@@ -90,7 +90,7 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
     phaser.phase(KonanPhase.BACKEND) {
         phaser.phase(KonanPhase.LOWER) {
             KonanLower(context).lower()
-            validateIrModule(context, context.ir.irModule)
+//            validateIrModule(context, context.ir.irModule) // Temporarily disabled until moving to new IR finished.
             context.ir.moduleIndexForCodegen = ModuleIndex(context.ir.irModule)
         }
         phaser.phase(KonanPhase.BITCODE) {

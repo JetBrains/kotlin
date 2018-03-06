@@ -17,19 +17,14 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 
-internal val FunctionDescriptor.canBeCalledVirtually: Boolean
-            // We check that either method is open, or one of declarations it overrides is open.
-        get() = isOverridable || DescriptorUtils.getAllOverriddenDeclarations(this).any { it.isOverridable }
-
-internal class OverriddenFunctionDescriptor(val descriptor: FunctionDescriptor, overriddenDescriptor: FunctionDescriptor) {
+internal class OverriddenFunctionDescriptor(
+        val descriptor: SimpleFunctionDescriptor,
+        overriddenDescriptor: SimpleFunctionDescriptor
+) {
     val overriddenDescriptor = overriddenDescriptor.original
 
     val needBridge: Boolean
@@ -44,16 +39,15 @@ internal class OverriddenFunctionDescriptor(val descriptor: FunctionDescriptor, 
                 return descriptor.canObjCClassMethodBeCalledVirtually(this.overriddenDescriptor)
             }
 
-            // We check that either method is open, or one of declarations it overrides is open.
-            return overriddenDescriptor.canBeCalledVirtually
+            return overriddenDescriptor.isOverridable
         }
 
     val inheritsBridge: Boolean
-        get() = !descriptor.kind.isReal
-                && OverridingUtil.overrides(descriptor.target, overriddenDescriptor)
+        get() = !descriptor.isReal
+                && descriptor.target.overrides(overriddenDescriptor)
                 && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()
 
-    fun getImplementation(context: Context): FunctionDescriptor {
+    fun getImplementation(context: Context): SimpleFunctionDescriptor {
         val target = descriptor.target
         if (!needBridge) return target
         val bridgeOwner = if (inheritsBridge) {
@@ -90,17 +84,18 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
 
         assert(!classDescriptor.isInterface)
 
-        val superVtableEntries = if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(classDescriptor)) {
+        val superVtableEntries = if (classDescriptor.isSpecialClassWithNoSupertypes()) {
             emptyList()
         } else {
-            context.getVtableBuilder(classDescriptor.getSuperClassOrAny()).vtableEntries
+            val superClass = classDescriptor.getSuperClassNotAny() ?: context.ir.symbols.any.owner
+            context.getVtableBuilder(superClass).vtableEntries
         }
 
         val methods = classDescriptor.sortedContributedMethods
         val newVtableSlots = mutableListOf<OverriddenFunctionDescriptor>()
 
         val inheritedVtableSlots = superVtableEntries.map { superMethod ->
-            val overridingMethod = methods.singleOrNull { OverridingUtil.overrides(it, superMethod.descriptor) }
+            val overridingMethod = methods.singleOrNull { it.overrides(superMethod.descriptor) }
             if (overridingMethod == null) {
                 superMethod
             } else {
@@ -122,7 +117,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
         inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenDescriptor.functionName.localHash.value }
     }
 
-    fun vtableIndex(function: FunctionDescriptor): Int {
+    fun vtableIndex(function: SimpleFunctionDescriptor): Int {
         val bridgeDirections = function.target.bridgeDirectionsTo(function.original)
         val index = vtableEntries.indexOfFirst { it.descriptor == function.original && it.bridgeDirections == bridgeDirections }
         if (index < 0) throw Error(function.toString() + " not in vtable of " + classDescriptor.toString())

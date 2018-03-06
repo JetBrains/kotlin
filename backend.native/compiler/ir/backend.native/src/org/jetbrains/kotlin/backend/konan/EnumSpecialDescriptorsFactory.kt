@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
@@ -43,7 +42,7 @@ internal object DECLARATION_ORIGIN_ENUM :
 internal data class LoweredEnum(val implObject: IrClass,
                                 val valuesField: IrField,
                                 val valuesGetter: IrSimpleFunction,
-                                val itemGetterSymbol: IrFunctionSymbol,
+                                val itemGetterSymbol: IrSimpleFunctionSymbol,
                                 val itemGetterDescriptor: FunctionDescriptor,
                                 val entriesMap: Map<Name, Int>)
 
@@ -74,7 +73,11 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
         val implObject = IrClassImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, implObjectDescriptor).apply {
             createParameterDeclarations()
             addFakeOverrides()
+            setSuperSymbols(listOf(context.ir.symbols.any.owner))
         }
+        implObject.parent = context.ir.getEnum(enumClassDescriptor)
+        valuesGetter.parent = implObject
+        valuesField.parent = implObject
 
         val (itemGetterSymbol, itemGetterDescriptor) = getEnumItemGetter(enumClassDescriptor)
 
@@ -114,10 +117,9 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                 false, false, false, false, false, false).initialize(valuesArrayType, dispatchReceiverParameter = receiver)
     }
 
-    private val kotlinPackage = context.irModule!!.descriptor.getPackage(FqName("kotlin"))
     private val genericArrayType = context.ir.symbols.array.descriptor
 
-    private fun getEnumItemGetter(enumClassDescriptor: ClassDescriptor): Pair<IrFunctionSymbol, FunctionDescriptor> {
+    private fun getEnumItemGetter(enumClassDescriptor: ClassDescriptor): Pair<IrSimpleFunctionSymbol, FunctionDescriptor> {
         val getter = context.ir.symbols.array.functions.single { it.descriptor.name == Name.identifier("get") }
 
         val typeParameterT = genericArrayType.declaredTypeParameters[0]

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.*
@@ -144,6 +145,17 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                 "LocalClassContext for ${descriptor}"
     }
 
+    private class LocalClassMemberContext(val member: IrFunction, val classContext: LocalClassContext) : LocalContext() {
+        override fun irGet(startOffset: Int, endOffset: Int, descriptor: ValueDescriptor): IrExpression? {
+            val field = classContext.capturedValueToField[descriptor] ?: return null
+
+            return IrGetFieldImpl(startOffset, endOffset, field.symbol,
+                    receiver = IrGetValueImpl(startOffset, endOffset, member.dispatchReceiverParameter!!.symbol)
+            )
+        }
+
+    }
+
     private inner class LocalDeclarationsTransformer(val memberDeclaration: IrDeclaration) {
         val localFunctions: MutableMap<FunctionDescriptor, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<ClassDescriptor, LocalClassContext> = LinkedHashMap()
@@ -169,6 +181,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             rewriteDeclarations()
 
             val result = collectRewrittenDeclarations()
+            result.forEach { it.parent = memberDeclaration.parent }
             return result
         }
 
@@ -209,7 +222,14 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                     // Replace local function definition with an empty composite.
                     return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.builtIns.unitType)
                 } else {
-                    return super.visitFunction(declaration)
+                    if (localContext is LocalClassContext && declaration.parent == localContext.declaration) {
+                        return declaration.apply {
+                            val classMemberLocalContext = LocalClassMemberContext(declaration, localContext)
+                            transformChildrenVoid(FunctionBodiesRewriter(classMemberLocalContext))
+                        }
+                    } else {
+                        return super.visitFunction(declaration)
+                    }
                 }
             }
 
@@ -219,6 +239,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                 val constructorContext = localClassConstructors[declaration.descriptor]
                 if (constructorContext != null) {
                     return constructorContext.transformedDeclaration.apply {
+                        this.parent = declaration.parent
                         this.body = declaration.body!!
 
                         declaration.descriptor.valueParameters.filter { it.declaresDefaultValue() }.forEach { argument ->
@@ -361,7 +382,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             localClassContext.capturedValueToField.forEach { capturedValue, field ->
                 val startOffset = irClass.startOffset
                 val endOffset = irClass.endOffset
-                irClass.declarations.add(field)
+                irClass.addChild(field)
 
                 for (constructorContext in constructorsCallingSuper) {
                     val blockBody = constructorContext.declaration.body as? IrBlockBody

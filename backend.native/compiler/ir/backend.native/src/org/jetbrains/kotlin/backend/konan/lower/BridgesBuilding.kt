@@ -35,9 +35,10 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.util.type
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
@@ -48,7 +49,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
     val interop = context.interopBuiltIns
     val symbols = context.ir.symbols
     val nullableAnyType = context.builtIns.nullableAnyType
-    var runtimeJobDescriptor: FunctionDescriptor? = null
+    lateinit var runtimeJobFunction: IrSimpleFunction
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat {
@@ -68,10 +69,11 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                     return expression
 
                 val job = expression.getValueArgument(3) as IrFunctionReference
+                val jobFunction = (job.symbol as IrSimpleFunctionSymbol).owner
                 val jobDescriptor = job.descriptor
                 val arg = jobDescriptor.valueParameters[0]
-                if (runtimeJobDescriptor == null) {
-                    runtimeJobDescriptor = jobDescriptor.newCopyBuilder()
+                if (!::runtimeJobFunction.isInitialized) {
+                    val runtimeJobDescriptor = jobDescriptor.newCopyBuilder()
                             .setReturnType(nullableAnyType)
                             .setValueParameters(listOf(ValueParameterDescriptorImpl(
                                     containingDeclaration = jobDescriptor,
@@ -87,8 +89,17 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                     source                = arg.source
                             )))
                             .build()!!
+
+                    runtimeJobFunction = IrFunctionImpl(
+                            jobFunction.startOffset,
+                            jobFunction.endOffset,
+                            IrDeclarationOrigin.DEFINED,
+                            runtimeJobDescriptor
+                    ).also {
+                        it.createParameterDeclarations()
+                    }
                 }
-                val overriddenJobDescriptor = OverriddenFunctionDescriptor(jobDescriptor, runtimeJobDescriptor!!)
+                val overriddenJobDescriptor = OverriddenFunctionDescriptor(jobFunction, runtimeJobFunction)
                 if (!overriddenJobDescriptor.needBridge) return expression
 
                 val bridge = context.buildBridge(
@@ -115,22 +126,9 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
 internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
-        val functions = mutableSetOf<FunctionDescriptor?>()
-        irClass.declarations.forEach {
-            when (it) {
-                is IrFunction -> functions.add(it.descriptor)
-                is IrProperty -> {
-                    functions.add(it.getter?.descriptor)
-                    functions.add(it.setter?.descriptor)
-                }
-            }
-        }
+        val builtBridges = mutableSetOf<IrSimpleFunction>()
 
-        irClass.descriptor.contributedMethods.forEach { functions.add(it) }
-
-        val builtBridges = mutableSetOf<FunctionDescriptor>()
-        functions.filterNotNull()
-                .filterNot { it.modality == Modality.ABSTRACT }
+        irClass.simpleFunctions()
                 .forEach { function ->
                     function.allOverriddenDescriptors
                             .map { OverriddenFunctionDescriptor(function, it) }
@@ -151,7 +149,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
                         ?: return declaration
                 val descriptor = declaration.descriptor
                 val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor)
-                if (typeSafeBarrierDescription == null || builtBridges.contains(descriptor))
+                if (typeSafeBarrierDescription == null || builtBridges.contains(declaration))
                     return declaration
 
                 val irBuilder = context.createIrBuilder(declaration.symbol, declaration.startOffset, declaration.endOffset)
@@ -169,22 +167,13 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
                 startOffset          = irClass.startOffset,
                 endOffset            = irClass.endOffset,
                 descriptor           = descriptor,
-                targetSymbol         = irClass.findMember(descriptor.descriptor), // TODO: optimize.
+                targetSymbol         = descriptor.descriptor.symbol,
                 superQualifierSymbol = irClass.symbol)
         )
     }
 }
 
-private fun IrClass.findMember(descriptor: FunctionDescriptor): IrFunctionSymbol {
-    val functions = this.declarations.filterIsInstance<IrFunction>().map { it.symbol }
-    val propertyAccessors = this.declarations
-            .filterIsInstance<IrProperty>()
-            .flatMap { listOfNotNull(it.getter?.symbol, it.setter?.symbol) }
-
-    return (functions + propertyAccessors).single { it.descriptor == descriptor }
-}
-
-private object DECLARATION_ORIGIN_BRIDGE_METHOD :
+internal object DECLARATION_ORIGIN_BRIDGE_METHOD :
         IrDeclarationOriginImpl("BRIDGE_METHOD")
 
 private fun IrBuilderWithScope.returnIfBadType(value: IrExpression,
@@ -220,17 +209,20 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
 
 private fun Context.buildBridge(startOffset: Int, endOffset: Int,
                                 descriptor: OverriddenFunctionDescriptor, targetSymbol: IrFunctionSymbol,
-                                superQualifierSymbol: IrClassSymbol? = null): IrFunctionImpl {
-    val bridgeDescriptor = specialDeclarationsFactory.getBridgeDescriptor(descriptor)
-    val bridge = IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_BRIDGE_METHOD,
-            bridgeDescriptor).apply { createParameterDeclarations() }
+                                superQualifierSymbol: IrClassSymbol? = null): IrFunction {
+
+    val bridge = specialDeclarationsFactory.getBridgeDescriptor(descriptor)
+
+    if (bridge.modality == Modality.ABSTRACT) {
+        return bridge
+    }
 
     val irBuilder = createIrBuilder(bridge.symbol, startOffset, endOffset)
     bridge.body = irBuilder.irBlockBody(bridge) {
-        val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor.overriddenDescriptor)
-        typeSafeBarrierDescription?.let { buildTypeSafeBarrier(bridge, descriptor.descriptor, it) }
+        val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor.overriddenDescriptor.descriptor)
+        typeSafeBarrierDescription?.let { buildTypeSafeBarrier(bridge, descriptor.descriptor.descriptor, it) }
 
-        val delegatingCall = IrCallImpl(startOffset, endOffset, targetSymbol, descriptor.descriptor,
+        val delegatingCall = IrCallImpl(startOffset, endOffset, targetSymbol, targetSymbol.descriptor,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
         ).apply {
             bridge.dispatchReceiverParameter?.let {
@@ -244,7 +236,7 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
             }
         }
 
-        if (KotlinBuiltIns.isUnitOrNullableUnit(bridgeDescriptor.returnType!!))
+        if (KotlinBuiltIns.isUnitOrNullableUnit(bridge.returnType))
             +delegatingCall
         else
             +irReturn(delegatingCall)

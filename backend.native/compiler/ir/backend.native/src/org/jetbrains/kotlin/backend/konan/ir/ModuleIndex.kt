@@ -33,6 +33,8 @@ class ModuleIndex(val module: IrModuleFragment) {
      */
     val classes: Map<ClassDescriptor, IrClass>
 
+    val enumEntries: Map<ClassDescriptor, IrEnumEntry>
+
     /**
      * Contains all functions declared in [module]
      */
@@ -41,6 +43,7 @@ class ModuleIndex(val module: IrModuleFragment) {
 
     init {
         val map = mutableMapOf<ClassDescriptor, IrClass>()
+        enumEntries = mutableMapOf()
 
         module.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -56,6 +59,12 @@ class ModuleIndex(val module: IrModuleFragment) {
                 super.visitClass(declaration)
 
                 map[declaration.descriptor] = declaration
+            }
+
+            override fun visitEnumEntry(declaration: IrEnumEntry) {
+                super.visitEnumEntry(declaration)
+
+                enumEntries[declaration.descriptor] = declaration
             }
 
             override fun visitFunction(declaration: IrFunction) {

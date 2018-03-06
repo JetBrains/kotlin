@@ -21,15 +21,17 @@ import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class ObjCExportCodeGenerator(
         codegen: CodeGenerator,
@@ -153,7 +155,7 @@ internal class ObjCExportCodeGenerator(
 
         val value = genValue(Lifetime.ARGUMENT)
 
-        return callFromBridge(conversion.descriptor.llvmFunction, listOf(value), resultLifetime)
+        return callFromBridge(conversion.owner.llvmFunction, listOf(value), resultLifetime)
     }
 
     internal fun emitRtti(
@@ -329,15 +331,16 @@ private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
     val writableTypeInfoType = runtime.writableTypeInfoType!!
     val writableTypeInfoValue = Struct(writableTypeInfoType, objCExportAddition)
 
-    val global = if (codegen.isExternal(descriptor)) {
+    val irClass = context.ir.get(descriptor)
+    val global = if (codegen.isExternal(irClass)) {
         // Note: this global replaces the external one with common linkage.
         staticData.createGlobal(
                 writableTypeInfoType,
-                descriptor.writableTypeInfoSymbolName,
+                irClass.writableTypeInfoSymbolName,
                 isExported = true
         )
     } else {
-        context.llvmDeclarations.forClass(descriptor).writableTypeInfoGlobal!!.also {
+        context.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal!!.also {
             it.setLinkage(LLVMLinkage.LLVMExternalLinkage)
         }
     }
@@ -356,7 +359,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(objCValueType: ObjCValueTyp
     val name = "${valueType.classFqName.shortName()}To${objCValueType.nsNumberName}"
 
     val converter = generateFunction(codegen, kotlinToObjCFunctionType, name) {
-        val unboxFunction = symbols.getUnboxFunction(valueType).descriptor.llvmFunction
+        val unboxFunction = symbols.getUnboxFunction(valueType).owner.llvmFunction
         val kotlinValue = callFromBridge(
                 unboxFunction,
                 listOf(param(0)),
@@ -385,15 +388,14 @@ private fun ObjCExportCodeGenerator.emitFunctionConverters() {
 }
 
 private fun ObjCExportCodeGenerator.generateKotlinFunctionAdapterToBlock(numberOfParameters: Int): ConstPointer {
-    val interfaceDescriptor = codegen.context.builtIns.getFunction(numberOfParameters)
-    val invokeMethod = interfaceDescriptor.unsubstitutedMemberScope.getContributedFunctions(
-            Name.identifier("invoke"), NoLookupLocation.FROM_BACKEND
-    ).single()
+    val irInterface = context.ir.symbols.functions[numberOfParameters].owner
+    val invokeMethod = irInterface.declarations.filterIsInstance<IrSimpleFunction>()
+            .single { it.name == OperatorNameConventions.INVOKE }
 
-    val invokeImpl = generateKotlinFunctionImpl(invokeMethod)
+    val invokeImpl = generateKotlinFunctionImpl(invokeMethod.descriptor)
 
     return rttiGenerator.generateSyntheticInterfaceImpl(
-            interfaceDescriptor,
+            irInterface,
             mapOf(invokeMethod to invokeImpl)
     )
 }
@@ -414,7 +416,7 @@ private fun ObjCExportCodeGenerator.emitKotlinFunctionAdaptersToBlock() {
 private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
     setObjCExportTypeInfo(
             context.builtIns.string,
-            constPointer(codegen.llvmFunction(context.interopBuiltIns.CreateNSStringFromKString))
+            constPointer(codegen.llvmFunction(context.ir.symbols.interopCreateNSStringFromKString.owner))
     )
 
     setObjCExportTypeInfo(
@@ -495,10 +497,11 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             }
         }
 
+        val targetIr = context.ir.get(target)
         val llvmTarget = if (!isVirtual) {
-            codegen.llvmFunction(target)
+            codegen.llvmFunction(targetIr)
         } else {
-            lookupVirtualImpl(args.first(), target)
+            lookupVirtualImpl(args.first(), targetIr)
         }
 
         val targetResult = callFromBridge(llvmTarget, args, Lifetime.ARGUMENT)
@@ -533,13 +536,15 @@ private fun ObjCExportCodeGenerator.generateObjCImpForArrayConstructor(
                     objCToKotlin(param(index + 2), typeBridge, Lifetime.ARGUMENT)
                 }
 
+        val targetIr = context.ir.get(target)
+
         val arrayInstance = callFromBridge(
                 context.llvm.allocArrayFunction,
-                listOf(target.constructedClass.llvmTypeInfoPtr, kotlinValueArgs.first()),
+                listOf((targetIr as IrConstructor).constructedClass.llvmTypeInfoPtr, kotlinValueArgs.first()),
                 resultLifetime = Lifetime.ARGUMENT
         )
         callFromBridge(
-                target.llvmFunction,
+                targetIr.llvmFunction,
                 listOf(arrayInstance) + kotlinValueArgs
         )
 
@@ -564,7 +569,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
     val objcMsgSend = msgSender(objCFunctionType(methodBridge))
 
-    val functionType = codegen.getLlvmFunctionType(descriptor)
+    val functionType = codegen.getLlvmFunctionType(context.ir.get(descriptor))
 
     val result = generateFunction(codegen, functionType, "") {
         val args = mutableListOf<LLVMValueRef>()
@@ -689,7 +694,8 @@ private fun ObjCExportCodeGenerator.vtableIndex(descriptor: FunctionDescriptor):
     return if (classDescriptor.isInterface) {
         null
     } else {
-        context.getVtableBuilder(classDescriptor).vtableIndex(descriptor)
+        context.getVtableBuilder(context.ir.get(classDescriptor))
+                .vtableIndex(context.ir.get(descriptor) as IrSimpleFunction)
     }
 }
 
@@ -761,12 +767,12 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 
             inherited.forEach {
                 presentVtableBridges += vtableIndex(it)
-                presentMethodTableBridges += it.functionName
+                presentMethodTableBridges += context.ir.get(it).functionName
             }
 
             uninherited.forEach {
                 val vtableIndex = vtableIndex(it)
-                val functionName = it.functionName
+                val functionName = context.ir.get(it).functionName
 
                 if (vtableIndex !in presentVtableBridges || functionName !in presentMethodTableBridges) {
                     presentVtableBridges += vtableIndex
@@ -794,17 +800,18 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             .filter { mapper.isBaseMethod(it) && it.isOverridable }
             .map { createMethodVirtualAdapter(it) }
 
-    val typeInfo = constPointer(codegen.typeInfoValue(descriptor))
+    val irClass = context.ir.get(descriptor)
+    val typeInfo = constPointer(codegen.typeInfoValue(irClass))
     val objCName = namer.getClassOrProtocolName(descriptor)
 
     val vtableSize = if (descriptor.kind == ClassKind.INTERFACE) {
         -1
     } else {
-        context.getVtableBuilder(descriptor).vtableEntries.size
+        context.getVtableBuilder(irClass).vtableEntries.size
     }
 
-    val vtable = if (!descriptor.isInterface && !descriptor.typeInfoHasVtableAttached) {
-        staticData.placeGlobal("", rttiGenerator.vtable(descriptor)).also {
+    val vtable = if (!descriptor.isInterface && !irClass.typeInfoHasVtableAttached) {
+        staticData.placeGlobal("", rttiGenerator.vtable(irClass)).also {
             it.setConstant(true)
         }.pointer.getElementPtr(0)
     } else {
@@ -812,7 +819,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
     }
 
     val methodTable = if (!descriptor.isInterface && descriptor.isAbstract()) {
-        rttiGenerator.methodTableRecords(descriptor)
+        rttiGenerator.methodTableRecords(irClass)
     } else {
         emptyList()
     }
@@ -859,13 +866,16 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
         val implementation = if (this.modality == Modality.ABSTRACT) {
             null
         } else {
-            OverriddenFunctionDescriptor(this, base).getImplementation(context)
+            OverriddenFunctionDescriptor(
+                    context.ir.get(this) as IrSimpleFunction,
+                    context.ir.get(base) as IrSimpleFunction
+            ).getImplementation(context)
         }
-        DirectAdapterRequest(implementation, base)
+        DirectAdapterRequest(implementation?.descriptor, base)
     }
 
     val superClassMethod = method.overriddenDescriptors
-            .atMostOne { !(it.containingDeclaration as ClassDescriptor).isInterface }
+            .atMostOne { !(it.containingDeclaration as ClassDescriptor).isInterface }?.original
 
     val inheritedAdapters = superClassMethod?.getAllRequiredDirectAdapters().orEmpty()
     val requiredAdapters = method.getAllRequiredDirectAdapters()
@@ -914,7 +924,7 @@ private fun ObjCExportCodeGenerator.createObjectInstanceAdapter(
     return generateObjCToKotlinMethodAdapter(methodBridge, selector) {
         initRuntimeIfNeeded() // For instance methods it gets called when allocating.
 
-        val value = getObjectValue(descriptor, ExceptionHandler.Caller, locationInfo = null)
+        val value = getObjectValue(context.ir.get(descriptor), ExceptionHandler.Caller, locationInfo = null)
         ret(kotlinToObjC(value, ReferenceBridge))
     }
 }
@@ -930,7 +940,7 @@ private fun ObjCExportCodeGenerator.createEnumEntryAdapter(
     return generateObjCToKotlinMethodAdapter(methodBridge, selector) {
         initRuntimeIfNeeded() // For instance methods it gets called when allocating.
 
-        val value = getEnumEntry(descriptor, ExceptionHandler.Caller)
+        val value = getEnumEntry(context.ir.getEnumEntry(descriptor), ExceptionHandler.Caller)
         ret(kotlinToObjC(value, ReferenceBridge))
     }
 }

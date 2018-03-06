@@ -123,7 +123,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
 
                 else -> null
             }
-        }.let { irClass.declarations.addAll(it) }
+        }.let { irClass.addChildren(it) }
 
         if (irClass.descriptor.annotations.hasAnnotation(interop.exportObjCClass.fqNameSafe)) {
             val irBuilder = context.createIrBuilder(currentFile.symbol).at(irClass)

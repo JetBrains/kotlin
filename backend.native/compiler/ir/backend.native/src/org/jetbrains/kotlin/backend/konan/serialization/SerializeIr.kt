@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.util.addFakeOverrides
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
+import org.jetbrains.kotlin.ir.util.setOverrides
+import org.jetbrains.kotlin.ir.util.setSuperSymbols
 import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
 import org.jetbrains.kotlin.serialization.KonanIr
 import org.jetbrains.kotlin.serialization.KonanIr.IrConst.ValueCase.*
@@ -1209,6 +1211,7 @@ internal class IrDeserializer(val context: Context,
 
         clazz.createParameterDeclarations()
         clazz.addFakeOverrides()
+        clazz.setSuperSymbols(context.ir.symbols.symbolTable)
 
         return clazz
 
@@ -1222,6 +1225,7 @@ internal class IrDeserializer(val context: Context,
             descriptor, body as IrBody)
 
         function.createParameterDeclarations()
+        function.setOverrides(context.ir.symbols.symbolTable)
 
         proto.defaultArgumentList.forEach {
             val expr = deserializeExpression(it.value)

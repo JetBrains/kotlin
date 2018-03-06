@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -37,7 +38,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.endOffsetOrUndefined
 import org.jetbrains.kotlin.ir.util.startOffsetOrUndefined
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -48,7 +51,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
@@ -56,7 +58,7 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 internal class SpecialDeclarationsFactory(val context: Context) {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
     private val outerThisFields = mutableMapOf<ClassDescriptor, IrField>()
-    private val bridgesDescriptors = mutableMapOf<Pair<FunctionDescriptor, BridgeDirections>, FunctionDescriptor>()
+    private val bridgesDescriptors = mutableMapOf<Pair<IrSimpleFunction, BridgeDirections>, IrSimpleFunction>()
     private val loweredEnums = mutableMapOf<ClassDescriptor, LoweredEnum>()
 
     object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
@@ -83,19 +85,30 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             )
         }
 
-    fun getBridgeDescriptor(overriddenFunctionDescriptor: OverriddenFunctionDescriptor): FunctionDescriptor {
-        val descriptor = overriddenFunctionDescriptor.descriptor.original
+    fun getBridgeDescriptor(overriddenFunctionDescriptor: OverriddenFunctionDescriptor): IrSimpleFunction {
+        val irFunction = overriddenFunctionDescriptor.descriptor
+        val descriptor = irFunction.descriptor
         assert(overriddenFunctionDescriptor.needBridge,
                 { "Function $descriptor is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor}" })
         val bridgeDirections = overriddenFunctionDescriptor.bridgeDirections
-        return bridgesDescriptors.getOrPut(descriptor to bridgeDirections) {
-            SimpleFunctionDescriptorImpl.create(
+        return bridgesDescriptors.getOrPut(irFunction to bridgeDirections) {
+            val newDescriptor = SimpleFunctionDescriptorImpl.create(
                     /* containingDeclaration = */ descriptor.containingDeclaration,
                     /* annotations           = */ Annotations.EMPTY,
-                    /* name                  = */ "<bridge-$bridgeDirections>${descriptor.functionName}".synthesizedName,
+                    /* name                  = */ "<bridge-$bridgeDirections>${irFunction.functionName}".synthesizedName,
                     /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
                     /* source                = */ SourceElement.NO_SOURCE).apply {
                 initializeBridgeDescriptor(this, descriptor, bridgeDirections.array)
+            }
+
+            IrFunctionImpl(
+                    irFunction.startOffset,
+                    irFunction.endOffset,
+                    DECLARATION_ORIGIN_BRIDGE_METHOD,
+                    newDescriptor
+            ).apply {
+                createParameterDeclarations()
+                this.parent = overriddenFunctionDescriptor.descriptor.parent
             }
         }
     }
@@ -169,9 +182,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     override val reflectionTypes: ReflectionTypes by lazy(PUBLICATION) {
         ReflectionTypes(moduleDescriptor, FqName("konan.internal"))
     }
-    private val vtableBuilders = mutableMapOf<ClassDescriptor, ClassVtablesBuilder>()
+    private val vtableBuilders = mutableMapOf<IrClass, ClassVtablesBuilder>()
 
-    fun getVtableBuilder(classDescriptor: ClassDescriptor) = vtableBuilders.getOrPut(classDescriptor) {
+    fun getVtableBuilder(classDescriptor: IrClass) = vtableBuilders.getOrPut(classDescriptor) {
         ClassVtablesBuilder(classDescriptor, this)
     }
 

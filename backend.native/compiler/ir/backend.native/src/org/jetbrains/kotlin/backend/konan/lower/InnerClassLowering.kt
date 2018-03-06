@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -57,7 +59,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         private fun createOuterThisField() {
             val field = context.specialDeclarationsFactory.getOuterThisField(classDescriptor)
             outerThisFieldSymbol = field.symbol
-            irClass.declarations.add(field)
+            irClass.addChild(field)
         }
 
         private fun lowerConstructors() {
@@ -109,7 +111,16 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
                     var innerClass: ClassDescriptor
                     if (constructorSymbol == null || constructorSymbol.descriptor.constructedClass != classDescriptor) {
                         innerClass = classDescriptor
-                        irThis = IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol, origin)
+                        val currentIrFunction = currentFunction!!.scope.scopeOwnerSymbol.owner as IrFunction
+
+                        val currentFunctionReceiver = currentIrFunction.dispatchReceiverParameter
+                        val thisSymbol = if (currentFunctionReceiver?.descriptor == irClass.thisReceiver!!.descriptor) {
+                            currentFunctionReceiver
+                        } else {
+                            irClass.thisReceiver!!
+                        }.symbol
+
+                        irThis = IrGetValueImpl(startOffset, endOffset, thisSymbol, origin)
                     } else {
                         // For constructor we have outer class as dispatchReceiverParameter.
                         innerClass = DescriptorUtils.getContainingClass(classDescriptor) ?:

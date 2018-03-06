@@ -21,8 +21,8 @@ import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanVersion
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
@@ -185,7 +185,7 @@ private fun debugInfoBaseType(context:Context, targetData:LLVMTargetDataRef, typ
 internal val FunctionDescriptor.types:List<KotlinType>
     get() {
         val parameters = valueParameters.map{it.type}
-        return if (returnType != null) listOf(returnType!!, *parameters.toTypedArray()) else parameters
+        return listOf(returnType, *parameters.toTypedArray())
     }
 
 internal fun KotlinType.size(context:Context) = context.debugInfo.llvmTypeSizes.getOrDefault(this, context.debugInfo.otherTypeSize)

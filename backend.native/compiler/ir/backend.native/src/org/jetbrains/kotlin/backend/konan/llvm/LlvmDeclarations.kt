@@ -20,18 +20,13 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 internal fun createLlvmDeclarations(context: Context): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(context)
@@ -47,8 +42,8 @@ internal fun createLlvmDeclarations(context: Context): LlvmDeclarations {
 internal class LlvmDeclarations(
         private val functions: Map<FunctionDescriptor, FunctionLlvmDeclarations>,
         private val classes: Map<ClassDescriptor, ClassLlvmDeclarations>,
-        private val fields: Map<PropertyDescriptor, FieldLlvmDeclarations>,
-        private val staticFields: Map<PropertyDescriptor, StaticFieldLlvmDeclarations>,
+        private val fields: Map<IrField, FieldLlvmDeclarations>,
+        private val staticFields: Map<IrField, StaticFieldLlvmDeclarations>,
         private val theUnitInstanceRef: ConstPointer?
 ) {
     fun forFunction(descriptor: FunctionDescriptor) = functions[descriptor] ?:
@@ -57,10 +52,10 @@ internal class LlvmDeclarations(
     fun forClass(descriptor: ClassDescriptor) = classes[descriptor] ?:
             error(descriptor.toString())
 
-    fun forField(descriptor: PropertyDescriptor) = fields[descriptor] ?:
+    fun forField(descriptor: IrField) = fields[descriptor] ?:
             error(descriptor.toString())
 
-    fun forStaticField(descriptor: PropertyDescriptor) = staticFields[descriptor] ?:
+    fun forStaticField(descriptor: IrField) = staticFields[descriptor] ?:
             error(descriptor.toString())
 
     fun forSingleton(descriptor: ClassDescriptor) = forClass(descriptor).singletonDeclarations ?:
@@ -72,7 +67,7 @@ internal class LlvmDeclarations(
 
 internal class ClassLlvmDeclarations(
         val bodyType: LLVMTypeRef,
-        val fields: List<PropertyDescriptor>, // TODO: it is not an LLVM declaration.
+        val fields: List<IrField>, // TODO: it is not an LLVM declaration.
         val typeInfoGlobal: StaticData.Global,
         val writableTypeInfoGlobal: StaticData.Global?,
         val typeInfo: ConstPointer,
@@ -101,7 +96,7 @@ internal class StaticFieldLlvmDeclarations(val storage: LLVMValueRef)
  */
 internal fun ContextUtils.getFields(classDescriptor: ClassDescriptor) = context.getFields(classDescriptor)
 
-internal fun Context.getFields(classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
+internal fun Context.getFields(classDescriptor: ClassDescriptor): List<IrField> {
     val superClass = classDescriptor.getSuperClassNotAny() // TODO: what if Any has fields?
     val superFields = if (superClass != null) getFields(superClass) else emptyList()
 
@@ -111,7 +106,7 @@ internal fun Context.getFields(classDescriptor: ClassDescriptor): List<PropertyD
 /**
  * Fields declared in the class.
  */
-private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
+private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<IrField> {
     // TODO: Here's what is going on here:
     // The existence of a backing field for a property is only described in the IR,
     // but not in the PropertyDescriptor.
@@ -122,33 +117,24 @@ private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<Pr
     // In this function we check the presence of the backing field
     // two ways: first we check IR, then we check the protobuf extension.
 
-    val irClass = ir.moduleIndexForCodegen.classes[classDescriptor]
-    val fields = if (irClass != null) {
-        val declarations = irClass.declarations
-
-        declarations.mapNotNull {
-            when (it) {
-                is IrProperty -> it.backingField?.descriptor
-                is IrField -> it.descriptor
-                else -> null
-            }
+    val irClass = classDescriptor
+    val fields = irClass.declarations.mapNotNull {
+        when (it) {
+            is IrField -> it
+            is IrProperty -> it.konanBackingField
+            else -> null
         }
-    } else {
-        val properties = classDescriptor.unsubstitutedMemberScope.
-                getContributedDescriptors().
-                filterIsInstance<DeserializedPropertyDescriptor>()
-
-        properties.mapNotNull { it.backingField }
     }
+
     return fields.sortedBy {
         it.fqNameSafe.localHash.value
     }
 }
 
-private fun ContextUtils.createClassBodyType(name: String, fields: List<PropertyDescriptor>): LLVMTypeRef {
+private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>): LLVMTypeRef {
     val fieldTypes = fields.map {
         @Suppress("DEPRECATION")
-        getLLVMType(if (it.isDelegated) context.builtIns.nullableAnyType else it.type)
+        getLLVMType(if (it.isDelegate) context.builtIns.nullableAnyType else it.type)
     }
 
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!
@@ -163,8 +149,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
     val functions = mutableMapOf<FunctionDescriptor, FunctionLlvmDeclarations>()
     val classes = mutableMapOf<ClassDescriptor, ClassLlvmDeclarations>()
-    val fields = mutableMapOf<PropertyDescriptor, FieldLlvmDeclarations>()
-    val staticFields = mutableMapOf<PropertyDescriptor, StaticFieldLlvmDeclarations>()
+    val fields = mutableMapOf<IrField, FieldLlvmDeclarations>()
+    val staticFields = mutableMapOf<IrField, StaticFieldLlvmDeclarations>()
     var theUnitInstanceRef: ConstPointer? = null
 
     private class Namer(val prefix: String) {
@@ -183,7 +169,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     val objectNamer = Namer("object-")
 
     private fun getLocalName(parent: FqName, descriptor: DeclarationDescriptor): Name {
-        if (DescriptorUtils.isAnonymousObject(descriptor)) {
+        if (descriptor.isAnonymousObject) {
             return objectNamer.getName(parent, descriptor)
         }
 
@@ -191,20 +177,15 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     }
 
     private fun getFqName(descriptor: DeclarationDescriptor): FqName {
-        if (descriptor is PackageFragmentDescriptor) {
-            return descriptor.fqName
+        val parent = descriptor.parent
+        val parentFqName = when (parent) {
+            is IrPackageFragment -> parent.fqName
+            is IrDeclaration -> getFqName(parent)
+            else -> error(parent)
         }
 
-
-        val containingDeclaration = descriptor.containingDeclaration
-        val parent = if (containingDeclaration != null) {
-            getFqName(containingDeclaration)
-        } else {
-            FqName.ROOT
-        }
-
-        val localName = getLocalName(parent, descriptor)
-        return parent.child(localName)
+        val localName = getLocalName(parentFqName, descriptor)
+        return parentFqName.child(localName)
     }
 
     /**
@@ -223,17 +204,17 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
     override fun visitClass(declaration: IrClass) {
 
-        if (declaration.descriptor.isIntrinsic) {
+        if (declaration.isIntrinsic) {
             // do not generate any declarations for intrinsic classes as they require special handling
         } else {
-            this.classes[declaration.descriptor] = createClassDeclarations(declaration)
+            this.classes[declaration] = createClassDeclarations(declaration)
         }
 
         super.visitClass(declaration)
     }
 
     private fun createClassDeclarations(declaration: IrClass): ClassLlvmDeclarations {
-        val descriptor = declaration.descriptor
+        val descriptor = declaration
 
         val internalName = qualifyInternalName(descriptor)
 
@@ -317,7 +298,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     ): SingletonLlvmDeclarations? {
 
         if (descriptor.isUnit()) {
-            this.theUnitInstanceRef = staticData.createUnitInstance(descriptor, bodyType, typeInfoPtr)
+            this.theUnitInstanceRef = staticData.createUnitInstance(bodyType, typeInfoPtr)
             return null
         }
 
@@ -329,6 +310,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         }
         val instanceFieldRef = addGlobal(
                 symbolName, getLLVMType(descriptor.defaultType), isExported = isExported, threadLocal = true)
+
+        LLVMSetInitializer(instanceFieldRef, kNullObjHeaderPtr)
 
         return SingletonLlvmDeclarations(instanceFieldRef)
     }
@@ -353,11 +336,10 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     override fun visitField(declaration: IrField) {
         super.visitField(declaration)
 
-        val descriptor = declaration.descriptor
+        val descriptor = declaration
 
-        val dispatchReceiverParameter = descriptor.dispatchReceiverParameter
-        if (dispatchReceiverParameter != null) {
-            val containingClass = dispatchReceiverParameter.containingDeclaration
+        val containingClass = descriptor.containingClass
+        if (containingClass != null) {
             val classDeclarations = this.classes[containingClass] ?: error(containingClass.toString())
 
             val allFields = classDeclarations.fields
@@ -381,9 +363,9 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
     override fun visitFunction(declaration: IrFunction) {
         super.visitFunction(declaration)
 
-        if (!declaration.descriptor.kind.isReal) return
+        if (!declaration.isReal) return
 
-        val descriptor = declaration.descriptor
+        val descriptor = declaration
         val llvmFunctionType = getLlvmFunctionType(descriptor)
 
         if ((descriptor is ConstructorDescriptor && descriptor.getObjCInitMethod() != null)) {
@@ -402,7 +384,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         } else {
             val symbolName = if (descriptor.isExported()) {
                 descriptor.symbolName.also {
-                    if (!MainFunctionDetector.isMain(descriptor)) {
+                    if (!descriptor.isMain()) {
                         assert(LLVMGetNamedFunction(context.llvm.llvmModule, it) == null) { it }
                     } else {
                         // As a workaround, allow `main` functions to clash because frontend accepts this.

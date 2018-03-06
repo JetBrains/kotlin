@@ -19,15 +19,12 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.isExternalObjCClassMethod
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 
 
 internal class RTTIGenerator(override val context: Context) : ContextUtils {
@@ -125,8 +122,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val size = getInstanceSize(bodyType, className)
 
-        val superTypeOrAny = classDesc.getSuperClassOrAny()
-        val superType = if (KotlinBuiltIns.isAny(classDesc)) NullPointer(runtime.typeInfoType)
+        val superTypeOrAny = classDesc.getSuperClassNotAny() ?: context.ir.symbols.any.owner
+        val superType = if (classDesc.isAny()) NullPointer(runtime.typeInfoType)
                 else superTypeOrAny.typeInfoPtr
 
         val interfaces = classDesc.implementedInterfaces.map { it.typeInfoPtr }
@@ -236,14 +233,14 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val size = 0
 
-        val superClass = context.builtIns.any
+        val superClass = context.ir.symbols.any.owner
 
         assert(superClass.implementedInterfaces.isEmpty())
         val interfaces = listOf(descriptor.typeInfoPtr)
         val interfacesPtr = staticData.placeGlobalConstArray("",
                 pointerType(runtime.typeInfoType), interfaces)
 
-        assert(superClass.getMemberScope().getVariableNames().isEmpty())
+        assert(superClass.declarations.all { it !is IrProperty && it !is IrField })
         val objOffsetsPtr = NullPointer(int32Type)
         val objOffsetsCount = 0
         val fieldsPtr = NullPointer(runtime.fieldTableRecordType)
@@ -295,18 +292,18 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private fun getReflectionInfo(descriptor: ClassDescriptor): ReflectionInfo {
         // Use data from value class in type info for box class:
         val descriptorForReflection = context.ir.symbols.valueClassToBox.entries
-                .firstOrNull { it.value.descriptor == descriptor }
-                ?.key ?: descriptor
+                .firstOrNull { it.value.owner == descriptor }
+                ?.key?.owner ?: descriptor
 
-        return if (DescriptorUtils.isAnonymousObject(descriptorForReflection)) {
+        return if (descriptorForReflection.isAnonymousObject) {
             ReflectionInfo(packageName = null, relativeName = null)
-        } else if (DescriptorUtils.isLocal(descriptorForReflection)) {
+        } else if (descriptorForReflection.isLocal) {
             ReflectionInfo(packageName = null, relativeName = descriptorForReflection.name.asString())
         } else {
             ReflectionInfo(
                     packageName = descriptorForReflection.findPackage().fqName.asString(),
-                    relativeName = descriptorForReflection.parentsWithSelf
-                            .takeWhile { it is ClassDescriptor }.toList().reversed()
+                    relativeName = generateSequence(descriptorForReflection, { it.parent as? ClassDescriptor })
+                            .toList().reversed()
                             .joinToString(".") { it.name.asString() }
             )
         }

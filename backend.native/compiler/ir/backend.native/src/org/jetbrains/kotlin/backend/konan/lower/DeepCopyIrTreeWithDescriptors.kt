@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -46,9 +46,9 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
+internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                                     val parentDescriptor: DeclarationDescriptor,
-                                    val context: CommonBackendContext) {
+                                    val context: Context) {
 
     private val descriptorSubstituteMap: MutableMap<DeclarationDescriptor, DeclarationDescriptor> = mutableMapOf()
     private var typeSubstitutor: TypeSubstitutor? = null
@@ -503,7 +503,9 @@ class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
                 origin      = mapDeclarationOrigin(declaration.origin),
                 descriptor  = mapFunctionDeclaration(declaration.descriptor),
                 body        = declaration.body?.transform(this, null)
-            ).transformParameters(declaration)
+            ).also {
+                it.setOverrides(context.ir.symbols.symbolTable)
+            }.transformParameters(declaration)
 
         //---------------------------------------------------------------------//
 

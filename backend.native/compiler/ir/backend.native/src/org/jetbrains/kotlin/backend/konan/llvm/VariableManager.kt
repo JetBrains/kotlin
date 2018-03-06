@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.name.Name
 
@@ -174,4 +175,10 @@ internal fun debugInfoParameterLocation(builder: DIBuilderRef?,
             type = diType)
 
     return VariableDebugLocation(localVariable = variableDeclaration!!, location = location, file = file, line = line)
+}
+
+private val ValueDescriptor.type get() = when (this) {
+    is IrVariable -> this.type
+    is IrValueParameter -> this.type
+    else -> error(this)
 }

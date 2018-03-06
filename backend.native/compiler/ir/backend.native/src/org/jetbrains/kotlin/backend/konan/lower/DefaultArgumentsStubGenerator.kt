@@ -55,7 +55,11 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)
-                lower(memberDeclaration)
+                lower(memberDeclaration).also { functions ->
+                    functions.forEach {
+                        it.parent = irDeclarationContainer
+                    }
+                }
             else
                 null
         }
@@ -78,12 +82,18 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
         functionDescriptor.overriddenDescriptors.forEach { context.log{"DEFAULT-REPLACER: $it"} }
         if (bodies.isNotEmpty()) {
             val newIrFunction = functionDescriptor.generateDefaultsFunction(context)
+            newIrFunction.parent = irFunction.parent
             val descriptor = newIrFunction.descriptor
             log { "$functionDescriptor -> $descriptor" }
             val builder = context.createIrBuilder(newIrFunction.symbol)
-            val body = builder.irBlockBody(irFunction) {
+            newIrFunction.body = builder.irBlockBody(newIrFunction) {
                 val params = mutableListOf<IrVariableSymbol>()
                 val variables = mutableMapOf<ValueDescriptor, IrValueSymbol>()
+
+                irFunction.dispatchReceiverParameter?.let {
+                    variables[it.descriptor] = newIrFunction.dispatchReceiverParameter!!.symbol
+                }
+
                 if (descriptor.extensionReceiverParameter != null) {
                     variables[functionDescriptor.extensionReceiverParameter!!] =
                             newIrFunction.extensionReceiverParameter!!.symbol
@@ -157,20 +167,8 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
             irFunction.valueParameters.forEach {
                 it.defaultValue = null
             }
-            return if (functionDescriptor is ClassConstructorDescriptor)
-                listOf(irFunction, IrConstructorImpl(
-                        startOffset = irFunction.startOffset,
-                        endOffset   = irFunction.endOffset,
-                        descriptor  = descriptor as ClassConstructorDescriptor,
-                        origin      = DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER,
-                        body        = body).apply { createParameterDeclarations() })
-            else
-                listOf(irFunction, IrFunctionImpl(
-                        startOffset = irFunction.startOffset,
-                        endOffset   = irFunction.endOffset,
-                        descriptor  = descriptor,
-                        origin      = DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER,
-                        body        = body).apply { createParameterDeclarations() })
+
+            return listOf(irFunction, newIrFunction)
         }
         return listOf(irFunction)
     }
@@ -283,13 +281,24 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                         }
             }
 
-            private fun parametersForCall(expression: IrMemberAccessExpression): Pair<IrFunctionSymbol, List<Pair<ValueParameterDescriptor, IrExpression?>>> {
-                val descriptor = expression.descriptor as FunctionDescriptor
-                val keyDescriptor = if (DescriptorUtils.isOverride(descriptor))
-                    DescriptorUtils.getAllOverriddenDescriptors(descriptor).first { it.needsDefaultArgumentsLowering }
-                else
-                    descriptor.original
+            private fun IrFunction.findSuperMethodWithDefaultArguments(): IrFunction? {
+                if (!this.descriptor.needsDefaultArgumentsLowering) return null
+
+                if (this !is IrSimpleFunction) return this
+
+                this.overriddenSymbols.forEach {
+                    it.owner.findSuperMethodWithDefaultArguments()?.let { return it }
+                }
+
+                return this
+            }
+
+            private fun parametersForCall(expression: IrFunctionAccessExpression): Pair<IrFunctionSymbol, List<Pair<ValueParameterDescriptor, IrExpression?>>> {
+                val descriptor = expression.descriptor
+                val keyFunction = (expression.symbol.owner as IrFunction).findSuperMethodWithDefaultArguments()!!
+                val keyDescriptor = keyFunction.descriptor
                 val realFunction = keyDescriptor.generateDefaultsFunction(context)
+                realFunction.parent = keyFunction.parent
                 val realDescriptor = realFunction.descriptor
 
                 log { "$descriptor -> $realDescriptor" }

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.getDefault
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -133,6 +134,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             typeSubstitutor = createTypeSubstitutor(callee)                                 // Type parameters will be substituted with type arguments.
         ) as IrFunction
 
+        val irReturnableBlockSymbol = IrReturnableBlockSymbolImpl(copyFunctionDeclaration.descriptor.original)
+
         val evaluationStatements = evaluateArguments(callee, copyFunctionDeclaration)       // And list of evaluation statements.
 
         val statements = (copyFunctionDeclaration.body as IrBlockBody).statements           // IR statements from function copy.
@@ -142,7 +145,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
         val descriptor = caller.descriptor.original
         if (descriptor.isInlineConstructor) {
             val delegatingConstructorCall = statements[0] as IrDelegatingConstructorCall
-            val irBuilder = context.createIrBuilder(copyFunctionDeclaration.symbol, startOffset, endOffset)
+            val irBuilder = context.createIrBuilder(irReturnableBlockSymbol, startOffset, endOffset)
             irBuilder.run {
                 val constructorDescriptor = delegatingConstructorCall.descriptor.original
                 val constructorCall = irCall(delegatingConstructorCall.symbol,
@@ -166,7 +169,7 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
             startOffset = startOffset,
             endOffset   = endOffset,
             type        = returnType,
-            descriptor  = copyFunctionDeclaration.descriptor.original,
+            symbol      = irReturnableBlockSymbol,
             origin      = null,
             statements  = statements,
             sourceFileName = sourceFileName

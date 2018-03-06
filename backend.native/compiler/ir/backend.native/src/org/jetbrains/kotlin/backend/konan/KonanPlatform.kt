@@ -80,3 +80,8 @@ object KonanPlatform : TargetPlatform("Konan") {
 
     override val platformConfigurator: PlatformConfigurator = KonanPlatformConfigurator
 }
+
+/**
+ * Maximum number of parameters supported in function types (e.g. `FunctionXX`, `KFunctionXX`, `SuspendFunctionXX`).
+ */
+internal const val KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS = 22

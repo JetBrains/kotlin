@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.validateIrFile
 import org.jetbrains.kotlin.backend.common.validateIrModule
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.referenceAllTypeExternalClassifiers
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.konan.lower.DefaultParameterInjector
@@ -27,18 +27,24 @@ import org.jetbrains.kotlin.backend.konan.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.konan.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.checkDeclarationParents
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.replaceUnboundSymbols
 
 internal class KonanLower(val context: Context) {
 
     fun lower() {
+        val irModule = context.irModule!!
+
         // Phases to run against whole module.
-        lowerModule(context.irModule!!)
+        lowerModule(irModule)
 
         // Phases to run against a file.
-        context.irModule!!.files.forEach {
+        irModule.files.forEach {
             lowerFile(it)
         }
+
+        irModule.checkDeclarationParents()
     }
 
     private fun lowerModule(irModule: IrModuleFragment) {
@@ -73,8 +79,17 @@ internal class KonanLower(val context: Context) {
             irModule.files.forEach(LateinitLowering(context)::lower)
         }
 
-        @Suppress("DEPRECATION")
-        irModule.replaceUnboundSymbols(context)
+        val symbolTable = context.ir.symbols.symbolTable
+        irModule.referenceAllTypeExternalClassifiers(symbolTable)
+
+        do {
+            @Suppress("DEPRECATION")
+            irModule.replaceUnboundSymbols(context)
+            irModule.referenceAllTypeExternalClassifiers(symbolTable)
+        } while (symbolTable.unboundClasses.isNotEmpty())
+
+        irModule.patchDeclarationParents()
+
         validateIrModule(context, irModule)
     }
 
@@ -144,7 +159,7 @@ internal class KonanLower(val context: Context) {
             WorkersBridgesBuilding(context).lower(irFile)
         }
         phaser.phase(KonanPhase.AUTOBOX) {
-            validateIrFile(context, irFile)
+            // validateIrFile(context, irFile) // Temporarily disabled until moving to new IR finished.
             Autoboxing(context).lower(irFile)
         }
         phaser.phase(KonanPhase.RETURNS_INSERTION) {

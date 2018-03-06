@@ -16,27 +16,18 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
-import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
-import org.jetbrains.kotlin.backend.konan.llvm.isExported
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
-import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -48,7 +39,7 @@ internal val ClassDescriptor.implementedInterfaces: List<ClassDescriptor>
         val superInterfacesImplementedInterfaces = superInterfaces.flatMap { it.implementedInterfaces }
         return (superClassImplementedInterfaces +
                 superInterfacesImplementedInterfaces +
-                superInterfaces).distinctBy { it.classId }
+                superInterfaces).distinct()
     }
 
 
@@ -57,21 +48,19 @@ internal val ClassDescriptor.implementedInterfaces: List<ClassDescriptor>
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(): T {
-    if (this.kind.isReal) {
+internal tailrec fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
+    if (this.isReal) {
         return this
     } else {
-        val overridden = OverridingUtil.getOverriddenDeclarations(this)
-        val filtered = OverridingUtil.filterOutOverridden(overridden)
-        // TODO: is it correct to take first?
-        @Suppress("UNCHECKED_CAST")
-        return filtered.first { it.modality != Modality.ABSTRACT } as T
+        return overriddenSymbols
+                .firstOrNull { it.owner.modality != Modality.ABSTRACT }!!
+                .owner.resolveFakeOverride()
     }
 }
 
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 
-internal val CallableDescriptor.isIntrinsic: Boolean
+internal val FunctionDescriptor.isIntrinsic: Boolean
     get() = this.annotations.hasAnnotation(intrinsicAnnotation)
 
 private val intrinsicTypes = setOf(
@@ -81,7 +70,7 @@ private val intrinsicTypes = setOf(
         "kotlin.Float", "kotlin.Double"
 )
 
-private val arrayTypes = setOf(
+internal val arrayTypes = setOf(
         "kotlin.Array",
         "kotlin.ByteArray",
         "kotlin.CharArray",
@@ -105,82 +94,20 @@ internal val ClassDescriptor.isArray: Boolean
 internal val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
-private val konanInternalPackageName = FqName.fromSegments(listOf("konan", "internal"))
-
-/**
- * @return `konan.internal` member scope
- */
-internal val KonanBuiltIns.konanInternal: MemberScope
-    get() = this.builtInsModule.getPackage(konanInternalPackageName).memberScope
-
-internal val KotlinType.isKFunctionType: Boolean
-    get() {
-        val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
-        return kind == FunctionClassDescriptor.Kind.KFunction
-    }
-
-internal val FunctionDescriptor.isFunctionInvoke: Boolean
-    get() {
-        val dispatchReceiver = dispatchReceiverParameter ?: return false
-        assert(!dispatchReceiver.type.isKFunctionType)
-
-        return dispatchReceiver.type.isFunctionType &&
-                this.isOperator && this.name == OperatorNameConventions.INVOKE
-    }
-
-internal val FunctionDescriptor.isSuspendFunctionInvoke: Boolean
-    get() {
-        val dispatchReceiver = dispatchReceiverParameter
-                ?: return false
-
-        return dispatchReceiver.type.isSuspendFunctionType &&
-                this.isOperator && this.name == OperatorNameConventions.INVOKE
-    }
-
-internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
-
-internal val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
-    get() {
-        val result = mutableListOf<T>()
-        fun traverse(descriptor: T) {
-            result.add(descriptor)
-            @Suppress("UNCHECKED_CAST")
-            descriptor.overriddenDescriptors.forEach { traverse(it as T) }
-        }
-        traverse(this)
-        return result
-    }
-
-internal val ClassDescriptor.sortedContributedMethods: List<FunctionDescriptor>
-    get () = unsubstitutedMemberScope.sortedContributedMethods
-
-internal val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
-    get () = unsubstitutedMemberScope.contributedMethods
-
-internal val MemberScope.sortedContributedMethods: List<FunctionDescriptor>
+internal val IrClass.sortedContributedMethods: List<SimpleFunctionDescriptor>
     get () = contributedMethods.sortedBy {
             it.functionName.localHash.value
     }
 
-internal val MemberScope.contributedMethods: List<FunctionDescriptor>
-    get () {
-        val contributedDescriptors = this.getContributedDescriptors()
-
-        val functions = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
-
-        val properties = contributedDescriptors.filterIsInstance<PropertyDescriptor>()
-        val getters = properties.mapNotNull { it.getter }
-        val setters = properties.mapNotNull { it.setter }
-
-        return functions + getters + setters
-    }
+internal val IrClass.contributedMethods: List<SimpleFunctionDescriptor>
+    get () = this.simpleFunctions()
 
 fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
         || this.kind == ClassKind.ENUM_CLASS
 
 internal fun FunctionDescriptor.hasValueTypeAt(index: Int): Boolean {
     when (index) {
-        0 -> return !isSuspend && returnType.let { it != null && (it.isValueType() || it.isUnit()) }
+        0 -> return !isSuspend && returnType.let { (it.isValueType() || it.isUnit()) }
         1 -> return extensionReceiverParameter.let { it != null && it.type.isValueType() }
         else -> return this.valueParameters[index - 2].type.isValueType()
     }
@@ -188,7 +115,7 @@ internal fun FunctionDescriptor.hasValueTypeAt(index: Int): Boolean {
 
 internal fun FunctionDescriptor.hasReferenceAt(index: Int): Boolean {
     when (index) {
-        0 -> return isSuspend || returnType.let { it != null && !it.isValueType() && !it.isUnit() }
+        0 -> return isSuspend || returnType.let { !it.isValueType() && !it.isUnit() }
         1 -> return extensionReceiverParameter.let { it != null && !it.type.isValueType() }
         else -> return !this.valueParameters[index - 2].type.isValueType()
     }
@@ -200,8 +127,14 @@ private fun FunctionDescriptor.needBridgeToAt(target: FunctionDescriptor, index:
 internal fun FunctionDescriptor.needBridgeTo(target: FunctionDescriptor)
         = (0..this.valueParameters.size + 1).any { needBridgeToAt(target, it) }
 
-internal val FunctionDescriptor.target: FunctionDescriptor
+internal val SimpleFunctionDescriptor.target: SimpleFunctionDescriptor
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
+
+internal val FunctionDescriptor.target: FunctionDescriptor get() = when (this) {
+    is SimpleFunctionDescriptor -> this.target
+    is ConstructorDescriptor -> this
+    else -> error(this)
+}
 
 internal enum class BridgeDirection {
     NOT_NEEDED,
@@ -248,14 +181,31 @@ internal class BridgeDirections(val array: Array<BridgeDirection>) {
     }
 }
 
-internal fun FunctionDescriptor.bridgeDirectionsTo(overriddenDescriptor: FunctionDescriptor): BridgeDirections {
+val SimpleFunctionDescriptor.allOverriddenDescriptors: Set<SimpleFunctionDescriptor>
+    get() {
+        val result = mutableSetOf<SimpleFunctionDescriptor>()
+
+        fun traverse(function: SimpleFunctionDescriptor) {
+            if (function in result) return
+            result += function
+            function.overriddenSymbols.forEach { traverse(it.owner) }
+        }
+
+        traverse(this)
+
+        return result
+    }
+
+internal fun SimpleFunctionDescriptor.bridgeDirectionsTo(
+        overriddenDescriptor: SimpleFunctionDescriptor
+): BridgeDirections {
     val ourDirections = BridgeDirections(this.valueParameters.size)
     for (index in ourDirections.array.indices)
         ourDirections.array[index] = this.bridgeDirectionToAt(overriddenDescriptor, index)
 
     val target = this.target
-    if (!kind.isReal && modality != Modality.ABSTRACT
-            && OverridingUtil.overrides(target, overriddenDescriptor)
+    if (!this.isReal && modality != Modality.ABSTRACT
+            && target.overrides(overriddenDescriptor)
             && ourDirections == target.bridgeDirectionsTo(overriddenDescriptor)) {
         // Bridge is inherited from superclass.
         return BridgeDirections(this.valueParameters.size)
@@ -265,82 +215,10 @@ internal fun FunctionDescriptor.bridgeDirectionsTo(overriddenDescriptor: Functio
 }
 
 tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
-    return if (this is PackageFragmentDescriptor) this 
-        else this.containingDeclaration!!.findPackage()
+    val parent = this.parent
+    return parent as? PackageFragmentDescriptor
+            ?: (parent as DeclarationDescriptor).findPackage()
 }
-
-internal fun DeclarationDescriptor.allContainingDeclarations(): List<DeclarationDescriptor> {
-    var list = mutableListOf<DeclarationDescriptor>()
-    var current = this.containingDeclaration
-    while (current != null) {
-        list.add(current)
-        current = current.containingDeclaration
-    }
-    return list
-}
-
-internal fun DeclarationDescriptor.getMemberScope(): MemberScope {
-        val containingScope = when (this) {
-            is ClassDescriptor -> this.unsubstitutedMemberScope
-            is PackageViewDescriptor -> this.memberScope
-            else -> error("Unexpected member scope: $containingDeclaration")
-        }
-        return containingScope
-}
-
-// It is possible to declare "external inline fun",
-// but it doesn't have much sense for native,
-// since externals don't have IR bodies.
-// Enforce inlining of constructors annotated with @InlineConstructor.
-
-private val inlineConstructor = FqName("konan.internal.InlineConstructor")
-
-internal val FunctionDescriptor.needsInlining: Boolean
-    get() {
-        val inlineConstructor = annotations.hasAnnotation(inlineConstructor)
-        if (inlineConstructor) return true
-        return (this.isInline && !this.isExternal && !this.propertyIfAccessor.isIntrinsic)
-    }
-
-internal val FunctionDescriptor.needsSerializedIr: Boolean 
-    get() = (this.needsInlining && this.isExported())
-
-fun AnnotationDescriptor.getStringValueOrNull(name: String): String? {
-    val constantValue = this.allValueArguments.entries.atMostOne {
-        it.key.asString() == name
-    }?.value
-    return constantValue?.value as String?
-}
-
-fun AnnotationDescriptor.getStringValue(name: String): String = this.getStringValueOrNull(name)!!
-
-private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-    val result = mutableSetOf<FqName>()
-
-    fun getSubPackages(fqName: FqName) {
-        result.add(fqName)
-        module.getSubPackagesOf(fqName) { true }.forEach { getSubPackages(it) }
-    }
-
-    getSubPackages(FqName.ROOT)
-    return result
-}
-
-fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> =
-        getPackagesFqNames(this).flatMap {
-            getPackage(it).fragments.filter { it.module == this }
-        }
-
-val ClassDescriptor.enumEntries: List<ClassDescriptor>
-    get() {
-        assert(this.kind == ClassKind.ENUM_CLASS)
-        return this.unsubstitutedMemberScope.getContributedDescriptors()
-                .filterIsInstance<ClassDescriptor>()
-                .filter { it.kind == ClassKind.ENUM_ENTRY }
-    }
-
-internal val DeclarationDescriptor.isExpectMember: Boolean
-    get() = this is MemberDescriptor && this.isExpect
 
 fun FunctionDescriptor.isComparisonDescriptor(map: Map<SimpleType, IrSimpleFunction>): Boolean =
-        map.values.any { it.descriptor == this }
+        this in map.values

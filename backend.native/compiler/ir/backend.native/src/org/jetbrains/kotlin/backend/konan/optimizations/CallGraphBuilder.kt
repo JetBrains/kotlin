@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.konan.DirectedGraph
 import org.jetbrains.kotlin.backend.konan.DirectedGraphNode
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.FunctionSymbol)
@@ -94,7 +93,7 @@ internal class CallGraphBuilder(val context: Context,
 
     fun build(): CallGraph {
         val rootSet = if (hasMain) {
-            listOf(symbolTable.mapFunction(findMainEntryPoint(context)!!).resolved()) +
+            listOf(symbolTable.mapFunction(context.ir.symbols.entryPoint!!.owner).resolved()) +
                     moduleDFG.functions
                             .map { it.key }
                             .filter { it.isGlobalInitializer }

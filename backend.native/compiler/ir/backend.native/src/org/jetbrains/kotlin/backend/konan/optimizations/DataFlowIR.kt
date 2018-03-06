@@ -20,20 +20,19 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.llvm.symbolName
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -421,7 +420,7 @@ internal object DataFlowIR {
         private inline fun takeName(block: () -> String) = if (TAKE_NAMES) block() else null
 
         val classMap = mutableMapOf<ClassDescriptor, Type>()
-        val functionMap = mutableMapOf<CallableDescriptor, FunctionSymbol>()
+        val functionMap = mutableMapOf<DeclarationDescriptor, FunctionSymbol>()
 
         private val NAME_ESCAPES = Name.identifier("Escapes")
         private val NAME_POINTS_TO = Name.identifier("PointsTo")
@@ -432,10 +431,10 @@ internal object DataFlowIR {
 
         private val konanPackage = context.builtIns.builtInsModule.getPackage(FQ_NAME_KONAN).memberScope
         private val escapesAnnotationDescriptor = konanPackage.getContributedClassifier(
-                NAME_ESCAPES, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+                NAME_ESCAPES, NoLookupLocation.FROM_BACKEND) as org.jetbrains.kotlin.descriptors.ClassDescriptor
         private val escapesWhoDescriptor = escapesAnnotationDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters.single()
         private val pointsToAnnotationDescriptor = konanPackage.getContributedClassifier(
-                NAME_POINTS_TO, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+                NAME_POINTS_TO, NoLookupLocation.FROM_BACKEND) as org.jetbrains.kotlin.descriptors.ClassDescriptor
         private val pointsToOnWhomDescriptor = pointsToAnnotationDescriptor.unsubstitutedPrimaryConstructor!!.valueParameters.single()
 
         var privateTypeIndex = 0
@@ -448,17 +447,17 @@ internal object DataFlowIR {
                 }
 
                 override fun visitFunction(declaration: IrFunction) {
-                    declaration.body?.let { mapFunction(declaration.descriptor) }
+                    declaration.body?.let { mapFunction(declaration) }
                 }
 
                 override fun visitField(declaration: IrField) {
-                    declaration.initializer?.let { mapFunction(declaration.descriptor) }
+                    declaration.initializer?.let { mapFunction(declaration) }
                 }
 
                 override fun visitClass(declaration: IrClass) {
                     declaration.acceptChildrenVoid(this)
 
-                    mapClass(declaration.descriptor)
+                    mapClass(declaration)
                 }
             }, data = null)
         }
@@ -501,40 +500,27 @@ internal object DataFlowIR {
             return type
         }
 
-        fun mapType(type: KotlinType) = mapClass(type.erasure().single())
+        fun mapType(type: KotlinType) = mapClass(type.erasure(context).single())
 
         // TODO: use from LlvmDeclarations.
-        private fun getFqName(descriptor: DeclarationDescriptor): FqName {
-            if (descriptor is PackageFragmentDescriptor) {
-                return descriptor.fqName
-            }
-
-            val containingDeclaration = descriptor.containingDeclaration
-            val parent = if (containingDeclaration != null) {
-                getFqName(containingDeclaration)
-            } else {
-                FqName.ROOT
-            }
-
-            val localName = descriptor.name
-            return parent.child(localName)
-        }
+        private fun getFqName(descriptor: DeclarationDescriptor): FqName =
+                descriptor.parent.fqNameSafe.child(descriptor.name)
 
         private val FunctionDescriptor.internalName get() = getFqName(this).asString() + "#internal"
 
-        fun mapFunction(descriptor: CallableDescriptor) = descriptor.original.let {
+        fun mapFunction(descriptor: DeclarationDescriptor) = descriptor.original.let {
             functionMap.getOrPut(it) {
                 when (it) {
-                    is PropertyDescriptor -> {
+                    is IrField -> {
                         // A global property initializer.
-                        assert (it.dispatchReceiverParameter == null) { "All local properties initializers should've been lowered" }
+                        assert (it.parent !is IrClass) { "All local properties initializers should've been lowered" }
                         FunctionSymbol.Private(privateFunIndex++, 0, module, -1, true, takeName { "${it.symbolName}_init" })
                     }
 
                     is FunctionDescriptor -> {
                         val name = if (it.isExported()) it.symbolName else it.internalName
                         val numberOfParameters = it.allParameters.size + if (it.isSuspend) 1 else 0
-                        if (it.module != irModule.descriptor || it.isExternal || (it is IrBuiltinOperatorDescriptorBase)) {
+                        if (it.module != irModule.descriptor || it.isExternal || (it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
                             val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
                             val pointsToAnnotation = it.annotations.findAnnotation(FQ_NAME_POINTS_TO)
                             @Suppress("UNCHECKED_CAST")
@@ -544,7 +530,7 @@ internal object DataFlowIR {
                             FunctionSymbol.External(name.localHash.value, numberOfParameters, false, escapesBitMask,
                                     pointsToBitMask?.let { it.map { it.value }.toIntArray() }, takeName { name })
                         } else {
-                            val isAbstract = it.modality == Modality.ABSTRACT
+                            val isAbstract = it is SimpleFunctionDescriptor && it.modality == Modality.ABSTRACT
                             val classDescriptor = it.containingDeclaration as? ClassDescriptor
                             val placeToFunctionsTable = !isAbstract && it !is ConstructorDescriptor && classDescriptor != null
                                     && classDescriptor.kind != ClassKind.ANNOTATION_CLASS

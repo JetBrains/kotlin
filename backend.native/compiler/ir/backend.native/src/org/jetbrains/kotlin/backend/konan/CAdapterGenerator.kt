@@ -198,7 +198,7 @@ private class ExportedElement(val kind: ElementKind,
             isFunction -> {
                 val function = declaration as FunctionDescriptor
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
-                val llvmFunction = owner.codegen.llvmFunction(function)
+                val llvmFunction = owner.codegen.llvmFunction(context.ir.getFromCurrentModule(function))
                 // If function is virtual, we need to resolve receiver properly.
                 val bridge = if (!DescriptorUtils.isTopLevelDeclaration(function) && !function.isExtension &&
                         function.isOverridable) {
@@ -207,7 +207,7 @@ private class ExportedElement(val kind: ElementKind,
                         val receiver = param(0)
                         val numParams = LLVMCountParams(llvmFunction)
                         val args = (0..numParams - 1).map { index -> param(index) }
-                        val callee = lookupVirtualImpl(receiver, function)
+                        val callee = lookupVirtualImpl(receiver, context.ir.getFromCurrentModule(function))
                         val result = call(callee, args, exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                         ret(result)
                     }
@@ -223,14 +223,15 @@ private class ExportedElement(val kind: ElementKind,
                 val builder = LLVMCreateBuilder()!!
                 val bb = LLVMAppendBasicBlock(getTypeFunction, "")!!
                 LLVMPositionBuilderAtEnd(builder, bb)
-                LLVMBuildRet(builder, (declaration as ClassDescriptor).typeInfoPtr.llvm)
+                LLVMBuildRet(builder, context.ir.getFromCurrentModule(declaration as ClassDescriptor).typeInfoPtr.llvm)
                 LLVMDisposeBuilder(builder)
             }
             isEnumEntry -> {
                 // Produce entry getter.
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 generateFunction(owner.codegen, owner.kGetObjectFuncType, cname) {
-                    val value = getEnumEntry(declaration as ClassDescriptor, ExceptionHandler.Caller)
+                    val irEnumEntry = context.ir.getEnumEntryFromCurrentModule(declaration as ClassDescriptor)
+                    val value = getEnumEntry(irEnumEntry, ExceptionHandler.Caller)
                     ret(value)
                 }
             }

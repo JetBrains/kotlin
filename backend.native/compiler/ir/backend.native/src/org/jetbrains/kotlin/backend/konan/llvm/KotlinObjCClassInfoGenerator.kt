@@ -18,44 +18,40 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMStoreSizeOfType
 import llvm.LLVMValueRef
+import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValueOrNull
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.isFinalClass
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 
 internal class KotlinObjCClassInfoGenerator(override val context: Context) : ContextUtils {
     fun generate(irClass: IrClass) {
-        val descriptor = irClass.descriptor
-        assert(descriptor.isFinalClass)
+        assert(irClass.isFinalClass)
 
-        val objCLLvmDeclarations = context.llvmDeclarations.forClass(descriptor).objCDeclarations!!
+        val objCLLvmDeclarations = context.llvmDeclarations.forClass(irClass).objCDeclarations!!
 
         val instanceMethods = generateInstanceMethodDescs(irClass)
 
-        val companionObjectDescriptor = descriptor.companionObjectDescriptor
-        val classMethods = companionObjectDescriptor?.generateOverridingMethodDescs() ?: emptyList()
+        val companionObject = irClass.declarations.filterIsInstance<IrClass>().atMostOne { it.isCompanion  }
+        val classMethods = companionObject?.generateOverridingMethodDescs() ?: emptyList()
 
-        val superclassName = descriptor.getSuperClassNotAny()!!.let {
+        val superclassName = irClass.getSuperClassNotAny()!!.let {
             context.llvm.imports.add(it.llvmSymbolOrigin)
             it.name.asString()
         }
-        val protocolNames = descriptor.getSuperInterfaces().map {
+        val protocolNames = irClass.getSuperInterfaces().map {
             context.llvm.imports.add(it.llvmSymbolOrigin)
             it.name.asString().removeSuffix("Protocol")
         }
 
         val bodySize =
-                LLVMStoreSizeOfType(llvmTargetData, context.llvmDeclarations.forClass(descriptor).bodyType).toInt()
+                LLVMStoreSizeOfType(llvmTargetData, context.llvmDeclarations.forClass(irClass).bodyType).toInt()
 
-        val className = selectClassName(descriptor)?.let { staticData.cStringLiteral(it) } ?: NullPointer(int8Type)
+        val className = selectClassName(irClass)?.let { staticData.cStringLiteral(it) } ?: NullPointer(int8Type)
 
         val info = Struct(runtime.kotlinObjCClassInfo,
                 className,
@@ -73,8 +69,8 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 Int32(bodySize),
                 objCLLvmDeclarations.bodyOffsetGlobal.pointer,
 
-                descriptor.typeInfoPtr,
-                companionObjectDescriptor?.typeInfoPtr ?: NullPointer(runtime.typeInfoType),
+                irClass.typeInfoPtr,
+                companionObject?.typeInfoPtr ?: NullPointer(runtime.typeInfoType),
 
                 objCLLvmDeclarations.classPointerGlobal.pointer
         )
@@ -88,13 +84,12 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
     private fun generateInstanceMethodDescs(
             irClass: IrClass
     ): List<ObjCMethodDesc> = mutableListOf<ObjCMethodDesc>().apply {
-        val descriptor = irClass.descriptor
-        addAll(descriptor.generateOverridingMethodDescs())
+        addAll(irClass.generateOverridingMethodDescs())
         addAll(irClass.generateImpMethodDescs())
         val allImplementedSelectors = this.map { it.selector }.toSet()
 
-        assert(descriptor.getSuperClassNotAny()!!.isExternalObjCClass())
-        val allInitMethodsInfo = descriptor.getSuperClassNotAny()!!.constructors
+        assert(irClass.getSuperClassNotAny()!!.isExternalObjCClass())
+        val allInitMethodsInfo = irClass.getSuperClassNotAny()!!.constructors
                 .mapNotNull { it.getObjCInitMethod()?.getExternalObjCMethodInfo() }
                 .filter { it.selector !in allImplementedSelectors }
                 .distinctBy { it.selector }
@@ -104,14 +99,14 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         }
     }
 
-    private fun selectClassName(descriptor: ClassDescriptor): String? {
+    private fun selectClassName(irClass: IrClass): String? {
         val exportObjCClassAnnotation =
-                descriptor.annotations.findAnnotation(context.interopBuiltIns.exportObjCClass.fqNameSafe)
+                irClass.annotations.findAnnotation(context.interopBuiltIns.exportObjCClass.fqNameSafe)
 
         return if (exportObjCClassAnnotation != null) {
-            exportObjCClassAnnotation.getStringValueOrNull("name") ?: descriptor.name.asString()
-        } else if (descriptor.isExported()) {
-            descriptor.fqNameSafe.asString()
+            exportObjCClassAnnotation.getStringValueOrNull("name") ?: irClass.name.asString()
+        } else if (irClass.isExported()) {
+            irClass.fqNameSafe.asString()
         } else {
             null // Generate as anonymous.
         }
@@ -138,22 +133,21 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
             )
     )
 
-    private fun ClassDescriptor.generateOverridingMethodDescs(): List<ObjCMethodDesc> =
-            this.unsubstitutedMemberScope.contributedMethods.filter {
-                it.kind.isReal && it !is ConstructorDescriptor
-            }.mapNotNull { it.getObjCMethodInfo() }.map { generateMethodDesc(it) }
+    private fun IrClass.generateOverridingMethodDescs(): List<ObjCMethodDesc> =
+            this.simpleFunctions().filter { it.isReal }
+                    .mapNotNull { it.getObjCMethodInfo() }.map { generateMethodDesc(it) }
 
     private fun IrClass.generateImpMethodDescs(): List<ObjCMethodDesc> = this.declarations
             .filterIsInstance<IrSimpleFunction>()
             .mapNotNull {
                 val annotation =
-                        it.descriptor.annotations.findAnnotation(context.interopBuiltIns.objCMethodImp.fqNameSafe) ?:
+                        it.annotations.findAnnotation(context.interopBuiltIns.objCMethodImp.fqNameSafe) ?:
                                 return@mapNotNull null
 
                 ObjCMethodDesc(
                         annotation.getStringValue("selector"),
                         annotation.getStringValue("encoding"),
-                        it.descriptor.llvmFunction
+                        it.llvmFunction
                 )
             }
 }

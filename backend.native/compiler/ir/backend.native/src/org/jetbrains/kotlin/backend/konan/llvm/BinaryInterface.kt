@@ -17,25 +17,23 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
-import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
-import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
-import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
-import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+
 
 // This file describes the ABI for Kotlin descriptors of exported declarations.
 // TODO: revise the naming scheme to ensure it produces unique names.
@@ -49,7 +47,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
  * and so should be computable from the descriptor itself without checking a backend state.
  */
 internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
-    assert(!this.isExpectMember) { this }
+    // TODO: revise
 
     if (this.annotations.findAnnotation(symbolNameAnnotation) != null) {
         // Treat any `@SymbolName` declaration as exported.
@@ -73,7 +71,7 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
         return true
     }
 
-    if (DescriptorUtils.isAnonymousObject(this))
+    if (this.isAnonymousObject)
         return false
 
     if (this is ConstructorDescriptor && constructedClass.kind.isSingleton) {
@@ -82,19 +80,33 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
         return constructedClass.isExported()
     }
 
-    if (this is PropertyAccessorDescriptor) {
-        return this.correspondingProperty.isExported()
+    if (this is IrFunction) {
+        val descriptor = this.descriptor
+        // TODO: this code is required because accessor doesn't have a reference to property.
+        if (descriptor is PropertyAccessorDescriptor) {
+            val property = descriptor.correspondingProperty
+            if (property.annotations.hasAnnotation(inlineExposedAnnotation) ||
+                    property.annotations.hasAnnotation(publishedApiAnnotation)) return true
+        }
     }
 
-    if (this is DeclarationDescriptorWithVisibility && !this.visibility.isPublicAPI) {
+    val visibility = when (this) {
+        is IrClass -> this.visibility
+        is IrFunction -> this.visibility
+        is IrProperty -> this.visibility
+        is IrField -> this.visibility
+        else -> null
+    }
+
+    if (visibility != null && !visibility.isPublicAPI) {
         // If the declaration is explicitly marked as non-public,
         // then it must not be accessible from other modules.
         return false
     }
 
-    if (this is DeclarationDescriptorNonRoot) {
-        // If the declaration is not root, then check its container too.
-        return containingDeclaration.isExported()
+    val parent = this.parent
+    if (parent is IrDeclaration) {
+        return parent.isExported()
     }
 
     return true
@@ -158,8 +170,8 @@ private val FunctionDescriptor.signature: String
         val signatureSuffix =
                 when {
                     this.typeParameters.isNotEmpty() -> "Generic"
-                    returnType.let { it != null && it.isValueType() } -> "ValueType"
-                    returnType.let { it != null && !KotlinBuiltIns.isUnitOrNullableUnit(it) } -> typeToHashString(returnType!!)
+                    returnType.isValueType() -> "ValueType"
+                    !KotlinBuiltIns.isUnitOrNullableUnit(returnType) -> typeToHashString(returnType)
                     else -> ""
                 }
         return "$extensionReceiverPart($argsPart)$signatureSuffix"
@@ -188,7 +200,7 @@ internal val FunctionDescriptor.functionName: String
 internal val FunctionDescriptor.symbolName: String
     get() {
         if (!this.isExported()) {
-            throw AssertionError(this.toString())
+            throw AssertionError(this.descriptor.toString())
         }
 
         this.annotations.findAnnotation(symbolNameAnnotation)?.let {
@@ -204,19 +216,20 @@ internal val FunctionDescriptor.symbolName: String
             return name // no wrapping currently required
         }
 
-        val containingDeclarationPart = containingDeclaration.fqNameSafe.let {
+        val parent = this.parent
+
+        val containingDeclarationPart = parent.fqNameSafe.let {
             if (it.isRoot) "" else "$it."
         }
         return "kfun:$containingDeclarationPart$functionName"
     }
 
-internal val PropertyDescriptor.symbolName: String
+internal val IrField.symbolName: String
     get() {
-        val containingDeclarationPart = containingDeclaration.fqNameSafe.let {
+        val containingDeclarationPart = parent.fqNameSafe.let {
             if (it.isRoot) "" else "$it."
         }
-        val extensionReceiverPart = this.extensionReceiverParameter?.let { "${it.type}." } ?: ""
-        return "kprop:$containingDeclarationPart$extensionReceiverPart$name"
+        return "kprop:$containingDeclarationPart$name"
 
     }
 
@@ -235,7 +248,7 @@ internal fun RuntimeAware.getLlvmFunctionType(function: FunctionDescriptor): LLV
     val returnType = when {
         original is ConstructorDescriptor -> voidType
         original.isSuspend -> kObjHeaderPtr                // Suspend functions return Any?.
-        else -> getLLVMReturnType(original.returnType!!)
+        else -> getLLVMReturnType(original.returnType)
     }
     val paramTypes = ArrayList(original.allParameters.map { getLLVMType(it.type) })
     if (original.isSuspend)

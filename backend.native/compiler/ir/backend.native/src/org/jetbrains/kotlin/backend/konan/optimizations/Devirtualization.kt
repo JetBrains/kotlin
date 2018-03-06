@@ -66,7 +66,7 @@ internal object Devirtualization {
             return this
         }
 
-        val entryPoint = findMainEntryPoint(context)
+        val entryPoint = context.ir.symbols.entryPoint?.owner
         val exportedFunctions =
                 if (entryPoint != null)
                     listOf(moduleDFG.symbolTable.mapFunction(entryPoint).resolved())
@@ -97,7 +97,7 @@ internal object Devirtualization {
                                            val moduleDFG: ModuleDFG,
                                            val externalModulesDFG: ExternalModulesDFG) {
 
-        private val entryPoint = findMainEntryPoint(context)
+        private val entryPoint = context.ir.symbols.entryPoint?.owner
 
         private val symbolTable = moduleDFG.symbolTable
 
@@ -506,7 +506,7 @@ internal object Devirtualization {
             }
 
             val result = mutableMapOf<DataFlowIR.Node.VirtualCall, Pair<DevirtualizedCallSite, DataFlowIR.FunctionSymbol>>()
-            val nothing = symbolTable.mapClass(context.builtIns.nothing)
+            val nothing = symbolTable.mapClass(context.ir.symbols.nothing.owner)
             functions.values
                     .asSequence()
                     .filter { constraintGraph.functions.containsKey(it.symbol) }

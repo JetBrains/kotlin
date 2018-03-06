@@ -28,12 +28,10 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -118,7 +116,23 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
 
             initializer.createParameterDeclarations()
 
-            irClass.declarations.add(initializer)
+            initializers.forEach {
+                it.transformChildrenVoid(object : IrElementTransformerVoid() {
+                    override fun visitGetValue(expression: IrGetValue): IrExpression {
+                        if (expression.symbol == irClass.thisReceiver!!.symbol) {
+                            return IrGetValueImpl(
+                                    expression.startOffset,
+                                    expression.endOffset,
+                                    initializer.dispatchReceiverParameter!!.symbol
+                            )
+                        } else {
+                            return expression
+                        }
+                    }
+                })
+            }
+
+            irClass.addChild(initializer)
 
             return initializer.symbol
         }

@@ -19,10 +19,9 @@ package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.descriptors.CurrentKonanModule
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun ObjCExportCodeGenerator.generateKotlinFunctionImpl(invokeMethod: FunctionDescriptor): ConstPointer {
     // TODO: consider also overriding methods of `Any`.
@@ -31,7 +30,7 @@ internal fun ObjCExportCodeGenerator.generateKotlinFunctionImpl(invokeMethod: Fu
 
     val function = generateFunction(
             codegen,
-            codegen.getLlvmFunctionType(invokeMethod),
+            codegen.getLlvmFunctionType(context.ir.get(invokeMethod)),
             "invokeFunction$numberOfParameters"
     ) {
         val args = (0 until numberOfParameters).map { index -> kotlinReferenceToObjC(param(index + 1)) }
@@ -154,7 +153,10 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
                 objCReferenceToKotlin(param(index), Lifetime.ARGUMENT)
             }
 
-            val callee = lookupVirtualImpl(kotlinFunction, context.builtIns.getInvokeDescriptor(numberOfParameters))
+            val invokeMethod = context.ir.symbols.functions[numberOfParameters].owner.declarations
+                    .filterIsInstance<IrSimpleFunction>().single { it.name == OperatorNameConventions.INVOKE }
+
+            val callee = lookupVirtualImpl(kotlinFunction, invokeMethod)
 
             val result = callFromBridge(callee, listOf(kotlinFunction) + args, Lifetime.ARGUMENT)
 
@@ -221,9 +223,3 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
         }
     }
 }
-
-private fun KotlinBuiltIns.getInvokeDescriptor(numberOfParameters: Int): FunctionDescriptor =
-        getFunction(numberOfParameters).unsubstitutedMemberScope.getContributedFunctions(
-                Name.identifier("invoke"),
-                NoLookupLocation.FROM_BACKEND
-        ).single()

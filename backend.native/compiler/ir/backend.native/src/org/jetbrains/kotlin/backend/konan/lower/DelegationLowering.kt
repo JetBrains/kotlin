@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -120,16 +121,14 @@ internal class PropertyDelegationLowering(val context: KonanBackendContext) : Fi
                 declaration.transformChildrenVoid(this)
 
                 val initializer = declaration.delegate.initializer!!
-                return IrVariableImpl(declaration.startOffset, declaration.endOffset,
-                        declaration.origin, declaration.delegate.descriptor,
-                        IrBlockImpl(initializer.startOffset, initializer.endOffset, initializer.type, null,
-                                listOf(
-                                        declaration.getter,
-                                        declaration.setter,
-                                        initializer
-                                ).filterNotNull())
-                )
+                declaration.delegate.initializer = IrBlockImpl(initializer.startOffset, initializer.endOffset, initializer.type, null,
+                        listOf(
+                                declaration.getter,
+                                declaration.setter,
+                                initializer
+                        ).filterNotNull())
 
+                return declaration.delegate
             }
 
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
@@ -191,7 +190,7 @@ internal class PropertyDelegationLowering(val context: KonanBackendContext) : Fi
         if (kProperties.isNotEmpty()) {
             val initializers = kProperties.values.sortedBy { it.second }.map { it.first }
             // TODO: move to object for lazy initialization.
-            irFile.declarations.add(0, kPropertiesField.apply {
+            irFile.addChild(kPropertiesField.apply {
                 initializer = IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         context.createArrayOfExpression(kPropertyImplType, initializers, UNDEFINED_OFFSET, UNDEFINED_OFFSET))
             })

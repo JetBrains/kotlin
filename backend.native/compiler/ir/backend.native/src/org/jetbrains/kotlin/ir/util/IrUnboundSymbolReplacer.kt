@@ -20,19 +20,12 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.visitors.*
 
 @Deprecated("")
@@ -93,7 +86,7 @@ private fun IrModuleFragment.mergeFrom(other: IrModuleFragment): Unit {
         if (thisPackage == null) {
             this.externalPackageFragments.add(it)
         } else {
-            thisPackage.declarations.addAll(it.declarations)
+            thisPackage.addChildren(it.declarations)
         }
     }
 }
@@ -120,42 +113,47 @@ private class IrUnboundSymbolReplacer(
         val descriptorToSymbol: Map<DeclarationDescriptor, IrSymbol>
 ) : IrElementTransformerVoid() {
 
-    private inline fun <D : DeclarationDescriptor, reified S : IrBindableSymbol<D, *>> S.replace(
+    private val localDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, MutableList<IrSymbol>>()
+
+    private inline fun <R> withLocal(symbol: IrSymbol?, block: () -> R): R {
+        if (symbol == null) return block()
+
+        val locals = localDescriptorToSymbol.getOrPut(symbol.descriptor) { mutableListOf() }
+        locals.add(symbol)
+        return try {
+            block()
+        } finally {
+            locals.removeAt(locals.lastIndex)
+        }
+    }
+
+    private inline fun <reified D : DeclarationDescriptor, reified S : IrSymbol> S.replace(
             referenceSymbol: (SymbolTable, D) -> S): S? {
 
         if (this.isBound) {
             return null
         }
 
+        localDescriptorToSymbol[this.descriptor]?.lastOrNull()?.let {
+            return it as S
+        }
+
+
         descriptorToSymbol[this.descriptor]?.let {
             return it as S
         }
 
-        return referenceSymbol(symbolTable, this.descriptor)
+        return referenceSymbol(symbolTable, this.descriptor as D)
     }
 
-    private inline fun <D : DeclarationDescriptor, reified S : IrBindableSymbol<D, *>> S.replaceOrSame(
+    private inline fun <reified D : DeclarationDescriptor, reified S : IrSymbol> S.replaceOrSame(
             referenceSymbol: (SymbolTable, D) -> S): S = this.replace(referenceSymbol) ?: this
-
-    private fun IrFunctionSymbol.replace(
-            referenceSymbol: (SymbolTable, FunctionDescriptor) -> IrFunctionSymbol): IrFunctionSymbol? {
-
-        if (this.isBound) {
-            return null
-        }
-
-        descriptorToSymbol[this.descriptor]?.let {
-            return it as IrFunctionSymbol
-        }
-
-        return referenceSymbol(symbolTable, this.descriptor)
-    }
 
     private inline fun <reified S : IrSymbol> S.replaceLocal(): S? {
         return if (this.isBound) {
             null
         } else {
-            descriptorToSymbol[this.descriptor] as S
+            (localDescriptorToSymbol[this.descriptor]?.lastOrNull() ?: descriptorToSymbol[this.descriptor]) as S
         }
     }
 
@@ -198,21 +196,24 @@ private class IrUnboundSymbolReplacer(
     }
 
     override fun visitClassReference(expression: IrClassReference): IrExpression {
-        val symbol = expression.symbol.let {
-            if (it.isBound) {
-                return super.visitClassReference(expression)
-            }
-
-            descriptorToSymbol[it.descriptor]?.let {
-                it as IrClassifierSymbol
-            }
-
-            symbolTable.referenceClassifier(it.descriptor)
-        }
+        val symbol = expression.symbol.replace(SymbolTable::referenceClassifier)
+                ?: return super.visitClassReference(expression)
 
         expression.transformChildrenVoid(this)
         return with(expression) {
             IrClassReferenceImpl(startOffset, endOffset, type, symbol, symbol.descriptor.defaultType)
+        }
+    }
+
+    override fun visitClass(declaration: IrClass): IrStatement {
+        declaration.superClasses.forEachIndexed { index, symbol ->
+            val newSymbol = symbol.replace(SymbolTable::referenceClass)
+            if (newSymbol != null) {
+                declaration.superClasses[index] = newSymbol
+            }
+        }
+        withLocal(declaration.thisReceiver?.symbol) {
+            return super.visitClass(declaration)
         }
     }
 
@@ -358,7 +359,20 @@ private class IrUnboundSymbolReplacer(
     override fun visitFunction(declaration: IrFunction): IrStatement {
         returnTargetStack.push(declaration.symbol)
         try {
-            return super.visitFunction(declaration)
+            if (declaration is IrSimpleFunction) {
+                declaration.overriddenSymbols.forEachIndexed { index, symbol ->
+                    val newSymbol = symbol.replace(SymbolTable::referenceSimpleFunction)
+                    if (newSymbol != null) {
+                        declaration.overriddenSymbols[index] = newSymbol
+                    }
+                }
+            }
+
+            withLocal(declaration.dispatchReceiverParameter?.symbol) {
+                withLocal(declaration.extensionReceiverParameter?.symbol) {
+                    return super.visitFunction(declaration)
+                }
+            }
         } finally {
             returnTargetStack.pop()
         }

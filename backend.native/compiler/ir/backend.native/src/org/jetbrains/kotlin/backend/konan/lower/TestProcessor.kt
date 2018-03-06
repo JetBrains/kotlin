@@ -46,10 +46,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.util.addFakeOverrides
-import org.jetbrains.kotlin.ir.util.addTopLevelInitializer
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -499,6 +496,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
             addMember(instanceGetterBuilder.ir)
             companionGetterBuilder?.let { addMember(it.ir) }
             addFakeOverrides()
+            setSuperSymbols(context.ir.symbols.symbolTable)
         }
 
         override fun doInitialize() {
@@ -546,7 +544,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
                     irFile.packageFragmentDescriptor,
                     testClass.functions)) {
                 initialize()
-                irFile.declarations.add(ir)
+                irFile.addChild(ir)
                 irFile.addTopLevelInitializer(
                         IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, ir.symbol.constructors.single())
                 )

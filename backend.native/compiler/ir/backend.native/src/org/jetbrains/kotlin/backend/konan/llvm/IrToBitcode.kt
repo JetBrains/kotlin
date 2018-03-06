@@ -19,39 +19,37 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.common.descriptors.allParameters
-import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal fun emitLLVM(context: Context) {
@@ -153,7 +151,7 @@ internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
     override fun visitClass(declaration: IrClass) {
         super.visitClass(declaration)
 
-        val descriptor = declaration.descriptor
+        val descriptor = declaration
         if (descriptor.isIntrinsic) {
             // do not generate any code for intrinsic classes as they require special handling
             return
@@ -181,7 +179,7 @@ internal interface CodeContext {
      *
      * @param value may be null iff target type is `Unit`.
      */
-    fun genReturn(target: CallableDescriptor, value: LLVMValueRef?)
+    fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?)
 
     fun genBreak(destination: IrBreak)
 
@@ -270,7 +268,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private object TopLevelCodeContext : CodeContext {
         private fun unsupported(any: Any? = null): Nothing = throw UnsupportedOperationException(any?.toString() ?: "")
 
-        override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) = unsupported(target)
+        override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) = unsupported(target)
 
         override fun genBreak(destination: IrBreak) = unsupported()
 
@@ -347,7 +345,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
         appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
         appendStaticInitializers()
-        appendEntryPointSelector(findMainEntryPoint(context))
+        appendEntryPointSelector(context.ir.symbols.entryPoint?.owner)
         if (context.isDynamicLibrary) {
             appendCAdapters()
         }
@@ -371,7 +369,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
                 appendingTo(bbDeinit) {
                     context.llvm.fileInitializers.forEach {
-                        val descriptor = it.descriptor
+                        val descriptor = it
                         if (descriptor.type.isValueType())
                             return@forEach // Is not a subject for memory management.
                         val address = context.llvmDeclarations.forStaticField(descriptor).storage
@@ -386,7 +384,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             .forEach {
                                 if (it.initializer?.expression !is IrConst<*>?) {
                                     val initialization = evaluateExpression(it.initializer!!.expression)
-                                    val address = context.llvmDeclarations.forStaticField(it.descriptor).storage
+                                    val address = context.llvmDeclarations.forStaticField(it).storage
                                     storeAny(initialization, address)
                                 }
                             }
@@ -479,7 +477,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     override fun visitConstructor(declaration: IrConstructor) {
         context.log{"visitConstructor               : ${ir2string(declaration)}"}
-        if (declaration.descriptor.containingDeclaration.isIntrinsic) {
+        if (declaration.constructedClass.isIntrinsic) {
             // Do not generate any ctors for intrinsic classes.
             return
         }
@@ -487,18 +485,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (declaration.descriptor.getObjCInitMethod() != null) {
             // Do not generate any ctors for external Objective-C classes.
             return
-        }
-
-        val constructorDescriptor = declaration.descriptor
-        val classDescriptor = constructorDescriptor.constructedClass
-        if (constructorDescriptor.isPrimary) {
-            if (DescriptorUtils.isObject(classDescriptor)) {
-                if (!classDescriptor.isUnit()) {
-                    val objectPtr = codegen.getObjectInstanceStorage(classDescriptor)
-
-                    LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
-                }
-            }
         }
 
         visitFunction(declaration)
@@ -543,19 +529,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             function: IrFunction?,
             private val functionGenerationContext: FunctionGenerationContext): InnerScopeImpl() {
 
-        val parameters = bindParameters(function?.descriptor)
+        val parameters = bindParameters(function)
 
         init {
             if (function != null) {
                 parameters.forEach{
                     val descriptor = it.key
-                    val ir = when {
-                        descriptor is ValueParameterDescriptor -> function.getIrValueParameter(descriptor)
-                        descriptor is ReceiverParameterDescriptor && function.extensionReceiverParameter?.descriptor == descriptor -> function.extensionReceiverParameter!!
-                        descriptor is ReceiverParameterDescriptor && function.dispatchReceiverParameter?.descriptor == descriptor-> function.dispatchReceiverParameter!!
-                        function.descriptor is ClassConstructorDescriptor && (function.descriptor as ClassConstructorDescriptor).constructedClass.thisAsReceiverParameter == descriptor-> IrValueParameterImpl(function.startOffset, function.startOffset, object: IrDeclarationOriginImpl("THIS"){}, descriptor)
-                        else -> TODO()
-                    }
+                    val ir = descriptor
 
                     val local = functionGenerationContext.vars.createParameter(descriptor,
                             debugInfoIfNeeded(function, ir))
@@ -587,15 +567,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
         var llvmFunction:LLVMValueRef? = declaration?.let{
-            codegen.llvmFunction(declaration.descriptor)
+            codegen.llvmFunction(it)
         }
 
         private var name:String? = declaration?.descriptor?.name?.asString()
 
-        override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
-            if (declaration == null || target == declaration.descriptor) {
-                if (target.returnsUnit()) {
-                    assert (value == null)
+        override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) {
+            if (declaration == null || target == declaration) {
+                if ((target as IrFunction).returnsUnit()) {
                     functionGenerationContext.ret(null)
                 } else {
                     functionGenerationContext.ret(value!!)
@@ -654,7 +633,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (declaration.descriptor.isExternal)                    return
         if (body == null)                                         return
 
-        generateFunction(codegen, declaration.descriptor,
+        generateFunction(codegen, declaration,
                 declaration.location(declaration.startLine(), declaration.startColumn()),
                 declaration.location(declaration.endLine(), declaration.endColumn())) {
             using(FunctionScope(declaration, it)) {
@@ -674,7 +653,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
 
         if (declaration.descriptor.usedAnnotation) {
-            context.llvm.usedFunctions.add(codegen.llvmFunction(declaration.descriptor))
+            context.llvm.usedFunctions.add(codegen.llvmFunction(declaration))
         }
 
         if (context.shouldVerifyBitCode())
@@ -713,7 +692,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     override fun visitProperty(declaration: IrProperty) {
-        declaration.acceptChildrenVoid(this)
+        declaration.getter?.acceptVoid(this)
+        declaration.setter?.acceptVoid(this)
+        declaration.backingField?.acceptVoid(this)
     }
 
     //-------------------------------------------------------------------------//
@@ -721,7 +702,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     override fun visitField(declaration: IrField) {
         context.log{"visitField                     : ${ir2string(declaration)}"}
         debugFieldDeclaration(declaration)
-        val descriptor = declaration.descriptor
+        val descriptor = declaration
         if (context.needGlobalInit(declaration)) {
             val type = codegen.getLLVMType(descriptor.type)
             val globalProperty = context.llvmDeclarations.forStaticField(descriptor).storage
@@ -791,7 +772,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef =
             functionGenerationContext.getObjectValue(
-                    value.descriptor,
+                    value.symbol.owner,
                     currentCodeContext.exceptionHandler,
                     value.startLocation
             )
@@ -872,10 +853,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             throw IllegalStateException("IrVararg neither was lowered nor can be statically evaluated")
         }
 
+        val arrayClass = context.ir.getClass(value.type)!!
+
         // Note: even if all elements are const, they aren't guaranteed to be statically initialized.
         // E.g. an element may be a pointer to lazy-initialized object (aka singleton).
         // However it is guaranteed that all elements are already initialized at this point.
-        return codegen.staticData.createKotlinArray(value.type, elements)
+        return codegen.staticData.createKotlinArray(arrayClass, elements)
     }
 
     //-------------------------------------------------------------------------//
@@ -999,7 +982,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             for (catch in catches) {
                 fun genCatchBlock() {
                     using(VariableScope()) {
-                        currentCodeContext.genDeclareVariable(catch.parameter, exception, null)
+                        currentCodeContext.genDeclareVariable(catch.catchParameter, exception, null)
                         evaluateExpressionAndJump(catch.result, success)
                     }
                 }
@@ -1008,7 +991,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     genCatchBlock()
                     return      // Remaining catch clauses are unreachable.
                 } else {
-                    val isInstance = genInstanceOf(exception, catch.parameter.type)
+                    val isInstance = genInstanceOf(exception, catch.getCatchParameterTypeClass(context)!!)
                     val body = functionGenerationContext.basicBlock("catch", catch.startLocation)
                     val nextCheck = functionGenerationContext.basicBlock("catchCheck", catch.endLocation)
                     functionGenerationContext.condBr(isInstance, body, nextCheck)
@@ -1143,7 +1126,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateGetValue(value: IrGetValue): LLVMValueRef {
         context.log{"evaluateGetValue               : ${ir2string(value)}"}
-        return currentCodeContext.genGetValue(value.descriptor)
+        val symbol = value.symbol
+        val ir: IrSymbolDeclaration<IrValueSymbol> = when (symbol) {
+            is IrVariableSymbol -> symbol.owner
+            is IrValueParameterSymbol -> symbol.owner
+            else -> error(symbol)
+        }
+
+        return currentCodeContext.genGetValue(ir)
     }
 
     //-------------------------------------------------------------------------//
@@ -1151,7 +1141,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluateSetVariable(value: IrSetVariable): LLVMValueRef {
         context.log{"evaluateSetVariable            : ${ir2string(value)}"}
         val result = evaluateExpression(value.value)
-        val variable = currentCodeContext.getDeclaredVariable(value.descriptor)
+        val variable = currentCodeContext.getDeclaredVariable(value.symbol.owner)
         functionGenerationContext.vars.store(result, variable)
         assert(value.type.isUnit())
         return functionGenerationContext.theUnitInstanceRef.llvm
@@ -1177,7 +1167,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     functionScope = locationInfo.scope,
                     diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
                     name          = element.descriptor.name,
-                    argNo         = (element.descriptor as? ValueParameterDescriptor)?.index ?: 0,
+                    argNo         = if (element.isValueParameter) element.index else 0,
                     file          = file,
                     line          = locationInfo.line,
                     location      = location)
@@ -1189,7 +1179,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         context.log{"generateVariable               : ${ir2string(variable)}"}
         val value = variable.initializer?.let { evaluateExpression(it) }
         currentCodeContext.genDeclareVariable(
-                variable.descriptor, value, debugInfoIfNeeded(
+                variable, value, debugInfoIfNeeded(
                 (currentCodeContext.functionScope() as FunctionScope).declaration, variable))
     }
 
@@ -1251,11 +1241,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateCast(value: IrTypeOperatorCall): LLVMValueRef {
         context.log{"evaluateCast                   : ${ir2string(value)}"}
-        val type = value.typeOperand
-        assert(!KotlinBuiltIns.isPrimitiveType(type) && !KotlinBuiltIns.isPrimitiveType(value.argument.type))
-        assert(!type.isTypeParameter())
-        val dstDescriptor = TypeUtils.getClassDescriptor(type)                         // Get class descriptor for dst type.
-        val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor!!)                     // Get TypeInfo for dst type.
+        val dstDescriptor = value.getTypeOperandClass(context)!!
+
+        assert(!KotlinBuiltIns.isPrimitiveType(dstDescriptor.defaultType) &&
+                !KotlinBuiltIns.isPrimitiveType(value.argument.type))
+
+        val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor)                       // Get TypeInfo for dst type.
         val srcArg        = evaluateExpression(value.argument)                         // Evaluate src expression.
         val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, srcArg)             // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
@@ -1283,7 +1274,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         functionGenerationContext.br(bbExit)
 
         functionGenerationContext.positionAtEnd(bbInstanceOf)
-        val resultInstanceOf = genInstanceOf(srcArg, type)
+        val typeOperandClass = value.getTypeOperandClass(context)
+        val resultInstanceOf = if (typeOperandClass != null) {
+            genInstanceOf(srcArg, typeOperandClass)
+        } else {
+            // E.g. when generating type operation with reified type parameter in the original body of inline function.
+            kTrue
+            // TODO: these code should be unreachable, however [BridgesBuilding] generates IR with such type checks.
+        }
         functionGenerationContext.br(bbExit)
         val bbInstanceOfResult = functionGenerationContext.currentBlock
 
@@ -1295,12 +1293,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun genInstanceOf(obj: LLVMValueRef, type: KotlinType): LLVMValueRef {
-        val dstDescriptor = TypeUtils.getClassDescriptor(type) ?: return kTrue         // Get class descriptor for dst type.
-        // Reified parameters are not yet supported.
-        // Workaround for reified parameters
-
-        val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor)                       // Get TypeInfo for dst type.
+    private fun genInstanceOf(obj: LLVMValueRef, dstClass: IrClass): LLVMValueRef {
+        val dstTypeInfo   = codegen.typeInfoValue(dstClass)                            // Get TypeInfo for dst type.
         val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, obj)                // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
 
@@ -1322,11 +1316,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = evaluateExpression(value.receiver!!)
             return functionGenerationContext.loadSlot(
-                    fieldPtrOfClass(thisPtr, value.descriptor), value.descriptor.isVar())
+                    fieldPtrOfClass(thisPtr, value.symbol.owner), value.descriptor.isVar())
         }
         else {
             assert (value.receiver == null)
-            val ptr = context.llvmDeclarations.forStaticField(value.descriptor).storage
+            val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
             return functionGenerationContext.loadSlot(ptr, value.descriptor.isVar())
         }
     }
@@ -1339,11 +1333,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = evaluateExpression(value.receiver!!)
-            functionGenerationContext.storeAny(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
+            functionGenerationContext.storeAny(valueToAssign, fieldPtrOfClass(thisPtr, value.symbol.owner))
         }
         else {
             assert (value.receiver == null)
-            val globalValue = context.llvmDeclarations.forStaticField(value.descriptor).storage
+            val globalValue = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
             functionGenerationContext.storeAny(valueToAssign, globalValue)
         }
 
@@ -1385,7 +1379,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
        }
 
     */
-    private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: PropertyDescriptor): LLVMValueRef {
+    private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: IrField): LLVMValueRef {
         val fieldInfo = context.llvmDeclarations.forField(value)
 
         val classDescriptor = value.containingDeclaration as ClassDescriptor
@@ -1402,7 +1396,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return if (classDescriptor.isObjCClass()) {
             assert(classDescriptor.isKotlinObjCClass())
 
-            val objCPtr = callDirect(context.interopBuiltIns.objCPointerHolderValue.getter!!,
+            val objCPtr = callDirect(context.ir.symbols.objCPointerHolderValueGetter.owner,
                     listOf(objectPtr), Lifetime.IRRELEVANT)
 
             val objCDeclarations = context.llvmDeclarations.forClass(classDescriptor).objCDeclarations!!
@@ -1448,14 +1442,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         val evaluated = evaluateExpression(value)
 
-        val target = expression.returnTarget
-        val ret = if (target.returnsUnit()) {
-            null
-        } else {
-            evaluated
-        }
+        val target = expression.returnTargetSymbol.owner
 
-        currentCodeContext.genReturn(target, ret)
+        currentCodeContext.genReturn(target, evaluated)
         return codegen.kNothingFakeValue
     }
 
@@ -1487,15 +1476,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return resultPhi!!
         }
 
-        override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
-            if (target != returnableBlock.descriptor) {                         // It is not our "local return".
+        override fun genReturn(target: IrSymbolOwner, value: LLVMValueRef?) {
+            if (target != returnableBlock) {                                    // It is not our "local return".
                 super.genReturn(target, value)
                 return
             }
                                                                                 // It is local return from current function.
             functionGenerationContext.br(getExit())                                               // Generate branch on exit block.
 
-            if (!target.returnsUnit()) {                                        // If function returns more then "unit"
+            if (!returnableBlock.type.isUnit()) {                               // If function returns more then "unit"
                 functionGenerationContext.assignPhis(getResult() to value!!)                      // Assign return value to result PHI node.
             }
         }
@@ -1538,7 +1527,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private inner class ClassScope(val clazz:IrClass) : InnerScopeImpl() {
         val isExported
-            get() = clazz.descriptor.isExported()
+            get() = clazz.isExported()
         var offsetInBits = 0L
         val members = mutableListOf<DIDerivedTypeRef>()
         @Suppress("UNCHECKED_CAST")
@@ -1547,7 +1536,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     tag        = DwarfTag.DW_TAG_structure_type.value,
                     refBuilder = context.debugInfo.builder,
                     refScope   = (currentCodeContext.fileScope() as FileScope).file.file() as DIScopeOpaqueRef,
-                    name       = clazz.descriptor.typeInfoSymbolName,
+                    name       = clazz.typeInfoSymbolName,
                     refFile    = file().file(),
                     line       = clazz.startLine()) as DITypeOpaqueRef
         else null
@@ -1619,12 +1608,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun evaluateSpecialIntrinsicCall(expression: IrFunctionAccessExpression): LLVMValueRef? {
-        if (expression.descriptor.isIntrinsic) {
-            when (expression.descriptor.original) {
+        val function = expression.symbol.owner as IrFunction
+
+        if (function.isIntrinsic) {
+            when (function.descriptor) {
                 context.interopBuiltIns.objCObjectInitBy -> {
                     val receiver = evaluateExpression(expression.extensionReceiver!!)
                     val irConstructorCall = expression.getValueArgument(0) as IrCall
-                    val constructorDescriptor = irConstructorCall.descriptor as ClassConstructorDescriptor
+                    val constructorDescriptor = irConstructorCall.symbol.owner as ClassConstructorDescriptor
                     val constructorArgs = evaluateExplicitArgs(irConstructorCall)
                     val args = listOf(receiver) + constructorArgs
                     callDirect(constructorDescriptor, args, Lifetime.IRRELEVANT)
@@ -1641,7 +1632,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     val callee = expression as IrCall
                     val initializer = callee.getValueArgument(1) as IrCall
                     val thiz = evaluateExpression(callee.getValueArgument(0)!!)
-                    evaluateSimpleFunctionCall(initializer.descriptor, listOf(thiz) + evaluateExplicitArgs(initializer), resultLifetime(initializer))
+                    evaluateSimpleFunctionCall(
+                            initializer.symbol.owner as IrFunction,
+                            listOf(thiz) + evaluateExplicitArgs(initializer),
+                            resultLifetime(initializer)
+                    )
                     return codegen.theUnitInstanceRef.llvm
                 }
             }
@@ -1661,7 +1656,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         updateBuilderDebugLocation(value)
         when {
             value is IrDelegatingConstructorCall   ->
-                return delegatingConstructorCall(value.descriptor, args)
+                return delegatingConstructorCall(value.symbol.owner, args)
 
             else ->
                 return evaluateFunctionCall(value as IrCall, args, resultLifetime(value))
@@ -1709,7 +1704,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         scope.members.add(DICreateMemberType(
                 refBuilder   = context.debugInfo.builder,
                 refScope     = scope.scope as DIScopeOpaqueRef,
-                name         = expression.descriptor.symbolName,
+                name         = expression.symbolName,
                 file         = irFile.file(),
                 lineNum      = expression.startLine(),
                 sizeInBits   = sizeInBits,
@@ -1740,7 +1735,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private fun IrFunction.scope():DIScopeOpaqueRef? = descriptor.scope(startLine())
+    private fun IrFunction.scope():DIScopeOpaqueRef? = this.scope(startLine())
 
     @Suppress("UNCHECKED_CAST")
     private fun FunctionDescriptor.scope(startLine:Int): DIScopeOpaqueRef? {
@@ -1781,9 +1776,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    private val coroutineImplDescriptor = context.getInternalClass("CoroutineImpl")
-    private val doResumeFunctionDescriptor = coroutineImplDescriptor.unsubstitutedMemberScope
-            .getContributedFunctions(Name.identifier("doResume"), NoLookupLocation.FROM_BACKEND).single()
+    private val coroutineImplDescriptor = context.ir.symbols.coroutineImpl.owner
+    private val doResumeFunctionDescriptor = coroutineImplDescriptor.declarations
+            .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "doResume" }
 
     private fun getContinuation(): LLVMValueRef {
         val caller = functionGenerationContext.functionDescriptor!!
@@ -1791,13 +1786,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             codegen.param(caller, caller.allParameters.size)    // The last argument.
         else {
             // Suspend call from non-suspend function - must be [CoroutineImpl].
-            assert (doResumeFunctionDescriptor in caller.overriddenDescriptors,
+            assert (doResumeFunctionDescriptor.symbol in (caller as IrSimpleFunction).overriddenSymbols,
                     { "Expected 'CoroutineImpl.doResume' but was '$caller'" })
             currentCodeContext.genGetValue(caller.dispatchReceiverParameter!!)   // Coroutine itself is a continuation.
         }
     }
 
-    private fun CallableDescriptor.returnsUnit() = returnType == context.builtIns.unitType && !isSuspend
+    private fun FunctionDescriptor.returnsUnit() = returnType == context.builtIns.unitType && !isSuspend
 
     /**
      * Evaluates all arguments of [expression] that are explicitly represented in the IR.
@@ -1824,7 +1819,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         assert (expression.getArguments().isEmpty())
 
-        val descriptor = expression.descriptor
+        val descriptor = expression.symbol.owner as IrFunction
         assert (descriptor.dispatchReceiverParameter == null)
 
         val entry = codegen.functionEntryPointAddress(descriptor)
@@ -1887,7 +1882,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val bbResume = functionGenerationContext.basicBlock("resume", expression.resumeResult.startLocation)
         val id = currentCodeContext.addResumePoint(bbResume)
 
-        using (SuspensionPointScope(expression.suspensionPointIdParameter.descriptor, bbResume, id)) {
+        using (SuspensionPointScope(expression.suspensionPointIdParameter, bbResume, id)) {
             continuationBlock(expression.type, expression.result.startLocation).run {
                 val normalResult = evaluateExpression(expression.result)
                 jump(this, normalResult)
@@ -1906,7 +1901,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateFunctionCall(callee: IrCall, args: List<LLVMValueRef>,
                                      resultLifetime: Lifetime): LLVMValueRef {
-        val descriptor = callee.descriptor
+        val descriptor = callee.symbol.owner as IrFunction
 
         val argsWithContinuationIfNeeded = if (descriptor.isSuspend)
                                                args + getContinuation()
@@ -1918,11 +1913,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (callee is IrPrivateFunctionCall)
             return evaluatePrivateFunctionCall(callee, argsWithContinuationIfNeeded, resultLifetime)
 
-        when (descriptor) {
-            is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (callee, argsWithContinuationIfNeeded)
-            is ConstructorDescriptor           -> return evaluateConstructorCall   (callee, argsWithContinuationIfNeeded)
-            else                               -> return evaluateSimpleFunctionCall(
-                    descriptor, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifier)
+        when {
+            descriptor.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                return evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
+
+            descriptor is ConstructorDescriptor -> return evaluateConstructorCall(callee, argsWithContinuationIfNeeded)
+
+            else -> return evaluateSimpleFunctionCall(
+                    descriptor, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifierSymbol?.owner)
         }
     }
 
@@ -1940,9 +1938,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val functionPlacePtr = LLVMBuildGEP(functionGenerationContext.builder, functionsList, cValuesOf(kImmZero, functionIndex), 2, "")!!
         val functionPtr      = functionGenerationContext.load(functionPlacePtr)
 
-        val functionPtrType  = pointerType(codegen.getLlvmFunctionType(callee.descriptor))
+        val target = callee.symbol.owner as IrFunction
+        val functionPtrType  = pointerType(codegen.getLlvmFunctionType(target))
         val function         = functionGenerationContext.bitcast(functionPtrType, functionPtr)
-        return call(callee.descriptor, function, args, resultLifetime)
+        return call(target, function, args, resultLifetime)
     }
 
     //-------------------------------------------------------------------------//
@@ -1966,7 +1965,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
             resultLifetime: Lifetime, superClass: ClassDescriptor? = null): LLVMValueRef {
         //context.log{"evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}"}
-        if (descriptor.isOverridable && superClass == null)
+        if (superClass == null && descriptor is SimpleFunctionDescriptor && descriptor.isOverridable)
             return callVirtual(descriptor, args, resultLifetime)
         else
             return callDirect(descriptor, args, resultLifetime)
@@ -1980,7 +1979,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluateConstructorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         context.log{"evaluateConstructorCall        : ${ir2string(callee)}"}
         return memScoped {
-            val constructedClass = (callee.descriptor as ConstructorDescriptor).constructedClass
+            val constructedClass = (callee.symbol as IrConstructorSymbol).owner.constructedClass
             val thisValue = if (constructedClass.isArray) {
                 assert(args.isNotEmpty() && args[0].type == int32Type)
                 functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), args[0],
@@ -1991,12 +1990,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), count = kImmZero,
                         lifetime = resultLifetime(callee))
             } else if (constructedClass.isKotlinObjCClass()) {
-                callDirect(context.interopBuiltIns.allocObjCObject, listOf(genGetObjCClass(constructedClass)),
+                callDirect(context.ir.symbols.allocObjCObject.owner, listOf(genGetObjCClass(constructedClass)),
                         resultLifetime(callee))
             } else {
                 functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee))
             }
-            evaluateSimpleFunctionCall(callee.descriptor,
+            evaluateSimpleFunctionCall(callee.symbol.owner as IrFunction,
                     listOf(thisValue) + args, Lifetime.IRRELEVANT /* constructor doesn't return anything */)
             thisValue
         }
@@ -2074,8 +2073,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
             interop.getObjCClass -> {
                 val typeArgument = callee.getTypeArgument(descriptor.typeParameters.single())
-                val classDescriptor = TypeUtils.getClassDescriptor(typeArgument!!)!!
-                genGetObjCClass(classDescriptor)
+                val irClass = context.ir.getClass(typeArgument!!)!!
+                genGetObjCClass(irClass)
             }
 
             interop.getObjCMessenger -> {
@@ -2090,16 +2089,16 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
             context.ir.symbols.getClassTypeInfo.descriptor -> {
                 val typeArgument = callee.getTypeArgumentOrDefault(descriptor.typeParameters.single())
-                val typeArgumentClass = TypeUtils.getClassDescriptor(typeArgument)
+                val typeArgumentClass = context.ir.getClass(typeArgument)
                 if (typeArgumentClass == null) {
                     // E.g. for `T::class` in a body of an inline function itself.
                     functionGenerationContext.unreachable()
                     kNullInt8Ptr
                 } else {
-                    val classDescriptor = context.ir.symbols.valueClassToBox[typeArgumentClass]?.descriptor
+                    val irClass = context.ir.symbols.valueClassToBox[typeArgumentClass.symbol]?.owner
                             ?: typeArgumentClass
 
-                    val typeInfo = codegen.typeInfoValue(classDescriptor)
+                    val typeInfo = codegen.typeInfoValue(irClass)
                     LLVMConstBitCast(typeInfo, kInt8Ptr)!!
                 }
             }
@@ -2107,8 +2106,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             context.ir.symbols.createUninitializedInstance.descriptor -> {
                 val typeParameterT = context.ir.symbols.createUninitializedInstance.descriptor.typeParameters[0]
                 val enumClass = callee.getTypeArgument(typeParameterT)!!
-                val enumClassDescriptor = enumClass.constructor.declarationDescriptor as ClassDescriptor
-                functionGenerationContext.allocInstance(enumClassDescriptor, resultLifetime(callee))
+                val enumIrClass = context.ir.getClass(enumClass)!!
+                functionGenerationContext.allocInstance(enumIrClass, resultLifetime(callee))
             }
 
             context.ir.symbols.listOfInternal.descriptor -> {
@@ -2301,7 +2300,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun genObjCObjectInitFromPtr(args: List<LLVMValueRef>): LLVMValueRef {
-        return callDirect(context.interopBuiltIns.objCPointerHolder.unsubstitutedPrimaryConstructor!!,
+        return callDirect(context.ir.symbols.objCPointerHolder.owner.constructors.single(),
                 args, Lifetime.IRRELEVANT)
     }
 
@@ -2335,13 +2334,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
         context.log{"evaluateOperatorCall           : origin:${ir2string(callee)}"}
-        val descriptor = callee.descriptor
+        val descriptor = callee.symbol.owner as IrFunction
         val ib = context.irModule!!.irBuiltins
 
         with(functionGenerationContext) {
             return when {
-                descriptor == ib.eqeqeq -> icmpEq(args[0], args[1])
-                descriptor == ib.booleanNot -> icmpNe(args[0], kTrue)
+                descriptor == ib.eqeqeqFun -> icmpEq(args[0], args[1])
+                descriptor == ib.booleanNotFun -> icmpNe(args[0], kTrue)
 
                 descriptor.isComparisonDescriptor(ib.greaterFunByOperandType) -> {
                     if (args[0].type.isFloatingPoint()) fcmpGt(args[0], args[1])
@@ -2447,7 +2446,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             descriptor: ClassConstructorDescriptor, args: List<LLVMValueRef>): LLVMValueRef {
 
         val constructedClass = functionGenerationContext.constructedClass!!
-        val thisPtr = currentCodeContext.genGetValue(constructedClass.thisAsReceiverParameter)
+        val thisPtr = currentCodeContext.genGetValue(constructedClass.thisReceiver!!)
 
         if (constructedClass.isObjCClass()) {
             return codegen.theUnitInstanceRef.llvm

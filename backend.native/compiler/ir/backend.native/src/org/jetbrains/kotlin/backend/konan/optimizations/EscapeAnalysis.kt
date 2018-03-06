@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 
 internal object EscapeAnalysis {
@@ -605,7 +604,7 @@ internal object EscapeAnalysis {
                         reachable += parameters.size
                     reachabilities.add(reachable.toIntArray())
                     visited.forEach { node ->
-                        if (node !is ParameterDescriptor)
+                        if (node !is DataFlowIR.Node.Parameter)
                             nodes[node]!!.addIncomingParameter(it.index)
                     }
                 }

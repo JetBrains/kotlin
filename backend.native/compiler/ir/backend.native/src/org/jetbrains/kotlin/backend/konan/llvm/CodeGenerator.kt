@@ -21,14 +21,9 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.descriptors.stdlibModule
-import org.jetbrains.kotlin.backend.konan.isObjCClass
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
@@ -70,7 +65,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun typeInfoForAllocation(constructedClass: ClassDescriptor): LLVMValueRef {
         val descriptorForTypeInfo = if (constructedClass.isObjCClass()) {
-            context.interopBuiltIns.objCPointerHolder
+            context.ir.symbols.objCPointerHolder.owner
         } else {
             constructedClass
         }
@@ -549,7 +544,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         assert (typeInfoPtr.type == codegen.kTypeInfoPtr) { LLVMPrintTypeToString(typeInfoPtr.type)!!.toKString() }
         val llvmMethod = if (!owner.isInterface) {
             // If this is a virtual method of the class - we can call via vtable.
-            val index = context.getVtableBuilder(owner).vtableIndex(descriptor)
+            val index = context.getVtableBuilder(owner).vtableIndex(descriptor as SimpleFunctionDescriptor)
 
             val vtablePlace = gep(typeInfoPtr, Int32(1).llvm) // typeInfoPtr + 1
             val vtable = bitcast(kInt8PtrPtr, vtablePlace)
@@ -606,22 +601,20 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     /**
      * Note: the same code is generated as IR in [org.jetbrains.kotlin.backend.konan.lower.EnumUsageLowering].
      */
-    fun getEnumEntry(descriptor: ClassDescriptor, exceptionHandler: ExceptionHandler): LLVMValueRef {
-        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
-
+    fun getEnumEntry(descriptor: IrEnumEntry, exceptionHandler: ExceptionHandler): LLVMValueRef {
         val enumClassDescriptor = descriptor.containingDeclaration as ClassDescriptor
-        val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClassDescriptor)
+        val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClassDescriptor.descriptor)
 
         val ordinal = loweredEnum.entriesMap[descriptor.name]!!
         val values = call(
-                loweredEnum.valuesGetter.descriptor.original.llvmFunction,
+                loweredEnum.valuesGetter.llvmFunction,
                 emptyList(),
                 Lifetime.ARGUMENT,
                 exceptionHandler
         )
 
         return call(
-                loweredEnum.itemGetterDescriptor.original.llvmFunction,
+                loweredEnum.itemGetterSymbol.owner.llvmFunction,
                 listOf(values, Int32(ordinal).llvm),
                 Lifetime.GLOBAL,
                 exceptionHandler

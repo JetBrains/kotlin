@@ -52,7 +52,7 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
             it.returnType?.isUnit() == true &&
             it.hasSingleArrayOfStringParameter &&
             it.typeParameters.isEmpty() &&
-            it.isExported()
+            it.visibility.isPublicAPI
         }
     if (main == null) {
         context.reportCompilationError("Could not find '$entryName' in '$packageName' package.")

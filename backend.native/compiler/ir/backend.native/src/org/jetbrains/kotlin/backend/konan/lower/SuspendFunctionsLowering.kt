@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.descriptors.getFunction
 import org.jetbrains.kotlin.backend.common.descriptors.replace
-import org.jetbrains.kotlin.backend.common.ir.createFakeOverrideDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createOverriddenDescriptor
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
@@ -56,6 +55,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -301,6 +301,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
         fun build(): BuiltCoroutine {
             val superTypes = mutableListOf<KotlinType>(coroutineImplClassDescriptor.defaultType)
+            val superClasses = mutableListOf<IrClass>(coroutineImplSymbol.owner)
             var suspendFunctionClassDescriptor: ClassDescriptor? = null
             var functionClassDescriptor: ClassDescriptor? = null
             var suspendFunctionClassTypeArguments: List<KotlinType>? = null
@@ -313,12 +314,14 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 val unboundParameterTypes = unboundFunctionParameters.map { it.type }
                 suspendFunctionClassTypeArguments = unboundParameterTypes + irFunction.descriptor.returnType!!
                 superTypes += suspendFunctionClassDescriptor.defaultType.replace(suspendFunctionClassTypeArguments)
+                superClasses += context.ir.symbols.suspendFunctions[numberOfParameters].owner
 
                 functionClassDescriptor = kotlinPackageScope.getContributedClassifier(
                         Name.identifier("Function${numberOfParameters + 1}"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
                 val continuationType = continuationClassDescriptor.defaultType.replace(listOf(irFunction.descriptor.returnType!!))
                 functionClassTypeArguments = unboundParameterTypes + continuationType + context.builtIns.nullableAnyType
                 superTypes += functionClassDescriptor.defaultType.replace(functionClassTypeArguments)
+                superClasses += context.ir.symbols.functions[numberOfParameters + 1].owner
 
             }
             coroutineClassDescriptor = ClassDescriptorImpl(
@@ -336,6 +339,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     origin      = DECLARATION_ORIGIN_COROUTINE_IMPL,
                     descriptor  = coroutineClassDescriptor
             )
+            coroutineClass.parent = irFunction.parent
 
 
             val overriddenMap = mutableMapOf<CallableMemberDescriptor, CallableMemberDescriptor>()
@@ -375,40 +379,35 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                         doResumeFunctionSymbol                  = doResumeMethodBuilder.symbol)
             }
 
-            val inheritedFromCoroutineImpl = coroutineImplClassDescriptor.unsubstitutedMemberScope
-                    .getContributedDescriptors()
-                    .map { overriddenMap[it] ?: it.createFakeOverrideDescriptor(coroutineClassDescriptor) }
-            val contributedDescriptors = (
-                    inheritedFromCoroutineImpl + invokeMethodBuilder?.symbol?.descriptor
-                    ).filterNotNull().toList()
-            coroutineClassDescriptor.initialize(SimpleMemberScope(contributedDescriptors), constructors, null)
+            val memberScope = stub<MemberScope>("coroutine class")
+            coroutineClassDescriptor.initialize(memberScope, constructors, null)
 
             coroutineClass.createParameterDeclarations()
 
             coroutineClassThis = coroutineClass.thisReceiver!!.symbol
 
-            coroutineClass.addFakeOverrides()
-
             coroutineConstructorBuilder.initialize()
-            coroutineClass.declarations.add(coroutineConstructorBuilder.ir)
+            coroutineClass.addChild(coroutineConstructorBuilder.ir)
 
             coroutineFactoryConstructorBuilder?.let {
                 it.initialize()
-                coroutineClass.declarations.add(it.ir)
+                coroutineClass.addChild(it.ir)
             }
 
             createMethodBuilder?.let {
                 it.initialize()
-                coroutineClass.declarations.add(it.ir)
+                coroutineClass.addChild(it.ir)
             }
 
             invokeMethodBuilder?.let {
                 it.initialize()
-                coroutineClass.declarations.add(it.ir)
+                coroutineClass.addChild(it.ir)
             }
 
             doResumeMethodBuilder.initialize()
-            coroutineClass.declarations.add(doResumeMethodBuilder.ir)
+            coroutineClass.addChild(doResumeMethodBuilder.ir)
+
+            coroutineClass.setSuperSymbolsAndAddFakeOverrides(superClasses)
 
             return BuiltCoroutine(
                     coroutineClass       = coroutineClass,
@@ -569,6 +568,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
                     createParameterDeclarations()
 
+                    val thisReceiver = this.dispatchReceiverParameter!!.symbol
+
                     val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                     body = irBuilder.irBlockBody(startOffset, endOffset) {
                         +irReturn(
@@ -579,7 +580,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                                         if (unboundArgsSet.contains(it))
                                             irGet(valueParameters[unboundIndex++].symbol)
                                         else
-                                            irGetField(irGet(coroutineClassThis), argumentToPropertiesMap[it]!!)
+                                            irGetField(irGet(thisReceiver), argumentToPropertiesMap[it]!!)
                                     }.forEachIndexed { index, argument ->
                                         putValueArgument(index, argument)
                                     }
@@ -640,12 +641,14 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
                     createParameterDeclarations()
 
+                    val thisReceiver = this.dispatchReceiverParameter!!.symbol
+
                     val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
                     body = irBuilder.irBlockBody(startOffset, endOffset) {
                         +irReturn(
                                 irCall(doResumeFunctionSymbol).apply {
                                     dispatchReceiver = irCall(createFunctionSymbol).apply {
-                                        dispatchReceiver = irGet(coroutineClassThis)
+                                        dispatchReceiver = irGet(thisReceiver)
                                         valueParameters.forEachIndexed { index, parameter ->
                                             putValueArgument(index, irGet(parameter.symbol))
                                         }
@@ -673,7 +676,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                 initialize()
             }
 
-            coroutineClass.declarations.add(propertyBuilder.ir)
+            coroutineClass.addChild(propertyBuilder.ir)
             return propertyBuilder.symbol
         }
 
@@ -709,7 +712,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                                 outType               = context.builtIns.nullableAnyType,
                                 isMutable             = true)
                 )
-                val label = coroutineClassDescriptor.unsubstitutedMemberScope
+                val label = coroutineImplClassDescriptor.unsubstitutedMemberScope
                         .getContributedVariables(Name.identifier("label"), NoLookupLocation.FROM_BACKEND).single()
 
                 val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
@@ -747,6 +750,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
                     originalBody.transformChildrenVoid(object : IrElementTransformerVoid() {
 
+                        private val thisReceiver = function.dispatchReceiverParameter!!.symbol
+
                         // Replace returns to refer to the new function.
                         override fun visitReturn(expression: IrReturn): IrExpression {
                             expression.transformChildrenVoid(this)
@@ -763,7 +768,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
 
                             val capturedValue = argumentToPropertiesMap[expression.descriptor]
                                     ?: return expression
-                            return irGetField(irGet(coroutineClassThis), capturedValue)
+                            return irGetField(irGet(thisReceiver), capturedValue)
                         }
 
                         // Save/restore state at suspension points.
@@ -782,10 +787,10 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                                             val scope = liveLocals[suspensionPoint]!!
                                             return irBlock(expression) {
                                                 scope.forEach {
-                                                    +irSetField(irGet(coroutineClassThis), localToPropertyMap[it]!!, irGet(localsMap[it.descriptor] ?: it))
+                                                    +irSetField(irGet(thisReceiver), localToPropertyMap[it]!!, irGet(localsMap[it.descriptor] ?: it))
                                                 }
                                                 +irCall(coroutineImplLabelSetterSymbol).apply {
-                                                    dispatchReceiver = irGet(coroutineClassThis)
+                                                    dispatchReceiver = irGet(thisReceiver)
                                                     putValueArgument(0, irGet(suspensionPoint.suspensionPointIdParameter.symbol))
                                                 }
                                             }
@@ -794,7 +799,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                                             val scope = liveLocals[suspensionPoint]!!
                                             return irBlock(expression) {
                                                 scope.forEach {
-                                                    +irSetVar(localsMap[it.descriptor] ?: it, irGetField(irGet(coroutineClassThis), localToPropertyMap[it]!!))
+                                                    +irSetVar(localsMap[it.descriptor] ?: it, irGetField(irGet(thisReceiver), localToPropertyMap[it]!!))
                                                 }
                                             }
                                         }
@@ -813,7 +818,7 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                             endOffset         = endOffset,
                             type              = context.builtIns.unitType,
                             suspensionPointId = irCall(coroutineImplLabelGetterSymbol).apply {
-                                dispatchReceiver = irGet(coroutineClassThis)
+                                dispatchReceiver = irGet(function.dispatchReceiverParameter!!.symbol)
                             },
                             result            = irBlock(startOffset, endOffset) {
                                 +irThrowIfNotNull(exceptionArgument)    // Coroutine might start with an exception.

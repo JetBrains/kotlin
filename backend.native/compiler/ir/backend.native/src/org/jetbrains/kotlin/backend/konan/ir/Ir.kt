@@ -20,23 +20,22 @@ import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
 import org.jetbrains.kotlin.backend.konan.ValueType
-import org.jetbrains.kotlin.backend.konan.descriptors.getMemberScope
+import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.properties.Delegates
@@ -51,9 +50,55 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
     lateinit var moduleIndexForCodegen: ModuleIndex
 
     override var symbols: KonanSymbols by Delegates.notNull()
+
+    fun getClass(type: KotlinType): IrClass? =
+            (type.constructor.declarationDescriptor as? ClassDescriptor)?.let { get(it) }
+
+    fun get(descriptor: FunctionDescriptor): IrFunction {
+        return moduleIndexForCodegen.functions[descriptor]
+                ?: symbols.symbolTable.referenceFunction(descriptor).owner as IrFunction
+    }
+
+    fun get(descriptor: ClassDescriptor): IrClass {
+        return moduleIndexForCodegen.classes[descriptor]
+                ?: symbols.symbolTable.referenceClass(descriptor)
+                        .also {
+                            if (!it.isBound)
+                                error(descriptor)
+                        }
+                        .owner
+    }
+
+    fun getFromCurrentModule(descriptor: ClassDescriptor): IrClass = moduleIndexForCodegen.classes[descriptor]!!
+
+    fun getFromCurrentModule(descriptor: FunctionDescriptor): IrFunction = moduleIndexForCodegen.functions[descriptor]!!
+
+    fun getEnumEntryFromCurrentModule(descriptor: ClassDescriptor): IrEnumEntry =
+            originalModuleIndex.enumEntries[descriptor] ?: error(descriptor)
+
+    fun getEnumEntry(descriptor: ClassDescriptor): IrEnumEntry {
+        assert(descriptor.kind == ClassKind.ENUM_ENTRY)
+
+        return originalModuleIndex.enumEntries[descriptor]
+                ?: symbols.symbolTable.referenceEnumEntry(descriptor).owner
+    }
+
+    fun getEnum(descriptor: ClassDescriptor): IrClass {
+        assert(descriptor.kind == ClassKind.ENUM_CLASS)
+        return originalModuleIndex.classes[descriptor]
+                ?: symbols.symbolTable.referenceClass(descriptor).owner
+    }
 }
 
 internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Symbols<Context>(context, symbolTable) {
+
+    val entryPoint = findMainEntryPoint(context)?.let { symbolTable.referenceSimpleFunction(it) }
+
+    val nothing = symbolTable.referenceClass(builtIns.nothing)
+    val throwable = symbolTable.referenceClass(builtIns.throwable)
+    val string = symbolTable.referenceClass(builtIns.string)
+
+    val arrayList = symbolTable.referenceClass(getArrayListClassDescriptor(context))
 
     val interopNativePointedGetRawPointer =
             symbolTable.referenceSimpleFunction(context.interopBuiltIns.nativePointedGetRawPointer)
@@ -83,6 +128,15 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val interopInterpretObjCPointerOrNull =
             symbolTable.referenceSimpleFunction(context.interopBuiltIns.interpretObjCPointerOrNull)
 
+    val interopCreateNSStringFromKString =
+            symbolTable.referenceSimpleFunction(context.interopBuiltIns.CreateNSStringFromKString)
+
+    val objCPointerHolder = symbolTable.referenceClass(context.interopBuiltIns.objCPointerHolder)
+    val objCPointerHolderValueGetter =
+            symbolTable.referenceSimpleFunction(context.interopBuiltIns.objCPointerHolderValue.getter!!)
+
+    val allocObjCObject = symbolTable.referenceSimpleFunction(context.interopBuiltIns.allocObjCObject)
+
     val getNativeNullPtr = symbolTable.referenceSimpleFunction(context.builtIns.getNativeNullPtr)
 
     val boxFunctions = ValueType.values().associate {
@@ -97,7 +151,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val valueClassToBox = ValueType.values().associate {
         val valueClassId = ClassId.topLevel(it.classFqName.toSafe())
         val valueClassDescriptor = context.builtIns.builtInsModule.findClassAcrossModuleDependencies(valueClassId)!!
-        valueClassDescriptor to boxClasses[it]!!
+        symbolTable.referenceClass(valueClassDescriptor) to boxClasses[it]!!
     }
 
     val unboxFunctions = ValueType.values().mapNotNull {
@@ -235,6 +289,15 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
                     .getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single(predicate)
             )
 
+    val functions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
+            .map { symbolTable.referenceClass(builtIns.getFunction(it)) }
+
+    val kFunctions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
+            .map { symbolTable.referenceClass(context.reflectionTypes.getKFunction(it)) }
+
+    val suspendFunctions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
+            .map { symbolTable.referenceClass(builtIns.getSuspendFunction(it)) }
+
     val baseClassSuite   = getKonanTestClass("BaseClassSuite")
     val topLevelSuite    = getKonanTestClass("TopLevelSuite")
     val testFunctionKind = getKonanTestClass("TestFunctionKind")
@@ -267,8 +330,17 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
 
     private val testFunctionKindCache = mutableMapOf<TestProcessor.FunctionKind, IrEnumEntrySymbol>()
     fun getTestFunctionKind(kind: TestProcessor.FunctionKind): IrEnumEntrySymbol = testFunctionKindCache.getOrPut(kind) {
-        symbolTable.referenceEnumEntry(testFunctionKind.descriptor.getMemberScope().getContributedClassifier(
+        symbolTable.referenceEnumEntry(testFunctionKind.descriptor.unsubstitutedMemberScope.getContributedClassifier(
                 kind.runtimeKindName, NoLookupLocation.FROM_BACKEND
         ) as ClassDescriptor)
     }
+}
+
+private fun getArrayListClassDescriptor(context: Context): ClassDescriptor {
+    val module = context.builtIns.builtInsModule
+    val pkg = module.getPackage(FqName.fromSegments(listOf("kotlin", "collections")))
+    val classifier = pkg.memberScope.getContributedClassifier(Name.identifier("ArrayList"),
+            NoLookupLocation.FROM_BACKEND)
+
+    return classifier as ClassDescriptor
 }

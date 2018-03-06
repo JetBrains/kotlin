@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
+import org.jetbrains.kotlin.backend.konan.KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.correspondingValueType
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal interface ObjCExportMapper {
     fun getCategoryMembersFor(descriptor: ClassDescriptor): List<CallableMemberDescriptor>
-    val maxFunctionTypeParameterCount get() = 22
+    val maxFunctionTypeParameterCount get() = KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
     fun isSpecialMapped(descriptor: ClassDescriptor): Boolean
 }
 
