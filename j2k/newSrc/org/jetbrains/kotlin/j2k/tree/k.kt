@@ -27,7 +27,7 @@ interface JKKtAssignmentStatement : JKStatement
 interface JKKtCall : JKMethodCallExpression
 
 interface JKKtProperty : JKDeclaration, JKModifierListOwner {
-    val type: JKTypeIdentifier
+    val type: JKType
     val name: JKNameIdentifier
     val initializer: JKExpression?
     val getter: JKBlock?
@@ -35,12 +35,11 @@ interface JKKtProperty : JKDeclaration, JKModifierListOwner {
 }
 
 interface JKKtFunction : JKDeclaration, JKModifierListOwner {
-    val returnType: JKTypeIdentifier
+    val returnType: JKType
     val name: JKNameIdentifier
     val valueArguments: List<JKValueArgument>
     val block: JKBlock?
 }
-
 interface JKKtModifier : JKModifier {
     val type: KtModifierType
 

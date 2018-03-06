@@ -23,13 +23,13 @@ interface JKTransformer<in D> : JKVisitor<JKElement, D> {
     override fun visitFieldReference(fieldReference: JKFieldReference, data: D): JKFieldReference = visitReference(fieldReference, data) as JKFieldReference
     override fun visitClassReference(classReference: JKClassReference, data: D): JKClassReference = visitReference(classReference, data) as JKClassReference
     override fun visitType(type: JKType, data: D): JKType = visitElement(type, data) as JKType
+    override fun visitClassType(classType: JKClassType, data: D): JKClassType = visitType(classType, data) as JKClassType
     override fun visitOperatorIdentifier(operatorIdentifier: JKOperatorIdentifier, data: D): JKOperatorIdentifier = visitIdentifier(operatorIdentifier, data) as JKOperatorIdentifier
     override fun visitQualificationIdentifier(qualificationIdentifier: JKQualificationIdentifier, data: D): JKQualificationIdentifier = visitIdentifier(qualificationIdentifier, data) as JKQualificationIdentifier
     override fun visitLoop(loop: JKLoop, data: D): JKLoop = visitStatement(loop, data) as JKLoop
     override fun visitDeclaration(declaration: JKDeclaration, data: D): JKDeclaration = visitElement(declaration, data) as JKDeclaration
     override fun visitBlock(block: JKBlock, data: D): JKBlock = visitElement(block, data) as JKBlock
     override fun visitIdentifier(identifier: JKIdentifier, data: D): JKIdentifier = visitElement(identifier, data) as JKIdentifier
-    override fun visitTypeIdentifier(typeIdentifier: JKTypeIdentifier, data: D): JKTypeIdentifier = visitIdentifier(typeIdentifier, data) as JKTypeIdentifier
     override fun visitNameIdentifier(nameIdentifier: JKNameIdentifier, data: D): JKNameIdentifier = visitIdentifier(nameIdentifier, data) as JKNameIdentifier
     override fun visitLiteralExpression(literalExpression: JKLiteralExpression, data: D): JKLiteralExpression = visitExpression(literalExpression, data) as JKLiteralExpression
     override fun visitModifierList(modifierList: JKModifierList, data: D): JKModifierList = visitElement(modifierList, data) as JKModifierList
@@ -44,7 +44,8 @@ interface JKTransformer<in D> : JKVisitor<JKElement, D> {
     override fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): JKMethod = visitMethod(javaMethod, data) 
     override fun visitJavaForLoop(javaForLoop: JKJavaForLoop, data: D): JKLoop = visitLoop(javaForLoop, data) 
     override fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): JKExpression = visitExpression(javaAssignmentExpression, data) 
-    override fun visitJavaTypeIdentifier(javaTypeIdentifier: JKJavaTypeIdentifier, data: D): JKTypeIdentifier = visitTypeIdentifier(javaTypeIdentifier, data) 
+    override fun visitJavaPrimitiveType(javaPrimitiveType: JKJavaPrimitiveType, data: D): JKType = visitType(javaPrimitiveType, data) 
+    override fun visitJavaArrayType(javaArrayType: JKJavaArrayType, data: D): JKType = visitType(javaArrayType, data) 
     override fun visitJavaStringLiteralExpression(javaStringLiteralExpression: JKJavaStringLiteralExpression, data: D): JKLiteralExpression = visitLiteralExpression(javaStringLiteralExpression, data) 
     override fun visitJavaOperatorIdentifier(javaOperatorIdentifier: JKJavaOperatorIdentifier, data: D): JKOperatorIdentifier = visitOperatorIdentifier(javaOperatorIdentifier, data) 
     override fun visitJavaQualificationIdentifier(javaQualificationIdentifier: JKJavaQualificationIdentifier, data: D): JKQualificationIdentifier = visitQualificationIdentifier(javaQualificationIdentifier, data) 

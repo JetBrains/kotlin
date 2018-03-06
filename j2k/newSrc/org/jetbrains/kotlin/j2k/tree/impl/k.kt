@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 class JKKtPropertyImpl(override var modifierList: JKModifierList,
-                       override var type: JKTypeIdentifier,
+                       override var type: JKType,
                        override var name: JKNameIdentifier,
                        override var initializer: JKExpression? = null,
                        override var getter: JKBlock? = null,
