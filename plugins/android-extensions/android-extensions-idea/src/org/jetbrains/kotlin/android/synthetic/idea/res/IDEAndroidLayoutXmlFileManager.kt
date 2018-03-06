@@ -63,7 +63,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
     }
 
     override fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup {
-        val layouts = layoutGroup.layouts.map { layout ->
+        val layouts = layoutGroup.layouts.filter { it.isValid }.map { layout ->
             val resources = arrayListOf<AndroidResource>()
             layout.accept(AndroidXmlVisitor { id, widgetType, attribute ->
                 resources += parseAndroidResource(id, widgetType, attribute.valueElement)
