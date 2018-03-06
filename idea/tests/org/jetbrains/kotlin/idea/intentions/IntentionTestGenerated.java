@@ -468,6 +468,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("suspend.kt")
+        public void testSuspend() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addLabeledReturnInLambda/suspend.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unit.kt")
         public void testUnit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addLabeledReturnInLambda/unit.kt");
