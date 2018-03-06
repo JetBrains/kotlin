@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -74,6 +75,7 @@ import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEf
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -85,10 +87,12 @@ public class FunctionCodegen {
     private final ClassBuilder v;
     private final MemberCodegen<?> memberCodegen;
 
-    private final Function1<DeclarationDescriptor, Boolean> IS_PURE_INTERFACE_CHECKER = new Function1<DeclarationDescriptor, Boolean>() {
+    private final Function1<CallableMemberDescriptor, Boolean> DECLARATION_AND_DEFINITION_CHECKER = new Function1<CallableMemberDescriptor, Boolean>() {
         @Override
-        public Boolean invoke(DeclarationDescriptor descriptor) {
-            return JvmCodegenUtil.isInterfaceWithoutDefaults(descriptor, state);
+        public Boolean invoke(CallableMemberDescriptor descriptor) {
+            return !isInterface(descriptor.getContainingDeclaration()) ||
+                   (state.getTarget() != JvmTarget.JVM_1_6 &&
+                   hasJvmDefaultAnnotation(descriptor));
         }
     };
 
@@ -938,14 +942,14 @@ public class FunctionCodegen {
     private boolean hasSpecialBridgeMethod(@NotNull FunctionDescriptor descriptor) {
         if (SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor) == null) return false;
         return !BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
-                descriptor, typeMapper::mapAsmMethod, IS_PURE_INTERFACE_CHECKER
+                descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER
         ).isEmpty();
     }
 
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
-        if (IS_PURE_INTERFACE_CHECKER.invoke(descriptor.getContainingDeclaration())) return;
+        if (!DECLARATION_AND_DEFINITION_CHECKER.invoke(descriptor)) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;
@@ -955,7 +959,7 @@ public class FunctionCodegen {
         Set<Bridge<Method>> bridgesToGenerate;
         if (!isSpecial) {
             bridgesToGenerate =
-                    ImplKt.generateBridgesForFunctionDescriptor(descriptor, typeMapper::mapAsmMethod, IS_PURE_INTERFACE_CHECKER);
+                    ImplKt.generateBridgesForFunctionDescriptor(descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER);
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
                 boolean isSpecialBridge =
@@ -968,7 +972,7 @@ public class FunctionCodegen {
         }
         else {
             Set<BridgeForBuiltinSpecial<Method>> specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
-                    descriptor, typeMapper::mapAsmMethod, IS_PURE_INTERFACE_CHECKER
+                    descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER
             );
 
             if (!specials.isEmpty()) {
@@ -1310,7 +1314,7 @@ public class FunctionCodegen {
             iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor(), false);
         }
         else {
-            if (CodegenUtilKt.hasJvmDefaultAnnotation(descriptor)) {
+            if (hasJvmDefaultAnnotation(descriptor)) {
                 iv.invokeinterface(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
             }
             else {
@@ -1478,7 +1482,7 @@ public class FunctionCodegen {
         assert isInterface(containingDeclaration) : "'processInterfaceMethod' method should be called only for interfaces, but: " +
                                                     containingDeclaration;
 
-        if (CodegenUtilKt.hasJvmDefaultAnnotation(memberDescriptor)) {
+        if (hasJvmDefaultAnnotation(memberDescriptor)) {
            return kind != OwnerKind.DEFAULT_IMPLS;
         } else {
             switch (kind) {

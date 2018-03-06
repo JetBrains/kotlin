@@ -245,7 +245,7 @@ class ClassModelGenerator(val context: TranslationContext) {
             if (memberDescriptor is FunctionDescriptor) {
                 val bridgesToGenerate = generateBridgesForFunctionDescriptor(memberDescriptor, identity()) {
                     //There is no DefaultImpls in js backend so if method non-abstract it should be recognized as non-abstract on bridges calculation
-                    false
+                    true
                 }
 
                 for (bridge in bridgesToGenerate) {

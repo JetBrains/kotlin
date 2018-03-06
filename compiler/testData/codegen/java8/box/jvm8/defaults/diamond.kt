@@ -43,7 +43,7 @@ fun box(): String {
 
 fun checkNoMethod(clazz: Class<*>, name: String) {
     try {
-        clazz.getDeclaredMethod("test")
+        clazz.getDeclaredMethod(name)
     }
     catch (e: NoSuchMethodException) {
         return

@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.codegen.AsmUtil.isAbstractMethod
 import org.jetbrains.kotlin.codegen.BuiltinSpecialBridgesUtil
 import org.jetbrains.kotlin.codegen.FunctionCodegen.isMethodOfAny
 import org.jetbrains.kotlin.codegen.FunctionCodegen.isThereOverriddenInKotlinClass
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -60,7 +60,9 @@ import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescripto
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -73,12 +75,12 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     private val typeMapper = state.typeMapper
 
-    private val IS_PURE_INTERFACE_CHECKER = fun(descriptor: DeclarationDescriptor): Boolean =
-            JvmCodegenUtil.isInterfaceWithoutDefaults(descriptor, state)
+    private val DECLARATION_AND_DEFINITION_CHECKER = fun(descriptor: CallableMemberDescriptor): Boolean =
+        !isInterface(descriptor.containingDeclaration) || state.target !== JvmTarget.JVM_1_6 && descriptor.hasJvmDefaultAnnotation()
 
     override fun lower(irClass: IrClass) {
         val classDescriptor = irClass.descriptor
-        if (IS_PURE_INTERFACE_CHECKER(classDescriptor) || classDescriptor is FileClassDescriptor) return
+        if (classDescriptor is FileClassDescriptor) return
 
         if (classDescriptor is DefaultImplsClassDescriptor) {
             return /*TODO?*/
@@ -133,7 +135,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             bridgesToGenerate = generateBridgesForFunctionDescriptor(
                     descriptor,
                     getSignatureMapper(typeMapper),
-                    IS_PURE_INTERFACE_CHECKER
+                    DECLARATION_AND_DEFINITION_CHECKER
             )
             if (!bridgesToGenerate.isEmpty()) {
                 val origin = if (descriptor.kind == DECLARATION) getSourceFromDescriptor(descriptor) else null
@@ -148,7 +150,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             val specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
                     descriptor,
                     getSignatureMapper(typeMapper),
-                    IS_PURE_INTERFACE_CHECKER
+                    DECLARATION_AND_DEFINITION_CHECKER
             )
 
             if (!specials.isEmpty()) {
