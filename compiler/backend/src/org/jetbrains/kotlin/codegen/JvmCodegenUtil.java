@@ -53,30 +53,6 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
-    public static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isInterfaceWithoutDefaults(descriptor, state.isJvm8Target());
-    }
-
-    private static boolean isInterfaceWithoutDefaults(
-            @NotNull DeclarationDescriptor descriptor,
-            boolean isJvm8PlusTarget
-    ) {
-        if (!DescriptorUtils.isInterface(descriptor)) return false;
-
-        if (descriptor instanceof DeserializedClassDescriptor) {
-            SourceElement source = ((DeserializedClassDescriptor) descriptor).getSource();
-            if (source instanceof KotlinJvmBinarySourceElement) {
-                KotlinJvmBinaryClass binaryClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
-                assert binaryClass instanceof FileBasedKotlinClass :
-                        "KotlinJvmBinaryClass should be subclass of FileBasedKotlinClass, but " + binaryClass;
-                return ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
-            }
-        }
-        //we can't determine is interface have default methods or not
-        //we need inspect all methods for jvm target 1.8+
-        return !isJvm8PlusTarget;
-    }
-
     public static boolean isNonDefaultInterfaceMember(@NotNull CallableMemberDescriptor descriptor) {
         if (!isJvmInterface(descriptor.getContainingDeclaration())) {
             return false;
