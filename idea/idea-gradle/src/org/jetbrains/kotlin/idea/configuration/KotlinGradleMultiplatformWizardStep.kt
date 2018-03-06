@@ -21,6 +21,10 @@ import com.intellij.ide.util.projectWizard.ProjectWizardUtil
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ui.configuration.JdkComboBox
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.PanelWithAnchor
@@ -37,41 +41,50 @@ class KotlinGradleMultiplatformWizardStep(
     private val wizardContext: WizardContext
 ) : ModuleWizardStep() {
 
-    private val mainModuleNameComponent: LabeledComponent<JTextField>
-    private val jvmModuleNameComponent: LabeledComponent<JTextField>
-    private val jsModuleNameComponent: LabeledComponent<JTextField>
+    private val rootModuleNameComponent: LabeledComponent<JTextField> =
+        LabeledComponent.create(JTextField(), "Root module name:", BorderLayout.WEST)
+    private val commonModuleNameComponent: LabeledComponent<JTextField> =
+        LabeledComponent.create(JTextField(), "Common module name:", BorderLayout.WEST)
+    private val jvmCheckBox: JCheckBox =
+        JCheckBox("Create JVM module", true)
+    private val jdkComboBox: JdkComboBox =
+        JdkComboBox(ProjectSdksModel().also {
+            it.reset(null)
+        }) { it is JavaSdk }
+    private val jvmModuleNameComponent: LabeledComponent<JTextField> =
+        LabeledComponent.create(JTextField(), "JVM module name:", BorderLayout.WEST)
+    private val jsCheckBox: JCheckBox =
+        JCheckBox("Create JS module", true)
+    private val jsModuleNameComponent: LabeledComponent<JTextField> =
+        LabeledComponent.create(JTextField(), "JS module name:", BorderLayout.WEST)
 
     private val panel: JPanel
     private var syncEditing: Boolean = true
     private var inSyncUpdate: Boolean = false
 
     init {
-        mainModuleNameComponent = LabeledComponent.create(JTextField(), "Main module name:", BorderLayout.WEST)
-        jvmModuleNameComponent = LabeledComponent.create(JTextField(), "JVM module name:", BorderLayout.WEST)
-        jsModuleNameComponent = LabeledComponent.create(JTextField(), "JS module name:", BorderLayout.WEST)
-
         panel = object : JPanel(GridBagLayout()), PanelWithAnchor {
-            private var anchor: JComponent? = mainModuleNameComponent.anchor
+            private var anchor: JComponent? = rootModuleNameComponent.anchor
 
             override fun getAnchor(): JComponent? = anchor
 
             override fun setAnchor(anchor: JComponent?) {
                 this.anchor = anchor
-                mainModuleNameComponent.anchor = anchor
+                rootModuleNameComponent.anchor = anchor
+                commonModuleNameComponent.anchor = anchor
                 jvmModuleNameComponent.anchor = anchor
                 jsModuleNameComponent.anchor = anchor
             }
         }
-
         val baseDir = wizardContext.projectFileDirectory
         val projectName = wizardContext.projectName
         val initialProjectName = projectName ?: ProjectWizardUtil.findNonExistingFileName(baseDir, "untitled", "")
-        mainModuleNameComponent.component.text = initialProjectName
-        mainModuleNameComponent.component.select(0, initialProjectName.length)
+        rootModuleNameComponent.component.text = initialProjectName
+        rootModuleNameComponent.component.select(0, initialProjectName.length)
 
         updateDerivedModuleNames()
 
-        mainModuleNameComponent.component.document.addDocumentListener(object : DocumentAdapter() {
+        rootModuleNameComponent.component.document.addDocumentListener(object : DocumentAdapter() {
             override fun textChanged(e: DocumentEvent?) {
                 if (syncEditing) {
                     updateDerivedModuleNames()
@@ -86,55 +99,135 @@ class KotlinGradleMultiplatformWizardStep(
                 }
             }
         }
+        commonModuleNameComponent.component.document.addDocumentListener(stopSyncEditingListener)
         jvmModuleNameComponent.component.document.addDocumentListener(stopSyncEditingListener)
         jsModuleNameComponent.component.document.addDocumentListener(stopSyncEditingListener)
 
+        jvmCheckBox.addItemListener {
+            jvmModuleNameComponent.isEnabled = jvmCheckBox.isSelected
+            jdkComboBox.isEnabled = jvmCheckBox.isSelected
+        }
+        jsCheckBox.addItemListener {
+            jsModuleNameComponent.isEnabled = jsCheckBox.isSelected
+        }
+
         panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        panel.add(mainModuleNameComponent, GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, JBUI.insets(10, 0, 0, 0), 0, 0))
-        panel.add(jvmModuleNameComponent, GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0))
-        panel.add(jsModuleNameComponent, GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0))
-        panel.add(JLabel(""), GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0))
+        panel.add(
+            rootModuleNameComponent,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.insets(10, 0, 0, 0), 0, 0
+            )
+        )
+        panel.add(
+            commonModuleNameComponent,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            jvmCheckBox,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            jdkComboBox,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            jvmModuleNameComponent,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            jsCheckBox,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            jsModuleNameComponent,
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
+        panel.add(
+            JLabel(""),
+            GridBagConstraints(
+                0, GridBagConstraints.RELATIVE, 1, 1, 1.0, 1.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL,
+                JBUI.emptyInsets(), 0, 0
+            )
+        )
         UIUtil.mergeComponentsWithAnchor(panel)
     }
 
     private fun updateDerivedModuleNames() {
         inSyncUpdate = true
         try {
-            jvmModuleNameComponent.component.text = mainModuleName + "-jvm"
-            jsModuleNameComponent.component.text = mainModuleName + "-js"
+            commonModuleNameComponent.component.text = "$rootModuleName-common"
+            jvmModuleNameComponent.component.text = "$rootModuleName-jvm"
+            jsModuleNameComponent.component.text = "$rootModuleName-js"
 
-        }
-        finally {
+        } finally {
             inSyncUpdate = false
         }
     }
 
     override fun updateDataModel() {
         wizardContext.projectBuilder = builder
-        wizardContext.projectName = mainModuleName
+        wizardContext.projectName = rootModuleName
 
-        builder.projectId = ProjectId("", mainModuleName, "")
+        builder.projectId = ProjectId("", rootModuleName, "")
+        builder.commonModuleName = commonModuleName
         builder.jvmModuleName = jvmModuleName
+        builder.jdk = jdk
         builder.jsModuleName = jsModuleName
     }
 
     override fun getComponent() = panel
 
-    private val mainModuleName: String
-        get() = mainModuleNameComponent.component.text
+    private val rootModuleName: String
+        get() = rootModuleNameComponent.component.text
+    private val commonModuleName: String
+        get() = commonModuleNameComponent.component.text
     private val jvmModuleName: String
-        get() = jvmModuleNameComponent.component.text
+        get() = if (jvmCheckBox.isSelected) jvmModuleNameComponent.component.text else ""
+    private val jdk: Sdk?
+        get() = if (jvmCheckBox.isSelected) jdkComboBox.selectedJdk else null
     private val jsModuleName: String
-        get() = jsModuleNameComponent.component.text
+        get() = if (jsCheckBox.isSelected) jsModuleNameComponent.component.text else ""
 
     override fun validate(): Boolean {
-        if (mainModuleName.isEmpty()) {
-            throw ConfigurationException("Please specify the main module name")
+        if (rootModuleName.isEmpty()) {
+            throw ConfigurationException("Please specify the root module name")
         }
-        if (jvmModuleName.isNotEmpty() && (jvmModuleName == mainModuleName || jvmModuleName == jsModuleName)) {
+        if (commonModuleName.isNotEmpty()
+            && (commonModuleName == rootModuleName || commonModuleName == jvmModuleName || commonModuleName == jsModuleName)
+        ) {
+            throw ConfigurationException("The common module name should be distinct")
+        }
+        if (jvmModuleName.isNotEmpty() && (jvmModuleName == rootModuleName || jvmModuleName == jsModuleName)) {
             throw ConfigurationException("The JVM module name should be distinct")
         }
-        if (jsModuleName.isNotEmpty() && jsModuleName == mainModuleName) {
+        if (jsModuleName.isNotEmpty() && jsModuleName == rootModuleName) {
             throw ConfigurationException("The IS module name should be distinct")
         }
         return true

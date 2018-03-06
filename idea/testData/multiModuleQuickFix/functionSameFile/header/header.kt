@@ -1,6 +1,5 @@
 // "Create actual function for module jvm (JVM)" "true"
-// TEST
 
-package test
+expect fun bar()
 
-expect fun <caret>testHelper()
+expect fun <caret>foo(arg: Int): String
