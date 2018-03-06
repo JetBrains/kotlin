@@ -59,7 +59,7 @@ val intellijUltimateEnabled by extra(project.getBooleanProperty("intellijUltimat
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
 
 extra["intellijRepo"] = "https://www.jetbrains.com/intellij-repository"
-extra["intellijReleaseType"] = "releases" // or "snapshots"
+extra["intellijReleaseType"] = "snapshots" // or "snapshots"
 extra["versions.androidDxSources"] = "5.0.0_r2"
 
 extra["customDepsOrg"] = "kotlin.build.custom.deps"
