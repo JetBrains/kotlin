@@ -44,6 +44,7 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.indented {
             javaMethod.block?.accept(this, null)
             javaMethod.modifierList.accept(this, null)
+            javaMethod.valueArguments.forEach { it.accept(this, null) }
         }
         printer.println("]")
     }
@@ -91,6 +92,15 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println(javaStringLiteralExpression.classNameWithoutJK(), " \"")
         printer.indented {
             printer.println(javaStringLiteralExpression.text)
+        }
+        printer.println("\"")
+    }
+
+    override fun visitType(type: JKType) {
+        printer.println(type.classNameWithoutJK(), " \"")
+        printer.indented {
+            if(type is JKClassType)
+            printer.println(type.classReference.target.name.name)
         }
         printer.println("\"")
     }

@@ -34,7 +34,6 @@ interface JKJavaPrimitiveType : JKType {
 
 interface JKJavaArrayType : JKType {
     val type: JKType
-    val dimensionCount : Int
 }
 
 interface JKJavaStringLiteralExpression : JKLiteralExpression {
