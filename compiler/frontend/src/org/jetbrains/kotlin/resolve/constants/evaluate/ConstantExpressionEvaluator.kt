@@ -120,9 +120,9 @@ class ConstantExpressionEvaluator(
 
         val descriptor = expressionType.constructor.declarationDescriptor
         val diagnosticFactory = when {
-            DescriptorUtils.isEnumClass(descriptor) -> Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST
-            descriptor is ClassDescriptor && KotlinBuiltIns.isKClass(descriptor) -> Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL
-            else -> Errors.ANNOTATION_PARAMETER_MUST_BE_CONST
+            DescriptorUtils.isEnumClass(descriptor) -> Errors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST
+            descriptor is ClassDescriptor && KotlinBuiltIns.isKClass(descriptor) -> Errors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
+            else -> Errors.ANNOTATION_ARGUMENT_MUST_BE_CONST
         }
 
         trace.report(diagnosticFactory.on(argumentExpression))
@@ -156,7 +156,7 @@ class ConstantExpressionEvaluator(
             if (lhsExpression != null) {
                 val doubleColonLhs = trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, lhsExpression)
                 if (doubleColonLhs is DoubleColonLHS.Expression && !doubleColonLhs.isObjectQualifier) {
-                    trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
+                    trace.report(Errors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
                 }
             }
         }
