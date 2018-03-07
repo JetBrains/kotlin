@@ -87,10 +87,10 @@ private const val INLINE_MARKER_FAKE_CONTINUATION = 3
 private val INTRINSIC_ARRAY_CONSTRUCTOR_TYPE = AsmUtil.asmTypeByClassId(classId)
 
 internal fun getMethodNode(
-        classData: ByteArray,
-        methodName: String,
-        methodDescriptor: String,
-        classType: Type
+    classData: ByteArray,
+    methodName: String,
+    methodDescriptor: String,
+    classType: Type
 ): SMAPAndMethodNode? {
     val cr = ClassReader(classData)
     var node: MethodNode? = null
@@ -108,11 +108,11 @@ internal fun getMethodNode(
         }
 
         override fun visitMethod(
-                access: Int,
-                name: String,
-                desc: String,
-                signature: String?,
-                exceptions: Array<String>?
+            access: Int,
+            name: String,
+            desc: String,
+            signature: String?,
+            exceptions: Array<String>?
         ): MethodVisitor? {
             if (methodName == name && methodDescriptor == desc) {
                 node = object : MethodNode(API, access, name, desc, signature, exceptions) {
@@ -154,29 +154,28 @@ internal fun findVirtualFileImprecise(state: GenerationState, internalClassName:
 }
 
 internal fun getInlineName(codegenContext: CodegenContext<*>, typeMapper: KotlinTypeMapper): String =
-        getInlineName(codegenContext, codegenContext.contextDescriptor, typeMapper)
+    getInlineName(codegenContext, codegenContext.contextDescriptor, typeMapper)
 
 private fun getInlineName(
-        codegenContext: CodegenContext<*>,
-        currentDescriptor: DeclarationDescriptor,
-        typeMapper: KotlinTypeMapper
+    codegenContext: CodegenContext<*>,
+    currentDescriptor: DeclarationDescriptor,
+    typeMapper: KotlinTypeMapper
 ): String {
     when (currentDescriptor) {
         is PackageFragmentDescriptor -> {
             val file = DescriptorToSourceUtils.getContainingFile(codegenContext.contextDescriptor)
 
             val implementationOwnerInternalName: String? =
-                    if (file == null) {
-                        CodegenContextUtil.getImplementationOwnerClassType(codegenContext)?.internalName
-                    }
-                    else JvmFileClassUtil.getFileClassInternalName(file)
+                if (file == null) {
+                    CodegenContextUtil.getImplementationOwnerClassType(codegenContext)?.internalName
+                } else JvmFileClassUtil.getFileClassInternalName(file)
 
             if (implementationOwnerInternalName == null) {
                 val contextDescriptor = codegenContext.contextDescriptor
                 throw RuntimeException(
-                        "Couldn't find declaration for " +
-                        contextDescriptor.containingDeclaration!!.name + "." + contextDescriptor.name +
-                        "; context: " + codegenContext
+                    "Couldn't find declaration for " +
+                            contextDescriptor.containingDeclaration!!.name + "." + contextDescriptor.name +
+                            "; context: " + codegenContext
                 )
             }
 
@@ -201,20 +200,20 @@ private fun getInlineName(
 
 internal fun isInvokeOnLambda(owner: String, name: String): Boolean {
     return OperatorNameConventions.INVOKE.asString() == name &&
-           owner.startsWith(NUMBERED_FUNCTION_PREFIX) &&
-           owner.substring(NUMBERED_FUNCTION_PREFIX.length).isInteger()
+            owner.startsWith(NUMBERED_FUNCTION_PREFIX) &&
+            owner.substring(NUMBERED_FUNCTION_PREFIX.length).isInteger()
 }
 
 internal fun isAnonymousConstructorCall(internalName: String, methodName: String): Boolean =
-        isConstructor(methodName) && isAnonymousClass(internalName)
+    isConstructor(methodName) && isAnonymousClass(internalName)
 
 private fun isConstructor(methodName: String) = "<init>" == methodName
 
 internal fun isWhenMappingAccess(internalName: String, fieldName: String): Boolean =
-        fieldName.startsWith(WhenByEnumsMapping.MAPPING_ARRAY_FIELD_PREFIX) && internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX)
+    fieldName.startsWith(WhenByEnumsMapping.MAPPING_ARRAY_FIELD_PREFIX) && internalName.endsWith(WhenByEnumsMapping.MAPPINGS_CLASS_NAME_POSTFIX)
 
 internal fun isAnonymousSingletonLoad(internalName: String, fieldName: String): Boolean =
-        JvmAbi.INSTANCE_FIELD == fieldName && isAnonymousClass(internalName)
+    JvmAbi.INSTANCE_FIELD == fieldName && isAnonymousClass(internalName)
 
 /*
  * Note that sam wrapper prior to 1.2.30 was generated with next template name (that was included suffix hash):
@@ -235,22 +234,22 @@ internal fun isSamWrapper(internalName: String) =
 
 
 internal fun isSamWrapperConstructorCall(internalName: String, methodName: String) =
-        isConstructor(methodName) && isSamWrapper(internalName)
+    isConstructor(methodName) && isSamWrapper(internalName)
 
 internal fun isAnonymousClass(internalName: String) =
-        !isSamWrapper(internalName) &&
-        internalName.substringAfterLast('/').substringAfterLast("$", "").isInteger()
+    !isSamWrapper(internalName) &&
+            internalName.substringAfterLast('/').substringAfterLast("$", "").isInteger()
 
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =
-        MaxStackFrameSizeAndLocalsCalculator(API, methodNode.access, methodNode.desc, methodNode)
+    MaxStackFrameSizeAndLocalsCalculator(API, methodNode.access, methodNode.desc, methodNode)
 
 private fun String.isInteger(radix: Int = 10) = toIntOrNull(radix) != null
 
 internal fun isCapturedFieldName(fieldName: String): Boolean {
     // TODO: improve this heuristic
     return fieldName.startsWith(CAPTURED_FIELD_PREFIX) && !fieldName.startsWith(NON_CAPTURED_FIELD_PREFIX) ||
-           THIS_0 == fieldName ||
-           RECEIVER_0 == fieldName
+            THIS_0 == fieldName ||
+            RECEIVER_0 == fieldName
 }
 
 internal fun isReturnOpcode(opcode: Int) = opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN
@@ -338,8 +337,7 @@ internal fun buildClassReaderByInternalName(state: GenerationState, internalName
         return ClassReader(outputFile.asByteArray())
     }
 
-    val file = findVirtualFileImprecise(state, internalName) ?:
-               throw RuntimeException("Couldn't find virtual file for " + internalName)
+    val file = findVirtualFileImprecise(state, internalName) ?: throw RuntimeException("Couldn't find virtual file for " + internalName)
 
     return ClassReader(file.contentsToByteArray())
 }
@@ -392,9 +390,9 @@ internal fun removeFinallyMarkers(intoNode: MethodNode) {
 
 internal fun addInlineMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     v.visitMethodInsn(
-            Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
-            if (isStartNotEnd) INLINE_MARKER_BEFORE_METHOD_NAME else INLINE_MARKER_AFTER_METHOD_NAME,
-            "()V", false
+        Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
+        if (isStartNotEnd) INLINE_MARKER_BEFORE_METHOD_NAME else INLINE_MARKER_AFTER_METHOD_NAME,
+        "()V", false
     )
 }
 
@@ -403,11 +401,11 @@ internal fun addReturnsUnitMarkerIfNecessary(v: InstructionAdapter, resolvedCall
     val unsubstitutedDescriptor = wrapperDescriptor.unwrapInitialDescriptorForSuspendFunction()
 
     val typeSubstitutor = TypeSubstitutor.create(
-            unsubstitutedDescriptor.typeParameters
-                    .withIndex()
-                    .associateBy({ it.value.typeConstructor }) {
-                        TypeProjectionImpl(resolvedCall.typeArguments[wrapperDescriptor.typeParameters[it.index]] ?: return)
-                    }
+        unsubstitutedDescriptor.typeParameters
+            .withIndex()
+            .associateBy({ it.value.typeConstructor }) {
+                TypeProjectionImpl(resolvedCall.typeArguments[wrapperDescriptor.typeParameters[it.index]] ?: return)
+            }
     )
 
     val substitutedDescriptor = unsubstitutedDescriptor.substitute(typeSubstitutor) ?: return
@@ -421,18 +419,18 @@ internal fun addReturnsUnitMarkerIfNecessary(v: InstructionAdapter, resolvedCall
 internal fun addSuspendMarker(v: InstructionAdapter, isStartNotEnd: Boolean) {
     v.iconst(if (isStartNotEnd) INLINE_MARKER_BEFORE_SUSPEND_ID else INLINE_MARKER_AFTER_SUSPEND_ID)
     v.visitMethodInsn(
-            Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
-            "mark",
-            "(I)V", false
+        Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
+        "mark",
+        "(I)V", false
     )
 }
 
 private fun addReturnsUnitMarker(v: InstructionAdapter) {
     v.iconst(INLINE_MARKER_RETURNS_UNIT)
     v.visitMethodInsn(
-            Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
-            "mark",
-            "(I)V", false
+        Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,
+        "mark",
+        "(I)V", false
     )
 }
 
@@ -458,7 +456,7 @@ internal fun isFakeContinuationMarker(insn: AbstractInsnNode) =
     insn.previous != null && isSuspendMarker(insn.previous, INLINE_MARKER_FAKE_CONTINUATION) && insn.opcode == Opcodes.ACONST_NULL
 
 private fun isSuspendMarker(insn: AbstractInsnNode, id: Int) =
-        isInlineMarker(insn, "mark") && insn.previous.intConstant == id
+    isInlineMarker(insn, "mark") && insn.previous.intConstant == id
 
 internal fun isInlineMarker(insn: AbstractInsnNode): Boolean {
     return isInlineMarker(insn, null)
@@ -470,11 +468,11 @@ private fun isInlineMarker(insn: AbstractInsnNode, name: String?): Boolean {
     }
 
     return insn.getOpcode() == Opcodes.INVOKESTATIC &&
-           insn.owner == INLINE_MARKER_CLASS_NAME &&
-           if (name != null)
-               insn.name == name
-           else
-               insn.name == INLINE_MARKER_BEFORE_METHOD_NAME || insn.name == INLINE_MARKER_AFTER_METHOD_NAME
+            insn.owner == INLINE_MARKER_CLASS_NAME &&
+            if (name != null)
+                insn.name == name
+            else
+                insn.name == INLINE_MARKER_BEFORE_METHOD_NAME || insn.name == INLINE_MARKER_AFTER_METHOD_NAME
 }
 
 internal fun isBeforeInlineMarker(insn: AbstractInsnNode): Boolean {
@@ -525,28 +523,33 @@ internal fun isSpecialEnumMethod(functionDescriptor: FunctionDescriptor): Boolea
     val name = functionDescriptor.name.asString()
     val parameters = functionDescriptor.valueParameters
     return "enumValues" == name && parameters.size == 0 ||
-           ("enumValueOf" == name && parameters.size == 1 &&
-            KotlinBuiltIns.isString(parameters[0].type))
+            ("enumValueOf" == name && parameters.size == 1 &&
+                    KotlinBuiltIns.isString(parameters[0].type))
 }
 
 internal fun createSpecialEnumMethodBody(
-        name: String,
-        type: KotlinType,
-        typeMapper: KotlinTypeMapper
+    name: String,
+    type: KotlinType,
+    typeMapper: KotlinTypeMapper
 ): MethodNode {
     val isValueOf = "enumValueOf" == name
     val invokeType = typeMapper.mapType(type)
     val desc = getSpecialEnumFunDescriptor(invokeType, isValueOf)
     val node = MethodNode(API, Opcodes.ACC_STATIC, "fake", desc, null, null)
-    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, InstructionAdapter(node))
+    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(
+        type,
+        ReifiedTypeInliner.OperationKind.ENUM_REIFIED,
+        InstructionAdapter(node)
+    )
     if (isValueOf) {
         node.visitInsn(Opcodes.ACONST_NULL)
         node.visitVarInsn(Opcodes.ALOAD, 0)
 
-        node.visitMethodInsn(Opcodes.INVOKESTATIC, ENUM_TYPE.internalName, "valueOf",
-                             Type.getMethodDescriptor(ENUM_TYPE, JAVA_CLASS_TYPE, AsmTypes.JAVA_STRING_TYPE), false)
-    }
-    else {
+        node.visitMethodInsn(
+            Opcodes.INVOKESTATIC, ENUM_TYPE.internalName, "valueOf",
+            Type.getMethodDescriptor(ENUM_TYPE, JAVA_CLASS_TYPE, AsmTypes.JAVA_STRING_TYPE), false
+        )
+    } else {
         node.visitInsn(Opcodes.ICONST_0)
         node.visitTypeInsn(Opcodes.ANEWARRAY, ENUM_TYPE.internalName)
     }
@@ -556,7 +559,10 @@ internal fun createSpecialEnumMethodBody(
 }
 
 internal fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String {
-    return if (isValueOf) Type.getMethodDescriptor(type, AsmTypes.JAVA_STRING_TYPE) else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
+    return if (isValueOf) Type.getMethodDescriptor(
+        type,
+        AsmTypes.JAVA_STRING_TYPE
+    ) else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
 }
 
 
@@ -573,10 +579,10 @@ fun FunctionDescriptor.getClassFilePath(typeMapper: KotlinTypeMapper, cache: Inc
 
     return when (source) {
         is KotlinJvmBinaryPackageSourceElement -> {
-            val directMember = JvmCodegenUtil.getDirectMember(this) as? DeserializedCallableMemberDescriptor ?:
-                               throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
-            val kotlinClass = source.getContainingBinaryClass(directMember) ?:
-                              throw AssertionError("Descriptor $this is not found, in: $source")
+            val directMember = JvmCodegenUtil.getDirectMember(this) as? DeserializedCallableMemberDescriptor
+                    ?: throw AssertionError("Expected DeserializedCallableMemberDescriptor, got: $this")
+            val kotlinClass =
+                source.getContainingBinaryClass(directMember) ?: throw AssertionError("Descriptor $this is not found, in: $source")
             if (kotlinClass !is VirtualFileKotlinClass) {
                 throw AssertionError("Expected VirtualFileKotlinClass, got $kotlinClass")
             }
