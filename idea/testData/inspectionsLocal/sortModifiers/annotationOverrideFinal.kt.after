@@ -1,0 +1,10 @@
+annotation class Ann
+
+open class Base {
+    open fun bar() {}
+}
+
+open class Test : Base() {
+    @Ann
+    final override fun bar() {}
+}
