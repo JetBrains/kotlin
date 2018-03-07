@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.SamWrapperCodegen.SAM_WRAPPER_SUFFIX
 import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
@@ -226,14 +227,18 @@ internal fun isAnonymousSingletonLoad(internalName: String, fieldName: String): 
  *       hash
  *  );
  */
-internal fun isOldSamWrapper(internalName: String) =
-        internalName.contains("\$sam$") && internalName.substringAfter("\$i$", "").run { length == 8 && toLongOrNull(16) != null }
+private fun isOldSamWrapper(internalName: String) =
+    internalName.contains("\$sam$") && internalName.substringAfter("\$i$", "").run { length == 8 && toLongOrNull(16) != null }
+
+internal fun isSamWrapper(internalName: String) =
+    (internalName.endsWith(SAM_WRAPPER_SUFFIX) && internalName.contains("\$sam\$i\$")) || isOldSamWrapper(internalName)
+
 
 internal fun isSamWrapperConstructorCall(internalName: String, methodName: String) =
-        isConstructor(methodName) && isOldSamWrapper(internalName)
+        isConstructor(methodName) && isSamWrapper(internalName)
 
 internal fun isAnonymousClass(internalName: String) =
-        !isOldSamWrapper(internalName) &&
+        !isSamWrapper(internalName) &&
         internalName.substringAfterLast('/').substringAfterLast("$", "").isInteger()
 
 fun wrapWithMaxLocalCalc(methodNode: MethodNode) =

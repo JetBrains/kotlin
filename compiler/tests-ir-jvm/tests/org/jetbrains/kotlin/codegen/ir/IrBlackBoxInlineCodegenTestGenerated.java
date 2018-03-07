@@ -482,6 +482,12 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
                 doTest(fileName);
             }
 
+            @TestMetadata("kt22304.kt")
+            public void testKt22304() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam/kt22304.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("samOnCallSite.kt")
             public void testSamOnCallSite() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam/samOnCallSite.kt");
