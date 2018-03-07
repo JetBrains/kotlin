@@ -69,8 +69,10 @@ private class SortModifiersFix(private val modifiers: List<KtModifierKeywordToke
         val owner = list.parent as? KtModifierListOwner ?: return
 
         modifiers.forEach { owner.removeModifier(it) }
+        // We add visibility / modality modifiers after all others,
+        // because they can be redundant or not depending on others (e.g. override)
         modifiers
-            .partition { it == KtTokens.FINAL_KEYWORD }
+            .partition { it in KtTokens.VISIBILITY_MODIFIERS || it in KtTokens.MODALITY_MODIFIERS }
             .let { it.second + it.first }
             .forEach { owner.addModifier(it) }
     }
