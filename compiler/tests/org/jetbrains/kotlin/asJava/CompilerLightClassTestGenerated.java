@@ -183,12 +183,6 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             doTest(fileName);
         }
 
-        @TestMetadata("JvmPackageName.kt")
-        public void testJvmPackageName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/JvmPackageName.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("ExpectClass.kt")
         public void testExpectClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectClass.kt");
@@ -210,6 +204,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("ExpectedNestedClassInObject.kt")
         public void testExpectedNestedClassInObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectedNestedClassInObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("JvmPackageName.kt")
+        public void testJvmPackageName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/JvmPackageName.kt");
             doTest(fileName);
         }
 
