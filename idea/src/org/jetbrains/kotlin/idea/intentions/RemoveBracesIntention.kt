@@ -38,7 +38,10 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
         val container = block.parent
         when (container) {
             is KtContainerNode -> {
-                if (singleStatement is KtIfExpression && container.parent is KtIfExpression) return false
+                if (singleStatement is KtIfExpression) {
+                    val elseExpression = (container.parent as? KtIfExpression)?.`else`
+                    if (elseExpression != null && elseExpression != block) return false
+                }
 
                 val description = container.description() ?: return false
                 text = "Remove braces from '$description' statement"

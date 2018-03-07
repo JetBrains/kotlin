@@ -12528,6 +12528,42 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ifInsideIf2.kt")
+        public void testIfInsideIf2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifInsideIf2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifInsideIf3.kt")
+        public void testIfInsideIf3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifInsideIf3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifInsideIf4.kt")
+        public void testIfInsideIf4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifInsideIf4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifInsideIf5.kt")
+        public void testIfInsideIf5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifInsideIf5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifInsideIf6.kt")
+        public void testIfInsideIf6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifInsideIf6.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifInsideIf7.kt")
+        public void testIfInsideIf7() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifInsideIf7.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ifWithComment.kt")
         public void testIfWithComment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeBraces/ifWithComment.kt");
