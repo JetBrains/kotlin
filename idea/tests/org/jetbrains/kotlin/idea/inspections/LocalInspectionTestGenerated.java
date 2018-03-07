@@ -1485,6 +1485,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("functionWithReceiver.kt")
+        public void testFunctionWithReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/functionWithReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multipleReceivers.kt")
         public void testMultipleReceivers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/implicitThis/multipleReceivers.kt");
