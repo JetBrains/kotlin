@@ -17,32 +17,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.expressions.AssignedVariablesSearcher
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
-/**
- * Determines whether a variable with a given descriptor is stable or not at the given usage place.
- *
- *
- * Stable means that the variable value cannot change. The simple (non-property) variable is considered stable if it's immutable (val).
- *
- *
- * If the variable is a property, it's considered stable if it's immutable (val) AND it's final (not open) AND
- * the default getter is in use (otherwise nobody can guarantee that a getter is consistent) AND
- * (it's private OR internal OR used at the same module where it's defined).
- * The last check corresponds to a risk of changing property definition in another module, e.g. from "val" to "var".
-
- * @param variableDescriptor    descriptor of a considered variable
- * *
- * @param usageModule a module with a considered usage place, or null if it's not known (not recommended)
- * *
- * @return true if variable is stable, false otherwise
- */
-fun isStableValue(
-    variableDescriptor: VariableDescriptor,
-    usageModule: ModuleDescriptor?
-): Boolean {
-    if (variableDescriptor.isVar) return false
-    return variableDescriptor !is PropertyDescriptor || variableDescriptor.propertyKind(usageModule) === DataFlowValue.Kind.STABLE_VALUE
-}
-
 internal fun PropertyDescriptor.propertyKind(usageModule: ModuleDescriptor?): DataFlowValue.Kind {
     if (isVar) return DataFlowValue.Kind.MUTABLE_PROPERTY
     if (isOverridable) return DataFlowValue.Kind.PROPERTY_WITH_GETTER

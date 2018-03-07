@@ -2135,6 +2135,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifThenToDoubleBang"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("applicableForLocalStableVar.kt")
+            public void testApplicableForLocalStableVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToDoubleBang/applicableForLocalStableVar.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("blockHasMoreThanOneStatement.kt")
             public void testBlockHasMoreThanOneStatement() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToDoubleBang/blockHasMoreThanOneStatement.kt");
@@ -2255,9 +2261,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("notApplicableForLocalVar.kt")
-            public void testNotApplicableForLocalVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToDoubleBang/notApplicableForLocalVar.kt");
+            @TestMetadata("notApplicableForLocalUnstableVar.kt")
+            public void testNotApplicableForLocalUnstableVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToDoubleBang/notApplicableForLocalUnstableVar.kt");
                 doTest(fileName);
             }
 
@@ -2328,6 +2334,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public static class IfThenToElvis extends AbstractIntentionTest {
             public void testAllFilesPresentInIfThenToElvis() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/ifThenToElvis"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("applicableForLocalStableVar.kt")
+            public void testApplicableForLocalStableVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/applicableForLocalStableVar.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("blockHasMoreThanOneStatement.kt")
@@ -2510,9 +2522,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("notApplicableForLocalVar.kt")
-            public void testNotApplicableForLocalVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/notApplicableForLocalVar.kt");
+            @TestMetadata("notApplicableForLocalUnstableVar.kt")
+            public void testNotApplicableForLocalUnstableVar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/notApplicableForLocalUnstableVar.kt");
                 doTest(fileName);
             }
 

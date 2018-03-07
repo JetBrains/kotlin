@@ -57,7 +57,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
         val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
-        if (!ifThenToSelectData.receiverExpression.isStable(ifThenToSelectData.context)) return false
+        if (!ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
 
         val type = element.getType(ifThenToSelectData.context) ?: return false
         if (KotlinBuiltIns.isUnit(type)) return false
