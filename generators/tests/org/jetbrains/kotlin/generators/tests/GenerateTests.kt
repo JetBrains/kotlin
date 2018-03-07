@@ -214,7 +214,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractGotoSuperTest> {
-            model("navigation/gotoSuper", extension = "test")
+            model("navigation/gotoSuper", extension = "test", recursive = false)
         }
 
         testClass<AbstractGotoTypeDeclarationTest> {

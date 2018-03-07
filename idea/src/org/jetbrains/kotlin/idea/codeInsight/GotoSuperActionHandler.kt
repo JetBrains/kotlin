@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
+import org.jetbrains.kotlin.idea.highlighter.markers.expectedDeclarationIfAny
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class GotoSuperActionHandler : CodeInsightActionHandler {
-    override fun invoke(project: Project, editor: Editor, file: PsiFile) {
-        FeatureUsageTracker.getInstance().triggerFeatureUsed(GotoSuperAction.FEATURE_ID)
-
-        val element = file.findElementAt(editor.caretModel.offset) ?: return
+    internal fun allSuperDeclarationsAndDescriptor(editor: Editor, file: PsiFile): Pair<List<PsiElement>, DeclarationDescriptor?> {
+        val element = file.findElementAt(editor.caretModel.offset) ?: return emptyList<PsiElement>() to null
         val declaration =
             PsiTreeUtil.getParentOfType<KtDeclaration>(
                 element,
@@ -37,21 +37,28 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
                 KtClass::class.java,
                 KtProperty::class.java,
                 KtObjectDeclaration::class.java
-            ) ?: return
+            ) ?: return emptyList<PsiElement>() to null
+
+        val expectDeclaration = if (declaration.hasActualModifier()) declaration.expectedDeclarationIfAny() else null
 
         val descriptor = declaration.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL)
+        val superDeclarations = findSuperDeclarations(file.project, descriptor)
+        return ((superDeclarations ?: emptyList()) + listOfNotNull(expectDeclaration)) to descriptor
+    }
 
-        val superDeclarations = findSuperDeclarations(project, descriptor)
+    override fun invoke(project: Project, editor: Editor, file: PsiFile) {
+        FeatureUsageTracker.getInstance().triggerFeatureUsed(GotoSuperAction.FEATURE_ID)
 
-        if (superDeclarations == null || superDeclarations.isEmpty()) return
-        if (superDeclarations.size == 1) {
-            val navigatable = EditSourceUtil.getDescriptor(superDeclarations[0])
+        val (allDeclarations, descriptor) = allSuperDeclarationsAndDescriptor(editor, file)
+        if (allDeclarations.isEmpty()) return
+        if (allDeclarations.size == 1) {
+            val navigatable = EditSourceUtil.getDescriptor(allDeclarations[0])
             if (navigatable != null && navigatable.canNavigate()) {
                 navigatable.navigate(true)
             }
         } else {
-            val message = getTitle(descriptor)
-            val superDeclarationsArray = PsiUtilCore.toPsiElementArray(superDeclarations)
+            val message = getTitle(descriptor!!)
+            val superDeclarationsArray = PsiUtilCore.toPsiElementArray(allDeclarations)
             val popup = if (descriptor is ClassDescriptor)
                 NavigationUtil.getPsiElementPopup(superDeclarationsArray, message)
             else
@@ -64,7 +71,7 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
     }
 
     private fun getTitle(descriptor: DeclarationDescriptor): String? =
-        when(descriptor) {
+        when (descriptor) {
             is ClassDescriptor -> KotlinBundle.message("goto.super.class.chooser.title")
             is PropertyDescriptor -> KotlinBundle.message("goto.super.property.chooser.title")
             is SimpleFunctionDescriptor -> KotlinBundle.message("goto.super.function.chooser.title")
