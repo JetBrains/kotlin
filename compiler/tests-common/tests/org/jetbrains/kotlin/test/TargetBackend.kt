@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.test;
 
-public enum TargetBackend {
+enum class TargetBackend {
     ANY,
     JVM,
     JS
