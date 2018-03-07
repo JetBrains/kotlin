@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import kotlin.io.FilesKt;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -232,6 +233,8 @@ public final class InTextDirectivesUtils {
     }
 
     public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
+        if (!isAllowedByWhitelist(targetBackend, file)) return true;
+
         return isIgnoredTargetByPrefix(targetBackend, file, "// IGNORE_BACKEND: ");
     }
 
@@ -242,5 +245,18 @@ public final class InTextDirectivesUtils {
     // Whether the target test is supposed to pass successfully on targetBackend
     public static boolean isPassingTarget(TargetBackend targetBackend, File file) {
         return isCompatibleTarget(targetBackend, file) && !isIgnoredTarget(targetBackend, file) && !isIgnoredTargetWithoutCheck(targetBackend, file);
+    }
+
+    private static boolean isAllowedByWhitelist(@NotNull TargetBackend targetBackend, @NotNull File file) {
+        List<File> whitelist = targetBackend.getWhitelist();
+        if (whitelist == null) return true;
+
+        for (File entry : whitelist) {
+            if (FilesKt.startsWith(file, entry)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

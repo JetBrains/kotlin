@@ -94,7 +94,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
             p.println("return;");
             p.popIndent();
             p.println("}");
-            p.println("throw new AssertionError(\"Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.\");");
+            p.println("throw new AssertionError(\"Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.\");");
         }
     }
 
