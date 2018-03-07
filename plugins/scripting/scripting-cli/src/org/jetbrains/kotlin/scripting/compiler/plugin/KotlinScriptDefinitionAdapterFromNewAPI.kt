@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.script.experimental.api.ScriptCompileConfigurationParams
 import kotlin.script.experimental.api.ScriptDefinition
 import kotlin.script.experimental.api.resultOrNull
@@ -46,6 +47,13 @@ class KotlinScriptDefinitionAdapterFromNewAPI(val scriptDefinition: ScriptDefini
             scriptDefinition.configurator.baseConfiguration(null)
         }.resultOrNull()?.getOrNull(ScriptCompileConfigurationParams.updateConfigurationOnAnnotations)?.toList()
         ?: emptyList()
+    }
+
+    override val implicitReceivers: List<KType> by lazy {
+        runBlocking {
+            scriptDefinition.configurator.baseConfiguration(null)
+        }.resultOrNull()?.getOrNull(ScriptCompileConfigurationParams.scriptSignature)?.providedDeclarations?.implicitReceivers
+                ?: emptyList()
     }
 }
 
