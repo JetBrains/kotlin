@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
@@ -120,72 +109,63 @@ class ConstantExpressionEvaluator(
 
     private fun checkCompileTimeConstant(
         argumentExpression: KtExpression,
-        expectedType: KotlinType,
+        expressionType: KotlinType,
         trace: BindingTrace
     ) {
-        val expressionType = trace.getType(argumentExpression)
-
-        if (expressionType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
-            // TYPE_MISMATCH should be reported otherwise
-            return
-        }
-
-        // array(1, <!>null<!>, 3) - error should be reported on inner expression
-        if (argumentExpression is KtCallExpression) {
-            getArgumentExpressionsForArrayCall(argumentExpression, trace)?.let { checkArgumentsAreCompileTimeConstants(it, trace) }
-        }
-        if (argumentExpression is KtCollectionLiteralExpression) {
-            getArgumentExpressionsForCollectionLiteralCall(argumentExpression, trace)?.let {
-                checkArgumentsAreCompileTimeConstants(
-                    it,
-                    trace
-                )
-            }
-        }
-
         val constant = ConstantExpressionEvaluator.getConstant(argumentExpression, trace.bindingContext)
         if (constant != null && constant.canBeUsedInAnnotations) {
-            if (constant.usesNonConstValAsConstant) {
-                trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(argumentExpression))
-            }
-
-            if (argumentExpression is KtClassLiteralExpression) {
-                val lhsExpression = argumentExpression.receiverExpression
-                if (lhsExpression != null) {
-                    val doubleColonLhs = trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, lhsExpression)
-                    if (doubleColonLhs is DoubleColonLHS.Expression && !doubleColonLhs.isObjectQualifier) {
-                        trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
-                    }
-                }
-            }
-
+            checkInnerPartsOfCompileTimeConstant(constant, trace, argumentExpression)
             return
         }
 
         val descriptor = expressionType.constructor.declarationDescriptor
-        if (descriptor != null && DescriptorUtils.isEnumClass(descriptor)) {
-            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST.on(argumentExpression))
-        } else if (descriptor is ClassDescriptor && KotlinBuiltIns.isKClass(descriptor)) {
-            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
-        } else {
-            trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_CONST.on(argumentExpression))
+        val diagnosticFactory = when {
+            DescriptorUtils.isEnumClass(descriptor) -> Errors.ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST
+            descriptor is ClassDescriptor && KotlinBuiltIns.isKClass(descriptor) -> Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL
+            else -> Errors.ANNOTATION_PARAMETER_MUST_BE_CONST
         }
+
+        trace.report(diagnosticFactory.on(argumentExpression))
     }
 
-    private fun checkArgumentsAreCompileTimeConstants(
-        argumentsWithComponentType: Pair<List<KtExpression>, KotlinType?>,
-        trace: BindingTrace
+    private fun checkInnerPartsOfCompileTimeConstant(
+        constant: CompileTimeConstant<*>,
+        trace: BindingTrace,
+        argumentExpression: KtExpression
     ) {
-        val (arguments, componentType) = argumentsWithComponentType
-        for (expression in arguments) {
-            checkCompileTimeConstant(expression, componentType!!, trace)
+        // array(1, <!>null<!>, 3) - error should be reported on inner expression
+        val callArguments = when (argumentExpression) {
+            is KtCallExpression -> getArgumentExpressionsForArrayCall(argumentExpression, trace)
+            is KtCollectionLiteralExpression -> getArgumentExpressionsForCollectionLiteralCall(argumentExpression, trace)
+            else -> null
+        }
+
+        if (callArguments != null) {
+            for (argument in callArguments) {
+                val type = trace.getType(argument) ?: continue
+                checkCompileTimeConstant(argument, type, trace)
+            }
+        }
+
+        if (constant.usesNonConstValAsConstant) {
+            trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(argumentExpression))
+        }
+
+        if (argumentExpression is KtClassLiteralExpression) {
+            val lhsExpression = argumentExpression.receiverExpression
+            if (lhsExpression != null) {
+                val doubleColonLhs = trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, lhsExpression)
+                if (doubleColonLhs is DoubleColonLHS.Expression && !doubleColonLhs.isObjectQualifier) {
+                    trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
+                }
+            }
         }
     }
 
     private fun getArgumentExpressionsForArrayCall(
         expression: KtCallExpression,
         trace: BindingTrace
-    ): Pair<List<KtExpression>, KotlinType?>? {
+    ): List<KtExpression>? {
         val resolvedCall = expression.getResolvedCall(trace.bindingContext) ?: return null
         return getArgumentExpressionsForArrayLikeCall(resolvedCall)
     }
@@ -193,18 +173,15 @@ class ConstantExpressionEvaluator(
     private fun getArgumentExpressionsForCollectionLiteralCall(
         expression: KtCollectionLiteralExpression,
         trace: BindingTrace
-    ): Pair<List<KtExpression>, KotlinType?>? {
+    ): List<KtExpression>? {
         val resolvedCall = trace[COLLECTION_LITERAL_CALL, expression] ?: return null
         return getArgumentExpressionsForArrayLikeCall(resolvedCall)
     }
 
-    private fun getArgumentExpressionsForArrayLikeCall(resolvedCall: ResolvedCall<*>): Pair<List<KtExpression>, KotlinType>? {
+    private fun getArgumentExpressionsForArrayLikeCall(resolvedCall: ResolvedCall<*>): List<KtExpression>? {
         if (!CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)) {
             return null
         }
-
-        val returnType = resolvedCall.resultingDescriptor.returnType ?: return null
-        val componentType = module.builtIns.getArrayElementType(returnType)
 
         val result = arrayListOf<KtExpression>()
         for ((_, resolvedValueArgument) in resolvedCall.valueArguments) {
@@ -216,7 +193,7 @@ class ConstantExpressionEvaluator(
             }
         }
 
-        return Pair<List<KtExpression>, KotlinType>(result, componentType)
+        return result
     }
 
     private fun hasSpread(argument: ResolvedValueArgument): Boolean {
@@ -240,7 +217,15 @@ class ConstantExpressionEvaluator(
             if (constant != null) {
                 constants.add(constant)
             }
-            checkCompileTimeConstant(argumentExpression, expectedType, trace)
+
+            val expressionType = trace.getType(argumentExpression) ?: continue
+
+            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
+                // TYPE_MISMATCH should be reported otherwise
+                continue
+            }
+
+            checkCompileTimeConstant(argumentExpression, expressionType, trace)
         }
         return constants
     }
