@@ -6612,7 +6612,7 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("passMemberOrExtFromNative.kt")
@@ -6630,7 +6630,7 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("passTopLevelFunctionFromNative.kt")

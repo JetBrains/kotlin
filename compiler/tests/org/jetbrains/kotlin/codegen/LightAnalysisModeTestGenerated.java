@@ -38,7 +38,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         public void testAllFilesPresentInAnnotations() throws Exception {
@@ -6454,7 +6454,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             public void testAllFilesPresentInMultiModule() throws Exception {
@@ -7187,7 +7187,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("implementedByFake2.kt")
@@ -7199,7 +7199,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("implementedByFake3.kt")
@@ -7211,7 +7211,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         public void testAllFilesPresentInDefaultArguments() throws Exception {
@@ -7571,7 +7571,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
@@ -8036,7 +8036,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         public void testAllFilesPresentInDelegation() throws Exception {
@@ -12137,7 +12137,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("closureWithSelfInstantiation.kt")
@@ -12149,7 +12149,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("subclassingExtensionReceiverClass.kt")
@@ -12161,7 +12161,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         public void testAllFilesPresentInLocalClasses() throws Exception {
@@ -14642,7 +14642,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("accessToPrivateProperty.kt")

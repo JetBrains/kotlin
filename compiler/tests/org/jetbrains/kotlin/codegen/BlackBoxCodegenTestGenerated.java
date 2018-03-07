@@ -168,7 +168,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
@@ -6470,7 +6470,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inlineMultiModuleWithController.kt")
@@ -7191,7 +7191,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("implementedByFake2.kt")
@@ -7203,7 +7203,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("implementedByFake3.kt")
@@ -7215,7 +7215,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("inheritedFromInterfaceViaAbstractSuperclass.kt")
@@ -7665,7 +7665,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("genericSetValueViaSyntheticAccessor.kt")
@@ -8064,7 +8064,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -12153,7 +12153,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("closureOfLambdaInLocalClass.kt")
@@ -12171,7 +12171,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("inExtensionFunction.kt")
@@ -12333,7 +12333,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("withclosure.kt")
@@ -14658,7 +14658,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("classArtificialFieldInsideNested.kt")

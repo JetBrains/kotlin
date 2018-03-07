@@ -42,7 +42,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("annotatedObjectLiteral.kt")
@@ -54,7 +54,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("annotationWithKotlinProperty.kt")
@@ -66,7 +66,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("annotationWithKotlinPropertyFromInterfaceCompanion.kt")
@@ -78,7 +78,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("annotationsOnDefault.kt")
@@ -90,7 +90,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("annotationsOnTypeAliases.kt")
@@ -102,7 +102,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("defaultParameterValues.kt")
@@ -114,7 +114,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("delegatedPropertySetter.kt")
@@ -126,7 +126,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("fileClassWithFileAnnotation.kt")
@@ -138,7 +138,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("jvmAnnotationFlags.kt")
@@ -150,7 +150,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kotlinPropertyFromClassObjectAsParameter.kt")
@@ -162,7 +162,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kotlinTopLevelPropertyAsParameter.kt")
@@ -174,7 +174,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt10136.kt")
@@ -186,7 +186,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nestedClassPropertyAsParameter.kt")
@@ -198,7 +198,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nestedClassesInAnnotations.kt")
@@ -216,7 +216,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("parameterWithPrimitiveType.kt")
@@ -228,7 +228,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("propertyWithPropertyInInitializerAsParameter.kt")
@@ -240,7 +240,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("resolveWithLowPriorityAnnotation.kt")
@@ -258,7 +258,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("wrongAnnotationArgumentInCtor.kt")
@@ -270,7 +270,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
@@ -290,7 +290,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambda.kt")
@@ -302,7 +302,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("samFunExpression.kt")
@@ -314,7 +314,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("samLambda.kt")
@@ -326,7 +326,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
     }
@@ -465,7 +465,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("cloneArray.kt")
@@ -477,7 +477,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("clonePrimitiveArrays.kt")
@@ -489,7 +489,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("collectionAssignGetMultiIndex.kt")
@@ -675,7 +675,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt238.kt")
@@ -729,7 +729,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt594.kt")
@@ -747,7 +747,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt7009.kt")
@@ -771,7 +771,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt779.kt")
@@ -1011,7 +1011,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("compareWithBoxedLong.kt")
@@ -1023,7 +1023,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("divisionByZero.kt")
@@ -1035,7 +1035,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("intrinsic.kt")
@@ -1140,7 +1140,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("explicitEqualsOnDouble.kt")
@@ -1218,7 +1218,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt6842.kt")
@@ -1661,7 +1661,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         public void testAllFilesPresentInBuiltinStubMethods() throws Exception {
@@ -1677,7 +1677,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("customReadOnlyIterator.kt")
@@ -1695,7 +1695,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("inheritedImplementations.kt")
@@ -1707,7 +1707,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("Iterator.kt")
@@ -1719,7 +1719,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("IteratorWithRemove.kt")
@@ -1731,7 +1731,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("List.kt")
@@ -1743,7 +1743,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("ListIterator.kt")
@@ -1755,7 +1755,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("ListWithAllImplementations.kt")
@@ -1767,7 +1767,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("ListWithAllInheritedImplementations.kt")
@@ -1779,7 +1779,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("Map.kt")
@@ -1791,7 +1791,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("MapEntry.kt")
@@ -1803,7 +1803,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("MapEntryWithSetValue.kt")
@@ -1815,7 +1815,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("MapWithAllImplementations.kt")
@@ -1827,7 +1827,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nonTrivialSubstitution.kt")
@@ -1839,7 +1839,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nonTrivialUpperBound.kt")
@@ -1851,7 +1851,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("substitutedIterable.kt")
@@ -1863,7 +1863,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("SubstitutedList.kt")
@@ -1875,7 +1875,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("substitutedListWithExtraSuperInterface.kt")
@@ -1887,7 +1887,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections")
@@ -1967,7 +1967,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericValOnLHS.kt")
@@ -2053,7 +2053,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("propertyAccessors.kt")
@@ -2065,7 +2065,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("receiverInEquals.kt")
@@ -2077,7 +2077,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("reflectionReference.kt")
@@ -2089,7 +2089,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
 
@@ -2246,7 +2246,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericCallableReferencesWithNullableTypes.kt")
@@ -2258,7 +2258,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericCallableReferencesWithOverload.kt")
@@ -2270,7 +2270,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericMember.kt")
@@ -2294,7 +2294,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("innerClassConstructorWithTwoReceivers.kt")
@@ -2336,7 +2336,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("nestedConstructorFromClass.kt")
@@ -2378,7 +2378,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateClassMember.kt")
@@ -2500,7 +2500,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("extension.kt")
@@ -2684,7 +2684,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("listOfStringsMapLength.kt")
@@ -2777,7 +2777,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("boundWithSerializableReceiver.kt")
@@ -2789,7 +2789,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("noReflect.kt")
@@ -2801,7 +2801,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reflectedIsNotSerialized.kt")
@@ -2813,7 +2813,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("withReflect.kt")
@@ -2825,7 +2825,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
     }
@@ -2847,7 +2847,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("asForConstants.kt")
@@ -2859,7 +2859,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("asSafe.kt")
@@ -2871,7 +2871,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("asSafeFail.kt")
@@ -2889,7 +2889,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("asUnit.kt")
@@ -2907,7 +2907,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("castGenericNull.kt")
@@ -2955,7 +2955,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("isNullablePrimitive.kt")
@@ -2985,7 +2985,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("unitAsAny.kt")
@@ -3003,7 +3003,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("unitAsSafeAny.kt")
@@ -3035,7 +3035,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("asFunKSmall.kt")
@@ -3047,7 +3047,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("isFunKBig.kt")
@@ -3059,7 +3059,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("isFunKSmall.kt")
@@ -3071,7 +3071,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaTypeIsFunK.kt")
@@ -3083,7 +3083,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reifiedAsFunKBig.kt")
@@ -3095,7 +3095,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reifiedAsFunKSmall.kt")
@@ -3107,7 +3107,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reifiedIsFunKBig.kt")
@@ -3119,7 +3119,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reifiedIsFunKSmall.kt")
@@ -3131,7 +3131,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reifiedSafeAsFunKBig.kt")
@@ -3143,7 +3143,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reifiedSafeAsFunKSmall.kt")
@@ -3155,7 +3155,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("safeAsFunKBig.kt")
@@ -3167,7 +3167,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("safeAsFunKSmall.kt")
@@ -3179,7 +3179,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -3206,7 +3206,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("labeledExpressionCast.kt")
@@ -3269,7 +3269,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reifiedAsWithMutable.kt")
@@ -3305,7 +3305,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
     }
@@ -3348,7 +3348,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
@@ -3368,7 +3368,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("primitives.kt")
@@ -3386,7 +3386,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simple.kt")
@@ -3419,7 +3419,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaObjectType.kt")
@@ -3431,7 +3431,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaObjectTypeReified.kt")
@@ -3443,7 +3443,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaPrimitiveType.kt")
@@ -3455,7 +3455,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaPrimitiveTypeReified.kt")
@@ -3467,7 +3467,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaReified.kt")
@@ -3479,7 +3479,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt11943.kt")
@@ -3491,7 +3491,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("objectSuperConstructorCall.kt")
@@ -3503,7 +3503,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
     }
@@ -3573,7 +3573,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("classObjectWithPrivateGenericMember.kt")
@@ -3651,7 +3651,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("delegationMethodsWithArgs.kt")
@@ -3741,7 +3741,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt1134.kt")
@@ -3753,7 +3753,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt1157.kt")
@@ -3789,7 +3789,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt1538.kt")
@@ -3867,7 +3867,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt2384.kt")
@@ -4083,7 +4083,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt723.kt")
@@ -4203,7 +4203,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("rightHandOverride.kt")
@@ -4323,7 +4323,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("closureOnTopLevel2.kt")
@@ -4335,7 +4335,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("closureWithParameter.kt")
@@ -4503,7 +4503,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("recursiveClosure.kt")
@@ -4521,7 +4521,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("simplestClosure.kt")
@@ -4926,7 +4926,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("collectionLiteralsWithConstants.kt")
@@ -4938,7 +4938,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("collectionLiteralsWithVarargs.kt")
@@ -4950,7 +4950,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("defaultAnnotationParameterValues.kt")
@@ -4962,7 +4962,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -4989,7 +4989,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("irrelevantImplCharSequenceKotlin.kt")
@@ -5001,7 +5001,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("irrelevantImplMutableListKotlin.kt")
@@ -5013,7 +5013,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("noStubsInJavaSuperClass.kt")
@@ -5025,7 +5025,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("toArrayInJavaClass.kt")
@@ -5037,7 +5037,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -5097,7 +5097,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("long.kt")
@@ -5283,7 +5283,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("forUserType.kt")
@@ -5295,7 +5295,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("inRangeConditionsInWhen.kt")
@@ -5397,7 +5397,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt2416.kt")
@@ -5463,7 +5463,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt416.kt")
@@ -5493,7 +5493,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt772.kt")
@@ -5517,7 +5517,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt8148_break.kt")
@@ -5529,7 +5529,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt8148_continue.kt")
@@ -5541,7 +5541,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt870.kt")
@@ -5565,7 +5565,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt910.kt")
@@ -5738,7 +5738,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("forInArrayWithArrayPropertyUpdatedInLoopBody.kt")
@@ -5756,7 +5756,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("forInArrayWithArrayVarUpdatedInLoopBody13.kt")
@@ -5813,7 +5813,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("forInArrrayWithIndexNoElementVar.kt")
@@ -5918,7 +5918,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("forInCharSequenceWithIndex.kt")
@@ -5999,7 +5999,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("forInListWithIndexWithExplicitlyTypedIndexVariable.kt")
@@ -6050,7 +6050,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("forInSequenceWithIndexWithExplicitlyTypedIndexVariable.kt")
@@ -6134,7 +6134,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("expectException.kt")
@@ -6384,7 +6384,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("defaultParametersInSuspend.kt")
@@ -7401,7 +7401,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("floatParam.kt")
@@ -7413,7 +7413,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("genericParam.kt")
@@ -7431,7 +7431,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("mixedParams.kt")
@@ -7568,7 +7568,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericarray.kt")
@@ -7619,7 +7619,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("array.kt")
@@ -7631,7 +7631,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("boolean.kt")
@@ -7718,7 +7718,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("arrayParams.kt")
@@ -7730,7 +7730,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("changingVarParam.kt")
@@ -7815,7 +7815,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("implementedByFake3.kt")
@@ -7827,7 +7827,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("inheritedFromInterfaceViaAbstractSuperclass.kt")
@@ -7863,7 +7863,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("compiler/testData/codegen/box/defaultArguments/constructor")
@@ -7895,7 +7895,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("defArgs1.kt")
@@ -7967,7 +7967,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -8289,7 +8289,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("genericDelegateUncheckedCast2.kt")
@@ -8301,7 +8301,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("genericSetValueViaSyntheticAccessor.kt")
@@ -8331,7 +8331,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("inClassVal.kt")
@@ -8385,7 +8385,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("privateVar.kt")
@@ -8403,7 +8403,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("protectedVarWithPrivateSet.kt")
@@ -8433,7 +8433,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("topLevelVal.kt")
@@ -8469,7 +8469,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("valInInnerClass.kt")
@@ -8642,7 +8642,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt15437.kt")
@@ -8712,7 +8712,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("delegationWithPrivateConstructor.kt")
@@ -9222,7 +9222,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("companionObjectInEnum.kt")
@@ -9456,7 +9456,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("manyDefaultParameters.kt")
@@ -9474,7 +9474,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("noClassForSimpleEnum.kt")
@@ -9486,7 +9486,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("objectInEnum.kt")
@@ -9566,7 +9566,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("secondaryConstructorWithDefaultArguments.kt")
@@ -9600,7 +9600,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("divide.kt")
@@ -9612,7 +9612,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("intrinsics.kt")
@@ -9624,7 +9624,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt9443.kt")
@@ -9642,7 +9642,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("maxValueByte.kt")
@@ -9654,7 +9654,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("maxValueInt.kt")
@@ -9666,7 +9666,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("minus.kt")
@@ -9678,7 +9678,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("mod.kt")
@@ -9690,7 +9690,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("multiply.kt")
@@ -9702,7 +9702,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("parenthesized.kt")
@@ -9714,7 +9714,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("plus.kt")
@@ -9726,7 +9726,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("simpleCallBinary.kt")
@@ -9738,7 +9738,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("unaryMinus.kt")
@@ -9750,7 +9750,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("unaryPlus.kt")
@@ -9762,7 +9762,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -9894,7 +9894,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt865.kt")
@@ -9942,7 +9942,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -9975,7 +9975,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("genericVarForPrimitiveType.kt")
@@ -10068,7 +10068,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("jvmStaticExternalPrivate.kt")
@@ -10080,7 +10080,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("withDefaultArg.kt")
@@ -10092,7 +10092,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -10256,7 +10256,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleNative.kt")
@@ -10268,7 +10268,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("topLevel.kt")
@@ -10280,7 +10280,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -10301,7 +10301,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt1770.kt")
@@ -10313,7 +10313,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
     }
@@ -10347,7 +10347,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("defaultargs.kt")
@@ -10419,7 +10419,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("functionNtoStringGeneric.kt")
@@ -10431,7 +10431,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("functionNtoStringNoReflect.kt")
@@ -10443,7 +10443,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("infixRecursiveCall.kt")
@@ -10467,7 +10467,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt1413.kt")
@@ -10497,7 +10497,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt2270.kt")
@@ -10706,7 +10706,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt3189.kt")
@@ -10724,7 +10724,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt3297.kt")
@@ -10766,7 +10766,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -10847,7 +10847,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt4783.kt")
@@ -10941,7 +10941,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("manyNumbers.kt")
@@ -10953,7 +10953,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("rewriteWithDifferent.kt")
@@ -10965,7 +10965,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("rewriteWithEqual.kt")
@@ -10977,7 +10977,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("simplePlusGet.kt")
@@ -10989,7 +10989,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("simplePlusMinus.kt")
@@ -11001,7 +11001,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -11973,7 +11973,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("ea35953.kt")
@@ -12033,7 +12033,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt8666.kt")
@@ -12075,7 +12075,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("throwableCallableReference.kt")
@@ -12087,7 +12087,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("throwableParamOrder.kt")
@@ -12105,7 +12105,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -12126,7 +12126,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
@@ -12146,7 +12146,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("covariantOverrideWithDeclarationSiteProjection.kt")
@@ -12158,7 +12158,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("invariantArgumentsNoWildcard.kt")
@@ -12170,7 +12170,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -12191,7 +12191,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("mapPut.kt")
@@ -12227,7 +12227,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("cloneCallsSuper.kt")
@@ -12239,7 +12239,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("cloneCallsSuperAndModifies.kt")
@@ -12251,7 +12251,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("cloneableClassWithoutClone.kt")
@@ -12263,7 +12263,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
     }
@@ -12318,7 +12318,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("capturePackageFields.kt")
@@ -12330,7 +12330,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("checkNoAccessors.kt")
@@ -12342,7 +12342,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("classFieldReference.kt")
@@ -12354,7 +12354,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("classFieldReflection.kt")
@@ -12366,7 +12366,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("constructorProperty.kt")
@@ -12378,7 +12378,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("publicField.kt")
@@ -12390,7 +12390,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("simpleMemberProperty.kt")
@@ -12402,7 +12402,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("superCall.kt")
@@ -12414,7 +12414,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("superCall2.kt")
@@ -12426,7 +12426,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("topLevelFieldReference.kt")
@@ -12438,7 +12438,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("topLevelFieldReflection.kt")
@@ -12450,7 +12450,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("visibility.kt")
@@ -12462,7 +12462,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("writeFieldReference.kt")
@@ -12474,7 +12474,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -12495,7 +12495,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("clashingErasure.kt")
@@ -12507,7 +12507,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("classMembers.kt")
@@ -12519,7 +12519,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("fakeJvmNameInJava.kt")
@@ -12531,7 +12531,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("functionName.kt")
@@ -12543,7 +12543,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("multifileClass.kt")
@@ -12555,7 +12555,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("multifileClassWithLocalClass.kt")
@@ -12567,7 +12567,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("multifileClassWithLocalGeneric.kt")
@@ -12579,7 +12579,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("propertyAccessorsUseSite.kt")
@@ -12591,7 +12591,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("propertyName.kt")
@@ -12603,7 +12603,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("renamedFileClass.kt")
@@ -12615,7 +12615,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("compiler/testData/codegen/box/jvmName/fileFacades")
@@ -12635,7 +12635,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaAnnotationOnFileFacade.kt")
@@ -12647,7 +12647,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simple.kt")
@@ -12659,7 +12659,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
     }
@@ -12681,7 +12681,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("defaultsNotAtEnd.kt")
@@ -12693,7 +12693,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("doubleParameters.kt")
@@ -12705,7 +12705,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("extensionMethod.kt")
@@ -12717,7 +12717,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("generics.kt")
@@ -12729,7 +12729,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("innerClass.kt")
@@ -12741,7 +12741,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("multipleDefaultParameters.kt")
@@ -12753,7 +12753,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nonDefaultParameter.kt")
@@ -12765,7 +12765,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("primaryConstructor.kt")
@@ -12777,7 +12777,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("privateClass.kt")
@@ -12789,7 +12789,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("secondaryConstructor.kt")
@@ -12801,7 +12801,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("simple.kt")
@@ -12813,7 +12813,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("simpleJavaCall.kt")
@@ -12825,7 +12825,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("varargs.kt")
@@ -12837,7 +12837,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -12867,7 +12867,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("closure.kt")
@@ -12879,7 +12879,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("companionObject.kt")
@@ -12891,7 +12891,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("convention.kt")
@@ -12903,7 +12903,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("default.kt")
@@ -12915,7 +12915,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("enumCompanion.kt")
@@ -12927,7 +12927,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("explicitObject.kt")
@@ -12939,7 +12939,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("funAccess.kt")
@@ -12951,7 +12951,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("importStaticMemberFromObject.kt")
@@ -12963,7 +12963,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("inline.kt")
@@ -12975,7 +12975,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("inlinePropertyAccessors.kt")
@@ -12987,7 +12987,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt9897_static.kt")
@@ -12999,7 +12999,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("object.kt")
@@ -13011,7 +13011,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("postfixInc.kt")
@@ -13023,7 +13023,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("prefixInc.kt")
@@ -13035,7 +13035,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("privateMethod.kt")
@@ -13047,7 +13047,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("privateSetter.kt")
@@ -13059,7 +13059,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("propertyAccess.kt")
@@ -13071,7 +13071,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("propertyAccessorsCompanion.kt")
@@ -13083,7 +13083,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("propertyAccessorsObject.kt")
@@ -13095,7 +13095,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("propertyAsDefault.kt")
@@ -13107,7 +13107,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("simple.kt")
@@ -13119,7 +13119,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("syntheticAccessor.kt")
@@ -13131,7 +13131,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -13473,7 +13473,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("noclosure.kt")
@@ -13542,7 +13542,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("fun.kt")
@@ -13554,7 +13554,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("internal.kt")
@@ -13584,7 +13584,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("publicOverride.kt")
@@ -14193,7 +14193,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("useWithException.kt")
@@ -14205,7 +14205,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -14346,7 +14346,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt11117.kt")
@@ -14376,7 +14376,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt18982.kt")
@@ -14406,7 +14406,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt2675.kt")
@@ -14436,7 +14436,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt3684.kt")
@@ -14460,7 +14460,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt560.kt")
@@ -14472,7 +14472,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt694.kt")
@@ -14916,7 +14916,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("invokespecial.kt")
@@ -14928,7 +14928,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("mainInFiles.kt")
@@ -14940,7 +14940,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nullablePrimitiveNoFieldInitializer.kt")
@@ -15035,7 +15035,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inc.kt")
@@ -15135,7 +15135,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("comparisonWithNullCallsFun.kt")
@@ -15261,7 +15261,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt248.kt")
@@ -15363,7 +15363,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt711.kt")
@@ -15387,7 +15387,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt753.kt")
@@ -15399,7 +15399,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt756.kt")
@@ -15411,7 +15411,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt757.kt")
@@ -15423,7 +15423,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt828.kt")
@@ -15459,7 +15459,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nullAsNullableIntIsNull.kt")
@@ -15483,7 +15483,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("rangeTo.kt")
@@ -15501,7 +15501,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("unboxComparable.kt")
@@ -15741,7 +15741,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("withArguments.kt")
@@ -15794,7 +15794,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         public void testAllFilesPresentInProperties() throws Exception {
@@ -15852,7 +15852,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("commonPropertiesKJK.kt")
@@ -15864,7 +15864,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("companionFieldInsideLambda.kt")
@@ -15882,7 +15882,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("companionObjectPropertiesFromJava.kt")
@@ -15894,7 +15894,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("companionPrivateField.kt")
@@ -15960,7 +15960,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("javaPropertyBoxedSetter.kt")
@@ -15972,7 +15972,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt10715.kt")
@@ -15996,7 +15996,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt1165.kt")
@@ -16026,7 +16026,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt1398.kt")
@@ -16038,7 +16038,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt1417.kt")
@@ -16056,7 +16056,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt1714.kt")
@@ -16068,7 +16068,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt1714_minimal.kt")
@@ -16230,7 +16230,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("protectedJavaProperty.kt")
@@ -16242,7 +16242,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("protectedJavaPropertyInCompanion.kt")
@@ -16254,7 +16254,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("substituteJavaSuperField.kt")
@@ -16266,7 +16266,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("twoAnnotatedExtensionPropertiesWithoutBackingFields.kt")
@@ -16298,7 +16298,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("constValInAnnotationDefault.kt")
@@ -16310,7 +16310,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("interfaceCompanion.kt")
@@ -16322,7 +16322,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -16423,7 +16423,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("sideEffects.kt")
@@ -16542,7 +16542,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("simple.kt")
@@ -16617,7 +16617,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("compiler/testData/codegen/box/ranges/contains")
@@ -16685,7 +16685,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inCustomObjectRange.kt")
@@ -16709,7 +16709,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inFloatingPointRangeWithNaNBound.kt")
@@ -16727,7 +16727,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inIterable.kt")
@@ -16751,7 +16751,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inOptimizableFloatRange.kt")
@@ -16763,7 +16763,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inOptimizableIntRange.kt")
@@ -16775,7 +16775,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inOptimizableLongRange.kt")
@@ -16787,7 +16787,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inPrimitiveProgression.kt")
@@ -16817,7 +16817,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inRangeWithImplicitReceiver.kt")
@@ -16829,7 +16829,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inRangeWithNonmatchingArguments.kt")
@@ -16841,7 +16841,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inRangeWithSmartCast.kt")
@@ -16853,7 +16853,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inUntil.kt")
@@ -17003,7 +17003,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inexactSteppedDownTo.kt")
@@ -17027,7 +17027,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("maxValueMinusTwoToMaxValue.kt")
@@ -17039,7 +17039,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("maxValueToMaxValue.kt")
@@ -17051,7 +17051,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("maxValueToMinValue.kt")
@@ -17063,7 +17063,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("oneElementDownTo.kt")
@@ -17093,7 +17093,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("progressionMaxValueMinusTwoToMaxValue.kt")
@@ -17105,7 +17105,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("progressionMaxValueToMaxValue.kt")
@@ -17117,7 +17117,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("progressionMaxValueToMinValue.kt")
@@ -17129,7 +17129,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("progressionMinValueToMinValue.kt")
@@ -17141,7 +17141,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reversedBackSequence.kt")
@@ -17654,7 +17654,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inexactSteppedDownTo.kt")
@@ -17678,7 +17678,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("maxValueMinusTwoToMaxValue.kt")
@@ -17690,7 +17690,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("maxValueToMaxValue.kt")
@@ -17702,7 +17702,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("maxValueToMinValue.kt")
@@ -17714,7 +17714,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("oneElementDownTo.kt")
@@ -17744,7 +17744,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("progressionMaxValueMinusTwoToMaxValue.kt")
@@ -17756,7 +17756,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("progressionMaxValueToMaxValue.kt")
@@ -17768,7 +17768,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("progressionMaxValueToMinValue.kt")
@@ -17780,7 +17780,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("progressionMinValueToMinValue.kt")
@@ -17792,7 +17792,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("reversedBackSequence.kt")
@@ -17915,7 +17915,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("annotationsOnJavaMembers.kt")
@@ -17927,7 +17927,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("findAnnotation.kt")
@@ -17939,7 +17939,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("openSuspendFun.kt")
@@ -17951,7 +17951,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateAnnotation.kt")
@@ -17963,7 +17963,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyAccessors.kt")
@@ -17975,7 +17975,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyWithoutBackingField.kt")
@@ -17987,7 +17987,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("retentions.kt")
@@ -17999,7 +17999,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleClassAnnotation.kt")
@@ -18011,7 +18011,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleConstructorAnnotation.kt")
@@ -18023,7 +18023,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleFunAnnotation.kt")
@@ -18035,7 +18035,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleParamAnnotation.kt")
@@ -18047,7 +18047,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleValAnnotation.kt")
@@ -18059,7 +18059,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -18080,7 +18080,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("callPrivateJavaMethod.kt")
@@ -18092,7 +18092,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("callStaticJavaMethod.kt")
@@ -18104,7 +18104,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("cannotCallEnumConstructor.kt")
@@ -18116,7 +18116,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("disallowNullValueForNotNullField.kt")
@@ -18128,7 +18128,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("equalsHashCodeToString.kt")
@@ -18140,7 +18140,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("exceptionHappened.kt")
@@ -18152,7 +18152,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("fakeOverride.kt")
@@ -18164,7 +18164,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("fakeOverrideSubstituted.kt")
@@ -18176,7 +18176,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("incorrectNumberOfArguments.kt")
@@ -18188,7 +18188,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("innerClassConstructor.kt")
@@ -18200,7 +18200,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jvmStatic.kt")
@@ -18212,7 +18212,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jvmStaticInObjectIncorrectReceiver.kt")
@@ -18224,7 +18224,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("localClassMember.kt")
@@ -18236,7 +18236,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("memberOfGenericClass.kt")
@@ -18248,7 +18248,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateProperty.kt")
@@ -18260,7 +18260,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyAccessors.kt")
@@ -18272,7 +18272,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyGetterAndGetFunctionDifferentReturnType.kt")
@@ -18284,7 +18284,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("protectedMembers.kt")
@@ -18296,7 +18296,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("returnUnit.kt")
@@ -18308,7 +18308,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleConstructor.kt")
@@ -18320,7 +18320,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleMemberFunction.kt")
@@ -18332,7 +18332,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleTopLevelFunctions.kt")
@@ -18344,7 +18344,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("compiler/testData/codegen/box/reflection/call/bound")
@@ -18364,7 +18364,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("extensionFunction.kt")
@@ -18376,7 +18376,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("extensionPropertyAccessors.kt")
@@ -18388,7 +18388,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("innerClassConstructor.kt")
@@ -18400,7 +18400,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("javaInstanceField.kt")
@@ -18412,7 +18412,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("javaInstanceMethod.kt")
@@ -18424,7 +18424,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("jvmStaticCompanionObjectPropertyAccessors.kt")
@@ -18436,7 +18436,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("jvmStaticObjectFunction.kt")
@@ -18448,7 +18448,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("jvmStaticObjectPropertyAccessors.kt")
@@ -18460,7 +18460,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("memberFunction.kt")
@@ -18472,7 +18472,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("memberPropertyAccessors.kt")
@@ -18484,7 +18484,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("objectFunction.kt")
@@ -18496,7 +18496,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("objectPropertyAccessors.kt")
@@ -18508,7 +18508,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
         }
@@ -18530,7 +18530,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("boundExtensionPropertyAcessor.kt")
@@ -18542,7 +18542,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("boundJvmStaticInObject.kt")
@@ -18554,7 +18554,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("companionObject.kt")
@@ -18566,7 +18566,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("defaultAndNonDefaultIntertwined.kt")
@@ -18578,7 +18578,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("extensionFunction.kt")
@@ -18590,7 +18590,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jvmStaticInCompanionObject.kt")
@@ -18602,7 +18602,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jvmStaticInObject.kt")
@@ -18614,7 +18614,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("manyArgumentsNoneDefaultConstructor.kt")
@@ -18626,7 +18626,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("manyArgumentsNoneDefaultFunction.kt")
@@ -18638,7 +18638,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("manyArgumentsOnlyOneDefault.kt")
@@ -18650,7 +18650,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("manyMaskArguments.kt")
@@ -18662,7 +18662,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("nonDefaultParameterOmitted.kt")
@@ -18674,7 +18674,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("nullValue.kt")
@@ -18686,7 +18686,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("ordinaryMethodIsInvokedWhenNoDefaultValuesAreUsed.kt")
@@ -18698,7 +18698,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("primitiveDefaultValues.kt")
@@ -18710,7 +18710,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateMemberFunction.kt")
@@ -18722,7 +18722,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleConstructor.kt")
@@ -18734,7 +18734,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleMemberFunciton.kt")
@@ -18746,7 +18746,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleTopLevelFunction.kt")
@@ -18758,7 +18758,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -18779,7 +18779,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("arrays.kt")
@@ -18791,7 +18791,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("builtinClassLiterals.kt")
@@ -18803,7 +18803,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericArrays.kt")
@@ -18815,7 +18815,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericClass.kt")
@@ -18833,7 +18833,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleClassLiteral.kt")
@@ -18860,7 +18860,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("companionObject.kt")
@@ -18872,7 +18872,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("createInstance.kt")
@@ -18884,7 +18884,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("declaredMembers.kt")
@@ -18896,7 +18896,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaVoid.kt")
@@ -18908,7 +18908,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jvmName.kt")
@@ -18920,7 +18920,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("localClassSimpleName.kt")
@@ -18938,7 +18938,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("nestedClassesJava.kt")
@@ -18950,7 +18950,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("objectInstance.kt")
@@ -18962,7 +18962,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("primitiveKClassEquality.kt")
@@ -18974,7 +18974,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("qualifiedName.kt")
@@ -18986,7 +18986,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("starProjectedType.kt")
@@ -18998,7 +18998,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -19019,7 +19019,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("classesWithoutConstructors.kt")
@@ -19031,7 +19031,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("constructorName.kt")
@@ -19043,7 +19043,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("primaryConstructor.kt")
@@ -19055,7 +19055,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleGetConstructors.kt")
@@ -19067,7 +19067,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -19088,7 +19088,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("arrayOfKClasses.kt")
@@ -19100,7 +19100,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("callByJava.kt")
@@ -19112,7 +19112,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("callByKotlin.kt")
@@ -19124,7 +19124,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("callJava.kt")
@@ -19136,7 +19136,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("callKotlin.kt")
@@ -19148,7 +19148,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("createJdkAnnotationInstance.kt")
@@ -19160,7 +19160,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("enumKClassAnnotation.kt")
@@ -19172,7 +19172,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("equalsHashCodeToString.kt")
@@ -19184,7 +19184,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("floatingPointParameters.kt")
@@ -19196,7 +19196,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("parameterNamedEquals.kt")
@@ -19208,7 +19208,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("primitivesAndArrays.kt")
@@ -19220,7 +19220,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -19241,7 +19241,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("classInLambda.kt")
@@ -19253,7 +19253,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functionExpressionInProperty.kt")
@@ -19265,7 +19265,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt11969.kt")
@@ -19277,7 +19277,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt6368.kt")
@@ -19289,7 +19289,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt6691_lambdaInSamConstructor.kt")
@@ -19301,7 +19301,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInClassObject.kt")
@@ -19313,7 +19313,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInConstructor.kt")
@@ -19325,7 +19325,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInFunction.kt")
@@ -19337,7 +19337,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInLambda.kt")
@@ -19349,7 +19349,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInLocalClassConstructor.kt")
@@ -19361,7 +19361,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInLocalClassSuperCall.kt")
@@ -19373,7 +19373,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInLocalFunction.kt")
@@ -19385,7 +19385,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInMemberFunction.kt")
@@ -19397,7 +19397,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInMemberFunctionInLocalClass.kt")
@@ -19409,7 +19409,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInMemberFunctionInNestedClass.kt")
@@ -19421,7 +19421,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInObjectDeclaration.kt")
@@ -19433,7 +19433,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInObjectExpression.kt")
@@ -19445,7 +19445,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInObjectLiteralSuperCall.kt")
@@ -19457,7 +19457,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInPackage.kt")
@@ -19469,7 +19469,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInPropertyGetter.kt")
@@ -19481,7 +19481,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("lambdaInPropertySetter.kt")
@@ -19493,7 +19493,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("localClassInTopLevelFunction.kt")
@@ -19505,7 +19505,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("objectInLambda.kt")
@@ -19517,7 +19517,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -19538,7 +19538,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functionFromStdlib.kt")
@@ -19550,7 +19550,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functionReferenceErasedToKFunction.kt")
@@ -19562,7 +19562,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericOverriddenFunction.kt")
@@ -19574,7 +19574,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("instanceOfFunction.kt")
@@ -19586,7 +19586,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaClassGetFunctions.kt")
@@ -19598,7 +19598,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("platformName.kt")
@@ -19610,7 +19610,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateMemberFunction.kt")
@@ -19622,7 +19622,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleGetFunctions.kt")
@@ -19634,7 +19634,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleNames.kt")
@@ -19661,7 +19661,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("defaultImplsGenericSignature.kt")
@@ -19673,7 +19673,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functionLiteralGenericSignature.kt")
@@ -19685,7 +19685,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericBackingFieldSignature.kt")
@@ -19697,7 +19697,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericMethodSignature.kt")
@@ -19709,7 +19709,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt11121.kt")
@@ -19721,7 +19721,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt5112.kt")
@@ -19733,7 +19733,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kt6106.kt")
@@ -19745,7 +19745,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("signatureOfDeepGenericInner.kt")
@@ -19757,7 +19757,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("signatureOfDeepInner.kt")
@@ -19769,7 +19769,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("signatureOfDeepInnerLastGeneric.kt")
@@ -19781,7 +19781,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("signatureOfGenericInnerGenericOuter.kt")
@@ -19793,7 +19793,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("signatureOfGenericInnerSimpleOuter.kt")
@@ -19805,7 +19805,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("signatureOfSimpleInnerSimpleOuter.kt")
@@ -19817,7 +19817,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -19838,7 +19838,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -19859,7 +19859,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("arrayInJava.kt")
@@ -19871,7 +19871,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("basic.kt")
@@ -19883,7 +19883,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("basicInJava.kt")
@@ -19895,7 +19895,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("checkcast.kt")
@@ -19907,7 +19907,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("forceWrapping.kt")
@@ -19919,7 +19919,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("vararg.kt")
@@ -19931,7 +19931,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("varargInJava.kt")
@@ -19943,7 +19943,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("wrappingForCallableReferences.kt")
@@ -19955,7 +19955,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -19976,7 +19976,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -19997,7 +19997,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("extensionProperty.kt")
@@ -20009,7 +20009,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functions.kt")
@@ -20021,7 +20021,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inlineReifiedFun.kt")
@@ -20033,7 +20033,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("mappedClassIsEqualToClassLiteral.kt")
@@ -20045,7 +20045,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("memberProperty.kt")
@@ -20057,7 +20057,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("openSuspendFun.kt")
@@ -20069,7 +20069,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyAccessors.kt")
@@ -20081,7 +20081,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyAccessorsWithJvmName.kt")
@@ -20093,7 +20093,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("syntheticFields.kt")
@@ -20105,7 +20105,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("topLevelFunctionOtherFile.kt")
@@ -20117,7 +20117,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("topLevelProperty.kt")
@@ -20129,7 +20129,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("compiler/testData/codegen/box/reflection/mapping/fakeOverrides")
@@ -20149,7 +20149,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("javaMethod.kt")
@@ -20161,7 +20161,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
 
@@ -20182,7 +20182,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("objectFunction.kt")
@@ -20194,7 +20194,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
 
@@ -20215,7 +20215,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("array.kt")
@@ -20227,7 +20227,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("constructors.kt")
@@ -20239,7 +20239,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("genericArrayElementType.kt")
@@ -20251,7 +20251,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("innerGenericTypeArgument.kt")
@@ -20263,7 +20263,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("memberFunctions.kt")
@@ -20275,7 +20275,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("overrideAnyWithPrimitive.kt")
@@ -20287,7 +20287,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("parameterizedTypeArgument.kt")
@@ -20299,7 +20299,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("parameterizedTypes.kt")
@@ -20311,7 +20311,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("propertyAccessors.kt")
@@ -20323,7 +20323,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("supertypes.kt")
@@ -20335,7 +20335,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("topLevelFunctions.kt")
@@ -20347,7 +20347,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("typeParameters.kt")
@@ -20359,7 +20359,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("unit.kt")
@@ -20371,7 +20371,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("withNullability.kt")
@@ -20383,7 +20383,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
         }
@@ -20405,7 +20405,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("classToString.kt")
@@ -20417,7 +20417,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("extensionPropertyReceiverToString.kt")
@@ -20429,7 +20429,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functionEqualsHashCode.kt")
@@ -20441,7 +20441,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functionFromStdlibMultiFileFacade.kt")
@@ -20453,7 +20453,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functionFromStdlibSingleFileFacade.kt")
@@ -20465,7 +20465,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functionToString.kt")
@@ -20477,7 +20477,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("memberExtensionToString.kt")
@@ -20489,7 +20489,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("parametersEqualsHashCode.kt")
@@ -20501,7 +20501,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("parametersToString.kt")
@@ -20513,7 +20513,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyEqualsHashCode.kt")
@@ -20525,7 +20525,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyToString.kt")
@@ -20537,7 +20537,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("typeEqualsHashCode.kt")
@@ -20549,7 +20549,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("typeParametersEqualsHashCode.kt")
@@ -20561,7 +20561,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("typeParametersToString.kt")
@@ -20573,7 +20573,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("typeToString.kt")
@@ -20585,7 +20585,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("typeToStringInnerGeneric.kt")
@@ -20597,7 +20597,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -20618,7 +20618,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("callableVisibility.kt")
@@ -20630,7 +20630,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("classModality.kt")
@@ -20642,7 +20642,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("classVisibility.kt")
@@ -20654,7 +20654,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("classes.kt")
@@ -20666,7 +20666,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functions.kt")
@@ -20678,7 +20678,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaVisibility.kt")
@@ -20690,7 +20690,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("properties.kt")
@@ -20702,7 +20702,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("typeParameters.kt")
@@ -20714,7 +20714,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -20735,7 +20735,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("callPropertiesInMultifileClass.kt")
@@ -20747,7 +20747,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaFieldForVarAndConstVal.kt")
@@ -20759,7 +20759,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -20780,7 +20780,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaVoid.kt")
@@ -20792,7 +20792,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("primitiveJavaClass.kt")
@@ -20804,7 +20804,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyGetSetName.kt")
@@ -20828,7 +20828,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleClassLiterals.kt")
@@ -20854,7 +20854,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("classReference.kt")
@@ -20866,7 +20866,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("delegatedProperty.kt")
@@ -20878,7 +20878,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
         }
@@ -20900,7 +20900,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("boundObjectMemberReferences.kt")
@@ -20912,7 +20912,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("boundReferences.kt")
@@ -20924,7 +20924,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("findParameterByName.kt")
@@ -20936,7 +20936,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("functionParameterNameAndIndex.kt")
@@ -20948,7 +20948,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("instanceExtensionReceiverAndValueParameters.kt")
@@ -20960,7 +20960,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("isMarkedNullable.kt")
@@ -20972,7 +20972,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("isOptional.kt")
@@ -20984,7 +20984,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaAnnotationConstructor.kt")
@@ -20996,7 +20996,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kinds.kt")
@@ -21008,7 +21008,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertySetter.kt")
@@ -21020,7 +21020,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -21041,7 +21041,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("callPrivatePropertyFromGetProperties.kt")
@@ -21053,7 +21053,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("declaredVsInheritedProperties.kt")
@@ -21065,7 +21065,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("fakeOverridesInSubclass.kt")
@@ -21077,7 +21077,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericClassLiteralPropertyReceiverIsStar.kt")
@@ -21089,7 +21089,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericOverriddenProperty.kt")
@@ -21101,7 +21101,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericProperty.kt")
@@ -21113,7 +21113,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("getExtensionPropertiesMutableVsReadonly.kt")
@@ -21125,7 +21125,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("getPropertiesMutableVsReadonly.kt")
@@ -21137,7 +21137,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("invokeKProperty.kt")
@@ -21149,7 +21149,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaPropertyInheritedInKotlin.kt")
@@ -21161,7 +21161,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("javaStaticField.kt")
@@ -21173,7 +21173,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("kotlinPropertyInheritedInJava.kt")
@@ -21185,7 +21185,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("memberAndMemberExtensionWithSameName.kt")
@@ -21197,7 +21197,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("mutatePrivateJavaInstanceField.kt")
@@ -21209,7 +21209,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("mutatePrivateJavaStaticField.kt")
@@ -21221,7 +21221,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("noConflictOnKotlinGetterAndJavaField.kt")
@@ -21233,7 +21233,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("overrideKotlinPropertyByJavaMethod.kt")
@@ -21245,7 +21245,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateClassVal.kt")
@@ -21257,7 +21257,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateClassVar.kt")
@@ -21269,7 +21269,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateFakeOverrideFromSuperclass.kt")
@@ -21281,7 +21281,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateJvmStaticVarInObject.kt")
@@ -21293,7 +21293,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privatePropertyCallIsAccessibleOnAccessors.kt")
@@ -21305,7 +21305,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("privateToThisAccessors.kt")
@@ -21317,7 +21317,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("propertyOfNestedClassAndArrayType.kt")
@@ -21329,7 +21329,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("protectedClassVar.kt")
@@ -21341,7 +21341,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("publicClassValAccessible.kt")
@@ -21353,7 +21353,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("referenceToJavaFieldOfKotlinSubclass.kt")
@@ -21365,7 +21365,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleGetProperties.kt")
@@ -21377,7 +21377,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("compiler/testData/codegen/box/reflection/properties/accessors")
@@ -21393,7 +21393,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 public void testAllFilesPresentInAccessors() throws Exception {
@@ -21409,7 +21409,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("memberExtensions.kt")
@@ -21421,7 +21421,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("memberPropertyAccessors.kt")
@@ -21433,7 +21433,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("topLevelPropertyAccessors.kt")
@@ -21445,7 +21445,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
 
@@ -21466,7 +21466,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("boundExtensionProperty.kt")
@@ -21478,7 +21478,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("boundMemberProperty.kt")
@@ -21490,7 +21490,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("extensionProperty.kt")
@@ -21502,7 +21502,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("fakeOverride.kt")
@@ -21514,7 +21514,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("getExtensionDelegate.kt")
@@ -21526,7 +21526,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("kPropertyForDelegatedProperty.kt")
@@ -21538,7 +21538,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("memberExtensionProperty.kt")
@@ -21550,7 +21550,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("memberProperty.kt")
@@ -21562,7 +21562,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("nameClashClassAndCompanion.kt")
@@ -21574,7 +21574,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("nameClashExtensionProperties.kt")
@@ -21586,7 +21586,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("noSetAccessibleTrue.kt")
@@ -21598,7 +21598,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("notDelegatedProperty.kt")
@@ -21610,7 +21610,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("overrideDelegatedByDelegated.kt")
@@ -21622,7 +21622,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("topLevelProperty.kt")
@@ -21634,7 +21634,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
 
@@ -21665,7 +21665,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -21686,7 +21686,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("genericSubstitution.kt")
@@ -21698,7 +21698,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("isSubclassOfIsSuperclassOf.kt")
@@ -21710,7 +21710,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("primitives.kt")
@@ -21722,7 +21722,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("simpleSupertypes.kt")
@@ -21734,7 +21734,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -21755,7 +21755,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("typeParametersAndNames.kt")
@@ -21767,7 +21767,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("upperBounds.kt")
@@ -21779,7 +21779,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
 
@@ -21800,7 +21800,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("classifierIsTypeParameter.kt")
@@ -21812,7 +21812,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("classifiersOfBuiltInTypes.kt")
@@ -21824,7 +21824,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("innerGenericArguments.kt")
@@ -21836,7 +21836,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jvmErasureOfClass.kt")
@@ -21848,7 +21848,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jvmErasureOfTypeParameter.kt")
@@ -21860,7 +21860,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("platformTypeNotEqualToKotlinType.kt")
@@ -21872,7 +21872,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("typeArguments.kt")
@@ -21884,7 +21884,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("useSiteVariance.kt")
@@ -21896,7 +21896,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("withNullability.kt")
@@ -21908,7 +21908,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("compiler/testData/codegen/box/reflection/types/createType")
@@ -21928,7 +21928,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("innerGeneric.kt")
@@ -21940,7 +21940,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("simpleCreateType.kt")
@@ -21952,7 +21952,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("typeParameter.kt")
@@ -21964,7 +21964,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("wrongNumberOfArguments.kt")
@@ -21976,7 +21976,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
 
@@ -21997,7 +21997,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("simpleGenericTypes.kt")
@@ -22009,7 +22009,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("simpleSubtypeSupertype.kt")
@@ -22021,7 +22021,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
 
                 @TestMetadata("typeProjection.kt")
@@ -22033,7 +22033,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     catch (Throwable ignore) {
                         return;
                     }
-                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                    throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
                 }
             }
         }
@@ -22056,7 +22056,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("arrayLengthNPE.kt")
@@ -22074,7 +22074,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("commonSupertypeContravariant.kt")
@@ -22128,7 +22128,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("hashCodeNPE.kt")
@@ -22152,7 +22152,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("intersectionOfEqualTypes.kt")
@@ -22188,7 +22188,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt13381.kt")
@@ -22212,7 +22212,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt15196.kt")
@@ -22236,7 +22236,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("Kt1619Test.kt")
@@ -22278,7 +22278,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt2017.kt")
@@ -22308,7 +22308,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt2318.kt")
@@ -22320,7 +22320,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("Kt2495Test.kt")
@@ -22344,7 +22344,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt274.kt")
@@ -22356,7 +22356,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt3046.kt")
@@ -22368,7 +22368,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt3107.kt")
@@ -22392,7 +22392,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt3442.kt")
@@ -22434,7 +22434,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt4262.kt")
@@ -22446,7 +22446,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt4281.kt")
@@ -22470,7 +22470,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt529.kt")
@@ -22482,7 +22482,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt533.kt")
@@ -22494,7 +22494,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt5395.kt")
@@ -22512,7 +22512,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt5445_2.kt")
@@ -22524,7 +22524,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt5786_privateWithDefault.kt")
@@ -22554,7 +22554,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt6434_2.kt")
@@ -22572,7 +22572,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt715.kt")
@@ -22584,7 +22584,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt7401.kt")
@@ -22608,7 +22608,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt998.kt")
@@ -22644,7 +22644,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("noCapturingForTypesWithTypeVariables.kt")
@@ -22692,7 +22692,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("resolvedCallForGetOperator.kt")
@@ -22716,7 +22716,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -22737,7 +22737,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("anonymousObjectNoPropagate.kt")
@@ -22749,7 +22749,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("anonymousObjectReifiedSupertype.kt")
@@ -22761,7 +22761,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("approximateCapturedTypes.kt")
@@ -22773,7 +22773,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("asOnPlatformType.kt")
@@ -22785,7 +22785,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("checkcast.kt")
@@ -22809,7 +22809,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("defaultJavaClass.kt")
@@ -22821,7 +22821,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("expectedTypeFromCast.kt")
@@ -22833,7 +22833,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("filterIsInstance.kt")
@@ -22845,7 +22845,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("innerAnonymousObject.kt")
@@ -22857,7 +22857,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("instanceof.kt")
@@ -22869,7 +22869,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("isOnPlatformType.kt")
@@ -22881,7 +22881,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("javaClass.kt")
@@ -22893,7 +22893,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nestedReified.kt")
@@ -22905,7 +22905,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nestedReifiedSignature.kt")
@@ -22917,7 +22917,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("newArrayInt.kt")
@@ -22929,7 +22929,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nonInlineableLambdaInReifiedFunction.kt")
@@ -22941,7 +22941,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("recursiveInnerAnonymousObject.kt")
@@ -22953,7 +22953,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("recursiveNewArray.kt")
@@ -22965,7 +22965,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("recursiveNonInlineableLambda.kt")
@@ -22977,7 +22977,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("reifiedChain.kt")
@@ -22995,7 +22995,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("reifiedInlineFunOfObjectWithinReified.kt")
@@ -23007,7 +23007,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("reifiedInlineIntoNonInlineableLambda.kt")
@@ -23019,7 +23019,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("safecast.kt")
@@ -23037,7 +23037,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("spreads.kt")
@@ -23069,7 +23069,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("instanceOfArrays.kt")
@@ -23081,7 +23081,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jClass.kt")
@@ -23093,7 +23093,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jaggedArray.kt")
@@ -23111,7 +23111,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("jaggedDeep.kt")
@@ -23151,7 +23151,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt245.kt")
@@ -23246,7 +23246,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("nonLiteralComparator.kt")
@@ -23264,7 +23264,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("samWrappersDifferentFiles.kt")
@@ -23276,7 +23276,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("sameWrapperClass.kt")
@@ -23288,7 +23288,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
         }
     }
@@ -23580,7 +23580,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nullSmartCast.kt")
@@ -23619,7 +23619,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("bridges.kt")
@@ -23637,7 +23637,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("commonBridgesTarget.kt")
@@ -23655,7 +23655,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("emptyMap.kt")
@@ -23721,7 +23721,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("notEmptyMap.kt")
@@ -23733,7 +23733,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("redundantStubForSize.kt")
@@ -23814,7 +23814,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("functions.kt")
@@ -23826,7 +23826,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("hidePrivateByPublic.kt")
@@ -23838,7 +23838,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("incInClassObject.kt")
@@ -23874,7 +23874,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt8089.kt")
@@ -23892,7 +23892,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("protectedStatic.kt")
@@ -23904,7 +23904,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("protectedStatic2.kt")
@@ -23916,7 +23916,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("protectedStaticAndInline.kt")
@@ -23928,7 +23928,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("syntheticAccessor.kt")
@@ -24054,7 +24054,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt894.kt")
@@ -24096,7 +24096,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("stringPlusOnlyWorksOnString.kt")
@@ -24345,7 +24345,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("exceptionInMonitorExpression.kt")
@@ -24357,7 +24357,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("finally.kt")
@@ -24369,7 +24369,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("longValue.kt")
@@ -24381,7 +24381,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nestedDifferentObjects.kt")
@@ -24393,7 +24393,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nestedSameObject.kt")
@@ -24405,7 +24405,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("nonLocalReturn.kt")
@@ -24417,7 +24417,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("objectValue.kt")
@@ -24429,7 +24429,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("sync.kt")
@@ -24441,7 +24441,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("value.kt")
@@ -24453,7 +24453,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("wait.kt")
@@ -24465,7 +24465,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -24516,7 +24516,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt10047.kt")
@@ -24576,7 +24576,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -24609,7 +24609,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -24630,7 +24630,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("noPrivateNoAccessorsInMultiFileFacade2.kt")
@@ -24642,7 +24642,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("privateInInlineNested.kt")
@@ -24660,7 +24660,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("syntheticAccessor.kt")
@@ -24678,7 +24678,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -24695,7 +24695,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         public void testAllFilesPresentInTraits() throws Exception {
@@ -24729,7 +24729,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("inheritedFun.kt")
@@ -24753,7 +24753,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("interfaceWithNonAbstractFunIndirect.kt")
@@ -24795,7 +24795,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt2541.kt")
@@ -24855,7 +24855,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("syntheticAccessor.kt")
@@ -24918,7 +24918,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("ifOrWhenSpecialCall.kt")
@@ -24975,7 +24975,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("genericTypeWithNothing.kt")
@@ -24987,7 +24987,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt2831.kt")
@@ -25005,7 +25005,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("kt3286.kt")
@@ -25047,7 +25047,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
     }
 
@@ -25305,7 +25305,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("doNotCopyImmediatelyCreatedArrays.kt")
@@ -25359,7 +25359,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("varargsAndFunctionLiterals.kt")
@@ -25434,7 +25434,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             catch (Throwable ignore) {
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("is.kt")
@@ -25721,7 +25721,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("expression.kt")
@@ -25745,7 +25745,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 catch (Throwable ignore) {
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("statement.kt")
