@@ -219,8 +219,17 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
         }
 
         fun PsiType.toJK(): JKType {
-            val ref = JKClassReferenceImpl(this@JavaToJKTreeBuilder.resolveClassReference((this as PsiClassType).resolve() ?: TODO())) //TODO support other types
-            return JKClassTypeImpl(ref, parameters.map { it.toJK() })
+            return when (this) {
+                is PsiClassType -> JKClassTypeImpl(resolve()!!.convertClassReference(), parameters.map { it.toJK() })
+                is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK())
+                is PsiPrimitiveType -> when (presentableText) {
+                    "int" -> JKJavaPrimitiveTypeImpl.INT
+                    "byte" -> JKJavaPrimitiveTypeImpl.BYTE
+                    "boolean" -> JKJavaPrimitiveTypeImpl.BOOLEAN
+                    else -> throw Exception("Invalid PSI")
+                }
+                else -> throw Exception("Invalid PSI")
+            }
         }
 
     }

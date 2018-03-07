@@ -165,8 +165,7 @@ sealed class JKJavaPrimitiveTypeImpl(override val name: String) : JKJavaPrimitiv
     object INT : JKJavaPrimitiveTypeImpl("int")
 }
 
-class JKJavaArrayTypeImpl(override val type: JKType, override val dimensionCount: Int) : JKJavaArrayType, JKElementBase() {
-
+class JKJavaArrayTypeImpl(override val type: JKType) : JKJavaArrayType, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaArrayType(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
