@@ -26,6 +26,7 @@ import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.kotlin.idea.inspections.ReplaceStringInDocumentFix
 import org.jetbrains.kotlin.idea.maven.PomFile
+import org.jetbrains.kotlin.idea.maven.findDependencies
 import org.jetbrains.kotlin.idea.versions.DEPRECATED_LIBRARIES_INFORMATION
 
 class DeprecatedMavenDependencyInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
@@ -35,32 +36,39 @@ class DeprecatedMavenDependencyInspection : DomElementsInspection<MavenDomProjec
         val file = domFileElement.file
         val module = domFileElement.module ?: return
         val manager = MavenProjectsManager.getInstance(module.project) ?: return
-        val project = manager.findProject(module) ?: return
+        val mavenProject = manager.findProject(module) ?: return
 
         val pomFile = PomFile.forFileOrNull(file) ?: return
 
         for (libInfo in DEPRECATED_LIBRARIES_INFORMATION) {
-            pomFile.findDependencies(MavenId(libInfo.old.groupId, libInfo.old.name, null))
-                .filter { it.version?.stringValue != null }
+            val libMavenId = MavenId(libInfo.old.groupId, libInfo.old.name, null)
+
+            val moduleDependencies = pomFile.findDependencies(libMavenId)
                 .filter {
                     val libVersion =
-                        project.findDependencies(libInfo.old.groupId, libInfo.old.name).map { it.version }.distinct().singleOrNull()
+                        mavenProject.findDependencies(libInfo.old.groupId, libInfo.old.name).map { it.version }.distinct().singleOrNull()
                     libVersion != null && VersionComparatorUtil.COMPARATOR.compare(libVersion, libInfo.outdatedAfterVersion) >= 0
                 }
-                .forEach { dependency ->
-                    val xmlElement = dependency.artifactId.xmlElement
-                    if (xmlElement != null) {
-                        val fix = ReplaceStringInDocumentFix(xmlElement, libInfo.old.name, libInfo.new.name)
 
-                        holder.createProblem(
-                            dependency.artifactId,
-                            ProblemHighlightType.LIKE_DEPRECATED,
-                            libInfo.message,
-                            null,
-                            fix
-                        )
-                    }
+            val dependencyManagementDependencies = pomFile.domModel.dependencyManagement.dependencies.findDependencies(libMavenId).filter {
+                val version = it.version?.value
+                version != null && VersionComparatorUtil.COMPARATOR.compare(version, libInfo.outdatedAfterVersion) >= 0
+            }
+
+            for (dependency in moduleDependencies + dependencyManagementDependencies) {
+                val xmlElement = dependency.artifactId.xmlElement
+                if (xmlElement != null) {
+                    val fix = ReplaceStringInDocumentFix(xmlElement, libInfo.old.name, libInfo.new.name)
+
+                    holder.createProblem(
+                        dependency.artifactId,
+                        ProblemHighlightType.LIKE_DEPRECATED,
+                        libInfo.message,
+                        null,
+                        fix
+                    )
                 }
+            }
         }
     }
 }
