@@ -1,5 +1,5 @@
 // "Move annotation to receiver type" "false"
-// ERROR: This annotation is not applicable to target 'top level function' and use site target '@receiver'
+// ERROR: This annotation is not applicable to target 'declaration' and use site target '@receiver'
 // ACTION: Make internal
 // ACTION: Make private
 
