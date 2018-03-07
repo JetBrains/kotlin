@@ -897,4 +897,15 @@ extern "C" void Kotlin_ObjCExport_AbstractMethodCalled(id self, SEL selector) {
         class_getName(object_getClass(self)), sel_getName(selector)];
 }
 
+__attribute__((constructor))
+static void checkLoadedOnce() {
+  Class marker = objc_allocateClassPair([NSObject class], "KotlinFrameworkLoadedOnceMarker", 0);
+  if (marker == nullptr) {
+    [NSException raise:NSGenericException
+          format:@"Only one Kotlin framework can be loaded currently"];
+  } else {
+    objc_registerClassPair(marker);
+  }
+}
+
 #endif // KONAN_OBJC_INTEROP
