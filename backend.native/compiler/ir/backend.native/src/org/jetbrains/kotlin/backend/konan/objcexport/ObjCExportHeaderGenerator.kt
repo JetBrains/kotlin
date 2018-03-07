@@ -244,9 +244,13 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
             val presentConstructors = mutableSetOf<String>()
 
             descriptor.constructors.filter { mapper.shouldBeExposed(it) }.forEach {
-                if (!descriptor.isArray) presentConstructors += getSelector(it)
+                val selector = getSelector(it)
+                if (!descriptor.isArray) presentConstructors += selector
 
                 +"${getSignature(it, it)};"
+                if (selector == "init") {
+                    +"+ (instancetype)new OBJC_SWIFT_UNAVAILABLE(\"use object initializers instead\");"
+                }
                 +""
             }
 
@@ -278,8 +282,13 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
 
             // Hide "unimplemented" super constructors:
             superClass?.constructors?.filter { mapper.shouldBeExposed(it) }?.forEach {
-                if (getSelector(it) !in presentConstructors) {
+                val selector = getSelector(it)
+                if (selector !in presentConstructors) {
                     +"${getSignature(it, it)} __attribute__((unavailable));"
+                    if (selector == "init") {
+                        +"+(instancetype) new __attribute__((unavailable));"
+                    }
+
                     +""
                     // TODO: consider adding exception-throwing impls for these.
                 }
