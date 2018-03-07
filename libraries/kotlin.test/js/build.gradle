@@ -27,6 +27,7 @@ compileTestKotlin2Js {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
     kotlinOptions {
         metaInfo = false
+        moduleKind = "umd"
     }
 }
 

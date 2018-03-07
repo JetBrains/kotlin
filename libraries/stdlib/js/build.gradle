@@ -69,12 +69,6 @@ dependencies {
     merger project(":tools:kotlin-stdlib-js-merger")
 }
 
-idea {
-    module {
-        excludeDirs = excludeDirs + files('node_modules')
-    }
-}
-
 createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
 createPreprocessorTask(project, "Test", "${projectDir}/../test", commonTestSrcDir)
 
@@ -143,7 +137,8 @@ compileKotlin2Js {
         outputFile = "${buildDir}/classes/main/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
-        freeCompilerArgs += [ "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir].collect { file(it).absoluteFile }.join(File.pathSeparator) ]
+        freeCompilerArgs += ["-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir].collect { file(it).absoluteFile }.
+                join(File.pathSeparator)]
     }
 }
 
@@ -155,7 +150,7 @@ compileExperimentalKotlin2Js {
         outputFile = "${buildDir}/classes/main/kotlin-experimental.js"
         sourceMap = true
         sourceMapPrefix = "./"
-        freeCompilerArgs += [ "-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator) ]
+        freeCompilerArgs += ["-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator)]
     }
 }
 
@@ -183,8 +178,8 @@ task compileJs(type: JavaExec) {
     doFirst {
         args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
                (compileBuiltinsKotlin2Js.outputs.files.collect { it.path } +
-               compileKotlin2Js.outputs.files.collect { it.path } +
-               compileExperimentalKotlin2Js.outputs.files.collect { it.path }).findAll {
+                compileKotlin2Js.outputs.files.collect { it.path } +
+                compileExperimentalKotlin2Js.outputs.files.collect { it.path }).findAll {
                    it.endsWith(".js") && !it.endsWith(".meta.js")
                }
     }
@@ -248,7 +243,7 @@ task mergedJar(type: Jar, dependsOn: classes) {
     new File("${rootDir}/resources/kotlinManifest.properties").withInputStream {
         properties.load(it)
     }
-    manifest.attributes 'Implementation-Title' : properties."manifest.impl.title.kotlin.javascript.stdlib"
+    manifest.attributes 'Implementation-Title': properties."manifest.impl.title.kotlin.javascript.stdlib"
 
     includeEmptyDirs false
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
@@ -260,19 +255,19 @@ task mergedJar(type: Jar, dependsOn: classes) {
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     includeEmptyDirs false
-    from (sourceSets.builtins.allSource) {
+    from(sourceSets.builtins.allSource) {
         into 'kotlin'
     }
-    from (sourceSets.main.allSource) {
+    from(sourceSets.main.allSource) {
         into 'kotlin'
         exclude '**/*.java'
         exclude 'org.w3c/**'
         exclude 'js/**'
     }
-    from (sourceSets.main.allSource) {
+    from(sourceSets.main.allSource) {
         include 'org.w3c/**'
     }
-    from (sourceSets.experimental.allSource) {
+    from(sourceSets.experimental.allSource) {
         into 'kotlin'
     }
 }
@@ -301,38 +296,42 @@ dist {
     }
 }
 
-task populateNodeModules(type: Copy, dependsOn: [compileJs, compileTestKotlin2Js]) {
-    from jsOutputFile
-    from kotlinTestJsOutputFile
-
-    into "${buildDir}/node_modules"
-}
-
 node {
     download = true
     version = '8.9.4' // The default 6.9.1 has buggy hyperbolic functions implementation
     nodeModulesDir = buildDir
 }
 
-task installMocha(type: NpmTask, dependsOn: [populateNodeModules]) {
+// Otherwise Node ignores nodeModulesDir
+task deleteLegacyNodeModules(type: Delete) {
+    delete "$projectDir/node_modules"
+}
+
+task installMocha(type: NpmTask, dependsOn: [deleteLegacyNodeModules]) {
     args = ['install', 'mocha']
 }
 
-task installTeamcityReporter(type: NpmTask, dependsOn: [populateNodeModules]) {
+task installTeamcityReporter(type: NpmTask, dependsOn: [deleteLegacyNodeModules]) {
     args = ['install', 'mocha-teamcity-reporter']
 }
 
-task runMocha(type: NodeTask, dependsOn: [compileTestKotlin2Js, populateNodeModules, installMocha]) {
+task runMocha(type: NodeTask, dependsOn: [testClasses, installMocha, ':kotlin-test:kotlin-test-js:testClasses']) {
     script = file("${buildDir}/node_modules/mocha/bin/mocha")
-    args = [jsTestOutputFile]
 
     if (project.hasProperty("teamcity")) {
         dependsOn installTeamcityReporter
-        args = ['--reporter', 'mocha-teamcity-reporter'] + args
+        args = ['--reporter', 'mocha-teamcity-reporter']
+    }
+    else {
+        args = ['--reporter', 'min']
+    }
 
-        execOverrides {
-            it.ignoreExitValue = true
-        }
+    args += [jsTestOutputFile, kotlinTestJsTestOutputFile]
+
+    execOverrides {
+        it.ignoreExitValue = rootProject.ignoreTestFailures
+        it.environment('NODE_PATH', [file(jsOutputFile).parent, file(kotlinTestJsOutputFile).parent].join(File.pathSeparator))
+        it.workingDir = buildDir
     }
 }
 
