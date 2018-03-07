@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -151,6 +148,11 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
                     it.defaultValue?.coerceInnerExpression(it.descriptor.type)
                 }
             }
+        }
+
+    override fun visitClass(declaration: IrClass): IrStatement =
+        runInTypeParameterScope(declaration) {
+            super.visitClass(declaration)
         }
 
     override fun visitWhen(expression: IrWhen): IrExpression =
