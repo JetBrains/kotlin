@@ -55,7 +55,6 @@ repositories {
     extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
     }
-    maven(url = "https://dl.bintray.com/kotlin/kotlin-dev") // for dex-method-list
     maven(url = "https://repo.gradle.org/gradle/libs-releases-local") // for native-platform
     jcenter()
 }
@@ -64,7 +63,7 @@ dependencies {
     compile("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
-    compile("com.jakewharton.dex:dex-method-list:2.0.0-alpha")
+    compile("com.jakewharton.dex:dex-method-list:3.0.0")
     // TODO: adding the dep to the plugin breaks the build unexpectedly, resolve and uncomment
 //    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")
     // Shadow plugin is used in many projects of the main build. Once it's no longer used in buildSrc, please move this dependency to the root project

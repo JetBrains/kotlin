@@ -23,11 +23,11 @@ import java.io.File
 open class DexMethodCount : DefaultTask() {
 
     data class Counts(
-            val total: Int,
-            val totalOwnPackages: Int?,
-            val totalOtherPackages: Int?,
-            val byPackage: Map<String, Int>,
-            val byClass: Map<String, Int>
+        val total: Int,
+        val totalOwnPackages: Int?,
+        val totalOtherPackages: Int?,
+        val byPackage: Map<String, Int>,
+        val byClass: Map<String, Int>
     )
 
     @InputFile
@@ -58,7 +58,7 @@ open class DexMethodCount : DefaultTask() {
 
     @TaskAction
     fun invoke() {
-        val methods = DexMethods.list(jarFile)
+        val methods = dexMethods(jarFile)
 
         val counts = methods.getCounts().also { this.counts = it }
 
@@ -73,16 +73,18 @@ open class DexMethodCount : DefaultTask() {
 
         val ownPackages = ownPackages?.map { it + '.' }
         val byOwnPackages = if (ownPackages != null) {
-            this.partition { method -> ownPackages.any { method.declaringType.startsWith(it) }}.let {
+            this.partition { method -> ownPackages.any { method.declaringType.startsWith(it) } }.let {
                 it.first.size to it.second.size
             }
         } else (null to null)
 
-        return Counts(total = this.size,
-                      totalOwnPackages = byOwnPackages.first,
-                      totalOtherPackages = byOwnPackages.second,
-                      byPackage = byPackage,
-                      byClass = byClass)
+        return Counts(
+            total = this.size,
+            totalOwnPackages = byOwnPackages.first,
+            totalOtherPackages = byOwnPackages.second,
+            byPackage = byPackage,
+            byClass = byClass
+        )
     }
 
     private fun printTotals(counts: Counts) {
