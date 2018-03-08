@@ -182,12 +182,31 @@ fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, configurator: Kot
     return modules.filter { configurator.getStatus(it) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }.map { it.baseModule }
 }
 
-fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, excludeModules: Collection<Module> = emptyList()): Collection<Module> {
+fun getConfigurationPossibilities(
+    project: Project,
+    excludeModules: Collection<Module> = emptyList()
+): Pair<Collection<Module>, Collection<KotlinProjectConfigurator>> {
     val modulesWithKotlinFiles = getConfigurableModulesWithKotlinFiles(project).exclude(excludeModules)
     val configurators = allConfigurators()
-    return modulesWithKotlinFiles.filter { moduleSourceRootGroup ->
-        configurators.any { it.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }
-    }.map { it.baseModule }
+
+    val runnableConfigurators = mutableSetOf<KotlinProjectConfigurator>()
+    val configurableModules = mutableListOf<Module>()
+
+    // We need to return all modules for which at least one configurator is applicable, as well as all configurators which
+    // are applicable for at least one module. At the same time we want to call getStatus() only once for each module/configurator pair.
+    for (moduleSourceRootGroup in modulesWithKotlinFiles) {
+        var moduleCanBeConfigured = false
+        for (configurator in configurators) {
+            if (moduleCanBeConfigured && configurator in runnableConfigurators) continue
+            if (configurator.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED) {
+                moduleCanBeConfigured = true
+                runnableConfigurators.add(configurator)
+            }
+        }
+        if (moduleCanBeConfigured) configurableModules.add(moduleSourceRootGroup.baseModule)
+    }
+
+    return configurableModules to runnableConfigurators
 }
 
 fun findApplicableConfigurator(module: Module): KotlinProjectConfigurator {
