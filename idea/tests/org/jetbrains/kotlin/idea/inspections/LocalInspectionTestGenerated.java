@@ -2515,6 +2515,45 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/redundantCompanionReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantCompanionReference extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInRedundantCompanionReference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantCompanionReference"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/basic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("directCompanion.kt")
+        public void testDirectCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/directCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionReference.kt")
+        public void testFunctionReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/functionReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notCompanion.kt")
+        public void testNotCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/notCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onlyCompanion.kt")
+        public void testOnlyCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/onlyCompanion.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/redundantExplicitType")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
