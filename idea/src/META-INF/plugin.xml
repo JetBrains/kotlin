@@ -2746,9 +2746,9 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantCompanionReferenceInspection"
                      displayName="Redundant Companion reference"
                      groupPath="Kotlin"
-                     groupName="Style issues"
+                     groupName="Redundant constructs"
                      enabledByDefault="true"
-                     level="WEAK WARNING"
+                     level="WARNING"
                      language="kotlin"
     />
 

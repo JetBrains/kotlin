@@ -26,12 +26,12 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
 
             val parent = expression.getStrictParentOfType<KtDotQualifiedExpression>() ?: return
             if (expression == parent.receiverExpression && expression.text == descriptor.containingDeclaration?.name?.asString()) return
-            if (parent.getStrictParentOfType<KtCallableReferenceExpression>() != null) return
+            if (expression == parent.selectorExpression && parent.parent !is KtDotQualifiedExpression) return
 
             holder.registerProblem(
                 expression,
                 "Redundant Companion reference",
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 RemoveRedundantCompanionReferenceFix()
             )
         })
