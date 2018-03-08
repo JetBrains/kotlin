@@ -62,6 +62,7 @@ import com.intellij.psi.util.JavaClassSupers
 import com.intellij.util.io.URLUtil
 import com.intellij.util.lang.UrlClassLoader
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -130,17 +131,20 @@ class KotlinCoreEnvironment private constructor(
             with (project) {
                 registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
 
-                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
+                val traceHolder = CliTraceHolder()
+                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder)
+                val kotlinAsJavaSupport = CliKotlinAsJavaSupport(this, traceHolder)
                 registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(CodeAnalyzerInitializer::class.java, cliLightClassGenerationSupport)
+                registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)
+                registerService(CodeAnalyzerInitializer::class.java, traceHolder)
 
                 registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
                 registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
 
                 val area = Extensions.getArea(this)
 
-                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, cliLightClassGenerationSupport))
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, kotlinAsJavaSupport))
                 area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
                         PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java)))
             }

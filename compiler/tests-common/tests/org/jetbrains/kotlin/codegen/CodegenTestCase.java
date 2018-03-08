@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.checkers.CheckerTestUtil;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.kotlin.cli.jvm.compiler.CliTraceHolder;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -466,7 +466,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             try {
                 GenerationState generationState = GenerationUtils.compileFiles(
                         myFiles.getPsiFiles(), myEnvironment, getClassBuilderFactory(),
-                        new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+                        new CliTraceHolder.NoScopeRecordCliBindingTrace()
                 );
                 classFileFactory = generationState.getFactory();
 

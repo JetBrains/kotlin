@@ -374,7 +374,7 @@ object KotlinToJVMBytecodeCompiler {
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                     project,
                     sourceFiles,
-                    CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
+                    CliTraceHolder.NoScopeRecordCliBindingTrace(),
                     environment.configuration,
                     environment::createPackagePartProvider,
                     sourceModuleSearchScope = scope

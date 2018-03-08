@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cli.common.repl.CompiledReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplHistory
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
+import org.jetbrains.kotlin.cli.jvm.compiler.CliTraceHolder
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.container.get
@@ -56,7 +56,7 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
 
     val module: ModuleDescriptorImpl
 
-    val trace: BindingTraceContext = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+    val trace: BindingTraceContext = CliTraceHolder.NoScopeRecordCliBindingTrace()
 
     init {
         // Module source scope is empty because all binary classes are in the dependency module, and all source classes are guaranteed

@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.cli.jvm.javac
 
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.findFacadeClass
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.javac.JavacWrapperKotlinResolver
 import org.jetbrains.kotlin.javac.resolve.MockKotlinField
@@ -47,7 +47,7 @@ class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: Li
     }
 
     override fun findField(classOrObject: KtClassOrObject, name: String): JavaField? {
-        val lightClass = classOrObject.getLightClass() ?: return null
+        val lightClass = classOrObject.toLightClass() ?: return null
 
         return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
     }
@@ -57,7 +57,4 @@ class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: Li
 
         return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
     }
-
-    private fun KtClassOrObject.getLightClass(): KtLightClass? = lightClassGenerationSupport.getLightClass(this)
-
 }

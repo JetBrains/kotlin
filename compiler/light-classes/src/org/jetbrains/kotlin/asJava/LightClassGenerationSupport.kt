@@ -20,7 +20,9 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.asJava.builder.*
+import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
+import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -30,30 +32,23 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult
 
-abstract class LightClassGenerationSupport {
-
-    abstract fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass
-
-    abstract fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade
-
-    abstract fun createDataHolderForScript(script: KtScript, builder: LightClassBuilder): LightClassDataHolder.ForScript
-
-    abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
-
-    /*
-     * Finds files whose package declaration is exactly {@code fqName}. For example, if a file declares
-     *     package a.b.c
-     * it will not be returned for fqName "a.b"
-     *
-     * If the resulting collection is empty, it means that this package has not other declarations than sub-packages
-     */
-    abstract fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile>
-
+abstract class KotlinAsJavaSupport {
     // Returns only immediately declared classes/objects, package classes are not included (they have no declarations)
     abstract fun findClassOrObjectDeclarationsInPackage(
-            packageFqName: FqName,
-            searchScope: GlobalSearchScope
+        packageFqName: FqName,
+        searchScope: GlobalSearchScope
     ): Collection<KtClassOrObject>
+
+    /*
+    * Finds files whose package declaration is exactly {@code fqName}. For example, if a file declares
+    *     package a.b.c
+    * it will not be returned for fqName "a.b"
+    *
+    * If the resulting collection is empty, it means that this package has not other declarations than sub-packages
+    */
+    abstract fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile>
+
+    abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
     abstract fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean
 
@@ -62,12 +57,6 @@ abstract class LightClassGenerationSupport {
     abstract fun getLightClass(classOrObject: KtClassOrObject): KtLightClass?
 
     abstract fun getLightClassForScript(script: KtScript): KtLightClassForScript?
-
-    abstract fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor?
-
-    abstract fun analyze(element: KtElement): BindingContext
-
-    abstract fun analyzeWithContent(element: KtClassOrObject): BindingContext
 
     abstract fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
@@ -82,7 +71,29 @@ abstract class LightClassGenerationSupport {
     abstract fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile>
 
     companion object {
-        @JvmStatic fun getInstance(project: Project): LightClassGenerationSupport {
+        @JvmStatic
+        fun getInstance(project: Project): KotlinAsJavaSupport {
+            return ServiceManager.getService(project, KotlinAsJavaSupport::class.java)
+        }
+    }
+}
+
+abstract class LightClassGenerationSupport {
+    abstract fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass
+
+    abstract fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade
+
+    abstract fun createDataHolderForScript(script: KtScript, builder: LightClassBuilder): LightClassDataHolder.ForScript
+
+    abstract fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor?
+
+    abstract fun analyze(element: KtElement): BindingContext
+
+    abstract fun analyzeWithContent(element: KtClassOrObject): BindingContext
+
+    companion object {
+        @JvmStatic
+        fun getInstance(project: Project): LightClassGenerationSupport {
             return ServiceManager.getService(project, LightClassGenerationSupport::class.java)
         }
     }
