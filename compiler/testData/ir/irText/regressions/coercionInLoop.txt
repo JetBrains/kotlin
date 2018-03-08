@@ -27,6 +27,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
                   CONST String type=kotlin.String value=Fail 
                   GET_VAR 'i: Int' type=kotlin.Int origin=null
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
             BLOCK type=kotlin.Int origin=POSTFIX_INCR
               VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int flags:val
                 GET_VAR 'i: Int' type=kotlin.Int origin=POSTFIX_INCR

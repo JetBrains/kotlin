@@ -37,8 +37,8 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
-    public static File mockRuntimeJarForTests() {
-        return assertExists(new File("dist/kotlin-mock-runtime-for-test.jar"));
+    public static File minimalRuntimeJarForTests() {
+        return assertExists(new File("dist/kotlin-stdlib-minimal-for-test.jar"));
     }
 
     @NotNull

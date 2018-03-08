@@ -2,6 +2,7 @@
 description = "Kotlin NoArg Compiler Plugin"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 dependencies {
     testRuntime(intellijDep())
@@ -38,7 +39,6 @@ dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kot
 
 ideaPlugin {
     from(jar)
-    rename("^kotlin-", "")
 }
 
 projectTest {

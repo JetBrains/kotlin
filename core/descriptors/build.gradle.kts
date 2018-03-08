@@ -1,4 +1,5 @@
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String

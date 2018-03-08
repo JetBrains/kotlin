@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/destructuringInLambda.kt
   CLASS CLASS name:A modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:A flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       VALUE_PARAMETER name:y index:1 type:kotlin.Int flags:
@@ -55,6 +57,8 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
             x: GET_VAR 'value-parameter x: Int = ...' type=kotlin.Int origin=null
             y: GET_VAR 'value-parameter y: Int = ...' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:A) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
@@ -69,6 +73,8 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
               $this: GET_VAR 'this@A: A' type=A origin=null
             CONST String type=kotlin.String value=)
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:A) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
@@ -88,6 +94,8 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:A, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       BLOCK_BODY
@@ -101,11 +109,13 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=A
+              typeOperand: CLASS CLASS name:A modality:FINAL visibility:public flags:data
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:A flags:val
           TYPE_OP type=A origin=CAST typeOperand=A
+            typeOperand: CLASS CLASS name:A modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

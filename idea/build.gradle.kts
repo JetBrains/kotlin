@@ -1,6 +1,7 @@
 import org.gradle.jvm.tasks.Jar
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 dependencies {
     testRuntime(intellijDep())
@@ -36,6 +37,8 @@ dependencies {
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compile("teamcity:markdown")
 
+    compileOnly(project(":kotlin-daemon-client"))
+
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) {
         includeJars("annotations", "openapi", "idea", "velocity", "boot", "gson", "log4j", "asm-all",
@@ -49,7 +52,7 @@ dependencies {
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle")) { isTransitive = false }
     testCompile(project(":idea:idea-maven")) { isTransitive = false }
@@ -94,11 +97,6 @@ dependencies {
     testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("testng"))
-}
-
-val processResources: Copy by tasks
-processResources.from("../compiler/cli/src") {
-    include("META-INF/extensions/compiler.xml")
 }
 
 sourceSets {

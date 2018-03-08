@@ -249,6 +249,8 @@ apply {
     }
 }
 
+apply { plugin("jps-compatible") }
+
 fun Project.allprojectsRecursive(body: Project.() -> Unit) {
     this.body()
     this.subprojects { allprojectsRecursive(body) }

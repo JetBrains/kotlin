@@ -23,6 +23,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
@@ -39,7 +40,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.isStableValue
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -80,9 +80,8 @@ fun KtExpression?.isNullExpressionOrEmptyBlock(): Boolean =
 fun KtThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
     val thrownExpression = this.thrownExpression as? KtCallExpression ?: return false
 
-    val context = this.analyze(BodyResolveMode.PARTIAL)
     val nameExpression = thrownExpression.calleeExpression as? KtNameReferenceExpression ?: return false
-    val descriptor = context[BindingContext.REFERENCE_TARGET, nameExpression]
+    val descriptor = nameExpression.resolveToCall()?.resultingDescriptor
     val declDescriptor = descriptor?.containingDeclaration ?: return false
 
     val exceptionName = DescriptorUtils.getFqName(declDescriptor).asString()

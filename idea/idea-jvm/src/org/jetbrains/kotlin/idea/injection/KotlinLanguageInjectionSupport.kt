@@ -95,27 +95,39 @@ class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
         return null
     }
 
-    fun findInjectionCommentLanguageId(host: KtElement): String? {
-        return InjectorUtils.findCommentInjection(host, "", null)?.injectedLanguageId
+    fun findCommentInjection(host: KtElement): BaseInjection? {
+        return InjectorUtils.findCommentInjection(host, "", null)
     }
 
-    fun findInjectionComment(host: KtElement): PsiComment? {
+    private fun findInjectionComment(host: KtElement): PsiComment? {
         val commentRef = Ref.create<PsiElement>(null)
         InjectorUtils.findCommentInjection(host, "", commentRef) ?: return null
 
         return commentRef.get() as? PsiComment
     }
 
-    fun findAnnotationInjectionLanguageId(host: KtElement): String? {
+    internal fun findAnnotationInjectionLanguageId(host: KtElement): InjectionInfo? {
         val annotationEntry = findAnnotationInjection(host) ?: return null
-        return extractLanguageFromInjectAnnotation(annotationEntry)
+        val extractLanguageFromInjectAnnotation = extractLanguageFromInjectAnnotation(annotationEntry) ?: return null
+        val prefix = extractStringArgumentByName(annotationEntry, "prefix")
+        val suffix = extractStringArgumentByName(annotationEntry, "suffix")
+        return InjectionInfo(extractLanguageFromInjectAnnotation, prefix, suffix)
     }
 }
 
-fun extractLanguageFromInjectAnnotation(annotationEntry: KtAnnotationEntry): String? {
-    val firstArgument: ValueArgument = annotationEntry.valueArguments.firstOrNull() ?: return null
+private fun extractStringArgumentByName(annotationEntry: KtAnnotationEntry, name: String): String? {
+    val namedArgument: ValueArgument = annotationEntry.valueArguments.firstOrNull { it.getArgumentName()?.asName?.asString() == name } ?: return null
+    return extractStringValue(namedArgument)
+}
 
-    val firstStringArgument = firstArgument.getArgumentExpression() as? KtStringTemplateExpression ?: return null
+
+private fun extractLanguageFromInjectAnnotation(annotationEntry: KtAnnotationEntry): String? {
+    val firstArgument: ValueArgument = annotationEntry.valueArguments.firstOrNull() ?: return null
+    return extractStringValue(firstArgument)
+}
+
+private fun extractStringValue(valueArgument: ValueArgument): String? {
+    val firstStringArgument = valueArgument.getArgumentExpression() as? KtStringTemplateExpression ?: return null
     val firstStringEntry = firstStringArgument.entries.singleOrNull() ?: return null
 
     return firstStringEntry.text

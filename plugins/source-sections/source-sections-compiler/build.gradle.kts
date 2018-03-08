@@ -2,6 +2,7 @@
 description = "Kotlin SourceSections Compiler Plugin"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 
 dependencies {

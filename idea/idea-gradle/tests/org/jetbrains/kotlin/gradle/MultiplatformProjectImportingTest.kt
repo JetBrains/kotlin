@@ -17,14 +17,12 @@
 package org.jetbrains.kotlin.gradle
 
 import com.intellij.openapi.roots.DependencyScope
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
-import java.io.File
 
 class MultiplatformProjectImportingTest : GradleImportingTestCase() {
     @Test
@@ -74,9 +72,9 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
 
     @Test
     fun testPlatformToCommonExpectedByDependency() {
-        createProjectSubFile("settings.gradle", "include ':common', ':jvm', ':js'")
+        createProjectSubFile("settings.gradle", "include ':common1', ':common2', ':jvm', ':js'")
 
-        val kotlinVersion = "1.2.0-beta-74"
+        val kotlinVersion = "1.2.40-dev-610"
 
         createProjectSubFile("build.gradle", """
              buildscript {
@@ -90,7 +88,11 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                 }
             }
 
-            project('common') {
+            project('common1') {
+                apply plugin: 'kotlin-platform-common'
+            }
+
+            project('common2') {
                 apply plugin: 'kotlin-platform-common'
             }
 
@@ -98,7 +100,8 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                 apply plugin: 'kotlin-platform-jvm'
 
                 dependencies {
-                    expectedBy project(':common')
+                    expectedBy project(':common1')
+                    expectedBy project(':common2')
                 }
             }
 
@@ -106,16 +109,20 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                 apply plugin: 'kotlin-platform-js'
 
                 dependencies {
-                    expectedBy project(':common')
+                    expectedBy project(':common1')
                 }
             }
         """)
 
         importProject()
-        assertModuleModuleDepScope("jvm_main", "common_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm_test", "common_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_main", "common_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_test", "common_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm_main", "common1_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm_main", "common2_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm_test", "common1_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm_test", "common2_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("js_main", "common1_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("js_test", "common1_test", DependencyScope.COMPILE)
+        assertNoDepForModule("js_main", "common2_main")
+        assertNoDepForModule("js_test", "common2_test")
     }
 
     @Test

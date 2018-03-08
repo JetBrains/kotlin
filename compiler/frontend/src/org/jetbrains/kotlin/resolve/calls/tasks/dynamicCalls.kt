@@ -31,11 +31,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.createDynamicType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
@@ -53,7 +50,8 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
         override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
             if (isAugmentedAssignmentConvention(name)) return listOf()
             if (call.callType == Call.CallType.INVOKE
-                && call.valueArgumentList == null && call.functionLiteralArguments.isEmpty()) {
+                && call.valueArgumentList == null && call.functionLiteralArguments.isEmpty()
+            ) {
                 // this means that we are looking for "imaginary" invokes,
                 // e.g. in `+d` we are looking for property "plus" with member "invoke"
                 return listOf()
@@ -217,7 +215,10 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
 
             if (hasSpreadOperator) {
                 for (funLiteralArg in call.functionLiteralArguments) {
-                    addParameter(funLiteralArg, getFunctionType(funLiteralArg.getLambdaExpression()), null)
+                    addParameter(
+                        funLiteralArg,
+                        funLiteralArg.getLambdaExpression()?.let { getFunctionType(it) } ?: TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE,
+                        null)
                 }
 
                 break

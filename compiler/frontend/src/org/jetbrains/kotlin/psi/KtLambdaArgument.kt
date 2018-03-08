@@ -20,9 +20,7 @@ import com.intellij.lang.ASTNode
 
 class KtLambdaArgument(node: ASTNode) : KtValueArgument(node), LambdaArgument {
 
-    override fun getArgumentExpression() = super.getArgumentExpression()!!
-
-    override fun getLambdaExpression(): KtLambdaExpression = getArgumentExpression().unpackFunctionLiteral()!!
+    override fun getLambdaExpression(): KtLambdaExpression? = getArgumentExpression()?.unpackFunctionLiteral()
 }
 
 fun KtExpression.unpackFunctionLiteral(allowParentheses: Boolean = false): KtLambdaExpression? {

@@ -1,4 +1,4 @@
-// "Create actual class for platform JVM" "true"
+// "Create actual class for module jvm (JVM)" "true"
 // SHOULD_BE_AVAILABLE_AFTER_EXECUTION
 
 package test.inner

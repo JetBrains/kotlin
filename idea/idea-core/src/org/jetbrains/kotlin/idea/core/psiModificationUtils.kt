@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParenthese
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.SmartList
 
 @Suppress("UNCHECKED_CAST")
@@ -56,7 +57,10 @@ inline fun <reified T : PsiElement> PsiElement.replaced(newElement: T): T {
 fun <T : PsiElement> T.copied(): T = copy() as T
 
 fun KtLambdaArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
-    return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
+    val ktExpression = this.getArgumentExpression()
+            ?: throw KotlinExceptionWithAttachments("no argument expression for $this")
+                .withAttachment("lambdaExpression", this.text)
+    return moveInsideParenthesesAndReplaceWith(ktExpression, bindingContext)
 }
 
 fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
@@ -458,4 +462,13 @@ fun KtModifierList.normalize(): KtModifierList {
         modifiers.sortBy { MODIFIERS_ORDER.indexOf(it.node.elementType) }
         modifiers.forEach { newList.add(it) }
     }
+}
+
+fun KtBlockStringTemplateEntry.canDropBraces() =
+    expression is KtNameReferenceExpression && canPlaceAfterSimpleNameEntry(nextSibling)
+
+fun KtBlockStringTemplateEntry.dropBraces(): KtSimpleNameStringTemplateEntry {
+    val name = (expression as KtNameReferenceExpression).getReferencedName()
+    val newEntry = KtPsiFactory(this).createSimpleNameStringTemplateEntry(name)
+    return replaced(newEntry)
 }

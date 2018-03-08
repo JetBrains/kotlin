@@ -5,6 +5,7 @@
 // ACTION: Move lambda argument into parentheses
 // ACTION: Replace with safe (this?.) call
 // ACTION: Specify explicit lambda signature
+// ACTION: Add return@let
 // ERROR: Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type String?
 
 fun String?.foo(a: String?) {

@@ -35,12 +35,11 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import javax.inject.Inject
 
 class CodeFragmentAnalyzer(
-        private val resolveSession: ResolveSession,
-        private val qualifierResolver: QualifiedExpressionResolver,
-        private val expressionTypingServices: ExpressionTypingServices,
-        private val typeResolver: TypeResolver
+    private val resolveSession: ResolveSession,
+    private val qualifierResolver: QualifiedExpressionResolver,
+    private val expressionTypingServices: ExpressionTypingServices,
+    private val typeResolver: TypeResolver
 ) {
-
     // component dependency cycle
     var resolveElementCache: ResolveElementCache? = null
         @Inject set
@@ -54,20 +53,28 @@ class CodeFragmentAnalyzer(
 
         when (codeFragmentElement) {
             is KtExpression -> {
-                PreliminaryDeclarationVisitor.createForExpression(codeFragmentElement, trace,
-                                                                  expressionTypingServices.languageVersionSettings)
+                PreliminaryDeclarationVisitor.createForExpression(
+                    codeFragmentElement, trace,
+                    expressionTypingServices.languageVersionSettings
+                )
                 expressionTypingServices.getTypeInfo(
-                        scopeForContextElement,
-                        codeFragmentElement,
-                        TypeUtils.NO_EXPECTED_TYPE,
-                        dataFlowInfo,
-                        trace,
-                        false
+                    scopeForContextElement,
+                    codeFragmentElement,
+                    TypeUtils.NO_EXPECTED_TYPE,
+                    dataFlowInfo,
+                    trace,
+                    false
                 )
             }
 
             is KtTypeReference -> {
-                val context = TypeResolutionContext(scopeForContextElement, trace, true, true, codeFragment.suppressDiagnosticsInDebugMode()).noBareTypes()
+                val context = TypeResolutionContext(
+                    scopeForContextElement,
+                    trace,
+                    true,
+                    true,
+                    codeFragment.suppressDiagnosticsInDebugMode()
+                ).noBareTypes()
                 typeResolver.resolvePossiblyBareType(context, codeFragmentElement)
             }
         }
@@ -76,17 +83,17 @@ class CodeFragmentAnalyzer(
     //TODO: this code should be moved into debugger which should set correct context for its code fragment
     private fun KtElement.correctContextForElement(): KtElement {
         return when (this) {
-                   is KtProperty -> this.delegateExpressionOrInitializer
-                   is KtFunctionLiteral -> this.bodyExpression?.statements?.lastOrNull()
-                   is KtDeclarationWithBody -> this.bodyExpression
-                   is KtBlockExpression -> this.statements.lastOrNull()
-                   else -> null
-               } ?: this
+            is KtProperty -> this.delegateExpressionOrInitializer
+            is KtFunctionLiteral -> this.bodyExpression?.statements?.lastOrNull()
+            is KtDeclarationWithBody -> this.bodyExpression
+            is KtBlockExpression -> this.statements.lastOrNull()
+            else -> null
+        } ?: this
     }
 
     private fun getScopeAndDataFlowForAnalyzeFragment(
-            codeFragment: KtCodeFragment,
-            resolveToElement: (KtElement) -> BindingContext
+        codeFragment: KtCodeFragment,
+        resolveToElement: (KtElement) -> BindingContext
     ): Pair<LexicalScope, DataFlowInfo>? {
         val context = codeFragment.context
 
@@ -103,7 +110,8 @@ class CodeFragmentAnalyzer(
 
         when (context) {
             is KtPrimaryConstructor -> {
-                val descriptor = (getClassDescriptor(context.getContainingClassOrObject()) as? ClassDescriptorWithResolutionScopes) ?: return null
+                val descriptor =
+                    (getClassDescriptor(context.getContainingClassOrObject()) as? ClassDescriptorWithResolutionScopes) ?: return null
 
                 scopeForContextElement = descriptor.scopeForInitializerResolution
                 dataFlowInfo = DataFlowInfo.EMPTY
@@ -145,8 +153,10 @@ class CodeFragmentAnalyzer(
         }
 
         val importScopes = importList.imports.mapNotNull {
-            qualifierResolver.processImportReference(it, resolveSession.moduleDescriptor, resolveSession.trace,
-                                                     excludedImportNames = emptyList(), packageFragmentForVisibilityCheck = null)
+            qualifierResolver.processImportReference(
+                it, resolveSession.moduleDescriptor, resolveSession.trace,
+                excludedImportNames = emptyList(), packageFragmentForVisibilityCheck = null
+            )
         }
 
         return scopeForContextElement.addImportingScopes(importScopes) to dataFlowInfo

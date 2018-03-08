@@ -126,7 +126,9 @@ fun IrFunction.createParameterDeclarations() {
             innerStartOffset(this), innerEndOffset(this),
             IrDeclarationOrigin.DEFINED,
             this
-    )
+    ).also {
+        it.parent = this@createParameterDeclarations
+    }
 
     dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.irValueParameter()
     extensionReceiverParameter = descriptor.extensionReceiverParameter?.irValueParameter()
@@ -140,7 +142,9 @@ fun IrFunction.createParameterDeclarations() {
                 innerStartOffset(it), innerEndOffset(it),
                 IrDeclarationOrigin.DEFINED,
                 it
-        )
+        ).also { typeParameter ->
+            typeParameter.parent = this
+        }
     }
 }
 

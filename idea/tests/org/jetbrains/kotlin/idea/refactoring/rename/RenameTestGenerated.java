@@ -157,6 +157,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("classAndTypeAliasRedeclaration/classAndTypeAliasRedeclaration.test")
+    public void testClassAndTypeAliasRedeclaration_ClassAndTypeAliasRedeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/classAndTypeAliasRedeclaration/classAndTypeAliasRedeclaration.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("classByPrimaryConstructor/classByPrimaryConstructor.test")
     public void testClassByPrimaryConstructor_ClassByPrimaryConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/classByPrimaryConstructor/classByPrimaryConstructor.test");
@@ -196,6 +202,24 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("companionShortRef/companionShortRef.test")
     public void testCompanionShortRef_CompanionShortRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/companionShortRef/companionShortRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("dataClassComponentN/dataClassComponentN.test")
+    public void testDataClassComponentN_DataClassComponentN() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/dataClassComponentN/dataClassComponentN.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("dataClassCopy/dataClassCopy.test")
+    public void testDataClassCopy_DataClassCopy() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/dataClassCopy/dataClassCopy.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("enumValueOf/enumValueOf.test")
+    public void testEnumValueOf_EnumValueOf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/enumValueOf/enumValueOf.test");
         doTest(fileName);
     }
 
@@ -412,6 +436,18 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("objectPropertyImportAliasByRef/objectPropertyImportAliasByRef.test")
     public void testObjectPropertyImportAliasByRef_ObjectPropertyImportAliasByRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/objectPropertyImportAliasByRef/objectPropertyImportAliasByRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("overloadsWithDifferentOrigins/overloadsWithDifferentOrigins.test")
+    public void testOverloadsWithDifferentOrigins_OverloadsWithDifferentOrigins() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/overloadsWithDifferentOrigins/overloadsWithDifferentOrigins.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("overloadsWithSameOrigin/overloadsWithSameOrigin.test")
+    public void testOverloadsWithSameOrigin_OverloadsWithSameOrigin() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/overloadsWithSameOrigin/overloadsWithSameOrigin.test");
         doTest(fileName);
     }
 
@@ -1276,6 +1312,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("renameUnaryMinus/unaryMinus.test")
     public void testRenameUnaryMinus_UnaryMinus() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameUnaryMinus/unaryMinus.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("samConstructorTypeAlias/samConstructorTypeAlias.test")
+    public void testSamConstructorTypeAlias_SamConstructorTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/samConstructorTypeAlias/samConstructorTypeAlias.test");
         doTest(fileName);
     }
 

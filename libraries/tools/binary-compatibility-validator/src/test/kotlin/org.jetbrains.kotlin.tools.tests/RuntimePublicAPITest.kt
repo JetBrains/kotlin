@@ -29,7 +29,7 @@ class RuntimePublicAPITest {
     val testName = TestName()
 
     @Test fun kotlinRuntime() {
-        snapshotAPIAndCompare("../../tools/runtime/build/libs", "kotlin-runtime", listOf("../runtime-declarations.json"), listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../stdlib/runtime/build/libs", "kotlin-runtime", listOf("../runtime-declarations.json"), listOf("kotlin.jvm.internal"))
     }
 
     //@Ignore("No more original stdlib jar is produced")

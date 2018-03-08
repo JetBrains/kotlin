@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.idea.completion.test
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
+import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureLanguageVersion
 import org.jetbrains.kotlin.resolve.TargetPlatform

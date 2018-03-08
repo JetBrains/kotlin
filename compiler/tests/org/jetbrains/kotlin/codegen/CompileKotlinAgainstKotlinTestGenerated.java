@@ -133,6 +133,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("internalSetterOverridden.kt")
+    public void testInternalSetterOverridden() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("jvmField.kt")
     public void testJvmField() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/jvmField.kt");

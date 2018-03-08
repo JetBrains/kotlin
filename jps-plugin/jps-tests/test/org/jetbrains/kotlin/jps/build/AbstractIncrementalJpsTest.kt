@@ -47,9 +47,8 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
-import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageProvider
-import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
+import org.jetbrains.kotlin.jps.incremental.withLookupStorage
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
@@ -302,9 +301,10 @@ abstract class AbstractIncrementalJpsTest(
         p.println("Begin of Lookup Maps")
         p.println()
 
-        val lookupStorage = project.dataManager.getStorage(KotlinDataContainerTarget, JpsLookupStorageProvider)
-        lookupStorage.forceGC()
-        p.print(lookupStorage.dump(lookupsDuringTest))
+        project.dataManager.withLookupStorage { lookupStorage ->
+            lookupStorage.forceGC()
+            p.print(lookupStorage.dump(lookupsDuringTest))
+        }
 
         p.println()
         p.println("End of Lookup Maps")

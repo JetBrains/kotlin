@@ -1,0 +1,7 @@
+open class Base {
+    open fun foo() {}
+}
+
+open class Test : Base() {
+    public final override fun foo() {}
+}

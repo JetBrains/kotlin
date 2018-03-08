@@ -1,6 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
+import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf
 import proguard.gradle.ProGuardTask
 import shadow.org.apache.tools.zip.ZipEntry
@@ -24,6 +25,8 @@ plugins { java }
 
 callGroovy("configureJavaOnlyJvm6Project", this)
 publish()
+
+val jpsLibraryPath by extra(rootProject.extra["distLibDir"])
 
 val core = "$rootDir/core"
 val annotationsSrc = "$buildDir/annotations"

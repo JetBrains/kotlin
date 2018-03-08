@@ -35,14 +35,14 @@ class ArrayIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) :
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
         SimpleBoundedValue(
-            codegen, rangeCall,
-            lowBound = StackValue.constant(0, asmElementType),
-            isLowInclusive = true,
-            highBound = StackValue.operation(Type.INT_TYPE) { v ->
+            codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
+            StackValue.constant(0, asmElementType),
+            true,
+            StackValue.operation(Type.INT_TYPE) { v ->
                 codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
                 v.arraylength()
             },
-            isHighInclusive = false
+            false
         )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =

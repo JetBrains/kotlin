@@ -25,8 +25,13 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.findUElementByTextFromPsi
 
@@ -59,6 +64,22 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
         TestCase.assertSame("virtualFiles of element and file itself should be the same",
                             psiElement(copied).containingFile.originalFile.virtualFile,
                             copied.originalFile.virtualFile)
+    }
+
+    fun testDetachedResolve() {
+        val psiFile = myFixture.configureByText(
+            "AnnotatedClass.kt", """
+            class AnnotatedClass {
+                    @JvmName(name = "")
+                    fun bar(param: String) { unknownFunc(param) }
+            }
+        """.trimIndent()
+        ) as KtFile
+
+        val detachedCall = psiFile.findDescendantOfType<KtCallExpression>()!!.copied()
+        val uCallExpression = detachedCall.toUElementOfType<UCallExpression>()!!
+        // at least it should not throw exceptions
+        TestCase.assertNull(uCallExpression.methodName)
     }
 
     fun testParameterInAnnotationClassFromFactory() {

@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
   CLASS CLASS name:A modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (runA:A.(kotlin.String) -> kotlin.Unit) returnType:A flags:
       VALUE_PARAMETER name:runA index:0 type:A.(kotlin.String) -> kotlin.Unit flags:
         EXPRESSION_BODY
@@ -42,6 +44,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           CALL 'constructor A(A.(String) -> Unit = ...)' type=A origin=null
             runA: GET_VAR 'value-parameter runA: A.(String) -> Unit = ...' type=A.(kotlin.String) -> kotlin.Unit origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:A) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
@@ -52,6 +56,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
               $this: GET_VAR 'this@A: A' type=A origin=null
             CONST String type=kotlin.String value=)
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:A) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
@@ -63,6 +69,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:A, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       BLOCK_BODY
@@ -76,11 +84,13 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=A
+              typeOperand: CLASS CLASS name:A modality:FINAL visibility:public flags:data
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:A flags:val
           TYPE_OP type=A origin=CAST typeOperand=A
+            typeOperand: CLASS CLASS name:A modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -96,22 +106,32 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:B modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (x:kotlin.Any) returnType:B flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
         EXPRESSION_BODY
           BLOCK type=B.<init>.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B.<init>.<no name provided> flags:
+              superClasses:
+                CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
               CONSTRUCTOR visibility:public <> () returnType:B.<init>.<no name provided> flags:
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                   INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+                overridden:
+                  FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
                 VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
               FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+                overridden:
+                  FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
               FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+                overridden:
+                  FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
             CALL 'constructor <no name provided>()' type=B.<init>.<no name provided> origin=OBJECT_LITERAL
       BLOCK_BODY
@@ -144,6 +164,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
           CALL 'constructor B(Any = ...)' type=B origin=null
             x: GET_VAR 'value-parameter x: Any = ...' type=kotlin.Any origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:B) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:B flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
@@ -154,6 +176,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
               $this: GET_VAR 'this@B: B' type=B origin=null
             CONST String type=kotlin.String value=)
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:B) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:B flags:
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
@@ -165,6 +189,8 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:B, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:B flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       BLOCK_BODY
@@ -178,11 +204,13 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=B
+              typeOperand: CLASS CLASS name:B modality:FINAL visibility:public flags:data
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:B flags:val
           TYPE_OP type=B origin=CAST typeOperand=B
+            typeOperand: CLASS CLASS name:B modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

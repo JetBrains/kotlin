@@ -19,9 +19,14 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 
 abstract class IrDeclarationBase(
     startOffset: Int,
     endOffset: Int,
     override val origin: IrDeclarationOrigin
-) : IrElementBase(startOffset, endOffset), IrDeclaration
+) : IrElementBase(startOffset, endOffset),
+    IrDeclaration {
+
+    override lateinit var parent: IrDeclarationParent
+}

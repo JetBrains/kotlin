@@ -55,6 +55,7 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     private fun addStubToPackageFragment(descriptor: SimpleFunctionDescriptor): IrSimpleFunction {
         val irSimpleFunction = stubBuilder.generateFunctionStub(descriptor)
         irBuiltInsExternalPackageFragment.declarations.add(irSimpleFunction)
+        irSimpleFunction.parent = irBuiltInsExternalPackageFragment
         return irSimpleFunction
     }
 

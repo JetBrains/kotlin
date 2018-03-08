@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -78,18 +79,48 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
     override fun visitClass(declaration: IrClass, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.thisReceiver?.accept(this, "\$this")
+            declaration.superClasses.renderDeclarationElementsOrDescriptors("superClasses")
             declaration.typeParameters.dumpElements()
             declaration.declarations.dumpElements()
         }
     }
 
-    override fun visitFunction(declaration: IrFunction, data: String) {
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: String) {
         declaration.dumpLabeledElementWith(data) {
+            declaration.superClassifiers.renderDeclarationElementsOrDescriptors("superClassifiers")
+        }
+    }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.overriddenSymbols.renderDeclarationElementsOrDescriptors("overridden")
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
             declaration.extensionReceiverParameter?.accept(this, "\$receiver")
             declaration.valueParameters.dumpElements()
             declaration.body?.accept(this, "")
+        }
+    }
+
+    private fun Collection<IrSymbol>.renderDeclarationElementsOrDescriptors(caption: String) {
+        if (isNotEmpty()) {
+            indented(caption) {
+                for (symbol in this) {
+                    symbol.renderDeclarationElementOrDescriptor()
+                }
+            }
+        }
+    }
+
+    private fun IrSymbol.renderDeclarationElementOrDescriptor(label: String? = null) {
+        if (isBound)
+            owner.render(label)
+        else {
+            if (label != null) {
+                printer.println("$label: ", "UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
+            } else {
+                printer.println("UNBOUND: ", DescriptorRenderer.COMPACT.render(descriptor))
+            }
         }
     }
 
@@ -199,9 +230,25 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         }
     }
 
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            expression.typeOperandClassifier.renderDeclarationElementOrDescriptor("typeOperand")
+            expression.acceptChildren(this, "")
+        }
+    }
+
     private inline fun IrElement.dumpLabeledElementWith(label: String, body: () -> Unit) {
         printer.println(accept(elementRenderer, null).withLabel(label))
         indented(body)
+    }
+
+    private fun IrElement.render(label: String? = null) {
+        if (label != null) {
+            printer.println("$label: ", accept(elementRenderer, null))
+        } else {
+            printer.println(accept(elementRenderer, null))
+        }
+
     }
 
     private fun IrElement.dumpLabeledSubTree(label: String) {
@@ -209,6 +256,11 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         indented {
             acceptChildren(this@DumpIrTreeVisitor, "")
         }
+    }
+
+    private inline fun indented(label: String, body: () -> Unit) {
+        printer.println("$label:")
+        indented(body)
     }
 
     private inline fun indented(body: () -> Unit) {

@@ -79,11 +79,6 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
         get() = targetField ?: "v5"
         set(value) { targetField = value }
 
-    private var typedArraysField: kotlin.Boolean? = null
-    override var typedArrays: kotlin.Boolean
-        get() = typedArraysField ?: true
-        set(value) { typedArraysField = value }
-
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments) {
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
@@ -100,7 +95,6 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
         sourceMapEmbedSourcesField?.let { args.sourceMapEmbedSources = it }
         sourceMapPrefixField?.let { args.sourceMapPrefix = it }
         targetField?.let { args.target = it }
-        typedArraysField?.let { args.typedArrays = it }
     }
 }
 
@@ -120,5 +114,4 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fil
     sourceMapEmbedSources = null
     sourceMapPrefix = null
     target = "v5"
-    typedArrays = true
 }

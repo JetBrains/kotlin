@@ -507,7 +507,7 @@ class QuickFixRegistrar : QuickFixContributor {
         RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
 
         WRONG_ANNOTATION_TARGET.registerFactory(AddAnnotationTargetFix)
-        WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.registerFactory(MoveReceiverAnnotationFix)
+        WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.registerFactory(MoveReceiverAnnotationFix, AddAnnotationTargetFix)
 
         NO_CONSTRUCTOR.registerFactory(RemoveNoConstructorFix)
 

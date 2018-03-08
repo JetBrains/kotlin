@@ -27,7 +27,10 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.builder.*
+import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
+import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolderImpl
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
@@ -35,8 +38,8 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.load.java.components.FilesByFacadeFqNameIndexer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
@@ -190,9 +193,9 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
         if (facadeFqName.isRoot) return emptyList()
 
-        return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(facadeFqName.parent(), scope)).filter {
-            JvmFileClassUtil.getFileClassInfoNoResolve(it).facadeClassFqName == facadeFqName
-        }
+        return bindingContext.get(FilesByFacadeFqNameIndexer.FACADE_FILES_BY_FQ_NAME, facadeFqName)?.filter {
+            PsiSearchScopeUtil.isInScope(scope, it)
+        } ?: emptyList()
     }
 
     override fun createTrace(): BindingTraceContext {
@@ -244,14 +247,20 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
     }
 
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(packageFqName, scope)).groupBy {
-            JvmFileClassUtil.getFileClassInfoNoResolve(it).facadeClassFqName
-        }.mapNotNull { KtLightClassForFacade.createForFacade(psiManager, it.key, scope, it.value) }
+        return findFacadeFilesInPackage(packageFqName, scope)
+            .groupBy { it.javaFileFacadeFqName }
+            .mapNotNull { KtLightClassForFacade.createForFacade(psiManager, it.key, scope, it.value) }
     }
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
-        return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(packageFqName, scope)).map {
-            JvmFileClassUtil.getFileClassInfoNoResolve(it).facadeClassFqName.shortName().asString()
-        }
+        return findFacadeFilesInPackage(packageFqName, scope)
+            .map { it.javaFileFacadeFqName.shortName().asString() }
     }
+
+    private fun findFacadeFilesInPackage(
+        packageFqName: FqName,
+        scope: GlobalSearchScope
+    ) = bindingContext.get(FilesByFacadeFqNameIndexer.FACADE_FILES_BY_PACKAGE_NAME, packageFqName)
+        ?.filter { PsiSearchScopeUtil.isInScope(scope, it) }
+        .orEmpty()
 }

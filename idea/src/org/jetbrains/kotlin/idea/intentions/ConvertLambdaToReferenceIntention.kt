@@ -55,9 +55,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
 
     private fun KtLambdaArgument.outerCalleeDescriptor(): FunctionDescriptor? {
         val outerCallExpression = parent as? KtCallExpression ?: return null
-        val context = outerCallExpression.analyze()
-        val outerCallee = outerCallExpression.calleeExpression as? KtReferenceExpression ?: return null
-        return context[REFERENCE_TARGET, outerCallee] as? FunctionDescriptor
+        return outerCallExpression.resolveToCall()?.resultingDescriptor as? FunctionDescriptor
     }
 
     private fun isConvertibleCallInLambda(

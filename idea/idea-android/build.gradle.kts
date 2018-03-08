@@ -2,6 +2,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 dependencies {
     testRuntime(intellijDep())
@@ -19,13 +20,14 @@ dependencies {
 
     compile(androidDxJar())
 
+    compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "util", "guava", "android-base-common", rootProject = rootProject) }
     compileOnly(intellijPluginDep("android")) {
         includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
     }
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm"))
     testCompile(projectTests(":compiler:tests-common"))

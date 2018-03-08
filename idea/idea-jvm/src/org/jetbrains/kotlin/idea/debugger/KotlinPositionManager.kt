@@ -26,7 +26,9 @@ import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFile
@@ -342,13 +344,15 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
 
-        val classNames = DebuggerClassNameProvider(myDebugProcess).getOuterClassNamesForPosition(position)
-        return classNames.flatMap { name ->
-            listOfNotNull(
-                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name),
-                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, "$name$*")
-            )
-        }
+        return DumbService.getInstance(myDebugProcess.project).runReadActionInSmartMode(Computable {
+            val classNames = DebuggerClassNameProvider(myDebugProcess).getOuterClassNamesForPosition(position)
+            classNames.flatMap { name ->
+                listOfNotNull(
+                        myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name),
+                        myDebugProcess.requestsManager.createClassPrepareRequest(requestor, "$name$*")
+                )
+            }
+        })
     }
 
     private fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)

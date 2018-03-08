@@ -4,6 +4,7 @@ import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 jvmTarget = "1.6"
 
@@ -31,7 +32,7 @@ val depDistProjects = listOf(
 // TODO: it seems incomplete, find and add missing dependencies
 val testDistProjects = listOf(
         "", // for root project
-        ":prepare:mock-runtime-for-test",
+        ":kotlin-stdlib:jvm-minimal-for-test",
         ":kotlin-compiler",
         ":kotlin-script-runtime",
         ":kotlin-stdlib",
@@ -91,6 +92,11 @@ sourceSets {
         // not yet ready
 //        java.srcDir("tests-ir-jvm/tests")
     }
+}
+
+val jar: Jar by tasks
+jar.from("../idea/src") {
+    include("META-INF/extensions/compiler.xml")
 }
 
 projectTest {

@@ -175,5 +175,5 @@ class MultiplatformGradleOrderEnumeratorHandler(val factory: MultiplatformGradle
 
 private fun Module.isMultiplatformModule(): Boolean {
     val settings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
-    return settings.targetPlatformKind is TargetPlatformKind.Common || settings.implementedModuleName != null
+    return settings.targetPlatformKind is TargetPlatformKind.Common || settings.implementedModuleNames.isNotEmpty()
 }

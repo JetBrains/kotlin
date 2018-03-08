@@ -127,8 +127,7 @@ class MovePropertyToConstructorIntention :
 
     private fun KtProperty.findConstructorParameter(): KtParameter? {
         val reference = initializer as? KtReferenceExpression ?: return null
-        val parameterDescriptor = reference.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, reference]
-                                          as? ParameterDescriptor ?: return null
+        val parameterDescriptor = reference.resolveToCall()?.resultingDescriptor as? ParameterDescriptor ?: return null
         return parameterDescriptor.source.getPsi() as? KtParameter
     }
 

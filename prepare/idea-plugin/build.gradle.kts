@@ -7,7 +7,8 @@ plugins {
     `java-base`
 }
 
-val projectsToShadow = listOf(
+// Do not rename, used in JPS importer
+val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
         ":compiler:backend",
         ":compiler:backend-common",
@@ -46,9 +47,11 @@ val projectsToShadow = listOf(
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:util",
-        ":core:util.runtime")
+        ":core:util.runtime"))
 
+// Do not rename, used in JPS importer
 val packedJars by configurations.creating
+
 val sideJars by configurations.creating
 
 dependencies {

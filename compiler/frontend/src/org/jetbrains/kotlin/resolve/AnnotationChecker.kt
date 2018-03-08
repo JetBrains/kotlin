@@ -229,7 +229,7 @@ class AnnotationChecker(
         private fun DeclarationDescriptor?.hasBackingField(bindingTrace: BindingTrace) =
             (this as? PropertyDescriptor)?.let { bindingTrace.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
 
-        private fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, trace: BindingTrace): TargetList {
+        fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, trace: BindingTrace): TargetList {
             return when (annotated) {
                 is KtClassOrObject ->
                     (descriptor as? ClassDescriptor)?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
@@ -385,7 +385,7 @@ class AnnotationChecker(
             }
         }
 
-        private class TargetList(
+        class TargetList(
             val defaultTargets: List<KotlinTarget>,
             val canBeSubstituted: List<KotlinTarget> = emptyList(),
             val onlyWithUseSiteTarget: List<KotlinTarget> = emptyList()

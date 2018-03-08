@@ -15,11 +15,13 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
             then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'compareTo(Double): Int' type=kotlin.Int origin=null
                 $this: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
                 other: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -35,8 +37,10 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -44,8 +48,10 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'compareTo(Double): Int' type=kotlin.Int origin=null
                 $this: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 other: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -67,11 +73,13 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
             then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'compareTo(Float): Int' type=kotlin.Int origin=null
                 $this: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
                 other: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -87,8 +95,10 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -96,8 +106,10 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'compareTo(Float): Int' type=kotlin.Int origin=null
                 $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 other: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -113,8 +125,10 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -122,8 +136,10 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'compareTo(Double): Int' type=kotlin.Int origin=null
                 $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 other: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -139,8 +155,10 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -148,8 +166,10 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'compareTo(Float): Int' type=kotlin.Int origin=null
                 $this: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 other: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -171,11 +191,13 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
             then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'compareTo(Float): Int' type=kotlin.Int origin=null
                 $this: GET_VAR 'this@test2fr: Float' type=kotlin.Float origin=null
                 other: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
@@ -189,13 +211,16 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
             then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: CALL 'compareTo(Double): Int' type=kotlin.Int origin=null
                 $this: GET_VAR 'this@test3fr: Float' type=kotlin.Float origin=null
                 other: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
               arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
+

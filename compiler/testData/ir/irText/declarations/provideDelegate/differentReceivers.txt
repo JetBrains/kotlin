@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/differentReceivers.kt
   CLASS CLASS name:MyClass modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:MyClass flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:MyClass flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY
@@ -17,11 +19,17 @@ FILE fqName:<root> fileName:/differentReceivers.kt
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR 'this@MyClass: MyClass' type=MyClass origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   FUN name:provideDelegate visibility:public modality:FINAL <> ($receiver:MyClass, host:kotlin.Any?, p:kotlin.Any) returnType:String flags:
     $receiver: VALUE_PARAMETER name:<this> type:MyClass flags:

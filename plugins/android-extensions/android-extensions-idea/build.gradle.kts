@@ -2,6 +2,7 @@
 description = "Kotlin Android Extensions IDEA"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 jvmTarget = "1.6"
 
@@ -23,7 +24,7 @@ dependencies {
     testCompile(project(":compiler:tests-common"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:frontend.java"))
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:kapt3-idea"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea"))

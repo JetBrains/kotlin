@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.implementedDescriptor
+import org.jetbrains.kotlin.idea.facet.implementedDescriptors
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -44,8 +44,8 @@ fun getExpectedDeclarationTooltip(declaration: KtDeclaration?): String? {
     val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    val commonModuleDescriptor = platformModuleDescriptor.implementedDescriptor ?: return null
-    if (!commonModuleDescriptor.hasDeclarationOf(descriptor)) return null
+    val commonModuleDescriptors = platformModuleDescriptor.implementedDescriptors ?: return null
+    if (!commonModuleDescriptors.any { it.hasDeclarationOf(descriptor) }) return null
 
     return "Has declaration in common module"
 }
@@ -54,7 +54,10 @@ fun navigateToExpectedDeclaration(declaration: KtDeclaration?) {
     declaration?.expectedDeclarationIfAny()?.navigate(false)
 }
 
-internal fun MemberDescriptor.expectedDescriptor() = module.implementedDescriptor?.declarationOf(this)
+internal fun MemberDescriptor.expectedDescriptors() = module.implementedDescriptors.mapNotNull { it.declarationOf(this) }
+
+// TODO: Sort out the cases with multiple expected descriptors
+internal fun MemberDescriptor.expectedDescriptor() = expectedDescriptors().firstOrNull()
 
 internal fun KtDeclaration.expectedDeclarationIfAny(): KtDeclaration? {
     val expectedDescriptor = (toDescriptor() as? MemberDescriptor)?.expectedDescriptor() ?: return null

@@ -840,7 +840,11 @@ public class OverridingUtil {
         }
         else {
             assert memberDescriptor instanceof PropertyAccessorDescriptorImpl;
-            ((PropertyAccessorDescriptorImpl) memberDescriptor).setVisibility(visibilityToInherit);
+            PropertyAccessorDescriptorImpl propertyAccessorDescriptor = (PropertyAccessorDescriptorImpl) memberDescriptor;
+            propertyAccessorDescriptor.setVisibility(visibilityToInherit);
+            if (visibilityToInherit != propertyAccessorDescriptor.getCorrespondingProperty().getVisibility()) {
+                propertyAccessorDescriptor.setDefault(false);
+            }
         }
     }
 

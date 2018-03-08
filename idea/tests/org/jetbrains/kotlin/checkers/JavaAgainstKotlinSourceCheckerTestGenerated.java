@@ -210,6 +210,12 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             doTest(fileName);
         }
 
+        @TestMetadata("JvmPackageNameFileFacade.kt")
+        public void testJvmPackageNameFileFacade() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaWithKotlin/JvmPackageNameFileFacade.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoNotNullOnParameterInOverride.kt")
         public void testNoNotNullOnParameterInOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaWithKotlin/NoNotNullOnParameterInOverride.kt");

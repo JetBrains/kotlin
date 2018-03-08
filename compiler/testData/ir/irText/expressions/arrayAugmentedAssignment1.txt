@@ -13,6 +13,8 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
         CONST Int type=kotlin.Int value=42
   CLASS CLASS name:C modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (x:kotlin.IntArray) returnType:C flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.IntArray flags:
       BLOCK_BODY
@@ -29,11 +31,17 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
             GET_FIELD 'x: IntArray' type=kotlin.IntArray origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   FUN name:testVariable visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
@@ -71,6 +79,7 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
     VALUE_PARAMETER name:c index:0 type:C flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:kotlin.IntArray flags:val
             CALL '<get-x>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY

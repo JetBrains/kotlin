@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
@@ -123,11 +123,8 @@ val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
             .toMap()
 }
 
-internal fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider): List<Module> {
-    return modelsProvider.modules.filter { module ->
-        module.findImplementedModuleName(modelsProvider) == name
-    }
-}
+internal fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider) =
+    modelsProvider.modules.filter { name in it.findImplementedModuleNames(modelsProvider) }
 
 val Module.implementingModules: List<Module>
     get() = cached(CachedValueProvider {
@@ -167,12 +164,11 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
         })
     }
 
-val ModuleDescriptor.implementedDescriptor: ModuleDescriptor?
+val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
     get() {
-        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return null
+        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
 
-        val implementedModuleInfo = moduleSourceInfo.expectedBy
-        return implementedModuleInfo?.let {
+        return moduleSourceInfo.expectedBy.mapNotNull {
             KotlinCacheService.getInstance(moduleSourceInfo.module.project)
                 .getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
         }

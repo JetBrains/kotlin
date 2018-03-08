@@ -923,6 +923,18 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("extractFromPrivateInlineFun.kt")
+            public void testExtractFromPrivateInlineFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractFromPrivateInlineFun.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("extractFromPublicInlineFun.kt")
+            public void testExtractFromPublicInlineFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractFromPublicInlineFun.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("extractToEnumClassBody.kt")
             public void testExtractToEnumClassBody() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractToEnumClassBody.kt");

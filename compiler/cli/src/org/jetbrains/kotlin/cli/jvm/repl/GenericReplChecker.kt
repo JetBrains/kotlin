@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplTerminalDiagnosticMessageHolder
+import org.jetbrains.kotlin.cli.jvm.repl.messages.ConsoleDiagnosticMessageHolder
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
@@ -43,8 +43,8 @@ const val KOTLIN_REPL_JVM_TARGET_PROPERTY = "kotlin.repl.jvm.target"
 
 open class GenericReplChecker(
         disposable: Disposable,
-        val scriptDefinition: KotlinScriptDefinition,
-        val compilerConfiguration: CompilerConfiguration,
+        private val scriptDefinition: KotlinScriptDefinition,
+        private val compilerConfiguration: CompilerConfiguration,
         messageCollector: MessageCollector
 ) : ReplCheckAction {
 
@@ -65,7 +65,7 @@ open class GenericReplChecker(
 
     private val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
 
-    internal fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
+    private fun createDiagnosticHolder() = ConsoleDiagnosticMessageHolder()
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult {
         state.lock.write {
@@ -88,7 +88,7 @@ open class GenericReplChecker(
 
             return when {
                 syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> ReplCheckResult.Incomplete()
-                syntaxErrorReport.isHasErrors -> ReplCheckResult.Error(errorHolder.renderedDiagnostics)
+                syntaxErrorReport.isHasErrors -> ReplCheckResult.Error(errorHolder.renderMessage())
                 else -> ReplCheckResult.Ok()
             }
         }

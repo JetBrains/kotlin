@@ -19,17 +19,15 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
-import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenamer
 
-class VariableInplaceRenameHandlerWithFinishHook(private val onFinish: () -> Unit) : VariableInplaceRenameHandler() {
-    override fun createRenamer(elementToRename: PsiElement, editor: Editor?): VariableInplaceRenamer? {
-        return object : VariableInplaceRenamer(elementToRename as PsiNamedElement, editor) {
+class VariableInplaceRenameHandlerWithFinishHook(private val onFinish: () -> Unit) : KotlinVariableInplaceRenameHandler() {
+    override fun createRenamer(elementToRename: PsiElement, editor: Editor): VariableInplaceRenamer? {
+        return object : RenamerImpl(elementToRename as PsiNamedElement, editor) {
             override fun performRefactoring(): Boolean {
                 try {
                     return super.performRefactoring()
-                }
-                finally {
+                } finally {
                     onFinish()
                 }
             }
