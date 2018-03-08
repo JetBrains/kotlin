@@ -154,6 +154,9 @@ abstract class ConvertScopeFunctionFix(private val counterpartName: String) : Lo
         val functionLiteral = lambda.getLambdaExpression()?.functionLiteral ?: return
         val lambdaDescriptor = bindingContext[FUNCTION, functionLiteral] ?: return
 
+        functionLiteral.valueParameterList?.delete()
+        functionLiteral.arrow?.delete()
+
         val replacements = ReplacementCollection()
         analyzeLambda(bindingContext, lambda, lambdaDescriptor, replacements)
         callee.replace(KtPsiFactory(project).createExpression(counterpartName) as KtNameReferenceExpression)
@@ -205,6 +208,7 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
         lambda.accept(object : KtTreeVisitorVoid() {
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 super.visitSimpleNameExpression(expression)
+                if (expression is KtOperationReferenceExpression) return
                 val resolvedCall = expression.getResolvedCall(bindingContext) ?: return
                 val dispatchReceiverTarget = resolvedCall.dispatchReceiver?.getReceiverTargetDescriptor(bindingContext)
                 val extensionReceiverTarget = resolvedCall.extensionReceiver?.getReceiverTargetDescriptor(bindingContext)
