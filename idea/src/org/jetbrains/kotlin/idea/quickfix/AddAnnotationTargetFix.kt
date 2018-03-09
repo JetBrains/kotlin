@@ -23,9 +23,11 @@ import com.intellij.psi.PsiTarget
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -65,7 +67,8 @@ class AddAnnotationTargetFix(annotationEntry: KtAnnotationEntry) : KotlinQuickFi
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtAnnotationEntry>? {
             val entry = diagnostic.psiElement as? KtAnnotationEntry ?: return null
-            if (entry.toAnnotationClass() == null) return null
+            val annotationClass = entry.toAnnotationClass() ?: return null
+            if (entry.useSiteTarget != null && entry.getRequiredAnnotationTargets(annotationClass, entry.project).isEmpty()) return null
 
             return AddAnnotationTargetFix(entry)
         }
@@ -87,19 +90,34 @@ private fun KtAnnotationEntry.getRequiredAnnotationTargets(annotationClass: KtCl
         }
     }.flatten().toSet()
     val annotationTargetValueNames = AnnotationTarget.values().map { it.name }
-    return (requiredTargets + otherReferenceRequiredTargets).filter { it.name in annotationTargetValueNames }
+    return (requiredTargets + otherReferenceRequiredTargets).distinct().filter { it.name in annotationTargetValueNames }
 }
 
 private fun PsiAnnotation.getActualTargetList(): List<KotlinTarget> {
     val annotated = parent.parent as? PsiTarget ?: return emptyList()
-    return AnnotationChecker.getDeclarationSiteActualTargetList(annotated)
+    return AnnotationChecker.getActualTargetList(annotated)
 }
 
 private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
     val annotatedElement = getStrictParentOfType<KtModifierList>()?.owner as? KtElement
             ?: getStrictParentOfType<KtAnnotatedExpression>()?.baseExpression
+            ?: getStrictParentOfType<KtFile>()
             ?: return emptyList()
-    return AnnotationChecker.getDeclarationSiteActualTargetList(annotatedElement, null, BindingTraceContext())
+
+    val targetList = AnnotationChecker.getActualTargetList(annotatedElement, null, BindingTraceContext())
+
+    if (useSiteTarget == null) {
+        return targetList.defaultTargets
+    }
+    val target = KotlinTarget.USE_SITE_MAPPING[useSiteTarget?.getAnnotationUseSiteTarget()] ?: return emptyList()
+    if (target !in with(targetList) { defaultTargets + canBeSubstituted + onlyWithUseSiteTarget }) return emptyList()
+    return if (target == KotlinTarget.RECEIVER &&
+            !languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes)
+                   ) {
+        listOf(KotlinTarget.VALUE_PARAMETER)
+    } else {
+        listOf(target)
+    }
 }
 
 private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, psiFactory: KtPsiFactory) {

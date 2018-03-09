@@ -149,6 +149,24 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CompilationErrors extends AbstractCompilerLightClassTest {
+        @TestMetadata("ActualClass.kt")
+        public void testActualClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ActualClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ActualTypeAlias.kt")
+        public void testActualTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ActualTypeAlias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ActualTypeAliasCustomJvmPackageName.kt")
+        public void testActualTypeAliasCustomJvmPackageName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ActualTypeAliasCustomJvmPackageName.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInCompilationErrors() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
@@ -186,6 +204,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("ExpectedNestedClassInObject.kt")
         public void testExpectedNestedClassInObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectedNestedClassInObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("JvmPackageName.kt")
+        public void testJvmPackageName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/JvmPackageName.kt");
             doTest(fileName);
         }
 

@@ -1973,8 +1973,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             """
         )
 
-        val commonModule = createModulePom(
-            "my-common-module",
+        val commonModule1 = createModulePom(
+            "my-common-module1",
             """
 
                 <parent>
@@ -1984,7 +1984,50 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                 </parent>
 
                 <groupId>test</groupId>
-                <artifactId>my-common-module</artifactId>
+                <artifactId>my-common-module1</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib-common</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>meta</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>metadata</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        val commonModule2 = createModulePom(
+                "my-common-module2",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>my-common-module2</artifactId>
                 <version>1.0.0</version>
 
                 <dependencies>
@@ -2038,7 +2081,12 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                     </dependency>
                     <dependency>
                         <groupId>test</groupId>
-                        <artifactId>my-common-module</artifactId>
+                        <artifactId>my-common-module1</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>test</groupId>
+                        <artifactId>my-common-module2</artifactId>
                         <version>1.0.0</version>
                     </dependency>
                 </dependencies>
@@ -2086,7 +2134,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                     </dependency>
                     <dependency>
                         <groupId>test</groupId>
-                        <artifactId>my-common-module</artifactId>
+                        <artifactId>my-common-module1</artifactId>
                         <version>1.0.0</version>
                     </dependency>
                 </dependencies>
@@ -2112,23 +2160,27 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                 """
         )
 
-        importProjects(mainPom, commonModule, jvmModule, jsModule)
+        importProjects(mainPom, commonModule1, commonModule2, jvmModule, jsModule)
 
-        assertModules("project", "my-common-module", "my-jvm-module", "my-js-module")
+        assertModules("project", "my-common-module1", "my-common-module2", "my-jvm-module", "my-js-module")
         assertImporterStatePresent()
 
-        with(facetSettings("my-common-module")) {
+        with(facetSettings("my-common-module1")) {
+            Assert.assertEquals(TargetPlatformKind.Common.description, targetPlatformKind!!.description)
+        }
+
+        with(facetSettings("my-common-module2")) {
             Assert.assertEquals(TargetPlatformKind.Common.description, targetPlatformKind!!.description)
         }
 
         with(facetSettings("my-jvm-module")) {
             Assert.assertEquals(TargetPlatformKind.Jvm(JvmTarget.JVM_1_6).description, targetPlatformKind!!.description)
-            Assert.assertEquals("my-common-module", implementedModuleName)
+            Assert.assertEquals(listOf("my-common-module1", "my-common-module2"), implementedModuleNames)
         }
 
         with(facetSettings("my-js-module")) {
             Assert.assertEquals(TargetPlatformKind.JavaScript.description, targetPlatformKind!!.description)
-            Assert.assertEquals("my-common-module", implementedModuleName)
+            Assert.assertEquals(listOf("my-common-module1"), implementedModuleNames)
         }
     }
 

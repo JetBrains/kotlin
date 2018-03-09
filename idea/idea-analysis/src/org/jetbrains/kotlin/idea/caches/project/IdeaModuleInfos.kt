@@ -117,24 +117,22 @@ private fun ideaModelDependencies(module: Module, forProduction: Boolean): List<
     return result.toList()
 }
 
-fun Module.findImplementedModuleName(modelsProvider: IdeModifiableModelsProvider): String? {
+fun Module.findImplementedModuleNames(modelsProvider: IdeModifiableModelsProvider): List<String> {
     val facetModel = modelsProvider.getModifiableFacetModel(this)
     val facet = facetModel.findFacet(
         KotlinFacetType.TYPE_ID,
         FacetTypeRegistry.getInstance().findFacetType(ID)!!.defaultFacetName
     )
-    return facet?.configuration?.settings?.implementedModuleName
+    return facet?.configuration?.settings?.implementedModuleNames ?: emptyList()
 }
 
-fun Module.findImplementedModule(modelsProvider: IdeModifiableModelsProvider): Module? {
-    val implementedModuleName = findImplementedModuleName(modelsProvider)
-    return implementedModuleName?.let { modelsProvider.findIdeModule(it) }
-}
+fun Module.findImplementedModules(modelsProvider: IdeModifiableModelsProvider) =
+    findImplementedModuleNames(modelsProvider).mapNotNull { modelsProvider.findIdeModule(it) }
 
 interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
     val module: Module
 
-    override val expectedBy: ModuleSourceInfo?
+    override val expectedBy: List<ModuleSourceInfo>
 
     override val displayedName get() = module.name
 
@@ -149,11 +147,11 @@ interface ModuleSourceInfo : IdeaModuleInfo, TrackableModuleInfo {
 }
 
 sealed class ModuleSourceInfoWithExpectedBy(private val forProduction: Boolean) : ModuleSourceInfo {
-    override val expectedBy: ModuleSourceInfo?
+    override val expectedBy: List<ModuleSourceInfo>
         get() {
             val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
-            val expectedByModule = module.findImplementedModule(modelsProvider)
-            return if (forProduction) expectedByModule?.productionSourceInfo() else expectedByModule?.testSourceInfo()
+            val expectedByModules = module.findImplementedModules(modelsProvider)
+            return expectedByModules.mapNotNull { if (forProduction) it.productionSourceInfo() else it.testSourceInfo() }
         }
 
     override fun dependencies(): List<IdeaModuleInfo> = module.cached(createCachedValueProvider {

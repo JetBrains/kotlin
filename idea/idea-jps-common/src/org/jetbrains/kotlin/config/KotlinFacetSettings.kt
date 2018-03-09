@@ -192,7 +192,7 @@ class KotlinFacetSettings {
             }
         }
 
-    var implementedModuleName: String? = null
+    var implementedModuleNames: List<String> = emptyList()
 
     var productionOutputPath: String? = null
     var testOutputPath: String? = null

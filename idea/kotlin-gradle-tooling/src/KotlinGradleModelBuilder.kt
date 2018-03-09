@@ -20,7 +20,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
@@ -48,7 +47,7 @@ interface KotlinGradleModel : Serializable {
     val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet
     val coroutines: String?
     val platformPluginId: String?
-    val implements: String?
+    val implements: List<String>
 }
 
 class KotlinGradleModelImpl(
@@ -56,7 +55,7 @@ class KotlinGradleModelImpl(
         override val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
         override val coroutines: String?,
         override val platformPluginId: String?,
-        override val implements: String?
+        override val implements: List<String>
 ) : KotlinGradleModel
 
 abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
@@ -89,11 +88,11 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
 
     override fun canBuild(modelName: String?): Boolean = modelName == KotlinGradleModel::class.java.name
 
-    private fun getImplements(project: Project): Project? {
+    private fun getImplementedProjects(project: Project): List<Project> {
         return listOf("expectedBy", "implement")
                 .flatMap { project.configurations.findByName(it)?.dependencies ?: emptySet<Dependency>() }
-                .firstIsInstanceOrNull<ProjectDependency>()
-                ?.dependencyProject
+                .filterIsInstance<ProjectDependency>()
+                .mapNotNull { it.dependencyProject }
     }
 
     // see GradleProjectResolverUtil.getModuleId() in IDEA codebase
@@ -164,14 +163,14 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         }
 
         val platform = platformPluginId ?: pluginToPlatform.entries.singleOrNull { project.plugins.findPlugin(it.key) != null }?.value
-        val implementedProject = getImplements(project)
+        val implementedProjects = getImplementedProjects(project)
 
         return KotlinGradleModelImpl(
                 kotlinPluginId != null || platformPluginId != null,
                 compilerArgumentsBySourceSet,
                 getCoroutines(project),
                 platform,
-                implementedProject?.pathOrName()
+                implementedProjects.map { it.pathOrName() }
         )
     }
 }

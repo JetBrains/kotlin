@@ -121,7 +121,7 @@ fun Module.createFacet(
                     platformKind
             )
             if (implementedModuleName != null) {
-                this.implementedModuleName = implementedModuleName
+                this.implementedModuleNames = listOf(implementedModuleName)
             }
         }
         modelsProvider.commit()

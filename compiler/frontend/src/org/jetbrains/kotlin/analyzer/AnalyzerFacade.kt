@@ -239,7 +239,7 @@ interface ModuleInfo {
     val name: Name
     val displayedName: String get() = name.asString()
     fun dependencies(): List<ModuleInfo>
-    val expectedBy: ModuleInfo? get() = null
+    val expectedBy: List<ModuleInfo> get() = emptyList()
     val platform: TargetPlatform? get() = null
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
@@ -310,8 +310,8 @@ class LazyModuleDependencies<M : ModuleInfo>(
 
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
 
-    override val expectedByDependency by storageManager.createNullableLazyValue {
-        module.expectedBy?.let { resolverForProject.descriptorForModule(it as M) }
+    override val expectedByDependencies by storageManager.createLazyValue {
+        module.expectedBy.map { resolverForProject.descriptorForModule(it as M) }
     }
 
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>

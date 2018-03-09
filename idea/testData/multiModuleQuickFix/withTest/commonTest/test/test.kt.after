@@ -1,4 +1,4 @@
-// "Create actual function for platform JVM" "true"
+// "Create actual function for module jvm (JVM)" "true"
 // TEST
 
 package test

@@ -1,0 +1,7 @@
+{
+  "type": "AUTO_DETECT",
+  "mainFile": "test.kt",
+  "newName": "copyNew",
+  "withRuntime": "true",
+  "hint": "Rename is not applicable to synthetic declaration"
+}

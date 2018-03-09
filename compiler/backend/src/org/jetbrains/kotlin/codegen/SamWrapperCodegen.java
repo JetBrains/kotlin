@@ -55,6 +55,7 @@ public class SamWrapperCodegen {
     private final SamType samType;
     private final MemberCodegen<?> parentCodegen;
     private final int visibility;
+    public static final String SAM_WRAPPER_SUFFIX = "$0";
 
     public SamWrapperCodegen(
             @NotNull GenerationState state,
@@ -206,7 +207,7 @@ public class SamWrapperCodegen {
         }
 
         String shortName = String.format(
-                "%s$sam%s$%s$0",
+                "%s$sam%s$%s" + SAM_WRAPPER_SUFFIX,
                 outermostOwner.shortName().asString(),
                 (isInsideInline ? "$i" : ""),
                 DescriptorUtils.getFqNameSafe(samType.getJavaClassDescriptor()).asString().replace('.', '_')

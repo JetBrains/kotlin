@@ -51,7 +51,8 @@ class LazyTopDownAnalyzer(
     private val identifierChecker: IdentifierChecker,
     private val languageVersionSettings: LanguageVersionSettings,
     private val deprecationResolver: DeprecationResolver,
-    private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>
+    private val classifierUsageCheckers: Iterable<ClassifierUsageChecker>,
+    private val filePreprocessor: FilePreprocessor
 ) {
     fun analyzeDeclarations(
         topDownAnalysisMode: TopDownAnalysisMode,
@@ -91,7 +92,7 @@ class LazyTopDownAnalyzer(
                 }
 
                 override fun visitKtFile(file: KtFile) {
-                    DescriptorResolver.registerFileInPackage(trace, file)
+                    filePreprocessor.preprocessFile(file)
                     registerDeclarations(file.declarations)
                     val packageDirective = file.packageDirective
                     assert(file.isScript() || packageDirective != null) { "No package in a non-script file: " + file }

@@ -85,10 +85,10 @@ public class ErrorUtils {
                 return emptyList();
             }
 
-            @Nullable
+            @NotNull
             @Override
-            public ModuleDescriptor getExpectedByModule() {
-                return null;
+            public List<ModuleDescriptor> getExpectedByModules() {
+                return emptyList();
             }
 
             @Override

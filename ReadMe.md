@@ -59,7 +59,7 @@ On the first project configuration gradle will download and setup the dependenci
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
 
-These dependencies are quite large, so depending on the qualify of your internet connection 
+These dependencies are quite large, so depending on the quality of your internet connection 
 you might face timeouts getting them. In this case you can increase timeout by specifying the following 
 command line parameters on the first run: 
     

@@ -20,8 +20,10 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.ConsoleReplConfiguration
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.IdeReplConfiguration
 import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -36,8 +38,8 @@ import java.util.concurrent.Future
 class ReplFromTerminal(
         disposable: Disposable,
         compilerConfiguration: CompilerConfiguration,
-        replConfiguration: ReplConfiguration
-) : ReplConfiguration by replConfiguration {
+        private val replConfiguration: ReplConfiguration
+) {
     private val replInitializer: Future<ReplInterpreter> = Executors.newSingleThreadExecutor().submit(Callable {
         ReplInterpreter(disposable, compilerConfiguration, replConfiguration)
     })
@@ -45,13 +47,17 @@ class ReplFromTerminal(
     private val replInterpreter: ReplInterpreter
         get() = replInitializer.get()
 
-    private val messageCollector: MessageCollector = compilerConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    private val writer get() = replConfiguration.writer
+
+    private val messageCollector = compilerConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     private fun doRun() {
         try {
-            writer.printlnWelcomeMessage("Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
-                                         "(JRE ${System.getProperty("java.runtime.version")})")
-            writer.printlnWelcomeMessage("Type :help for help, :quit for quit")
+            with (writer) {
+                printlnWelcomeMessage("Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
+                                             "(JRE ${System.getProperty("java.runtime.version")})")
+                printlnWelcomeMessage("Type :help for help, :quit for quit")
+            }
 
             // Display compiler messages related to configuration and CLI arguments, quit if there are errors
             val hasErrors = messageCollector.hasErrors()
@@ -67,14 +73,16 @@ class ReplFromTerminal(
             }
         }
         catch (e: Exception) {
-            errorLogger.logException(e)
+            replConfiguration.exceptionReporter.report(e)
+            throw e
         }
         finally {
             try {
-                commandReader.flushHistory()
+                replConfiguration.commandReader.flushHistory()
             }
             catch (e: Exception) {
-                errorLogger.logException(e)
+                replConfiguration.exceptionReporter.report(e)
+                throw e
             }
 
         }
@@ -87,7 +95,7 @@ class ReplFromTerminal(
     }
 
     private fun one(next: WhatNextAfterOneLine): WhatNextAfterOneLine {
-        var line = commandReader.readLine(next) ?: return WhatNextAfterOneLine.QUIT
+        var line = replConfiguration.commandReader.readLine(next) ?: return WhatNextAfterOneLine.QUIT
 
         line = unescapeLineBreaks(line)
 
@@ -162,12 +170,13 @@ class ReplFromTerminal(
 
         fun run(disposable: Disposable, configuration: CompilerConfiguration) {
             val replIdeMode = System.getProperty("kotlin.repl.ideMode") == "true"
-            val replConfiguration = if (replIdeMode) ReplForIdeConfiguration() else ConsoleReplConfiguration()
+            val replConfiguration = if (replIdeMode) IdeReplConfiguration() else ConsoleReplConfiguration()
             return try {
                 ReplFromTerminal(disposable, configuration, replConfiguration).doRun()
             }
             catch (e: Exception) {
-                replConfiguration.errorLogger.logException(e)
+                replConfiguration.exceptionReporter.report(e)
+                throw e
             }
         }
     }

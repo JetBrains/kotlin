@@ -128,6 +128,10 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
                  expectedScopes, actualScopes);
   }
 
+  protected void assertNoDepForModule(String moduleName, String depName) {
+    assertEmpty("No dependency '" + depName + "' was expected", collectModuleDeps(moduleName, depName, ModuleOrderEntry.class));
+  }
+
   @NotNull
   private List<ModuleOrderEntry> getModuleModuleDeps(@NotNull String moduleName, @NotNull String depName) {
     return getModuleDep(moduleName, depName, ModuleOrderEntry.class);
@@ -139,6 +143,14 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
   @NotNull
   private <T> List<T> getModuleDep(@NotNull String moduleName, @NotNull String depName, @NotNull Class<T> clazz) {
+    List<T> deps = collectModuleDeps(moduleName, depName, clazz);
+    assertTrue("Dependency '" + depName + "' for module '" + moduleName + "' not found among: " + collectModuleDepsNames(moduleName, clazz),
+               !deps.isEmpty());
+    return deps;
+  }
+
+  @NotNull
+  private <T> List<T> collectModuleDeps(@NotNull String moduleName, @NotNull String depName, @NotNull Class<T> clazz) {
     List<T> deps = ContainerUtil.newArrayList();
 
     for (OrderEntry e : getRootManager(moduleName).getOrderEntries()) {
@@ -146,8 +158,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         deps.add((T)e);
       }
     }
-    assertTrue("Dependency '" + depName + "' for module '" + moduleName + "' not found among: " + collectModuleDepsNames(moduleName, clazz),
-               !deps.isEmpty());
+
     return deps;
   }
 

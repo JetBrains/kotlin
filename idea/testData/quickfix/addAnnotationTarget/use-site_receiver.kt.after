@@ -1,0 +1,7 @@
+// "Add annotation target" "true"
+class Foo
+
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class ReceiverAnn
+
+fun @receiver:ReceiverAnn Foo.test() {}

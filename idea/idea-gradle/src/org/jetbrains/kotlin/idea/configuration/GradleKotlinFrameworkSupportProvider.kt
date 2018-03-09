@@ -61,7 +61,7 @@ abstract class GradleKotlinFrameworkSupportProvider(val frameworkTypeId: String,
         addSupport(buildScriptData, rootModel.sdk)
     }
 
-    fun addSupport(buildScriptData: BuildScriptDataBuilder, sdk: Sdk?) {
+    open fun addSupport(buildScriptData: BuildScriptDataBuilder, sdk: Sdk?) {
         var kotlinVersion = bundledRuntimeVersion()
         val additionalRepository = getRepositoryForVersion(kotlinVersion)
         if (isSnapshot(bundledRuntimeVersion())) {
@@ -114,12 +114,13 @@ open class GradleKotlinJavaFrameworkSupportProvider(frameworkTypeId: String = "K
 
     override fun getDependencies(sdk: Sdk?) = listOf(getStdlibArtifactId(sdk, bundledRuntimeVersion()))
 
-    override fun addSupport(module: Module, rootModel: ModifiableRootModel, modifiableModelsProvider: ModifiableModelsProvider, buildScriptData: BuildScriptDataBuilder) {
-        super.addSupport(module, rootModel, modifiableModelsProvider, buildScriptData)
-        val jvmTarget = getDefaultJvmTarget(rootModel.sdk, bundledRuntimeVersion())
+    override fun addSupport(buildScriptData: BuildScriptDataBuilder, sdk: Sdk?) {
+        super.addSupport(buildScriptData, sdk)
+        val jvmTarget = getDefaultJvmTarget(sdk, bundledRuntimeVersion())
         if (jvmTarget != null) {
-            buildScriptData.addOther("compileKotlin {\n    kotlinOptions.jvmTarget = \"1.8\"\n}\n\n")
-            buildScriptData.addOther("compileTestKotlin {\n    kotlinOptions.jvmTarget = \"1.8\"\n}\n")
+            val description = jvmTarget.description
+            buildScriptData.addOther("compileKotlin {\n    kotlinOptions.jvmTarget = \"$description\"\n}\n\n")
+            buildScriptData.addOther("compileTestKotlin {\n    kotlinOptions.jvmTarget = \"$description\"\n}\n")
         }
     }
 
@@ -155,6 +156,16 @@ class GradleKotlinMPPJavaFrameworkSupportProvider
     override fun getPluginId() = "kotlin-platform-jvm"
     override fun getDescription() = "JVM-specific code for a Kotlin multiplatform project"
     override fun getTestDependencies() = listOf(MAVEN_TEST_ID, MAVEN_TEST_JUNIT_ID, "junit:junit:4.12")
+
+    override fun addSupport(buildScriptData: BuildScriptDataBuilder, sdk: Sdk?) {
+        super.addSupport(buildScriptData, sdk)
+        val jvmTarget = getDefaultJvmTarget(sdk, bundledRuntimeVersion())
+        if (jvmTarget != null) {
+            val description = jvmTarget.description
+            buildScriptData.addOther("sourceCompatibility = \"$description\"\n\n")
+        }
+    }
+
 }
 
 class GradleKotlinMPPJSFrameworkSupportProvider

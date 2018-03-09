@@ -120,6 +120,7 @@ fun createContainerForLazyResolveWithJava(
     targetEnvironment.configure(this)
 
     useImpl<ContractDeserializerImpl>()
+    useImpl<FilesByFacadeFqNameIndexer>()
 }.apply {
     get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
 }

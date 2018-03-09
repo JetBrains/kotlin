@@ -202,6 +202,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     @NotNull
     public PsiFile[] getPackageFiles(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
+        // TODO: this does not take into account JvmPackageName annotation
         Collection<KtFile> result = lightClassGenerationSupport.findFilesForPackage(packageFQN, scope);
         return result.toArray(new PsiFile[result.size()]);
     }

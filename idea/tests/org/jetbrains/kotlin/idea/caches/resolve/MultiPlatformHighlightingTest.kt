@@ -63,6 +63,10 @@ class MultiPlatformHighlightingTest : AbstractMultiModuleHighlightingTest() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
 
+    fun testInternal() {
+        doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+    }
+
     fun testSuppressHeaderWithoutImpl() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
     }
@@ -77,12 +81,13 @@ class MultiPlatformHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testUseCorrectBuiltInsForCommonModule() {
         doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], TargetPlatformKind.JavaScript,
-                            withStdlibCommon = true, jdk = TestJdkKind.FULL_JDK, configureModule = { module, platform ->
-            if (platform == TargetPlatformKind.JavaScript) {
-                module.addLibrary(ForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
-                module.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
-            }
-        })
+                            withStdlibCommon = true, jdk = TestJdkKind.FULL_JDK,
+                            configureModule = { module, platform ->
+                                if (platform == TargetPlatformKind.JavaScript) {
+                                    module.addLibrary(ForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
+                                    module.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
+                                }
+                            })
     }
 
     fun testHeaderClassImplTypealias() {
