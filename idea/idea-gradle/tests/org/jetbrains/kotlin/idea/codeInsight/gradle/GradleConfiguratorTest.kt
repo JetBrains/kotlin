@@ -194,7 +194,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
             val (modules, ableToRunConfigurators) = getConfigurationPossibilities(myProject)
             assertTrue(ableToRunConfigurators.any { it is KotlinGradleModuleConfigurator })
             assertTrue(ableToRunConfigurators.any { it is KotlinJsGradleModuleConfigurator })
-            val moduleNames = modules.map { it.name }
+            val moduleNames = modules.map { it.baseModule.name }
             assertSameElements(moduleNames, "app")
 
             val moduleNamesFromConfigurator = getCanBeConfiguredModules(myProject, configurator).map { it.name }

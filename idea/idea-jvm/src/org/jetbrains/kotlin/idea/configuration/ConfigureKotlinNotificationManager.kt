@@ -17,9 +17,9 @@ import kotlin.reflect.KClass
 
 object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<ConfigureKotlinNotification> {
     fun notify(project: Project, excludeModules: List<Module> = emptyList()) {
-        val notificationString = ConfigureKotlinNotification.getNotificationString(project, excludeModules)
-        if (notificationString != null) {
-            notify(project, ConfigureKotlinNotification(project, excludeModules, notificationString))
+        val notificationState = ConfigureKotlinNotification.getNotificationState(project, excludeModules)
+        if (notificationState != null) {
+            notify(project, ConfigureKotlinNotification(project, excludeModules, notificationState))
         }
     }
 
@@ -47,8 +47,7 @@ interface KotlinSingleNotificationManager<in T: Notification> {
         for (oldNotification in notifications) {
             if (oldNotification == notification) {
                 isNotificationExists = true
-            }
-            else {
+            } else {
                 oldNotification?.expire()
             }
         }
@@ -59,19 +58,19 @@ interface KotlinSingleNotificationManager<in T: Notification> {
 private val checkInProgress = AtomicBoolean(false)
 
 fun checkHideNonConfiguredNotifications(project: Project) {
-    if (checkInProgress.get() || ConfigureKotlinNotificationManager.getVisibleNotifications(project).isEmpty()) return
+    if (checkInProgress.get()) return
+    val notification = ConfigureKotlinNotificationManager.getVisibleNotifications(project).firstOrNull() ?: return
 
     ApplicationManager.getApplication().executeOnPooledThread {
         if (!checkInProgress.compareAndSet(false, true)) return@executeOnPooledThread
 
         DumbService.getInstance(project).waitForSmartMode()
-        if (getConfigurableModulesWithKotlinFiles(project).none(::isNotConfiguredNotificationRequired)) {
+        if (notification.notificationState.notConfiguredModules.none(::isNotConfiguredNotificationRequired)) {
             ApplicationManager.getApplication().invokeLater {
                 ConfigureKotlinNotificationManager.expireOldNotifications(project)
                 checkInProgress.set(false)
             }
-        }
-        else {
+        } else {
             checkInProgress.set(false)
         }
     }

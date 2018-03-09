@@ -121,17 +121,13 @@ fun showConfigureKotlinNotificationIfNeeded(module: Module) {
 }
 
 fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: List<Module> = emptyList()) {
-    val notificationString = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
-        val modules = getConfigurableModulesWithKotlinFiles(project).exclude(excludeModules)
-        if (modules.none(::isNotConfiguredNotificationRequired))
-            null
-        else
-            ConfigureKotlinNotification.getNotificationString(project, excludeModules)
+    val notificationState = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
+        ConfigureKotlinNotification.getNotificationState(project, excludeModules)
     })
 
-    if (notificationString != null) {
+    if (notificationState != null) {
         ApplicationManager.getApplication().invokeLater {
-            ConfigureKotlinNotificationManager.notify(project, ConfigureKotlinNotification(project, excludeModules, notificationString))
+            ConfigureKotlinNotificationManager.notify(project, ConfigureKotlinNotification(project, excludeModules, notificationState))
         }
     }
 }
@@ -185,25 +181,31 @@ fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, configurator: Kot
 fun getConfigurationPossibilities(
     project: Project,
     excludeModules: Collection<Module> = emptyList()
-): Pair<Collection<Module>, Collection<KotlinProjectConfigurator>> {
+): Pair<Collection<ModuleSourceRootGroup>, Collection<KotlinProjectConfigurator>> {
     val modulesWithKotlinFiles = getConfigurableModulesWithKotlinFiles(project).exclude(excludeModules)
     val configurators = allConfigurators()
 
     val runnableConfigurators = mutableSetOf<KotlinProjectConfigurator>()
-    val configurableModules = mutableListOf<Module>()
+    val configurableModules = mutableListOf<ModuleSourceRootGroup>()
 
     // We need to return all modules for which at least one configurator is applicable, as well as all configurators which
     // are applicable for at least one module. At the same time we want to call getStatus() only once for each module/configurator pair.
     for (moduleSourceRootGroup in modulesWithKotlinFiles) {
         var moduleCanBeConfigured = false
+        var moduleAlreadyConfigured = false
         for (configurator in configurators) {
             if (moduleCanBeConfigured && configurator in runnableConfigurators) continue
-            if (configurator.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED) {
-                moduleCanBeConfigured = true
-                runnableConfigurators.add(configurator)
+            val status = configurator.getStatus(moduleSourceRootGroup)
+            when (status) {
+                ConfigureKotlinStatus.CAN_BE_CONFIGURED -> {
+                    moduleCanBeConfigured = true
+                    runnableConfigurators.add(configurator)
+                }
+                ConfigureKotlinStatus.CONFIGURED -> moduleAlreadyConfigured = true
             }
         }
-        if (moduleCanBeConfigured) configurableModules.add(moduleSourceRootGroup.baseModule)
+        if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(moduleSourceRootGroup))
+            configurableModules.add(moduleSourceRootGroup)
     }
 
     return configurableModules to runnableConfigurators
