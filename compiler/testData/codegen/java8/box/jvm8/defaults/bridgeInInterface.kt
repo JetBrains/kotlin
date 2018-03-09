@@ -3,14 +3,14 @@
 // WITH_RUNTIME
 
 interface Test<T> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun test(p: T): T {
         return p
     }
 }
 
 interface Test2: Test<String> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override fun test(p: String): String {
         return p + "K"
     }

@@ -3,14 +3,14 @@
 // WITH_RUNTIME
 // FILE: 1.kt
 interface Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     val prop: String
         get() =  "OK"
 }
 
 // FILE: 2.kt
 interface Test2 : Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override val prop: String
         get() = super.prop
 }

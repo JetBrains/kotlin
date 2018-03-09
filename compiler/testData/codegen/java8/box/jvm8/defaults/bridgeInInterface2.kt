@@ -4,7 +4,7 @@
 // FULL_JDK
 
 interface Test<T> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun test(p: T): T {
         return null!!
     }
@@ -15,7 +15,7 @@ interface Test<T> {
 }
 
 interface Test2: Test<String> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override fun test(p: String): String {
         return p
     }

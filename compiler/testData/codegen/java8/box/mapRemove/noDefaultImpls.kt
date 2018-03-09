@@ -12,7 +12,7 @@ class B : A<String, String>, java.util.AbstractMap<String, String>() {
 }
 
 interface C<K, V> : MutableMap<K, V> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override fun remove(key: K, value: V) = true
 }
 

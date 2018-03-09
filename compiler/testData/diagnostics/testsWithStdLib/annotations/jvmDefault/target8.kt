@@ -3,27 +3,27 @@
 // !JVM_TARGET: 1.8
 interface B {
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun test() {}
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     abstract fun test2(s: String = "")
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     abstract fun test3()
 
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     abstract val prop: String
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     abstract val prop2: String
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     val prop3: String
         get() = ""
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     var prop4: String
         get() = ""
         set(value) {}

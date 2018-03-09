@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 
 interface Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun test(): String {
         return inlineFun { "O" }
     }
@@ -12,7 +12,7 @@ interface Test {
         return inlineFun { "K" }
     }
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     private inline fun inlineFun(s: () -> String) = s()
 
 }

@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 // FILE: 1.kt
 interface Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     val prop: String
         get() =  "OK"
 }

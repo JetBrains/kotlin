@@ -16,7 +16,7 @@ open class TestClass : Test {
 }
 
 interface Test2 : Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override fun test(): String
 }
 

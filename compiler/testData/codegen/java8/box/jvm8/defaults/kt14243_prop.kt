@@ -6,7 +6,7 @@ interface Z<T> {
 
     val value: T
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     val z: T
         get() = value
 }

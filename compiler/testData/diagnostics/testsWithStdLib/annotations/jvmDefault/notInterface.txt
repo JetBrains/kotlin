@@ -4,9 +4,9 @@ public abstract class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.annotations.JvmDefault public final fun test(): kotlin.Unit
-    @kotlin.annotations.JvmDefault public abstract fun test2(/*0*/ s: kotlin.String = ...): kotlin.Unit
-    @kotlin.annotations.JvmDefault public abstract fun test3(): kotlin.Unit
+    @kotlin.jvm.JvmDefault public final fun test(): kotlin.Unit
+    @kotlin.jvm.JvmDefault public abstract fun test2(/*0*/ s: kotlin.String = ...): kotlin.Unit
+    @kotlin.jvm.JvmDefault public abstract fun test3(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -14,7 +14,7 @@ public object B {
     private constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.annotations.JvmDefault public final fun test(): kotlin.Unit
-    @kotlin.annotations.JvmDefault public final fun test2(/*0*/ s: kotlin.String = ...): kotlin.Unit
+    @kotlin.jvm.JvmDefault public final fun test(): kotlin.Unit
+    @kotlin.jvm.JvmDefault public final fun test2(/*0*/ s: kotlin.String = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -7,12 +7,12 @@ interface Test {
         return privateFun() + privateProp
     }
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     private fun privateFun(): String {
         return "O"
     }
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     private val privateProp: String
         get() = "K"
 }
