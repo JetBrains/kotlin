@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_IMPL_ASM_TYPE
+import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
 import org.jetbrains.kotlin.codegen.serialization.JvmStringTable
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -202,7 +203,7 @@ class AnonymousObjectTransformer(
         when (header.kind) {
             KotlinClassHeader.Kind.CLASS -> {
                 val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
-                val newStringTable = JvmStringTable(state.typeMapper, nameResolver)
+                val newStringTable = JvmCodegenStringTable(state.typeMapper, nameResolver)
                 val newProto = classProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.anonymousObjectOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
                 }.build()
@@ -210,7 +211,7 @@ class AnonymousObjectTransformer(
             }
             KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
                 val (nameResolver, functionProto) = JvmProtoBufUtil.readFunctionDataFrom(data, strings)
-                val newStringTable = JvmStringTable(state.typeMapper, nameResolver)
+                val newStringTable = JvmCodegenStringTable(state.typeMapper, nameResolver)
                 val newProto = functionProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.lambdaClassOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
                 }.build()

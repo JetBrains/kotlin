@@ -48,7 +48,7 @@ class DescriptorSerializer private constructor(
             DescriptorSerializer(descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
                                  serializeTypeTableToFunction = false)
 
-    val stringTable: StringTable
+    val stringTable: DescriptorAwareStringTable
         get() = extension.stringTable
 
     private fun useTypeTable(): Boolean = extension.shouldUseTypeTable()

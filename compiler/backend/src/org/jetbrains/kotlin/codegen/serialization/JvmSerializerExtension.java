@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.serialization.AnnotationSerializer;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.SerializerExtension;
-import org.jetbrains.kotlin.serialization.StringTable;
 import org.jetbrains.kotlin.types.FlexibleType;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -57,7 +56,7 @@ public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
     private final BindingContext codegenBinding;
     private final KotlinTypeMapper typeMapper;
-    private final StringTable stringTable;
+    private final JvmCodegenStringTable stringTable;
     private final AnnotationSerializer annotationSerializer;
     private final boolean useTypeTable;
     private final String moduleName;
@@ -67,7 +66,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         this.bindings = bindings;
         this.codegenBinding = state.getBindingContext();
         this.typeMapper = state.getTypeMapper();
-        this.stringTable = new JvmStringTable(typeMapper);
+        this.stringTable = new JvmCodegenStringTable(typeMapper);
         this.annotationSerializer = new AnnotationSerializer(stringTable);
         this.useTypeTable = state.getUseTypeTableInSerializer();
         this.moduleName = state.getModuleName();
@@ -76,7 +75,7 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     @NotNull
     @Override
-    public StringTable getStringTable() {
+    public JvmCodegenStringTable getStringTable() {
         return stringTable;
     }
 

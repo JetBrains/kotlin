@@ -18,14 +18,33 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.types.ErrorUtils
 import java.io.OutputStream
 
 interface StringTable {
     fun getStringIndex(string: String): Int
 
-    fun getFqNameIndex(descriptor: ClassifierDescriptorWithTypeParameters): Int
-
-    fun getClassIdIndex(classId: ClassId): Int
+    /**
+     * @param className the fully qualified name of some class in the format: `org/foo/bar/Test.Inner`
+     */
+    fun getQualifiedClassNameIndex(className: String, isLocal: Boolean): Int
 
     fun serializeTo(output: OutputStream)
+}
+
+interface DescriptorAwareStringTable : StringTable {
+    fun getFqNameIndex(descriptor: ClassifierDescriptorWithTypeParameters): Int {
+        if (ErrorUtils.isError(descriptor)) {
+            throw IllegalStateException("Cannot get FQ name of error class: $descriptor")
+        }
+
+        val classId = descriptor.classId
+                ?: getLocalClassIdReplacement(descriptor)
+                ?: throw IllegalStateException("Cannot get FQ name of local class: $descriptor")
+
+        return getQualifiedClassNameIndex(classId.asString(), classId.isLocal)
+    }
+
+    fun getLocalClassIdReplacement(descriptor: ClassifierDescriptorWithTypeParameters): ClassId? = null
 }

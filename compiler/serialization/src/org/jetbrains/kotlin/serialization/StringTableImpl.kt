@@ -16,18 +16,14 @@
 
 package org.jetbrains.kotlin.serialization
 
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.Interner
 import java.io.OutputStream
 
-open class StringTableImpl : StringTable {
+open class StringTableImpl : DescriptorAwareStringTable {
     private class FqNameProto(val fqName: QualifiedName.Builder) {
         override fun hashCode(): Int {
             var result = 13
@@ -50,25 +46,17 @@ open class StringTableImpl : StringTable {
     private val strings = Interner<String>()
     private val qualifiedNames = Interner<FqNameProto>()
 
-    fun getSimpleNameIndex(name: Name): Int = getStringIndex(name.asString())
-
     override fun getStringIndex(string: String): Int = strings.intern(string)
 
-    override fun getFqNameIndex(descriptor: ClassifierDescriptorWithTypeParameters): Int {
-        if (ErrorUtils.isError(descriptor)) {
-            throw IllegalStateException("Cannot get FQ name of error class: $descriptor")
-        }
+    override fun getQualifiedClassNameIndex(className: String, isLocal: Boolean): Int =
+        getQualifiedClassNameIndex(ClassId.fromString(className, isLocal))
 
-        val classId = descriptor.classId ?: return getFqNameIndexOfLocalAnonymousClass(descriptor)
-        return getClassIdIndex(classId)
-    }
-
-    override fun getClassIdIndex(classId: ClassId): Int {
+    private fun getQualifiedClassNameIndex(classId: ClassId): Int {
         val builder = QualifiedName.newBuilder()
         builder.kind = QualifiedName.Kind.CLASS
 
         builder.parentQualifiedName =
-                classId.outerClassId?.let(this::getClassIdIndex)
+                classId.outerClassId?.let(this::getQualifiedClassNameIndex)
                 ?: getPackageFqNameIndex(classId.packageFqName)
 
         builder.shortName = getStringIndex(classId.shortClassName.asString())
@@ -76,15 +64,11 @@ open class StringTableImpl : StringTable {
         return qualifiedNames.intern(FqNameProto(builder))
     }
 
-    open fun getFqNameIndexOfLocalAnonymousClass(descriptor: ClassifierDescriptorWithTypeParameters): Int {
-        throw IllegalStateException("Cannot get FQ name of local class: " + descriptor)
-    }
-
     fun getPackageFqNameIndex(fqName: FqName): Int {
         var result = -1
         for (segment in fqName.pathSegments()) {
             val builder = QualifiedName.newBuilder()
-            builder.shortName = getSimpleNameIndex(segment)
+            builder.shortName = getStringIndex(segment.asString())
             if (result != -1) {
                 builder.parentQualifiedName = result
             }

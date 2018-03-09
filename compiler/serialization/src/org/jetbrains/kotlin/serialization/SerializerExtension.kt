@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class SerializerExtension {
-    abstract val stringTable: StringTable
+    abstract val stringTable: DescriptorAwareStringTable
 
     val annotationSerializer by lazy { AnnotationSerializer(stringTable) }
 

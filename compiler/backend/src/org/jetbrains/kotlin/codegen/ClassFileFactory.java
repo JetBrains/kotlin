@@ -151,7 +151,7 @@ public class ClassFileFactory implements OutputFileCollection {
                 ProtoBuf.Annotation.Builder annotation = ProtoBuf.Annotation.newBuilder();
                 ClassId classId = DescriptorUtilsKt.getClassId(descriptor);
                 if (classId != null) {
-                    annotation.setId(stringTable.getClassIdIndex(classId));
+                    annotation.setId(stringTable.getQualifiedClassNameIndex(classId.asString(), false));
                     builder.addAnnotation(annotation);
                 }
             }
