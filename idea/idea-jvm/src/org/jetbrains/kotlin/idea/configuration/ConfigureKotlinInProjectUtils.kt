@@ -115,7 +115,7 @@ fun getConfigurableModulesWithKotlinFiles(project: Project): List<ModuleSourceRo
 
 fun showConfigureKotlinNotificationIfNeeded(module: Module) {
     val moduleGroup = module.toModuleGroup()
-    if (isNotConfiguredNotificationRequired(moduleGroup)) return
+    if (!isNotConfiguredNotificationRequired(moduleGroup)) return
 
     ConfigureKotlinNotificationManager.notify(module.project)
 }
@@ -123,7 +123,7 @@ fun showConfigureKotlinNotificationIfNeeded(module: Module) {
 fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: List<Module> = emptyList()) {
     val notificationString = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
         val modules = getConfigurableModulesWithKotlinFiles(project).exclude(excludeModules)
-        if (modules.all(::isNotConfiguredNotificationRequired))
+        if (modules.none(::isNotConfiguredNotificationRequired))
             null
         else
             ConfigureKotlinNotification.getNotificationString(project, excludeModules)
@@ -137,7 +137,7 @@ fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: Li
 }
 
 fun isNotConfiguredNotificationRequired(moduleGroup: ModuleSourceRootGroup): Boolean {
-    return !SuppressNotificationState.isKotlinNotConfiguredSuppressed(moduleGroup) && isModuleConfigured(moduleGroup)
+    return !SuppressNotificationState.isKotlinNotConfiguredSuppressed(moduleGroup) && !isModuleConfigured(moduleGroup)
 }
 
 fun getAbleToRunConfigurators(project: Project): Collection<KotlinProjectConfigurator> {
