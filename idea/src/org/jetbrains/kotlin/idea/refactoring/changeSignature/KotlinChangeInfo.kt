@@ -236,18 +236,17 @@ open class KotlinChangeInfo(
 
     fun getNewSignature(inheritedCallable: KotlinCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
-
-        val defaultVisibility = if (kind.isConstructor) Visibilities.PUBLIC else Visibilities.DEFAULT_VISIBILITY
+        val isCustomizedVisibility = newVisibility != Visibilities.DEFAULT_VISIBILITY
 
         if (kind == Kind.PRIMARY_CONSTRUCTOR) {
             buffer.append(name)
 
-            if (newVisibility != defaultVisibility) {
+            if (isCustomizedVisibility) {
                 buffer.append(' ').append(newVisibility).append(" constructor ")
             }
         }
         else {
-            if (!DescriptorUtils.isLocal(inheritedCallable.originalCallableDescriptor) && newVisibility != defaultVisibility) {
+            if (!DescriptorUtils.isLocal(inheritedCallable.originalCallableDescriptor) && isCustomizedVisibility) {
                 buffer.append(newVisibility).append(' ')
             }
 
