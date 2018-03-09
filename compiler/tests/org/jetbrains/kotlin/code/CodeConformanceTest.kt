@@ -46,6 +46,7 @@ class CodeConformanceTest : TestCase() {
                 "dist",
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
                 "libraries/tools/kotlin-maven-plugin/target",
+                "libraries/tools/kotlinp/src",
                 "compiler/testData/psi/kdoc",
                 "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java"

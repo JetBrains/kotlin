@@ -134,6 +134,7 @@ include ":kotlin-build-common",
         ":tools:binary-compatibility-validator",
         ":tools:kotlin-stdlib-js-merger",
         ":tools:kotlin-stdlib-gen",
+        ":tools:kotlinp",
         ":kotlin-gradle-plugin-api",
         ":kotlin-gradle-plugin",
         ":kotlin-gradle-plugin-test-utils-embeddable",
@@ -240,6 +241,7 @@ project(':kotlin-source-sections-compiler-plugin').projectDir = "$rootDir/plugin
 project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
 project(':tools:kotlin-stdlib-js-merger').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-js-merger" as File
 project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
+project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
 project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-api" as File
 project(':kotlin-gradle-plugin').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin" as File
 project(':kotlin-gradle-plugin-test-utils-embeddable').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-test-utils-embeddable" as File

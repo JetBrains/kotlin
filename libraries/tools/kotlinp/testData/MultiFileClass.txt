@@ -1,0 +1,14 @@
+// test/File.class
+// ------------------------------------------
+multi-file class {
+  // test/File__MultiFileClassKt
+}
+// test/File__MultiFileClassKt.class
+// ------------------------------------------
+package {
+  // facade: test/File
+
+  // field: x:I
+  public final const val x: kotlin/Int /* = ... */
+    public final get
+}

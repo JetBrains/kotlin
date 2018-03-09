@@ -1,0 +1,10 @@
+// SyntheticClassKt.class
+// ------------------------------------------
+package {
+
+  // signature: f(Lkotlin/annotation/AnnotationTarget;)Ljava/lang/String;
+  public final fun f(a: kotlin/annotation/AnnotationTarget): kotlin/String?
+}
+// SyntheticClassKt$WhenMappings.class
+// ------------------------------------------
+synthetic class
