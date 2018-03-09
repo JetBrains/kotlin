@@ -14,56 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.utils;
+package org.jetbrains.kotlin.utils
 
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+class Interner<T>(private val parent: Interner<T>? = null) {
+    private val firstIndex: Int = parent?.run { interned.size + firstIndex } ?: 0
+    private val interned = hashMapOf<T, Int>()
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+    val allInternedObjects: List<T>
+        get() = interned.keys.sortedBy(interned::get)
 
-public final class Interner<T> {
-    private final Interner<T> parent;
-    private final int firstIndex;
-    private final Map<T, Integer> interned = new HashMap<>();
+    val isEmpty: Boolean
+        get() = interned.isEmpty() && parent?.isEmpty != false
 
-    public Interner(Interner<T> parent) {
-        this.parent = parent;
-        this.firstIndex = parent != null ? parent.interned.size() + parent.firstIndex : 0;
-    }
-
-    public Interner() {
-        this(null);
-    }
-
-    @Nullable
-    private Integer find(@NotNull T obj) {
-        assert parent == null || parent.interned.size() + parent.firstIndex == firstIndex :
-                "Parent changed in parallel with child: indexes will be wrong";
-        if (parent != null) {
-            Integer index = parent.find(obj);
-            if (index != null) return index;
+    private fun find(obj: T): Int? {
+        assert(parent == null || parent.interned.size + parent.firstIndex == firstIndex) {
+            "Parent changed in parallel with child: indexes will be wrong"
         }
-        return interned.get(obj);
+        return parent?.find(obj) ?: interned[obj]
     }
 
-    public int intern(@NotNull T obj) {
-        Integer index = find(obj);
-        if (index != null) return index;
-
-        index = firstIndex + interned.size();
-        interned.put(obj, index);
-        return index;
-    }
-
-    @NotNull
-    public List<T> getAllInternedObjects() {
-        return CollectionsKt.sortedBy(interned.keySet(), interned::get);
-    }
-
-    public boolean isEmpty() {
-        return interned.isEmpty() && (parent == null || parent.isEmpty());
-    }
+    fun intern(obj: T): Int =
+        find(obj) ?: (firstIndex + interned.size).also {
+            interned[obj] = it
+        }
 }
