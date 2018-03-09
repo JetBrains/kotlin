@@ -4456,10 +4456,18 @@ public final class ProtoBuf {
 
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     boolean hasOuterType();
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     org.jetbrains.kotlin.metadata.ProtoBuf.Type getOuterType();
 
@@ -5567,12 +5575,20 @@ public final class ProtoBuf {
     private org.jetbrains.kotlin.metadata.ProtoBuf.Type outerType_;
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     public boolean hasOuterType() {
       return ((bitField0_ & 0x00000100) == 0x00000100);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     public org.jetbrains.kotlin.metadata.ProtoBuf.Type getOuterType() {
       return outerType_;
@@ -6612,18 +6628,30 @@ public final class ProtoBuf {
       private org.jetbrains.kotlin.metadata.ProtoBuf.Type outerType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public boolean hasOuterType() {
         return ((bitField0_ & 0x00000200) == 0x00000200);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public org.jetbrains.kotlin.metadata.ProtoBuf.Type getOuterType() {
         return outerType_;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public Builder setOuterType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
         if (value == null) {
@@ -6636,6 +6664,10 @@ public final class ProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public Builder setOuterType(
           org.jetbrains.kotlin.metadata.ProtoBuf.Type.Builder builderForValue) {
@@ -6646,6 +6678,10 @@ public final class ProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public Builder mergeOuterType(org.jetbrains.kotlin.metadata.ProtoBuf.Type value) {
         if (((bitField0_ & 0x00000200) == 0x00000200) &&
@@ -6661,6 +6697,10 @@ public final class ProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public Builder clearOuterType() {
         outerType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Type.getDefaultInstance();
@@ -6908,15 +6948,15 @@ public final class ProtoBuf {
     int getUpperBoundCount();
 
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     java.util.List<java.lang.Integer> getUpperBoundIdList();
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     int getUpperBoundIdCount();
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     int getUpperBoundId(int index);
   }
@@ -7230,24 +7270,25 @@ public final class ProtoBuf {
     public static final int UPPER_BOUND_ID_FIELD_NUMBER = 6;
     private java.util.List<java.lang.Integer> upperBoundId_;
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
         getUpperBoundIdList() {
       return upperBoundId_;
     }
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     public int getUpperBoundIdCount() {
       return upperBoundId_.size();
     }
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     public int getUpperBoundId(int index) {
       return upperBoundId_.get(index);
     }
+    private int upperBoundIdMemoizedSerializedSize = -1;
 
     private void initFields() {
       id_ = 0;
@@ -7306,8 +7347,12 @@ public final class ProtoBuf {
       for (int i = 0; i < upperBound_.size(); i++) {
         output.writeMessage(5, upperBound_.get(i));
       }
+      if (getUpperBoundIdList().size() > 0) {
+        output.writeRawVarint32(50);
+        output.writeRawVarint32(upperBoundIdMemoizedSerializedSize);
+      }
       for (int i = 0; i < upperBoundId_.size(); i++) {
-        output.writeInt32(6, upperBoundId_.get(i));
+        output.writeInt32NoTag(upperBoundId_.get(i));
       }
       extensionWriter.writeUntil(1000, output);
       output.writeRawBytes(unknownFields);
@@ -7346,7 +7391,12 @@ public final class ProtoBuf {
             .computeInt32SizeNoTag(upperBoundId_.get(i));
         }
         size += dataSize;
-        size += 1 * getUpperBoundIdList().size();
+        if (!getUpperBoundIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        upperBoundIdMemoizedSerializedSize = dataSize;
       }
       size += extensionsSerializedSize();
       size += unknownFields.size();
@@ -7852,26 +7902,26 @@ public final class ProtoBuf {
          }
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public java.util.List<java.lang.Integer>
           getUpperBoundIdList() {
         return java.util.Collections.unmodifiableList(upperBoundId_);
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public int getUpperBoundIdCount() {
         return upperBoundId_.size();
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public int getUpperBoundId(int index) {
         return upperBoundId_.get(index);
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public Builder setUpperBoundId(
           int index, int value) {
@@ -7881,7 +7931,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public Builder addUpperBoundId(int value) {
         ensureUpperBoundIdIsMutable();
@@ -7890,7 +7940,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public Builder addAllUpperBoundId(
           java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -7901,7 +7951,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public Builder clearUpperBoundId() {
         upperBoundId_ = java.util.Collections.emptyList();
@@ -7936,7 +7986,9 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isExternal
      *isExpect
+     *isInline
      * </pre>
      */
     boolean hasFlags();
@@ -7950,7 +8002,9 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isExternal
      *isExpect
+     *isInline
      * </pre>
      */
     int getFlags();
@@ -8546,7 +8600,9 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isExternal
      *isExpect
+     *isInline
      * </pre>
      */
     public boolean hasFlags() {
@@ -8562,7 +8618,9 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isExternal
      *isExpect
+     *isInline
      * </pre>
      */
     public int getFlags() {
@@ -9663,7 +9721,9 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isExternal
        *isExpect
+       *isInline
        * </pre>
        */
       public boolean hasFlags() {
@@ -9679,7 +9739,9 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isExternal
        *isExpect
+       *isInline
        * </pre>
        */
       public int getFlags() {
@@ -9695,7 +9757,9 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isExternal
        *isExpect
+       *isInline
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -9714,7 +9778,9 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isExternal
        *isExpect
+       *isInline
        * </pre>
        */
       public Builder clearFlags() {
@@ -15470,7 +15536,7 @@ public final class ProtoBuf {
      *hasGetter
      *hasSetter
      *isConst
-     *lateinit
+     *isLateinit
      *hasConstant
      *isExternal
      *isDelegated
@@ -15490,7 +15556,7 @@ public final class ProtoBuf {
      *hasGetter
      *hasSetter
      *isConst
-     *lateinit
+     *isLateinit
      *hasConstant
      *isExternal
      *isDelegated
@@ -15586,6 +15652,9 @@ public final class ProtoBuf {
      *isNotDefault
      *isExternal
      *isInline
+     *If getter_flags or setter_flags are absent, their value should be computed as follows:
+     *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+     *- all other flags are false
      * </pre>
      */
     boolean hasGetterFlags();
@@ -15599,6 +15668,9 @@ public final class ProtoBuf {
      *isNotDefault
      *isExternal
      *isInline
+     *If getter_flags or setter_flags are absent, their value should be computed as follows:
+     *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+     *- all other flags are false
      * </pre>
      */
     int getGetterFlags();
@@ -15818,7 +15890,7 @@ public final class ProtoBuf {
      *hasGetter
      *hasSetter
      *isConst
-     *lateinit
+     *isLateinit
      *hasConstant
      *isExternal
      *isDelegated
@@ -15840,7 +15912,7 @@ public final class ProtoBuf {
      *hasGetter
      *hasSetter
      *isConst
-     *lateinit
+     *isLateinit
      *hasConstant
      *isExternal
      *isDelegated
@@ -16003,6 +16075,9 @@ public final class ProtoBuf {
      *isNotDefault
      *isExternal
      *isInline
+     *If getter_flags or setter_flags are absent, their value should be computed as follows:
+     *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+     *- all other flags are false
      * </pre>
      */
     public boolean hasGetterFlags() {
@@ -16018,6 +16093,9 @@ public final class ProtoBuf {
      *isNotDefault
      *isExternal
      *isInline
+     *If getter_flags or setter_flags are absent, their value should be computed as follows:
+     *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+     *- all other flags are false
      * </pre>
      */
     public int getGetterFlags() {
@@ -16531,7 +16609,7 @@ public final class ProtoBuf {
        *hasGetter
        *hasSetter
        *isConst
-       *lateinit
+       *isLateinit
        *hasConstant
        *isExternal
        *isDelegated
@@ -16553,7 +16631,7 @@ public final class ProtoBuf {
        *hasGetter
        *hasSetter
        *isConst
-       *lateinit
+       *isLateinit
        *hasConstant
        *isExternal
        *isDelegated
@@ -16575,7 +16653,7 @@ public final class ProtoBuf {
        *hasGetter
        *hasSetter
        *isConst
-       *lateinit
+       *isLateinit
        *hasConstant
        *isExternal
        *isDelegated
@@ -16600,7 +16678,7 @@ public final class ProtoBuf {
        *hasGetter
        *hasSetter
        *isConst
-       *lateinit
+       *isLateinit
        *hasConstant
        *isExternal
        *isDelegated
@@ -17058,6 +17136,9 @@ public final class ProtoBuf {
        *isNotDefault
        *isExternal
        *isInline
+       *If getter_flags or setter_flags are absent, their value should be computed as follows:
+       *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+       *- all other flags are false
        * </pre>
        */
       public boolean hasGetterFlags() {
@@ -17073,6 +17154,9 @@ public final class ProtoBuf {
        *isNotDefault
        *isExternal
        *isInline
+       *If getter_flags or setter_flags are absent, their value should be computed as follows:
+       *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+       *- all other flags are false
        * </pre>
        */
       public int getGetterFlags() {
@@ -17088,6 +17172,9 @@ public final class ProtoBuf {
        *isNotDefault
        *isExternal
        *isInline
+       *If getter_flags or setter_flags are absent, their value should be computed as follows:
+       *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+       *- all other flags are false
        * </pre>
        */
       public Builder setGetterFlags(int value) {
@@ -17106,6 +17193,9 @@ public final class ProtoBuf {
        *isNotDefault
        *isExternal
        *isInline
+       *If getter_flags or setter_flags are absent, their value should be computed as follows:
+       *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+       *- all other flags are false
        * </pre>
        */
       public Builder clearGetterFlags() {

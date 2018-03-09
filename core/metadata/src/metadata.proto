@@ -121,7 +121,7 @@ message Type {
   optional Type flexible_upper_bound = 5;
   optional int32 flexible_upper_bound_id = 8;
 
-  // Only one of the following values should be present
+  // Only one of [class_name, type_parameter, type_parameter_name, type_alias_name] should be present
 
   optional int32 class_name = 6 [(fq_name_id_in_table) = true];
   optional int32 type_parameter = 7; // id of the type parameter
@@ -132,6 +132,7 @@ message Type {
   // Top level types are always fully expanded
   optional int32 type_alias_name = 12 [(fq_name_id_in_table) = true];
 
+  // Outer type may be present only if class_name or type_alias_name is present
   optional Type outer_type = 10;
   optional int32 outer_type_id = 11;
 
@@ -161,7 +162,7 @@ message TypeParameter {
   optional Variance variance = 4 [default = INV];
 
   repeated Type upper_bound = 5;
-  repeated int32 upper_bound_id = 6;
+  repeated int32 upper_bound_id = 6 [packed = true];
 
   extensions 100 to 999;
 }
@@ -185,7 +186,9 @@ message Class {
     ClassKind
     isInner
     isData
+    isExternal
     isExpect
+    isInline
   */
   optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
 
@@ -304,7 +307,7 @@ message Property {
     hasGetter
     hasSetter
     isConst
-    lateinit
+    isLateinit
     hasConstant
     isExternal
     isDelegated
@@ -332,9 +335,13 @@ message Property {
     isNotDefault
     isExternal
     isInline
+
+    If getter_flags or setter_flags are absent, their value should be computed as follows:
+    - hasAnnotations, Visibility, Modality have the same value as in the property flags
+    - all other flags are false
   */
-  optional int32 getter_flags = 7 /* absent => same as property */;
-  optional int32 setter_flags = 8 /* absent => same as property */;
+  optional int32 getter_flags = 7;
+  optional int32 setter_flags = 8;
 
   // Index into the VersionRequirementTable
   optional int32 version_requirement = 31;

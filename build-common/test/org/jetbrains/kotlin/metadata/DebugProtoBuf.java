@@ -5468,14 +5468,26 @@ public final class DebugProtoBuf {
 
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     boolean hasOuterType();
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.Type getOuterType();
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder getOuterTypeOrBuilder();
 
@@ -6766,18 +6778,30 @@ public final class DebugProtoBuf {
     private org.jetbrains.kotlin.metadata.DebugProtoBuf.Type outerType_;
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     public boolean hasOuterType() {
       return ((bitField0_ & 0x00000100) == 0x00000100);
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.Type getOuterType() {
       return outerType_;
     }
     /**
      * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+     *
+     * <pre>
+     * Outer type may be present only if class_name or type_alias_name is present
+     * </pre>
      */
     public org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder getOuterTypeOrBuilder() {
       return outerType_;
@@ -8087,12 +8111,20 @@ public final class DebugProtoBuf {
           org.jetbrains.kotlin.metadata.DebugProtoBuf.Type, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder> outerTypeBuilder_;
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public boolean hasOuterType() {
         return ((bitField0_ & 0x00000200) == 0x00000200);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Type getOuterType() {
         if (outerTypeBuilder_ == null) {
@@ -8103,6 +8135,10 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public Builder setOuterType(org.jetbrains.kotlin.metadata.DebugProtoBuf.Type value) {
         if (outerTypeBuilder_ == null) {
@@ -8119,6 +8155,10 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public Builder setOuterType(
           org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder builderForValue) {
@@ -8133,6 +8173,10 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public Builder mergeOuterType(org.jetbrains.kotlin.metadata.DebugProtoBuf.Type value) {
         if (outerTypeBuilder_ == null) {
@@ -8152,6 +8196,10 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public Builder clearOuterType() {
         if (outerTypeBuilder_ == null) {
@@ -8165,6 +8213,10 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder getOuterTypeBuilder() {
         bitField0_ |= 0x00000200;
@@ -8173,6 +8225,10 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       public org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder getOuterTypeOrBuilder() {
         if (outerTypeBuilder_ != null) {
@@ -8183,6 +8239,10 @@ public final class DebugProtoBuf {
       }
       /**
        * <code>optional .org.jetbrains.kotlin.metadata.Type outer_type = 10;</code>
+       *
+       * <pre>
+       * Outer type may be present only if class_name or type_alias_name is present
+       * </pre>
        */
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.metadata.DebugProtoBuf.Type, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder> 
@@ -8503,15 +8563,15 @@ public final class DebugProtoBuf {
         int index);
 
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     java.util.List<java.lang.Integer> getUpperBoundIdList();
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     int getUpperBoundIdCount();
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     int getUpperBoundId(int index);
   }
@@ -8858,24 +8918,25 @@ public final class DebugProtoBuf {
     public static final int UPPER_BOUND_ID_FIELD_NUMBER = 6;
     private java.util.List<java.lang.Integer> upperBoundId_;
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
         getUpperBoundIdList() {
       return upperBoundId_;
     }
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     public int getUpperBoundIdCount() {
       return upperBoundId_.size();
     }
     /**
-     * <code>repeated int32 upper_bound_id = 6;</code>
+     * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     public int getUpperBoundId(int index) {
       return upperBoundId_.get(index);
     }
+    private int upperBoundIdMemoizedSerializedSize = -1;
 
     private void initFields() {
       id_ = 0;
@@ -8934,8 +8995,12 @@ public final class DebugProtoBuf {
       for (int i = 0; i < upperBound_.size(); i++) {
         output.writeMessage(5, upperBound_.get(i));
       }
+      if (getUpperBoundIdList().size() > 0) {
+        output.writeRawVarint32(50);
+        output.writeRawVarint32(upperBoundIdMemoizedSerializedSize);
+      }
       for (int i = 0; i < upperBoundId_.size(); i++) {
-        output.writeInt32(6, upperBoundId_.get(i));
+        output.writeInt32NoTag(upperBoundId_.get(i));
       }
       extensionWriter.writeUntil(1000, output);
       getUnknownFields().writeTo(output);
@@ -8974,7 +9039,12 @@ public final class DebugProtoBuf {
             .computeInt32SizeNoTag(upperBoundId_.get(i));
         }
         size += dataSize;
-        size += 1 * getUpperBoundIdList().size();
+        if (!getUpperBoundIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        upperBoundIdMemoizedSerializedSize = dataSize;
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -9659,26 +9729,26 @@ public final class DebugProtoBuf {
          }
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public java.util.List<java.lang.Integer>
           getUpperBoundIdList() {
         return java.util.Collections.unmodifiableList(upperBoundId_);
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public int getUpperBoundIdCount() {
         return upperBoundId_.size();
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public int getUpperBoundId(int index) {
         return upperBoundId_.get(index);
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public Builder setUpperBoundId(
           int index, int value) {
@@ -9688,7 +9758,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public Builder addUpperBoundId(int value) {
         ensureUpperBoundIdIsMutable();
@@ -9697,7 +9767,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public Builder addAllUpperBoundId(
           java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -9708,7 +9778,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 upper_bound_id = 6;</code>
+       * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
        */
       public Builder clearUpperBoundId() {
         upperBoundId_ = java.util.Collections.emptyList();
@@ -9743,7 +9813,9 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isExternal
      *isExpect
+     *isInline
      * </pre>
      */
     boolean hasFlags();
@@ -9757,7 +9829,9 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isExternal
      *isExpect
+     *isInline
      * </pre>
      */
     int getFlags();
@@ -10465,7 +10539,9 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isExternal
      *isExpect
+     *isInline
      * </pre>
      */
     public boolean hasFlags() {
@@ -10481,7 +10557,9 @@ public final class DebugProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isExternal
      *isExpect
+     *isInline
      * </pre>
      */
     public int getFlags() {
@@ -11826,7 +11904,9 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isExternal
        *isExpect
+       *isInline
        * </pre>
        */
       public boolean hasFlags() {
@@ -11842,7 +11922,9 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isExternal
        *isExpect
+       *isInline
        * </pre>
        */
       public int getFlags() {
@@ -11858,7 +11940,9 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isExternal
        *isExpect
+       *isInline
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -11877,7 +11961,9 @@ public final class DebugProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isExternal
        *isExpect
+       *isInline
        * </pre>
        */
       public Builder clearFlags() {
@@ -20236,7 +20322,7 @@ public final class DebugProtoBuf {
      *hasGetter
      *hasSetter
      *isConst
-     *lateinit
+     *isLateinit
      *hasConstant
      *isExternal
      *isDelegated
@@ -20256,7 +20342,7 @@ public final class DebugProtoBuf {
      *hasGetter
      *hasSetter
      *isConst
-     *lateinit
+     *isLateinit
      *hasConstant
      *isExternal
      *isDelegated
@@ -20374,6 +20460,9 @@ public final class DebugProtoBuf {
      *isNotDefault
      *isExternal
      *isInline
+     *If getter_flags or setter_flags are absent, their value should be computed as follows:
+     *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+     *- all other flags are false
      * </pre>
      */
     boolean hasGetterFlags();
@@ -20387,6 +20476,9 @@ public final class DebugProtoBuf {
      *isNotDefault
      *isExternal
      *isInline
+     *If getter_flags or setter_flags are absent, their value should be computed as follows:
+     *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+     *- all other flags are false
      * </pre>
      */
     int getGetterFlags();
@@ -20614,7 +20706,7 @@ public final class DebugProtoBuf {
      *hasGetter
      *hasSetter
      *isConst
-     *lateinit
+     *isLateinit
      *hasConstant
      *isExternal
      *isDelegated
@@ -20636,7 +20728,7 @@ public final class DebugProtoBuf {
      *hasGetter
      *hasSetter
      *isConst
-     *lateinit
+     *isLateinit
      *hasConstant
      *isExternal
      *isDelegated
@@ -20817,6 +20909,9 @@ public final class DebugProtoBuf {
      *isNotDefault
      *isExternal
      *isInline
+     *If getter_flags or setter_flags are absent, their value should be computed as follows:
+     *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+     *- all other flags are false
      * </pre>
      */
     public boolean hasGetterFlags() {
@@ -20832,6 +20927,9 @@ public final class DebugProtoBuf {
      *isNotDefault
      *isExternal
      *isInline
+     *If getter_flags or setter_flags are absent, their value should be computed as follows:
+     *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+     *- all other flags are false
      * </pre>
      */
     public int getGetterFlags() {
@@ -21436,7 +21534,7 @@ public final class DebugProtoBuf {
        *hasGetter
        *hasSetter
        *isConst
-       *lateinit
+       *isLateinit
        *hasConstant
        *isExternal
        *isDelegated
@@ -21458,7 +21556,7 @@ public final class DebugProtoBuf {
        *hasGetter
        *hasSetter
        *isConst
-       *lateinit
+       *isLateinit
        *hasConstant
        *isExternal
        *isDelegated
@@ -21480,7 +21578,7 @@ public final class DebugProtoBuf {
        *hasGetter
        *hasSetter
        *isConst
-       *lateinit
+       *isLateinit
        *hasConstant
        *isExternal
        *isDelegated
@@ -21505,7 +21603,7 @@ public final class DebugProtoBuf {
        *hasGetter
        *hasSetter
        *isConst
-       *lateinit
+       *isLateinit
        *hasConstant
        *isExternal
        *isDelegated
@@ -22246,6 +22344,9 @@ public final class DebugProtoBuf {
        *isNotDefault
        *isExternal
        *isInline
+       *If getter_flags or setter_flags are absent, their value should be computed as follows:
+       *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+       *- all other flags are false
        * </pre>
        */
       public boolean hasGetterFlags() {
@@ -22261,6 +22362,9 @@ public final class DebugProtoBuf {
        *isNotDefault
        *isExternal
        *isInline
+       *If getter_flags or setter_flags are absent, their value should be computed as follows:
+       *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+       *- all other flags are false
        * </pre>
        */
       public int getGetterFlags() {
@@ -22276,6 +22380,9 @@ public final class DebugProtoBuf {
        *isNotDefault
        *isExternal
        *isInline
+       *If getter_flags or setter_flags are absent, their value should be computed as follows:
+       *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+       *- all other flags are false
        * </pre>
        */
       public Builder setGetterFlags(int value) {
@@ -22294,6 +22401,9 @@ public final class DebugProtoBuf {
        *isNotDefault
        *isExternal
        *isInline
+       *If getter_flags or setter_flags are absent, their value should be computed as follows:
+       *- hasAnnotations, Visibility, Modality have the same value as in the property flags
+       *- all other flags are false
        * </pre>
        */
       public Builder clearGetterFlags() {
@@ -33470,143 +33580,144 @@ public final class DebugProtoBuf {
       "ion:\003INV\0221\n\004type\030\002 \001(\0132#.org.jetbrains.k" +
       "otlin.metadata.Type\022\017\n\007type_id\030\003 \001(\005\"0\n\n" +
       "Projection\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\022\010\n\004" +
-      "STAR\020\003*\005\010d\020\310\001\"\224\002\n\rTypeParameter\022\n\n\002id\030\001 ",
+      "STAR\020\003*\005\010d\020\310\001\"\230\002\n\rTypeParameter\022\n\n\002id\030\001 ",
       "\002(\005\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022\026\n\007reified\030\003 \001(\010" +
       ":\005false\022L\n\010variance\030\004 \001(\01625.org.jetbrain" +
       "s.kotlin.metadata.TypeParameter.Variance" +
       ":\003INV\0228\n\013upper_bound\030\005 \003(\0132#.org.jetbrai" +
-      "ns.kotlin.metadata.Type\022\026\n\016upper_bound_i" +
-      "d\030\006 \003(\005\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003" +
-      "INV\020\002*\005\010d\020\350\007\"\244\007\n\005Class\022\020\n\005flags\030\001 \001(\005:\0016" +
-      "\022\025\n\007fq_name\030\003 \002(\005B\004\220\265\030\001\022#\n\025companion_obj" +
-      "ect_name\030\004 \001(\005B\004\210\265\030\001\022D\n\016type_parameter\030\005" +
-      " \003(\0132,.org.jetbrains.kotlin.metadata.Typ",
-      "eParameter\0226\n\tsupertype\030\006 \003(\0132#.org.jetb" +
-      "rains.kotlin.metadata.Type\022\030\n\014supertype_" +
-      "id\030\002 \003(\005B\002\020\001\022!\n\021nested_class_name\030\007 \003(\005B" +
-      "\006\020\001\210\265\030\001\022?\n\013constructor\030\010 \003(\0132*.org.jetbr" +
-      "ains.kotlin.metadata.Constructor\0229\n\010func" +
-      "tion\030\t \003(\0132\'.org.jetbrains.kotlin.metada" +
-      "ta.Function\0229\n\010property\030\n \003(\0132\'.org.jetb" +
-      "rains.kotlin.metadata.Property\022<\n\ntype_a" +
-      "lias\030\013 \003(\0132(.org.jetbrains.kotlin.metada" +
-      "ta.TypeAlias\022<\n\nenum_entry\030\r \003(\0132(.org.j",
-      "etbrains.kotlin.metadata.EnumEntry\022\'\n\027se" +
-      "aled_subclass_fq_name\030\020 \003(\005B\006\020\001\220\265\030\001\022<\n\nt" +
-      "ype_table\030\036 \001(\0132(.org.jetbrains.kotlin.m" +
-      "etadata.TypeTable\022\033\n\023version_requirement" +
-      "\030\037 \001(\005\022Y\n\031version_requirement_table\030  \001(" +
-      "\01326.org.jetbrains.kotlin.metadata.Versio" +
-      "nRequirementTable\"x\n\004Kind\022\t\n\005CLASS\020\000\022\r\n\t" +
-      "INTERFACE\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTR" +
-      "Y\020\003\022\024\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\024\n" +
-      "\020COMPANION_OBJECT\020\006*\006\010d\020\270\224\001\"\335\002\n\007Package\022",
-      "9\n\010function\030\003 \003(\0132\'.org.jetbrains.kotlin" +
-      ".metadata.Function\0229\n\010property\030\004 \003(\0132\'.o" +
-      "rg.jetbrains.kotlin.metadata.Property\022<\n" +
-      "\ntype_alias\030\005 \003(\0132(.org.jetbrains.kotlin" +
-      ".metadata.TypeAlias\022<\n\ntype_table\030\036 \001(\0132" +
-      "(.org.jetbrains.kotlin.metadata.TypeTabl" +
-      "e\022Y\n\031version_requirement_table\030  \001(\01326.o" +
-      "rg.jetbrains.kotlin.metadata.VersionRequ" +
-      "irementTable*\005\010d\020\310\001\"Z\n\tTypeTable\0221\n\004type" +
-      "\030\001 \003(\0132#.org.jetbrains.kotlin.metadata.T",
-      "ype\022\032\n\016first_nullable\030\002 \001(\005:\002-1\"\214\001\n\013Cons" +
-      "tructor\022\020\n\005flags\030\001 \001(\005:\0016\022F\n\017value_param" +
-      "eter\030\002 \003(\0132-.org.jetbrains.kotlin.metada" +
-      "ta.ValueParameter\022\033\n\023version_requirement" +
-      "\030\037 \001(\005*\006\010d\020\270\224\001\"\232\004\n\010Function\022\020\n\005flags\030\t \001" +
-      "(\005:\0016\022\024\n\told_flags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(" +
-      "\005B\004\210\265\030\001\0228\n\013return_type\030\003 \001(\0132#.org.jetbr" +
-      "ains.kotlin.metadata.Type\022\026\n\016return_type" +
-      "_id\030\007 \001(\005\022D\n\016type_parameter\030\004 \003(\0132,.org." +
-      "jetbrains.kotlin.metadata.TypeParameter\022",
-      ":\n\rreceiver_type\030\005 \001(\0132#.org.jetbrains.k" +
-      "otlin.metadata.Type\022\030\n\020receiver_type_id\030" +
-      "\010 \001(\005\022F\n\017value_parameter\030\006 \003(\0132-.org.jet" +
-      "brains.kotlin.metadata.ValueParameter\022<\n" +
-      "\ntype_table\030\036 \001(\0132(.org.jetbrains.kotlin" +
-      ".metadata.TypeTable\022\033\n\023version_requireme" +
-      "nt\030\037 \001(\005\0229\n\010contract\030  \001(\0132\'.org.jetbrai" +
-      "ns.kotlin.metadata.Contract*\006\010d\020\270\224\001\"\331\003\n\010" +
-      "Property\022\022\n\005flags\030\013 \001(\005:\003518\022\027\n\told_flag" +
-      "s\030\001 \001(\005:\0042054\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0228\n\013ret",
-      "urn_type\030\003 \001(\0132#.org.jetbrains.kotlin.me" +
-      "tadata.Type\022\026\n\016return_type_id\030\t \001(\005\022D\n\016t" +
-      "ype_parameter\030\004 \003(\0132,.org.jetbrains.kotl" +
-      "in.metadata.TypeParameter\022:\n\rreceiver_ty" +
-      "pe\030\005 \001(\0132#.org.jetbrains.kotlin.metadata" +
-      ".Type\022\030\n\020receiver_type_id\030\n \001(\005\022M\n\026sette" +
-      "r_value_parameter\030\006 \001(\0132-.org.jetbrains." +
-      "kotlin.metadata.ValueParameter\022\024\n\014getter" +
-      "_flags\030\007 \001(\005\022\024\n\014setter_flags\030\010 \001(\005\022\033\n\023ve" +
-      "rsion_requirement\030\037 \001(\005*\006\010d\020\270\224\001\"\343\001\n\016Valu",
-      "eParameter\022\020\n\005flags\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002" +
-      "(\005B\004\210\265\030\001\0221\n\004type\030\003 \001(\0132#.org.jetbrains.k" +
-      "otlin.metadata.Type\022\017\n\007type_id\030\005 \001(\005\022@\n\023" +
-      "vararg_element_type\030\004 \001(\0132#.org.jetbrain" +
-      "s.kotlin.metadata.Type\022\036\n\026vararg_element" +
-      "_type_id\030\006 \001(\005*\005\010d\020\310\001\"\212\003\n\tTypeAlias\022\020\n\005f" +
-      "lags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022D\n\016typ" +
-      "e_parameter\030\003 \003(\0132,.org.jetbrains.kotlin" +
-      ".metadata.TypeParameter\022<\n\017underlying_ty" +
-      "pe\030\004 \001(\0132#.org.jetbrains.kotlin.metadata",
-      ".Type\022\032\n\022underlying_type_id\030\005 \001(\005\022:\n\rexp" +
-      "anded_type\030\006 \001(\0132#.org.jetbrains.kotlin." +
-      "metadata.Type\022\030\n\020expanded_type_id\030\007 \001(\005\022" +
-      "=\n\nannotation\030\010 \003(\0132).org.jetbrains.kotl" +
-      "in.metadata.Annotation\022\033\n\023version_requir" +
-      "ement\030\037 \001(\005*\005\010d\020\310\001\"&\n\tEnumEntry\022\022\n\004name\030" +
-      "\001 \001(\005B\004\210\265\030\001*\005\010d\020\310\001\"\225\003\n\022VersionRequiremen" +
-      "t\022\017\n\007version\030\001 \001(\005\022\024\n\014version_full\030\002 \001(\005" +
-      "\022M\n\005level\030\003 \001(\01627.org.jetbrains.kotlin.m" +
-      "etadata.VersionRequirement.Level:\005ERROR\022",
-      "\022\n\nerror_code\030\004 \001(\005\022\025\n\007message\030\005 \001(\005B\004\230\265" +
-      "\030\001\022e\n\014version_kind\030\006 \001(\0162=.org.jetbrains" +
-      ".kotlin.metadata.VersionRequirement.Vers" +
-      "ionKind:\020LANGUAGE_VERSION\"+\n\005Level\022\013\n\007WA" +
-      "RNING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN\020\002\"J\n\013Versio" +
-      "nKind\022\024\n\020LANGUAGE_VERSION\020\000\022\024\n\020COMPILER_" +
-      "VERSION\020\001\022\017\n\013API_VERSION\020\002\"a\n\027VersionReq" +
-      "uirementTable\022F\n\013requirement\030\001 \003(\01321.org" +
-      ".jetbrains.kotlin.metadata.VersionRequir" +
-      "ement\"\217\002\n\017PackageFragment\022;\n\007strings\030\001 \001",
-      "(\0132*.org.jetbrains.kotlin.metadata.Strin" +
-      "gTable\022J\n\017qualified_names\030\002 \001(\01321.org.je" +
-      "tbrains.kotlin.metadata.QualifiedNameTab" +
-      "le\0227\n\007package\030\003 \001(\0132&.org.jetbrains.kotl" +
-      "in.metadata.Package\0223\n\005class\030\004 \003(\0132$.org" +
-      ".jetbrains.kotlin.metadata.Class*\005\010d\020\310\001\"" +
-      "A\n\010Contract\0225\n\006effect\030\001 \003(\0132%.org.jetbra" +
-      "ins.kotlin.metadata.Effect\"\306\003\n\006Effect\022E\n" +
-      "\013effect_type\030\001 \001(\01620.org.jetbrains.kotli" +
-      "n.metadata.Effect.EffectType\022N\n\033effect_c",
-      "onstructor_argument\030\002 \003(\0132).org.jetbrain" +
-      "s.kotlin.metadata.Expression\022S\n conclusi" +
-      "on_of_conditional_effect\030\003 \001(\0132).org.jet" +
-      "brains.kotlin.metadata.Expression\022B\n\004kin" +
-      "d\030\004 \001(\01624.org.jetbrains.kotlin.metadata." +
-      "Effect.InvocationKind\"C\n\nEffectType\022\024\n\020R" +
-      "ETURNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETURNS_" +
-      "NOT_NULL\020\002\"G\n\016InvocationKind\022\020\n\014AT_MOST_" +
-      "ONCE\020\000\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST_ONC" +
-      "E\020\002\"\234\003\n\nExpression\022\r\n\005flags\030\001 \001(\005\022!\n\031val",
-      "ue_parameter_reference\030\002 \001(\005\022O\n\016constant" +
-      "_value\030\003 \001(\01627.org.jetbrains.kotlin.meta" +
-      "data.Expression.ConstantValue\022=\n\020is_inst" +
-      "ance_type\030\004 \001(\0132#.org.jetbrains.kotlin.m" +
-      "etadata.Type\022\033\n\023is_instance_type_id\030\005 \001(" +
-      "\005\022?\n\014and_argument\030\006 \003(\0132).org.jetbrains." +
-      "kotlin.metadata.Expression\022>\n\013or_argumen" +
-      "t\030\007 \003(\0132).org.jetbrains.kotlin.metadata." +
-      "Expression\".\n\rConstantValue\022\010\n\004TRUE\020\000\022\t\n" +
-      "\005FALSE\020\001\022\010\n\004NULL\020\002*9\n\010Modality\022\t\n\005FINAL\020",
-      "\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n" +
-      "\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r" +
-      "\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_" +
-      "THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013DECLA" +
-      "RATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATIO" +
-      "N\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProtoBuf"
+      "ns.kotlin.metadata.Type\022\032\n\016upper_bound_i" +
+      "d\030\006 \003(\005B\002\020\001\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001" +
+      "\022\007\n\003INV\020\002*\005\010d\020\350\007\"\244\007\n\005Class\022\020\n\005flags\030\001 \001(" +
+      "\005:\0016\022\025\n\007fq_name\030\003 \002(\005B\004\220\265\030\001\022#\n\025companion" +
+      "_object_name\030\004 \001(\005B\004\210\265\030\001\022D\n\016type_paramet" +
+      "er\030\005 \003(\0132,.org.jetbrains.kotlin.metadata",
+      ".TypeParameter\0226\n\tsupertype\030\006 \003(\0132#.org." +
+      "jetbrains.kotlin.metadata.Type\022\030\n\014supert" +
+      "ype_id\030\002 \003(\005B\002\020\001\022!\n\021nested_class_name\030\007 " +
+      "\003(\005B\006\020\001\210\265\030\001\022?\n\013constructor\030\010 \003(\0132*.org.j" +
+      "etbrains.kotlin.metadata.Constructor\0229\n\010" +
+      "function\030\t \003(\0132\'.org.jetbrains.kotlin.me" +
+      "tadata.Function\0229\n\010property\030\n \003(\0132\'.org." +
+      "jetbrains.kotlin.metadata.Property\022<\n\nty" +
+      "pe_alias\030\013 \003(\0132(.org.jetbrains.kotlin.me" +
+      "tadata.TypeAlias\022<\n\nenum_entry\030\r \003(\0132(.o",
+      "rg.jetbrains.kotlin.metadata.EnumEntry\022\'" +
+      "\n\027sealed_subclass_fq_name\030\020 \003(\005B\006\020\001\220\265\030\001\022" +
+      "<\n\ntype_table\030\036 \001(\0132(.org.jetbrains.kotl" +
+      "in.metadata.TypeTable\022\033\n\023version_require" +
+      "ment\030\037 \001(\005\022Y\n\031version_requirement_table\030" +
+      "  \001(\01326.org.jetbrains.kotlin.metadata.Ve" +
+      "rsionRequirementTable\"x\n\004Kind\022\t\n\005CLASS\020\000" +
+      "\022\r\n\tINTERFACE\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_" +
+      "ENTRY\020\003\022\024\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020" +
+      "\005\022\024\n\020COMPANION_OBJECT\020\006*\006\010d\020\270\224\001\"\335\002\n\007Pack",
+      "age\0229\n\010function\030\003 \003(\0132\'.org.jetbrains.ko" +
+      "tlin.metadata.Function\0229\n\010property\030\004 \003(\013" +
+      "2\'.org.jetbrains.kotlin.metadata.Propert" +
+      "y\022<\n\ntype_alias\030\005 \003(\0132(.org.jetbrains.ko" +
+      "tlin.metadata.TypeAlias\022<\n\ntype_table\030\036 " +
+      "\001(\0132(.org.jetbrains.kotlin.metadata.Type" +
+      "Table\022Y\n\031version_requirement_table\030  \001(\013" +
+      "26.org.jetbrains.kotlin.metadata.Version" +
+      "RequirementTable*\005\010d\020\310\001\"Z\n\tTypeTable\0221\n\004" +
+      "type\030\001 \003(\0132#.org.jetbrains.kotlin.metada",
+      "ta.Type\022\032\n\016first_nullable\030\002 \001(\005:\002-1\"\214\001\n\013" +
+      "Constructor\022\020\n\005flags\030\001 \001(\005:\0016\022F\n\017value_p" +
+      "arameter\030\002 \003(\0132-.org.jetbrains.kotlin.me" +
+      "tadata.ValueParameter\022\033\n\023version_require" +
+      "ment\030\037 \001(\005*\006\010d\020\270\224\001\"\232\004\n\010Function\022\020\n\005flags" +
+      "\030\t \001(\005:\0016\022\024\n\told_flags\030\001 \001(\005:\0016\022\022\n\004name\030" +
+      "\002 \002(\005B\004\210\265\030\001\0228\n\013return_type\030\003 \001(\0132#.org.j" +
+      "etbrains.kotlin.metadata.Type\022\026\n\016return_" +
+      "type_id\030\007 \001(\005\022D\n\016type_parameter\030\004 \003(\0132,." +
+      "org.jetbrains.kotlin.metadata.TypeParame",
+      "ter\022:\n\rreceiver_type\030\005 \001(\0132#.org.jetbrai" +
+      "ns.kotlin.metadata.Type\022\030\n\020receiver_type" +
+      "_id\030\010 \001(\005\022F\n\017value_parameter\030\006 \003(\0132-.org" +
+      ".jetbrains.kotlin.metadata.ValueParamete" +
+      "r\022<\n\ntype_table\030\036 \001(\0132(.org.jetbrains.ko" +
+      "tlin.metadata.TypeTable\022\033\n\023version_requi" +
+      "rement\030\037 \001(\005\0229\n\010contract\030  \001(\0132\'.org.jet" +
+      "brains.kotlin.metadata.Contract*\006\010d\020\270\224\001\"" +
+      "\331\003\n\010Property\022\022\n\005flags\030\013 \001(\005:\003518\022\027\n\told_" +
+      "flags\030\001 \001(\005:\0042054\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0228\n",
+      "\013return_type\030\003 \001(\0132#.org.jetbrains.kotli" +
+      "n.metadata.Type\022\026\n\016return_type_id\030\t \001(\005\022" +
+      "D\n\016type_parameter\030\004 \003(\0132,.org.jetbrains." +
+      "kotlin.metadata.TypeParameter\022:\n\rreceive" +
+      "r_type\030\005 \001(\0132#.org.jetbrains.kotlin.meta" +
+      "data.Type\022\030\n\020receiver_type_id\030\n \001(\005\022M\n\026s" +
+      "etter_value_parameter\030\006 \001(\0132-.org.jetbra" +
+      "ins.kotlin.metadata.ValueParameter\022\024\n\014ge" +
+      "tter_flags\030\007 \001(\005\022\024\n\014setter_flags\030\010 \001(\005\022\033" +
+      "\n\023version_requirement\030\037 \001(\005*\006\010d\020\270\224\001\"\343\001\n\016",
+      "ValueParameter\022\020\n\005flags\030\001 \001(\005:\0010\022\022\n\004name" +
+      "\030\002 \002(\005B\004\210\265\030\001\0221\n\004type\030\003 \001(\0132#.org.jetbrai" +
+      "ns.kotlin.metadata.Type\022\017\n\007type_id\030\005 \001(\005" +
+      "\022@\n\023vararg_element_type\030\004 \001(\0132#.org.jetb" +
+      "rains.kotlin.metadata.Type\022\036\n\026vararg_ele" +
+      "ment_type_id\030\006 \001(\005*\005\010d\020\310\001\"\212\003\n\tTypeAlias\022" +
+      "\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022D\n" +
+      "\016type_parameter\030\003 \003(\0132,.org.jetbrains.ko" +
+      "tlin.metadata.TypeParameter\022<\n\017underlyin" +
+      "g_type\030\004 \001(\0132#.org.jetbrains.kotlin.meta",
+      "data.Type\022\032\n\022underlying_type_id\030\005 \001(\005\022:\n" +
+      "\rexpanded_type\030\006 \001(\0132#.org.jetbrains.kot" +
+      "lin.metadata.Type\022\030\n\020expanded_type_id\030\007 " +
+      "\001(\005\022=\n\nannotation\030\010 \003(\0132).org.jetbrains." +
+      "kotlin.metadata.Annotation\022\033\n\023version_re" +
+      "quirement\030\037 \001(\005*\005\010d\020\310\001\"&\n\tEnumEntry\022\022\n\004n" +
+      "ame\030\001 \001(\005B\004\210\265\030\001*\005\010d\020\310\001\"\225\003\n\022VersionRequir" +
+      "ement\022\017\n\007version\030\001 \001(\005\022\024\n\014version_full\030\002" +
+      " \001(\005\022M\n\005level\030\003 \001(\01627.org.jetbrains.kotl" +
+      "in.metadata.VersionRequirement.Level:\005ER",
+      "ROR\022\022\n\nerror_code\030\004 \001(\005\022\025\n\007message\030\005 \001(\005" +
+      "B\004\230\265\030\001\022e\n\014version_kind\030\006 \001(\0162=.org.jetbr" +
+      "ains.kotlin.metadata.VersionRequirement." +
+      "VersionKind:\020LANGUAGE_VERSION\"+\n\005Level\022\013" +
+      "\n\007WARNING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN\020\002\"J\n\013Ve" +
+      "rsionKind\022\024\n\020LANGUAGE_VERSION\020\000\022\024\n\020COMPI" +
+      "LER_VERSION\020\001\022\017\n\013API_VERSION\020\002\"a\n\027Versio" +
+      "nRequirementTable\022F\n\013requirement\030\001 \003(\01321" +
+      ".org.jetbrains.kotlin.metadata.VersionRe" +
+      "quirement\"\217\002\n\017PackageFragment\022;\n\007strings",
+      "\030\001 \001(\0132*.org.jetbrains.kotlin.metadata.S" +
+      "tringTable\022J\n\017qualified_names\030\002 \001(\01321.or" +
+      "g.jetbrains.kotlin.metadata.QualifiedNam" +
+      "eTable\0227\n\007package\030\003 \001(\0132&.org.jetbrains." +
+      "kotlin.metadata.Package\0223\n\005class\030\004 \003(\0132$" +
+      ".org.jetbrains.kotlin.metadata.Class*\005\010d" +
+      "\020\310\001\"A\n\010Contract\0225\n\006effect\030\001 \003(\0132%.org.je" +
+      "tbrains.kotlin.metadata.Effect\"\306\003\n\006Effec" +
+      "t\022E\n\013effect_type\030\001 \001(\01620.org.jetbrains.k" +
+      "otlin.metadata.Effect.EffectType\022N\n\033effe",
+      "ct_constructor_argument\030\002 \003(\0132).org.jetb" +
+      "rains.kotlin.metadata.Expression\022S\n conc" +
+      "lusion_of_conditional_effect\030\003 \001(\0132).org" +
+      ".jetbrains.kotlin.metadata.Expression\022B\n" +
+      "\004kind\030\004 \001(\01624.org.jetbrains.kotlin.metad" +
+      "ata.Effect.InvocationKind\"C\n\nEffectType\022" +
+      "\024\n\020RETURNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETU" +
+      "RNS_NOT_NULL\020\002\"G\n\016InvocationKind\022\020\n\014AT_M" +
+      "OST_ONCE\020\000\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST" +
+      "_ONCE\020\002\"\234\003\n\nExpression\022\r\n\005flags\030\001 \001(\005\022!\n",
+      "\031value_parameter_reference\030\002 \001(\005\022O\n\016cons" +
+      "tant_value\030\003 \001(\01627.org.jetbrains.kotlin." +
+      "metadata.Expression.ConstantValue\022=\n\020is_" +
+      "instance_type\030\004 \001(\0132#.org.jetbrains.kotl" +
+      "in.metadata.Type\022\033\n\023is_instance_type_id\030" +
+      "\005 \001(\005\022?\n\014and_argument\030\006 \003(\0132).org.jetbra" +
+      "ins.kotlin.metadata.Expression\022>\n\013or_arg" +
+      "ument\030\007 \003(\0132).org.jetbrains.kotlin.metad" +
+      "ata.Expression\".\n\rConstantValue\022\010\n\004TRUE\020" +
+      "\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002*9\n\010Modality\022\t\n\005FI",
+      "NAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020" +
+      "\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE" +
+      "\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE" +
+      "_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013D" +
+      "ECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEG" +
+      "ATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProtoBu" +
+      "f"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
