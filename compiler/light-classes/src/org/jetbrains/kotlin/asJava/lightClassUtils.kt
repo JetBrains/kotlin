@@ -20,7 +20,6 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -53,7 +52,7 @@ fun KtFile.findFacadeClass(): KtLightClass? {
             .firstOrNull { it is KtLightClassForFacade && this in it.files } as? KtLightClass
 }
 
-fun KtScript.toLightClass(): KtLightClassForScript? = KotlinAsJavaSupport.getInstance(project).getLightClassForScript(this)
+fun KtScript.toLightClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightClassForScript(this)
 
 fun KtElement.toLightElements(): List<PsiNamedElement> =
         when (this) {
