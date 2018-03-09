@@ -15,6 +15,8 @@ import java.io.InputStream
 object JvmProtoBufUtil {
     val EXTENSION_REGISTRY: ExtensionRegistryLite = ExtensionRegistryLite.newInstance().apply(JvmProtoBuf::registerAllExtensions)
 
+    const val PLATFORM_TYPE_ID = "kotlin.jvm.PlatformType"
+
     @JvmStatic
     fun readClassDataFrom(data: Array<String>, strings: Array<String>): Pair<JvmNameResolver, ProtoBuf.Class> =
         readClassDataFrom(BitEncoding.decodeBytes(data), strings)
