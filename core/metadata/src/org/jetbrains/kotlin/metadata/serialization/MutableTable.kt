@@ -1,35 +1,22 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("FINITE_BOUNDS_VIOLATION_IN_JAVA")
-package org.jetbrains.kotlin.serialization
+package org.jetbrains.kotlin.metadata.serialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-import org.jetbrains.kotlin.utils.Interner
-import java.util.*
 
 private class TableElementWrapper<Element : GeneratedMessageLite.Builder<*, Element>>(val builder: Element) {
     // If you'll try to optimize it using structured equals/hashCode, pay attention to extensions present in proto messages
     private val bytes: ByteArray = builder.build().toByteArray()
-    private val hashCode: Int = Arrays.hashCode(bytes)
+    private val hashCode: Int = bytes.contentHashCode()
 
     override fun hashCode() = hashCode
 
-    override fun equals(other: Any?) = other is TableElementWrapper<*> && Arrays.equals(bytes, other.bytes)
+    override fun equals(other: Any?) = other is TableElementWrapper<*> && bytes.contentEquals(other.bytes)
 }
 
 abstract class MutableTable<Element, Table, TableBuilder>

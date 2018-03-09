@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
+import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.Interner
 import java.io.OutputStream
 
 open class StringTableImpl : DescriptorAwareStringTable {
