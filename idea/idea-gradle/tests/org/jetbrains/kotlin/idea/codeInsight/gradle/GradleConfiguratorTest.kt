@@ -191,10 +191,10 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         runReadAction {
             val configurator = findGradleModuleConfigurator()
 
-            val (modules, ableToRunConfigurators) = getConfigurationPossibilities(myProject)
+            val (modules, ableToRunConfigurators) = getConfigurationPossibilitiesForConfigureNotification(myProject)
             assertTrue(ableToRunConfigurators.any { it is KotlinGradleModuleConfigurator })
             assertTrue(ableToRunConfigurators.any { it is KotlinJsGradleModuleConfigurator })
-            val moduleNames = modules.map { it.name }
+            val moduleNames = modules.map { it.baseModule.name }
             assertSameElements(moduleNames, "app")
 
             val moduleNamesFromConfigurator = getCanBeConfiguredModules(myProject, configurator).map { it.name }
@@ -232,7 +232,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         importProject()
 
         runReadAction {
-            assertEmpty(getConfigurationPossibilities(myProject).first)
+            assertEmpty(getConfigurationPossibilitiesForConfigureNotification(myProject).first)
         }
     }
 
@@ -263,7 +263,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         importProject()
 
         runReadAction {
-            assertEmpty(getConfigurationPossibilities(myProject).first)
+            assertEmpty(getConfigurationPossibilitiesForConfigureNotification(myProject).first)
         }
     }
 

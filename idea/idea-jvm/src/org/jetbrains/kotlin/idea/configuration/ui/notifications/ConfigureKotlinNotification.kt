@@ -11,19 +11,25 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
-import org.jetbrains.kotlin.idea.configuration.getConfigurationPossibilities
+import org.jetbrains.kotlin.idea.configuration.getConfigurationPossibilitiesForConfigureNotification
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
 import javax.swing.event.HyperlinkEvent
 
+data class ConfigureKotlinNotificationState(
+    val notificationString: String,
+    val notConfiguredModules: Collection<String>
+)
+
 class ConfigureKotlinNotification(
     project: Project,
     excludeModules: List<Module>,
-    notificationString: String
+    val notificationState: ConfigureKotlinNotificationState
 ) : Notification(
     KotlinConfigurationCheckerComponent.CONFIGURE_NOTIFICATION_GROUP_ID, "Configure Kotlin",
-    notificationString,
-    NotificationType.WARNING, NotificationListener { notification, event ->
+    notificationState.notificationString,
+    NotificationType.WARNING,
+    NotificationListener { notification, event ->
         if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
             val configurator = getConfiguratorByName(event.description) ?: throw AssertionError("Missed action: " + event.description)
             notification.expire()
@@ -46,18 +52,21 @@ class ConfigureKotlinNotification(
     }
 
     companion object {
-        fun getNotificationString(project: Project, excludeModules: Collection<Module>): String? {
-            val (configurableModules, ableToRunConfigurators) = getConfigurationPossibilities(project, excludeModules)
-            if (ableToRunConfigurators.isEmpty()) return null
+        fun getNotificationState(project: Project, excludeModules: Collection<Module>): ConfigureKotlinNotificationState? {
+            val (configurableModules, ableToRunConfigurators) = getConfigurationPossibilitiesForConfigureNotification(project, excludeModules)
+            if (ableToRunConfigurators.isEmpty() || configurableModules.isEmpty()) return null
 
             val isOnlyOneModule = configurableModules.size == 1
 
-            val modulesString = if (isOnlyOneModule) "'${configurableModules.first().name}' module" else "modules"
+            val modulesString = if (isOnlyOneModule) "'${configurableModules.first().baseModule.name}' module" else "modules"
             val links = ableToRunConfigurators.joinToString(separator = "<br/>") { configurator ->
                 getLink(configurator, isOnlyOneModule)
             }
 
-            return "Configure $modulesString in '${project.name}' project<br/> $links"
+            return ConfigureKotlinNotificationState(
+                "Configure $modulesString in '${project.name}' project<br/> $links",
+                configurableModules.map { it.baseModule.name }
+            )
         }
 
         private fun getLink(configurator: KotlinProjectConfigurator, isOnlyOneModule: Boolean): String {

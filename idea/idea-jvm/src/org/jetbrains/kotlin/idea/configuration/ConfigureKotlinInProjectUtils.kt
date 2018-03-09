@@ -91,6 +91,10 @@ fun isModuleConfigured(moduleSourceRootGroup: ModuleSourceRootGroup): Boolean {
     }
 }
 
+/**
+ * Returns a list of modules which contain sources in Kotlin.
+ * Note that this method is expensive and should not be called more often than strictly necessary.
+ */
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
     if (!runReadAction {
         !project.isDisposed && FileTypeIndex.containsFileOfType (KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
@@ -106,6 +110,10 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
             }
 }
 
+/**
+ * Returns a list of modules which contain sources in Kotlin, grouped by base module.
+ * Note that this method is expensive and should not be called more often than strictly necessary.
+ */
 fun getConfigurableModulesWithKotlinFiles(project: Project): List<ModuleSourceRootGroup> {
     val modules = getModulesWithKotlinFiles(project)
     if (modules.isEmpty()) return emptyList()
@@ -121,17 +129,13 @@ fun showConfigureKotlinNotificationIfNeeded(module: Module) {
 }
 
 fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: List<Module> = emptyList()) {
-    val notificationString = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
-        val modules = getConfigurableModulesWithKotlinFiles(project).exclude(excludeModules)
-        if (modules.none(::isNotConfiguredNotificationRequired))
-            null
-        else
-            ConfigureKotlinNotification.getNotificationString(project, excludeModules)
+    val notificationState = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
+        ConfigureKotlinNotification.getNotificationState(project, excludeModules)
     })
 
-    if (notificationString != null) {
+    if (notificationState != null) {
         ApplicationManager.getApplication().invokeLater {
-            ConfigureKotlinNotificationManager.notify(project, ConfigureKotlinNotification(project, excludeModules, notificationString))
+            ConfigureKotlinNotificationManager.notify(project, ConfigureKotlinNotification(project, excludeModules, notificationState))
         }
     }
 }
@@ -177,33 +181,43 @@ private fun KotlinProjectConfigurator.canConfigure(moduleSourceRootGroup: Module
         getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED &&
         (allConfigurators().toList() - this).none { it.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CONFIGURED }
 
+/**
+ * Returns a list of modules which contain sources in Kotlin and for which it's possible to run the given configurator.
+ * Note that this method is expensive and should not be called more often than strictly necessary.
+ */
 fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     val modules = getConfigurableModulesWithKotlinFiles(project)
     return modules.filter { configurator.getStatus(it) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }.map { it.baseModule }
 }
 
-fun getConfigurationPossibilities(
+fun getConfigurationPossibilitiesForConfigureNotification(
     project: Project,
     excludeModules: Collection<Module> = emptyList()
-): Pair<Collection<Module>, Collection<KotlinProjectConfigurator>> {
+): Pair<Collection<ModuleSourceRootGroup>, Collection<KotlinProjectConfigurator>> {
     val modulesWithKotlinFiles = getConfigurableModulesWithKotlinFiles(project).exclude(excludeModules)
     val configurators = allConfigurators()
 
     val runnableConfigurators = mutableSetOf<KotlinProjectConfigurator>()
-    val configurableModules = mutableListOf<Module>()
+    val configurableModules = mutableListOf<ModuleSourceRootGroup>()
 
     // We need to return all modules for which at least one configurator is applicable, as well as all configurators which
     // are applicable for at least one module. At the same time we want to call getStatus() only once for each module/configurator pair.
     for (moduleSourceRootGroup in modulesWithKotlinFiles) {
         var moduleCanBeConfigured = false
+        var moduleAlreadyConfigured = false
         for (configurator in configurators) {
             if (moduleCanBeConfigured && configurator in runnableConfigurators) continue
-            if (configurator.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED) {
-                moduleCanBeConfigured = true
-                runnableConfigurators.add(configurator)
+            val status = configurator.getStatus(moduleSourceRootGroup)
+            when (status) {
+                ConfigureKotlinStatus.CAN_BE_CONFIGURED -> {
+                    moduleCanBeConfigured = true
+                    runnableConfigurators.add(configurator)
+                }
+                ConfigureKotlinStatus.CONFIGURED -> moduleAlreadyConfigured = true
             }
         }
-        if (moduleCanBeConfigured) configurableModules.add(moduleSourceRootGroup.baseModule)
+        if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(moduleSourceRootGroup))
+            configurableModules.add(moduleSourceRootGroup)
     }
 
     return configurableModules to runnableConfigurators
