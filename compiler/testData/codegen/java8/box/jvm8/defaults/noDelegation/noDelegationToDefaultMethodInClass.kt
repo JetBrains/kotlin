@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 // FULL_JDK
 interface Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun test() {
     }
 }

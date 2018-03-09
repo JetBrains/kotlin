@@ -11,7 +11,7 @@ interface Test {
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
 interface Test2 : Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override fun test(): String {
         return super.test()
     }

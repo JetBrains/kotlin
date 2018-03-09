@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 // FILE: 1.kt
 interface Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun test(): String {
         return "OK"
     }
@@ -12,7 +12,7 @@ interface Test {
 // FILE: 2.kt
 
 interface Test2 : Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override fun test(): String {
         return super.test()
     }

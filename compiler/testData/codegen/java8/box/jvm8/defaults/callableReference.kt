@@ -3,10 +3,10 @@
 // WITH_RUNTIME
 
 interface Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun foo(): String = "O"
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     val bar: String
         get() = "K"
 

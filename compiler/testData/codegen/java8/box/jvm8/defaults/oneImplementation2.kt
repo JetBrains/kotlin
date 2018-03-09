@@ -3,12 +3,12 @@
 // WITH_RUNTIME
 
 interface KCallable {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     val returnType: String
 }
 
 interface KCallableImpl : KCallable {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override val returnType: String
         get() = "OK"
 }

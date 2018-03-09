@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 
 interface Z {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     val z: String
         get() = "OK"
 }

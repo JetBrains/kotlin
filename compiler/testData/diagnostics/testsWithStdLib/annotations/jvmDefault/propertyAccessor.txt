@@ -1,7 +1,7 @@
 package
 
 public interface B {
-    @kotlin.annotations.JvmDefault public open val prop1: kotlin.String
+    @kotlin.jvm.JvmDefault public open val prop1: kotlin.String
     public open var prop2: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -5,19 +5,19 @@
 
 interface Z {
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     private fun privateFun() = { "OK" }
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun callPrivateFun() = privateFun()
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun publicFun() = { "OK" }
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun funWithDefaultArgs(s: () -> Unit = {}): () -> Unit
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     val property: () -> Unit
         get() = {}
 

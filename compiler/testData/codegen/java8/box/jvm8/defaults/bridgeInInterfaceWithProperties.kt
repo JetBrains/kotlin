@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 
 interface Test<T> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     var test: T
         get() = null!!
         set(value) {
@@ -13,7 +13,7 @@ interface Test<T> {
 var result = "fail"
 
 interface Test2 : Test<String> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override var test: String
         get() = result
         set(value) {

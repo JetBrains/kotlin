@@ -4,7 +4,7 @@
 // FULL_JDK
 
 interface Test<T> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     var T.test: T
         get() = null!!
         set(value) {
@@ -19,7 +19,7 @@ interface Test<T> {
 }
 
 interface Test2 : Test<String> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override var String.test: String
         get() = ""
         set(value) {}

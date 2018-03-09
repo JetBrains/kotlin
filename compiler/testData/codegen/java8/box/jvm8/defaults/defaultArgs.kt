@@ -2,7 +2,7 @@
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
 interface Z {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun test(s: String = "OK"): String {
         return s
     }

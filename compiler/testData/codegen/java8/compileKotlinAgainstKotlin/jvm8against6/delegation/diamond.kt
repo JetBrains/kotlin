@@ -10,7 +10,7 @@ interface Test {
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
 interface Test2 : Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override fun test(): String {
         return super.test()
     }
@@ -22,7 +22,7 @@ interface Test3 : Test {
 
 
 interface Test4 : Test2, Test3 {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override fun test(): String {
         return super.test()
     }

@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 
 interface IBase {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun bar() = "OK"
 }
 

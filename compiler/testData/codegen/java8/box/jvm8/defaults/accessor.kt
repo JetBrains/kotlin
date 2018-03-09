@@ -6,19 +6,19 @@ var storage = "fail"
 
 interface Test {
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     private var foo: String
         get() = storage
         set(value) {
             storage = value
         }
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     private fun bar(): String {
         return "K"
     }
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun call(): String {
         return {
             foo = "O"

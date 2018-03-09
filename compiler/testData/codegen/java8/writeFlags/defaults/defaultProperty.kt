@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 
 interface Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     var z: String
         get() = "OK"
         set(value) {}

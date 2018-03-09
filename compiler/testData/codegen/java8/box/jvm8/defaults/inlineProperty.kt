@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 
 interface Test {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun test(): String {
         return inlineProp
     }
@@ -12,7 +12,7 @@ interface Test {
         return inlineProp
     }
 
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     private inline val inlineProp: String
         get() = "OK"
 

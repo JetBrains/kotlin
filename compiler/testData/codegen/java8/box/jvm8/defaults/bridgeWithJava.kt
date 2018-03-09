@@ -12,7 +12,7 @@ public interface Test<T> {
 // FILE: kotlin.kt
 
 interface Test2: Test<String> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     override fun test(p: String): String {
         return p
     }

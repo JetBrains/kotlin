@@ -3,7 +3,7 @@
 // WITH_RUNTIME
 
 interface Z<T> {
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     fun test(p: T): T {
         return p
     }

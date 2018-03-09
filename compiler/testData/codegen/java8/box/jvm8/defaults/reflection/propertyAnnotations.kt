@@ -7,7 +7,7 @@ annotation class Accessor(val value: String)
 
 interface Z {
     @Property("OK")
-    @kotlin.annotations.JvmDefault
+    @JvmDefault
     val z: String
         @Accessor("OK")
         get() = "OK"
