@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiTarget
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -26,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -78,13 +79,23 @@ private fun KtAnnotationEntry.getRequiredAnnotationTargets(annotationClass: KtCl
     val requiredTargets = getActualTargetList()
     if (requiredTargets.isEmpty()) return emptyList()
 
-    val searchScope = GlobalSearchScope.allScope(project).restrictToKotlinSources()
+    val searchScope = GlobalSearchScope.allScope(project)
     val otherReferenceRequiredTargets = ReferencesSearch.search(annotationClass, searchScope).mapNotNull { reference ->
-        reference.element.getNonStrictParentOfType<KtAnnotationEntry>()?.takeIf { it != this }?.getActualTargetList()
+        if (reference.element is KtNameReferenceExpression) {
+            // Kotlin annotation
+            reference.element.getNonStrictParentOfType<KtAnnotationEntry>()?.takeIf { it != this }?.getActualTargetList()
+        } else {
+            // Java annotation
+            (reference.element.parent as? PsiAnnotation)?.getActualTargetList()
+        }
     }.flatten().toSet()
-
     val annotationTargetValueNames = AnnotationTarget.values().map { it.name }
     return (requiredTargets + otherReferenceRequiredTargets).distinct().filter { it.name in annotationTargetValueNames }
+}
+
+private fun PsiAnnotation.getActualTargetList(): List<KotlinTarget> {
+    val annotated = parent.parent as? PsiTarget ?: return emptyList()
+    return AnnotationChecker.getActualTargetList(annotated)
 }
 
 private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
@@ -101,8 +112,8 @@ private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
     val target = KotlinTarget.USE_SITE_MAPPING[useSiteTarget?.getAnnotationUseSiteTarget()] ?: return emptyList()
     if (target !in with(targetList) { defaultTargets + canBeSubstituted + onlyWithUseSiteTarget }) return emptyList()
     return if (target == KotlinTarget.RECEIVER &&
-        !languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes)
-    ) {
+            !languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes)
+                   ) {
         listOf(KotlinTarget.VALUE_PARAMETER)
     } else {
         listOf(target)
