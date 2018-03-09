@@ -372,12 +372,12 @@ object KotlinToJVMBytecodeCompiler {
             // of the compiled modules (.class) to the list of scopes of the source module
             val scope = if (moduleOutputs.isEmpty()) sourcesOnly else sourcesOnly.uniteWith(DirectoriesScope(project, moduleOutputs))
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                    project,
-                    sourceFiles,
-                    CliTraceHolder.NoScopeRecordCliBindingTrace(),
-                    environment.configuration,
-                    environment::createPackagePartProvider,
-                    sourceModuleSearchScope = scope
+                project,
+                sourceFiles,
+                NoScopeRecordCliBindingTrace(),
+                environment.configuration,
+                environment::createPackagePartProvider,
+                sourceModuleSearchScope = scope
             )
         }
 

@@ -21,7 +21,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
-import org.jetbrains.kotlin.cli.jvm.compiler.CliTraceHolder
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.get
@@ -104,7 +104,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
             val result = analyzeModuleContents(
-                moduleContext, ktFiles, CliTraceHolder.NoScopeRecordCliBindingTrace(),
+                moduleContext, ktFiles, NoScopeRecordCliBindingTrace(),
                 languageVersionSettings, separateModules, loadJvmTarget(testFilesInModule)
             )
             if (oldModule != result.moduleDescriptor) {

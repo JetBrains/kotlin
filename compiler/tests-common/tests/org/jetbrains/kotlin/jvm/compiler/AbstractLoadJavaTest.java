@@ -21,9 +21,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.CliTraceHolder;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -189,7 +189,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         registerJavacIfNeeded(environment);
         AnalysisResult result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                environment.getProject(), environment.getSourceFiles(), new CliTraceHolder.NoScopeRecordCliBindingTrace(),
+                environment.getProject(), environment.getSourceFiles(), new NoScopeRecordCliBindingTrace(),
                 configuration, environment::createPackagePartProvider
         );
 

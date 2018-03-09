@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.resolve.lazy
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.cli.jvm.compiler.CliTraceHolder
+import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.ComponentProvider
@@ -35,7 +36,7 @@ object JvmResolveUtil {
     @JvmOverloads
     fun createContainer(environment: KotlinCoreEnvironment, files: Collection<KtFile> = emptyList()): ComponentProvider =
         TopDownAnalyzerFacadeForJVM.createContainer(
-            environment.project, files, CliTraceHolder.NoScopeRecordCliBindingTrace(),
+            environment.project, files, NoScopeRecordCliBindingTrace(),
             environment.configuration, { PackagePartProvider.Empty }, ::FileBasedDeclarationProviderFactory
         )
 
@@ -53,7 +54,7 @@ object JvmResolveUtil {
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = CliTraceHolder.CliBindingTrace()
+        trace: BindingTrace = CliBindingTrace()
     ): AnalysisResult {
         for (file in files) {
             AnalyzingUtils.checkForSyntacticErrors(file)
@@ -85,7 +86,7 @@ object JvmResolveUtil {
         files: Collection<KtFile>,
         configuration: CompilerConfiguration,
         packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider,
-        trace: BindingTrace = CliTraceHolder.CliBindingTrace()
+        trace: BindingTrace = CliBindingTrace()
     ): AnalysisResult {
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             project, files, trace, configuration, packagePartProviderFactory
