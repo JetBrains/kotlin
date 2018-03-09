@@ -39,7 +39,7 @@ class SamWrapperTransformationInfo(override val oldClassName: String, private va
     override val newClassName: String
         get() = inliningContext.root.callSiteInfo.ownerClassName + "\$inlined" + "\$sam$".run { this + oldClassName.substringAfter(this) }
 
-    override fun shouldRegenerate(sameModule: Boolean) = !sameModule && !alreadyRegenerated
+    override fun shouldRegenerate(sameModule: Boolean, isInlineLambdaContext: Boolean) = !sameModule && !alreadyRegenerated
 
     override fun canRemoveAfterTransformation() = false
 

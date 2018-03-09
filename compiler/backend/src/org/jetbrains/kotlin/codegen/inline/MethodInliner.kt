@@ -154,7 +154,7 @@ class MethodInliner(
                 transformationInfo = iterator.next()
 
                 val oldClassName = transformationInfo!!.oldClassName
-                if (transformationInfo!!.shouldRegenerate(isSameModule)) {
+                if (transformationInfo!!.shouldRegenerate(isSameModule, inliningContext.isInliningLambda)) {
                     //TODO: need poping of type but what to do with local funs???
                     val newClassName = transformationInfo!!.newClassName
                     remapper.addMapping(oldClassName, newClassName)
@@ -278,7 +278,7 @@ class MethodInliner(
                         "<init> call doesn't correspond to object transformation info for '$owner.$name': $transformationInfo"
                     }
                     val parent = inliningContext.parent
-                    val shouldRegenerate = transformationInfo!!.shouldRegenerate(isSameModule)
+                    val shouldRegenerate = transformationInfo!!.shouldRegenerate(isSameModule, inliningContext.isInliningLambda)
                     val isContinuation = parent != null && parent.isContinuation
                     if (shouldRegenerate || isContinuation) {
                         assert(shouldRegenerate || inlineCallSiteInfo.ownerClassName == transformationInfo!!.oldClassName) { "Only coroutines can call their own constructors" }
@@ -704,7 +704,7 @@ class MethodInliner(
     private fun isAnonymousClassThatMustBeRegenerated(type: Type?): Boolean {
         if (type == null || type.sort != Type.OBJECT) return false
         val info = inliningContext.findAnonymousObjectTransformationInfo(type.internalName)
-        return info != null && info.shouldRegenerate(true)
+        return info != null && info.shouldRegenerate(true, inliningContext.isInliningLambda)
     }
 
     private fun buildConstructorInvocation(
@@ -730,8 +730,8 @@ class MethodInliner(
             //anonymous object could be inlined in several context without transformation (keeps same class name)
             // and on further inlining such code some of such cases would be transformed and some not,
             // so we should distinguish one classes from another more clearly
-            !memoizeAnonymousObject.shouldRegenerate(isSameModule) &&
-            info.shouldRegenerate(isSameModule)
+            !memoizeAnonymousObject.shouldRegenerate(isSameModule, inliningContext.isInliningLambda) &&
+            info.shouldRegenerate(isSameModule, inliningContext.isInliningLambda)
         ) {
 
             inliningContext.recordIfNotPresent(anonymousType, info)

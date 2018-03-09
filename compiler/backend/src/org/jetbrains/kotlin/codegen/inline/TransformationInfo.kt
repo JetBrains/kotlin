@@ -30,7 +30,7 @@ interface TransformationInfo {
         get() = false
 
 
-    fun shouldRegenerate(sameModule: Boolean): Boolean
+    fun shouldRegenerate(sameModule: Boolean, isInlineLambdaContext: Boolean): Boolean
 
     fun canRemoveAfterTransformation(): Boolean
 
@@ -48,7 +48,7 @@ class WhenMappingTransformationInfo(
         parentNameGenerator.subGenerator(false, oldClassName.substringAfterLast("/").substringAfterLast(TRANSFORMED_WHEN_MAPPING_MARKER))
     }
 
-    override fun shouldRegenerate(sameModule: Boolean): Boolean = !alreadyRegenerated && !sameModule
+    override fun shouldRegenerate(sameModule: Boolean, isInlineLambdaContext: Boolean): Boolean = !alreadyRegenerated && !sameModule
 
     override fun canRemoveAfterTransformation(): Boolean = true
 
@@ -93,9 +93,15 @@ class AnonymousObjectTransformationInfo internal constructor(
             nameGenerator: NameGenerator
     ) : this(ownerInternalName, needReification, hashMapOf(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator)
 
-    override fun shouldRegenerate(sameModule: Boolean): Boolean =
-            !alreadyRegenerated &&
-            (!lambdasToInline.isEmpty() || !sameModule || capturedOuterRegenerated || needReification || capturesAnonymousObjectThatMustBeRegenerated)
+    override fun shouldRegenerate(sameModule: Boolean, isInlineLambdaContext: Boolean): Boolean {
+        if (alreadyRegenerated) return false
+
+        return !lambdasToInline.isEmpty() ||
+                !sameModule ||
+                (capturedOuterRegenerated || (isStaticOrigin && isInlineLambdaContext)) ||
+                needReification ||
+                capturesAnonymousObjectThatMustBeRegenerated
+    }
 
     override fun canRemoveAfterTransformation(): Boolean {
         // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
