@@ -23,6 +23,8 @@ package kotlin
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class ByteArray(size: Int) {
+    companion object {}
+
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -46,6 +48,8 @@ public class ByteArray(size: Int) {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class CharArray(size: Int) {
+    companion object {}
+
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -69,6 +73,8 @@ public class CharArray(size: Int) {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class ShortArray(size: Int) {
+    companion object {}
+
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -92,6 +98,8 @@ public class ShortArray(size: Int) {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class IntArray(size: Int) {
+    companion object {}
+
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -115,6 +123,8 @@ public class IntArray(size: Int) {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class LongArray(size: Int) {
+    companion object {}
+
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -138,6 +148,8 @@ public class LongArray(size: Int) {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class FloatArray(size: Int) {
+    companion object {}
+
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -161,6 +173,8 @@ public class FloatArray(size: Int) {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 public class DoubleArray(size: Int) {
+    companion object {}
+
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
@@ -184,6 +198,8 @@ public class DoubleArray(size: Int) {
  * @constructor Creates a new array of the specified [size], with all elements initialized to false.
  */
 public class BooleanArray(size: Int) {
+    companion object {}
+
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
      * [init] function. The [init] function returns an array element given its index.
