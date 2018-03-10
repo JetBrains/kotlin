@@ -93,12 +93,15 @@ private fun String.toMaybeVersionedJarRegex(): Regex {
 }
 
 
-private val jreHome = System.getProperty("java.home")
 
-fun firstFromJavaHomeThatExists(vararg paths: String): File? =
-        paths.mapNotNull { File(jreHome, it).takeIf { it.exists() } }.firstOrNull()
+fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = File(this.property("JDK_18") as String)): File? =
+    paths.map { File(jdkHome, it) }.firstOrNull { it.exists() }.also {
+        if (it == null)
+            logger.warn("Cannot find file by paths: ${paths.toList()} in $jdkHome")
+    }
 
-fun toolsJar(): File? = firstFromJavaHomeThatExists("../lib/tools.jar", "../Classes/tools.jar")
+fun Project.toolsJar(jdkHome: File = File(this.property("JDK_18") as String)): File? =
+    firstFromJavaHomeThatExists("lib/tools.jar", jdkHome = jdkHome)
 
 object EmbeddedComponents {
     val CONFIGURATION_NAME = "embeddedComponents"
