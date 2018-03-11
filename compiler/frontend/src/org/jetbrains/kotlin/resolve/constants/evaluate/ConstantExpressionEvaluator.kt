@@ -154,6 +154,7 @@ class ConstantExpressionEvaluator(
             }
         }
 
+        // TODO: Consider removing this check, because we already checked inner expression
         if (constant.usesNonConstValAsConstant) {
             if (useDeprecationWarning) {
                 reportDeprecationWarningOnNonConst(argumentExpression, trace)
