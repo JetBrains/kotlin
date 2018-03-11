@@ -24536,6 +24536,18 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("assignNonConstSingleArrayElementAsVarargInAnnotation.kt")
+            public void testAssignNonConstSingleArrayElementAsVarargInAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/assignNonConstSingleArrayElementAsVarargInAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignNonConstSingleArrayElementAsVarargInAnnotationError.kt")
+            public void testAssignNonConstSingleArrayElementAsVarargInAnnotationError() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/assignNonConstSingleArrayElementAsVarargInAnnotationError.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("assigningArraysToVarargsInAnnotations.kt")
             public void testAssigningArraysToVarargsInAnnotations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/assigningArraysToVarargsInAnnotations.kt");
