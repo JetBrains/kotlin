@@ -33,7 +33,11 @@ abstract class JKElementBase : JKElement {
 }
 
 
-class JKClassImpl(override var modifierList: JKModifierList, override var name: JKNameIdentifier, override var classKind: JKClass.ClassKind) : JKClass, JKElementBase() {
+class JKClassImpl(
+    override var modifierList: JKModifierList,
+    override var name: JKNameIdentifier,
+    override var classKind: JKClass.ClassKind
+) : JKClass, JKElementBase() {
     override val valid: Boolean
         get() = true
     override var declarations: List<JKDeclaration> = mutableListOf()
@@ -71,8 +75,10 @@ class JKModifierListImpl : JKModifierList, JKElementBase() {
     }
 }
 
-class JKValueArgumentImpl(override var type: JKTypeIdentifier,
-                          override val name: String) : JKValueArgument, JKElementBase() {
+class JKValueArgumentImpl(
+    override var type: JKTypeIdentifier,
+    override val name: String
+) : JKValueArgument, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitValueArgument(this, data)
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
         type = type.transform(transformer, data)
@@ -84,6 +90,7 @@ class JKBlockImpl(override var statements: List<JKStatement>) : JKBlock, JKEleme
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
         statements = statements.map { it.transform<JKStatement, D>(transformer, data) }
     }
+
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
     }
@@ -93,8 +100,10 @@ class JKStringLiteralExpressionImpl(override val text: String) : JKStringLiteral
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitStringLiteralExpression(this, data)
 }
 
-class JKBinaryExpressionImpl(override var left: JKExpression, override var right: JKExpression?,
-                             override var operator: JKOperatorIdentifier) : JKBinaryExpression, JKElementBase() {
+class JKBinaryExpressionImpl(
+    override var left: JKExpression, override var right: JKExpression?,
+    override var operator: JKOperatorIdentifier
+) : JKBinaryExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBinaryExpression(this, data)
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         left.accept(visitor, data)
@@ -109,8 +118,10 @@ class JKBinaryExpressionImpl(override var left: JKExpression, override var right
     }
 }
 
-class JKPrefixExpressionImpl(override var expression: JKExpression,
-                             override var operator: JKOperatorIdentifier) : JKPrefixExpression, JKElementBase() {
+class JKPrefixExpressionImpl(
+    override var expression: JKExpression?,
+    override var operator: JKOperatorIdentifier
+) : JKPrefixExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPrefixExpression(this, data)
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         expression?.accept(visitor, data)
@@ -123,8 +134,10 @@ class JKPrefixExpressionImpl(override var expression: JKExpression,
     }
 }
 
-class JKPostfixExpressionImpl(override var expression: JKExpression,
-                              override var operator: JKOperatorIdentifier) : JKPostfixExpression, JKElementBase() {
+class JKPostfixExpressionImpl(
+    override var expression: JKExpression,
+    override var operator: JKOperatorIdentifier
+) : JKPostfixExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPostfixExpression(this, data)
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         expression?.accept(visitor, data)
@@ -149,8 +162,10 @@ class JKExpressionListImpl(override var expressions: Array<JKExpression>) : JKEx
     }
 }
 
-class JKQualifiedExpressionImpl(override var receiver: JKExpression, override var operator: JKQualificationIdentifier,
-                                override var selector: JKStatement) : JKQualifiedExpression, JKElementBase() {
+class JKQualifiedExpressionImpl(
+    override var receiver: JKExpression, override var operator: JKQualificationIdentifier,
+    override var selector: JKStatement
+) : JKQualifiedExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitQualifiedExpression(this, data)
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         receiver.accept(visitor, data)
@@ -172,7 +187,8 @@ class JKExpressionStatementImpl(override val expression: JKExpression) : JKExpre
     }
 }
 
-class JKArrayAccessExpressionImpl(override var expression: JKExpression, override var indexExpression: JKExpression?) : JKArrayAccessExpression, JKElementBase() {
+class JKArrayAccessExpressionImpl(override var expression: JKExpression, override var indexExpression: JKExpression?) :
+    JKArrayAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitArrayAccessExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
@@ -212,7 +228,10 @@ class JKTypeCastExpressionImpl(override var expression: JKExpression?, override 
     }
 }
 
-class JKTypeReferenceImpl(override val parameters: List<JKType>) : JKType, JKElementBase() {
+class JKTypeImpl(
+    override val classReference: JKClassReference, override val parameters: List<JKType>,
+    override val nullability: Nullability = Nullability.Default
+) : JKType, JKElementBase() {
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitType(this, data)
 

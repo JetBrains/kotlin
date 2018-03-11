@@ -20,16 +20,19 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
-class JKJavaFieldImpl(override var modifierList: JKModifierList,
-                      override var type: JKTypeIdentifier,
-                      override var name: JKNameIdentifier,
-                      override var initializer: JKExpression?) : JKJavaField, JKElementBase() {
+class JKJavaFieldImpl(
+    override var modifierList: JKModifierList,
+    override var type: JKTypeIdentifier,
+    override var name: JKNameIdentifier,
+    override var initializer: JKExpression?
+) : JKJavaField, JKElementBase() {
     override val valid: Boolean
         get() = true
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaField(this, data)
 
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) = listOfNotNull(type, name, initializer).forEach { it.accept(visitor, data) }
+    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) =
+        listOfNotNull(type, name, initializer).forEach { it.accept(visitor, data) }
 
     override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
         type = type.transform(transformer, data)
@@ -57,10 +60,12 @@ class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : J
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaModifier(this, data)
 }
 
-class JKJavaMethodImpl(override var modifierList: JKModifierList,
-                       override var name: JKNameIdentifier,
-                       override var valueArguments: List<JKValueArgument>,
-                       override var block: JKBlock?) : JKJavaMethod, JKElementBase() {
+class JKJavaMethodImpl(
+    override var modifierList: JKModifierList,
+    override var name: JKNameIdentifier,
+    override var valueArguments: List<JKValueArgument>,
+    override var block: JKBlock?
+) : JKJavaMethod, JKElementBase() {
     override val valid: Boolean
         get() = true
 
@@ -86,8 +91,10 @@ sealed class JKJavaQualificationIdentifierImpl : JKJavaQualificationIdentifier, 
     object DOT : JKJavaQualificationIdentifierImpl()
 }
 
-class JKJavaMethodCallExpressionImpl(override var identifier: JKMethodReference,
-                                     override var arguments: JKExpressionList) : JKJavaMethodCallExpression, JKElementBase() {
+class JKJavaMethodCallExpressionImpl(
+    override var identifier: JKMethodReference,
+    override var arguments: JKExpressionList
+) : JKJavaMethodCallExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
@@ -113,8 +120,10 @@ class JKJavaFieldAccessExpressionImpl(override var identifier: JKReference) : JK
     }
 }
 
-class JKJavaNewExpressionImpl(override var identifier: JKClassReference,
-                              override var arguments: JKExpressionList) : JKJavaNewExpression, JKElementBase() {
+class JKJavaNewExpressionImpl(
+    override var identifier: JKClassReference,
+    override var arguments: JKExpressionList
+) : JKJavaNewExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
@@ -127,7 +136,7 @@ class JKJavaNewExpressionImpl(override var identifier: JKClassReference,
     }
 }
 
-class JKJavaNewEmptyArrayImpl(override val initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
+class JKJavaNewEmptyArrayImpl(override var initializer: List<JKLiteralExpression?>) : JKJavaNewEmptyArray, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewEmptyArray(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
