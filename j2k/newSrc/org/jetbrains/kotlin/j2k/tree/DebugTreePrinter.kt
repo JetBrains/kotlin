@@ -88,14 +88,6 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println(classReference.target.name.name)
     }
 
-    override fun visitJavaStringLiteralExpression(javaStringLiteralExpression: JKJavaStringLiteralExpression) {
-        printer.println(javaStringLiteralExpression.classNameWithoutJK(), " \"")
-        printer.indented {
-            printer.println(javaStringLiteralExpression.text)
-        }
-        printer.println("\"")
-    }
-
     override fun visitType(type: JKType) {
         printer.println(type.classNameWithoutJK(), " \"")
         printer.indented {

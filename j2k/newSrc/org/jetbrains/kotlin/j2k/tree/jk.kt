@@ -32,7 +32,7 @@ interface JKElement {
 
 interface JKClass : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier
-    val declarations: List<JKDeclaration>
+    val declarations: MutableList<JKDeclaration>
     val classKind: ClassKind
 
     enum class ClassKind {
