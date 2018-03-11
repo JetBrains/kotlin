@@ -44,6 +44,9 @@ class JKKtPropertyImpl(override var modifierList: JKModifierList,
         getter = getter?.transform(transformer, data)
         setter = setter?.transform(transformer, data)
     }
+
+    override val valid: Boolean
+        get() = true
 }
 
 class JKKtFunctionImpl(override var returnType: JKTypeIdentifier,

@@ -91,7 +91,7 @@ interface JKTypeCastExpression : JKExpression {
 }
 
 interface JKExpressionList : JKElement {
-
+    val expressions: Array<JKExpression>
 }
 
 interface JKReference : JKElement {
