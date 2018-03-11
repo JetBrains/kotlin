@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaTypeIdentifierImpl
+import org.jetbrains.kotlin.j2k.tree.JKDeclaration
+import org.jetbrains.kotlin.j2k.tree.JKElement
+import org.jetbrains.kotlin.j2k.tree.JKJavaField
+import org.jetbrains.kotlin.j2k.tree.JKJavaMethod
+import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtPropertyImpl
 
@@ -37,6 +40,12 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
 
     override fun visitJavaMethod(javaMethod: JKJavaMethod): JKDeclaration {
         somethingChanged = true
-        return JKKtFunctionImpl(JKJavaTypeIdentifierImpl("Stab"), javaMethod.name, javaMethod.valueArguments, javaMethod.block, javaMethod.modifierList)
+        return JKKtFunctionImpl(
+            JKJavaPrimitiveTypeImpl.BOOLEAN,
+            javaMethod.name,
+            javaMethod.valueArguments,
+            javaMethod.block,
+            javaMethod.modifierList
+        )
     }
 }

@@ -49,7 +49,7 @@ class JKKtPropertyImpl(override var modifierList: JKModifierList,
         get() = true
 }
 
-class JKKtFunctionImpl(override var returnType: JKTypeIdentifier,
+class JKKtFunctionImpl(override var returnType: JKType,
                        override var name: JKNameIdentifier,
                        override var valueArguments: List<JKValueArgument>,
                        override var block: JKBlock?,
