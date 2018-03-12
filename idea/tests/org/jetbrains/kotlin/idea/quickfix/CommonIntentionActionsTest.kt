@@ -23,15 +23,14 @@ import com.intellij.lang.jvm.actions.*
 import com.intellij.lang.jvm.types.JvmSubstitutor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair.pair
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiJvmSubstitutor
-import com.intellij.psi.PsiSubstitutor
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import com.intellij.psi.codeStyle.SuggestedNameInfo
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.UastContext
 import org.jetbrains.uast.toUElement
@@ -177,6 +176,27 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.checkResult(
             """class Foo {
               |    fun <caret>bar(){}
+              |}""".trim().trimMargin(), true
+        )
+    }
+
+    fun testAddAnnotation() {
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |   fun <caret>bar(){}
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("bar", KtModifierListOwner::class.java).toLightElements().single() as PsiMethod,
+                annotationRequest("kotlin.jvm.JvmName", stringAttribute("name", "foo"))
+            ).single()
+        )
+        myFixture.checkResult(
+            """class Foo {
+              |   @JvmName(name = "foo")
+              |   fun <caret>bar(){}
               |}""".trim().trimMargin(), true
         )
     }
