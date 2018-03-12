@@ -7,14 +7,15 @@ class My {
     }
 
     fun getMyValue(): String {
-        // GETSTATIC for the companion object
+        // INVOKESTATIC My$Companion.access$setMy$p
         my = "Overriden value"
-        // GETSTATIC for direct access to 'my' property
+        // GETSTATIC My.my
         return my
     }
 
-    // PUTSTATIC for 'my' property into clinit
-    // PUTSTATIC for 'my' property into 'access$getMy$cp'
+    // PUTSTATIC My.my into clinit
+    // PUTSTATIC My.my into 'access$setMy$cp'
+    // GETSTATIC My.my into 'access$getMy$cp'
 }
 
 // 2 GETSTATIC My.my
