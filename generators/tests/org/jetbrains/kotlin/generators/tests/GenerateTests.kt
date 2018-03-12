@@ -374,6 +374,7 @@ fun main(args: Array<String>) {
             model("codeInsight/unwrapAndRemove/unwrapFinally", testMethod = "doTestFinallyUnwrapper")
             model("codeInsight/unwrapAndRemove/removeFinally", testMethod = "doTestFinallyRemover")
             model("codeInsight/unwrapAndRemove/unwrapLambda", testMethod = "doTestLambdaUnwrapper")
+            model("codeInsight/unwrapAndRemove/unwrapFunctionParameter", testMethod = "doTestFunctionParameterUnwrapper")
         }
 
         testClass<AbstractExpressionTypeTest> {
