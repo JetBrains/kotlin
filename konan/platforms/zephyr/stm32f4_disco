@@ -23,20 +23,20 @@ entrySelector.zephyr_stm32f4_disco = --defsym main=Konan_main
 
 boardSpecificClangFlags.zephyr_stm32f4_disco = -mabi=aapcs -mthumb -mcpu=cortex-m4
 
-targetToolchain.linux-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-linux/arm-none-eabi
-dependencies.linux-zephyr_stm32f4_disco = \
+targetToolchain.linux_x64-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-linux/arm-none-eabi
+dependencies.linux_x64-zephyr_stm32f4_disco = \
     clang-llvm-5.0.0-linux-x86-64 \
     gcc-arm-none-eabi-7-2017-q4-major-linux \
     target-sysroot-2-wasm
 
-targetToolchain.osx-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-mac/arm-none-eabi
-dependencies.osx-zephyr_stm32f4_disco = \
+targetToolchain.macos_x64-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-mac/arm-none-eabi
+dependencies.macos_x64-zephyr_stm32f4_disco = \
     gcc-arm-none-eabi-7-2017-q4-major-mac \
     clang-llvm-5.0.0-darwin-macos \
     target-sysroot-2-wasm
 
-targetToolchain.mingw-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-win32/arm-none-eabi
-dependencies.mingw-zephyr_stm32f4_disco = \
+targetToolchain.mingw_x64-zephyr_stm32f4_disco = gcc-arm-none-eabi-7-2017-q4-major-win32/arm-none-eabi
+dependencies.mingw_x64-zephyr_stm32f4_disco = \
     msys2-mingw-w64-x86_64-gcc-7.2.0-clang-llvm-5.0.0-windows-x86-64 \
     gcc-arm-none-eabi-7-2017-q4-major-win32 \
     target-sysroot-2-wasm

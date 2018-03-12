@@ -49,23 +49,6 @@ private fun String.asArgList(key: String) =
         else
             listOf(this)
 
-// Performs substitution similar to:
-//  foo = ${foo} ${foo.${arch}} ${foo.${os}}
-private fun substitute(properties: Properties, substitutions: Map<String, String>) {
-    for (key in properties.stringPropertyNames()) {
-        for (substitution in substitutions.values) {
-            val suffix = ".$substitution"
-            if (key.endsWith(suffix)) {
-                val baseKey = key.removeSuffix(suffix)
-                val oldValue = properties.getProperty(baseKey, "")
-                val appendedValue = properties.getProperty(key, "")
-                val newValue = if (oldValue != "") "$oldValue $appendedValue" else appendedValue
-                properties.setProperty(baseKey, newValue)
-            }
-        }
-    }
-}
-
 private fun <T> Collection<T>.atMostOne(): T? {
     return when (this.size) {
         0 -> null
@@ -83,15 +66,6 @@ private fun runCmd(command: Array<String>, verbose: Boolean = false) {
     Command(*command).getOutputLines(true).let { lines ->
         if (verbose) lines.forEach(::println)
     }
-}
-
-private fun loadProperties(file: File?, substitutions: Map<String, String>): Properties {
-    val result = Properties()
-    file?.bufferedReader()?.use { reader ->
-        result.load(reader)
-    }
-    substitute(result, substitutions)
-    return result
 }
 
 private fun Properties.storeProperties(file: File) {

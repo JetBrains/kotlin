@@ -23,7 +23,7 @@ enum class Family(val exeSuffix:String, val dynamicPrefix: String, val dynamicSu
     OSX     ("kexe", "lib", "dylib"),
     IOS     ("kexe", "lib", "dylib"),
     LINUX   ("kexe", "lib", "so"   ),
-    WINDOWS ("exe" , ""   , "dll"  ),
+    MINGW   ("exe" , ""   , "dll"  ),
     ANDROID ("so"  , "lib", "so"   ),
     WASM    ("wasm", ""   , "wasm" ),
     ZEPHYR  ("o"   , "lib", "a"    )
@@ -38,25 +38,25 @@ enum class Architecture(val bitness: Int) {
     WASM32(32);
 }
 
-sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture, val detailedName: String) : Named {
-    object ANDROID_ARM32 :  KonanTarget( "android_arm32",   Family.ANDROID, Architecture.ARM32,     "android_arm32")
-    object ANDROID_ARM64 :  KonanTarget( "android_arm64",   Family.ANDROID, Architecture.ARM64,     "android_arm64")
-    object IOS_ARM64 :      KonanTarget( "ios_arm64",       Family.IOS,     Architecture.ARM64,     "ios")
-    object IOS_X64 :        KonanTarget( "ios_x64",         Family.IOS,     Architecture.X64,       "ios_sim")
-    object LINUX_X64 :      KonanTarget( "linux_x64",       Family.LINUX,   Architecture.X64,       "linux")
-    object MINGW_X64 :      KonanTarget( "mingw_x64",       Family.WINDOWS, Architecture.X64,       "mingw")
-    object MACOS_X64 :      KonanTarget( "macos_x64",       Family.OSX,     Architecture.X64,       "osx")
-    object LINUX_ARM32_HFP :KonanTarget( "linux_arm32_hfp", Family.LINUX,   Architecture.ARM32,     "raspberrypi")
-    object LINUX_MIPS32 :   KonanTarget( "linux_mips32",    Family.LINUX,   Architecture.MIPS32,    "linux_mips32")
-    object LINUX_MIPSEL32 : KonanTarget( "linux_mipsel32",  Family.LINUX,   Architecture.MIPSEL32,  "linux_mipsel32")
-    object WASM32 :         KonanTarget( "wasm32",          Family.WASM,    Architecture.WASM32,    "wasm32")
+sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named {
+    object ANDROID_ARM32 :  KonanTarget( "android_arm32",   Family.ANDROID, Architecture.ARM32)
+    object ANDROID_ARM64 :  KonanTarget( "android_arm64",   Family.ANDROID, Architecture.ARM64)
+    object IOS_ARM64 :      KonanTarget( "ios_arm64",       Family.IOS,     Architecture.ARM64)
+    object IOS_X64 :        KonanTarget( "ios_x64",         Family.IOS,     Architecture.X64)
+    object LINUX_X64 :      KonanTarget( "linux_x64",       Family.LINUX,   Architecture.X64)
+    object MINGW_X64 :      KonanTarget( "mingw_x64",       Family.MINGW,   Architecture.X64)
+    object MACOS_X64 :      KonanTarget( "macos_x64",       Family.OSX,     Architecture.X64)
+    object LINUX_ARM32_HFP :KonanTarget( "linux_arm32_hfp", Family.LINUX,   Architecture.ARM32)
+    object LINUX_MIPS32 :   KonanTarget( "linux_mips32",    Family.LINUX,   Architecture.MIPS32)
+    object LINUX_MIPSEL32 : KonanTarget( "linux_mipsel32",  Family.LINUX,   Architecture.MIPSEL32)
+    object WASM32 :         KonanTarget( "wasm32",          Family.WASM,    Architecture.WASM32)
 
     // Tunable targets
-    class ZEPHYR(val subName: String, val genericName: String = "zephyr") : KonanTarget("${genericName}_$subName", Family.ZEPHYR, Architecture.ARM32, "${genericName}_$subName")
+    class ZEPHYR(val subName: String, val genericName: String = "zephyr") : KonanTarget("${genericName}_$subName", Family.ZEPHYR, Architecture.ARM32)
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
-    if (target == host) host.detailedName else "${host.detailedName}-${target.detailedName}"
+    if (target == host) host.name else "${host.name}-${target.name}"
 
 enum class CompilerOutputKind {
     PROGRAM {
@@ -111,7 +111,7 @@ private class TargetManagerImpl(val userRequest: String?, val hostManager: HostM
     }
 
     override val hostTargetSuffix get() = hostTargetSuffix(HostManager.host, target)
-    override val targetSuffix get() = target.detailedName
+    override val targetSuffix get() = target.name
 }
 
 open class HostManager(protected val distribution: Distribution = Distribution()) {
@@ -228,9 +228,9 @@ open class HostManager(protected val distribution: Distribution = Distribution()
         val hostIsLinux = (host == KonanTarget.LINUX_X64)
         val hostIsMingw = (host == KonanTarget.MINGW_X64)
 
-        val hostSuffix get() = host.detailedName
+        val hostSuffix get() = host.name
         @JvmStatic
-        val hostName get() = host.visibleName
+        val hostName get() = host.name
 
         val knownTargetTemplates = listOf("zephyr")
 

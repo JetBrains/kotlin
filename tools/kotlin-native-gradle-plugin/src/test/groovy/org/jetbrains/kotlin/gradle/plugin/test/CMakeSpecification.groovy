@@ -25,7 +25,7 @@ class CMakeSpecification extends BaseKonanSpecification {
         def sdlIncludePath
         def sdlLinkOptions
         switch (HostManager.host.family) {
-            case Family.WINDOWS:
+            case Family.MINGW:
                 sdlIncludePath = "C:/SDL2/include"
                 sdlLinkOptions = "C:/SDL2/lib"
                 break

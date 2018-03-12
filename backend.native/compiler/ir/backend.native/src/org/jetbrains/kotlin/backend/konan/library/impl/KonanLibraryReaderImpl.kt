@@ -66,7 +66,7 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
         get() = (realFiles.includedDir.listFiles).map{it.absolutePath}
 
     override val linkerOpts: List<String>
-        get() = manifestProperties.propertyList("linkerOpts", target!!.detailedName)
+        get() = manifestProperties.propertyList("linkerOpts", target!!.visibleName)
 
     override val unresolvedDependencies: List<String>
         get() = manifestProperties.propertyList("depends")

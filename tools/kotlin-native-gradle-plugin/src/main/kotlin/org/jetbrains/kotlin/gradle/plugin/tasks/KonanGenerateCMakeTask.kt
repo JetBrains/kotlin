@@ -103,7 +103,7 @@ open class KonanGenerateCMakeTask : DefaultTask() {
     private val File.relativePath get() = relativeTo(project.projectDir)
 
     private val String.crossPlatformPath get() =
-        if (host.family == Family.WINDOWS) replace('\\', '/') else this
+        if (host.family == Family.MINGW) replace('\\', '/') else this
 
     private val FileCollection.asCMakeSourceList: List<String>
         get() = files.map { it.relativePath.toString().crossPlatformPath }

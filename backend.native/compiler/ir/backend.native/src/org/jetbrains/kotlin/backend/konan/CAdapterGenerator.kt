@@ -830,7 +830,7 @@ internal class CAdapterGenerator(
         output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
 
-        if (context.config.target.family == Family.WINDOWS) {
+        if (context.config.target.family == Family.MINGW) {
             outputStreamWriter = context.config.tempFiles
                     .cAdapterDef
                     .printWriter()

@@ -71,7 +71,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
                                      List<String> tasks,
                                      Map<String, String> environment = [:],
                                      Map<String, String> properties = ["konan.useEnvironmentVariables": 'true']) {
-        def wrapper = (HostManager.host.family == Family.WINDOWS) ? "gradlew.bat" : "gradlew"
+        def wrapper = (HostManager.host.family == Family.MINGW) ? "gradlew.bat" : "gradlew"
         def command = ["$project.projectDir.absolutePath/$wrapper".toString()]
         command.addAll(tasks)
         command.addAll(properties.collect { "-P${it.key}=${it.value}".toString() })
