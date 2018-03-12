@@ -158,9 +158,7 @@ extra["IntellijCoreDependencies"] =
                "picocontainer",
                "snappy-in-java-0.5.1",
                "streamex",
-               "trove4j",
-               "xpp3-1.1.4-min",
-               "xstream-1.4.8")
+               "trove4j")
 
 extra["nativePlatformVariants"] =
         listOf("windows-amd64",
