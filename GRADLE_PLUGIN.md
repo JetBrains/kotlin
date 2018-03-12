@@ -189,6 +189,9 @@ and set dependencies between building tasks.
         // Artifact object or just its name may be used
         artifact 'foo'
         artifact kotlinArtifacts.bar
+        
+        // Artifacts from other projects are also allowed
+        artifact project(':bazProject'), 'bazLibrary' 
 
         // Interopability libraries are also allowed
         // Use it instead of the `useInterop` method available in versions before 0.3.4
@@ -428,7 +431,7 @@ tables below.
                 artifact 'baz'
 
                 // An artifact from another project
-                artifact project(':path:to:a:project', 'artifcatName')
+                artifact project(':path:to:a:project'), 'artifcatName'
 
                 // All libraries from anohter project
                 allLibrariesFrom project(':some:project')
