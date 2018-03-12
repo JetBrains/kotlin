@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.test
 import java.io.File
 
 val JS_IR_BACKEND_TEST_WHITELIST = listOf(
-    "js/js.translator/testData/box/annotation"
+    "js/js.translator/testData/box/package/nestedPackage.kt"
 ).map { File(it) }
