@@ -11,15 +11,14 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
-import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootGroup
-import org.jetbrains.kotlin.idea.configuration.getConfigurationPossibilities
+import org.jetbrains.kotlin.idea.configuration.getConfigurationPossibilitiesForConfigureNotification
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
 import javax.swing.event.HyperlinkEvent
 
 data class ConfigureKotlinNotificationState(
     val notificationString: String,
-    val notConfiguredModules: Collection<ModuleSourceRootGroup>
+    val notConfiguredModules: Collection<String>
 )
 
 class ConfigureKotlinNotification(
@@ -54,7 +53,7 @@ class ConfigureKotlinNotification(
 
     companion object {
         fun getNotificationState(project: Project, excludeModules: Collection<Module>): ConfigureKotlinNotificationState? {
-            val (configurableModules, ableToRunConfigurators) = getConfigurationPossibilities(project, excludeModules)
+            val (configurableModules, ableToRunConfigurators) = getConfigurationPossibilitiesForConfigureNotification(project, excludeModules)
             if (ableToRunConfigurators.isEmpty() || configurableModules.isEmpty()) return null
 
             val isOnlyOneModule = configurableModules.size == 1
@@ -66,7 +65,7 @@ class ConfigureKotlinNotification(
 
             return ConfigureKotlinNotificationState(
                 "Configure $modulesString in '${project.name}' project<br/> $links",
-                configurableModules
+                configurableModules.map { it.baseModule.name }
             )
         }
 

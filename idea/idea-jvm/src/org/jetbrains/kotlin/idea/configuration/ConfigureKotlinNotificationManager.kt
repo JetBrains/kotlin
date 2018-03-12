@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationsManager
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import java.util.concurrent.atomic.AtomicBoolean
@@ -65,7 +68,22 @@ fun checkHideNonConfiguredNotifications(project: Project) {
         if (!checkInProgress.compareAndSet(false, true)) return@executeOnPooledThread
 
         DumbService.getInstance(project).waitForSmartMode()
-        if (notification.notificationState.notConfiguredModules.none(::isNotConfiguredNotificationRequired)) {
+        val moduleSourceRootMap = ModuleSourceRootMap(project)
+
+        val hideNotification = try {
+            val moduleSourceRootGroups = notification.notificationState.notConfiguredModules
+                .mapNotNull { ModuleManager.getInstance(project).findModuleByName(it) }
+                .map { moduleSourceRootMap.getWholeModuleGroup(it) }
+            moduleSourceRootGroups.none(::isNotConfiguredNotificationRequired)
+        } catch (e: IndexNotReadyException) {
+            checkInProgress.set(false)
+            ApplicationManager.getApplication().invokeLater {
+                checkHideNonConfiguredNotifications(project)
+            }
+            return@executeOnPooledThread
+        }
+
+        if (hideNotification) {
             ApplicationManager.getApplication().invokeLater {
                 ConfigureKotlinNotificationManager.expireOldNotifications(project)
                 checkInProgress.set(false)
@@ -75,3 +93,5 @@ fun checkHideNonConfiguredNotifications(project: Project) {
         }
     }
 }
+
+private val LOG = Logger.getInstance(ConfigureKotlinNotificationManager::class.java)

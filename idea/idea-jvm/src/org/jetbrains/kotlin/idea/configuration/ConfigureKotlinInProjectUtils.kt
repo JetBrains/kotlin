@@ -91,6 +91,10 @@ fun isModuleConfigured(moduleSourceRootGroup: ModuleSourceRootGroup): Boolean {
     }
 }
 
+/**
+ * Returns a list of modules which contain sources in Kotlin.
+ * Note that this method is expensive and should not be called more often than strictly necessary.
+ */
 fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
     if (!runReadAction {
         !project.isDisposed && FileTypeIndex.containsFileOfType (KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
@@ -106,6 +110,10 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
             }
 }
 
+/**
+ * Returns a list of modules which contain sources in Kotlin, grouped by base module.
+ * Note that this method is expensive and should not be called more often than strictly necessary.
+ */
 fun getConfigurableModulesWithKotlinFiles(project: Project): List<ModuleSourceRootGroup> {
     val modules = getModulesWithKotlinFiles(project)
     if (modules.isEmpty()) return emptyList()
@@ -173,12 +181,16 @@ private fun KotlinProjectConfigurator.canConfigure(moduleSourceRootGroup: Module
         getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED &&
         (allConfigurators().toList() - this).none { it.getStatus(moduleSourceRootGroup) == ConfigureKotlinStatus.CONFIGURED }
 
+/**
+ * Returns a list of modules which contain sources in Kotlin and for which it's possible to run the given configurator.
+ * Note that this method is expensive and should not be called more often than strictly necessary.
+ */
 fun getCanBeConfiguredModulesWithKotlinFiles(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     val modules = getConfigurableModulesWithKotlinFiles(project)
     return modules.filter { configurator.getStatus(it) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }.map { it.baseModule }
 }
 
-fun getConfigurationPossibilities(
+fun getConfigurationPossibilitiesForConfigureNotification(
     project: Project,
     excludeModules: Collection<Module> = emptyList()
 ): Pair<Collection<ModuleSourceRootGroup>, Collection<KotlinProjectConfigurator>> {
