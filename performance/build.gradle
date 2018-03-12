@@ -43,7 +43,7 @@ compileKotlin {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinStdLibJdk8Version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinStdLibJdk8Version"
 }
 
 task jvmRun(type: JavaExec) {
