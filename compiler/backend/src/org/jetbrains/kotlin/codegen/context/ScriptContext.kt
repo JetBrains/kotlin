@@ -14,87 +14,58 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.context;
+package org.jetbrains.kotlin.codegen.context
 
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.FieldInfo;
-import org.jetbrains.kotlin.codegen.OwnerKind;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.kotlin.psi.KtAnonymousInitializer;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtScript;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.codegen.FieldInfo
+import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 
-import java.util.List;
+class ScriptContext(
+    typeMapper: KotlinTypeMapper,
+    val scriptDescriptor: ScriptDescriptor,
+    val earlierScripts: List<ScriptDescriptor>,
+    contextDescriptor: ClassDescriptor,
+    parentContext: CodegenContext<*>?
+) : ClassContext(typeMapper, contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext, null) {
+    val lastStatement: KtExpression?
 
-public class ScriptContext extends ClassContext {
-    private final ScriptDescriptor scriptDescriptor;
-    private final List<ScriptDescriptor> earlierScripts;
-    private final KtExpression lastStatement;
-
-    public ScriptContext(
-            @NotNull KotlinTypeMapper typeMapper,
-            @NotNull ScriptDescriptor scriptDescriptor,
-            @NotNull List<ScriptDescriptor> earlierScripts,
-            @NotNull ClassDescriptor contextDescriptor,
-            @Nullable CodegenContext parentContext
-    ) {
-        super(typeMapper, contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext, null);
-        this.scriptDescriptor = scriptDescriptor;
-        this.earlierScripts = earlierScripts;
-        KtScript script = (KtScript) DescriptorToSourceUtils.getSourceFromDescriptor(scriptDescriptor);
-        assert script != null : "Declaration should be present for script: " + scriptDescriptor;
-        KtDeclaration lastDeclaration = CollectionsKt.lastOrNull(script.getDeclarations());
-        if (lastDeclaration instanceof KtAnonymousInitializer) {
-            this.lastStatement = ((KtAnonymousInitializer) lastDeclaration).getBody();
+    val resultFieldInfo: FieldInfo
+        get() {
+            assert(state.replSpecific.shouldGenerateScriptResultValue) { "Should not be called unless 'scriptResultFieldName' is set" }
+            val state = state
+            val scriptResultFieldName = state.replSpecific.scriptResultFieldName!!
+            return FieldInfo.createForHiddenField(state.typeMapper.mapClass(scriptDescriptor), AsmTypes.OBJECT_TYPE, scriptResultFieldName)
         }
-        else {
-            this.lastStatement = null;
+
+    init {
+        val script = DescriptorToSourceUtils.getSourceFromDescriptor(scriptDescriptor) as KtScript?
+                ?: error("Declaration should be present for script: $scriptDescriptor")
+        val lastDeclaration = script.declarations.lastOrNull()
+        if (lastDeclaration is KtAnonymousInitializer) {
+            this.lastStatement = lastDeclaration.body
+        } else {
+            this.lastStatement = null
         }
     }
 
-    @NotNull
-    public ScriptDescriptor getScriptDescriptor() {
-        return scriptDescriptor;
-    }
-
-    @NotNull
-    public FieldInfo getResultFieldInfo() {
-        assert getState().getReplSpecific().getShouldGenerateScriptResultValue() : "Should not be called unless 'scriptResultFieldName' is set";
-        GenerationState state = getState();
-        String scriptResultFieldName = state.getReplSpecific().getScriptResultFieldName();
-        assert scriptResultFieldName != null;
-        return FieldInfo.createForHiddenField(state.getTypeMapper().mapClass(scriptDescriptor), AsmTypes.OBJECT_TYPE, scriptResultFieldName);
-    }
-
-    @NotNull
-    public List<ScriptDescriptor> getEarlierScripts() {
-        return earlierScripts;
-    }
-
-    @NotNull
-    public String getScriptFieldName(@NotNull ScriptDescriptor scriptDescriptor) {
-        int index = earlierScripts.indexOf(scriptDescriptor);
+    fun getScriptFieldName(scriptDescriptor: ScriptDescriptor): String {
+        val index = earlierScripts.indexOf(scriptDescriptor)
         if (index < 0) {
-            throw new IllegalStateException("Unregistered script: " + scriptDescriptor);
+            throw IllegalStateException("Unregistered script: $scriptDescriptor")
         }
-        return "script$" + (index + 1);
+        return "script$" + (index + 1)
     }
 
-    @Nullable
-    public KtExpression getLastStatement() {
-        return lastStatement;
-    }
-
-    @Override
-    public String toString() {
-        return "Script: " + getContextDescriptor().getName().asString();
+    override fun toString(): String {
+        return "Script: " + contextDescriptor.name.asString()
     }
 }
