@@ -143,7 +143,7 @@ class AddFunctionToSupertypeFix private constructor(
                         functionDescriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Unit",
                         classDescriptor.importableFqName
                     )
-                    "{ $bodyText }"
+                    "{\n$bodyText\n}"
                 } else {
                     "{}"
                 }
