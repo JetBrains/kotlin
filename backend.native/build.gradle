@@ -38,17 +38,6 @@ allprojects {
     repositories {
         maven { url kotlinCompilerRepo }
     }
-
-    configurations.all {
-        // kotlin-compiler module includes Kotlin runtime bundled;
-        // make Gradle aware of this to avoid multiple Kotlin runtimes in classpath:
-        resolutionStrategy.dependencySubstitution {
-            substitute module('org.jetbrains.kotlin:kotlin-runtime') with module(kotlinCompilerModule)
-            substitute module('org.jetbrains.kotlin:kotlin-stdlib')  with module(kotlinStdLibModule)
-            substitute module('org.jetbrains.kotlin:kotlin-reflect') with module(kotlinReflectModule)
-        }
-        // TODO: probably we should use kotlin-compiler without bundled runtime
-    }
 }
 
 sourceSets {
@@ -129,7 +118,10 @@ configurations {
     kotlin_reflect_jar
     kotlin_script_runtime_jar
 
-    cli_bcRuntime.extendsFrom compilerRuntime
+    cli_bcRuntime {
+        extendsFrom compilerRuntime
+        extendsFrom kotlin_script_runtime_jar
+    }
 
     cli_bc {
         extendsFrom cli_bcRuntime
@@ -149,7 +141,7 @@ dependencies {
     compilerCompile kotlinNativeInterop['hash'].configuration
     compilerCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 
-    cli_bcCompile "org.jetbrains.kotlin:kotlin-runtime:$buildKotlinVersion"
+    cli_bcCompile kotlinCompilerModule
     cli_bcCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     cli_bcCompile sourceSets.compiler.output
 

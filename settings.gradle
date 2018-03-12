@@ -33,3 +33,11 @@ include ':platformLibs'
 
 includeBuild 'tools/kotlin-native-gradle-plugin'
 includeBuild 'shared'
+
+if (hasProperty("kotlinProjectPath")) {
+    includeBuild(kotlinProjectPath) {
+        dependencySubstitution {
+            substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':include:kotlin-compiler')
+        }
+    }
+}
