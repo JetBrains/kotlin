@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.COLLECTION_LITERAL_CALL
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
@@ -86,8 +87,9 @@ class ConstantExpressionEvaluator(
         val varargElementType = parameterDescriptor.varargElementType
         val argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument)
         val constantType = if (argumentsAsVararg) varargElementType else parameterDescriptor.type
-        val compileTimeConstants = resolveAnnotationValueArguments(resolvedArgument, constantType!!, trace)
-        val constants = compileTimeConstants.map { it.toConstantValue(constantType) }
+        val expectedType = getEffectiveExpectedType(parameterDescriptor, resolvedArgument, languageVersionSettings, trace)
+        val compileTimeConstants = resolveAnnotationValueArguments(resolvedArgument, constantType!!, expectedType, trace)
+        val constants = compileTimeConstants.map { it.toConstantValue(expectedType) }
 
         if (argumentsAsVararg) {
             if (isArrayPassedInNamedForm(constants, resolvedArgument)) return constants.single()
@@ -110,11 +112,12 @@ class ConstantExpressionEvaluator(
     private fun checkCompileTimeConstant(
         argumentExpression: KtExpression,
         expressionType: KotlinType,
-        trace: BindingTrace
+        trace: BindingTrace,
+        useDeprecationWarning: Boolean
     ) {
         val constant = ConstantExpressionEvaluator.getConstant(argumentExpression, trace.bindingContext)
         if (constant != null && constant.canBeUsedInAnnotations) {
-            checkInnerPartsOfCompileTimeConstant(constant, trace, argumentExpression)
+            checkInnerPartsOfCompileTimeConstant(constant, trace, argumentExpression, useDeprecationWarning)
             return
         }
 
@@ -125,13 +128,17 @@ class ConstantExpressionEvaluator(
             else -> Errors.ANNOTATION_ARGUMENT_MUST_BE_CONST
         }
 
-        trace.report(diagnosticFactory.on(argumentExpression))
+        if (useDeprecationWarning)
+            reportDeprecationWarningOnNonConst(argumentExpression, trace)
+        else
+            trace.report(diagnosticFactory.on(argumentExpression))
     }
 
     private fun checkInnerPartsOfCompileTimeConstant(
         constant: CompileTimeConstant<*>,
         trace: BindingTrace,
-        argumentExpression: KtExpression
+        argumentExpression: KtExpression,
+        useDeprecationWarning: Boolean
     ) {
         // array(1, <!>null<!>, 3) - error should be reported on inner expression
         val callArguments = when (argumentExpression) {
@@ -143,12 +150,17 @@ class ConstantExpressionEvaluator(
         if (callArguments != null) {
             for (argument in callArguments) {
                 val type = trace.getType(argument) ?: continue
-                checkCompileTimeConstant(argument, type, trace)
+                checkCompileTimeConstant(argument, type, trace, useDeprecationWarning)
             }
         }
 
         if (constant.usesNonConstValAsConstant) {
-            trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(argumentExpression))
+            if (useDeprecationWarning) {
+                reportDeprecationWarningOnNonConst(argumentExpression, trace)
+            } else {
+                trace.report(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION.on(argumentExpression))
+            }
+
         }
 
         if (argumentExpression is KtClassLiteralExpression) {
@@ -156,10 +168,18 @@ class ConstantExpressionEvaluator(
             if (lhsExpression != null) {
                 val doubleColonLhs = trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, lhsExpression)
                 if (doubleColonLhs is DoubleColonLHS.Expression && !doubleColonLhs.isObjectQualifier) {
-                    trace.report(Errors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
+                    if (useDeprecationWarning) {
+                        reportDeprecationWarningOnNonConst(argumentExpression, trace)
+                    } else {
+                        trace.report(Errors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
+                    }
                 }
             }
         }
+    }
+
+    private fun reportDeprecationWarningOnNonConst(expression: KtExpression, trace: BindingTrace) {
+        trace.report(Errors.ANNOTATION_ARGUMENT_IS_NON_CONST.on(expression))
     }
 
     private fun getArgumentExpressionsForArrayCall(
@@ -203,6 +223,7 @@ class ConstantExpressionEvaluator(
 
     private fun resolveAnnotationValueArguments(
         resolvedValueArgument: ResolvedValueArgument,
+        deprecatedExpectedType: KotlinType,
         expectedType: KotlinType,
         trace: BindingTrace
     ): List<CompileTimeConstant<*>> {
@@ -220,12 +241,18 @@ class ConstantExpressionEvaluator(
 
             val expressionType = trace.getType(argumentExpression) ?: continue
 
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
-                // TYPE_MISMATCH should be reported otherwise
-                continue
+            // this type check should not used as it can introduce subtle bugs when type checking rules against expected type are changing
+            if (!languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonConstValuesAsVarargsInAnnotations) &&
+                !KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, deprecatedExpectedType)
+            ) {
+                if (KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
+                    checkCompileTimeConstant(argumentExpression, expressionType, trace, useDeprecationWarning = true)
+                }
+
+                continue // TYPE_MISMATCH should be reported otherwise
             }
 
-            checkCompileTimeConstant(argumentExpression, expressionType, trace)
+            checkCompileTimeConstant(argumentExpression, expressionType, trace, useDeprecationWarning = false)
         }
         return constants
     }

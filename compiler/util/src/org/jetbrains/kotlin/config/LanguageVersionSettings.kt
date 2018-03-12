@@ -67,6 +67,7 @@ enum class LanguageFeature(
     JvmStaticInInterface(KOTLIN_1_3),
     InlineClasses(KOTLIN_1_3),
     ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3),
+    ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
     ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),
