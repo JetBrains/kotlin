@@ -25,6 +25,7 @@ dependencies {
     testCompileOnly(project(":compiler:util"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
+    testCompile(project(":compiler:backend.js"))
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))
