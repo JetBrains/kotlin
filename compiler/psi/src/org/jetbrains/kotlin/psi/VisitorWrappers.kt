@@ -170,6 +170,14 @@ fun prefixExpressionRecursiveVisitor(block: (KtPrefixExpression) -> Unit) =
         }
     }
 
+fun typeReferenceRecursiveVisitor(block: (KtTypeReference) -> Unit) =
+    object : KtTreeVisitorVoid() {
+        override fun visitTypeReference(typeReference: KtTypeReference) {
+            super.visitTypeReference(typeReference)
+            block(typeReference)
+        }
+    }
+
 fun namedFunctionVisitor(block: (KtNamedFunction) -> Unit) =
     object : KtVisitorVoid() {
         override fun visitNamedFunction(namedFunction: KtNamedFunction) {

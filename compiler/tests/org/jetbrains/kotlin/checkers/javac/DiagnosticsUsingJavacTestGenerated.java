@@ -1678,6 +1678,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("receiverUseSiteTargetOnExtensionFunction.kt")
+                public void testReceiverUseSiteTargetOnExtensionFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/receiverUseSiteTargetOnExtensionFunction.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("repeatable.kt")
                 public void testRepeatable() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/repeatable.kt");
