@@ -976,12 +976,12 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNothing(@NotNull KotlinType type) {
         return isNothingOrNullableNothing(type)
-               && !type.isMarkedNullable();
+               && !TypeUtils.isNullableType(type);
     }
 
     public static boolean isNullableNothing(@NotNull KotlinType type) {
         return isNothingOrNullableNothing(type)
-               && type.isMarkedNullable();
+               && TypeUtils.isNullableType(type);
     }
 
     public static boolean isNothingOrNullableNothing(@NotNull KotlinType type) {
