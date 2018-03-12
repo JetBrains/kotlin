@@ -15398,6 +15398,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("genericCharInRangeLiteral.kt")
+            public void testGenericCharInRangeLiteral() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/genericCharInRangeLiteral.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inArray.kt")
             public void testInArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/contains/inArray.kt");
