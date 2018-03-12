@@ -34,6 +34,8 @@ import org.jetbrains.jps.model.module.JpsSdkDependency
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.JpsUtils.getAllDependencies
+import org.jetbrains.kotlin.jps.productionOutputFilePath
+import org.jetbrains.kotlin.jps.testOutputFilePath
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -161,8 +163,11 @@ object KotlinBuilderModuleScriptGenerator {
         }
     }
 
-    fun getOutputDirSafe(target: ModuleBuildTarget): File =
-            target.outputDir ?: throw ProjectBuildException("No output directory found for " + target)
+    fun getOutputDirSafe(target: ModuleBuildTarget): File {
+        val explicitOutputPath = if (target.isTests) target.module.testOutputFilePath else target.module.productionOutputFilePath
+        val explicitOutputDir = explicitOutputPath?.let { File(it).absoluteFile.parentFile }
+        return explicitOutputDir ?: target.outputDir ?: throw ProjectBuildException("No output directory found for " + target)
+    }
 
     fun getProductionModulesWhichInternalsAreVisible(from: ModuleBuildTarget): List<JpsModule> {
         if (!from.isTests) return emptyList()

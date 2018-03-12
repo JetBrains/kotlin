@@ -116,3 +116,17 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
 
 val JpsModule.targetPlatform: TargetPlatformKind<*>?
     get() = kotlinFacetExtension?.settings?.targetPlatformKind
+
+val JpsModule.productionOutputFilePath: String?
+    get() {
+        val facetSettings = kotlinFacetExtension?.settings ?: return null
+        if (facetSettings.useProjectSettings) return null
+        return facetSettings.productionOutputPath
+    }
+
+val JpsModule.testOutputFilePath: String?
+    get() {
+        val facetSettings = kotlinFacetExtension?.settings ?: return null
+        if (facetSettings.useProjectSettings) return null
+        return facetSettings.testOutputPath
+    }

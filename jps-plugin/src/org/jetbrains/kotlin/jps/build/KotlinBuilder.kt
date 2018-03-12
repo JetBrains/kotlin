@@ -56,6 +56,8 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.JpsJsModuleUtils.getOutputMetaFile
 import org.jetbrains.kotlin.jps.incremental.*
+import org.jetbrains.kotlin.jps.productionOutputFilePath
+import org.jetbrains.kotlin.jps.testOutputFilePath
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
@@ -681,7 +683,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val representativeModule = representativeTarget.module
         val moduleName = representativeModule.name
-        val outputFile = JpsJsModuleUtils.getOutputFile(outputDir, moduleName, representativeTarget.isTests)
+        val isTests = representativeTarget.isTests
+        val explicitOutputPath = if (isTests) representativeModule.testOutputFilePath else representativeModule.productionOutputFilePath
+        val outputFile = explicitOutputPath?.let { File(it) } ?: JpsJsModuleUtils.getOutputFile(outputDir, moduleName, isTests)
         val libraries = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeModule)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeModule)
