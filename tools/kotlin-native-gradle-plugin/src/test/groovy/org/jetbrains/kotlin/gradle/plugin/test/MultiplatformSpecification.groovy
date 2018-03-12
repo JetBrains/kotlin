@@ -244,22 +244,22 @@ class MultiplatformSpecification extends BaseKonanSpecification {
         result.output.contains("dependency is not a project: ")
     }
 
-    def 'Build should fail if several common projects are added'() {
-        when:
+    def 'Build should support several expectedBy-dependencies'() {
+        expect:
         def project = KonanProject.createEmpty(projectDirectory) { KonanProject it ->
-            def commonDirectory = createCommonProject(it)
+            def commonDirectory = createCommonProject(it, "commonFoo")
             createCommonSource(commonDirectory,
                     ["src", "main", "kotlin"],
                     "common.kt",
-                    "fun foo(): Int = 0")
+                    "expect fun foo(): Int")
 
-            commonDirectory = createCommonProject(it, "common2")
+            commonDirectory = createCommonProject(it, "commonBar")
             createCommonSource(commonDirectory,
                     ["src", "main", "kotlin"],
                     "common.kt",
-                    "fun bar(): Int = 0")
+                    "expect fun bar(): Int")
 
-            it.generateSrcFile("platform.kt", "fun baz() = 0")
+            it.generateSrcFile("platform.kt", "actual fun foo() = 0\nactual fun bar() = 0")
             it.buildFile.append("""
                 konanArtifacts {
                     library('foo') {
@@ -268,15 +268,12 @@ class MultiplatformSpecification extends BaseKonanSpecification {
                 }
 
                 dependencies {
-                    expectedBy project(':common')
-                    expectedBy project(':common2')
+                    expectedBy project(':commonFoo')
+                    expectedBy project(':commonBar')
                 }
                 """.stripIndent())
         }
-        def result = project.createRunner().withArguments(":build").buildAndFail()
-
-        then:
-        result.output.contains("has more than one 'expectedBy' dependency")
+        project.createRunner().withArguments(":build").build()
     }
 
     def 'Build should fail if the common project has no common plugin'() {

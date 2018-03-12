@@ -25,11 +25,6 @@ open class KotlinNativePlatformPlugin: KotlinPlatformImplementationPluginBase("n
 
     protected fun addCommonProject(commonProject: Project, platformProject: Project) {
         commonProjects.add(commonProject)
-        if (commonProjects.size > 1) {
-            throw GradleException("Platform project $platformProject has more than one " +
-                    "'$EXPECTED_BY_CONFIG_NAME' dependency: ${commonProjects.joinToString()}")
-        }
-
         commonProject.whenEvaluated {
             if (!commonProject.pluginManager.hasPlugin("kotlin-platform-common")) {
                 throw GradleException("Platform project $platformProject has an " +
