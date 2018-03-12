@@ -74,7 +74,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     @Input var noStdLib            = false
     @Input var noMain              = false
-    @Input var enableOptimizations = false
+    @Input var enableOptimizations = project.environmentVariables.enableOptimizations
     @Input var enableAssertions    = false
 
     @Optional @Input var entryPoint: String? = null

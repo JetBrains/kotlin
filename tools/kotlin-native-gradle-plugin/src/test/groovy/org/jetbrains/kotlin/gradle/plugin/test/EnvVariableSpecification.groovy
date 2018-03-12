@@ -53,7 +53,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
 
         // Gradle TestKit doesn't support setting environment variables for runners.
         // So we use the following hack: we create a gradle wrapper, start it as a separate
-        // process with custom environment variables and check its exit code.
+        // process with custom environment variables and check its exit code and output.
         runner.withArguments("wrapper").build()
 
         def classpath = runner.pluginClasspath.collect { "'${escapeBackSlashes(it.absolutePath)}'" }.join(", ")
@@ -113,8 +113,8 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         return "$prefix${baseName}.$suffix"
     }
 
-    @Unroll("Plugin should support #action debug via an env variable")
-    def 'Plugin should support enabling/disabling debug via an env variable'() {
+    @Unroll("Plugin should support #action via an env variable")
+    def 'Plugin should support enabling/disabling debug/opt via an env variable'() {
         when:
         def project = createProjectWithWrapper()
         project.buildFile.append("""\
@@ -126,12 +126,12 @@ class EnvVariableSpecification extends BaseKonanSpecification {
                 task assertEnableDebug {
                     doLast {
                         konanArtifacts.main.forEach {
-                            $check
+                            if (!$assertion) throw new AssertionError("$message for \${it.name}")
                         }
                     }
                 }
                 """.stripIndent())
-        def result = runWrapper(project,"assertEnableDebug", ["DEBUGGING_SYMBOLS": value])
+        def result = runWrapper(project,"assertEnableDebug", [(variable): value])
                 .printStderr()
                 .getExitValue()
 
@@ -139,9 +139,11 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         result == 0
 
         where:
-        action      |value |check
-        "enabling"  |"YES" |"if (!it.enableDebug) throw new AssertionError(\"Debug should be enabled for \${it.name}\")"
-        "disabling" |"NO"  |"if (it.enableDebug)  throw new AssertionError(\"Debug should be disabled for \${it.name}\")"
+        action            |variable                     |value |assertion                 |message
+        "enabling debug"  |"DEBUGGING_SYMBOLS"          |"YES" |"it.enableDebug"          |"Debug should be enabled"
+        "disabling debug" |"DEBUGGING_SYMBOLS"          |"NO"  |"!it.enableDebug"         |"Debug should be disabled"
+        "enabling opt"    |"KONAN_ENABLE_OPTIMIZATIONS" |"YES" |"it.enableOptimizations"  |"Opts should be enabled"
+        "disabling opt"   |"KONAN_ENABLE_OPTIMIZATIONS" |"NO"  |"!it.enableOptimizations" |"Opts should be disabled"
     }
 
     def 'Plugin should support setting destination directory via an env variable'() {

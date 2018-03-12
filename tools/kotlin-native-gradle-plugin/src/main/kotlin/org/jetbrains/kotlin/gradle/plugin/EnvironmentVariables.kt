@@ -23,13 +23,18 @@ import java.io.File
 /**
  *  The plugin allows an IDE to specify some building parameters. These parameters
  *  are passed to the plugin via environment variables. Two variables are supported:
- *      - CONFIGURATION_BUILD_DIR - an absolute path to a destination directory for all compilation tasks.
- *                                  The IDE should take care about specifying different directories
- *                                  for different targets. This setting has less priority than
- *                                  an explicitly specified destination directory in the build script.
- *      - DEBUGGING_SYMBOLS - If YES, the debug support will be enabled for all artifacts. This option has less
- *                            priority than explicitly specified enableDebug option in the build script and
- *                            enableDebug project property.
+ *      - CONFIGURATION_BUILD_DIR    - An absolute path to a destination directory for all compilation tasks.
+ *                                     The IDE should take care about specifying different directories
+ *                                     for different targets. This setting has less priority than
+ *                                     an explicitly specified destination directory in the build script.
+ *
+ *      - DEBUGGING_SYMBOLS          - If YES, the debug support will be enabled for all artifacts. This option has less
+ *                                     priority than explicitly specified enableDebug option in the build script and
+ *                                     enableDebug project property.
+ *
+ *      - KONAN_ENABLE_OPTIMIZATIONS - If YES, optimizations will be enabled for all artifacts by default. This option
+ *                                     has less priority than explicitly specified enableOptimizations option in the
+ *                                     build script.
  *
  *  Support for environment variables should be explicitly enabled by setting a project property:
  *      konan.useEnvironmentVariables = true.
@@ -38,6 +43,7 @@ import java.io.File
 internal interface EnvironmentVariables {
     val configurationBuildDir: File?
     val debuggingSymbols: Boolean
+    val enableOptimizations: Boolean
 }
 
 internal class EnvironmentVariablesUnused: EnvironmentVariables {
@@ -45,6 +51,9 @@ internal class EnvironmentVariablesUnused: EnvironmentVariables {
         get() = null
 
     override val debuggingSymbols: Boolean
+        get() = false
+
+    override val enableOptimizations: Boolean
         get() = false
 }
 
@@ -56,6 +65,9 @@ internal class EnvironmentVariablesImpl:  EnvironmentVariables {
 
     override val debuggingSymbols: Boolean
         get() = System.getenv("DEBUGGING_SYMBOLS")?.toUpperCase() == "YES"
+
+    override val enableOptimizations: Boolean
+        get() = System.getenv("KONAN_ENABLE_OPTIMIZATIONS")?.toUpperCase() == "YES"
 }
 
 internal val Project.useEnvironmentVariables: Boolean
