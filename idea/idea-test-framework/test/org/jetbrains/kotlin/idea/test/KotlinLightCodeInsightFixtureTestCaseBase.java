@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.test;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -65,19 +64,6 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCod
     }
 
     @NotNull
-    protected File createTempFile(@NotNull String name, @Nullable String text) throws IOException {
-        File directory = createTempDirectory();
-        File file = new File(directory, name);
-        if (!file.createNewFile()) {
-            throw new IOException("Can't create " + file);
-        }
-        if (text != null) {
-            FileUtil.writeToFile(file, text);
-        }
-        return file;
-    }
-
-    @NotNull
     public VirtualFile createTempFile(
             @NonNls @NotNull String ext,
             @Nullable byte[] bom,
@@ -102,26 +88,6 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightCod
         try (OutputStreamWriter writer = new OutputStreamWriter(stream, charset)) {
             writer.write(content);
         }
-    }
-
-    @NotNull
-    protected File createTempDirectory() throws IOException {
-        return createTempDir("");
-    }
-
-    @NotNull
-    public File createTempDir(@NonNls @NotNull String prefix) throws IOException {
-        return createTempDir(prefix, true);
-    }
-
-    @NotNull
-    public File createTempDir(@NonNls @NotNull String prefix, final boolean refresh) throws IOException {
-        final File tempDirectory = FileUtilRt.createTempDirectory("idea_test_" + prefix, null, false);
-        myFilesToDelete.add(tempDirectory);
-        if (refresh) {
-            getVirtualFile(tempDirectory);
-        }
-        return tempDirectory;
     }
 
     protected static VirtualFile getVirtualFile(@NotNull File file) {
