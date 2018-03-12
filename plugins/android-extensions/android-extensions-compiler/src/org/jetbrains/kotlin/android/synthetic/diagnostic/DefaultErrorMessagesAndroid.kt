@@ -45,7 +45,7 @@ object DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
                 "'Parcelable' should be a class")
 
         MAP.put(ErrorsAndroid.PARCELABLE_DELEGATE_IS_NOT_ALLOWED,
-                "Delegating 'Parcelable' is now allowed")
+                "Delegating 'Parcelable' is not allowed")
 
         MAP.put(ErrorsAndroid.PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS,
                 "'Parcelable' should not be a 'enum class'")
