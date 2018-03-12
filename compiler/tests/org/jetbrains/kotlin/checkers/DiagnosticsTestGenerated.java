@@ -13230,6 +13230,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/typeInferenceOnSamAdapters.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("withDefaultMethods.kt")
+                public void testWithDefaultMethods() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/withDefaultMethods.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/samByProjectedType")
