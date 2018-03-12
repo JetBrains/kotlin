@@ -339,4 +339,31 @@ public class UnwrapRemoveTestGenerated extends AbstractUnwrapRemoveTest {
             doTestLambdaUnwrapper(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapFunctionParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class UnwrapFunctionParameter extends AbstractUnwrapRemoveTest {
+        public void testAllFilesPresentInUnwrapFunctionParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/unwrapAndRemove/unwrapFunctionParameter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("functionHasMultiParam.kt")
+        public void testFunctionHasMultiParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapFunctionParameter/functionHasMultiParam.kt");
+            doTestFunctionParameterUnwrapper(fileName);
+        }
+
+        @TestMetadata("functionHasSingleParam.kt")
+        public void testFunctionHasSingleParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapFunctionParameter/functionHasSingleParam.kt");
+            doTestFunctionParameterUnwrapper(fileName);
+        }
+
+        @TestMetadata("functionWithReceiver.kt")
+        public void testFunctionWithReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/unwrapAndRemove/unwrapFunctionParameter/functionWithReceiver.kt");
+            doTestFunctionParameterUnwrapper(fileName);
+        }
+    }
 }
