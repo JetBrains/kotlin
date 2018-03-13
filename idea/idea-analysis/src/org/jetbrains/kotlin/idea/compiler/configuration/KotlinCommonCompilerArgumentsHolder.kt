@@ -22,14 +22,12 @@ import com.intellij.util.text.VersionComparatorUtil
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.setApiVersionToLanguageVersionIfNeeded
+import org.jetbrains.kotlin.config.SettingConstants
 import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION
 import org.jetbrains.kotlin.config.detectVersionAutoAdvance
 import org.jetbrains.kotlin.config.dropVersionsIfNecessary
 
-@State(name = KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION,
-       storages = arrayOf(Storage(file = StoragePathMacros.PROJECT_FILE),
-                          Storage(file = BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH,
-                                  scheme = StorageScheme.DIRECTORY_BASED)))
+@State(name = KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION, storages = [(Storage(SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE))])
 class KotlinCommonCompilerArgumentsHolder(project: Project) : BaseKotlinCompilerSettings<CommonCompilerArguments>(project) {
     override fun getState(): Element {
         return super.getState().apply {
