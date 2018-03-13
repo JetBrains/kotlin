@@ -9,7 +9,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -85,11 +87,24 @@ private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
 
     val targetList = AnnotationChecker.getActualTargetList(annotatedElement, null, BindingTraceContext())
 
-    if (useSiteTarget == null) {
-        return targetList.defaultTargets
+    val useSiteTarget = this.useSiteTarget ?: return targetList.defaultTargets
+    val annotationUseSiteTarget = useSiteTarget.getAnnotationUseSiteTarget()
+    val target = KotlinTarget.USE_SITE_MAPPING[annotationUseSiteTarget] ?: return emptyList()
+
+    if (annotationUseSiteTarget == AnnotationUseSiteTarget.FIELD) {
+        if (KotlinTarget.MEMBER_PROPERTY !in targetList.defaultTargets && KotlinTarget.TOP_LEVEL_PROPERTY !in targetList.defaultTargets) {
+            return emptyList()
+        }
+        val property = annotatedElement as? KtProperty
+        if (property != null && (LightClassUtil.getLightClassPropertyMethods(property).backingField == null || property.hasDelegate())) {
+            return emptyList()
+        }
+    } else {
+        if (target !in with(targetList) { defaultTargets + canBeSubstituted + onlyWithUseSiteTarget }) {
+            return emptyList()
+        }
     }
-    val target = KotlinTarget.USE_SITE_MAPPING[useSiteTarget?.getAnnotationUseSiteTarget()] ?: return emptyList()
-    if (target !in with(targetList) { defaultTargets + canBeSubstituted + onlyWithUseSiteTarget }) return emptyList()
+
     return listOf(target)
 }
 
