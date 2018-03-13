@@ -67,11 +67,10 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         context.trace.report(ErrorsJvm.INAPPLICABLE_JVM_FIELD.on(annotationEntry, problem.errorMessage))
     }
 
-    private fun PropertyDescriptor.hasCustomAccessor()
-            = !(getter?.isDefault ?: true) || !(setter?.isDefault ?: true)
+    private fun PropertyDescriptor.hasCustomAccessor() = !(getter?.isDefault ?: true) || !(setter?.isDefault ?: true)
 
-    private fun PropertyDescriptor.hasBackingField(bindingContext: BindingContext)
-            = bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, this) ?: false
+    private fun PropertyDescriptor.hasBackingField(bindingContext: BindingContext) =
+        bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, this) ?: false
 
     private fun PropertyDescriptor.isInsideCompanionObjectOfInterface(): Boolean {
         val containingClass = containingDeclaration as? ClassDescriptor ?: return false
