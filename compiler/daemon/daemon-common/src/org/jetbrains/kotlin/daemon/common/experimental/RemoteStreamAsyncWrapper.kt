@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Defa
 
 class RemoteOutputStreamAsyncWrapper(val rmiOutput: RemoteOutputStream) : RemoteOutputStreamAsyncClientSide, Client by DefaultClientRMIWrapper() {
 
-    override suspend fun close() =
+    override suspend fun closeStream() =
         rmiOutput.close()
 
     override suspend fun write(data: ByteArray, offset: Int, length: Int) =
@@ -25,7 +25,7 @@ class RemoteOutputStreamAsyncWrapper(val rmiOutput: RemoteOutputStream) : Remote
 
 class RemoteInputStreamAsyncWrapper(private val rmiInput: RemoteInputStream) : RemoteInputStreamClientSide, Client by DefaultClientRMIWrapper() {
 
-    override suspend fun close() =
+    override suspend fun closeStream() =
         rmiInput.close()
 
     override suspend fun read() =

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.daemon.common.experimental
 
 interface RemoteOutputStreamAsync {
 
-    suspend fun close()
+    /** closeStream() name is chosen since Clients are AutoClosable now
+     * and Client-implementations of RemoteOutputStreamAsync have conflict of 'close' name **/
+    suspend fun closeStream()
 
     suspend fun write(data: ByteArray, offset: Int, length: Int)
 
@@ -16,7 +18,9 @@ interface RemoteOutputStreamAsync {
 
 interface RemoteInputStreamAsync {
 
-    suspend fun close()
+    /** closeStream() name is chosen since Clients are AutoClosable now
+     * and Client-implementations of RemoteInputStreamAsync have conflict of 'close' name **/
+    suspend fun closeStream()
 
     suspend fun read(length: Int): ByteArray
 

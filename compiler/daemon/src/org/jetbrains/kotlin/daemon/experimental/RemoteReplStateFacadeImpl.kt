@@ -17,21 +17,12 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 class RemoteReplStateFacadeServerSide(
     val _id: Int,
     val state: GenericReplCompilerState,
-    val port: Int = findPortForSocket(
+    override val serverPort: Int = findPortForSocket(
         COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
         REPL_SERVER_PORTS_RANGE_START,
         REPL_SERVER_PORTS_RANGE_END
     )
 ) : ReplStateFacadeServerSide {
-
-    private val delegate = DefaultServer(port, this)
-
-    override suspend fun processMessage(msg: Server.AnyMessage<in ReplStateFacadeServerSide>, output: ByteWriteChannelWrapper) =
-        delegate.processMessage(msg, output)
-
-    override suspend fun attachClient(client: Socket) = delegate.attachClient(client)
-
-    override fun runServer() = delegate.runServer()
 
     override suspend fun getId(): Int = _id
 
@@ -44,7 +35,7 @@ class RemoteReplStateFacadeServerSide(
     override suspend fun historyResetTo(id: ILineId): List<ILineId> = state.history.resetTo(id).toList()
 
     val clientSide: RemoteReplStateFacadeClientSide
-        get() = RemoteReplStateFacadeClientSide(port)
+        get() = RemoteReplStateFacadeClientSide(serverPort)
 
 }
 

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.daemon.experimental.unit
 
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
 import org.jetbrains.kotlin.daemon.common.experimental.walkDaemonsAsync
+import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
 import org.jetbrains.kotlin.daemon.experimental.KotlinCompileDaemon
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
@@ -70,7 +70,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                 compilerId,
                 runFile,
                 filter = { _, _ -> true },
-                report = { _, msg -> println(msg) }
+                report = { _, msg -> println("[report] : " + msg) }
             ).toList()
         }
         println("daemons : $daemons")

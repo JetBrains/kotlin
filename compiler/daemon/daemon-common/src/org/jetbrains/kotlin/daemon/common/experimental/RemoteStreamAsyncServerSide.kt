@@ -13,7 +13,7 @@ interface RemoteOutputStreamAsyncServerSide : RemoteOutputStreamAsync, Server<Re
     // Query messages:
     class CloseMessage : Server.Message<RemoteOutputStreamAsyncServerSide> {
         override suspend fun process(server: RemoteOutputStreamAsyncServerSide, output: ByteWriteChannelWrapper) =
-            server.close()
+            server.closeStream()
     }
 
     class WriteMessage(val data: ByteArray, val offset: Int = -1, val length: Int = -1) :
@@ -33,7 +33,7 @@ interface RemoteInputStreamServerSide : RemoteInputStreamAsync, Server<RemoteInp
     // Query messages:
     class CloseMessage : Server.Message<RemoteInputStreamServerSide> {
         override suspend fun process(server: RemoteInputStreamServerSide, output: ByteWriteChannelWrapper) =
-            server.close()
+            server.closeStream()
     }
 
     class ReadMessage(val length: Int = -1) : Server.Message<RemoteInputStreamServerSide> {

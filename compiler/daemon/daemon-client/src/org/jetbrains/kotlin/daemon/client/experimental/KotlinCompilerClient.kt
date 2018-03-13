@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.daemon.client.experimental
 
-import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -13,9 +12,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -297,23 +293,14 @@ object KotlinCompilerClient {
 
                     val compResults = object : CompilationResultsServerSide {
 
+                        override val serverPort: Int
+                            get() = resultsPort
+
                         private val resultsPort = findPortForSocket(
                             COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
                             RESULTS_SERVER_PORTS_RANGE_START,
                             RESULTS_SERVER_PORTS_RANGE_END
                         )
-
-                        private val delegate = DefaultServer(resultsPort, this)
-
-                        override suspend fun processMessage(
-                            msg: Server.AnyMessage<in CompilationResultsServerSide>,
-                            output: ByteWriteChannelWrapper
-                        ) =
-                            delegate.processMessage(msg, output)
-
-                        override suspend fun attachClient(client: Socket) = delegate.attachClient(client)
-
-                        override fun runServer() = delegate.runServer()
 
                         private val resultsMap = hashMapOf<Int, MutableList<Serializable>>()
 
