@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.components.InferenceExtension
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
@@ -123,7 +124,6 @@ class PSICallResolver(
             scopeTower, resolutionCallbacks, kotlinCall, calculateExpectedType(context), givenCandidates, context.collectAllCandidates
         )
         return convertToOverloadResolutionResults(context, result, tracingStrategy)
-
     }
 
     private fun <D : CallableDescriptor> resolveToDeprecatedMod(
@@ -150,8 +150,11 @@ class PSICallResolver(
     }
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =
+        createResolutionCallbacks(context.inferenceExtension, context.trace)
+
+    fun createResolutionCallbacks(inferenceExtension: InferenceExtension, trace: BindingTrace) =
         KotlinResolutionCallbacksImpl(
-            context, expressionTypingServices, typeApproximator,
+            inferenceExtension, trace, expressionTypingServices, typeApproximator,
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
             constantExpressionEvaluator, dataFlowValueFactory
         )
@@ -169,7 +172,7 @@ class PSICallResolver(
         }
     }
 
-    private fun <D : CallableDescriptor> convertToOverloadResolutionResults(
+    fun <D : CallableDescriptor> convertToOverloadResolutionResults(
         context: BasicCallResolutionContext,
         result: CallResolutionResult,
         tracingStrategy: TracingStrategy

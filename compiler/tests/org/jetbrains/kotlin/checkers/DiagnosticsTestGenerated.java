@@ -13201,6 +13201,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("newsometest.kt")
+                public void testNewsometest() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/newsometest.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("privateCandidatesWithWrongArguments.kt")
                 public void testPrivateCandidatesWithWrongArguments() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/privateCandidatesWithWrongArguments.kt");

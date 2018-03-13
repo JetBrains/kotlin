@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
+import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -167,6 +168,16 @@ fun createCommonConstraintSystem(callComponents: KotlinCallComponents, kotlinCal
     }
 
     return commonSystem.asReadOnlyStorage()
+}
+
+fun createCommonConstraintSystem(calls: List<CallResolutionResult>, callComponents: KotlinCallComponents): NewConstraintSystem {
+    val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns).apply {
+        for (call in calls) {
+            addOtherSystem(call.constraintSystem)
+        }
+    }
+
+    return commonSystem
 }
 
 enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {

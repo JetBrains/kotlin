@@ -105,7 +105,7 @@ class KotlinCallCompleter(
         kotlinConstraintSystemCompleter.runCompletion(
             constraintSystem.asConstraintSystemCompleterContext(),
             completionMode,
-            resolvedCallAtom,
+            listOf(resolvedCallAtom),
             returnType
         ) {
             if (collectAllCandidatesMode) {
@@ -123,6 +123,27 @@ class KotlinCallCompleter(
         constraintSystem.diagnostics.forEach(diagnosticsHolder::addDiagnostic)
     }
 
+    fun runCompletion(
+        primitives: List<ResolvedAtom>,
+        diagnosticsHolder: KotlinDiagnosticsHolder,
+        constraintSystem: NewConstraintSystem,
+        resolutionCallbacks: KotlinResolutionCallbacks
+    ) {
+        kotlinConstraintSystemCompleter.runCompletion(
+            constraintSystem.asConstraintSystemCompleterContext(),
+            ConstraintSystemCompletionMode.FULL,
+            primitives,
+            constraintSystem.builtIns.unitType
+        ) {
+            postponedArgumentsAnalyzer.analyze(
+                constraintSystem.asPostponedArgumentsAnalyzerContext(),
+                resolutionCallbacks,
+                it,
+                diagnosticsHolder
+            )
+        }
+
+    }
 
     // true if we should complete this call
     private fun KotlinResolutionCandidate.prepareForCompletion(

@@ -69,6 +69,26 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
 
     @NotNull
     public static BasicCallResolutionContext create(
+            @NotNull BindingTrace trace,
+            @NotNull LexicalScope scope,
+            @NotNull Call call,
+            @NotNull KotlinType expectedType,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull ContextDependency contextDependency,
+            @NotNull CheckArgumentTypesMode checkArguments,
+            boolean isAnnotationContext,
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
+    ) {
+        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
+                                              new ResolutionResultsCacheImpl(), null,
+                                              StatementFilter.NONE, isAnnotationContext, false, false,
+                                              CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER, languageVersionSettings,
+                                              dataFlowValueFactory, InferenceExtension.Companion.getNone());
+    }
+
+    @NotNull
+    public static BasicCallResolutionContext create(
             @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckArgumentTypesMode checkArguments,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
