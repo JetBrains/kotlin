@@ -194,7 +194,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         gradleModel: KotlinGradleModel
     ) {
         val implementedModules = gradleModel.implements.mapNotNull { findModuleById(ideProject, it) }
-        if (resolverCtx.isResolveModulePerSourceSet) {
+        if (useModulePerSourceSet()) {
             val dependentSourceSets = dependentModule.getSourceSetsMap()
             val implementedSourceSetMaps = implementedModules.map { it.getSourceSetsMap() }
             for ((sourceSetName, dependentSourceSet) in dependentSourceSets) {

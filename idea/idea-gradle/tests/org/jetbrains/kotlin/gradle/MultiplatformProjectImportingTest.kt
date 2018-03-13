@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.facetSettings
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
@@ -577,12 +578,24 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         """
         )
 
+        val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
+        try {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = true
+            importProject()
 
-        importProject()
+            assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+            TestCase.assertEquals(listOf("project1"), facetSettings("project2").implementedModuleNames)
 
-        assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+            currentExternalProjectSettings.isResolveModulePerSourceSet = false
+            importProject()
 
+            assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+            TestCase.assertEquals(listOf("project1"), facetSettings("project2").implementedModuleNames)
+        } finally {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
+        }
     }
 
     @Test
