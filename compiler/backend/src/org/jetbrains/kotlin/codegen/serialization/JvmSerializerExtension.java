@@ -189,6 +189,11 @@ public class JvmSerializerExtension extends SerializerExtension {
         );
 
         proto.setExtension(JvmProtoBuf.propertySignature, signature);
+        Boolean fieldMovedFromInterfaceCompanion = bindings.get(FIELD_MOVED_FROM_INTERFACE_COMPANION, descriptor);
+        if (fieldMovedFromInterfaceCompanion != null && fieldMovedFromInterfaceCompanion) {
+            proto.setExtension(JvmProtoBuf.isMovedFromInterfaceCompanion, 1);
+        }
+
     }
 
     @Override

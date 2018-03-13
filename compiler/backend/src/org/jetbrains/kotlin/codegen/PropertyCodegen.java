@@ -57,9 +57,9 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAn
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTIES;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER;
-import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
-import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.EXPECTED_FUNCTION_SOURCE_WITH_DEFAULT_ARGUMENTS_NOT_FOUND;
+import static org.jetbrains.kotlin.load.java.JvmAbi.isInterfaceCompanionWithBackingFieldsInOuter;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
@@ -420,6 +420,10 @@ public class PropertyCodegen {
         String name = backingFieldContext.getFieldName(propertyDescriptor, isDelegate);
 
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
+        if (hasJvmFieldAnnotation(propertyDescriptor) &&
+            isInterfaceCompanionWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration())) {
+            v.getSerializationBindings().put(FIELD_MOVED_FROM_INTERFACE_COMPANION, propertyDescriptor, true);
+        }
 
         FieldVisitor fv = builder.newField(
                 JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),

@@ -8,6 +8,7 @@
 package zzz
 import java.lang.reflect.Field
 import kotlin.reflect.KProperty1
+import kotlin.reflect.KProperty0
 import kotlin.test.assertEquals
 
 class A(val s1: String, val s2: String) {
@@ -21,27 +22,28 @@ class A(val s1: String, val s2: String) {
 }
 
 
-/*
-// TODO: uncomment when callable references to object members are supported
 class AWithCompanion {
     companion object {
         @JvmField public val publicField = "1";
         @JvmField internal val internalField = "2";
 
         fun testAccessors() {
-            checkAccessor(AWithCompanion.Companion::publicField, "1", AWithCompanion.Companion)
-            checkAccessor(AWithCompanion.Companion::internalField, "2", AWithCompanion.Companion)
+            checkAccessor(AWithCompanion.Companion::publicField, "1")
+            checkAccessor(AWithCompanion.Companion::internalField, "2")
         }
     }
 }
-*/
 
 fun box(): String {
     A("1", "2").testAccessors()
-    // AWithCompanion.testAccessors()
+    AWithCompanion.testAccessors()
     return "OK"
 }
 
 public fun <T, R> checkAccessor(prop: KProperty1<T, R>, value: R, receiver: T) {
     assertEquals(prop.get(receiver), value, "Property ${prop} has wrong value")
+}
+
+public fun <R> checkAccessor(prop: KProperty0<R>, value: R) {
+    assertEquals(prop.get(), value, "Property ${prop} has wrong value")
 }

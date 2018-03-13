@@ -1637,6 +1637,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/bound/array.kt");
             }
 
+            @TestMetadata("boundJvmFieldInInterfaceCompanion.kt")
+            public void testBoundJvmFieldInInterfaceCompanion() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/boundJvmFieldInInterfaceCompanion.kt");
+            }
+
             @TestMetadata("companionObjectReceiver.kt")
             public void testCompanionObjectReceiver() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/companionObjectReceiver.kt");
@@ -11943,6 +11948,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/jvmField"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("annotationCompanion.kt")
+        public void testAnnotationCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/annotationCompanion.kt");
+        }
+
+        @TestMetadata("annotationCompanionWithJava.kt")
+        public void testAnnotationCompanionWithJava() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/annotationCompanionWithJava.kt");
+        }
+
         @TestMetadata("captureClassFields.kt")
         public void testCaptureClassFields() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/captureClassFields.kt");
@@ -11971,6 +11986,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("constructorProperty.kt")
         public void testConstructorProperty() throws Exception {
             runTest("compiler/testData/codegen/box/jvmField/constructorProperty.kt");
+        }
+
+        @TestMetadata("interfaceCompanion.kt")
+        public void testInterfaceCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/interfaceCompanion.kt");
+        }
+
+        @TestMetadata("interfaceCompanionWithJava.kt")
+        public void testInterfaceCompanionWithJava() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmField/interfaceCompanionWithJava.kt");
         }
 
         @TestMetadata("publicField.kt")
@@ -17691,6 +17716,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/mapping/inlineReifiedFun.kt");
             }
 
+            @TestMetadata("interfaceCompanionPropertyWithJvmField.kt")
+            public void testInterfaceCompanionPropertyWithJvmField() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/interfaceCompanionPropertyWithJvmField.kt");
+            }
+
             @TestMetadata("mappedClassIsEqualToClassLiteral.kt")
             public void testMappedClassIsEqualToClassLiteral() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/mapping/mappedClassIsEqualToClassLiteral.kt");
@@ -18284,6 +18314,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("javaStaticField.kt")
             public void testJavaStaticField() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/properties/javaStaticField.kt");
+            }
+
+            @TestMetadata("jvmFieldInAnnotationCompanionWithAnnotation.kt")
+            public void testJvmFieldInAnnotationCompanionWithAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/properties/jvmFieldInAnnotationCompanionWithAnnotation.kt");
+            }
+
+            @TestMetadata("jvmFieldInInterfaceCompanion.kt")
+            public void testJvmFieldInInterfaceCompanion() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/properties/jvmFieldInInterfaceCompanion.kt");
+            }
+
+            @TestMetadata("jvmFieldInInterfaceCompanionWithAnnotation.kt")
+            public void testJvmFieldInInterfaceCompanionWithAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/properties/jvmFieldInInterfaceCompanionWithAnnotation.kt");
             }
 
             @TestMetadata("kotlinPropertyInheritedInJava.kt")

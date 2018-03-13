@@ -556,6 +556,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/inSingleFileFacade.kt");
             }
 
+            @TestMetadata("interface13.kt")
+            public void testInterface13() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/interface13.kt");
+            }
+
             @TestMetadata("jvmFieldApplicability.kt")
             public void testJvmFieldApplicability() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmField/jvmFieldApplicability.kt");

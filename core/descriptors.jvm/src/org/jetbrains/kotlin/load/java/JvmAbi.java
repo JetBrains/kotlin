@@ -7,21 +7,26 @@ package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 
 public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
     public static final String ERASED_INLINE_CLASS_NAME = "Erased";
+    public static final FqName JVM_FIELD_ANNOTATION_FQ_NAME = new FqName("kotlin.jvm.JvmField");
 
     /**
      * Warning: use DEFAULT_IMPLS_CLASS_NAME and TypeMappingConfiguration.innerClassNameFactory when possible.
@@ -97,16 +102,54 @@ public final class JvmAbi {
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
         return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-               isCompanionObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+               (isCompanionObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration())
+                ||
+                (isCompanionObject(propertyDescriptor.getContainingDeclaration()) &&
+                 hasJvmFieldAnnotation(propertyDescriptor)));
     }
 
     public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
         return isCompanionObject(companionObject) &&
-               isClassOrEnumClass(companionObject.getContainingDeclaration()) &&
+               (isClassOrEnumClass(companionObject.getContainingDeclaration()) ||
+                isInterfaceCompanionWithBackingFieldsInOuter(companionObject)) &&
                !isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
+
+    }
+
+    public static boolean isInterfaceCompanionWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
+        DeclarationDescriptor interfaceClass = companionObject.getContainingDeclaration();
+        if (!isInterface(interfaceClass) && !isAnnotationClass(interfaceClass)) return false;
+        Collection<DeclarationDescriptor> descriptors = ((ClassDescriptor) companionObject).getUnsubstitutedMemberScope()
+                .getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.getALL_NAME_FILTER());
+        boolean hasJvmFieldAnnotation = false;
+        for (DeclarationDescriptor next : descriptors) {
+            if (!(next instanceof PropertyDescriptor)) continue;
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) next;
+
+            if (propertyDescriptor.getVisibility() != Visibilities.PUBLIC ||
+                propertyDescriptor.isVar() ||
+                propertyDescriptor.getModality() != Modality.FINAL) {
+                return false;
+            }
+
+            if (!hasJvmFieldAnnotation(propertyDescriptor)) return false;
+            hasJvmFieldAnnotation = true;
+        }
+        return hasJvmFieldAnnotation;
     }
 
     public static boolean isMappedIntrinsicCompanionObject(@NotNull ClassDescriptor companionObject) {
         return CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(companionObject);
+    }
+
+    private static boolean hasJvmFieldAnnotation(@NotNull CallableMemberDescriptor memberDescriptor) {
+        List<AnnotationWithTarget> annotations = memberDescriptor.getAnnotations().getUseSiteTargetedAnnotations();
+        for (AnnotationWithTarget annotationWithTarget : annotations) {
+            if (AnnotationUseSiteTarget.FIELD.equals(annotationWithTarget.getTarget()) &&
+                JVM_FIELD_ANNOTATION_FQ_NAME.equals(annotationWithTarget.getAnnotation().getFqName())) {
+                return true;
+            }
+        }
+        return memberDescriptor.getAnnotations().hasAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME);
     }
 }

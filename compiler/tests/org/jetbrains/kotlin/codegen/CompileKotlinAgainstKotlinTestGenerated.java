@@ -143,9 +143,19 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmField.kt");
     }
 
+    @TestMetadata("jvmFieldInAnnotationCompanion.kt")
+    public void testJvmFieldInAnnotationCompanion() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/jvmFieldInAnnotationCompanion.kt");
+    }
+
     @TestMetadata("jvmFieldInConstructor.kt")
     public void testJvmFieldInConstructor() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmFieldInConstructor.kt");
+    }
+
+    @TestMetadata("jvmFieldInInterfaceCompanion.kt")
+    public void testJvmFieldInInterfaceCompanion() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/jvmFieldInInterfaceCompanion.kt");
     }
 
     @TestMetadata("jvmNames.kt")

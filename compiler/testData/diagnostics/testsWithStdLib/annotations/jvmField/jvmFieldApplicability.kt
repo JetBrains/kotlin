@@ -95,6 +95,8 @@ interface K {
     companion object {
         <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
         var c = 3
+
+        var x = 3
     }
 }
 

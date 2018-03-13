@@ -67,6 +67,7 @@ enum class LanguageFeature(
     ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3, kind = BUG_FIX),
     NestedClassesInAnnotations(KOTLIN_1_3),
     JvmStaticInInterface(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
+    JvmFieldInInterface(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
     ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3, kind = BUG_FIX),
     ReleaseCoroutines(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
