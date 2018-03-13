@@ -283,7 +283,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         importProject()
 
         runReadAction {
-            assertEmpty(getCanBeConfiguredModulesWithKotlinFiles(myProject))
+            assertEmpty(getConfigurationPossibilitiesForConfigureNotification(myProject).first)
         }
     }
 
