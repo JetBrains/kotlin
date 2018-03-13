@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.daemon.LazyClasspathWatcher
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
+
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Report
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdaterAsync
@@ -89,7 +89,7 @@ typealias Message = Server.Message<CompileServiceServerSide>
 typealias EndConnectionMessage = Server.EndConnectionMessage<CompileServiceServerSide>
 
 class CompileServiceServerSideImpl(
-    val serverPort: Int,
+    override val serverPort: Int,
     val compiler: CompilerSelector,
     val compilerId: CompilerId,
     val daemonOptions: DaemonOptions,
@@ -117,15 +117,6 @@ class CompileServiceServerSideImpl(
         timer,
         onShutdown
     )
-
-    private val delegate = DefaultServer(serverPort, this)
-
-    override suspend fun processMessage(msg: Server.AnyMessage<in CompileServiceServerSide>, output: ByteWriteChannelWrapper) =
-        delegate.processMessage(msg, output)
-
-    override suspend fun attachClient(client: Socket) = delegate.attachClient(client)
-
-    override fun runServer() = delegate.runServer()
 
     private val log by lazy { Logger.getLogger("compiler") }
 
@@ -708,7 +699,6 @@ class CompileServiceServerSideImpl(
 
     // TODO: handover should include mechanism for client to switch to a new daemon then previous "handed over responsibilities" and shot down
     private fun initiateElections() {
-
         ifAliveUnit {
 
             log.info("initiate elections")

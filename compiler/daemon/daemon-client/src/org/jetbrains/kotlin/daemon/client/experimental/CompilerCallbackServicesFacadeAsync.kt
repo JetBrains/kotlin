@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_FIND_PORT_ATTEMPTS
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultServer
+
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -29,22 +29,13 @@ open class CompilerCallbackServicesFacadeServerSide(
     val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
     val lookupTracker: LookupTracker? = null,
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
-    val port: Int = findCallbackServerSocket()
+    override val serverPort: Int = findCallbackServerSocket()
 ) : CompilerServicesFacadeBaseServerSide {
-
-    private val delegate = DefaultServer(port, this)
-
-    override suspend fun processMessage(msg: Server.AnyMessage<in CompilerServicesFacadeBaseServerSide>, output: ByteWriteChannelWrapper) =
-        delegate.processMessage(msg, output)
-
-    override suspend fun attachClient(client: Socket) = delegate.attachClient(client)
-
-    override fun runServer() = delegate.runServer()
 
     private val log = Logger.getLogger("CompilerCallbackServicesFacadeServerSide")
 
     val clientSide : CompilerServicesFacadeBaseClientSide
-        get() = CompilerServicesFacadeBaseClientSideImpl(port)
+        get() = CompilerServicesFacadeBaseClientSideImpl(serverPort)
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         //TODO : some report
