@@ -25,8 +25,9 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import kotlin.reflect.KClass
-import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Failure
 import kotlin.script.dependencies.ScriptContents
+import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Failure
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 
@@ -62,7 +63,7 @@ class ScriptContentLoader(private val project: Project) {
     fun loadContentsAndResolveDependencies(
             scriptDef: KotlinScriptDefinition,
             file: VirtualFile
-    ): ScriptDependencies? {
+    ): DependenciesResolver.ResolveResult {
         val scriptContents = getScriptContents(scriptDef, file)
         val environment = getEnvironment(scriptDef)
         val result = try {
@@ -75,7 +76,7 @@ class ScriptContentLoader(private val project: Project) {
             e.asResolveFailure(scriptDef)
         }
         ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
-        return result.dependencies?.adjustByDefinition(scriptDef)
+        return result
     }
 
     fun getEnvironment(scriptDef: KotlinScriptDefinition) =
@@ -92,5 +93,5 @@ fun ScriptDependencies.adjustByDefinition(
 
 fun Throwable.asResolveFailure(scriptDef: KotlinScriptDefinition): Failure {
     val prefix = "${scriptDef.dependencyResolver::class.simpleName} threw exception ${this::class.simpleName}:\n "
-    return Failure(ScriptReport(prefix + (message ?: "<no message>")))
+    return Failure(ScriptReport(prefix + (message ?: "<no message>"), ScriptReport.Severity.FATAL))
 }
