@@ -35,7 +35,7 @@
                         interface="org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor"
                         area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptTemplatesProvider"
-                        interface="org.jetbrains.kotlin.idea.core.script.ScriptTemplatesProvider"
+                        interface="org.jetbrains.kotlin.script.ScriptTemplatesProvider"
                         area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.facetConfigurationExtension"
                         interface="org.jetbrains.kotlin.idea.facet.KotlinFacetConfigurationExtension"/>
