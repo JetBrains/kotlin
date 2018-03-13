@@ -306,6 +306,42 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("use-site_field_member.kt")
+        public void testUse_site_field_member() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/use-site_field_member.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("use-site_field_member_with_delegate.kt")
+        public void testUse_site_field_member_with_delegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/use-site_field_member_with_delegate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("use-site_field_member_without_backing.kt")
+        public void testUse_site_field_member_without_backing() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/use-site_field_member_without_backing.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("use-site_field_toplevel.kt")
+        public void testUse_site_field_toplevel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/use-site_field_toplevel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("use-site_field_toplevel_with_delegate.kt")
+        public void testUse_site_field_toplevel_with_delegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/use-site_field_toplevel_with_delegate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("use-site_field_toplevel_without_backing.kt")
+        public void testUse_site_field_toplevel_without_backing() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/use-site_field_toplevel_without_backing.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("use-site_file.kt")
         public void testUse_site_file() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/use-site_file.kt");
