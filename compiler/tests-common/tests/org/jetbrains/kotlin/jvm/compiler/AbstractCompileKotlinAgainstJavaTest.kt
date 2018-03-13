@@ -17,25 +17,26 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
+import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
 import org.junit.Assert
-
 import java.io.File
 import java.io.IOException
 import java.lang.annotation.Retention
-
-import org.jetbrains.kotlin.test.KotlinTestUtils.*
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
 
 abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
@@ -46,15 +47,17 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))
         val out = File(tmpdir, "out")
 
-        val compiledSuccessfully = compileKotlinWithJava(listOf(javaFile),
-                                                         listOf(ktFile),
-                                                         out, testRootDisposable)
+        val compiledSuccessfully = compileKotlinWithJava(
+            listOf(javaFile),
+            listOf(ktFile),
+            out, testRootDisposable
+        )
         if (!compiledSuccessfully) return
 
         val environment = KotlinCoreEnvironment.createForTests(
-                testRootDisposable,
-                newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, getAnnotationsJar(), out),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            testRootDisposable,
+            newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, getAnnotationsJar(), out),
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
@@ -71,10 +74,10 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
     @Throws(IOException::class)
     fun compileKotlinWithJava(
-            javaFiles: List<File>,
-            ktFiles: List<File>,
-            outDir: File,
-            disposable: Disposable
+        javaFiles: List<File>,
+        ktFiles: List<File>,
+        outDir: File,
+        disposable: Disposable
     ): Boolean {
         val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
@@ -85,8 +88,7 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
                                   arguments = arrayOf("-proc:none"))
         if (!ktFiles.isEmpty()) {
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
-        }
-        else {
+        } else {
             val mkdirs = outDir.mkdirs()
             assert(mkdirs) { "Not created: $outDir" }
         }
@@ -98,14 +100,14 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         // Do not render parameter names because there are test cases where classes inherit from JDK collections,
         // and some versions of JDK have debug information in the class files (including parameter names), and some don't
         private val CONFIGURATION = AbstractLoadJavaTest.COMPARATOR_CONFIGURATION.withRenderer(
-                DescriptorRenderer.withOptions {
-                    withDefinedIn = false
-                    parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
-                    verbose = true
-                    annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-                    excludedAnnotationClasses = setOf(FqName(Retention::class.java.name))
-                    modifiers = DescriptorRendererModifier.ALL
-                }
+            DescriptorRenderer.withOptions {
+                withDefinedIn = false
+                parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
+                verbose = true
+                annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
+                excludedAnnotationClasses = setOf(FqName(Retention::class.java.name))
+                modifiers = DescriptorRendererModifier.ALL
+            }
         )
     }
 }
