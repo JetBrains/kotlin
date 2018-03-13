@@ -14,8 +14,7 @@ import java.io.File
 
 class KotlinGotoSuperMultiModuleTest : AbstractKotlinNavigationMultiModuleTest() {
     override fun doNavigate(editor: Editor, file: PsiFile): GotoTargetHandler.GotoData {
-        val gotoAction = GotoSuperActionHandler()
-        val (superDeclarations, _) = gotoAction.allSuperDeclarationsAndDescriptor(editor, file)
+        val (superDeclarations, _) = GotoSuperActionHandler.SuperDeclarationsAndDescriptor.forDeclarationAtCaret(editor, file)
         return GotoTargetHandler.GotoData(file.findElementAt(editor.caretModel.offset)!!, superDeclarations.toTypedArray(), emptyList())
     }
 
