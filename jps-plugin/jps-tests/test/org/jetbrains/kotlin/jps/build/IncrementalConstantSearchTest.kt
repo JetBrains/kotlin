@@ -16,11 +16,6 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.builders.java.dependencyView.Callbacks
-import com.intellij.util.concurrency.FixedFuture
-import java.io.File
-import java.util.concurrent.Future
-
 class IncrementalConstantSearchTest : AbstractIncrementalJpsTest() {
     fun testJavaConstantChangedUsedInKotlin() {
         doTest("jps-plugin/testData/incremental/custom/javaConstantChangedUsedInKotlin/")
@@ -45,26 +40,4 @@ class IncrementalConstantSearchTest : AbstractIncrementalJpsTest() {
     fun testKotlinJvmFieldUnchangedUsedInJava() {
         doTest("jps-plugin/testData/incremental/custom/kotlinJvmFieldUnchangedUsedInJava/")
     }
-
-    override val mockConstantSearch: Callbacks.ConstantAffectionResolver?
-        get() = object : Callbacks.ConstantAffectionResolver {
-            override fun request(
-                    ownerClassName: String?,
-                    fieldName: String?,
-                    accessFlags: Int,
-                    fieldRemoved: Boolean,
-                    accessChanged: Boolean
-            ): Future<Callbacks.ConstantAffection> {
-                // We emulate how constant affection service works in IDEA:
-                // it is able to find Kotlin usages of Java constant, but can't find Java usages of Kotlin constant
-                val affectedFiles =
-                        when {
-                            ownerClassName == "JavaClass" && fieldName == "CONST" -> listOf(File(workDir, "src/usage.kt"))
-                            ownerClassName == "test.Klass" && fieldName == "CONST" -> listOf(File(workDir, "src/Usage.java"))
-                            else -> emptyList()
-                        }
-
-                return FixedFuture(Callbacks.ConstantAffection(affectedFiles))
-            }
-        }
 }

@@ -46,6 +46,7 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.jps.incremental.withLookupStorage
@@ -132,8 +133,9 @@ abstract class AbstractIncrementalJpsTest(
 
     // JPS forces rebuild of all files when JVM constant has been changed and Callbacks.ConstantAffectionResolver
     // is not provided, so ConstantAffectionResolver is mocked with empty implementation
-    protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
-        get() = MockConstantSearch(workDir)
+    // Usages in Kotlin files are expected to be found by KotlinLookupConstantSearch
+    private val mockConstantSearch: Callbacks.ConstantAffectionResolver?
+        get() = MockJavaConstantSearch(workDir)
 
     private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules()): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
@@ -493,7 +495,16 @@ abstract class AbstractIncrementalJpsTest(
     }
 }
 
-private class MockConstantSearch(private val workDir: File) : Callbacks.ConstantAffectionResolver {
+/**
+ * Mocks Intellij Java constant search.
+ * When JPS is run from Intellij, it sends find usages request to IDE (it only searches for references inside Java files).
+ *
+ * We rely on heuristics instead of precise usages search.
+ * A Java file is considered affected if:
+ * 1. It contains changed field name as a content substring.
+ * 2. Its simple file name is not equal to a field's owner class simple name (to avoid recompiling field's declaration again)
+ */
+private class MockJavaConstantSearch(private val workDir: File) : Callbacks.ConstantAffectionResolver {
     override fun request(
         ownerClassName: String,
         fieldName: String,
@@ -501,13 +512,19 @@ private class MockConstantSearch(private val workDir: File) : Callbacks.Constant
         fieldRemoved: Boolean,
         accessChanged: Boolean
     ): Future<Callbacks.ConstantAffection> {
-        val affectedFiles = workDir.walk().filter { it.isFile && it.isNameUsage() }
-        return FixedFuture(Callbacks.ConstantAffection(affectedFiles.toList()))
-    }
+        fun File.isAffected(): Boolean {
+            if (!isJavaFile()) return false
 
-    private fun File.isNameUsage(): Boolean =
-            name.equals("usage.kt", ignoreCase = true)
-            || name.equals("usage.java", ignoreCase = true)
+            if (nameWithoutExtension == ownerClassName.substringAfterLast(".")) return false
+
+            val code = readText()
+            return code.contains(fieldName)
+        }
+
+
+        val affectedJavaFiles = workDir.walk().filter(File::isAffected).toList()
+        return FixedFuture(Callbacks.ConstantAffection(affectedJavaFiles))
+    }
 }
 
 internal val ProjectDescriptor.allModuleTargets: Collection<ModuleBuildTarget>
