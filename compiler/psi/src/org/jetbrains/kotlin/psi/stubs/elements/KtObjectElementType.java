@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl;
 import org.jetbrains.kotlin.psi.stubs.impl.Utils;
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,7 +41,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
     @Override
     public KotlinObjectStub createStub(@NotNull KtObjectDeclaration psi, StubElement parentStub) {
         String name = psi.getName();
-        FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
+        FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
         List<String> superNames = KtPsiUtilKt.getSuperNames(psi);
         return new KotlinObjectStubImpl(parentStub, StringRef.fromString(name), fqName, Utils.INSTANCE.wrapStrings(superNames),
                                         psi.isTopLevel(), psi.isCompanion(), psi.isLocal(), psi.isObjectLiteral());

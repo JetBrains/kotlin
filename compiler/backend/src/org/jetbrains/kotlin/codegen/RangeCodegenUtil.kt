@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtForExpression
@@ -94,7 +94,7 @@ fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
 fun BindingContext.getElementType(forExpression: KtForExpression): KotlinType {
     val loopRange = forExpression.loopRange!!
     val nextCall = get(BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange)
-            ?: throw AssertionError("No next() function " + DiagnosticUtils.atLocation(loopRange))
+            ?: throw AssertionError("No next() function " + PsiDiagnosticUtils.atLocation(loopRange))
     return nextCall.resultingDescriptor.returnType!!
 }
 

@@ -22,16 +22,16 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 
 class KtTypeAliasElementType(debugName: String) :
     KtStubElementType<KotlinTypeAliasStub, KtTypeAlias>(debugName, KtTypeAlias::class.java, KotlinTypeAliasStub::class.java) {
 
     override fun createStub(psi: KtTypeAlias, parentStub: StubElement<*>?): KotlinTypeAliasStub {
         val name = StringRef.fromString(psi.name)
-        val fqName = StringRef.fromString(ResolveSessionUtils.safeFqNameForLazyResolve(psi)?.asString())
+        val fqName = StringRef.fromString(psi.safeFqNameForLazyResolve()?.asString())
         val isTopLevel = psi.isTopLevel()
         return KotlinTypeAliasStubImpl(parentStub, name, fqName, isTopLevel)
     }

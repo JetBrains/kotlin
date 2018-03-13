@@ -31,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -324,10 +323,6 @@ public class KtPsiUtil {
 
     public static boolean isAbstract(@NotNull KtDeclarationWithBody declaration) {
         return declaration.getBodyExpression() == null;
-    }
-
-    public static boolean isBackingFieldReference(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof SyntheticFieldDescriptor;
     }
 
     @Nullable

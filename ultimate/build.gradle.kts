@@ -24,6 +24,7 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":core:descriptors")) { isTransitive = false }
+    compile(project(":compiler:psi")) { isTransitive = false }
     compile(project(":core:descriptors.jvm")) { isTransitive = false }
     compile(project(":core:util.runtime")) { isTransitive = false }
     compile(project(":compiler:light-classes")) { isTransitive = false }

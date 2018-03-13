@@ -24,7 +24,7 @@ import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileAnnotationList
@@ -364,7 +364,7 @@ fun PsiElement.getElementTextWithContext(): String {
         .toString()
 }
 
-fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${DiagnosticUtils.atLocation(this)}"
+fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${PsiDiagnosticUtils.atLocation(this)}"
 
 fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList): KtFileAnnotationList {
     if (file.fileAnnotationList != null) {
@@ -423,4 +423,12 @@ fun ASTNode.leaves(forward: Boolean = true): Sequence<ASTNode> {
     } else {
         return generateSequence(TreeUtil.prevLeaf(this)) { TreeUtil.prevLeaf(it) }
     }
+}
+
+fun ASTNode.closestPsiElement(): PsiElement? {
+    var node = this
+    while (node.psi == null) {
+        node = node.treeParent
+    }
+    return node.psi
 }

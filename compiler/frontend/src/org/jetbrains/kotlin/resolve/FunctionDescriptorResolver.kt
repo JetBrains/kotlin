@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -142,7 +142,9 @@ class FunctionDescriptorResolver(
     ) {
         if (functionDescriptor.returnType != null) return
         assert(function.typeReference == null) {
-            "Return type must be initialized early for function: " + function.text + ", at: " + DiagnosticUtils.atLocation(function)
+            "Return type must be initialized early for function: " + function.text + ", at: " + PsiDiagnosticUtils.atLocation(
+                function
+            )
         }
 
         val inferredReturnType = when {

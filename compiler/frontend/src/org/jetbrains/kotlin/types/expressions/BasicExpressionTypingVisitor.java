@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import org.jetbrains.kotlin.psi.psiUtil.ReservedCheckingKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
@@ -159,7 +160,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public KotlinTypeInfo visitSimpleNameExpression(@NotNull KtSimpleNameExpression expression, ExpressionTypingContext context) {
-        KtPsiUtilKt.checkReservedYield(expression, context.trace);
+        ReservedCheckingKt.checkReservedYield(expression, context.trace);
 
         // TODO : other members
         // TODO : type substitutions???
@@ -882,7 +883,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             boolean isStatement
     ) {
         KtSimpleNameExpression labelExpression = expression.getTargetLabel();
-        KtPsiUtilKt.checkReservedYield(labelExpression, context.trace);
+        ReservedCheckingKt.checkReservedYield(labelExpression, context.trace);
         if (labelExpression != null) {
             PsiElement labelIdentifier = labelExpression.getIdentifier();
             UnderscoreChecker.INSTANCE.checkIdentifier(labelIdentifier, context.trace, components.languageVersionSettings);

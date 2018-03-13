@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.util
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 class KotlinFrontEndException(message: String, cause: Throwable) : KotlinExceptionWithAttachments(message, cause) {
@@ -14,7 +14,7 @@ class KotlinFrontEndException(message: String, cause: Throwable) : KotlinExcepti
         message: String,
         cause: Throwable,
         element: PsiElement
-    ) : this(getExceptionMessage("Front-end", message, cause, DiagnosticUtils.atLocation(element)), cause) {
+    ) : this(getExceptionMessage("Front-end", message, cause, PsiDiagnosticUtils.atLocation(element)), cause) {
         withAttachment(
             "element.kt",
             if (element.isValid) {

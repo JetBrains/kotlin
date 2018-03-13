@@ -25,9 +25,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtProperty;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl;
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils;
 
 import java.io.IOException;
 
@@ -47,7 +47,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
                 psi.getReceiverTypeReference() != null, psi.getTypeReference() != null,
-                ResolveSessionUtils.safeFqNameForLazyResolve(psi)
+                KtPsiUtilKt.safeFqNameForLazyResolve(psi)
         );
     }
 

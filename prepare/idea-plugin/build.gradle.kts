@@ -23,6 +23,7 @@ val projectsToShadow by extra(listOf(
         ":core:deserialization",
         ":eval4j",
         ":idea:formatter",
+        ":compiler:psi",
         ":compiler:frontend",
         ":compiler:frontend.java",
         ":compiler:frontend.script",

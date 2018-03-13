@@ -23,18 +23,15 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
@@ -404,12 +401,6 @@ fun KtNamedDeclaration.getValueParameterList(): KtParameterList? {
     }
 }
 
-fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name? {
-    val callExpression = parent as KtCallExpression
-    val resolvedCall = callExpression.getResolvedCall(bindingContext)
-    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.name
-}
-
 fun KtExpression.asAssignment(): KtBinaryExpression? =
     if (KtPsiUtil.isAssignment(this)) this as KtBinaryExpression else null
 
@@ -476,31 +467,6 @@ private val BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN = Regex("([a-zA-Z0-9
 fun canPlaceAfterSimpleNameEntry(element: PsiElement?): Boolean {
     val entryText = element?.text ?: return true
     return !BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN.matches(entryText)
-}
-
-fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: String, message: String) {
-    KtPsiUtil.getPreviousWord(element, word)?.let {
-        sink.report(Errors.UNSUPPORTED.on(it, message))
-    }
-}
-
-fun checkReservedYield(expression: KtSimpleNameExpression?, sink: DiagnosticSink) {
-    // do not force identifier calculation for elements from stubs.
-    if (expression?.getReferencedName() != "yield") return
-
-    val identifier = expression.getIdentifier() ?: return
-
-    if (identifier.node.elementType == KtTokens.IDENTIFIER && "yield" == identifier.text) {
-        sink.report(Errors.YIELD_IS_RESERVED.on(identifier, "Identifier 'yield' is reserved. Use backticks to call it: `yield`"))
-    }
-}
-
-val MESSAGE_FOR_YIELD_BEFORE_LAMBDA = "Reserved yield block/lambda. Use 'yield() { ... }' or 'yield(fun...)'"
-
-fun checkReservedYieldBeforeLambda(element: PsiElement, sink: DiagnosticSink) {
-    KtPsiUtil.getPreviousWord(element, "yield")?.let {
-        sink.report(Errors.YIELD_IS_RESERVED.on(it, MESSAGE_FOR_YIELD_BEFORE_LAMBDA))
-    }
 }
 
 fun KtElement.nonStaticOuterClasses(): Sequence<KtClass> {
@@ -598,4 +564,18 @@ fun PsiElement.isTopLevelKtOrJavaMember(): Boolean {
         is PsiClass -> containingClass == null && this.qualifiedName != null
         else -> false
     }
+}
+
+fun KtNamedDeclaration.safeNameForLazyResolve(): Name {
+    return nameAsName.safeNameForLazyResolve()
+}
+
+fun Name?.safeNameForLazyResolve(): Name {
+    return SpecialNames.safeIdentifier(this)
+}
+
+fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
+    //NOTE: should only create special names for package level declarations, so we can safely rely on real fq name for parent
+    val parentFqName = KtNamedDeclarationUtil.getParentFqName(this)
+    return parentFqName?.child(safeNameForLazyResolve())
 }

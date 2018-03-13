@@ -26,9 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl;
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils;
 
 import java.io.IOException;
 
@@ -42,7 +42,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
     public KotlinFunctionStub createStub(@NotNull KtNamedFunction psi, @NotNull StubElement parentStub) {
         boolean isTopLevel = psi.getParent() instanceof KtFile;
         boolean isExtension = psi.getReceiverTypeReference() != null;
-        FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
+        FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
         boolean hasBlockBody = psi.hasBlockBody();
         boolean hasBody = psi.hasBody();
         return new KotlinFunctionStubImpl(parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
