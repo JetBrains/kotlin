@@ -692,7 +692,7 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
         if (isBuildCacheSupported()) {
             dir(kotlinTask.destinationDir)
                 .withNormalizer(CompileClasspathNormalizer::class.java)
-                .withPropertyName("${kotlinTask.name} output classes")
+                .withPropertyName("${kotlinTask.name}OutputClasses")
         }
         else {
             dirCompatible(kotlinTask.destinationDir)
