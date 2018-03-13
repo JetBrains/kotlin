@@ -29,3 +29,5 @@ projectTest {
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
+
+testsJar()

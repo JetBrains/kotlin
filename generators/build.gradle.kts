@@ -38,3 +38,5 @@ val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.Gene
 val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare")
 
 val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt")
+
+testsJar()

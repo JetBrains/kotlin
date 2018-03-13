@@ -2,11 +2,15 @@
 apply { plugin("kotlin") }
 apply { plugin("jps-compatible") }
 
+val depenencyProjects = arrayOf(
+    ":generators", ":compiler", ":js:js.tests", ":compiler:tests-java8"
+)
+
 dependencies {
-    jpsTest(project(":generators", configuration = "jpsTest"))
-    jpsTest(project(":compiler", configuration = "jpsTest"))
-    jpsTest(project(":js:js.tests", configuration = "jpsTest"))
-    jpsTest(project(":compiler:tests-java8", configuration = "jpsTest"))
+    depenencyProjects.forEach {
+        testCompile(projectTests(it))
+        jpsTest(project(it, configuration = "jpsTest"))
+    }
 }
 
 sourceSets {
