@@ -30,7 +30,7 @@ val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
 when (platform) {
     "182" -> {
-        extra["versions.jar.guava"] = "21.0"
+        extra["versions.jar.guava"] = "23.6-jre"
         extra["versions.jar.groovy-all"] = "2.4.12"
         extra["versions.jar.lombok-ast"] = "0.2.3"
         extra["versions.jar.swingx-core"] = "1.6.2-2"
