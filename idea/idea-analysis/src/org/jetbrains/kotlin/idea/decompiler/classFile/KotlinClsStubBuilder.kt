@@ -56,7 +56,8 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         val kotlinClass = IDEKotlinBinaryClassCache.getKotlinBinaryClass(file, fileContent) ?: error("Can't find binary class for Kotlin file: $file")
         val header = kotlinClass.classHeader
         val classId = kotlinClass.classId
-        val packageFqName = classId.packageFqName
+        val packageFqName = header.packageName?.let { FqName(it) } ?: classId.packageFqName
+
         if (!header.metadataVersion.isCompatible()) {
             return createIncompatibleAbiVersionFileStub()
         }
