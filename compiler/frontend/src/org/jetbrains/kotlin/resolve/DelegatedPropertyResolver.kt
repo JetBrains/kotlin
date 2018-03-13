@@ -23,14 +23,12 @@ import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER
+import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
-import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -600,9 +598,13 @@ class DelegatedPropertyResolver(
             val delegateType = delegateTypeInfo.type ?: return null
             val delegateDataFlow = delegateTypeInfo.dataFlowInfo
 
-            val inferenceSession = DelegatesInferenceSession(callComponents, kotlinCallCompleter, psiCallResolver, trace)
+            val variableType = variableDescriptor.type.unwrap()
+            val expectedType = if (variableType !is DeferredType) variableType else null
+            val inferenceSession = DelegatesInferenceSession(
+                callComponents, kotlinCallCompleter, psiCallResolver, trace, variableDescriptor, builtIns, expectedType
+            )
             val receiver = createReceiverForGetSetValueMethods(delegateExpression, delegateType, trace)
-            val context = createContextForGetSetValueMethods(variableDescriptor, scopeForDelegate, dataFlowInfo, trace, inferenceSession)
+            val context = createContextForGetSetValueMethods(variableDescriptor, scopeForDelegate, dataFlowInfo, traceToResolveConventionMethods, inferenceSession)
 
             inferenceSession.expressionTypingContext = context
 
@@ -694,7 +696,10 @@ class DelegatedPropertyResolver(
         val callComponents: KotlinCallComponents,
         val kotlinCallCompleter: KotlinCallCompleter,
         val psiCallResolver: PSICallResolver,
-        val trace: BindingTrace
+        val trace: BindingTrace,
+        val variableDescriptor: VariableDescriptorWithAccessors,
+        val builtIns: KotlinBuiltIns,
+        val expectedType: UnwrappedType?
     ) : InferenceExtension {
         lateinit var expressionTypingContext: ExpressionTypingContext
 
@@ -745,7 +750,47 @@ class DelegatedPropertyResolver(
         }
 
         fun prepareForCompletion(commonSystem: NewConstraintSystem) {
+            val csBuilder = commonSystem.getBuilder()
+            for (call in calls) {
+                val resultAtom = call.resultCallAtom ?: continue
+                when (resultAtom.candidateDescriptor.name) {
+                    OperatorNameConventions.GET_VALUE -> resultAtom.addConstraintsForGetValueMethod(csBuilder)
+                    OperatorNameConventions.SET_VALUE -> resultAtom.addConstraintsForSetValueMethod(csBuilder)
+                }
+            }
+        }
 
+        private fun ResolvedCallAtom.addConstraintForThis(descriptor: CallableDescriptor, commonSystem: ConstraintSystemBuilder) {
+            val typeOfThis = variableDescriptor.extensionReceiverParameter?.type
+                    ?: variableDescriptor.dispatchReceiverParameter?.type
+                    ?: builtIns.nullableNothingType
+
+            val valueParameterForThis = descriptor.valueParameters.getOrNull(0) ?: return
+            val substitutedType = substitutor.substituteKeepAnnotations(valueParameterForThis.type.unwrap())
+            commonSystem.addSubtypeConstraint(typeOfThis.unwrap(), substitutedType, ExpectedTypeConstraintPosition(atom))
+        }
+
+        private fun ResolvedCallAtom.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {
+            val candidateDescriptor = candidateDescriptor
+            if (candidateDescriptor.name != OperatorNameConventions.GET_VALUE) return
+
+            val unsubstitutedReturnType = candidateDescriptor.returnType?.unwrap() ?: return
+            val substitutedReturnType = substitutor.substituteKeepAnnotations(unsubstitutedReturnType)
+
+            if (expectedType != null) {
+                commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType, ExpectedTypeConstraintPosition(atom))
+            }
+
+            addConstraintForThis(candidateDescriptor, commonSystem)
+        }
+
+        private fun ResolvedCallAtom.addConstraintsForSetValueMethod(commonSystem: ConstraintSystemBuilder) {
+            val unsubstitutedParameterType = candidateDescriptor.valueParameters.getOrNull(2)?.type?.unwrap() ?: return
+            val substitutedParameterType = substitutor.substituteKeepAnnotations(unsubstitutedParameterType)
+
+            if (expectedType != null) {
+                commonSystem.addSubtypeConstraint(expectedType, substitutedParameterType, ExpectedTypeConstraintPosition(atom))
+            }
         }
     }
 

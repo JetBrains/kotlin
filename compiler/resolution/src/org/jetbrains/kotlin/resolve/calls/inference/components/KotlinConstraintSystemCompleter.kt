@@ -130,7 +130,7 @@ class KotlinConstraintSystemCompleter(
 
 
     private fun getOrderedAllTypeVariables(c: Context, topLevelPrimitive: List<ResolvedAtom>): List<TypeConstructor> {
-        fun ResolvedAtom.process(to: MutableList<TypeConstructor>) {
+        fun ResolvedAtom.process(to: HashSet<TypeConstructor>) {
             val typeVariables = when (this) {
                 is ResolvedCallAtom -> substitutor.freshVariables
                 is ResolvedCallableReferenceAtom -> candidate?.freshSubstitutor?.freshVariables.orEmpty()
@@ -147,11 +147,11 @@ class KotlinConstraintSystemCompleter(
             }
         }
 
-        val result = arrayListOf<TypeConstructor>().apply {
+        val result = hashSetOf<TypeConstructor>().apply {
             for (primitive in topLevelPrimitive) {
                 primitive.process(this)
             }
-        }
+        }.toList()
 
         assert(result.size == c.notFixedTypeVariables.size) {
             val notFoundTypeVariables = c.notFixedTypeVariables.keys.toMutableSet().removeAll(result)
