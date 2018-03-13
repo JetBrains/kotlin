@@ -6,6 +6,7 @@ import com.intellij.debugger.streams.trace.dsl.ForLoopBody
 import com.intellij.debugger.streams.trace.dsl.StatementFactory
 import com.intellij.debugger.streams.trace.dsl.Variable
 import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinCodeBlock
 
 /**
  * @author Vitaliy.Bibaev

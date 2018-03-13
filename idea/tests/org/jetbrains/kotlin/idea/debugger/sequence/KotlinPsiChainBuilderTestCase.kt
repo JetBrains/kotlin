@@ -1,5 +1,5 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin
+package org.jetbrains.kotlin.idea.debugger.sequence
 
 import com.intellij.debugger.streams.test.StreamChainBuilderTestCase
 import com.intellij.debugger.streams.wrapper.StreamChain
@@ -17,7 +17,7 @@ import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
+import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import java.io.File
@@ -48,7 +48,8 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
       if (ProjectLibraryTable.getInstance(LightPlatformTestCase.getProject()).getLibraryByName(stdLibName) == null) {
         VfsRootAccess.allowRootAccess(LibraryUtil.LIBRARIES_DIRECTORY)
         PsiTestUtil.addLibrary(testRootDisposable, LightPlatformTestCase.getModule(), stdLibName,
-            LibraryUtil.LIBRARIES_DIRECTORY, LibraryUtil.KOTLIN_STD_LIBRARY_JAR_NAME)
+                               LibraryUtil.LIBRARIES_DIRECTORY, LibraryUtil.KOTLIN_STD_LIBRARY_JAR_NAME
+        )
       }
     }
     LibraryModificationTracker.getInstance(LightPlatformTestCase.getProject()).incModificationCount()

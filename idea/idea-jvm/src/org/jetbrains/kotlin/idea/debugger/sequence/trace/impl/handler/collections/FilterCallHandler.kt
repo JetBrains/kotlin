@@ -1,8 +1,6 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.trace.impl.handler.collections
+package org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections
 
-import com.intellij.debugger.streams.kotlin.trace.impl.handler.typeBefore
-import com.intellij.debugger.streams.kotlin.trace.impl.handler.withArgs
 import com.intellij.debugger.streams.trace.dsl.*
 import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
 import com.intellij.debugger.streams.trace.impl.handler.type.ClassTypeImpl
@@ -11,6 +9,8 @@ import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.StreamCall
 import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
 import com.intellij.debugger.streams.wrapper.impl.CallArgumentImpl
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.typeBefore
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.withArgs
 
 /**
  * @author Vitaliy.Bibaev

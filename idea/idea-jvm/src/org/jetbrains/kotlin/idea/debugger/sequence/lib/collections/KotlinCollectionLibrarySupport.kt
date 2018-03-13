@@ -1,8 +1,7 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.lib.collections
+package org.jetbrains.kotlin.idea.debugger.sequence.lib.collections
 
-import com.intellij.debugger.streams.kotlin.trace.impl.handler.collections.*
-import com.intellij.debugger.streams.kotlin.trace.impl.interpret.FilterTraceInterpreter
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.interpret.FilterTraceInterpreter
 import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.TerminalOperation
 import com.intellij.debugger.streams.lib.impl.LibrarySupportBase
@@ -14,6 +13,9 @@ import com.intellij.debugger.streams.trace.TerminatorCallHandler
 import com.intellij.debugger.streams.trace.dsl.Dsl
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections.BothSemanticHandlerWrapper
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections.BothSemanticsHandler
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections.FilterCallHandler
 
 /**
  * @author Vitaliy.Bibaev
@@ -30,7 +32,8 @@ class KotlinCollectionLibrarySupport : LibrarySupportBase() {
   }
 
   private abstract class CollectionOperation(override val name: String,
-                                             handler: BothSemanticsHandler)
+                                             handler: BothSemanticsHandler
+  )
     : IntermediateOperation, TerminalOperation {
 
     private val wrapper = BothSemanticHandlerWrapper(handler)

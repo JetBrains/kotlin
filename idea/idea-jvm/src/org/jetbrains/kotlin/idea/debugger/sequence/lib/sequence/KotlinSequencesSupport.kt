@@ -1,11 +1,11 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.lib.sequence
+package org.jetbrains.kotlin.idea.debugger.sequence.lib.sequence
 
-import com.intellij.debugger.streams.kotlin.resolve.ChunkedResolver
-import com.intellij.debugger.streams.kotlin.resolve.FilteredMapResolver
-import com.intellij.debugger.streams.kotlin.resolve.WindowedResolver
-import com.intellij.debugger.streams.kotlin.trace.impl.handler.sequence.FilterIsInstanceHandler
-import com.intellij.debugger.streams.kotlin.trace.impl.handler.sequence.KotlinDistinctByHandler
+import org.jetbrains.kotlin.idea.debugger.sequence.resolve.ChunkedResolver
+import org.jetbrains.kotlin.idea.debugger.sequence.resolve.FilteredMapResolver
+import org.jetbrains.kotlin.idea.debugger.sequence.resolve.WindowedResolver
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.sequence.FilterIsInstanceHandler
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.sequence.KotlinDistinctByHandler
 import com.intellij.debugger.streams.lib.IntermediateOperation
 import com.intellij.debugger.streams.lib.impl.*
 import com.intellij.debugger.streams.resolve.AppendResolver
@@ -57,5 +57,6 @@ class KotlinSequencesSupport : LibrarySupportBase() {
 
   private class FilterIsInstanceOperationHandler()
     : IntermediateOperationBase("filterIsInstance", ::FilterIsInstanceHandler,
-      SimplePeekCallTraceInterpreter(), FilteredMapResolver())
+      SimplePeekCallTraceInterpreter(), FilteredMapResolver()
+  )
 }

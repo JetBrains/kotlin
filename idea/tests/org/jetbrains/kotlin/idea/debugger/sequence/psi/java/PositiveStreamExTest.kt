@@ -1,9 +1,9 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.psi.java
+package org.jetbrains.kotlin.idea.debugger.sequence.psi.java
 
-import com.intellij.debugger.streams.kotlin.KotlinPsiChainBuilderTestCase
-import com.intellij.debugger.streams.kotlin.LibraryUtil
-import com.intellij.debugger.streams.kotlin.lib.java.StreamExLibrarySupportProvider
+import org.jetbrains.kotlin.idea.debugger.sequence.KotlinPsiChainBuilderTestCase
+import org.jetbrains.kotlin.idea.debugger.sequence.LibraryUtil
+import org.jetbrains.kotlin.idea.debugger.sequence.lib.java.StreamExLibrarySupportProvider
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -20,7 +20,7 @@ class PositiveStreamExTest : KotlinPsiChainBuilderTestCase.Positive("streams/pos
     ApplicationManager.getApplication().runWriteAction {
       VfsRootAccess.allowRootAccess(LibraryUtil.LIBRARIES_DIRECTORY)
       PsiTestUtil.addLibrary(testRootDisposable, LightPlatformTestCase.getModule(),
-          "StreamEx", LibraryUtil.LIBRARIES_DIRECTORY, "streamex-0.6.5.jar")
+                             "StreamEx", LibraryUtil.LIBRARIES_DIRECTORY, "streamex-0.6.5.jar")
     }
   }
 
