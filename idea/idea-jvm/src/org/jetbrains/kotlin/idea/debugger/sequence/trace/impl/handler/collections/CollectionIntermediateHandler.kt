@@ -1,5 +1,5 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.trace.impl.handler.collections
+package org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections
 
 import com.intellij.debugger.streams.trace.IntermediateCallHandler
 import com.intellij.debugger.streams.trace.dsl.*
@@ -12,7 +12,8 @@ class CollectionIntermediateHandler(
     order: Int,
     private val call: IntermediateStreamCall,
     private val dsl: Dsl,
-    private val internalHandler: BothSemanticsHandler)
+    private val internalHandler: BothSemanticsHandler
+)
   : IntermediateCallHandler, CollectionHandlerBase(order, dsl, call, internalHandler) {
 
   override fun prepareResult(): CodeBlock {

@@ -1,8 +1,8 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.psi.collections
+package org.jetbrains.kotlin.idea.debugger.sequence.psi.collections
 
-import com.intellij.debugger.streams.kotlin.psi.impl.KotlinChainTransformerImpl
-import com.intellij.debugger.streams.kotlin.psi.resolveType
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.impl.KotlinChainTransformerImpl
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import com.intellij.debugger.streams.psi.ChainTransformer
 import com.intellij.debugger.streams.wrapper.QualifierExpression
 import com.intellij.debugger.streams.wrapper.StreamChain

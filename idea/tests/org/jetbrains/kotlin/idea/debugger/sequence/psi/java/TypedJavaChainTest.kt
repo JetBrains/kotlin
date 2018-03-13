@@ -1,12 +1,12 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.psi.java
+package org.jetbrains.kotlin.idea.debugger.sequence.psi.java
 
-import com.intellij.debugger.streams.kotlin.lib.java.JavaStandardLibrarySupportProvider
-import com.intellij.debugger.streams.kotlin.psi.TypedChainTestCase
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.DOUBLE
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.INT
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.LONG
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.NULLABLE_ANY
+import org.jetbrains.kotlin.idea.debugger.sequence.lib.java.JavaStandardLibrarySupportProvider
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.TypedChainTestCase
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.DOUBLE
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.INT
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.LONG
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.NULLABLE_ANY
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 
 /**

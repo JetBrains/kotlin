@@ -1,11 +1,11 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.psi.collections
+package org.jetbrains.kotlin.idea.debugger.sequence.psi.collections
 
-import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor
-import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.ANY
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes.NULLABLE_ANY
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.CallTypeExtractor
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.KotlinPsiUtil
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.ANY
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes.NULLABLE_ANY
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.types.KotlinType

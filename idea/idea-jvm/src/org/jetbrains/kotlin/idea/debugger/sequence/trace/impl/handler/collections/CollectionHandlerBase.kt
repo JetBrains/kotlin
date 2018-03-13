@@ -1,5 +1,5 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.trace.impl.handler.collections
+package org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections
 
 import com.intellij.debugger.streams.trace.TraceHandler
 import com.intellij.debugger.streams.trace.dsl.Dsl
@@ -12,7 +12,8 @@ import com.intellij.debugger.streams.wrapper.StreamCall
  * @author Vitaliy.Bibaev
  */
 abstract class CollectionHandlerBase(order: Int, private val dsl: Dsl,
-                                     private val call: StreamCall, private val internalHandler: BothSemanticsHandler)
+                                     private val call: StreamCall, private val internalHandler: BothSemanticsHandler
+)
   : TraceHandler {
   private val declarations: List<VariableDeclaration> = internalHandler.variablesDeclaration(call, order, dsl)
   protected val variables: List<Variable> = declarations.map(VariableDeclaration::variable)

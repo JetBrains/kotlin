@@ -1,8 +1,8 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.exec
+package org.jetbrains.kotlin.idea.debugger.sequence.exec
 
 import com.intellij.debugger.impl.OutputChecker
-import com.intellij.debugger.streams.kotlin.LibraryUtil
+import org.jetbrains.kotlin.idea.debugger.sequence.LibraryUtil
 import com.intellij.debugger.streams.lib.LibrarySupportProvider
 import com.intellij.debugger.streams.test.TraceExecutionTestCase
 import com.intellij.execution.configurations.JavaParameters
@@ -35,13 +35,13 @@ abstract class KotlinTraceEvaluationTestCase : TraceExecutionTestCase() {
     super.setUpModule()
     ApplicationManager.getApplication().runWriteAction {
       VfsRootAccess.allowRootAccess(LibraryUtil.LIBRARIES_DIRECTORY)
-      PsiTestUtil.addLibrary(myModule, "${LibraryUtil.LIBRARIES_DIRECTORY}/$STDLIB_JAR_NAME")
+      PsiTestUtil.addLibrary(myModule, "${LibraryUtil.LIBRARIES_DIRECTORY}/${STDLIB_JAR_NAME}")
     }
   }
 
   override fun createJavaParameters(mainClass: String?): JavaParameters {
     val javaParameters = super.createJavaParameters(mainClass)
-    javaParameters.classPath.add("${LibraryUtil.LIBRARIES_DIRECTORY}/$STDLIB_JAR_NAME")
+    javaParameters.classPath.add("${LibraryUtil.LIBRARIES_DIRECTORY}/${STDLIB_JAR_NAME}")
     return javaParameters
   }
 

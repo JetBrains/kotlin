@@ -1,10 +1,10 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.psi.impl
+package org.jetbrains.kotlin.idea.debugger.sequence.psi.impl
 
-import com.intellij.debugger.streams.kotlin.psi.CallTypeExtractor
-import com.intellij.debugger.streams.kotlin.psi.KotlinPsiUtil
-import com.intellij.debugger.streams.kotlin.psi.callName
-import com.intellij.debugger.streams.kotlin.psi.resolveType
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.CallTypeExtractor
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.KotlinPsiUtil
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.callName
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import com.intellij.debugger.streams.psi.ChainTransformer
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.debugger.streams.wrapper.CallArgument

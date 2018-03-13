@@ -1,5 +1,5 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.trace.impl.handler.collections
+package org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections
 
 import com.intellij.debugger.streams.trace.TerminatorCallHandler
 import com.intellij.debugger.streams.trace.dsl.CodeBlock
@@ -8,6 +8,8 @@ import com.intellij.debugger.streams.trace.dsl.Expression
 import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections.BothSemanticsHandler
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.collections.CollectionHandlerBase
 
 /**
  * @author Vitaliy.Bibaev
@@ -15,7 +17,8 @@ import com.intellij.debugger.streams.wrapper.TerminatorStreamCall
 class CollectionTerminatorHandler(private val call: TerminatorStreamCall,
                                   private val resultExpression: String,
                                   private val dsl: Dsl,
-                                  private val internalHandler: BothSemanticsHandler)
+                                  private val internalHandler: BothSemanticsHandler
+)
   : TerminatorCallHandler, CollectionHandlerBase(Int.MAX_VALUE, dsl, call, internalHandler) {
 
   override fun prepareResult(): CodeBlock {

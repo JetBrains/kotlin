@@ -1,10 +1,10 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.trace.impl.handler
+package org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler
 
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
 import com.intellij.debugger.streams.wrapper.*
 import com.intellij.debugger.streams.wrapper.impl.IntermediateStreamCallImpl
 import com.intellij.debugger.streams.wrapper.impl.TerminatorStreamCallImpl
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 
 /**
  * @author Vitaliy.Bibaev

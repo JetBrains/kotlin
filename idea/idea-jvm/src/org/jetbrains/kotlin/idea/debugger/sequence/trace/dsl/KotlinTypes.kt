@@ -1,5 +1,5 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.trace.dsl
+package org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl
 
 import com.intellij.debugger.streams.trace.dsl.Types
 import com.intellij.debugger.streams.trace.impl.handler.type.*
@@ -40,7 +40,7 @@ object KotlinTypes : Types {
     FLOAT -> ArrayTypeImpl(FLOAT, { "kotlin.FloatArray" }, { "kotlin.FloatArray($it)" })
     DOUBLE -> ArrayTypeImpl(DOUBLE, { "kotlin.DoubleArray" }, { "kotlin.DoubleArray($it)" })
     else -> ArrayTypeImpl(nullable { elementType }, { "kotlin.Array<$it>" },
-        { "kotlin.arrayOfNulls<${elementType.genericTypeName}>($it)" })
+                          { "kotlin.arrayOfNulls<${elementType.genericTypeName}>($it)" })
   }
 
   override fun map(keyType: GenericType, valueType: GenericType): MapType =
@@ -66,8 +66,10 @@ object KotlinTypes : Types {
   }
 
   private val primitiveTypesIndex: Map<String, GenericType> =
-      listOf(KotlinTypes.BOOLEAN, KotlinTypes.BYTE, KotlinTypes.INT, KotlinTypes.SHORT,
-          KotlinTypes.CHAR, KotlinTypes.LONG, KotlinTypes.FLOAT, KotlinTypes.DOUBLE)
+      listOf(
+          BOOLEAN, BYTE, INT, SHORT,
+          CHAR, LONG, FLOAT, DOUBLE
+      )
           .associate { it.genericTypeName to it }
 
   private val primitiveArraysIndex: Map<String, ArrayType> = primitiveTypesIndex.asSequence()

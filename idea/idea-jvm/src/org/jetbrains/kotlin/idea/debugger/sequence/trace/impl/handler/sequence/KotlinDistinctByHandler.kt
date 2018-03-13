@@ -1,7 +1,7 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.trace.impl.handler.sequence
+package org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.handler.sequence
 
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 import com.intellij.debugger.streams.trace.dsl.*
 import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
 import com.intellij.debugger.streams.trace.impl.handler.type.ClassTypeImpl
@@ -11,7 +11,6 @@ import com.intellij.debugger.streams.wrapper.CallArgument
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
 import com.intellij.debugger.streams.wrapper.impl.CallArgumentImpl
 import com.intellij.debugger.streams.wrapper.impl.IntermediateStreamCallImpl
-import one.util.streamex.StreamEx
 
 /**
  * Based on com.intellij.debugger.streams.trace.impl.handler.unified.DistinctByKeyHandler
@@ -64,7 +63,6 @@ class KotlinDistinctByHandler(callNumber: Int, private val call: IntermediateStr
   override fun prepareResult(): CodeBlock {
     val keys2TimesBefore = dsl.map(KotlinTypes.NULLABLE_ANY, dsl.types.list(dsl.types.INT), "keys2Times")
     val transitions = dsl.map(dsl.types.INT, dsl.types.INT, "transitionsMap")
-    StreamEx.of(1).distinct().toList()
     return dsl.block {
       add(peekHandler.prepareResult())
       declare(keys2TimesBefore.defaultDeclaration())

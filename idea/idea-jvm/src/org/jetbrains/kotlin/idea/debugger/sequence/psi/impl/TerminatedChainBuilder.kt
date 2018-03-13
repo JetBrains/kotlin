@@ -1,8 +1,8 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.psi.impl
+package org.jetbrains.kotlin.idea.debugger.sequence.psi.impl
 
-import com.intellij.debugger.streams.kotlin.psi.StreamCallChecker
-import com.intellij.debugger.streams.kotlin.psi.previousCall
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.StreamCallChecker
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.previousCall
 import com.intellij.debugger.streams.psi.ChainTransformer
 import org.jetbrains.kotlin.psi.KtCallExpression
 import java.util.*
@@ -11,7 +11,8 @@ import java.util.*
  * @author Vitaliy.Bibaev
  */
 open class TerminatedChainBuilder(transformer: ChainTransformer<KtCallExpression>,
-                                  private val callChecker: StreamCallChecker)
+                                  private val callChecker: StreamCallChecker
+)
   : KotlinChainBuilderBase(transformer) {
   override val existenceChecker: ExistenceChecker = MyExistenceChecker()
 

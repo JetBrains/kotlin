@@ -1,9 +1,9 @@
 // Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.debugger.streams.kotlin.psi.collection
+package org.jetbrains.kotlin.idea.debugger.sequence.psi.collection
 
-import com.intellij.debugger.streams.kotlin.lib.collections.KotlinCollectionSupportProvider
-import com.intellij.debugger.streams.kotlin.psi.TypedChainTestCase
-import com.intellij.debugger.streams.kotlin.trace.dsl.KotlinTypes
+import org.jetbrains.kotlin.idea.debugger.sequence.lib.collections.KotlinCollectionSupportProvider
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.TypedChainTestCase
+import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinTypes
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 
 /**
