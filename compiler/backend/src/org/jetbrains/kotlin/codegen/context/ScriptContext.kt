@@ -16,21 +16,30 @@
 
 package org.jetbrains.kotlin.codegen.context
 
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.FieldInfo
 import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
+import org.jetbrains.org.objectweb.asm.Type
+import kotlin.reflect.KClass
 
 class ScriptContext(
-    typeMapper: KotlinTypeMapper,
+    val typeMapper: KotlinTypeMapper,
     val scriptDescriptor: ScriptDescriptor,
     val earlierScripts: List<ScriptDescriptor>,
     contextDescriptor: ClassDescriptor,
@@ -41,14 +50,14 @@ class ScriptContext(
     val resultFieldInfo: FieldInfo
         get() {
             assert(state.replSpecific.shouldGenerateScriptResultValue) { "Should not be called unless 'scriptResultFieldName' is set" }
-            val state = state
             val scriptResultFieldName = state.replSpecific.scriptResultFieldName!!
             return FieldInfo.createForHiddenField(state.typeMapper.mapClass(scriptDescriptor), AsmTypes.OBJECT_TYPE, scriptResultFieldName)
         }
 
+    val script = DescriptorToSourceUtils.getSourceFromDescriptor(scriptDescriptor) as KtScript?
+            ?: error("Declaration should be present for script: $scriptDescriptor")
+
     init {
-        val script = DescriptorToSourceUtils.getSourceFromDescriptor(scriptDescriptor) as KtScript?
-                ?: error("Declaration should be present for script: $scriptDescriptor")
         val lastDeclaration = script.declarations.lastOrNull()
         if (lastDeclaration is KtAnonymousInitializer) {
             this.lastStatement = lastDeclaration.body
@@ -56,6 +65,29 @@ class ScriptContext(
             this.lastStatement = null
         }
     }
+
+    fun getImplicitReceiverName(index: Int): String = "\$\$implicitReceiver$index"
+
+    fun getImplicitReceiverType(index: Int): Type? {
+        val receivers = script.kotlinScriptDefinition.value.implicitReceivers
+        val kClass = receivers.getOrNull(index)?.classifier as? KClass<*>
+        return kClass?.java?.classId?.let(AsmUtil::asmTypeByClassId)
+    }
+
+    fun getOuterReceiverExpression(prefix: StackValue?, thisOrOuterClass: ClassDescriptor): StackValue {
+        receiverDescriptors.forEachIndexed { index, outerReceiver ->
+            if (outerReceiver == thisOrOuterClass) {
+                return getImplicitReceiverType(index)?.let { type ->
+                    val owner = typeMapper.mapType(scriptDescriptor)
+                    StackValue.field(type, owner, getImplicitReceiverName(index), false, prefix ?: StackValue.LOCAL_0)
+                } ?: error("Invalid script receiver: ${thisOrOuterClass.fqNameSafe}")
+            }
+        }
+        error("Script receiver not found: ${thisOrOuterClass.fqNameSafe}")
+    }
+
+    val receiverDescriptors: List<ClassDescriptor>
+        get() = scriptDescriptor.implicitReceivers
 
     fun getScriptFieldName(scriptDescriptor: ScriptDescriptor): String {
         val index = earlierScripts.indexOf(scriptDescriptor)
@@ -69,3 +101,6 @@ class ScriptContext(
         return "Script: " + contextDescriptor.name.asString()
     }
 }
+
+private val Class<*>.classId: ClassId
+    get() = enclosingClass?.classId?.createNestedClassId(Name.identifier(simpleName)) ?: ClassId.topLevel(FqName(name))

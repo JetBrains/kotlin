@@ -363,6 +363,7 @@ public class DefaultErrorMessages {
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 
         MAP.put(MISSING_DEPENDENCY_CLASS, "Cannot access class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
+        MAP.put(MISSING_SCRIPT_RECEIVER_CLASS, "Cannot access implicit script receiver class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
         MAP.put(PRE_RELEASE_CLASS, "{0} is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler", TO_STRING);
         MAP.put(INCOMPATIBLE_CLASS,
                 "{0} was compiled with an incompatible version of Kotlin. {1}",

@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -92,16 +89,26 @@ class LazyScriptDescriptor(
     override fun computeSupertypes() =
         listOf(ScriptHelper.getInstance().getKotlinType(this, scriptDefinition.template)).ifEmpty { listOf(builtIns.anyType) }
 
-    private val scriptOuterScope: () -> LexicalScope = resolveSession.storageManager.createLazyValue {
-        val receivers = scriptDefinition.implicitReceivers
-        var outerScope = super.getOuterScope()
-        for (receiver in receivers.asReversed()) {
+    private val scriptImplicitReceivers: () -> List<ClassDescriptor> = resolveSession.storageManager.createLazyValue {
+        scriptDefinition.implicitReceivers.mapNotNull { receiver ->
             val receiverClassId = receiver.classifier?.let { it as? KClass<*> }?.java?.classId
-            val receiverClassDescriptor = receiverClassId?.let { module.findClassAcrossModuleDependencies(it) }
-            if (receiverClassDescriptor == null) {
-                resolveSession.trace.report(Errors.MISSING_DEPENDENCY_CLASS.on(scriptInfo.script, receiverClassId?.asSingleFqName() ?: FqName(receiver.toString())))
-                break
+            receiverClassId?.let {
+                module.findClassAcrossModuleDependencies(it)
+                        ?: also {
+                            // TODO: use PositioningStrategies to highlight some specific place in case of error, instead of treating the whole file as invalid
+                            resolveSession.trace.report(
+                                Errors.MISSING_SCRIPT_RECEIVER_CLASS.on(scriptInfo.script, receiverClassId.asSingleFqName())
+                            )
+                        }
             }
+        }
+    }
+
+    override fun getImplicitReceivers(): List<ClassDescriptor> = scriptImplicitReceivers()
+
+    private val scriptOuterScope: () -> LexicalScope = resolveSession.storageManager.createLazyValue {
+        var outerScope = super.getOuterScope()
+        for (receiverClassDescriptor in implicitReceivers.asReversed()) {
             outerScope = LexicalScopeImpl(
                 outerScope,
                 receiverClassDescriptor,

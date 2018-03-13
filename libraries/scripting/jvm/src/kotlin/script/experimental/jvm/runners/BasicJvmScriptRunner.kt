@@ -26,7 +26,12 @@ open class BasicJvmScriptRunner<ScriptBase : Any>(val baseClass: KClass<ScriptBa
                     if (scriptObject !is Class<*>)
                         ResultWithDiagnostics.Failure(ScriptDiagnostic("expecting class in this implementation, got ${scriptObject?.javaClass}"))
                     else {
-                        scriptObject.getConstructor().newInstance()
+                        val receivers = scriptEvaluationEnvironment.getOrNull(ScriptEvaluationEnvironmentParams.implicitReceivers)
+                        if (receivers == null) {
+                            scriptObject.getConstructor().newInstance()
+                        } else {
+                            scriptObject.getConstructor(Array<Any>::class.java).newInstance(receivers.toTypedArray())
+                        }
 
                         ResultWithDiagnostics.Success(EvaluationResult(null, scriptEvaluationEnvironment))
                     }

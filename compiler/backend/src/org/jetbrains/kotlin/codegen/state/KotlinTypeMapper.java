@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.reflect.KType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
@@ -1563,12 +1564,20 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    public JvmMethodSignature mapScriptSignature(@NotNull ScriptDescriptor script, @NotNull List<ScriptDescriptor> importedScripts) {
+    public JvmMethodSignature mapScriptSignature(
+            @NotNull ScriptDescriptor script,
+            @NotNull List<ScriptDescriptor> importedScripts,
+            List<? extends KType> implicitReceivers
+    ) {
         JvmSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
 
         sw.writeParametersStart();
 
         if (importedScripts.size() > 0) {
+            writeParameter(sw, DescriptorUtilsKt.getModule(script).getBuiltIns().getArray().getDefaultType(), null);
+        }
+
+        if (implicitReceivers.size() > 0) {
             writeParameter(sw, DescriptorUtilsKt.getModule(script).getBuiltIns().getArray().getDefaultType(), null);
         }
 
