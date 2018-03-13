@@ -3,12 +3,10 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir
+package org.jetbrains.kotlin.fir.declarations
 
-import com.intellij.psi.PsiElement
+// Probably not a function
+@Deprecated("May be not needed")
+interface FirAnonymousInitializer : FirDeclarationWithBody {
 
-interface FirElement {
-    val psi: PsiElement?
-
-    val session: FirSession
 }
