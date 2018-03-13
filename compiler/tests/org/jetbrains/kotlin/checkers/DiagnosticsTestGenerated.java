@@ -21465,6 +21465,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/typealias/import.kt");
             }
 
+            @TestMetadata("importForTypealiasObject.kt")
+            public void testImportForTypealiasObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typealias/importForTypealiasObject.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("importFromTypeAliasObject.kt")
             public void testImportFromTypeAliasObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/importFromTypeAliasObject.kt");

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
-import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -50,7 +50,7 @@ fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companion
 
 fun DeclarationDescriptor.getImportableDescriptor(): DeclarationDescriptor =
     when (this) {
-        is TypeAliasConstructorDescriptor -> containingDeclaration
+        is DescriptorDerivedFromTypeAlias -> typeAliasDescriptor
         is ConstructorDescriptor -> containingDeclaration
         is PropertyAccessorDescriptor -> correspondingProperty
         else -> this
@@ -97,13 +97,12 @@ val ClassifierDescriptorWithTypeParameters.hasCompanionObject: Boolean
 
 val ClassDescriptor.hasClassValueDescriptor: Boolean get() = classValueDescriptor != null
 
-val ClassifierDescriptorWithTypeParameters.classValueDescriptor: ClassDescriptor?
-    get() = denotedClassDescriptor?.let {
-        if (it.kind.isSingleton)
-            it
+val ClassDescriptor.classValueDescriptor: ClassDescriptor?
+    get() =
+        if (kind.isSingleton)
+            this
         else
-            it.companionObjectDescriptor
-    }
+            companionObjectDescriptor
 
 val ClassifierDescriptorWithTypeParameters.classValueTypeDescriptor: ClassDescriptor?
     get() = denotedClassDescriptor?.let {
