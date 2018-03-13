@@ -5,10 +5,4 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.psi.PsiElement
-
-interface FirElement {
-    val psi: PsiElement?
-
-    val session: FirSession
-}
+interface FirSession

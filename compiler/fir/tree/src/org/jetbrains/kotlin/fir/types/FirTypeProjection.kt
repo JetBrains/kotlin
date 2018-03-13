@@ -3,12 +3,10 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir
+package org.jetbrains.kotlin.fir.types
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirElement
 
-interface FirElement {
-    val psi: PsiElement?
+interface FirTypeProjection : FirElement {
 
-    val session: FirSession
 }
