@@ -12,8 +12,15 @@ import java.io.File
 class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.0")
 class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.+")
 
-class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.1-rc-1", androidGradlePluginVersion = "3.0.0-beta1") {
+// TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
+class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT("4.5", "3.2.0-alpha06")
 
+class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT("4.1", "3.0.0")
+
+abstract class KotlinAndroid3GradleIT(
+    gradleVersion: String,
+    androidGradlePluginVersion: String
+) : AbstractKotlinAndroidGradleTests(gradleVersion, androidGradlePluginVersion) {
     @Test
     fun testApplyWithFeaturePlugin() {
         val project = Project("AndroidProject", gradleVersion)

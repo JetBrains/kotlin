@@ -4,7 +4,6 @@ import com.android.build.gradle.*
 import com.android.build.gradle.api.*
 import com.android.build.gradle.tasks.MergeResources
 import com.android.builder.model.SourceProvider
-import com.android.ide.common.res2.ResourceSet
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -120,7 +119,7 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
     }
 
     override fun getResDirectories(variantData: BaseVariant): List<File> {
-        return variantData.mergeResources?.computeResourceSetList0()?.flatMap { it.sourceFiles } ?: emptyList()
+        return variantData.mergeResources?.computeResourceSetList0() ?: emptyList()
     }
 
     private inner class KaptVariant(variantData: BaseVariant) : KaptVariantData<BaseVariant>(variantData) {
@@ -143,17 +142,26 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         }
     }
 
-    //TODO once the Android plugin reaches its 3.0.0 release, consider compiling against it (remove the reflective call)
-    //TODO this is a private API for now
-    private fun MergeResources.computeResourceSetList0(): List<ResourceSet>? {
+    //TODO A public API is expected for this purpose. Once it is available, use the public API
+    private fun MergeResources.computeResourceSetList0(): List<File>? {
         val computeResourceSetListMethod = MergeResources::class.java.declaredMethods
                 .firstOrNull { it.name == "computeResourceSetList" && it.parameterCount == 0 } ?: return null
 
         val oldIsAccessible = computeResourceSetListMethod.isAccessible
         try {
             computeResourceSetListMethod.isAccessible = true
-            @Suppress("UNCHECKED_CAST")
-            return computeResourceSetListMethod.invoke(this) as? List<ResourceSet>
+
+            val resourceSets = computeResourceSetListMethod.invoke(this) as? Iterable<*>
+
+            return resourceSets
+                ?.mapNotNull { resourceSet ->
+                    val getSourceFiles = resourceSet?.javaClass?.methods?.find { it.name == "getSourceFiles" && it.parameterCount == 0 }
+                    val files = getSourceFiles?.invoke(resourceSet)
+                    @Suppress("UNCHECKED_CAST")
+                    files as? Iterable<File>
+                }
+                ?.flatten()
+
         } finally {
             computeResourceSetListMethod.isAccessible = oldIsAccessible
         }
