@@ -49,7 +49,7 @@ interface DependenciesResolver : ScriptDependenciesResolver {
 
 data class ScriptReport(val message: String, val severity: Severity = Severity.ERROR, val position: Position? = null) {
     data class Position(val startLine: Int, val startColumn: Int, val endLine: Int? = null, val endColumn: Int? = null)
-    enum class Severity { ERROR, WARNING, INFO, DEBUG }
+    enum class Severity { FATAL, ERROR, WARNING, INFO, DEBUG }
 }
 
 fun ScriptDependencies.asSuccess(): ResolveResult.Success = ResolveResult.Success(this)
