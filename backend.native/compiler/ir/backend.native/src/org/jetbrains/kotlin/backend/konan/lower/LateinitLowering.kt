@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
@@ -98,7 +99,7 @@ internal class LateinitLowering(
                 val propertyReference = expression.extensionReceiver!! as IrPropertyReference
                 assert(propertyReference.extensionReceiver == null, { "'lateinit' modifier is not allowed on extension properties" })
                 // TODO: Take propertyReference.fieldSymbol as soon as it will show up in IR.
-                val propertyDescriptor = propertyReference.descriptor
+                val propertyDescriptor = propertyReference.descriptor.resolveFakeOverride().original
 
                 val type = propertyDescriptor.type
                 assert(!KotlinBuiltIns.isPrimitiveType(type), { "'lateinit' modifier is not allowed on primitive types" })

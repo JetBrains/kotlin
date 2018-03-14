@@ -1092,6 +1092,11 @@ task lateinit_globalIsInitialized(type: RunKonanTest) {
     source = "codegen/lateinit/globalIsInitialized.kt"
 }
 
+task lateinit_innerIsInitialized(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/lateinit/innerIsInitialized.kt"
+}
+
 task kclass0(type: RunKonanTest) {
     source = "codegen/kclass/kclass0.kt"
 }
