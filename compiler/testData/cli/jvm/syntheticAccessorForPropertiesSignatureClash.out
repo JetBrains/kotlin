@@ -58,12 +58,12 @@ compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:18:15:
     fun `access$setFoo$p`(p: A.Companion, d: Int): Unit defined in A.Companion
     companion object {
               ^
-compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:28:9: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA$Companion;)I):
+compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:30:9: error: platform declaration clash: The following declarations have the same JVM signature (access$getFoo$p(LA$Companion;)I):
     fun <get-foo>(): Int defined in A.Companion
     fun `access$getFoo$p`(p: A.Companion): Int defined in A.Companion
         fun `access$getFoo$p`(p: A.Companion): Int = 1
         ^
-compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:29:9: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA$Companion;I)V):
+compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.kt:31:9: error: platform declaration clash: The following declarations have the same JVM signature (access$setFoo$p(LA$Companion;I)V):
     fun <set-foo>(<set-?>: Int): Unit defined in A.Companion
     fun `access$setFoo$p`(p: A.Companion, d: Int): Unit defined in A.Companion
         fun `access$setFoo$p`(p: A.Companion, d: Int) {}

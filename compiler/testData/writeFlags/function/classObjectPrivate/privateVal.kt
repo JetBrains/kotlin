@@ -4,6 +4,8 @@ class Foo {
 
   companion object {
     private val test = "String"
+      // Custom getter is needed, otherwise no need to generate getTest
+      get() = field
   }
 }
 
