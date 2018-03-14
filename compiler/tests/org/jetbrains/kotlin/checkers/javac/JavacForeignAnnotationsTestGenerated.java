@@ -26,13 +26,13 @@ public class JavacForeignAnnotationsTestGenerated extends AbstractJavacForeignAn
     }
 
     @TestMetadata("android_support.kt")
-    public void testAndroidSupport() throws Exception {
+    public void testAndroid_support() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/android_support.kt");
         doTest(fileName);
     }
 
     @TestMetadata("androidx.kt")
-    public void testAndroidSupport() throws Exception {
+    public void testAndroidx() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotations/tests/androidx.kt");
         doTest(fileName);
     }
