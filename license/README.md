@@ -102,6 +102,10 @@ any distributions of the compiler, libraries or plugin:
        - License: Eclipse Public License v1.0 (license/third_party/testdata/eclipse_license.txt)
        - Origin: Eclipse JDT, Copyright (c) 2011, 2013 Stephan Herrmann and others.
 
+ - Path: third-party/annotations/androidx
+      - License: Apache 2 (license/third_party/aosp_license.txt)
+      - Origin: Copyright (C) 2011-15 The Android Open Source Project
+
  - Path: third-party/annotations/edu/umd/cs/findbugs
        - License: LGPL 2.1 (license/third_party/testdata/findbugs_license.txt)
        - Origin: Bytecode Analysis Framework, Copyright (C) 2005 University of Maryland
@@ -186,4 +190,3 @@ any distributions of the compiler, libraries or plugin:
  - Path: libraries/examples/browser-example-with-library/src/js/jquery.js
       - License: MIT (license/third_party/jquery_license.txt)
       - Origin: jQuery JavaScript Library v1.6.2, Copyright 2011, John Resig
-   
