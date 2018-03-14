@@ -140,6 +140,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         )
     }
 
+    // Protected by ("projectContext.storageManager.lock")
     private val resolverByModuleDescriptor = mutableMapOf<ModuleDescriptor, ResolverForModule>()
 
     override val allModules: Collection<M> by lazy {
@@ -174,7 +175,9 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     }
 
     internal fun isResolverForModuleDescriptorComputed(descriptor: ModuleDescriptor) =
-        descriptor in resolverByModuleDescriptor
+        projectContext.storageManager.compute {
+            descriptor in resolverByModuleDescriptor
+        }
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
         if (!isCorrectModuleInfo(moduleInfo)) {
