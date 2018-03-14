@@ -19,3 +19,10 @@ lambda {
   // signature: invoke(Lkotlin/Unit;[ILjava/util/Set;)Ljava/lang/String;
   local final fun kotlin/Unit.<no name provided>(s: kotlin/IntArray?, t: kotlin/collections/Set<kotlin/Double>): kotlin/String
 }
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    LambdaKt
+  }
+}

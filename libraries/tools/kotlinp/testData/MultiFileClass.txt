@@ -12,3 +12,10 @@ package {
   public final const val x: kotlin/Int /* = ... */
     public final get
 }
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package test {
+    test/File__MultiFileClassKt (test/File)
+  }
+}

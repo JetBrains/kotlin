@@ -28,16 +28,20 @@ object Main {
         }
 
         for (path in paths) {
-            if (!path.endsWith(".class")) throw KotlinpException("only .class files are supported")
-
             val file = File(path)
             if (!file.exists()) throw KotlinpException("file does not exist: $path")
 
-            try {
-                print(Kotlinp.renderClassFile(Kotlinp.readClassFile(file)))
+            val text = try {
+                when (file.extension) {
+                    "class" -> Kotlinp.renderClassFile(Kotlinp.readClassFile(file))
+                    "kotlin_module" -> Kotlinp.renderModuleFile(Kotlinp.readModuleFile(file))
+                    else -> throw KotlinpException("only .class and .kotlin_module files are supported")
+                }
             } catch (e: IOException) {
                 throw KotlinpException("I/O operation failed: ${e.message}")
             }
+
+            print(text)
         }
 
         if (paths.isEmpty()) {

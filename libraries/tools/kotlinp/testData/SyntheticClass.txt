@@ -8,3 +8,10 @@ package {
 // SyntheticClassKt$WhenMappings.class
 // ------------------------------------------
 synthetic class
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    SyntheticClassKt
+  }
+}

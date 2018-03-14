@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kotlinp.test
 import com.intellij.openapi.Disposable
 import junit.framework.TestCase.assertEquals
 import kotlinx.metadata.jvm.KotlinClassMetadata
+import kotlinx.metadata.jvm.KotlinModuleMetadata
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -26,7 +27,13 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
     compile(file, disposable, tmpdir) { outputFile ->
         when (outputFile.extension) {
             "kotlin_module" -> {
-                // TODO: support kotlin_module files
+                val moduleFile = Kotlinp.readModuleFile(outputFile)!!
+                val moduleFile2 = transformModuleFile(moduleFile)
+
+                for ((sb, moduleFileToRender) in listOf(read to moduleFile, readWriteRead to moduleFile2)) {
+                    sb.appendFileName(outputFile.relativeTo(tmpdir))
+                    sb.append(Kotlinp.renderModuleFile(moduleFileToRender))
+                }
             }
             "class" -> {
                 val classFile = Kotlinp.readClassFile(outputFile)!!
@@ -91,3 +98,6 @@ private fun transformClassFile(classFile: KotlinClassMetadata): KotlinClassMetad
             KotlinClassMetadata.MultiFileClassPart.Writer().apply(classFile::accept).write(classFile.facadeClassName)
         else -> classFile
     }
+
+private fun transformModuleFile(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
+    KotlinModuleMetadata.Writer().apply(moduleFile::accept).write()
