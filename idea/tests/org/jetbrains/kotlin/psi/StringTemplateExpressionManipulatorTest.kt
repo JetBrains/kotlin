@@ -64,7 +64,7 @@ class StringTemplateExpressionManipulatorTest : KotlinLightCodeInsightFixtureTes
         val expression = KtPsiFactory(project).createExpression(original) as KtStringTemplateExpression
         val manipulator = ElementManipulators.getNotNullManipulator(expression)
         val newExpression = if (range == null) manipulator.handleContentChange(expression, newContent) else manipulator.handleContentChange(expression, range, newContent)
-        assertEquals(expected, newExpression.text)
+        assertEquals(expected, newExpression?.text)
     }
 
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
