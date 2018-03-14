@@ -31,6 +31,7 @@ when (platform) {
         extra["versions.jar.kxml2"] = "2.3.0"
         extra["versions.jar.streamex"] = "0.6.5"
         extra["versions.jar.gson"] = "2.8.2"
+        extra["versions.jar.oro"] = "2.0.8"
         for (jar in gradleJars) {
             extra["versions.jar.$jar"] = "4.4"
         }
