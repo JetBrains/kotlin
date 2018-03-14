@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -33,17 +33,6 @@ fun MemberDescriptor.expectedDescriptor() = expectedDescriptors().firstOrNull()
 fun KtDeclaration.expectedDeclarationIfAny(): KtDeclaration? {
     val expectedDescriptor = (toDescriptor() as? MemberDescriptor)?.expectedDescriptor() ?: return null
     return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtDeclaration
-}
-
-fun KtDeclaration.isExpectedOrExpectedClassMember(): Boolean {
-    if (hasExpectModifier()) return true
-    if (this is KtClassOrObject) return this.isExpected()
-
-    return containingClassOrObject?.isExpected() == true
-}
-
-fun KtClassOrObject.isExpected(): Boolean {
-    return this.hasExpectModifier() || this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
 }
 
 fun DeclarationDescriptor.liftToExpected(): DeclarationDescriptor? {
@@ -114,8 +103,19 @@ fun KtDeclaration.actualsForExpected(module: Module? = null): Set<KtDeclaration>
         } ?: emptySet()
 
 
-fun KtNamedDeclaration.isExpectDeclaration(): Boolean =
-    (toDescriptor() as? MemberDescriptor)?.isExpect == true
+fun KtDeclaration.isExpectDeclaration(): Boolean {
+    if (hasExpectModifier()) return true
+    if (this is KtClassOrObject) return this.isExpected()
 
-fun KtNamedDeclaration.isActualDeclaration(): Boolean =
-    (toDescriptor() as? MemberDescriptor)?.isActual == true
+    return containingClassOrObject?.isExpected() == true
+}
+
+private fun KtClassOrObject.isExpected(): Boolean {
+    return this.hasExpectModifier() || this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
+}
+
+fun KtDeclaration.isActualDeclaration(): Boolean {
+    if (hasActualModifier()) return true
+
+    return (toDescriptor() as? MemberDescriptor)?.isActual == true
+}

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallab
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.isExpectedOrExpectedClassMember
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -101,7 +101,7 @@ class KotlinChangeSignatureData(
         primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
             val primaryDeclaration = primaryFunction.declaration as? KtDeclaration ?: return@flatMapTo emptyList()
 
-            if (primaryDeclaration.isExpectedOrExpectedClassMember()) {
+            if (primaryDeclaration.isExpectDeclaration()) {
                 return@flatMapTo primaryDeclaration.actualsForExpected().mapNotNull {
                     val descriptor = it.unsafeResolveToDescriptor()
                     val callableDescriptor = when (descriptor) {
