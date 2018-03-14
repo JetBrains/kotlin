@@ -202,7 +202,15 @@ public class JvmCodegenUtil {
         }
 
         if (!isCallInsideSameClassAsFieldRepresentingProperty(property, context)) {
-            if (!isDebuggerContext(context)) {
+            DeclarationDescriptor propertyOwner = property.getContainingDeclaration();
+            boolean isAnnotationValue;
+            if (propertyOwner instanceof ClassDescriptor) {
+                isAnnotationValue = ((ClassDescriptor) propertyOwner).getKind() == ANNOTATION_CLASS;
+            } else {
+                isAnnotationValue = false;
+            }
+
+            if (isAnnotationValue || !isDebuggerContext(context)) {
                 // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
                 return false;
             }
