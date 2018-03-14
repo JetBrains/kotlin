@@ -30,6 +30,11 @@ To run a shorter build with only the host compiler and libraries, run:
 
     ./gradlew dist distPlatformLibs
 
+To include Kotlin compiler in [composite build](https://docs.gradle.org/current/userguide/composite_builds.html) and build
+against it, use the `kotlinProjectPath` project property:
+
+    ./gradlew dist -PkotlinProjectPath=path/to/kotlin/project
+
 After that, you should be able to compile your programs like this:
 
     export PATH=./dist/bin:$PATH
