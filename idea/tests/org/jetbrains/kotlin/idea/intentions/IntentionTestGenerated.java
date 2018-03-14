@@ -25,6 +25,645 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddAnnotationUseSiteTarget extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddAnnotationUseSiteTarget() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("hasTarget1.kt")
+        public void testHasTarget1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/hasTarget1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasTarget2.kt")
+        public void testHasTarget2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/hasTarget2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasTarget3.kt")
+        public void testHasTarget3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/hasTarget3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Constructor extends AbstractIntentionTest {
+            public void testAllFilesPresentInConstructor() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/constructor"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("parameter.kt")
+            public void testParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/parameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("secondary.kt")
+            public void testSecondary() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/secondary.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Val extends AbstractIntentionTest {
+                public void testAllFilesPresentInVal() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("delegate.kt")
+                public void testDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val/delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("field.kt")
+                public void testField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val/field.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("file.kt")
+                public void testFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val/file.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("get.kt")
+                public void testGet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val/get.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("param.kt")
+                public void testParam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val/param.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("property.kt")
+                public void testProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val/property.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("set.kt")
+                public void testSet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val/set.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setparam.kt")
+                public void testSetparam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/val/setparam.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Var extends AbstractIntentionTest {
+                public void testAllFilesPresentInVar() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("delegate.kt")
+                public void testDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var/delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("field.kt")
+                public void testField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var/field.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("file.kt")
+                public void testFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var/file.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("get.kt")
+                public void testGet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var/get.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("param.kt")
+                public void testParam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var/param.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("property.kt")
+                public void testProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var/property.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("set.kt")
+                public void testSet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var/set.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setparam.kt")
+                public void testSetparam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor/var/setparam.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Extension extends AbstractIntentionTest {
+            public void testAllFilesPresentInExtension() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/extension"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Function extends AbstractIntentionTest {
+                public void testAllFilesPresentInFunction() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("delegate.kt")
+                public void testDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function/delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("field.kt")
+                public void testField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function/field.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("file.kt")
+                public void testFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function/file.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("get.kt")
+                public void testGet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function/get.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("param.kt")
+                public void testParam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function/param.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("property.kt")
+                public void testProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function/property.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("set.kt")
+                public void testSet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function/set.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setparam.kt")
+                public void testSetparam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/function/setparam.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Property extends AbstractIntentionTest {
+                public void testAllFilesPresentInProperty() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("delegate.kt")
+                public void testDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property/delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("field.kt")
+                public void testField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property/field.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("file.kt")
+                public void testFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property/file.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("get.kt")
+                public void testGet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property/get.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("param.kt")
+                public void testParam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property/param.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("property.kt")
+                public void testProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property/property.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("set.kt")
+                public void testSet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property/set.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setparam.kt")
+                public void testSetparam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/extension/property/setparam.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Property extends AbstractIntentionTest {
+            public void testAllFilesPresentInProperty() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/property"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("local.kt")
+            public void testLocal() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Delegate extends AbstractIntentionTest {
+                public void testAllFilesPresentInDelegate() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("delegate.kt")
+                public void testDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate/delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("field.kt")
+                public void testField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate/field.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("file.kt")
+                public void testFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate/file.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("get.kt")
+                public void testGet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate/get.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("param.kt")
+                public void testParam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate/param.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("property.kt")
+                public void testProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate/property.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("set.kt")
+                public void testSet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate/set.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setparam.kt")
+                public void testSetparam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/delegate/setparam.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Val extends AbstractIntentionTest {
+                public void testAllFilesPresentInVal() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/property/val"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("delegate.kt")
+                public void testDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val/delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("field.kt")
+                public void testField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val/field.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("file.kt")
+                public void testFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val/file.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("get.kt")
+                public void testGet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val/get.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("param.kt")
+                public void testParam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val/param.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("property.kt")
+                public void testProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val/property.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("set.kt")
+                public void testSet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val/set.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setparam.kt")
+                public void testSetparam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/val/setparam.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ValNoBacking extends AbstractIntentionTest {
+                public void testAllFilesPresentInValNoBacking() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("delegate.kt")
+                public void testDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking/delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("field.kt")
+                public void testField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking/field.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("file.kt")
+                public void testFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking/file.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("get.kt")
+                public void testGet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking/get.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("param.kt")
+                public void testParam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking/param.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("property.kt")
+                public void testProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking/property.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("set.kt")
+                public void testSet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking/set.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setparam.kt")
+                public void testSetparam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/valNoBacking/setparam.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Var extends AbstractIntentionTest {
+                public void testAllFilesPresentInVar() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/property/var"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("delegate.kt")
+                public void testDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var/delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("field.kt")
+                public void testField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var/field.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("file.kt")
+                public void testFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var/file.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("get.kt")
+                public void testGet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var/get.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("param.kt")
+                public void testParam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var/param.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("property.kt")
+                public void testProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var/property.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("set.kt")
+                public void testSet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var/set.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setparam.kt")
+                public void testSetparam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/var/setparam.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class VarNoBacking extends AbstractIntentionTest {
+                public void testAllFilesPresentInVarNoBacking() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("delegate.kt")
+                public void testDelegate() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking/delegate.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("field.kt")
+                public void testField() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking/field.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("file.kt")
+                public void testFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking/file.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("get.kt")
+                public void testGet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking/get.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("param.kt")
+                public void testParam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking/param.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("property.kt")
+                public void testProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking/property.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking/receiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("set.kt")
+                public void testSet() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking/set.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("setparam.kt")
+                public void testSetparam() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/property/varNoBacking/setparam.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addBraces")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
