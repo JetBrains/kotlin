@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface FirResolvedType : FirType {
+interface FirResolvedType : FirTypeWithNullability {
     val type: KotlinType
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitResolvedType(this, data)
 }

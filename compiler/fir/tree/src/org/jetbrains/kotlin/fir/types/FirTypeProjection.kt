@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirTypeProjection : FirElement {
-
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitTypeProjection(this, data)
 }

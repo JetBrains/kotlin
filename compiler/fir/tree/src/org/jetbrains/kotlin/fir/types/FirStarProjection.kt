@@ -5,4 +5,9 @@
 
 package org.jetbrains.kotlin.fir.types
 
-interface FirStarProjection : FirTypeProjection
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
+interface FirStarProjection : FirTypeProjection {
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitStarProjection(this, data)
+}

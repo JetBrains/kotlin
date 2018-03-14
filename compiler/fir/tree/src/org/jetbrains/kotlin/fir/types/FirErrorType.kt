@@ -5,5 +5,9 @@
 
 package org.jetbrains.kotlin.fir.types
 
-interface FirExplicitType : FirType, FirTypeProjectionContainer {
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
+interface FirErrorType : FirType {
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitErrorType(this, data)
 }

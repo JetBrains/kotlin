@@ -455,6 +455,8 @@ fun KtModifierListOwner.visibilityModifierTypeOrDefault(): KtModifierKeywordToke
 
 fun KtDeclaration.modalityModifier() = modifierFromTokenSet(MODALITY_MODIFIERS)
 
+fun KtDeclaration.modalityModifierType(): KtModifierKeywordToken? = modalityModifier()?.node?.elementType as KtModifierKeywordToken?
+
 fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
 fun KtStringTemplateExpression.isPlainWithEscapes() =
     entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }

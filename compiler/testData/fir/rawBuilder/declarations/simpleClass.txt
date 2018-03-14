@@ -1,0 +1,23 @@
+FILE: simpleClass.kt
+    unknown final class SomeInterface() {
+        unknown final function foo(x: Int, y: String): String
+
+        unknown final property bar(val): Boolean
+            unknown get(): Boolean
+
+    }
+    unknown final class SomeClass() : SomeInterface {
+        private final property baz(val): <implicit> = STUB
+            unknown get(): <implicit>
+
+        unknown final override function foo(x: Int, y: String): String {
+        }
+
+        unknown final override property bar(var): Boolean
+            unknown get(): <implicit> {
+                STUB
+            }
+            unknown set(value: Boolean): <implicit> {
+            }
+
+    }

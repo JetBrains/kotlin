@@ -5,5 +5,9 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
 interface FirImplicitType : FirType {
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitImplicitType(this, data)
 }

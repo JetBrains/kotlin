@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 interface FirNamedDeclaration : FirDeclaration {
     val name: Name
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitNamedDeclaration(this, data)
 }

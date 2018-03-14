@@ -5,8 +5,22 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirConstructorCall
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirConstructor : FirFunction {
+interface FirConstructor : FirFunction, FirAnnotationContainer {
     val delegatedConstructor: FirConstructorCall?
+
+    val visibility: Visibility
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitConstructor(this, data)
+
+    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+        acceptAnnotations(visitor, data)
+        delegatedConstructor?.accept(visitor, data)
+        super.acceptChildren(visitor, data)
+    }
 }

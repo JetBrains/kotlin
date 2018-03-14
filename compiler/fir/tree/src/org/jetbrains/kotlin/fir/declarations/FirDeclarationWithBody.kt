@@ -6,7 +6,16 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.expressions.FirBody
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirDeclarationWithBody : FirDeclaration {
-    val body: FirBody
+    val body: FirBody?
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitDeclarationWithBody(this, data)
+
+    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+        body?.accept(visitor, data)
+        super.acceptChildren(visitor, data)
+    }
 }

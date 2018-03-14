@@ -8,9 +8,21 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirMemberDeclaration : FirTypeParameterContainer, FirNamedDeclaration, FirAnnotationContainer {
     val visibility: Visibility
 
     val modality: Modality
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitMemberDeclaration(this, data)
+
+    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+        acceptAnnotations(visitor, data)
+        for (typeParameter in typeParameters) {
+            typeParameter.accept(visitor, data)
+        }
+        super.acceptChildren(visitor, data)
+    }
 }

@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
 // Is it necessary?
 interface FirErrorDeclaration : FirDeclaration {
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitErrorDeclaration(this, data)
 }
