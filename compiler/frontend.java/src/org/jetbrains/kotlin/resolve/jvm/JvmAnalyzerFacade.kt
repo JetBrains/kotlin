@@ -43,17 +43,16 @@ class JvmPlatformParameters(
 
 object JvmAnalyzerFacade : ResolverForModuleFactory() {
     override fun <M : ModuleInfo> createResolverForModule(
-        moduleInfo: M,
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
-        moduleContent: ModuleContent,
+        moduleContent: ModuleContent<M>,
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageSettingsProvider: LanguageSettingsProvider,
         packagePartProvider: PackagePartProvider
     ): ResolverForModule {
-        val (syntheticFiles, moduleContentScope) = moduleContent
+        val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project, moduleContext.storageManager, syntheticFiles,

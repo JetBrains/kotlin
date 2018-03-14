@@ -86,12 +86,12 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val projectContext: ProjectContext,
     modules: Collection<M>,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
-    private val modulesContent: (M) -> ModuleContent,
+    private val modulesContent: (M) -> ModuleContent<M>,
     private val platformParameters: PlatformAnalysisParameters,
     private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
     override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
+    private val packagePartProviderFactory: (ModuleContent<M>) -> PackagePartProvider = { _ -> PackagePartProvider.Empty },
     private val firstDependency: M? = null,
     private val modulePlatforms: (M) -> MultiTargetPlatform?,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
@@ -170,11 +170,19 @@ class ResolverForProjectImpl<M : ModuleInfo>(
 
                 ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
-                resolverForModuleFactoryByPlatform(module.platform).createResolverForModule(
-                    module, descriptor as ModuleDescriptorImpl, projectContext.withModule(descriptor), modulesContent(module),
-                    platformParameters, targetEnvironment, this@ResolverForProjectImpl,
+                val moduleContent = modulesContent(module)
+                val packagePartProvider = packagePartProviderFactory(moduleContent)
+                val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
+
+                resolverForModuleFactory.createResolverForModule(
+                    descriptor as ModuleDescriptorImpl,
+                    projectContext.withModule(descriptor),
+                    moduleContent,
+                    platformParameters,
+                    targetEnvironment,
+                    this@ResolverForProjectImpl,
                     languageSettingsProvider,
-                    packagePartProviderFactory(module, modulesContent(module))
+                    packagePartProvider
                 )
             }
         }
@@ -241,7 +249,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     }
 }
 
-data class ModuleContent(
+data class ModuleContent<out M: ModuleInfo>(
+    val moduleInfo: M,
     val syntheticFiles: Collection<KtFile>,
     val moduleContentScope: GlobalSearchScope
 )
@@ -283,10 +292,9 @@ interface TrackableModuleInfo : ModuleInfo {
 
 abstract class ResolverForModuleFactory {
     abstract fun <M : ModuleInfo> createResolverForModule(
-        moduleInfo: M,
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
-        moduleContent: ModuleContent,
+        moduleContent: ModuleContent<M>,
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
@@ -339,7 +347,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
     private val resolverForProject: ResolverForProjectImpl<M>,
     private val module: ModuleDescriptor,
-    moduleContent: ModuleContent,
+    moduleContent: ModuleContent<M>,
     private val packageOracle: PackageOracle
 ) : PackageFragmentProvider {
     private val syntheticFilePackages = moduleContent.syntheticFiles.map { it.packageFqName }.toSet()

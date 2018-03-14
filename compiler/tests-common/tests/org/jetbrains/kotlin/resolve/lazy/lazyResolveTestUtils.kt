@@ -40,7 +40,7 @@ fun createResolveSessionForFiles(
             "test",
             projectContext, listOf(testModule),
             { JvmAnalyzerFacade },
-            { ModuleContent(syntheticFiles, GlobalSearchScope.allScope(project)) },
+            { ModuleContent(it, syntheticFiles, GlobalSearchScope.allScope(project)) },
             JvmPlatformParameters { testModule },
             modulePlatforms = { JvmPlatform.multiTargetPlatform }
     )

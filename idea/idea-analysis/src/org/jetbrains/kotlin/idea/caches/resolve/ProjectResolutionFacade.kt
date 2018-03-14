@@ -111,7 +111,7 @@ internal class ProjectResolutionFacade(
         val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
 
         val modulesContentFactory = { module: IdeaModuleInfo ->
-            ModuleContent(syntheticFilesByModule[module] ?: listOf(), module.contentScope())
+            ModuleContent(module, syntheticFilesByModule[module] ?: listOf(), module.contentScope())
         }
 
         val jvmPlatformParameters = JvmPlatformParameters { javaClass: JavaClass ->
@@ -132,7 +132,7 @@ internal class ProjectResolutionFacade(
             IdeaEnvironment,
             builtIns,
             delegateResolverForProject,
-            packagePartProviderFactory = { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
+            packagePartProviderFactory = { moduleContent -> IDEPackagePartProvider(moduleContent.moduleContentScope) },
             firstDependency = settings.sdk?.let { SdkInfo(project, it) },
             modulePlatforms = { module -> module.platform?.multiTargetPlatform },
             packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),

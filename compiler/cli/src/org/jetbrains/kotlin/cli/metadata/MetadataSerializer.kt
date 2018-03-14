@@ -64,7 +64,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val analyzer = AnalyzerWithCompilerReport(messageCollector, configuration.languageVersionSettings)
         analyzer.analyzeAndReport(files) {
-            CommonAnalyzerFacade.analyzeFiles(files, moduleName, dependOnOldBuiltIns, configuration.languageVersionSettings) { _, content ->
+            CommonAnalyzerFacade.analyzeFiles(files, moduleName, dependOnOldBuiltIns, configuration.languageVersionSettings) { content ->
                 environment.createPackagePartProvider(content.moduleContentScope)
             }
         }

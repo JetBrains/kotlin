@@ -64,7 +64,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
     fun analyzeFiles(
         files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = mapOf(MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common),
-        packagePartProviderFactory: (ModuleInfo, ModuleContent) -> PackagePartProvider
+        packagePartProviderFactory: (ModuleContent<ModuleInfo>) -> PackagePartProvider
     ): AnalysisResult {
         val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
         val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
@@ -81,7 +81,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
             ProjectContext(project),
             listOf(moduleInfo),
             resolverForModuleFactoryByPlatform = { CommonAnalyzerFacade },
-            modulesContent = { ModuleContent(files, GlobalSearchScope.allScope(project)) },
+            modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
             platformParameters = object : PlatformAnalysisParameters {},
             languageSettingsProvider = object : LanguageSettingsProvider {
                 override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project) = multiplatformLanguageSettings
@@ -100,17 +100,16 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
     }
 
     override fun <M : ModuleInfo> createResolverForModule(
-        moduleInfo: M,
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
-        moduleContent: ModuleContent,
+        moduleContent: ModuleContent<M>,
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageSettingsProvider: LanguageSettingsProvider,
         packagePartProvider: PackagePartProvider
     ): ResolverForModule {
-        val (syntheticFiles, moduleContentScope) = moduleContent
+        val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project, moduleContext.storageManager, syntheticFiles,
