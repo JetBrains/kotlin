@@ -51,27 +51,17 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
         toRight: (JsExpression) -> JsExpression
     ): BinaryOperationIntrinsic = intrinsic({ l, _ -> toLeft(l) }, { _, r -> toRight(r) })
 
-    // toLeft(L).compareTo(toRight(R)) OP 0
-    private fun compareToIntrinsic(
-        toLeft: (JsExpression) -> JsExpression,
-        toRight: (JsExpression) -> JsExpression
-    ): BinaryOperationIntrinsic = intrinsic({ l, r -> compareForObject(toLeft(l), toRight(r)) }, { _, _ -> JsIntLiteral(0) })
-
     private fun unboxCharIfNeeded(type: KotlinType): (JsExpression) -> JsExpression = { e ->
         if (KotlinBuiltIns.isCharOrNullableChar(type)) {
             charToInt(e)
         } else e
     }
 
-    // TODO Couldn't Long be converted to Number in all cases except Long.compareTo(Long)?
     private val patterns = listOf(
-        pattern("Double|Float.compareTo(Long)") to primitiveIntrinsic(identity(), ::longToNumber),
-        pattern("Long.compareTo(Float|Double)") to primitiveIntrinsic(::longToNumber, identity()),
-        pattern("Int|Short|Byte.compareTo(Long)") to compareToIntrinsic(::longFromInt, identity()),
-        pattern("Long.compareTo(Int|Short|Byte)") to compareToIntrinsic(identity(), ::longFromInt),
-        pattern("Char.compareTo(Long)") to compareToIntrinsic({ longFromInt(charToInt(it)) }, identity()),
-        pattern("Long.compareTo(Char)") to compareToIntrinsic(identity(), { longFromInt(JsAstUtils.charToInt(it)) }),
-        pattern("Long.compareTo(Long)") to compareToIntrinsic(identity(), identity())
+        pattern("Int|Short|Byte|Float|Double.compareTo(Long)") to primitiveIntrinsic(identity(), ::longToNumber),
+        pattern("Long.compareTo(Int|Short|Byte|Float|Double)") to primitiveIntrinsic(::longToNumber, identity()),
+        // L.compareTo(R) OP 0
+        pattern("Long.compareTo(Long)") to intrinsic({ l, r -> compareForObject(l, r) }, { _, _ -> JsIntLiteral(0) })
     )
 
     override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
