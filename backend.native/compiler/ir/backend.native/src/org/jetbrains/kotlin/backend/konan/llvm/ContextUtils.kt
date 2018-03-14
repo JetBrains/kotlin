@@ -395,8 +395,6 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     private fun importRtFunction(name: String) = importFunction(name, runtime.llvmModule)
 
-    var globalInitIndex:Int = 0
-
     val allocInstanceFunction = importRtFunction("AllocInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
     val initInstanceFunction = importRtFunction("InitInstance")
@@ -412,6 +410,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded")
+    val mutationCheck = importRtFunction("MutationCheck")
 
     val createKotlinObjCClass by lazy { importRtFunction("CreateKotlinObjCClass") }
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo") }

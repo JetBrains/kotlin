@@ -111,9 +111,6 @@ private fun StaticData.getArrayListClass(): ClassDescriptor {
 internal fun StaticData.createArrayList(elementType: TypeProjection, array: ConstPointer, length: Int): ConstPointer {
     val arrayListClass = context.ir.symbols.arrayList.owner
 
-    // type is ArrayList<elementType>:
-    val type = arrayListClass.defaultType.replace(listOf(elementType))
-
     val arrayListFqName = arrayListClass.fqNameSafe
     val arrayListFields = mapOf(
         "$arrayListFqName.array" to array,

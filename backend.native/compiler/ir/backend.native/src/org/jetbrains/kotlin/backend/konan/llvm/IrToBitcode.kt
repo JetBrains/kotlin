@@ -477,8 +477,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     override fun visitConstructor(declaration: IrConstructor) {
         context.log{"visitConstructor               : ${ir2string(declaration)}"}
-        if (declaration.constructedClass.isIntrinsic) {
-            // Do not generate any ctors for intrinsic classes.
+        if (declaration.descriptor.containingDeclaration.defaultType.isValueType()) {
+            // Do not generate any ctors for value types.
             return
         }
 
@@ -692,6 +692,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     override fun visitProperty(declaration: IrProperty) {
+        val container = declaration.descriptor.containingDeclaration
+        // For value types with real backing field there's no point to generate an accessor.
+        if (container is ClassDescriptor && container.defaultType.isValueType() && declaration.backingField != null)
+            return
         declaration.getter?.acceptVoid(this)
         declaration.setter?.acceptVoid(this)
         declaration.backingField?.acceptVoid(this)
@@ -1330,9 +1334,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluateSetField(value: IrSetField): LLVMValueRef {
         context.log{"evaluateSetField               : ${ir2string(value)}"}
         val valueToAssign = evaluateExpression(value.value)
-
         if (value.descriptor.dispatchReceiverParameter != null) {
             val thisPtr = evaluateExpression(value.receiver!!)
+            functionGenerationContext.call(context.llvm.mutationCheck,
+                    listOf(functionGenerationContext.bitcast(codegen.kObjHeaderPtr, thisPtr)),
+                    Lifetime.IRRELEVANT, ExceptionHandler.Caller)
             functionGenerationContext.storeAny(valueToAssign, fieldPtrOfClass(thisPtr, value.symbol.owner))
         }
         else {
@@ -2424,7 +2430,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun call(descriptor: FunctionDescriptor, function: LLVMValueRef, args: List<LLVMValueRef>,
                      resultLifetime: Lifetime): LLVMValueRef {
         val result = call(function, args, resultLifetime)
-        if (descriptor.returnType?.isNothing() == true) {
+        if (descriptor.returnType.isNothing()) {
             functionGenerationContext.unreachable()
         }
 

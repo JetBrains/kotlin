@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@
 #include "Common.h"
 #include "TypeInfo.h"
 
-// Must fit in two bits.
 typedef enum {
   // Those bit masks are applied to refCount_ field.
   // Container is normal thread local container.
@@ -43,17 +42,19 @@ typedef enum {
 
   // Those bit masks are applied to objectCount_ field.
   // Shift to get actual object count.
-  CONTAINER_TAG_GC_SHIFT = 4,
+  CONTAINER_TAG_GC_SHIFT = 5,
   CONTAINER_TAG_GC_INCREMENT = 1 << CONTAINER_TAG_GC_SHIFT,
-  // Color of a container.
-  CONTAINER_TAG_GC_COLOR_MASK = ((CONTAINER_TAG_GC_INCREMENT >> 2) - 1),
+  // Color mask of a container.
+  CONTAINER_TAG_GC_COLOR_MASK = (1 << 2) - 1,
   // Colors.
   CONTAINER_TAG_GC_BLACK  = 0,
   CONTAINER_TAG_GC_GRAY   = 1,
   CONTAINER_TAG_GC_WHITE  = 2,
   CONTAINER_TAG_GC_PURPLE = 3,
-  CONTAINER_TAG_GC_MARKED = 4,
-  CONTAINER_TAG_GC_BUFFERED = 8
+  // Individual state bits used during GC and freezing.
+  CONTAINER_TAG_GC_MARKED = 1 << 2,
+  CONTAINER_TAG_GC_BUFFERED = 1 << 3,
+  CONTAINER_TAG_GC_SEEN = 1 << 4
 } ContainerTag;
 
 typedef uint32_t container_offset_t;
@@ -71,17 +72,47 @@ struct ContainerHeader {
     return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_PERMANENT;
   }
 
+  inline bool frozen() const {
+    return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_FROZEN;
+  }
+
+  inline void freeze() {
+    refCount_ = (refCount_ & ~CONTAINER_TAG_MASK) | CONTAINER_TAG_FROZEN;
+  }
+
+  inline bool permanentOrFrozen() const {
+    return tag() == CONTAINER_TAG_PERMANENT || tag() == CONTAINER_TAG_FROZEN;
+  }
+
+  inline bool stack() const {
+    return (refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_STACK;
+  }
+
   inline unsigned refCount() const {
     return refCount_ >> CONTAINER_TAG_SHIFT;
   }
 
+  template <bool Atomic>
   inline void incRefCount() {
+#ifdef KONAN_NO_THREADS
     refCount_ += CONTAINER_TAG_INCREMENT;
+#else
+    if (Atomic)
+      __sync_add_and_fetch(&refCount_, CONTAINER_TAG_INCREMENT);
+    else
+      refCount_ += CONTAINER_TAG_INCREMENT;
+#endif
   }
 
+  template <bool Atomic>
   inline int decRefCount() {
-    refCount_ -= CONTAINER_TAG_INCREMENT;
-    return refCount_ >> CONTAINER_TAG_SHIFT;
+#ifdef KONAN_NO_THREADS
+    int value = refCount_ -= CONTAINER_TAG_INCREMENT;
+#else
+    int value = Atomic ?
+       __sync_sub_and_fetch(&refCount_, CONTAINER_TAG_INCREMENT) : refCount_ -= CONTAINER_TAG_INCREMENT;
+#endif
+    return value >> CONTAINER_TAG_SHIFT;
   }
 
   inline unsigned tag() const {
@@ -130,6 +161,18 @@ struct ContainerHeader {
 
   inline void unMark() {
     objectCount_ &= ~CONTAINER_TAG_GC_MARKED;
+  }
+
+  inline bool seen() const {
+    return (objectCount_ & CONTAINER_TAG_GC_SEEN) != 0;
+  }
+
+  inline void setSeen() {
+    objectCount_ |= CONTAINER_TAG_GC_SEEN;
+  }
+
+  inline void resetSeen() {
+    objectCount_ &= ~CONTAINER_TAG_GC_SEEN;
   }
 };
 
@@ -413,7 +456,10 @@ void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
 OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
 // Move stable pointer ownership.
 OBJ_GETTER(AdoptStablePointer, void*) RUNTIME_NOTHROW;
-
+// Check mutability state.
+void MutationCheck(ObjHeader* obj);
+// Freeze object subgraph.
+void FreezeSubgraph(ObjHeader* root);
 #ifdef __cplusplus
 }
 #endif

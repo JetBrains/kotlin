@@ -597,7 +597,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                                         symbolTable.mapClass(owner),
                                                         vtableIndex,
                                                         arguments,
-                                                        symbolTable.mapType(callee.returnType!!),
+                                                        symbolTable.mapType(callee.returnType),
                                                         value
                                                 )
                                             }
@@ -606,7 +606,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                             DataFlowIR.Node.StaticCall(
                                                     symbolTable.mapFunction(actualCallee),
                                                     arguments,
-                                                    symbolTable.mapType(actualCallee.returnType!!),
+                                                    symbolTable.mapType(actualCallee.returnType),
                                                     actualCallee.dispatchReceiverParameter?.let { symbolTable.mapType(it.type) },
                                                     value
                                             )

@@ -38,8 +38,8 @@
 
 extern "C" {
 
-void ThrowWorkerInvalidState();
-void ThrowWorkerUnsupported();
+RUNTIME_NORETURN void ThrowWorkerInvalidState();
+RUNTIME_NORETURN void ThrowWorkerUnsupported();
 OBJ_GETTER(WorkerLaunchpad, KRef);
 
 }  // extern "C"
@@ -569,6 +569,15 @@ OBJ_GETTER(Kotlin_Worker_attachObjectGraphInternal, KNativePtr stable) {
 
 KNativePtr Kotlin_Worker_detachObjectGraphInternal(KInt transferMode, KRef producer) {
   return detachObjectGraphInternal(transferMode, producer);
+}
+
+void Kotlin_Worker_freezeInternal(KRef object) {
+  if (object != nullptr)
+    FreezeSubgraph(object);
+}
+
+KBoolean Kotlin_Worker_isFrozenInternal(KRef object) {
+  return object == nullptr || object->container()->frozen();
 }
 
 }  // extern "C"

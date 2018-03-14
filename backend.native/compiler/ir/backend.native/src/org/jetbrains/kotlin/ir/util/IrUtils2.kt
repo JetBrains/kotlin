@@ -277,7 +277,8 @@ private fun IrElement.innerEndOffset(descriptor: DeclarationDescriptorWithSource
         descriptor.endOffset ?: this.endOffset
 
 inline fun <reified T> stub(name: String): T {
-    return Proxy.newProxyInstance(T::class.java.classLoader, arrayOf(T::class.java)) { proxy, method, methodArgs ->
+    return Proxy.newProxyInstance(T::class.java.classLoader, arrayOf(T::class.java)) {
+        _ /* proxy */, method, _ /* methodArgs */ ->
         if (method.name == "toString" && method.parameterCount == 0) {
             "${T::class.simpleName} stub for $name"
         } else {
