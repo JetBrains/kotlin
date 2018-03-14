@@ -52,7 +52,7 @@ class BinaryOperationIntrinsics {
         return computeAndCache(IntrinsicKey(token, descriptor, leftType, rightType))
     }
 
-    private val factories = listOf(CompareToBOIF, EqualsBOIF, AssignmentBOIF)
+    private val factories = listOf(CompareToBOIF, EqualsBOIF)
 
     private fun computeAndCache(key: IntrinsicKey): BinaryOperationIntrinsic? {
         if (key in intrinsicCache) return intrinsicCache[key]
