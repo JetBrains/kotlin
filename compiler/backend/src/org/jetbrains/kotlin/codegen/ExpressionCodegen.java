@@ -875,7 +875,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     constantValue.append(String.valueOf(compileTimeConstant.getValue()));
                 }
                 else {
-                    result.add(new StringTemplateEntry.Constant(constantValue.toString()));
+                    String accumulatedConstantValue = constantValue.toString();
+                    if (accumulatedConstantValue.length() > 0) {
+                        result.add(new StringTemplateEntry.Constant(accumulatedConstantValue));
+                    }
                     constantValue.setLength(0);
 
                     result.add(new StringTemplateEntry.Expression(entryExpression));
