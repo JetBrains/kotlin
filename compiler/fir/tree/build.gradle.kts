@@ -20,6 +20,36 @@ dependencies {
 
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        java.srcDir("visitors")
+    }
     "test" {}
 }
+
+val generatorClasspath by configurations.creating
+
+dependencies {
+    generatorClasspath(project("visitors-generator"))
+}
+
+val generateVisitors by tasks.creating(JavaExec::class) {
+    val generationRoot = "$projectDir/src/org/jetbrains/kotlin/fir/"
+    val output = "$projectDir/visitors"
+
+    val allSourceFiles = fileTree(generationRoot) {
+        include("**/*.kt")
+    }
+
+    inputs.files(allSourceFiles)
+    outputs.files(output)
+
+    classpath = generatorClasspath
+    args(generationRoot, output)
+    main = "org.jetbrains.kotlin.fir.visitors.generator.VisitorsGeneratorKt"
+}
+
+
+val compileKotlin by tasks
+
+compileKotlin.dependsOn(generateVisitors)
