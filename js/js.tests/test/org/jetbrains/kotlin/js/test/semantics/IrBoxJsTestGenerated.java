@@ -13731,13 +13731,7 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("deeplyNestedPackage.kt")
         public void testDeeplyNestedPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/package/deeplyNestedPackage.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to white list for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("deeplyNestedPackageFunctionCalled.kt")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
 abstract class BasicIrBoxTest(
@@ -33,7 +34,14 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String
     ) {
-        val code = compile(units.map { (it as TranslationUnit.SourceFile).file })
+        val code = compile(
+            config.project,
+            units.map { (it as TranslationUnit.SourceFile).file }
+                // TODO: temporary ignore _commonFiles/asserts.kt since it depends on stdlib but we don't have any library support in JS IR BE yet
+                // and probably it will be better to avoid using stdlib in testData as much as possible.
+                .filter { !it.virtualFilePath.endsWith("js/js.translator/testData/_commonFiles/asserts.kt") },
+            config.configuration,
+            FqName((testPackage?.let { it + "." } ?: "") + testFunction))
 
         outputFile.parentFile.mkdirs()
         outputFile.writeText(code)
