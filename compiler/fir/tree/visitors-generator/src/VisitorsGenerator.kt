@@ -188,7 +188,7 @@ abstract class AbstractVisitorGenerator(val referencesData: DataCollector.Refere
 
 class SimpleVisitorGenerator(referencesData: DataCollector.ReferencesData) : AbstractVisitorGenerator(referencesData) {
     override fun Printer.generateContent() {
-        println("abstract class $SIMPLE_VISITOR_NAME<R, D> {")
+        println("abstract class $SIMPLE_VISITOR_NAME<out R, in D> {")
         indented {
             generateFunction(
                 "visitElement",
@@ -242,7 +242,10 @@ class UnitVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abstr
                 generateVisit(klass, parent)
             }
 
-            referencesData.back.keys.forEach {
+            val trampolines = referencesData.back.let {
+                it.keys + it.values.flatten()
+            }.distinct()
+            trampolines.forEach {
                 generateTrampolineVisit(it)
             }
 

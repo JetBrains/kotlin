@@ -5,5 +5,9 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
 interface FirExpression : FirStatement {
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitExpression(this, data)
 }

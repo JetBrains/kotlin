@@ -5,7 +5,20 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
 // Should we have FirBlockBody / FirExpressionBody?
-interface FirBody {
+// Is it FirExpression or just FirElement?
+interface FirBody : FirExpression {
     val statements: List<FirStatement>
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitBody(this, data)
+
+    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+        for (statement in statements) {
+            statement.accept(visitor, data)
+        }
+        super.acceptChildren(visitor, data)
+    }
 }

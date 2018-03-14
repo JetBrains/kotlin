@@ -5,10 +5,19 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.Variance
 
-interface FirTypeProjectionWithVariance {
+interface FirTypeProjectionWithVariance : FirTypeProjection {
     val variance: Variance
 
     val type: FirType
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitTypeProjectionWithVariance(this, data)
+
+    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+        type.accept(visitor, data)
+        super.acceptChildren(visitor, data)
+    }
 }

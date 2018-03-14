@@ -1,0 +1,21 @@
+FILE: typeParameters.kt
+    <out T : Any> unknown final class List() {
+        unknown final operator function get(index: Int): T
+
+        unknown final infix function concat(other: List<T>): List<T>
+
+    }
+    unknown final typealias StringList = List<out String>
+    unknown final typealias AnyList = List<*>
+    <out T : Any> unknown abstract class AbstractList() : List<T> {
+    }
+    unknown final class SomeList() : AbstractList<Int> {
+        unknown final override function get(index: Int): Int {
+            STUB
+        }
+
+        unknown final override function concat(other: List<Int>): List<Int> {
+            STUB
+        }
+
+    }

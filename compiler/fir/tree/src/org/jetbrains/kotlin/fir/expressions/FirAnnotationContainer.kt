@@ -5,6 +5,14 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
 interface FirAnnotationContainer {
     val annotations: List<FirAnnotationCall>
+
+    fun <D> acceptAnnotations(visitor: FirVisitor<Unit, D>, data: D) {
+        for (annotation in annotations) {
+            annotation.accept(visitor, data)
+        }
+    }
 }

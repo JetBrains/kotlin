@@ -5,5 +5,21 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-interface FirNamedFunction : FirFunction, FirCallableMember {
+import org.jetbrains.kotlin.fir.VisitedSupertype
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+
+interface FirNamedFunction : @VisitedSupertype FirFunction, FirCallableMember {
+    val isOperator: Boolean
+
+    val isInfix: Boolean
+
+    val isInline: Boolean
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitNamedFunction(this, data)
+
+    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+        super<FirCallableMember>.acceptChildren(visitor, data)
+        super<FirFunction>.acceptChildren(visitor, data)
+    }
 }

@@ -6,7 +6,18 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirDelegatedType : FirExplicitType {
-    val delegate: FirExpression
+interface FirDelegatedType : FirType {
+    val delegate: FirExpression?
+
+    val type: FirType
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitDelegatedType(this, data)
+
+    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+        super.acceptChildren(visitor, data)
+        delegate?.accept(visitor, data)
+    }
 }

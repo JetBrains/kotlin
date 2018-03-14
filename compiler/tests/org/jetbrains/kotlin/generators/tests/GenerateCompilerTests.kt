@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
@@ -195,6 +196,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrSourceRangesTestCase> {
             model("ir/sourceRanges")
+        }
+
+        testClass<AbstractRawFirBuilderTestCase> {
+            model("fir/rawBuilder", testMethod = "doRawFirTest")
         }
 
         testClass<AbstractBytecodeListingTest> {
