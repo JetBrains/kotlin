@@ -86,9 +86,10 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
 
                     if (KotlinBuiltIns.isChar(type)) {
                         val value = expressionText.removePrefix("'").removeSuffix("'")
-                        return when (value) { // escape double quote and unescape single one
+                        return when (value) { // escape double quote and unescape single one and $
                             "\"" -> "\\\""
                             "\\'" -> "'"
+                            "$" -> if (forceBraces) "\\$" else "$"
                             else -> value
                         }
                     }
