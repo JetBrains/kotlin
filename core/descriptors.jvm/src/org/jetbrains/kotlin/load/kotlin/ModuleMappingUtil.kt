@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
 fun ModuleMapping.Companion.loadModuleMapping(

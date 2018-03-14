@@ -20,10 +20,10 @@ import com.intellij.util.io.DataOutputStream
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageParts
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.ByteArrayOutputStream
 

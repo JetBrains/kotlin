@@ -20,9 +20,9 @@ import com.intellij.util.indexing.*
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageParts
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import java.io.DataInput
 import java.io.DataOutput

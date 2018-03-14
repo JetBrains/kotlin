@@ -22,9 +22,9 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageParts
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import java.io.EOFException

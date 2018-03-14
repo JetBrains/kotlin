@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.load.kotlin
+package org.jetbrains.kotlin.metadata.jvm.deserialization
 
 /**
  * @param annotations list of module annotations, in the format: "org/foo/bar/Baz.Inner" (see [ClassId.fromString])
