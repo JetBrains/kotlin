@@ -6768,6 +6768,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("dollarSignChar.kt")
+        public void testDollarSignChar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/dollarSignChar.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("endOfLineComment.kt")
         public void testEndOfLineComment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/endOfLineComment.kt");
