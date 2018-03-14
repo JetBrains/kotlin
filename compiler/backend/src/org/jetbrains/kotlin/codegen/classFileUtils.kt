@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.ByteArrayOutputStream
@@ -41,7 +42,7 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
     val incrementalCache = state.incrementalCacheForThisTarget ?: return this.toList()
     val moduleMappingData = incrementalCache.getModuleMappingData() ?: return this.toList()
 
-    val mapping = ModuleMapping.create(moduleMappingData, "<incremental>", state.deserializationConfiguration)
+    val mapping = ModuleMapping.loadModuleMapping(moduleMappingData, "<incremental>", state.deserializationConfiguration)
 
     incrementalCache.getObsoletePackageParts().forEach { internalName ->
         val qualifier = JvmClassName.byInternalName(internalName).packageFqName.asString()

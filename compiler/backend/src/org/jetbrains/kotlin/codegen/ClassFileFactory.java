@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorUtilKt;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping;
+import org.jetbrains.kotlin.load.kotlin.ModuleMappingUtilKt;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackageParts;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
@@ -192,8 +193,9 @@ public class ClassFileFactory implements OutputFileCollection {
                     answer.append(file.asText());
                     break;
                 case "kotlin_module": {
-                    ModuleMapping mapping = ModuleMapping.Companion.create(
-                            file.asByteArray(), relativePath.getPath(), CompilerDeserializationConfiguration.Default.INSTANCE
+                    ModuleMapping mapping = ModuleMappingUtilKt.loadModuleMapping(
+                            ModuleMapping.Companion, file.asByteArray(), relativePath.getPath(),
+                            CompilerDeserializationConfiguration.Default.INSTANCE
                     );
                     for (Map.Entry<String, PackageParts> entry : mapping.getPackageFqName2Parts().entrySet()) {
                         FqName packageFqName = new FqName(entry.getKey());

@@ -18,11 +18,6 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.IOException
@@ -48,10 +43,12 @@ class ModuleMapping private constructor(
         @JvmField
         val CORRUPTED: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "CORRUPTED")
 
-        fun create(
-                bytes: ByteArray?,
-                debugName: String,
-                configuration: DeserializationConfiguration
+        fun loadModuleMapping(
+            bytes: ByteArray?,
+            debugName: String,
+            isVersionCompatible: (IntArray) -> Boolean,
+            skipMetadataVersionCheck: Boolean,
+            isJvmPackageNameSupported: Boolean
         ): ModuleMapping {
             if (bytes == null) {
                 return EMPTY
@@ -66,9 +63,7 @@ class ModuleMapping private constructor(
                 return CORRUPTED
             }
 
-            val version = JvmMetadataVersion(*versionNumber)
-
-            if (configuration.skipMetadataVersionCheck || version.isCompatible()) {
+            if (skipMetadataVersionCheck || isVersionCompatible(versionNumber)) {
                 val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream) ?: return EMPTY
                 val result = linkedMapOf<String, PackageParts>()
 
@@ -83,7 +78,7 @@ class ModuleMapping private constructor(
                         packageParts.addPart(internalNameOf(packageFqName, partShortName), facadeInternalName)
                     }
 
-                    if (configuration.isJvmPackageNameSupported) {
+                    if (isJvmPackageNameSupported) {
                         for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
                             val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
                                             ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
@@ -101,7 +96,7 @@ class ModuleMapping private constructor(
 
                 // TODO: read arguments of module annotations
                 val nameResolver = NameResolverImpl(moduleProto.stringTable, moduleProto.qualifiedNameTable)
-                val annotations = moduleProto.annotationList.map { proto -> nameResolver.getClassId(proto.id) }
+                val annotations = moduleProto.annotationList.map { proto -> nameResolver.getQualifiedClassName(proto.id) }
 
                 return ModuleMapping(result, BinaryModuleData(annotations), debugName)
             } else {
@@ -114,7 +109,8 @@ class ModuleMapping private constructor(
 }
 
 private fun internalNameOf(packageFqName: String, className: String): String =
-        JvmClassName.byFqNameWithoutInnerClasses(FqName(packageFqName).child(Name.identifier(className))).internalName
+    if (packageFqName.isEmpty()) className
+    else packageFqName.replace('.', '/') + "/" + className
 
 class PackageParts(val packageFqName: String) {
     // JVM internal name of package part -> JVM internal name of the corresponding multifile facade (or null, if it's not a multifile part)

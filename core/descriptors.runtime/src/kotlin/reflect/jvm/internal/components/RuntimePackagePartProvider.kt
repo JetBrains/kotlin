@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal.components
 
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import java.util.concurrent.ConcurrentHashMap
@@ -29,10 +30,9 @@ class RuntimePackagePartProvider(private val classLoader: ClassLoader) : Package
         val mapping = try {
             val resourcePath = "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}"
             classLoader.getResourceAsStream(resourcePath)?.use { stream ->
-                ModuleMapping.create(stream.readBytes(), resourcePath, DeserializationConfiguration.Default)
+                ModuleMapping.loadModuleMapping(stream.readBytes(), resourcePath, DeserializationConfiguration.Default)
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             // TODO: do not swallow this exception?
             null
         }

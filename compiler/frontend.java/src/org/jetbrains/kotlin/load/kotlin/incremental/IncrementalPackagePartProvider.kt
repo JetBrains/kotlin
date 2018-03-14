@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.load.kotlin.incremental
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
@@ -32,7 +33,7 @@ class IncrementalPackagePartProvider(
 
     private val moduleMappings = storageManager.createLazyValue {
         incrementalCaches.map { cache ->
-            ModuleMapping.create(cache.getModuleMappingData(), "<incremental>", deserializationConfiguration)
+            ModuleMapping.loadModuleMapping(cache.getModuleMappingData(), "<incremental>", deserializationConfiguration)
         }
     }
 

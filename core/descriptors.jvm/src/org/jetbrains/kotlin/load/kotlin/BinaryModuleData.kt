@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.name.ClassId
-
-class BinaryModuleData(val annotations: List<ClassId>)
+/**
+ * @param annotations list of module annotations, in the format: "org/foo/bar/Baz.Inner" (see [ClassId.fromString])
+ */
+class BinaryModuleData(val annotations: List<String>)
