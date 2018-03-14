@@ -80,7 +80,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
             "sources for metadata serializer",
             ProjectContext(project),
             listOf(moduleInfo),
-            resolverForModuleFactory = { CommonAnalyzerFacade },
+            resolverForModuleFactoryByPlatform = { CommonAnalyzerFacade },
             modulesContent = { ModuleContent(files, GlobalSearchScope.allScope(project)) },
             platformParameters = object : PlatformAnalysisParameters {},
             languageSettingsProvider = object : LanguageSettingsProvider {

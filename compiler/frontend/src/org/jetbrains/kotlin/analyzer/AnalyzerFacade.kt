@@ -85,7 +85,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val debugName: String,
     private val projectContext: ProjectContext,
     modules: Collection<M>,
-    private val resolverForModuleFactory: (M) -> ResolverForModuleFactory,
+    private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val modulesContent: (M) -> ModuleContent,
     private val platformParameters: PlatformAnalysisParameters,
     private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
@@ -170,7 +170,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
 
                 ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
-                resolverForModuleFactory(module).createResolverForModule(
+                resolverForModuleFactoryByPlatform(module.platform).createResolverForModule(
                     module, descriptor as ModuleDescriptorImpl, projectContext.withModule(descriptor), modulesContent(module),
                     platformParameters, targetEnvironment, this@ResolverForProjectImpl,
                     languageSettingsProvider,

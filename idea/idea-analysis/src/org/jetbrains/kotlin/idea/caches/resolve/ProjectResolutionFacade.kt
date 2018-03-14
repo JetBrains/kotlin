@@ -123,8 +123,8 @@ internal class ProjectResolutionFacade(
             resolverDebugName,
             globalContext.withProject(project),
             modulesToCreateResolversFor,
-            { module ->
-                val platform = module.platform ?: settings.platform
+            { modulePlatform ->
+                val platform = modulePlatform ?: settings.platform
                 IdePlatformSupport.facades[platform] ?: throw UnsupportedOperationException("Unsupported platform $platform")
             },
             modulesContentFactory,

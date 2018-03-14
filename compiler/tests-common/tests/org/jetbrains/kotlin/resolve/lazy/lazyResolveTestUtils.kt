@@ -38,7 +38,8 @@ fun createResolveSessionForFiles(
     val testModule = TestModule(addBuiltIns)
     val resolverForProject = ResolverForProjectImpl(
             "test",
-            projectContext, listOf(testModule), { JvmAnalyzerFacade },
+            projectContext, listOf(testModule),
+            { JvmAnalyzerFacade },
             { ModuleContent(syntheticFiles, GlobalSearchScope.allScope(project)) },
             JvmPlatformParameters { testModule },
             modulePlatforms = { JvmPlatform.multiTargetPlatform }
