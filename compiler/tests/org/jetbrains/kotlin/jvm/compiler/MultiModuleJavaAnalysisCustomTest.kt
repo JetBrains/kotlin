@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -77,7 +78,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                     modules.first { it._name == moduleName }
                 },
                 builtIns = builtIns,
-                modulePlatforms = { MultiTargetPlatform.Specific("JVM") }
+                modulePlatforms = { JvmPlatform.multiTargetPlatform }
         )
 
         builtIns.initialize(
