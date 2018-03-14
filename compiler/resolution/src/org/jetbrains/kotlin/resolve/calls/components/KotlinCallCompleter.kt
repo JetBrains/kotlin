@@ -96,7 +96,7 @@ class KotlinCallCompleter(
         kotlinConstraintSystemCompleter.runCompletion(
             constraintSystem.asConstraintSystemCompleterContext(),
             completionMode,
-            resolvedCallAtom,
+            listOf(resolvedCallAtom),
             returnType
         ) {
             if (collectAllCandidatesMode) {
