@@ -1,3 +1,8 @@
+## v0.6.2 (Mar 2018)
+  * Support several `expectedBy`-dependencies in Gradle plugin.
+  * Improved interaction between Gradle plugin and IDE.
+  * Various bugfixes
+
 ## v0.6.1 (Mar 2018)
   * Various bugfixes
   * Support total ordering in FP comparisons
