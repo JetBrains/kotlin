@@ -12,18 +12,18 @@
 		2C3F384A1FD1738300151601 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C3F38481FD1738300151601 /* Main.storyboard */; };
 		2C3F384C1FD1738300151601 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C3F384B1FD1738300151601 /* Assets.xcassets */; };
 		2C3F384F1FD1738300151601 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C3F384D1FD1738300151601 /* LaunchScreen.storyboard */; };
-		2C3F385B1FD1760A00151601 /* KotlinArithmeticParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C3F385A1FD1760A00151601 /* KotlinArithmeticParser.framework */; };
-		2C3F385C1FD1760A00151601 /* KotlinArithmeticParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2C3F385A1FD1760A00151601 /* KotlinArithmeticParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7FE128BF205854BA0064CE74 /* KotlinArithmeticParser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7FF94AD92058464C00590D0D /* KotlinArithmeticParser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7FF94AE32058483900590D0D /* KotlinArithmeticParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FF94AD92058464C00590D0D /* KotlinArithmeticParser.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2C3F385D1FD1760A00151601 /* Embed Frameworks */ = {
+		7FE128BE2058549E0064CE74 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2C3F385C1FD1760A00151601 /* KotlinArithmeticParser.framework in Embed Frameworks */,
+				7FE128BF205854BA0064CE74 /* KotlinArithmeticParser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -38,7 +38,8 @@
 		2C3F384B1FD1738300151601 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2C3F384E1FD1738300151601 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2C3F38501FD1738300151601 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2C3F385A1FD1760A00151601 /* KotlinArithmeticParser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KotlinArithmeticParser.framework; path = build/konan/bin/xcode/KotlinArithmeticParser.framework; sourceTree = "<group>"; };
+		7FF94AD92058464C00590D0D /* KotlinArithmeticParser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KotlinArithmeticParser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FF94AEA2058485300590D0D /* Parser.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Parser.kt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,7 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C3F385B1FD1760A00151601 /* KotlinArithmeticParser.framework in Frameworks */,
+				7FF94AE32058483900590D0D /* KotlinArithmeticParser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,9 +57,10 @@
 		2C3F38381FD1738300151601 = {
 			isa = PBXGroup;
 			children = (
-				2C3F385A1FD1760A00151601 /* KotlinArithmeticParser.framework */,
 				2C3F38431FD1738300151601 /* calculator */,
+				7FF94ADA2058464C00590D0D /* KotlinArithmeticParser */,
 				2C3F38421FD1738300151601 /* Products */,
+				7FF94AE22058483900590D0D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -66,6 +68,7 @@
 			isa = PBXGroup;
 			children = (
 				2C3F38411FD1738300151601 /* KotlinCalculator.app */,
+				7FF94AD92058464C00590D0D /* KotlinArithmeticParser.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,6 +86,70 @@
 			path = calculator;
 			sourceTree = "<group>";
 		};
+		7FF94ADA2058464C00590D0D /* KotlinArithmeticParser */ = {
+			isa = PBXGroup;
+			children = (
+				7FF94AE42058485300590D0D /* src */,
+			);
+			name = KotlinArithmeticParser;
+			sourceTree = "<group>";
+		};
+		7FF94AE22058483900590D0D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7FF94AE42058485300590D0D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7FF94AE52058485300590D0D /* main */,
+			);
+			name = src;
+			path = parser/src;
+			sourceTree = SOURCE_ROOT;
+		};
+		7FF94AE52058485300590D0D /* main */ = {
+			isa = PBXGroup;
+			children = (
+				7FF94AE62058485300590D0D /* kotlin */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		7FF94AE62058485300590D0D /* kotlin */ = {
+			isa = PBXGroup;
+			children = (
+				7FF94AE72058485300590D0D /* org */,
+			);
+			path = kotlin;
+			sourceTree = "<group>";
+		};
+		7FF94AE72058485300590D0D /* org */ = {
+			isa = PBXGroup;
+			children = (
+				7FF94AE82058485300590D0D /* konan */,
+			);
+			path = org;
+			sourceTree = "<group>";
+		};
+		7FF94AE82058485300590D0D /* konan */ = {
+			isa = PBXGroup;
+			children = (
+				7FF94AE92058485300590D0D /* arithmeticparser */,
+			);
+			path = konan;
+			sourceTree = "<group>";
+		};
+		7FF94AE92058485300590D0D /* arithmeticparser */ = {
+			isa = PBXGroup;
+			children = (
+				7FF94AEA2058485300590D0D /* Parser.kt */,
+			);
+			path = arithmeticparser;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -90,11 +157,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2C3F38531FD1738300151601 /* Build configuration list for PBXNativeTarget "KotlinCalculator" */;
 			buildPhases = (
-				2C3F38561FD1754800151601 /* Compile Kotlin Framework */,
 				2C3F383D1FD1738300151601 /* Sources */,
 				2C3F383E1FD1738300151601 /* Frameworks */,
 				2C3F383F1FD1738300151601 /* Resources */,
-				2C3F385D1FD1760A00151601 /* Embed Frameworks */,
+				7FE128BE2058549E0064CE74 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -104,6 +170,21 @@
 			productName = calculator;
 			productReference = 2C3F38411FD1738300151601 /* KotlinCalculator.app */;
 			productType = "com.apple.product-type.application";
+		};
+		7FF94AD82058464C00590D0D /* KotlinArithmeticParser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7FF94ADE2058464C00590D0D /* Build configuration list for PBXNativeTarget "KotlinArithmeticParser" */;
+			buildPhases = (
+				7FF94AE12058466D00590D0D /* Compile Kotlin/Native */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KotlinArithmeticParser;
+			productName = KotlinArithmeticParser;
+			productReference = 7FF94AD92058464C00590D0D /* KotlinArithmeticParser.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -117,6 +198,10 @@
 				TargetAttributes = {
 					2C3F38401FD1738300151601 = {
 						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
+					};
+					7FF94AD82058464C00590D0D = {
+						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -135,6 +220,7 @@
 			projectRoot = "";
 			targets = (
 				2C3F38401FD1738300151601 /* KotlinCalculator */,
+				7FF94AD82058464C00590D0D /* KotlinArithmeticParser */,
 			);
 		};
 /* End PBXProject section */
@@ -153,19 +239,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2C3F38561FD1754800151601 /* Compile Kotlin Framework */ = {
+		7FF94AE12058466D00590D0D /* Compile Kotlin/Native */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Compile Kotlin Framework";
+			name = "Compile Kotlin/Native";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "case \"$PLATFORM_NAME\" in\n    iphoneos)\n        TARGET=iphone\n        TASK=compileKonanKotlinArithmeticParserIphone\n        ;;\n    iphonesimulator)\n        TARGET=iphone_sim\n        TASK=compileKonanKotlinArithmeticParserIphone_sim\n        ;;\n    *)\n        echo \"Unknown platform: $PLATFORM_NAME\"\n        exit 1\n        ;;\nesac\n\nmkdir -p \"$SRCROOT/build/konan/bin/\"\nrm -f \"$SRCROOT/build/konan/bin/xcode\"\nln -s \"$TARGET\" \"$SRCROOT/build/konan/bin/xcode\"\n\nif [ \"$CONFIGURATION\" == \"Debug\" ]; then\n    ENABLE_DEBUG=true\nelse\n    ENABLE_DEBUG=false\nfi\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$TASK\" -PenableDebug=$ENABLE_DEBUG";
+			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$KONAN_TASK\" -Pkonan.useEnvironmentVariables=true";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -315,10 +401,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/konan/bin/xcode",
-				);
+				FRAMEWORK_SEARCH_PATHS = $BUILT_PRODUCTS_DIR;
 				INFOPLIST_FILE = calculator/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -337,10 +420,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/build/konan/bin/xcode",
-				);
+				FRAMEWORK_SEARCH_PATHS = $BUILT_PRODUCTS_DIR;
 				INFOPLIST_FILE = calculator/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -349,6 +429,66 @@
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = arm64;
+			};
+			name = Release;
+		};
+		7FF94ADF2058464C00590D0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				KONAN_ENABLE_OPTIMIZATIONS = NO;
+				KONAN_TASK = "";
+				"KONAN_TASK[sdk=iphoneos*]" = compileKonanKotlinArithmeticParserIos_arm64;
+				"KONAN_TASK[sdk=iphonesimulator*]" = compileKonanKotlinArithmeticParserIos_x64;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = JetBrains.KotlinArithmeticParser;
+				PRODUCT_MODULE_NAME = "_$(PRODUCT_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		7FF94AE02058464C00590D0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				KONAN_ENABLE_OPTIMIZATIONS = YES;
+				KONAN_TASK = "";
+				"KONAN_TASK[sdk=iphoneos*]" = compileKonanKotlinArithmeticParserIos_arm64;
+				"KONAN_TASK[sdk=iphonesimulator*]" = compileKonanKotlinArithmeticParserIos_x64;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = JetBrains.KotlinArithmeticParser;
+				PRODUCT_MODULE_NAME = "_$(PRODUCT_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -369,6 +509,15 @@
 			buildConfigurations = (
 				2C3F38541FD1738300151601 /* Debug */,
 				2C3F38551FD1738300151601 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7FF94ADE2058464C00590D0D /* Build configuration list for PBXNativeTarget "KotlinArithmeticParser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7FF94ADF2058464C00590D0D /* Debug */,
+				7FF94AE02058464C00590D0D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

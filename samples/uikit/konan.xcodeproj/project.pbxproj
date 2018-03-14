@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2CB5403E1F56C2C4006EE521 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CB5403D1F56C2C4006EE521 /* main.m */; };
-		2CB540411F56C2C4006EE521 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CB540401F56C2C4006EE521 /* AppDelegate.m */; };
-		2CB540441F56C2C4006EE521 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CB540431F56C2C4006EE521 /* ViewController.m */; };
 		2CB540471F56C2C4006EE521 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2CB540451F56C2C4006EE521 /* Main.storyboard */; };
 		2CB540491F56C2C4006EE521 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2CB540481F56C2C4006EE521 /* Assets.xcassets */; };
 		2CB5404C1F56C2C4006EE521 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2CB5404A1F56C2C4006EE521 /* LaunchScreen.storyboard */; };
@@ -17,15 +14,11 @@
 
 /* Begin PBXFileReference section */
 		2CB540391F56C2C4006EE521 /* konan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = konan.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2CB5403D1F56C2C4006EE521 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2CB5403F1F56C2C4006EE521 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		2CB540401F56C2C4006EE521 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		2CB540421F56C2C4006EE521 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		2CB540431F56C2C4006EE521 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		2CB540461F56C2C4006EE521 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2CB540481F56C2C4006EE521 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2CB5404B1F56C2C4006EE521 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2CB5404D1F56C2C4006EE521 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7FE128BC205852380064CE74 /* main.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.kt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,25 +52,13 @@
 		2CB5403B1F56C2C4006EE521 /* konan */ = {
 			isa = PBXGroup;
 			children = (
-				2CB5403F1F56C2C4006EE521 /* AppDelegate.h */,
-				2CB540401F56C2C4006EE521 /* AppDelegate.m */,
-				2CB540421F56C2C4006EE521 /* ViewController.h */,
-				2CB540431F56C2C4006EE521 /* ViewController.m */,
 				2CB540451F56C2C4006EE521 /* Main.storyboard */,
 				2CB540481F56C2C4006EE521 /* Assets.xcassets */,
 				2CB5404A1F56C2C4006EE521 /* LaunchScreen.storyboard */,
 				2CB5404D1F56C2C4006EE521 /* Info.plist */,
-				2CB5403C1F56C2C4006EE521 /* Supporting Files */,
+				7FE128B9205852380064CE74 /* src */,
 			);
 			path = konan;
-			sourceTree = "<group>";
-		};
-		2CB5403C1F56C2C4006EE521 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				2CB5403D1F56C2C4006EE521 /* main.m */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		2CB540531F56CC4D006EE521 /* Frameworks */ = {
@@ -85,6 +66,30 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7FE128B9205852380064CE74 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7FE128BA205852380064CE74 /* main */,
+			);
+			path = src;
+			sourceTree = SOURCE_ROOT;
+		};
+		7FE128BA205852380064CE74 /* main */ = {
+			isa = PBXGroup;
+			children = (
+				7FE128BB205852380064CE74 /* kotlin */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		7FE128BB205852380064CE74 /* kotlin */ = {
+			isa = PBXGroup;
+			children = (
+				7FE128BC205852380064CE74 /* main.kt */,
+			);
+			path = kotlin;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,7 +174,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"$SRCROOT/build/konan/bin/xcode/app.kexe\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"";
+			shellScript = "cp \"$TARGET_BUILD_DIR/app.kexe\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"";
 		};
 		2C901F991F59928A004412FA /* Build Binary From Kotlin Sources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -183,7 +188,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "case \"$PLATFORM_NAME\" in\n    iphoneos)\n        TARGET=iphone\n        TASK=compileKonanAppIphone\n        ;;\n    iphonesimulator)\n        TARGET=iphone_sim\n        TASK=compileKonanAppIphone_sim\n        ;;\n    *)\n        echo \"Unknown platform: $PLATFORN_NAME\"\n        exit 1\n        ;;\nesac\n\nmkdir -p \"$SRCROOT/build/konan/bin/\"\nrm -f \"$SRCROOT/build/konan/bin/xcode\"\nln -s \"$TARGET\" \"$SRCROOT/build/konan/bin/xcode\"\n\n\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$TASK\"";
+			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$KONAN_TASK\" -Pkonan.useEnvironmentVariables=true";
 		};
 		2C901F9C1F5D7074004412FA /* Remove Original Binary */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -206,9 +211,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2CB540441F56C2C4006EE521 /* ViewController.m in Sources */,
-				2CB540411F56C2C4006EE521 /* AppDelegate.m in Sources */,
-				2CB5403E1F56C2C4006EE521 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,6 +333,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = konan/Info.plist;
+				KONAN_ENABLE_OPTIMIZATIONS = NO;
+				"KONAN_TASK[sdk=iphoneos*]" = compileKonanappIos_arm64;
+				"KONAN_TASK[sdk=iphonesimulator*]" = compileKonanappIos_x64;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jetbrains.konan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -342,6 +347,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = konan/Info.plist;
+				KONAN_ENABLE_OPTIMIZATIONS = YES;
+				"KONAN_TASK[sdk=iphoneos*]" = compileKonanappIos_arm64;
+				"KONAN_TASK[sdk=iphonesimulator*]" = compileKonanappIos_x64;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jetbrains.konan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
