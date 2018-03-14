@@ -1,0 +1,8 @@
+// CHOOSE_USE_SITE_TARGET: property
+
+annotation class A
+
+class Property {
+    @property:A
+    var foo: String = ""
+}
