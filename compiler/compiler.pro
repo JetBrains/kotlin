@@ -62,6 +62,7 @@ messages/**)
 -dontwarn org.jetbrains.annotations.ReadOnly
 -dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
+-dontwarn org.slf4j.**
 
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
