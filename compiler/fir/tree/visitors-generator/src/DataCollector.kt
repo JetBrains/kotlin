@@ -59,6 +59,9 @@ class DataCollector {
         return result
     }
 
+    private fun Map<String, List<String>>.sorted(): Map<String, List<String>> {
+        return this.toSortedMap().mapValues { (_, v) -> v.sorted() }
+    }
 
     fun computeResult(): ReferencesData {
         val back = references.computeBackReferences()
@@ -70,9 +73,9 @@ class DataCollector {
 
         val cleanBack = back.filterKeys { it in keysToKeep }
         return ReferencesData(
-            cleanBack.computeBackReferences(),
-            cleanBack,
-            packagePerClass.filterKeys { it in keysToKeep }.values.distinct()
+            cleanBack.computeBackReferences().sorted(),
+            cleanBack.sorted(),
+            packagePerClass.filterKeys { it in keysToKeep }.values.distinct().sortedBy { it.asString() }
         )
     }
 
