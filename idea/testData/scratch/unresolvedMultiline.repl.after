@@ -1,0 +1,3 @@
+foo.forEach {    // ERROR: error: unresolved reference: foo
+    1 + 1
+}
