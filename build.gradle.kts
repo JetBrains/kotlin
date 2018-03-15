@@ -12,7 +12,7 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.2-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.40-dev-165", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.40-dev-967", onlySuccessBootstrap = false))
 
     val repos = listOfNotNull(
             bootstrapKotlinRepo,

@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import org.gradle.kotlin.dsl.extra
-import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import proguard.gradle.ProGuardTask
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
