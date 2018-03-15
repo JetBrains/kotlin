@@ -13202,6 +13202,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/properties/lateinit/local/capturedLocalLateinit.kt");
                 }
 
+                @TestMetadata("kt23260.kt")
+                public void testKt23260() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/kt23260.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("localLateinit.kt")
                 public void testLocalLateinit() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/lateinit/local/localLateinit.kt");

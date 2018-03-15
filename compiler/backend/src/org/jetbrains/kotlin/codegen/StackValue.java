@@ -157,8 +157,13 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static Local local(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor) {
-        return new Local(index, type, descriptor.getType(), descriptor.isLateInit(), descriptor.getName());
+    public static StackValue local(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor) {
+        if (descriptor.isLateInit()) {
+            return new LateinitLocal(index, type, descriptor.getType(), descriptor.getName());
+        }
+        else {
+            return new Local(index, type, descriptor.getType());
+        }
     }
 
     @NotNull
@@ -805,50 +810,65 @@ public abstract class StackValue {
 
     public static class Local extends StackValue {
         public final int index;
-        private final boolean isLateinit;
-        private final Name name;
 
-        private Local(int index, Type type, KotlinType kotlinType, boolean isLateinit, Name name) {
+        private Local(int index, Type type, KotlinType kotlinType) {
             super(type, kotlinType, false);
 
             if (index < 0) {
                 throw new IllegalStateException("local variable index must be non-negative");
             }
 
-            if (isLateinit && name == null) {
-                throw new IllegalArgumentException("Lateinit local variable should have name: #" + index + " " + type.getDescriptor());
-            }
-
             this.index = index;
-            this.isLateinit = isLateinit;
-            this.name = name;
         }
 
         private Local(int index, Type type) {
-            this(index, type, null, false, null);
-        }
-
-        private Local(int index, Type type, KotlinType kotlinType) {
-            this(index, type, kotlinType, false, null);
+            this(index, type, null);
         }
 
         @Override
         public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
             v.load(index, this.type);
-            if (isLateinit) {
-                StackValue.genNonNullAssertForLateinit(v, name.asString());
-            }
             coerceTo(type, kotlinType, v);
-            // TODO unbox
         }
 
         @Override
         public void storeSelector(@NotNull Type topOfStackType, @Nullable KotlinType topOfStackKotlinType, @NotNull InstructionAdapter v) {
             coerceFrom(topOfStackType, topOfStackKotlinType, v);
             v.store(index, this.type);
-            if (isLateinit) {
-                PseudoInsnsKt.storeNotNull(v);
+        }
+    }
+
+    public static class LateinitLocal extends StackValue {
+        public final int index;
+        private final Name name;
+
+        private LateinitLocal(int index, Type type, KotlinType kotlinType, Name name) {
+            super(type, kotlinType, false);
+
+            if (index < 0) {
+                throw new IllegalStateException("local variable index must be non-negative");
             }
+
+            if (name == null) {
+                throw new IllegalArgumentException("Lateinit local variable should have name: #" + index + " " + type.getDescriptor());
+            }
+
+            this.index = index;
+            this.name = name;
+        }
+
+        @Override
+        public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+            v.load(index, this.type);
+            StackValue.genNonNullAssertForLateinit(v, name.asString());
+            coerceTo(type, kotlinType, v);
+        }
+
+        @Override
+        public void storeSelector(@NotNull Type topOfStackType, @Nullable KotlinType topOfStackKotlinType, @NotNull InstructionAdapter v) {
+            coerceFrom(topOfStackType, topOfStackKotlinType, v);
+            v.store(index, this.type);
+            PseudoInsnsKt.storeNotNull(v);
         }
     }
 
