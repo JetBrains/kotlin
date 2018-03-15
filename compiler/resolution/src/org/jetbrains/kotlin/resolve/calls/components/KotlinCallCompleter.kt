@@ -38,7 +38,10 @@ class KotlinCallCompleter(
         val candidate = prepareCandidateForCompletion(factory, candidates, resolutionCallbacks)
         val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
 
-        return candidate.runCompletion(completionType, diagnosticHolder, resolutionCallbacks)
+        return if (resolutionCallbacks.inferenceSession.shouldFixTypeVariables())
+            candidate.runCompletion(completionType, diagnosticHolder, resolutionCallbacks)
+        else
+            candidate.asCallResolutionResult(CallResolutionResult.Type.PARTIAL, diagnosticHolder)
     }
 
     fun createAllCandidatesResult(
@@ -176,6 +179,12 @@ class KotlinCallCompleter(
 
 interface InferenceSession {
     companion object {
-        val default = object : InferenceSession {}
+        val default = object : InferenceSession {
+            override fun shouldFixTypeVariables(): Boolean = false
+            override fun addPartiallyResolvedCall(call: CallResolutionResult) {}
+        }
     }
+
+    fun shouldFixTypeVariables(): Boolean
+    fun addPartiallyResolvedCall(call: CallResolutionResult)
 }
