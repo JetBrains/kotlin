@@ -28,11 +28,7 @@ fun getJvmModuleNameForDeserializedDescriptor(descriptor: DeclarationDescriptor)
         descriptor is DeserializedMemberDescriptor -> {
             val source = descriptor.containerSource
             if (source is JvmPackagePartSource) {
-                val packageProto = source.packageProto
-                val nameResolver = source.nameResolver
-                return packageProto.getExtensionOrNull(JvmProtoBuf.packageModuleName)
-                    ?.let(nameResolver::getString)
-                        ?: JvmAbi.DEFAULT_MODULE_NAME
+                return source.moduleName
             }
         }
     }
