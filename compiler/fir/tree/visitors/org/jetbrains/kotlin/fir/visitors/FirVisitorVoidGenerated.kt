@@ -4,9 +4,9 @@
  */
 package org.jetbrains.kotlin.fir.visitors
 
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.types.*
 
 
@@ -174,44 +174,44 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitTypeProjection(typeProjectionWithVariance, null)
     }
 
-    final override fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody, data: Nothing?) {
-        visitDeclarationWithBody(declarationWithBody)
-    }
-
-    final override fun visitDeclaration(declaration: FirDeclaration, data: Nothing?) {
-        visitDeclaration(declaration)
-    }
-
-    final override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: Nothing?) {
-        visitMemberDeclaration(memberDeclaration)
-    }
-
-    final override fun visitFunction(function: FirFunction, data: Nothing?) {
-        visitFunction(function)
-    }
-
-    final override fun visitElement(element: FirElement, data: Nothing?) {
-        visitElement(element)
+    final override fun visitCall(call: FirCall, data: Nothing?) {
+        visitCall(call)
     }
 
     final override fun visitClass(klass: FirClass, data: Nothing?) {
         visitClass(klass)
     }
 
-    final override fun visitPackageFragment(packageFragment: FirPackageFragment, data: Nothing?) {
-        visitPackageFragment(packageFragment)
+    final override fun visitDeclaration(declaration: FirDeclaration, data: Nothing?) {
+        visitDeclaration(declaration)
+    }
+
+    final override fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody, data: Nothing?) {
+        visitDeclarationWithBody(declarationWithBody)
+    }
+
+    final override fun visitElement(element: FirElement, data: Nothing?) {
+        visitElement(element)
+    }
+
+    final override fun visitExpression(expression: FirExpression, data: Nothing?) {
+        visitExpression(expression)
+    }
+
+    final override fun visitFunction(function: FirFunction, data: Nothing?) {
+        visitFunction(function)
+    }
+
+    final override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: Nothing?) {
+        visitMemberDeclaration(memberDeclaration)
     }
 
     final override fun visitNamedDeclaration(namedDeclaration: FirNamedDeclaration, data: Nothing?) {
         visitNamedDeclaration(namedDeclaration)
     }
 
-    final override fun visitCall(call: FirCall, data: Nothing?) {
-        visitCall(call)
-    }
-
-    final override fun visitExpression(expression: FirExpression, data: Nothing?) {
-        visitExpression(expression)
+    final override fun visitPackageFragment(packageFragment: FirPackageFragment, data: Nothing?) {
+        visitPackageFragment(packageFragment)
     }
 
     final override fun visitStatement(statement: FirStatement, data: Nothing?) {
@@ -222,16 +222,24 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitType(type)
     }
 
-    final override fun visitTypeWithNullability(typeWithNullability: FirTypeWithNullability, data: Nothing?) {
-        visitTypeWithNullability(typeWithNullability)
-    }
-
     final override fun visitTypeProjection(typeProjection: FirTypeProjection, data: Nothing?) {
         visitTypeProjection(typeProjection)
     }
 
-    final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
-        visitAnonymousInitializer(anonymousInitializer)
+    final override fun visitTypeWithNullability(typeWithNullability: FirTypeWithNullability, data: Nothing?) {
+        visitTypeWithNullability(typeWithNullability)
+    }
+
+    final override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?) {
+        visitAnnotationCall(annotationCall)
+    }
+
+    final override fun visitConstructorCall(constructorCall: FirConstructorCall, data: Nothing?) {
+        visitConstructorCall(constructorCall)
+    }
+
+    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
+        visitEnumEntry(enumEntry)
     }
 
     final override fun visitCallableMember(callableMember: FirCallableMember, data: Nothing?) {
@@ -258,8 +266,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitVariable(variable)
     }
 
-    final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
-        visitTypeAlias(typeAlias)
+    final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
+        visitAnonymousInitializer(anonymousInitializer)
+    }
+
+    final override fun visitImport(import: FirImport, data: Nothing?) {
+        visitImport(import)
+    }
+
+    final override fun visitBody(body: FirBody, data: Nothing?) {
+        visitBody(body)
     }
 
     final override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {
@@ -274,32 +290,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitPropertyAccessor(propertyAccessor)
     }
 
-    final override fun visitImport(import: FirImport, data: Nothing?) {
-        visitImport(import)
-    }
-
-    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
-        visitEnumEntry(enumEntry)
-    }
-
-    final override fun visitFile(file: FirFile, data: Nothing?) {
-        visitFile(file)
+    final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
+        visitTypeAlias(typeAlias)
     }
 
     final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: Nothing?) {
         visitTypeParameter(typeParameter)
     }
 
-    final override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?) {
-        visitAnnotationCall(annotationCall)
-    }
-
-    final override fun visitConstructorCall(constructorCall: FirConstructorCall, data: Nothing?) {
-        visitConstructorCall(constructorCall)
-    }
-
-    final override fun visitBody(body: FirBody, data: Nothing?) {
-        visitBody(body)
+    final override fun visitFile(file: FirFile, data: Nothing?) {
+        visitFile(file)
     }
 
     final override fun visitDelegatedType(delegatedType: FirDelegatedType, data: Nothing?) {
@@ -312,6 +312,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitImplicitType(implicitType: FirImplicitType, data: Nothing?) {
         visitImplicitType(implicitType)
+    }
+
+    final override fun visitStarProjection(starProjection: FirStarProjection, data: Nothing?) {
+        visitStarProjection(starProjection)
+    }
+
+    final override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: Nothing?) {
+        visitTypeProjectionWithVariance(typeProjectionWithVariance)
     }
 
     final override fun visitDynamicType(dynamicType: FirDynamicType, data: Nothing?) {
@@ -328,14 +336,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitUserType(userType: FirUserType, data: Nothing?) {
         visitUserType(userType)
-    }
-
-    final override fun visitStarProjection(starProjection: FirStarProjection, data: Nothing?) {
-        visitStarProjection(starProjection)
-    }
-
-    final override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: Nothing?) {
-        visitTypeProjectionWithVariance(typeProjectionWithVariance)
     }
 
 }

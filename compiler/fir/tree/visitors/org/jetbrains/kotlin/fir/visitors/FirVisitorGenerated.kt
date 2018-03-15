@@ -4,9 +4,9 @@
  */
 package org.jetbrains.kotlin.fir.visitors
 
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.types.*
 
 
