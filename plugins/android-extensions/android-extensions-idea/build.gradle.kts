@@ -17,7 +17,15 @@ dependencies {
     compile(project(":idea:idea-gradle"))
     compile(project(":plugins:android-extensions-compiler"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
-    compileOnly(intellijPluginDep("android")) { includeJars("android", "android-common", "android-base-common", "sdk-common", "sdk-tools") }
+    compileOnly(intellijPluginDep("android")) {
+        includeJars(
+            "android",
+            "android-common",
+            "android-base-common",
+            "sdk-common-26.0.0",
+            "sdk-tools"
+        )
+    }
     compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     compileOnly(intellijDep()) { includeJars("extensions", "openapi", "platform-api", "platform-impl", "java-api", "util", "idea", "android-base-common", rootProject = rootProject) }
 
@@ -32,7 +40,7 @@ dependencies {
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(commonDep("junit:junit"))
     testRuntime(projectDist(":kotlin-reflect"))
-    testCompile(intellijPluginDep("android")) { includeJars("android", "android-common", "sdk-common", "sdk-tools") }
+    testCompile(intellijPluginDep("android")) { includeJars("android", "android-common", "sdk-common-26.0.0", "sdk-tools") }
     testCompile(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     testCompile(intellijDep()) { includeJars("platform-api", "platform-impl", "extensions") }
 

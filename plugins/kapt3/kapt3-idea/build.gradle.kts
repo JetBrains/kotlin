@@ -12,7 +12,7 @@ dependencies {
     compile(project(":kotlin-annotation-processing"))
     compileOnly(intellijDep()) { includeJars("openapi", "platform-api", "external-system-rt", "util") }
     compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-api", "gradle", rootProject = rootProject) }
-    compileOnly(intellijPluginDep("android")) { includeJars("android", "android-common", "sdklib", "sdk-common", "sdk-tools") }
+    compileOnly(intellijPluginDep("android")) { includeJars("android", "android-common", "sdklib", "sdk-common-26.0.0", "sdk-tools") }
 }
 
 sourceSets {
