@@ -67,6 +67,7 @@ messages/**)
 -dontwarn com.intellij.util.io.Decompressor*
 -dontwarn org.w3c.dom.Location
 -dontwarn org.w3c.dom.Window
+-dontwarn org.slf4j.**
 
 
 #-libraryjars '<rtjar>'
