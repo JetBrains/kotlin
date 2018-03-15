@@ -1257,6 +1257,20 @@ task array3(type: RunKonanTest) {
     source = "runtime/collections/array3.kt"
 }
 
+task typed_array0(type: RunKonanTest) {
+    // MIPS target is big-endian.
+    disabled = (project.testTarget == 'linux_mips32')
+    goldValue = "OK\n"
+    source = "runtime/collections/typed_array0.kt"
+}
+
+task typed_array1(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32')  // No exceptions on WASM.
+    goldValue = "OK\n"
+    source = "runtime/collections/typed_array1.kt"
+}
+
+
 task sort0(type: RunKonanTest) {
     goldValue = "[a, b, x]\n[-1, 0, 42, 239, 100500]\n"
     source = "runtime/collections/sort0.kt"
