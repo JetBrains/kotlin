@@ -5,19 +5,31 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.CallResolutionResult
+import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.model.PartialCallResolutionResult
 
 interface InferenceSession {
     companion object {
         val default = object : InferenceSession {
-            override fun prepareBeforeCompletion(commonSystem: NewConstraintSystem) {}
-            override fun shouldFixTypeVariables(): Boolean = false
-            override fun addPartiallyResolvedCall(call: CallResolutionResult) {}
+            override fun shouldFixTypeVariables(candidate: KotlinResolutionCandidate): Boolean = true
+            override fun addPartialCallInfo(callInfo: PartialCallInfo) {}
+            override fun addErrorCallInfo(callInfo: ErrorCallInfo) {}
+            override fun currentConstraintSystem(): ConstraintStorage = ConstraintStorage.Empty
         }
     }
 
-    fun prepareBeforeCompletion(commonSystem: NewConstraintSystem)
-    fun shouldFixTypeVariables(): Boolean
-    fun addPartiallyResolvedCall(call: CallResolutionResult)
+    fun shouldFixTypeVariables(candidate: KotlinResolutionCandidate): Boolean
+    fun addPartialCallInfo(callInfo: PartialCallInfo)
+    fun addErrorCallInfo(callInfo: ErrorCallInfo)
+    fun currentConstraintSystem(): ConstraintStorage
+}
+
+interface PartialCallInfo {
+    val callResolutionResult: PartialCallResolutionResult
+}
+
+interface ErrorCallInfo {
+    val callResolutionResult: CallResolutionResult
 }

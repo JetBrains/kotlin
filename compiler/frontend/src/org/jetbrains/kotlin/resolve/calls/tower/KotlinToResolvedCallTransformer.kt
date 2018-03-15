@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
@@ -71,7 +72,8 @@ class KotlinToResolvedCallTransformer(
 
     fun <D : CallableDescriptor> transformAndReport(
         baseResolvedCall: CallResolutionResult,
-        context: BasicCallResolutionContext
+        context: BasicCallResolutionContext,
+        tracingStrategy: TracingStrategy
     ): ResolvedCall<D> {
         return when (baseResolvedCall) {
             is PartialCallResolutionResult -> {
@@ -84,7 +86,9 @@ class KotlinToResolvedCallTransformer(
                     psiKotlinCall.psiCall
 
                 context.trace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, baseResolvedCall)
-                context.inferenceSession.addPartiallyResolvedCall(baseResolvedCall)
+                context.inferenceSession.addPartialCallInfo(
+                    PSIPartialCallInfo(baseResolvedCall, context, tracingStrategy)
+                )
 
                 createStubResolvedCallAndWriteItToTrace(candidate, context.trace, baseResolvedCall.diagnostics)
             }

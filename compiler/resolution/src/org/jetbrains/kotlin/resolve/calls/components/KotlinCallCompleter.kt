@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
@@ -37,7 +38,7 @@ class KotlinCallCompleter(
         val candidate = prepareCandidateForCompletion(factory, candidates, resolutionCallbacks)
         val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
 
-        return if (resolutionCallbacks.inferenceSession.shouldFixTypeVariables())
+        return if (resolutionCallbacks.inferenceSession.shouldFixTypeVariables(candidate))
             candidate.runCompletion(completionType, diagnosticHolder, resolutionCallbacks)
         else
             candidate.asCallResolutionResult(ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder)
@@ -68,9 +69,9 @@ class KotlinCallCompleter(
         diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder,
         resolutionCallbacks: KotlinResolutionCallbacks
     ): CallResolutionResult {
-        if (ErrorUtils.isError(resolvedCall.candidateDescriptor) || csBuilder.hasContradiction) {
+        if (isErrorCandidate()) {
             runCompletion(resolvedCall, ConstraintSystemCompletionMode.FULL, diagnosticHolder, getSystem(), resolutionCallbacks)
-            return asCallResolutionResult(completionType, diagnosticHolder, isError = true)
+            return asCallResolutionResult(completionType, diagnosticHolder)
         }
 
         runCompletion(resolvedCall, completionType, diagnosticHolder, getSystem(), resolutionCallbacks)
@@ -155,15 +156,14 @@ class KotlinCallCompleter(
         return resolutionCallbacks.createReceiverWithSmartCastInfo(resolvedCall)?.stableType ?: returnType
     }
 
-    private fun KotlinResolutionCandidate.asCallResolutionResult(
+    fun KotlinResolutionCandidate.asCallResolutionResult(
         type: ConstraintSystemCompletionMode,
-        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
-        isError: Boolean = false
+        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder
     ): CallResolutionResult {
         val systemStorage = getSystem().asReadOnlyStorage()
         val allDiagnostics = diagnosticsHolder.getDiagnostics() + this.diagnosticsFromResolutionParts
 
-        if (isError) {
+        if (isErrorCandidate()) {
             return ErrorCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
         }
 
@@ -172,5 +172,9 @@ class KotlinCallCompleter(
         } else {
             PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
         }
+    }
+
+    private fun KotlinResolutionCandidate.isErrorCandidate(): Boolean {
+        return ErrorUtils.isError(resolvedCall.candidateDescriptor) || hasContradiction
     }
 }

@@ -48,7 +48,8 @@ class KotlinCallComponents(
 class SimpleCandidateFactory(
     val callComponents: KotlinCallComponents,
     val scopeTower: ImplicitScopeTower,
-    val kotlinCall: KotlinCall
+    val kotlinCall: KotlinCall,
+    val inferenceSession: InferenceSession
 ) : CandidateFactory<KotlinResolutionCandidate> {
     val baseSystem: ConstraintStorage
 
@@ -60,6 +61,8 @@ class SimpleCandidateFactory(
             baseSystem.addSubsystemFromArgument(argument)
         }
         baseSystem.addSubsystemFromArgument(kotlinCall.externalArgument)
+
+        baseSystem.addOtherSystem(inferenceSession.currentConstraintSystem())
 
         this.baseSystem = baseSystem.asReadOnlyStorage()
     }

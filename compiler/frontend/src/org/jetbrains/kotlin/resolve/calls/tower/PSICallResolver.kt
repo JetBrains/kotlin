@@ -173,7 +173,7 @@ class PSICallResolver(
         }
     }
 
-    private fun <D : CallableDescriptor> convertToOverloadResolutionResults(
+    fun <D : CallableDescriptor> convertToOverloadResolutionResults(
         context: BasicCallResolutionContext,
         result: CallResolutionResult,
         tracingStrategy: TracingStrategy
@@ -189,32 +189,46 @@ class PSICallResolver(
 
         val trace = context.trace
 
-        result.diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>()?.let {
-            tracingStrategy.unresolvedReference(trace)
-            return OverloadResolutionResultsImpl.nameNotFound()
+        handleErrorResolutionResult<D>(trace, result, tracingStrategy)?.let { errorResult ->
+            context.inferenceSession.addErrorCallInfo(PSIErrorCallInfo(result, errorResult))
+            return errorResult
         }
 
-        result.diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.let {
-            return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace)
-        }
-
-        val isInapplicableReceiver =
-            getResultApplicability(result.diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
-
-        val resolvedCall = if (isInapplicableReceiver) {
-            val singleCandidate = result.resultCallAtom() ?: error("Should be not null for result: $result")
-            kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate, result.diagnostics).also {
-                tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))
-            }
-        } else {
-            kotlinToResolvedCallTransformer.transformAndReport<D>(result, context)
-        }
+        val resolvedCall = kotlinToResolvedCallTransformer.transformAndReport<D>(result, context, tracingStrategy)
 
         // NB. Be careful with moving this invocation, as effect system expects resolution results to be written in trace
         // (see EffectSystem for details)
         resolvedCall.recordEffects(trace)
 
         return SingleOverloadResolutionResult(resolvedCall)
+    }
+
+    private fun <D : CallableDescriptor> handleErrorResolutionResult(
+        trace: BindingTrace,
+        result: CallResolutionResult,
+        tracingStrategy: TracingStrategy
+    ): OverloadResolutionResults<D>? {
+        val diagnostics = result.diagnostics
+
+        diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>()?.let {
+            tracingStrategy.unresolvedReference(trace)
+            return OverloadResolutionResultsImpl.nameNotFound()
+        }
+
+        diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.let {
+            return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace)
+        }
+
+        if (getResultApplicability(diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
+            val singleCandidate = result.resultCallAtom() ?: error("Should be not null for result: $result")
+            val resolvedCall = kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate, diagnostics).also {
+                tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))
+            }
+
+            return SingleOverloadResolutionResult(resolvedCall)
+        }
+
+        return null
     }
 
     private fun <D : CallableDescriptor> transformManyCandidatesAndRecordTrace(
@@ -360,7 +374,7 @@ class PSICallResolver(
         override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<KotlinResolutionCandidate> {
             val explicitReceiver = if (stripExplicitReceiver) null else kotlinCall.explicitReceiver
             val variableCall = PSIKotlinCallForVariable(kotlinCall, explicitReceiver, kotlinCall.name)
-            return SimpleCandidateFactory(callComponents, scopeTower, variableCall)
+            return SimpleCandidateFactory(callComponents, scopeTower, variableCall, context.inferenceSession)
         }
 
         override fun factoryForInvoke(variable: KotlinResolutionCandidate, useExplicitReceiver: Boolean):
@@ -380,7 +394,9 @@ class PSICallResolver(
                 PSIKotlinCallForInvoke(kotlinCall, variable, variableCallArgument, null)
             }
 
-            return variableCallArgument.receiver to SimpleCandidateFactory(callComponents, scopeTower, callForInvoke)
+            return variableCallArgument.receiver to SimpleCandidateFactory(
+                callComponents, scopeTower, callForInvoke, context.inferenceSession
+            )
         }
 
         // todo: create special check that there is no invoke on variable
