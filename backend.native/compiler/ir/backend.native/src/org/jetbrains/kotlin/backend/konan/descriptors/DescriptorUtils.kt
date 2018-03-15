@@ -48,14 +48,42 @@ internal val ClassDescriptor.implementedInterfaces: List<ClassDescriptor>
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal tailrec fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
+internal fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
     if (this.isReal) {
         return this
-    } else {
-        return overriddenSymbols
-                .firstOrNull { it.owner.modality != Modality.ABSTRACT }!!
-                .owner.resolveFakeOverride()
     }
+
+    val visited = mutableSetOf<IrSimpleFunction>()
+    val realSupers = mutableSetOf<IrSimpleFunction>()
+
+    fun findRealSupers(function: IrSimpleFunction) {
+        if (function in visited) return
+        visited += function
+        if (function.isReal) {
+            realSupers += function
+        } else {
+            function.overriddenSymbols.forEach { findRealSupers(it.owner) }
+        }
+    }
+
+    findRealSupers(this)
+
+    if (realSupers.size > 1) {
+        visited.clear()
+
+        fun excludeOverridden(function: IrSimpleFunction) {
+            if (function in visited) return
+            visited += function
+            function.overriddenSymbols.forEach {
+                realSupers.remove(it.owner)
+                excludeOverridden(it.owner)
+            }
+        }
+
+        realSupers.toList().forEach { excludeOverridden(it) }
+    }
+
+    return realSupers.first { it.modality != Modality.ABSTRACT }
 }
 
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -178,7 +179,7 @@ fun IrModuleFragment.referenceAllTypeExternalClassifiers(symbolTable: SymbolTabl
 
     fun KotlinType.referenceAllClassifiers() {
         TypeUtils.getClassDescriptor(this)?.let {
-            if (it.module != moduleDescriptor) {
+            if (!ErrorUtils.isError(it) && it.module != moduleDescriptor) {
                 if (it.kind == ClassKind.ENUM_ENTRY) {
                     symbolTable.referenceEnumEntry(it)
                 } else {

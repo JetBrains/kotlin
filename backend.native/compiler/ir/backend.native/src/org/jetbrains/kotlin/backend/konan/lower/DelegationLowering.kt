@@ -190,10 +190,12 @@ internal class PropertyDelegationLowering(val context: KonanBackendContext) : Fi
         if (kProperties.isNotEmpty()) {
             val initializers = kProperties.values.sortedBy { it.second }.map { it.first }
             // TODO: move to object for lazy initialization.
-            irFile.addChild(kPropertiesField.apply {
+            irFile.declarations.add(0, kPropertiesField.apply {
                 initializer = IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         context.createArrayOfExpression(kPropertyImplType, initializers, UNDEFINED_OFFSET, UNDEFINED_OFFSET))
             })
+
+            kPropertiesField.parent = irFile
         }
     }
 
