@@ -51,6 +51,8 @@ messages/**)
 -dontwarn org.jetbrains.annotations.ReadOnly
 -dontwarn org.jetbrains.annotations.Mutable
 -dontwarn com.intellij.util.io.TarUtil
+-dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
+-dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
 
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
