@@ -216,10 +216,15 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
         @TestMetadata("jvmStaticDefault.kt")
         public void testJvmStaticDefault() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/jvmStaticDefault.kt");
+            if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+                doTest(fileName);
+                return;
+            }
             try {
                 doTest(fileName);
             }
             catch (Throwable ignore) {
+                ignore.printStackTrace();
                 return;
             }
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
