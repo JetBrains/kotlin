@@ -7,6 +7,16 @@ import org.gradle.api.publish.ivy.internal.publication.DefaultIvyPublicationIden
 import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
 import java.io.File
 import org.gradle.internal.os.OperatingSystem
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
+    }
+}
 
 val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijRepo: String by rootProject.extra
@@ -140,8 +150,10 @@ val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(
 
 val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
-val copyIntellijSdkSources by tasks.creating {
-    configureExtractFromConfigurationTask(sources) { it.singleFile }
+val copyIntellijSdkSources by tasks.creating(ShadowJar::class.java) {
+    from(sources)
+    from(`asm-shaded-sources`)
+    destinationDir = File(repoDir, sources.name)
 }
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }
