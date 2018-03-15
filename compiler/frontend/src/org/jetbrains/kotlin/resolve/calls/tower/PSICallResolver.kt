@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
@@ -150,10 +151,13 @@ class PSICallResolver(
     }
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =
+        createResolutionCallbacks(context.trace, context.inferenceSession)
+
+    fun createResolutionCallbacks(trace: BindingTrace, inferenceSession: InferenceSession) =
         KotlinResolutionCallbacksImpl(
-            context, expressionTypingServices, typeApproximator,
+            trace, expressionTypingServices, typeApproximator,
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
-            constantExpressionEvaluator, dataFlowValueFactory
+            constantExpressionEvaluator, dataFlowValueFactory, inferenceSession
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {

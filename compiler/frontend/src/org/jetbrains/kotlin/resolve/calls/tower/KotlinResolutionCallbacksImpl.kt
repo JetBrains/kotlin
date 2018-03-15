@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
-import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.ReceiverKotlinCallArgument
@@ -45,17 +45,16 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinResolutionCallbacksImpl(
-    topLevelCallContext: BasicCallResolutionContext,
+    val trace: BindingTrace,
     val expressionTypingServices: ExpressionTypingServices,
     val typeApproximator: TypeApproximator,
     val argumentTypeResolver: ArgumentTypeResolver,
     val languageVersionSettings: LanguageVersionSettings,
     val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     val constantExpressionEvaluator: ConstantExpressionEvaluator,
-    val dataFlowValueFactory: DataFlowValueFactory
+    val dataFlowValueFactory: DataFlowValueFactory,
+    override val inferenceSession: InferenceSession
 ) : KotlinResolutionCallbacks {
-    val trace: BindingTrace = topLevelCallContext.trace
-
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
         var dataFlowInfoAfter: DataFlowInfo? = null
         val returnStatements = ArrayList<Pair<KtReturnExpression, KotlinTypeInfo?>>()
@@ -181,8 +180,6 @@ class KotlinResolutionCallbacksImpl(
         )
         return constantExpressionEvaluator.evaluateExpression(expression, temporaryBindingTrace, expectedType) != null
     }
-
-    override val inferenceSession = topLevelCallContext.inferenceSession
 
     private fun findCommonParent(callElement: KtExpression, receiver: ReceiverKotlinCallArgument?): KtExpression {
         if (receiver == null) return callElement
