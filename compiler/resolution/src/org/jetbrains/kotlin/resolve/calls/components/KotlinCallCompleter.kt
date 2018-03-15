@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 
@@ -33,26 +34,24 @@ class KotlinCallCompleter(
         if (candidates.size > 1) {
             diagnosticHolder.addDiagnostic(ManyCandidatesCallDiagnostic(factory.kotlinCall, candidates))
         }
-        val candidate = candidates.singleOrNull()
 
-        // this is needed at least for non-local return checker, because when we analyze lambda we should already bind descriptor for outer call
-        candidate?.resolvedCall?.let { resolutionCallbacks.bindStubResolvedCallForCandidate(it) }
+        val candidate = prepareCandidateForCompletion(factory, candidates, resolutionCallbacks)
+        val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
 
-        if (candidate == null || candidate.csBuilder.hasContradiction) {
-            val candidateForCompletion = candidate ?: factory.createErrorCandidate().forceResolution()
-            candidateForCompletion.prepareForCompletion(expectedType, resolutionCallbacks)
+        if (ErrorUtils.isError(candidate.resolvedCall.candidateDescriptor) ||
+            candidate.csBuilder.hasContradiction
+        ) {
             runCompletion(
-                candidateForCompletion.resolvedCall,
+                candidate.resolvedCall,
                 ConstraintSystemCompletionMode.FULL,
                 diagnosticHolder,
-                candidateForCompletion.getSystem(),
+                candidate.getSystem(),
                 resolutionCallbacks
             )
 
             return candidate.asCallResolutionResult(CallResolutionResult.Type.ERROR, diagnosticHolder)
         }
 
-        val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
         val constraintSystem = candidate.getSystem()
         runCompletion(candidate.resolvedCall, completionType, diagnosticHolder, constraintSystem, resolutionCallbacks)
 
@@ -114,6 +113,18 @@ class KotlinCallCompleter(
         constraintSystem.diagnostics.forEach(diagnosticsHolder::addDiagnostic)
     }
 
+    private fun prepareCandidateForCompletion(
+        factory: SimpleCandidateFactory,
+        candidates: Collection<KotlinResolutionCandidate>,
+        resolutionCallbacks: KotlinResolutionCallbacks
+    ): KotlinResolutionCandidate {
+        val candidate = candidates.singleOrNull()
+
+        // this is needed at least for non-local return checker, because when we analyze lambda we should already bind descriptor for outer call
+        candidate?.resolvedCall?.let { resolutionCallbacks.bindStubResolvedCallForCandidate(it) }
+
+        return candidate ?: factory.createErrorCandidate().forceResolution()
+    }
 
     // true if we should complete this call
     private fun KotlinResolutionCandidate.prepareForCompletion(
