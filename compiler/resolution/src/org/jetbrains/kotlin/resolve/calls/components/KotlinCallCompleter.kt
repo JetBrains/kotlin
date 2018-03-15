@@ -38,29 +38,7 @@ class KotlinCallCompleter(
         val candidate = prepareCandidateForCompletion(factory, candidates, resolutionCallbacks)
         val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
 
-        if (ErrorUtils.isError(candidate.resolvedCall.candidateDescriptor) ||
-            candidate.csBuilder.hasContradiction
-        ) {
-            runCompletion(
-                candidate.resolvedCall,
-                ConstraintSystemCompletionMode.FULL,
-                diagnosticHolder,
-                candidate.getSystem(),
-                resolutionCallbacks
-            )
-
-            return candidate.asCallResolutionResult(CallResolutionResult.Type.ERROR, diagnosticHolder)
-        }
-
-        val constraintSystem = candidate.getSystem()
-        runCompletion(candidate.resolvedCall, completionType, diagnosticHolder, constraintSystem, resolutionCallbacks)
-
-        val callResolutionType = if (completionType == ConstraintSystemCompletionMode.FULL)
-            CallResolutionResult.Type.COMPLETED
-        else
-            CallResolutionResult.Type.PARTIAL
-
-        return candidate.asCallResolutionResult(callResolutionType, diagnosticHolder)
+        return candidate.runCompletion(completionType, diagnosticHolder, resolutionCallbacks)
     }
 
     fun createAllCandidatesResult(
@@ -81,6 +59,26 @@ class KotlinCallCompleter(
             )
         }
         return CallResolutionResult(CallResolutionResult.Type.ALL_CANDIDATES, null, emptyList(), ConstraintStorage.Empty, candidates)
+    }
+
+    private fun KotlinResolutionCandidate.runCompletion(
+        completionType: ConstraintSystemCompletionMode,
+        diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder,
+        resolutionCallbacks: KotlinResolutionCallbacks
+    ): CallResolutionResult {
+        if (ErrorUtils.isError(resolvedCall.candidateDescriptor) || csBuilder.hasContradiction) {
+            runCompletion(resolvedCall, ConstraintSystemCompletionMode.FULL, diagnosticHolder, getSystem(), resolutionCallbacks)
+            return asCallResolutionResult(CallResolutionResult.Type.ERROR, diagnosticHolder)
+        }
+
+        runCompletion(resolvedCall, completionType, diagnosticHolder, getSystem(), resolutionCallbacks)
+
+        val callResolutionType = if (completionType == ConstraintSystemCompletionMode.FULL)
+            CallResolutionResult.Type.COMPLETED
+        else
+            CallResolutionResult.Type.PARTIAL
+
+        return asCallResolutionResult(callResolutionType, diagnosticHolder)
     }
 
     private fun runCompletion(
