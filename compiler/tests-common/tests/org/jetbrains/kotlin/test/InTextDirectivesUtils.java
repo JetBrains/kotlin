@@ -222,7 +222,7 @@ public final class InTextDirectivesUtils {
         if (targetBackend == TargetBackend.ANY) return true;
 
         List<String> backends = findLinesWithPrefixesRemoved(textWithDirectives(file), "// TARGET_BACKEND: ");
-        return backends.isEmpty() || backends.contains(targetBackend.name());
+        return backends.isEmpty() || backends.contains(targetBackend.name()) || backends.contains(targetBackend.getCompatibleWith().name());
     }
 
     private static boolean isIgnoredTargetByPrefix(TargetBackend targetBackend, File file, String prefix) {
