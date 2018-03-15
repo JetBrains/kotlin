@@ -131,6 +131,9 @@
 
         <action id="KotlinFormattingSettingsStatusAction" class="org.jetbrains.kotlin.idea.actions.internal.KotlinFormattingSettingsStatusAction"
                 text="Formatter settings info"/>
+
+        <action id="ShowFirAction" class="org.jetbrains.kotlin.idea.actions.internal.ShowFirAction"
+                text="Show RAW FIR Explorer"/>
       </group>
       <separator/>
 
