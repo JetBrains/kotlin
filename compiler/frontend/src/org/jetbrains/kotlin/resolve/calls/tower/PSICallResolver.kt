@@ -174,13 +174,13 @@ class PSICallResolver(
         result: CallResolutionResult,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
-        if (result.type == CallResolutionResult.Type.ALL_CANDIDATES) {
-            val resolvedCalls = result.allCandidates?.map {
+        if (result is AllCandidatesResolutionResult) {
+            val resolvedCalls = result.allCandidates.map {
                 val resultingSubstitutor = it.getSystem().asReadOnlyStorage().buildResultingSubstitutor()
                 kotlinToResolvedCallTransformer.transformToResolvedCall<D>(it.resolvedCall, null, resultingSubstitutor, result.diagnostics)
             }
 
-            return AllCandidates(resolvedCalls ?: emptyList())
+            return AllCandidates(resolvedCalls)
         }
 
         val trace = context.trace
@@ -198,7 +198,7 @@ class PSICallResolver(
             getResultApplicability(result.diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
 
         val resolvedCall = if (isInapplicableReceiver) {
-            val singleCandidate = result.resultCallAtom ?: error("Should be not null for result: $result")
+            val singleCandidate = result.resultCallAtom() ?: error("Should be not null for result: $result")
             kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate, result.diagnostics).also {
                 tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))
             }
@@ -398,12 +398,8 @@ class PSICallResolver(
 
             val psiKotlinCall = variable.resolvedCall.atom.psiKotlinCall
 
-            val variableResult = CallResolutionResult(
-                CallResolutionResult.Type.PARTIAL,
-                variable.resolvedCall,
-                listOf(),
-                variable.getSystem().asReadOnlyStorage()
-            )
+            val variableResult = PartialCallResolutionResult(variable.resolvedCall, listOf(), variable.getSystem().asReadOnlyStorage())
+
             return SubKotlinCallArgumentImpl(
                 CallMaker.makeExternalValueArgument((variableReceiver.receiverValue as ExpressionReceiver).expression),
                 psiKotlinCall.resultDataFlowInfo, psiKotlinCall.resultDataFlowInfo, variableReceiver,

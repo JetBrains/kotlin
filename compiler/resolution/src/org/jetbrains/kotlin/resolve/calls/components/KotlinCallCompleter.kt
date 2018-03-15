@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
@@ -41,7 +40,7 @@ class KotlinCallCompleter(
         return if (resolutionCallbacks.inferenceSession.shouldFixTypeVariables())
             candidate.runCompletion(completionType, diagnosticHolder, resolutionCallbacks)
         else
-            candidate.asCallResolutionResult(CallResolutionResult.Type.PARTIAL, diagnosticHolder)
+            candidate.asCallResolutionResult(ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder)
     }
 
     fun createAllCandidatesResult(
@@ -61,7 +60,7 @@ class KotlinCallCompleter(
                 collectAllCandidatesMode = true
             )
         }
-        return CallResolutionResult(CallResolutionResult.Type.ALL_CANDIDATES, null, emptyList(), ConstraintStorage.Empty, candidates)
+        return AllCandidatesResolutionResult(candidates)
     }
 
     private fun KotlinResolutionCandidate.runCompletion(
@@ -71,17 +70,12 @@ class KotlinCallCompleter(
     ): CallResolutionResult {
         if (ErrorUtils.isError(resolvedCall.candidateDescriptor) || csBuilder.hasContradiction) {
             runCompletion(resolvedCall, ConstraintSystemCompletionMode.FULL, diagnosticHolder, getSystem(), resolutionCallbacks)
-            return asCallResolutionResult(CallResolutionResult.Type.ERROR, diagnosticHolder)
+            return asCallResolutionResult(completionType, diagnosticHolder, isError = true)
         }
 
         runCompletion(resolvedCall, completionType, diagnosticHolder, getSystem(), resolutionCallbacks)
 
-        val callResolutionType = if (completionType == ConstraintSystemCompletionMode.FULL)
-            CallResolutionResult.Type.COMPLETED
-        else
-            CallResolutionResult.Type.PARTIAL
-
-        return asCallResolutionResult(callResolutionType, diagnosticHolder)
+        return asCallResolutionResult(completionType, diagnosticHolder)
     }
 
     private fun runCompletion(
@@ -161,18 +155,22 @@ class KotlinCallCompleter(
         return resolutionCallbacks.createReceiverWithSmartCastInfo(resolvedCall)?.stableType ?: returnType
     }
 
-    private fun KotlinResolutionCandidate?.asCallResolutionResult(
-        type: CallResolutionResult.Type,
-        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder
+    private fun KotlinResolutionCandidate.asCallResolutionResult(
+        type: ConstraintSystemCompletionMode,
+        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
+        isError: Boolean = false
     ): CallResolutionResult {
-        val diagnosticsFromResolutionParts = this?.diagnosticsFromResolutionParts ?: emptyList<KotlinCallDiagnostic>()
-        val systemStorage = this?.getSystem()?.asReadOnlyStorage() ?: ConstraintStorage.Empty
+        val systemStorage = getSystem().asReadOnlyStorage()
+        val allDiagnostics = diagnosticsHolder.getDiagnostics() + this.diagnosticsFromResolutionParts
 
-        return CallResolutionResult(
-            type,
-            this?.resolvedCall,
-            diagnosticsHolder.getDiagnostics() + diagnosticsFromResolutionParts,
-            systemStorage
-        )
+        if (isError) {
+            return ErrorCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+        }
+
+        return if (type == ConstraintSystemCompletionMode.FULL) {
+            CompletedCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+        } else {
+            PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+        }
     }
 }

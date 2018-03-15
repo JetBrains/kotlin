@@ -73,9 +73,10 @@ class KotlinToResolvedCallTransformer(
         baseResolvedCall: CallResolutionResult,
         context: BasicCallResolutionContext
     ): ResolvedCall<D> {
-        val candidate = baseResolvedCall.resultCallAtom!!
-        when (baseResolvedCall.type) {
-            CallResolutionResult.Type.PARTIAL -> {
+        return when (baseResolvedCall) {
+            is PartialCallResolutionResult -> {
+                val candidate = baseResolvedCall.resultCallAtom
+
                 val psiKotlinCall = candidate.atom.psiKotlinCall
                 val psiCall = if (psiKotlinCall is PSIKotlinCallForInvoke)
                     psiKotlinCall.baseCall.psiCall
@@ -85,9 +86,12 @@ class KotlinToResolvedCallTransformer(
                 context.trace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, baseResolvedCall)
                 context.inferenceSession.addPartiallyResolvedCall(baseResolvedCall)
 
-                return createStubResolvedCallAndWriteItToTrace(candidate, context.trace, baseResolvedCall.diagnostics)
+                createStubResolvedCallAndWriteItToTrace(candidate, context.trace, baseResolvedCall.diagnostics)
             }
-            CallResolutionResult.Type.ERROR, CallResolutionResult.Type.COMPLETED -> {
+
+            is CompletedCallResolutionResult, is ErrorCallResolutionResult -> {
+                val candidate = (baseResolvedCall as SingleCallResolutionResult).resultCallAtom
+
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
                     resultSubstitutor, context.trace, context, this, expressionTypingServices, argumentTypeResolver,
@@ -98,9 +102,11 @@ class KotlinToResolvedCallTransformer(
                     ktPrimitiveCompleter.completeAll(subKtPrimitive)
                 }
 
-                return ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.diagnostics) as ResolvedCall<D>
+                ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.diagnostics) as ResolvedCall<D>
             }
-            CallResolutionResult.Type.ALL_CANDIDATES -> error("Cannot transform result for ALL_CANDIDATES mode")
+
+            is SingleCallResolutionResult -> error("Call resolution result for one candidate didn't transformed: $baseResolvedCall")
+            is AllCandidatesResolutionResult -> error("Cannot transform result for ALL_CANDIDATES mode")
         }
     }
 
