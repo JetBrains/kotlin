@@ -183,6 +183,16 @@ extra["compilerModules"] = arrayOf(
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:psi",
+        *if (project.findProperty("fir.enabled") == "true") {
+            arrayOf(
+                ":compiler:fir:cones",
+                ":compiler:fir:resolve",
+                ":compiler:fir:tree",
+                ":compiler:fir:psi2fir"
+            )
+        } else {
+            emptyArray()
+        },
         ":compiler:frontend",
         ":compiler:frontend.java",
         ":compiler:frontend.script",

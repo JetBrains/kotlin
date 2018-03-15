@@ -10,12 +10,9 @@ plugins {
 
 jvmTarget = "1.6"
 
-val generatorClasspath by configurations.creating
-
 dependencies {
     compile(project(":core:descriptors"))
     compile(project(":compiler:fir:cones"))
-    generatorClasspath(project("visitors-generator"))
     // Necessary only to store bound PsiElement inside FirElement
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "annotations") }
 }
@@ -26,6 +23,12 @@ sourceSets {
         java.srcDir("visitors")
     }
     "test" {}
+}
+
+val generatorClasspath by configurations.creating
+
+dependencies {
+    generatorClasspath(project("visitors-generator"))
 }
 
 val generateVisitors by tasks.creating(JavaExec::class) {

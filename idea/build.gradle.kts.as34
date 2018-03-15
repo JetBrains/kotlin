@@ -33,6 +33,7 @@ dependencies {
     compile(project(":eval4j"))
     compile(project(":j2k"))
     compile(project(":idea:formatter"))
+    compile(project(":idea:fir-view"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
