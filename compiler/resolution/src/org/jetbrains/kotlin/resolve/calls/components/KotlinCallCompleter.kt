@@ -176,15 +176,3 @@ class KotlinCallCompleter(
         )
     }
 }
-
-interface InferenceSession {
-    companion object {
-        val default = object : InferenceSession {
-            override fun shouldFixTypeVariables(): Boolean = false
-            override fun addPartiallyResolvedCall(call: CallResolutionResult) {}
-        }
-    }
-
-    fun shouldFixTypeVariables(): Boolean
-    fun addPartiallyResolvedCall(call: CallResolutionResult)
-}
