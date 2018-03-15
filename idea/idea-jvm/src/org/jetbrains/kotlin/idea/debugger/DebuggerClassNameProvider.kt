@@ -198,7 +198,7 @@ class DebuggerClassNameProvider(
                         val typeForAnonymousClass = asmTypeForAnonymousClassOrNull(typeMapper.bindingContext, element)
 
                         if (typeForAnonymousClass == null) {
-                            val parentText = element.relevantParentInReadAction?.text ?: "<parent was null>"
+                            val parentText = runReadAction { getRelevantElement(element.parent)?.text } ?: "<parent was null>"
                             LOG.error("Can not get type for ${element.text}, parent: $parentText")
                             classNamesOfContainingDeclaration
                         } else {
