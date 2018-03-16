@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.isInstanceType
 import org.jetbrains.kotlin.serialization.deserialization.ContractDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
@@ -165,13 +166,7 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
         }
 
         private fun extractType(proto: ProtoBuf.Expression): KotlinType? {
-            val protoType = when {
-                proto.hasIsInstanceType() -> proto.isInstanceType
-                proto.hasIsInstanceTypeId() -> typeTable.types.getOrNull(proto.isInstanceTypeId) ?: return null
-                else -> return null
-            }
-
-            return typeDeserializer.type(protoType)
+            return typeDeserializer.type(proto.isInstanceType(typeTable) ?: return null)
         }
 
         private fun deserializeConstant(value: ProtoBuf.Expression.ConstantValue): ConstantReference? = when (value) {
