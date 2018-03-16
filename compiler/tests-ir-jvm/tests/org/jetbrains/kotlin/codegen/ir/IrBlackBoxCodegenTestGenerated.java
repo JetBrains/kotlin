@@ -13133,9 +13133,27 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("inheritedFromExpectedMethod.kt")
+            public void testInheritedFromExpectedMethod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedFromExpectedMethod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inheritedInExpectedDeclarations.kt")
+            public void testInheritedInExpectedDeclarations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments/inheritedInExpectedDeclarations.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("inlineFunctionWithDefaultLambda.kt")
             public void testInlineFunctionWithDefaultLambda() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments/inlineFunctionWithDefaultLambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt23239.kt")
+            public void testKt23239() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments/kt23239.kt");
                 doTest(fileName);
             }
         }
