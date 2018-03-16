@@ -47,12 +47,6 @@ public fun StringBuilder.append(vararg value: Any?): StringBuilder {
     return this
 }
 
-/**
- * Sets the character at the specified [index] to the specified [value].
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.setCharAt(index, value)
 
 
 internal fun <T> Appendable.appendElement(element: T, transform: ((T) -> CharSequence)?) {

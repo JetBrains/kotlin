@@ -79,27 +79,6 @@ public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCo
 @kotlin.internal.InlineOnly
 public inline fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
 
-/**
- * Returns an immutable set containing only the specified object [element].
- * The returned set is serializable.
- */
-@JvmVersion
-public fun <T> setOf(element: T): Set<T> = java.util.Collections.singleton(element)
-
-
-/**
- * Returns a new [java.util.SortedSet] with the given elements.
- */
-@JvmVersion
-public fun <T> sortedSetOf(vararg elements: T): java.util.TreeSet<T> = elements.toCollection(java.util.TreeSet<T>())
-
-/**
- * Returns a new [java.util.SortedSet] with the given [comparator] and elements.
- */
-@JvmVersion
-public fun <T> sortedSetOf(comparator: Comparator<in T>, vararg elements: T): java.util.TreeSet<T> = elements.toCollection(java.util.TreeSet<T>(comparator))
-
-
 internal fun <T> Set<T>.optimizeReadOnlySet() = when (size) {
     0 -> emptySet()
     1 -> setOf(iterator().next())

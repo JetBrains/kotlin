@@ -4,6 +4,14 @@
 
 package kotlin.text
 
+/**
+ * Sets the character at the specified [index] to the specified [value].
+ */
+@kotlin.jvm.JvmVersion
+@kotlin.internal.InlineOnly
+public inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.setCharAt(index, value)
+
+
 private object SystemProperties {
     /** Line separator for current system. */
     @JvmField
