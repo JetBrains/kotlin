@@ -80,15 +80,15 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
             "sources for metadata serializer",
             ProjectContext(project),
             listOf(moduleInfo),
-            resolverForModuleFactoryByPlatform = { CommonAnalyzerFacade },
             modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
-            platformParameters = object : PlatformAnalysisParameters {},
-            languageSettingsProvider = object : LanguageSettingsProvider {
+            modulePlatforms = { MultiTargetPlatform.Common },
+            moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
                 override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project) = multiplatformLanguageSettings
                 override fun getTargetPlatform(moduleInfo: ModuleInfo) = TargetPlatformVersion.NoVersion
             },
-            packagePartProviderFactory = packagePartProviderFactory,
-            modulePlatforms = { MultiTargetPlatform.Common }
+            resolverForModuleFactoryByPlatform = { CommonAnalyzerFacade },
+            platformParameters = object : PlatformAnalysisParameters {},
+            packagePartProviderFactory = packagePartProviderFactory
         )
 
         val moduleDescriptor = resolver.descriptorForModule(moduleInfo)

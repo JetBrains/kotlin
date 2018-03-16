@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProjectImpl
@@ -37,12 +38,13 @@ fun createResolveSessionForFiles(
     val projectContext = ProjectContext(project)
     val testModule = TestModule(addBuiltIns)
     val resolverForProject = ResolverForProjectImpl(
-            "test",
-            projectContext, listOf(testModule),
-            { JvmAnalyzerFacade },
-            { ModuleContent(it, syntheticFiles, GlobalSearchScope.allScope(project)) },
-            JvmPlatformParameters { testModule },
-            modulePlatforms = { JvmPlatform.multiTargetPlatform }
+        "test",
+        projectContext, listOf(testModule),
+        { ModuleContent(it, syntheticFiles, GlobalSearchScope.allScope(project)) },
+        modulePlatforms = { JvmPlatform.multiTargetPlatform },
+        moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
+        resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
+        platformParameters = JvmPlatformParameters { testModule }
     )
     return resolverForProject.resolverForModule(testModule).componentProvider.get<ResolveSession>()
 }

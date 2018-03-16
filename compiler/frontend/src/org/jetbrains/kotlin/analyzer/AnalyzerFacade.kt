@@ -85,17 +85,17 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val debugName: String,
     private val projectContext: ProjectContext,
     modules: Collection<M>,
-    private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val modulesContent: (M) -> ModuleContent<M>,
+    private val modulePlatforms: (M) -> MultiTargetPlatform?,
+    private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
+    private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val platformParameters: PlatformAnalysisParameters,
     private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
     override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val packagePartProviderFactory: (ModuleContent<M>) -> PackagePartProvider = { _ -> PackagePartProvider.Empty },
     private val firstDependency: M? = null,
-    private val modulePlatforms: (M) -> MultiTargetPlatform?,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    private val languageSettingsProvider: LanguageSettingsProvider = LanguageSettingsProvider.Default,
     private val invalidateOnOOCB: Boolean = true
 ) : ResolverForProject<M>() {
 
@@ -174,8 +174,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 val packagePartProvider = packagePartProviderFactory(moduleContent)
                 val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
 
-                val languageVersionSettings = languageSettingsProvider.getLanguageVersionSettings(module, projectContext.project)
-                val targetPlatformVersion = languageSettingsProvider.getTargetPlatform(module)
+                val languageVersionSettings = moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project)
+                val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module)
 
                 resolverForModuleFactory.createResolverForModule(
                     descriptor as ModuleDescriptorImpl,

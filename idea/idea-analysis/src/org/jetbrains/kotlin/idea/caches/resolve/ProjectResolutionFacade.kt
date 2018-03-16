@@ -123,20 +123,20 @@ internal class ProjectResolutionFacade(
             resolverDebugName,
             globalContext.withProject(project),
             modulesToCreateResolversFor,
-            { modulePlatform ->
+            modulesContentFactory,
+            modulePlatforms = { module -> module.platform?.multiTargetPlatform },
+            moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
+            resolverForModuleFactoryByPlatform = { modulePlatform ->
                 val platform = modulePlatform ?: settings.platform
                 IdePlatformSupport.facades[platform] ?: throw UnsupportedOperationException("Unsupported platform $platform")
             },
-            modulesContentFactory,
-            jvmPlatformParameters,
-            IdeaEnvironment,
-            builtIns,
-            delegateResolverForProject,
+            platformParameters = jvmPlatformParameters,
+            targetEnvironment = IdeaEnvironment,
+            builtIns = builtIns,
+            delegateResolver = delegateResolverForProject,
             packagePartProviderFactory = { moduleContent -> IDEPackagePartProvider(moduleContent.moduleContentScope) },
             firstDependency = settings.sdk?.let { SdkInfo(project, it) },
-            modulePlatforms = { module -> module.platform?.multiTargetPlatform },
             packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),
-            languageSettingsProvider = IDELanguageSettingsProvider,
             invalidateOnOOCB = invalidateOnOOCB
         )
 

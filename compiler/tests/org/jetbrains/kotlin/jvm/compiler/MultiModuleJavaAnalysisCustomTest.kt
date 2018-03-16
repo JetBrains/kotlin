@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleContent
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.analyzer.ResolverForProject
-import org.jetbrains.kotlin.analyzer.ResolverForProjectImpl
+import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -36,7 +33,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -69,17 +65,18 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val projectContext = ProjectContext(environment.project)
         val builtIns = JvmBuiltIns(projectContext.storageManager)
         val resolverForProject = ResolverForProjectImpl(
-                "test",
-                projectContext, modules,
-                { JvmAnalyzerFacade },
-                modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
-                platformParameters = JvmPlatformParameters {
-                    javaClass ->
-                    val moduleName = javaClass.name.asString().toLowerCase().first().toString()
-                    modules.first { it._name == moduleName }
-                },
-                builtIns = builtIns,
-                modulePlatforms = { JvmPlatform.multiTargetPlatform }
+            "test",
+            projectContext, modules,
+            modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
+            modulePlatforms = { JvmPlatform.multiTargetPlatform },
+            moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
+            resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
+            platformParameters = JvmPlatformParameters {
+                javaClass ->
+                val moduleName = javaClass.name.asString().toLowerCase().first().toString()
+                modules.first { it._name == moduleName }
+            },
+            builtIns = builtIns
         )
 
         builtIns.initialize(
