@@ -45,6 +45,13 @@ internal class KotlinOutputChecker(
         private val JDI_BUG_OUTPUT_PATTERN_2 = Regex("JDWP\\s+exit\\s+error\\s+AGENT_ERROR_NO_JNI_ENV.*]")
     }
 
+    private lateinit var myTestName: String
+
+    override fun init(testName: String) {
+        super.init(testName)
+        this.myTestName = Character.toLowerCase(testName[0]) + testName.substring(1)
+    }
+
     // Copied from the base OutputChecker.checkValid(). Need to intercept call to base preprocessBuffer() method
     override fun checkValid(jdk: Sdk, sortClassPath: Boolean) {
         if (IdeaLogger.ourErrorsOccurred != null) {
