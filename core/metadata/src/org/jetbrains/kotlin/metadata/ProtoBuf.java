@@ -24029,7 +24029,7 @@ public final class ProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *isNegated =&gt; this expression should be negated
@@ -24038,7 +24038,7 @@ public final class ProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *isNegated =&gt; this expression should be negated
@@ -24386,7 +24386,7 @@ public final class ProtoBuf {
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *isNegated =&gt; this expression should be negated
@@ -24397,7 +24397,7 @@ public final class ProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *isNegated =&gt; this expression should be negated
@@ -24971,7 +24971,7 @@ public final class ProtoBuf {
 
       private int flags_ ;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *isNegated =&gt; this expression should be negated
@@ -24982,7 +24982,7 @@ public final class ProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *isNegated =&gt; this expression should be negated
@@ -24993,7 +24993,7 @@ public final class ProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *isNegated =&gt; this expression should be negated
@@ -25007,7 +25007,7 @@ public final class ProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *isNegated =&gt; this expression should be negated

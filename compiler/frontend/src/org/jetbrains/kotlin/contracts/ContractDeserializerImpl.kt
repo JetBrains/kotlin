@@ -117,7 +117,7 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
         }
 
         private fun extractPrimitiveExpression(proto: ProtoBuf.Expression, primitiveType: PrimitiveExpressionType?): BooleanExpression? {
-            val isInverted = proto.hasFlags() && Flags.IS_NEGATED.get(proto.flags)
+            val isInverted = Flags.IS_NEGATED.get(proto.flags)
 
             return when (primitiveType) {
                 PrimitiveExpressionType.VALUE_PARAMETER_REFERENCE, PrimitiveExpressionType.RECEIVER_REFERENCE -> {
@@ -200,7 +200,7 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
                 proto.hasValueParameterReference() && proto.hasType() ->
                     expressionTypes.add(PrimitiveExpressionType.INSTANCE_CHECK)
 
-                proto.hasValueParameterReference() && proto.hasFlag(Flags.IS_NULL_CHECK_PREDICATE) ->
+                proto.hasValueParameterReference() && Flags.IS_NULL_CHECK_PREDICATE.get(proto.flags) ->
                     expressionTypes.add(PrimitiveExpressionType.NULLABILITY_CHECK)
             }
 
@@ -225,9 +225,6 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
         }
 
         private fun ProtoBuf.Expression.hasType(): Boolean = this.hasIsInstanceType() || this.hasIsInstanceTypeId()
-
-        private fun ProtoBuf.Expression.hasFlag(flag: Flags.BooleanFlagField) =
-            this.hasFlags() && flag.get(this.flags)
 
         // Arguments of expressions with such types are never other expressions
         private enum class PrimitiveExpressionType {
