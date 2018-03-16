@@ -108,7 +108,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         from: List<TypeParameterDescriptor>,
         declareTypeParameter: (Int, Int, TypeParameterDescriptor) -> IrTypeParameter
     ) {
-        from.mapTo(irTypeParametersOwner.typeParameters) { typeParameterDescriptor ->
+        val irTypeParameters = from.map { typeParameterDescriptor ->
             val ktTypeParameterDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor)
             val startOffset = ktTypeParameterDeclaration.startOffsetOrUndefined
             val endOffset = ktTypeParameterDeclaration.endOffsetOrUndefined
@@ -116,10 +116,14 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 startOffset,
                 endOffset,
                 typeParameterDescriptor
-            ).also { irTypeParameter ->
-                mapSuperClassifiers(typeParameterDescriptor, irTypeParameter)
-            }
+            )
         }
+
+        irTypeParameters.forEach {
+            mapSuperClassifiers(it.descriptor, it)
+        }
+
+        irTypeParametersOwner.typeParameters.addAll(irTypeParameters)
     }
 
     private fun mapSuperClassifiers(
