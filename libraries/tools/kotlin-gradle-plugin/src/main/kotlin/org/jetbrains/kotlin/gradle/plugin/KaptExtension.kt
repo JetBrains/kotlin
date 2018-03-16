@@ -32,6 +32,7 @@ open class KaptExtension {
 
     open var mapDiagnosticLocations: Boolean = false
 
+    @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
     open var processors: String = ""
 
     /** Explicit opt-in switch for Kapt caching. Should be used when annotation processors used by this project are
@@ -47,6 +48,15 @@ open class KaptExtension {
 
     private var apOptionsClosure: Closure<*>? = null
     private var javacOptionsClosure: Closure<*>? = null
+
+    open fun annotationProcessor(fqName: String) {
+        val oldProcessors = this.processors
+        this.processors = if (oldProcessors.isEmpty()) fqName else "$oldProcessors,$fqName"
+    }
+
+    open fun annotationProcessors(vararg fqName: String) {
+        fqName.forEach(this::annotationProcessor)
+    }
 
     open fun arguments(closure: Closure<*>) {
         apOptionsActions += { apOptions ->
