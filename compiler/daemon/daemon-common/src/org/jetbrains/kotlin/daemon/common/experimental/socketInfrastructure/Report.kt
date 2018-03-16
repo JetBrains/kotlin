@@ -22,7 +22,7 @@ object Report {
 
     public fun log(debugString: String, classs: String) {
         "[$classs] : $debugString".let {
-            _log_file.println(it)
+//            _log_file.println(it)
             println(it)
         }
     }

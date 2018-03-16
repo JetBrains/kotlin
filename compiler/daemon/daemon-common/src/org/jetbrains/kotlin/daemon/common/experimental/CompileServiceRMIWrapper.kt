@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.daemon.common.*
@@ -18,47 +19,47 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
 
     private fun deprecated(): Nothing = TODO("NEVER USE DEPRECATED METHODS, PLEASE!") // prints this todo message
 
-    override fun checkCompilerId(expectedCompilerId: CompilerId) = runBlocking {
+    override fun checkCompilerId(expectedCompilerId: CompilerId) = runBlocking(Unconfined) {
         server.checkCompilerId(expectedCompilerId)
     }
 
-    override fun getUsedMemory() = runBlocking {
+    override fun getUsedMemory() = runBlocking(Unconfined) {
         server.getUsedMemory()
     }
 
-    override fun getDaemonOptions() = runBlocking {
+    override fun getDaemonOptions() = runBlocking(Unconfined) {
         server.getDaemonOptions()
     }
 
-    override fun getDaemonInfo() = runBlocking {
+    override fun getDaemonInfo() = runBlocking(Unconfined) {
         server.getDaemonInfo()
     }
 
-    override fun getDaemonJVMOptions() = runBlocking {
+    override fun getDaemonJVMOptions() = runBlocking(Unconfined) {
         server.getDaemonJVMOptions()
     }
 
-    override fun registerClient(aliveFlagPath: String?) = runBlocking {
+    override fun registerClient(aliveFlagPath: String?) = runBlocking(Unconfined) {
         server.registerClient(aliveFlagPath)
     }
 
-    override fun getClients() = runBlocking {
+    override fun getClients() = runBlocking(Unconfined) {
         server.getClients()
     }
 
-    override fun leaseCompileSession(aliveFlagPath: String?) = runBlocking {
+    override fun leaseCompileSession(aliveFlagPath: String?) = runBlocking(Unconfined) {
         server.leaseCompileSession(aliveFlagPath)
     }
 
-    override fun releaseCompileSession(sessionId: Int) = runBlocking {
+    override fun releaseCompileSession(sessionId: Int) = runBlocking(Unconfined) {
         server.releaseCompileSession(sessionId)
     }
 
-    override fun shutdown() = runBlocking {
+    override fun shutdown() = runBlocking(Unconfined) {
         server.shutdown()
     }
 
-    override fun scheduleShutdown(graceful: Boolean) = runBlocking {
+    override fun scheduleShutdown(graceful: Boolean) = runBlocking(Unconfined) {
         server.scheduleShutdown(graceful)
     }
 
@@ -90,7 +91,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
         compilationResults: CompilationResults?
-    ) = runBlocking {
+    ) = runBlocking(Unconfined) {
         server.compile(
             sessionId,
             compilerArguments,
@@ -100,7 +101,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         )
     }
 
-    override fun clearJarCache() = runBlocking {
+    override fun clearJarCache() = runBlocking(Unconfined) {
         server.clearJarCache()
     }
 
@@ -119,7 +120,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         operationsTracer: RemoteOperationsTracer?
     ) = deprecated()
 
-    override fun releaseReplSession(sessionId: Int) = runBlocking {
+    override fun releaseReplSession(sessionId: Int) = runBlocking(Unconfined) {
         server.releaseReplSession(sessionId)
     }
 
@@ -144,7 +145,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         servicesFacade: CompilerServicesFacadeBase,
         templateClasspath: List<File>,
         templateClassName: String
-    ) = runBlocking {
+    ) = runBlocking(Unconfined) {
         server.leaseReplSession(
             aliveFlagPath,
             compilerArguments,
@@ -155,15 +156,15 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
         )
     }
 
-    override fun replCreateState(sessionId: Int) = runBlocking {
+    override fun replCreateState(sessionId: Int) = runBlocking(Unconfined) {
         server.replCreateState(sessionId).toRMI()
     }
 
-    override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = runBlocking {
+    override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = runBlocking(Unconfined) {
         server.replCheck(sessionId, replStateId, codeLine)
     }
 
-    override fun replCompile(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = runBlocking {
+    override fun replCompile(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = runBlocking(Unconfined) {
         server.replCompile(sessionId, replStateId, codeLine)
     }
 

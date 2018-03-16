@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import io.ktor.network.sockets.Socket
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.build.JvmSourceRoot
@@ -370,6 +371,8 @@ class CompileServiceServerSideImpl(
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide?
     ): CompileService.CallResult<Int> = ifAlive {
+        servicesFacade.connectToServer()
+        compilationResults?.connectToServer()
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = DaemonMessageReporterAsync(servicesFacade, compilationOptions)
         val targetPlatform = compilationOptions.targetPlatform
@@ -413,7 +416,7 @@ class CompileServiceServerSideImpl(
                         val k2jvmArgs = k2PlatformArgs as K2JVMCompilerArguments
                         withIC {
                             doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                                runBlocking {
+                                runBlocking(Unconfined) {
                                     execIncrementalCompiler(
                                         k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResults!!,
                                         messageCollector, daemonReporter
@@ -592,7 +595,7 @@ class CompileServiceServerSideImpl(
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
                 withValidReplState(replStateId) { state ->
-                    runBlocking {
+                    runBlocking(Unconfined) {
                         check(state, codeLine)
                     }
                 }
@@ -677,7 +680,7 @@ class CompileServiceServerSideImpl(
                     gracefulShutdown(false)
                 }
                 anyDead -> {
-                    runBlocking {
+                    runBlocking(Unconfined) {
                         clearJarCache()
                     }
                 }
@@ -699,10 +702,11 @@ class CompileServiceServerSideImpl(
 
     // TODO: handover should include mechanism for client to switch to a new daemon then previous "handed over responsibilities" and shot down
     private fun initiateElections() {
+        return // TODO fix!!!!!!
         ifAliveUnit {
 
             log.info("initiate elections")
-            runBlocking {
+            runBlocking(Unconfined) {
                 val aliveWithOpts = walkDaemonsAsync(
                     File(daemonOptions.runFilesPathOrDefault),
                     compilerId,
@@ -721,7 +725,7 @@ class CompileServiceServerSideImpl(
                             runFile
                         ) < 0
                     ) {
-                        runBlocking {
+                        runBlocking(Unconfined) {
                             // all others are smaller that me, take overs' clients and shut them down
                             log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                             aliveWithOpts.map { (daemon, runFile, _) ->
@@ -762,7 +766,7 @@ class CompileServiceServerSideImpl(
                             runFile
                         ) > 0
                     ) {
-                        runBlocking {
+                        runBlocking(Unconfined) {
                             // there is at least one bigger, handover my clients to it and shutdown
                             log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                             getClients().takeIf { it.isGood }?.let {
@@ -871,7 +875,7 @@ class CompileServiceServerSideImpl(
         facade: CompilerCallbackServicesFacadeClientSide,
         eventManager: EventManager,
         rpcProfiler: Profiler
-    ): Services = runBlocking {
+    ): Services = runBlocking(Unconfined) {
         val builder = Services.Builder()
         if (facade.hasIncrementalCaches()) {
             builder.register(

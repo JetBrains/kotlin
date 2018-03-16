@@ -2,10 +2,7 @@ package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.handleCoroutineException
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
 import java.beans.Transient
 import java.io.Serializable
@@ -50,7 +47,7 @@ class DefaultClient(
     override fun <T> readMessage() = async { input.nextObject() as T }
 
     override fun connectToServer() {
-        runBlocking {
+        runBlocking(Unconfined) {
             Report.log("connectToServer(port =$serverPort | host = $serverHost)", "DefaultClient")
             try {
                 socket = aSocket().tcp().connect(InetSocketAddress(serverPort))

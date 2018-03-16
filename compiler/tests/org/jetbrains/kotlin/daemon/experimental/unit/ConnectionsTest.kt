@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.experimental.unit
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.walkDaemonsAsync
@@ -64,7 +65,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                 port = port.toString()
             )
         )
-        val daemons = runBlocking {
+        val daemons = runBlocking(Unconfined) {
             walkDaemonsAsync(
                 File(daemonOptions.runFilesPathOrDefault),
                 compilerId,
@@ -76,7 +77,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         println("daemons : $daemons")
         assert(daemons.isNotEmpty())
         val daemon = daemons[0].daemon
-        val info = runBlocking { daemon.getDaemonInfo() }
+        val info = runBlocking(Unconfined) { daemon.getDaemonInfo() }
         println("info : $info")
         assert(info.isGood)
     }
