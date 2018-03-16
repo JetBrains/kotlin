@@ -24,10 +24,7 @@ class UnitVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abstr
                 generateVisit(klass, parent)
             }
 
-            val trampolines = referencesData.back.let {
-                it.keys + it.values.flatten()
-            }.distinct()
-            trampolines.forEach {
+            allElementTypes().forEach {
                 generateTrampolineVisit(it)
             }
 

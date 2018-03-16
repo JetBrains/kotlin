@@ -13,6 +13,7 @@ class DataCollector {
 
     private val references = mutableMapOf<String, List<String>>()
     private val packagePerClass = mutableMapOf<String, FqName>()
+    private val baseTransformedTypes = mutableListOf<String>()
 
     fun readFile(file: KtFile) {
         file.acceptChildren(object : KtVisitorVoid() {
@@ -26,6 +27,12 @@ class DataCollector {
                 val className = klass.name
                 if (klass.isInterface() && className != null) {
                     packagePerClass[className] = file.packageFqName
+                    val isBaseTT = klass.annotationEntries.any {
+                        it.shortName?.asString() == BASE_TRANSFORMED_TYPE_ANNOTATION_NAME
+                    }
+                    if (isBaseTT) {
+                        baseTransformedTypes += className
+                    }
 
                     val manual = klass.superTypeListEntries.find {
                         it.typeReference?.findDescendantOfType<KtAnnotationEntry> { annotationEntry ->
@@ -75,9 +82,15 @@ class DataCollector {
         return ReferencesData(
             cleanBack.computeBackReferences().sorted(),
             cleanBack.sorted(),
-            packagePerClass.filterKeys { it in keysToKeep }.values.distinct().sortedBy { it.asString() }
+            packagePerClass.filterKeys { it in keysToKeep }.values.distinct().sortedBy { it.asString() },
+            baseTransformedTypes.sorted()
         )
     }
 
-    data class ReferencesData(val direct: Map<String, List<String>>, val back: Map<String, List<String>>, val usedPackages: List<FqName>)
+    data class ReferencesData(
+        val direct: Map<String, List<String>>,
+        val back: Map<String, List<String>>,
+        val usedPackages: List<FqName>,
+        val baseTransformedTypes: List<String>
+    )
 }

@@ -18,6 +18,10 @@ const val FIR_ELEMENT_CLASS_NAME = "FirElement"
 const val VISITOR_PACKAGE = "org.jetbrains.kotlin.fir.visitors"
 const val SIMPLE_VISITOR_NAME = "FirVisitor"
 const val UNIT_VISITOR_NAME = "FirVisitorVoid"
+const val PARAMETRIC_TRANSFORMER_NAME = "FirTransformer"
+const val TRANSFORMER_RESULT_NAME = "CompositeTransformResult"
+
+const val BASE_TRANSFORMED_TYPE_ANNOTATION_NAME = "BaseTransformedType"
 const val VISITED_SUPERTYPE_ANNOTATION_NAME = "VisitedSupertype"
 
 const val WARNING_GENERATED_FILE =
@@ -55,6 +59,7 @@ fun main(args: Array<String>) {
 
         SimpleVisitorGenerator(data).runGenerator(packageDirectory.resolve("${SIMPLE_VISITOR_NAME}Generated.kt"))
         UnitVisitorGenerator(data).runGenerator(packageDirectory.resolve("${UNIT_VISITOR_NAME}Generated.kt"))
+        ParametricTransformerGenerator(data).runGenerator(packageDirectory.resolve("${PARAMETRIC_TRANSFORMER_NAME}Generated.kt"))
     }
 }
 

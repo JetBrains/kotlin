@@ -14,6 +14,7 @@ abstract class AbstractVisitorGenerator(val referencesData: DataCollector.Refere
         returnType: String,
         override: Boolean = false,
         final: Boolean = false,
+        typeParameters: List<String> = emptyList(),
         body: (Printer.() -> Unit)?
     ) {
 
@@ -31,7 +32,13 @@ abstract class AbstractVisitorGenerator(val referencesData: DataCollector.Refere
                 printWithNoIndent("override ")
             }
         }
-        printWithNoIndent("fun ", name, "(")
+        printWithNoIndent("fun ")
+        if (typeParameters.isNotEmpty()) {
+            printWithNoIndent("<")
+            separatedOneLine(typeParameters, ", ")
+            printWithNoIndent("> ")
+        }
+        printWithNoIndent(name, "(")
         parameters
             .flatMap { (a, b) ->
                 listOf(a, ": ", b, ", ")
@@ -108,6 +115,12 @@ abstract class AbstractVisitorGenerator(val referencesData: DataCollector.Refere
         }
         return builder.toString()
     }
+
+
+    fun allElementTypes() =
+        referencesData.back.let {
+            it.keys + it.values.flatten()
+        }.distinct()
 
     abstract fun Printer.generateContent()
 
