@@ -5,6 +5,7 @@ import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 import kotlin.test.assertEquals
 
+@Suppress("DEPRECATION_ERROR")
 class Controller {
     suspend fun controllerSuspendHereOld() =
         if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
@@ -61,6 +62,7 @@ fun box(): String {
         return "fail 2 $res"
     }
     res = c.builder {
+        @Suppress("DEPRECATION_ERROR")
         if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
             "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
         else

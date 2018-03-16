@@ -5,6 +5,7 @@ import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 import kotlin.test.assertEquals
 
+@Suppress("DEPRECATION_ERROR")
 class Controller {
     val coroutineContext = object : CoroutineContext {
         public override fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? = null
