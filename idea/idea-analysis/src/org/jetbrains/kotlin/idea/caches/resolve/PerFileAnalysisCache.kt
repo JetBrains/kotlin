@@ -41,7 +41,13 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.util.*
 
-internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: ComponentProvider) {
+internal class PerFileAnalysisCache(val file: KtFile, componentProvider: ComponentProvider) {
+    private val globalContext = componentProvider.get<GlobalContext>()
+    private val moduleDescriptor = componentProvider.get<ModuleDescriptor>()
+    private val resolveSession = componentProvider.get<ResolveSession>()
+    private val codeFragmentAnalyzer = componentProvider.get<CodeFragmentAnalyzer>()
+    private val bodyResolveCache = componentProvider.get<BodyResolveCache>()
+
     private val cache = HashMap<PsiElement, AnalysisResult>()
 
     private fun lookUp(analyzableElement: KtElement): AnalysisResult? {
@@ -92,7 +98,15 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
         }
 
         try {
-            return KotlinResolveDataProvider.analyze(project, componentProvider, analyzableElement)
+            return KotlinResolveDataProvider.analyze(
+                project,
+                globalContext,
+                moduleDescriptor,
+                resolveSession,
+                codeFragmentAnalyzer,
+                bodyResolveCache,
+                analyzableElement
+            )
         } catch (e: ProcessCanceledException) {
             throw e
         } catch (e: IndexNotReadyException) {
@@ -148,14 +162,20 @@ private object KotlinResolveDataProvider {
                 ?: element.containingKtFile
     }
 
-    fun analyze(project: Project, componentProvider: ComponentProvider, analyzableElement: KtElement): AnalysisResult {
+    fun analyze(
+        project: Project,
+        globalContext: GlobalContext,
+        moduleDescriptor: ModuleDescriptor,
+        resolveSession: ResolveSession,
+        codeFragmentAnalyzer: CodeFragmentAnalyzer,
+        bodyResolveCache: BodyResolveCache,
+        analyzableElement: KtElement
+    ): AnalysisResult {
         try {
-            val module = componentProvider.get<ModuleDescriptor>()
             if (analyzableElement is KtCodeFragment) {
-                return AnalysisResult.success(analyzeExpressionCodeFragment(componentProvider, analyzableElement), module)
+                return AnalysisResult.success(analyzeExpressionCodeFragment(codeFragmentAnalyzer, analyzableElement), moduleDescriptor)
             }
 
-            val resolveSession = componentProvider.get<ResolveSession>()
             val trace = DelegatingBindingTrace(
                 resolveSession.bindingContext,
                 "Trace for resolution of " + analyzableElement,
@@ -166,18 +186,18 @@ private object KotlinResolveDataProvider {
 
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                 //TODO: should get ModuleContext
-                componentProvider.get<GlobalContext>().withProject(project).withModule(module),
+                globalContext.withProject(project).withModule(moduleDescriptor),
                 resolveSession,
                 trace,
                 targetPlatform,
-                componentProvider.get<BodyResolveCache>(),
+                bodyResolveCache,
                 analyzableElement.jvmTarget,
                 analyzableElement.languageVersionSettings
             ).get<LazyTopDownAnalyzer>()
 
             lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))
 
-            return AnalysisResult.success(trace.bindingContext, module)
+            return AnalysisResult.success(trace.bindingContext, moduleDescriptor)
         } catch (e: ProcessCanceledException) {
             throw e
         } catch (e: IndexNotReadyException) {
@@ -190,9 +210,9 @@ private object KotlinResolveDataProvider {
         }
     }
 
-    private fun analyzeExpressionCodeFragment(componentProvider: ComponentProvider, codeFragment: KtCodeFragment): BindingContext {
+    private fun analyzeExpressionCodeFragment(codeFragmentAnalyzer: CodeFragmentAnalyzer, codeFragment: KtCodeFragment): BindingContext {
         val trace = BindingTraceContext()
-        componentProvider.get<CodeFragmentAnalyzer>().analyzeCodeFragment(
+        codeFragmentAnalyzer.analyzeCodeFragment(
             codeFragment,
             trace,
             BodyResolveMode.PARTIAL_FOR_COMPLETION //TODO: discuss it
