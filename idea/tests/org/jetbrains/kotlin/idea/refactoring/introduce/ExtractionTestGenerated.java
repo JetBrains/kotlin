@@ -935,6 +935,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("extractSuspend.kt")
+            public void testExtractSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractSuspend.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("extractToEnumClassBody.kt")
             public void testExtractToEnumClassBody() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractToEnumClassBody.kt");
