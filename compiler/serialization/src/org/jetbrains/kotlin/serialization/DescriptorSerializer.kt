@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinNames
-import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithExpectedDefault
+import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithAnyExpectedDefault
 import org.jetbrains.kotlin.resolve.checkers.KotlinVersionStringAnnotationValueChecker
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
@@ -408,7 +408,7 @@ class DescriptorSerializer private constructor(
     private fun valueParameter(descriptor: ValueParameterDescriptor): ProtoBuf.ValueParameter.Builder {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
-        val declaresDefaultValue = descriptor.declaresDefaultValue() || descriptor.isActualParameterWithExpectedDefault
+        val declaresDefaultValue = descriptor.declaresDefaultValue() || descriptor.isActualParameterWithAnyExpectedDefault
 
         val flags = Flags.getValueParameterFlags(
             hasAnnotations(descriptor), declaresDefaultValue, descriptor.isCrossinline, descriptor.isNoinline
