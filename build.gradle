@@ -27,10 +27,10 @@ ext {
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
     platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath))
 
-    kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinCompilerVersion}"
-    kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinStdLibVersion}"
-    kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinReflectVersion}"
-    kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinScriptRuntimeVersion}"
+    kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
+    kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+    kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
 }
 
 allprojects {
