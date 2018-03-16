@@ -193,7 +193,7 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
     private static String getGradleClassPattern(Filter filter) {
         try {
             Class<? extends Filter> filterClass = filter.getClass();
-            if (!"org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecuter$MethodNameFilter".equals(filterClass.getName())) {
+            if (!"org.gradle.api.internal.tasks.testing.junit.JUnitTestClassExecutor$MethodNameFilter".equals(filterClass.getName())) {
                 return null;
             }
 
