@@ -46,4 +46,21 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("TIME PER FILE: ${(time / counter) * 1e-6} ms, COUNTER: $counter")
     }
 
+    fun testConsistency() {
+        val root = File(testDataPath)
+        for (file in root.walkTopDown()) {
+            if (file.isDirectory) continue
+            if (file.path.contains("testData") || file.path.contains("resources")) continue
+            if (file.extension != "kt") continue
+            val ktFile = createKtFile(file.toRelativeString(root))
+            val firFile = ktFile.toFirFile()
+            try {
+                firFile.checkChildren()
+            } catch (e: Throwable) {
+                println("EXCEPTION in: " + file.toRelativeString(root))
+                throw e
+            }
+        }
+    }
+
 }
