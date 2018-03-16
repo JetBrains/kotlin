@@ -6147,6 +6147,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("initializerWithGetter.kt")
+        public void testInitializerWithGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/initializerWithGetter.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("javaUsageAsField.kt")
         public void testJavaUsageAsField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/javaUsageAsField.kt");
