@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 typealias ExactLightClassContextProvider = () -> LightClassConstructionContext
@@ -38,16 +39,23 @@ sealed class LazyLightClassDataHolder(
     isLocal: Boolean = false
 ) : LightClassDataHolder {
 
+    private data class CachedLightClassBuilderResult(val stub: PsiJavaFileStub, val diagnostics: Diagnostics)
+
     private val exactResultCachedValue =
-        CachedValuesManager.getManager(project).createCachedValue({
-                                                                      CachedValueProvider.Result.create(
-                                                                          builder(exactContextProvider()),
-                                                                          if (isLocal)
-                                                                              PsiModificationTracker.MODIFICATION_COUNT
-                                                                          else
-                                                                              PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
-                                                                      )
-                                                                  }, false)
+        CachedValuesManager.getManager(project).createCachedValue(
+            {
+                val (stub, _, diagnostics) = builder(exactContextProvider())
+                val cachedResult = CachedLightClassBuilderResult(stub, diagnostics)
+
+                CachedValueProvider.Result.create(
+                    cachedResult,
+                    if (isLocal)
+                        PsiModificationTracker.MODIFICATION_COUNT
+                    else
+                        PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                )
+            }, false
+        )
 
     private val lazyInexactStub by lazyPub {
         dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context).stub } }
