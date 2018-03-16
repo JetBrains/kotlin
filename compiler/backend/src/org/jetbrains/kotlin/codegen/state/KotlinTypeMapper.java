@@ -1117,7 +1117,7 @@ public class KotlinTypeMapper {
         }
 
         if (f instanceof TypeAliasConstructorDescriptor) {
-            return mapSignature(((TypeAliasConstructorDescriptor) f).getUnderlyingConstructorDescriptor(), kind, skipGenericSignature);
+            return mapSignature(((TypeAliasConstructorDescriptor) f).getUnderlyingConstructorDescriptor().getOriginal(), kind, skipGenericSignature);
         }
 
         if (f instanceof FunctionImportedFromObject) {

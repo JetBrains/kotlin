@@ -175,27 +175,26 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             constructor: ClassConstructorDescriptor
         ): TypeAliasConstructorDescriptor? {
             val substitutorForUnderlyingClass = typeAliasDescriptor.getTypeSubstitutorForUnderlyingClass() ?: return null
+            val substitutedConstructor = constructor.substitute(substitutorForUnderlyingClass) ?: return null
 
             val typeAliasConstructor =
                 TypeAliasConstructorDescriptorImpl(
-                    storageManager, typeAliasDescriptor, constructor, null, constructor.annotations,
+                    storageManager, typeAliasDescriptor,
+                    substitutedConstructor,
+                    null, constructor.annotations,
                     constructor.kind, typeAliasDescriptor.source
                 )
 
             val valueParameters =
                 FunctionDescriptorImpl.getSubstitutedValueParameters(
-                    typeAliasConstructor, constructor.valueParameters, substitutorForUnderlyingClass, false, false,
-                    null
+                    typeAliasConstructor, constructor.valueParameters, substitutorForUnderlyingClass
                 ) ?: return null
 
-            val returnType = run {
-                val returnTypeNoAbbreviation = substitutorForUnderlyingClass.substitute(constructor.returnType, Variance.INVARIANT)
-                        ?: return null
-                returnTypeNoAbbreviation.unwrap().lowerIfFlexible().withAbbreviation(typeAliasDescriptor.defaultType)
-            }
+            val returnType = substitutedConstructor.returnType.unwrap().lowerIfFlexible().withAbbreviation(typeAliasDescriptor.defaultType)
 
-            val receiverParameterType =
-                constructor.dispatchReceiverParameter?.let { substitutorForUnderlyingClass.safeSubstitute(it.type, Variance.INVARIANT) }
+            val receiverParameterType = constructor.dispatchReceiverParameter?.let {
+                substitutorForUnderlyingClass.safeSubstitute(it.type, Variance.INVARIANT)
+            }
 
             typeAliasConstructor.initialize(
                 receiverParameterType,

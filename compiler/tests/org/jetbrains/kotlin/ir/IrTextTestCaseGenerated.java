@@ -951,6 +951,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("specializedTypeAliasConstructorCall.kt")
+        public void testSpecializedTypeAliasConstructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/specializedTypeAliasConstructorCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("stringComparisons.kt")
         public void testStringComparisons() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/stringComparisons.kt");

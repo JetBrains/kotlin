@@ -599,6 +599,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         final TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
                 unsubstitutedTypeParameters, configuration.substitution, substitutedDescriptor, substitutedTypeParameters, wereChanges
         );
+        if (substitutor == null) return null;
 
         KotlinType substitutedReceiverParameterType = null;
         if (configuration.newExtensionReceiverParameterType != null) {
@@ -766,6 +767,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitFunctionDescriptor(this, data);
+    }
+
+    @Nullable
+    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(
+            FunctionDescriptor substitutedDescriptor,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @NotNull TypeSubstitutor substitutor
+    ) {
+        return getSubstitutedValueParameters(substitutedDescriptor, unsubstitutedValueParameters, substitutor, false, false, null);
     }
 
     @Nullable
