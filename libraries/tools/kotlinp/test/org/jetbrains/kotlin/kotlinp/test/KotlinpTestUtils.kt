@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.kotlinp.test
 
 import com.intellij.openapi.Disposable
+import junit.framework.TestCase.assertEquals
+import kotlinx.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTests
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -17,8 +19,9 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 import kotlin.test.fail
 
-fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, compareWithTxt: Boolean) {
-    val sb = StringBuilder()
+fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, compareWithTxt: Boolean, readWriteAndCompare: Boolean) {
+    val read = StringBuilder()
+    val readWriteRead = StringBuilder()
 
     compile(file, disposable, tmpdir) { outputFile ->
         when (outputFile.extension) {
@@ -26,15 +29,24 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
                 // TODO: support kotlin_module files
             }
             "class" -> {
-                sb.appendFileName(outputFile.relativeTo(tmpdir))
-                sb.append(Kotlinp.renderClassFile(Kotlinp.readClassFile(outputFile)!!))
+                val classFile = Kotlinp.readClassFile(outputFile)!!
+                val classFile2 = transformClassFile(classFile)
+
+                for ((sb, classFileToRender) in listOf(read to classFile, readWriteRead to classFile2)) {
+                    sb.appendFileName(outputFile.relativeTo(tmpdir))
+                    sb.append(Kotlinp.renderClassFile(classFileToRender))
+                }
             }
             else -> fail("Unknown file: $outputFile")
         }
     }
 
     if (compareWithTxt) {
-        KotlinTestUtils.assertEqualsToFile(File(file.path.replace(".kt", ".txt")), sb.toString())
+        KotlinTestUtils.assertEqualsToFile(File(file.path.replace(".kt", ".txt")), read.toString())
+    }
+
+    if (readWriteAndCompare) {
+        assertEquals(read.toString(), readWriteRead.toString())
     }
 }
 
@@ -59,3 +71,23 @@ private fun StringBuilder.appendFileName(file: File) {
     appendln("// $file")
     appendln("// ------------------------------------------")
 }
+
+// Reads the class file and writes it back with *Writer visitors.
+// The resulting class file should be the same from the point of view of any metadata reader, including kotlinp
+// (the exact bytes may differ though, because there are multiple ways to encode the same metadata)
+private fun transformClassFile(classFile: KotlinClassMetadata): KotlinClassMetadata =
+    when (classFile) {
+        is KotlinClassMetadata.Class -> KotlinClassMetadata.Class.Writer().apply(classFile::accept).write()
+        is KotlinClassMetadata.FileFacade -> KotlinClassMetadata.FileFacade.Writer().apply(classFile::accept).write()
+        is KotlinClassMetadata.SyntheticClass -> {
+            val writer = KotlinClassMetadata.SyntheticClass.Writer()
+            if (classFile.isLambda) {
+                classFile.accept(writer)
+            }
+            writer.write()
+        }
+        is KotlinClassMetadata.MultiFileClassFacade -> KotlinClassMetadata.MultiFileClassFacade.Writer().write(classFile.partClassNames)
+        is KotlinClassMetadata.MultiFileClassPart ->
+            KotlinClassMetadata.MultiFileClassPart.Writer().apply(classFile::accept).write(classFile.facadeClassName)
+        else -> classFile
+    }

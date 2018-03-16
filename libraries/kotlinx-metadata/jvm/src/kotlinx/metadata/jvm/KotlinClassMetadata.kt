@@ -9,7 +9,11 @@ import kotlinx.metadata.InconsistentKotlinMetadataException
 import kotlinx.metadata.KmClassVisitor
 import kotlinx.metadata.KmLambdaVisitor
 import kotlinx.metadata.KmPackageVisitor
+import kotlinx.metadata.impl.ClassWriter
+import kotlinx.metadata.impl.LambdaWriter
+import kotlinx.metadata.impl.PackageWriter
 import kotlinx.metadata.impl.accept
+import kotlinx.metadata.jvm.impl.writeProtoBufData
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
@@ -39,6 +43,34 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
             val (strings, proto) = classData
             proto.accept(v, strings)
         }
+
+        /**
+         * A [KmClassVisitor] that generates the metadata of a Kotlin class.
+         */
+        class Writer : ClassWriter() {
+            /**
+             * Returns the metadata of the class that was written with this writer.
+             *
+             * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
+             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
+             *   0 by default
+             */
+            @JvmOverloads
+            fun write(
+                metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                extraInt: Int = 0
+            ): KotlinClassMetadata.Class {
+                val (d1, d2) = writeProtoBufData(t.build(), c)
+                val metadata = KotlinClassHeader(
+                    KotlinClassHeader.CLASS_KIND, metadataVersion, bytecodeVersion, d1, d2, null, null, extraInt
+                )
+                return KotlinClassMetadata.Class(metadata)
+            }
+        }
     }
 
     /**
@@ -59,6 +91,34 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         fun accept(v: KmPackageVisitor) {
             val (strings, proto) = packageData
             proto.accept(v, strings)
+        }
+
+        /**
+         * A [KmPackageVisitor] that generates the metadata of a Kotlin file facade.
+         */
+        class Writer : PackageWriter() {
+            /**
+             * Returns the metadata of the file facade that was written with this writer.
+             *
+             * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
+             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
+             *   0 by default
+             */
+            @JvmOverloads
+            fun write(
+                metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                extraInt: Int = 0
+            ): KotlinClassMetadata.FileFacade {
+                val (d1, d2) = writeProtoBufData(t.build(), c)
+                val metadata = KotlinClassHeader(
+                    KotlinClassHeader.FILE_FACADE_KIND, metadataVersion, bytecodeVersion, d1, d2, null, null, extraInt
+                )
+                return KotlinClassMetadata.FileFacade(metadata)
+            }
         }
     }
 
@@ -95,6 +155,39 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
             val (strings, proto) = functionData!!
             proto.accept(v, strings)
         }
+
+        /**
+         * A [KmLambdaVisitor] that generates the metadata of a synthetic class. To generate metadata of a Kotlin lambda,
+         * call [Writer.visitFunction] and [Writer.visitEnd] on a newly created instance of this writer. If these methods are not called,
+         * the resulting metadata will represent a _non-lambda_ synthetic class.
+         */
+        class Writer : LambdaWriter() {
+            /**
+             * Returns the metadata of the synthetic class that was written with this writer.
+             *
+             * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
+             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
+             *   0 by default
+             */
+            @JvmOverloads
+            fun write(
+                metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                extraInt: Int = 0
+            ): KotlinClassMetadata.SyntheticClass {
+                val proto = t?.build()
+                val (d1, d2) =
+                        if (proto != null) writeProtoBufData(proto, c)
+                        else Pair(emptyArray(), emptyArray())
+                val metadata = KotlinClassHeader(
+                    KotlinClassHeader.SYNTHETIC_CLASS_KIND, metadataVersion, bytecodeVersion, d1, d2, null, null, extraInt
+                )
+                return KotlinClassMetadata.SyntheticClass(metadata)
+            }
+        }
     }
 
     /**
@@ -107,6 +200,36 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
          * JVM internal names of the part classes which this multi-file class combines.
          */
         val partClassNames: List<String> = header.data1.asList()
+
+        /**
+         * A writer that generates the metadata of a multi-file class facade.
+         */
+        class Writer {
+            /**
+             * Returns the metadata of the multi-file class facade that was written with this writer.
+             *
+             * @param partClassNames JVM internal names of the part classes which this multi-file class combines
+             * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
+             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
+             *   0 by default
+             */
+            @JvmOverloads
+            fun write(
+                partClassNames: List<String>,
+                metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                extraInt: Int = 0
+            ): KotlinClassMetadata.MultiFileClassFacade {
+                val metadata = KotlinClassHeader(
+                    KotlinClassHeader.MULTI_FILE_CLASS_FACADE_KIND, metadataVersion, bytecodeVersion, partClassNames.toTypedArray(),
+                    null, null, null, extraInt
+                )
+                return KotlinClassMetadata.MultiFileClassFacade(metadata)
+            }
+        }
     }
 
     /**
@@ -136,6 +259,36 @@ sealed class KotlinClassMetadata(val header: KotlinClassHeader) {
         fun accept(v: KmPackageVisitor) {
             val (strings, proto) = packageData
             proto.accept(v, strings)
+        }
+
+        /**
+         * A [KmPackageVisitor] that generates the metadata of a multi-file class part.
+         */
+        class Writer : PackageWriter() {
+            /**
+             * Returns the metadata of the multi-file class part that was written with this writer.
+             *
+             * @param facadeClassName JVM internal name of the corresponding multi-file class facade
+             * @param metadataVersion metadata version to be written to the metadata (see [KotlinClassHeader.metadataVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
+             * @param bytecodeVersion bytecode version to be written to the metadata (see [KotlinClassHeader.bytecodeVersion]),
+             *   [KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION] by default
+             * @param extraInt the value of the class-level flags to be written to the metadata (see [KotlinClassHeader.extraInt]),
+             *   0 by default
+             */
+            @JvmOverloads
+            fun write(
+                facadeClassName: String,
+                metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION,
+                bytecodeVersion: IntArray = KotlinClassHeader.COMPATIBLE_BYTECODE_VERSION,
+                extraInt: Int = 0
+            ): KotlinClassMetadata.MultiFileClassPart {
+                val (d1, d2) = writeProtoBufData(t.build(), c)
+                val metadata = KotlinClassHeader(
+                    KotlinClassHeader.MULTI_FILE_CLASS_PART_KIND, metadataVersion, bytecodeVersion, d1, d2, facadeClassName, null, extraInt
+                )
+                return KotlinClassMetadata.MultiFileClassPart(metadata)
+            }
         }
     }
 

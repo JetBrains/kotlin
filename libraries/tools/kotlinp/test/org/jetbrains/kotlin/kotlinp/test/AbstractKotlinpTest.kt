@@ -10,6 +10,6 @@ import java.io.File
 
 abstract class AbstractKotlinpTest : TestCaseWithTmpdir() {
     protected fun doTest(fileName: String) {
-        compileAndPrintAllFiles(File(fileName), testRootDisposable, tmpdir, compareWithTxt = true)
+        compileAndPrintAllFiles(File(fileName), testRootDisposable, tmpdir, compareWithTxt = true, readWriteAndCompare = true)
     }
 }

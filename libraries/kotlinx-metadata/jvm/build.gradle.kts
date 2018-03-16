@@ -24,6 +24,9 @@ dependencies {
     shadows(project(":core:metadata.jvm"))
     shadows(protobufLite())
     testCompile(commonDep("junit:junit"))
+    testCompile(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testRuntime(projectDist(":kotlin-reflect"))
 }
 
 noDefaultJar()
