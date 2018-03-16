@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSessionBase
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -50,19 +51,28 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 
     protected fun doRawFirTest(filePath: String) {
-        doBaseTest(filePath, KtNodeTypes.KT_FILE)
+        doRawFirTest(filePath, checkNeeded = true)
     }
 
-    private fun doBaseTest(filePath: String, fileType: IElementType) {
+    protected fun doRawFirTest(filePath: String, checkNeeded: Boolean) {
+        val file = createKtFile(filePath)
+        val firFile = file.toFirFile()
+        if (checkNeeded) {
+            val firFileDump = StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
+            val expectedPath = filePath.replace(".kt", ".txt")
+            KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
+        }
+    }
+
+    protected fun createKtFile(filePath: String): KtFile {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
-        val file = createFile(filePath, fileType) as KtFile
-        myFile = file
-
-        val firFile = RawFirBuilder(object : FirSessionBase() {}).buildFirFile(file)
-        val firFileDump = StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
-        val expectedPath = filePath.replace(".kt", ".txt")
-        KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
+        return (createFile(filePath, KtNodeTypes.KT_FILE) as KtFile).apply {
+            myFile = this
+        }
     }
+
+    protected fun KtFile.toFirFile(): FirFile =
+        RawFirBuilder(object : FirSessionBase() {}).buildFirFile(this)
 
     override fun tearDown() {
         super.tearDown()
