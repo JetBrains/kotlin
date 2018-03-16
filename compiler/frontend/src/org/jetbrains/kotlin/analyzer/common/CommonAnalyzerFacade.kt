@@ -106,7 +106,8 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageSettingsProvider: LanguageSettingsProvider,
+        languageVersionSettings: LanguageVersionSettings,
+        targetPlatformVersion: TargetPlatformVersion,
         packagePartProvider: PackagePartProvider
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
@@ -120,7 +121,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
             moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, packagePartProvider,
-            languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
+            languageVersionSettings
         )
 
         val packageFragmentProviders = listOf(

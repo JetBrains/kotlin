@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
@@ -45,7 +46,8 @@ object JsAnalyzerFacade : ResolverForModuleFactory() {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageSettingsProvider: LanguageSettingsProvider,
+        languageVersionSettings: LanguageVersionSettings,
+        targetPlatformVersion: TargetPlatformVersion,
         packagePartProvider: PackagePartProvider
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
@@ -65,7 +67,7 @@ object JsAnalyzerFacade : ResolverForModuleFactory() {
             JsPlatform,
             TargetPlatformVersion.NoVersion,
             targetEnvironment,
-            languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
+            languageVersionSettings
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 

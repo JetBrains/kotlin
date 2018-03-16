@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -49,7 +51,8 @@ object JvmAnalyzerFacade : ResolverForModuleFactory() {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageSettingsProvider: LanguageSettingsProvider,
+        languageVersionSettings: LanguageVersionSettings,
+        targetPlatformVersion: TargetPlatformVersion,
         packagePartProvider: PackagePartProvider
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
@@ -79,9 +82,7 @@ object JvmAnalyzerFacade : ResolverForModuleFactory() {
             resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
 
-        val jvmTarget = languageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget ?: JvmTarget.JVM_1_6
-        val languageVersionSettings = languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
-
+        val jvmTarget = targetPlatformVersion as? JvmTarget ?: JvmTarget.JVM_1_6
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
         val lookupTracker = LookupTracker.DO_NOTHING
