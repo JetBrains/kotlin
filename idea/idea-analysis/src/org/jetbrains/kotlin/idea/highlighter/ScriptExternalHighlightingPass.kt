@@ -89,6 +89,7 @@ class ScriptExternalHighlightingPass(
 
     private fun ScriptReport.Severity.convertSeverity(): HighlightSeverity? {
         return when (this) {
+            ScriptReport.Severity.FATAL -> ERROR
             ScriptReport.Severity.ERROR -> ERROR
             ScriptReport.Severity.WARNING -> WARNING
             ScriptReport.Severity.INFO -> INFORMATION
