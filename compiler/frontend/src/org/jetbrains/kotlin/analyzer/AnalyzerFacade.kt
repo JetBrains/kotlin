@@ -110,8 +110,12 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         }
     }
 
+    // Protected by ("projectContext.storageManager.lock")
     private val descriptorByModule = mutableMapOf<M, ModuleData>()
+
+    // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
+
     val modules = modules.toSet()
 
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
