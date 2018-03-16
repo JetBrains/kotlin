@@ -6283,6 +6283,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 doTest(fileName);
             }
 
+            @TestMetadata("delegate.kt")
+            public void testDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/delegate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("destructuringInLambdas.kt")
             public void testDestructuringInLambdas() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/destructuringInLambdas.kt");
