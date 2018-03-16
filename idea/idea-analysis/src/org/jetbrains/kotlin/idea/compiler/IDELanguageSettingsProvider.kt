@@ -18,10 +18,16 @@ package org.jetbrains.kotlin.idea.compiler
 
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.Key
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.cli.common.arguments.Jsr305Parser
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
@@ -29,15 +35,18 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
 
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings =
             when (moduleInfo) {
                 is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
                 is LibraryInfo -> project.getLanguageVersionSettings(extraAnalysisFlags = getExtraAnalysisFlags(project))
+                is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
                 else -> project.getLanguageVersionSettings()
             }
 
@@ -59,4 +68,34 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getTargetPlatform(moduleInfo: ModuleInfo): TargetPlatformVersion {
         return (moduleInfo as? ModuleSourceInfo)?.module?.targetPlatform?.version ?: TargetPlatformVersion.NoVersion
     }
+}
+
+private val LANGUAGE_VERSION_SETTINGS = Key.create<CachedValue<LanguageVersionSettings>>("LANGUAGE_VERSION_SETTINGS")
+
+private fun getVersionLanguageSettingsForScripts(project: Project, scriptDefinition: KotlinScriptDefinition): LanguageVersionSettings {
+    val args = scriptDefinition.additionalCompilerArguments
+    return if (args == null || args.none()) {
+        project.getLanguageVersionSettings()
+    } else {
+        val settings = scriptDefinition.getUserData(LANGUAGE_VERSION_SETTINGS) ?: createCachedValue(project) {
+            val compilerArguments = K2JVMCompilerArguments()
+            parseCommandLineArguments(args.toList(), compilerArguments)
+            // TODO: reporting
+            compilerArguments.configureLanguageVersionSettings(MessageCollector.NONE)
+        }.also { scriptDefinition.putUserData(LANGUAGE_VERSION_SETTINGS, it) }
+        settings.value
+    }
+}
+
+private fun createCachedValue(project: Project, body: () -> LanguageVersionSettings): CachedValue<LanguageVersionSettings> {
+    return CachedValuesManager
+        .getManager(project)
+        .createCachedValue(
+            {
+                CachedValueProvider.Result(
+                    body(),
+                    ProjectRootModificationTracker.getInstance(project)
+                )
+            }, false
+        )
 }

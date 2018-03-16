@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.fileTypes.LanguageFileType
+import com.intellij.openapi.util.UserDataHolderBase
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -26,7 +27,7 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-open class KotlinScriptDefinition(val template: KClass<out Any>) {
+open class KotlinScriptDefinition(val template: KClass<out Any>) : UserDataHolderBase() {
 
     open val name: String = "Kotlin Script"
 
@@ -45,6 +46,9 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) {
     open val dependencyResolver: DependenciesResolver get() = DependenciesResolver.NoDependencies
 
     open val acceptedAnnotations: List<KClass<out Annotation>> get() = emptyList()
+
+    @Deprecated("temporary workaround for missing functionality, will be replaced by the new API soon")
+    open val additionalCompilerArguments: Iterable<String>? = null
 }
 
 object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)
