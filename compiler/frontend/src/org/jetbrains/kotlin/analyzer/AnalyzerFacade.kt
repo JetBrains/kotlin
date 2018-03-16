@@ -166,6 +166,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 return@compute delegateResolver.resolverForModuleDescriptor(descriptor)
             }
             resolverByModuleDescriptor.getOrPut(descriptor) {
+                checkModuleIsCorrect(module)
+
                 ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
                 analyzerFacade(module).createResolverForModule(
@@ -184,14 +186,18 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         }
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
-        if (!isCorrectModuleInfo(moduleInfo)) {
-            diagnoseUnknownModuleInfo(listOf(moduleInfo))
-        }
+        checkModuleIsCorrect(moduleInfo)
         return doGetDescriptorForModule(moduleInfo)
     }
 
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) =
         throw AssertionError("$name does not know how to resolve $infos")
+
+    private fun checkModuleIsCorrect(moduleInfo: M) {
+        if (!isCorrectModuleInfo(moduleInfo)) {
+            diagnoseUnknownModuleInfo(listOf(moduleInfo))
+        }
+    }
 
     private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
         if (module in modules) {
