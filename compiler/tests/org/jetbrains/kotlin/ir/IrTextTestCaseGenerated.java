@@ -424,6 +424,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/typeParameterBeforeBound.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("typeParameterBoundedBySubclass.kt")
+            public void testTypeParameterBoundedBySubclass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/typeParameterBoundedBySubclass.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/ir/irText/declarations/provideDelegate")
