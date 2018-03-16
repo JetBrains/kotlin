@@ -11,7 +11,10 @@ buildscript {
 
     kotlinBootstrapFrom(BootstrapOption.TeamCity("1.2.40-dev-165", onlySuccessBootstrap = false))
 
+    val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
+
     val repos = listOfNotNull(
+            mirrorRepo,
             bootstrapKotlinRepo,
             "https://jcenter.bintray.com/",
             "https://plugins.gradle.org/m2")
@@ -231,13 +234,15 @@ allprojects {
     //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
     //  - idea seems unable to exclude common builddir from indexing
     // therefore it is disabled by default
-//    buildDir = File(commonBuildDir, project.name)
+    // buildDir = File(commonBuildDir, project.name)
 
+    val repos: List<String> by rootProject.extra
     repositories {
-        for (repo in (rootProject.extra["repos"] as List<String>)) {
-            maven { setUrl(repo) }
+        for (repo in repos) {
+            maven(repo)
         }
     }
+
     configureJvmProject(javaHome!!, jvmTarget!!)
 
     val commonCompilerArgs = listOf("-Xallow-kotlin-package")
