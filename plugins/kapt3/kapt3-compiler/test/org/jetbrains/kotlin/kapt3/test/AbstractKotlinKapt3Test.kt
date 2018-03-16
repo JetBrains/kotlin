@@ -285,9 +285,10 @@ abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
         try {
             kaptContext.doAnnotationProcessing(emptyList(), listOf(JavaKaptContextTest.simpleProcessor()),
                 compileClasspath = PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
-                annotationProcessingClasspath = emptyList(), annotationProcessors = "",
+                annotationProcessingClasspath = emptyList(),
                 sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
-                                               additionalSources = compilationUnits, withJdk = true)
+                additionalSources = compilationUnits, withJdk = true
+            )
 
             val javaFiles = sourceOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
             val actualRaw = javaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }

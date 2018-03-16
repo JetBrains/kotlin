@@ -164,7 +164,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             incrementalDataOutputDir: File
     ) : AbstractKapt3Extension(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
                                emptyList(), javaSourceRoots, outputDir, outputDir,
-                               stubsOutputDir, incrementalDataOutputDir, options, emptyMap(), "", STUBS_AND_APT, System.currentTimeMillis(),
+                               stubsOutputDir, incrementalDataOutputDir, options, emptyMap(), emptyList(), STUBS_AND_APT, System.currentTimeMillis(),
                                KaptLogger(true), correctErrorTypes = true, mapDiagnosticLocations = true,
                                compilerConfiguration = CompilerConfiguration.EMPTY
     ) {

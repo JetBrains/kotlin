@@ -67,7 +67,7 @@ class ClasspathBasedKapt3Extension(
         incrementalDataOutputDir: File?,
         options: Map<String, String>,
         javacOptions: Map<String, String>,
-        annotationProcessors: String,
+        annotationProcessorFqNames: List<String>,
         aptMode: AptMode,
         val useLightAnalysis: Boolean,
         correctErrorTypes: Boolean,
@@ -76,7 +76,7 @@ class ClasspathBasedKapt3Extension(
         logger: KaptLogger,
         compilerConfiguration: CompilerConfiguration
 ) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
-                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, javacOptions, annotationProcessors,
+                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, javacOptions, annotationProcessorFqNames,
                            aptMode, pluginInitializedTime, logger, correctErrorTypes, mapDiagnosticLocations, compilerConfiguration) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
@@ -103,7 +103,14 @@ class ClasspathBasedKapt3Extension(
         val classpath = annotationProcessingClasspath + compileClasspath
         val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
         this.annotationProcessingClassLoader = classLoader
-        val processors = ServiceLoader.load(Processor::class.java, classLoader).toList()
+
+        val processors = if (annotationProcessorFqNames.isNotEmpty()) {
+            logger.info("Annotation processor class names are set, skip AP discovery")
+            annotationProcessorFqNames.mapNotNull { tryLoadProcessor(it, classLoader) }
+        } else {
+            logger.info("Need to discovery annotation processors in the AP classpath")
+            ServiceLoader.load(Processor::class.java, classLoader).toList()
+        }
 
         if (processors.isEmpty()) {
             logger.info("No annotation processors available, aborting")
@@ -112,6 +119,28 @@ class ClasspathBasedKapt3Extension(
         }
 
         return processors
+    }
+
+    private fun tryLoadProcessor(fqName: String, classLoader: ClassLoader): Processor? {
+        val annotationProcessorClass = try {
+            Class.forName(fqName, true, classLoader)
+        } catch (e: Throwable) {
+            logger.warn("Can't find annotation processor class $fqName: ${e.message}")
+            return null
+        }
+
+        try {
+            val annotationProcessorInstance = annotationProcessorClass.newInstance()
+            if (annotationProcessorInstance !is Processor) {
+                logger.warn("$fqName is not an instance of 'Processor'")
+                return null
+            }
+
+            return annotationProcessorInstance
+        } catch (e: Throwable) {
+            logger.warn("Can't load annotation processor class $fqName: ${e.message}")
+            return null
+        }
     }
 }
 
@@ -125,7 +154,7 @@ abstract class AbstractKapt3Extension(
         val incrementalDataOutputDir: File?,
         val options: Map<String, String>,
         val javacOptions: Map<String, String>,
-        val annotationProcessors: String,
+        val annotationProcessorFqNames: List<String>,
         val aptMode: AptMode,
         val pluginInitializedTime: Long,
         val logger: KaptLogger,
@@ -224,8 +253,7 @@ abstract class AbstractKapt3Extension(
 
         val (annotationProcessingTime) = measureTimeMillis {
             kaptContext.doAnnotationProcessing(
-                    javaSourceFiles, processors, compileClasspath, annotationProcessingClasspath,
-                    annotationProcessors, sourcesOutputDir, classFilesOutputDir)
+                javaSourceFiles, processors, compileClasspath, annotationProcessingClasspath, sourcesOutputDir, classFilesOutputDir)
         }
 
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
