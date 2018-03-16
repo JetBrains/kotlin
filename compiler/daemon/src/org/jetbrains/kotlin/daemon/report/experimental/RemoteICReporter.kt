@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.report.experimental
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -29,7 +30,7 @@ internal class RemoteICReporterAsync(
     private val shouldReportCompileIteration =
         CompilationResultCategory.IC_COMPILE_ITERATION.code in compilationOptions.requestedCompilationResults
 
-    override fun report(message: () -> String) = runBlocking {
+    override fun report(message: () -> String) = runBlocking(Unconfined) {
         if (shouldReportMessages && isVerbose) {
             servicesFacade.report(ReportCategory.IC_MESSAGE, ReportSeverity.DEBUG, message())
         }

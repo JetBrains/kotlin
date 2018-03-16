@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.daemon.experimental.integration
 
 import com.intellij.openapi.application.ApplicationManager
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
 import org.jetbrains.kotlin.daemon.experimental.KotlinCompileDaemon
+import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.scripts.captureOut
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -29,6 +31,7 @@ import java.io.File
 import java.net.URLClassLoader
 import java.util.*
 import kotlin.concurrent.schedule
+import kotlin.math.log
 
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
@@ -81,12 +84,12 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             DaemonReportingTargets(messageCollector = messageCollector),
             autostart = true
         )
-        println("KotlinCompilerClient.connectToCompileService() called!")
+        println("KotlinCompilerClient.connectToCompileService() called! (daemon = $daemon)")
 
         assertNotNull("failed to connect daemon", daemon)
 
-        println("runBlocking { ")
-        runBlocking {
+        println("runBlocking(Unconfined) { ")
+        runBlocking(Unconfined) {
             println("register client...")
             daemon?.registerClient(clientAliveFile.absolutePath)
             println("   client registered")
@@ -164,6 +167,15 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         run(getHelloAppBaseDir(), "hello.run", "-cp", jar, "Hello.HelloKt")
     }
 
+    private fun terminate(daemonOptions: DaemonOptions, logFile: File) {
+        println("in finally")
+        runBlocking(Unconfined) {
+            println("in runBlocking")
+            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+        }
+        logFile.delete()
+    }
+
     fun testHelloApp() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             println("sarting test...")
@@ -214,116 +226,59 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                 Assert.assertEquals(jar, outputs.first().outputFile?.absolutePath)
                 run(getHelloAppBaseDir(), "hello.run", "-cp", jar, "Hello.HelloKt")
             } finally {
-                runBlocking {
-                    KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
-                }
-                logFile.delete()
+                terminate(daemonOptions, logFile)
             }
         }
     }
 
-//    fun testSimpleScriptLocal() {
-//        val messageCollector = TestMessageCollector()
-//        val (code, outputs) = compileLocally(
-//            messageCollector, File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
-//            "-d", tmpdir.absolutePath, "-Xreport-output-files"
-//        )
-//        Assert.assertEquals(0, code)
-//        Assert.assertTrue(outputs.isNotEmpty())
-//        Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
-//        runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", scriptRuntimeClassPath + tmpdir, "hi", "there")
-//    }
-//
-//    fun testSimpleScript() {
-//        withFlagFile(getTestName(true), ".alive") { flagFile ->
-//            val daemonOptions = DaemonOptions(
-//                runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
-//                verbose = true,
-//                reportPerf = true
-//            )
-//
-//            val logFile = createTempFile("kotlin-daemon-test.", ".log")
-//
-//            val daemonJVMOptions = configureDaemonJVMOptions(
-//                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
-//                inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false
-//            )
-//            try {
-//                val (code, outputs) = compileOnDaemon(
-//                    flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(),
-//                    File(getSimpleScriptBaseDir(), "script.kts").absolutePath, "-Xreport-output-files", "-d", tmpdir.absolutePath
-//                )
-//                Assert.assertEquals(0, code)
-//                Assert.assertTrue(outputs.isNotEmpty())
-//                Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
-//                runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", scriptRuntimeClassPath + tmpdir, "hi", "there")
-//            } finally {
-//                KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
-//                logFile.delete()
-//            }
-//        }
-//    }
+    fun testSimpleScriptLocal() {
+        val messageCollector = TestMessageCollector()
+        val (code, outputs) = compileLocally(
+            messageCollector,
+            File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
+            "-d",
+            tmpdir.absolutePath,
+            "-Xreport-output-files"
+        )
+        Assert.assertEquals(0, code)
+        Assert.assertTrue(outputs.isNotEmpty())
+        Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
+        runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", scriptRuntimeClassPath + tmpdir, "hi", "there")
+    }
 
-    fun testConnectionMechanism() {
+    fun testSimpleScript() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = DaemonOptions(
+                runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
+                verbose = true,
+                reportPerf = true
+            )
+
+            val logFile = createTempFile("kotlin-daemon-test.", ".log")
+
             val daemonJVMOptions = configureDaemonJVMOptions(
-                inheritMemoryLimits = true,
-                inheritOtherJvmOptions = true,
-                inheritAdditionalProperties = true
+                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false
             )
-            val compilerId = CompilerId()
-            val daemonOptions = DaemonOptions()
-            val port = findPortForSocket(
-                COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
-                COMPILE_DAEMON_PORTS_RANGE_START,
-                COMPILE_DAEMON_PORTS_RANGE_END
-            )
-            // timer with a daemon thread, meaning it should not prevent JVM to exit normally
-            val timer = Timer(true)
-            val compilerService = CompileServiceServerSideImpl(
-                port,
-                compilerId,
-                daemonOptions,
-                daemonJVMOptions,
-                port,
-                timer,
-                {
-                    if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_TIMEOUT_INFINITE_MS) {
-                        // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
-                        timer.schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
-                            cancel()
-                            KotlinCompileDaemon.log.info("force JVM shutdown")
-                            System.exit(0)
-                        }
-                    } else {
-                        timer.cancel()
-                    }
-                })
-            compilerService.runServer()
-            println("service started")
-            val runFileDir = File(daemonOptions.runFilesPathOrDefault)
-            runFileDir.mkdirs()
-            val runFile = File(
-                runFileDir,
-                makeRunFilenameString(
-                    timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                    digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
-                    port = port.toString()
+            try {
+                val (code, outputs) = compileOnDaemon(
+                    flagFile,
+                    compilerId,
+                    daemonJVMOptions,
+                    daemonOptions,
+                    org.jetbrains.kotlin.daemon.TestMessageCollector(),
+                    File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
+                    "-Xreport-output-files",
+                    "-d",
+                    tmpdir.absolutePath
                 )
-            )
-            val daemons = walkDaemons(
-                File(daemonOptions.runFilesPathOrDefault),
-                compilerId,
-                runFile,
-                filter = { _, p -> p != port },
-                report = { _, msg -> println(msg) }
-            ).toList()
-            println("daemons : $daemons")
-            assert(daemons.isNotEmpty())
-            val daemon = daemons[0].daemon
-            val info = daemon.getDaemonInfo()
-            println("info : $info")
-            assert(info.isGood)
+                Assert.assertEquals(0, code)
+                Assert.assertTrue(outputs.isNotEmpty())
+                Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
+                runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", scriptRuntimeClassPath + tmpdir, "hi", "there")
+            } finally {
+                terminate(daemonOptions, logFile)
+            }
         }
     }
 

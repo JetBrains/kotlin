@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
@@ -50,7 +51,7 @@ class CompilationResultsAsyncWrapper(val rmiImpl: CompilationResults) : Compilat
 
 class CompilationResultsRMIWrapper(val clientSide: CompilationResultsClientSide) : CompilationResults {
 
-    override fun add(compilationResultCategory: Int, value: Serializable) = runBlocking {
+    override fun add(compilationResultCategory: Int, value: Serializable) = runBlocking(Unconfined) {
         clientSide.add(compilationResultCategory, value)
     }
 

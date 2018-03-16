@@ -37,5 +37,5 @@ class RemoteReplStateFacadeServer(val _id: Int,
 
     override fun historyReset(): List<ILineId> = state.history.reset().toList()
 
-    override suspend fun historyResetTo(id: ILineId): List<ILineId> = state.history.resetTo(id).toList()
+    override fun historyResetTo(id: ILineId): List<ILineId> = state.history.resetTo(id).toList()
 }

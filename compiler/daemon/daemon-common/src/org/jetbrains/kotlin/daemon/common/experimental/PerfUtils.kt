@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.Profiler
 
 fun<R> Profiler.withMeasureBlocking(obj: Any?, body: suspend () -> R): R = this.withMeasure(obj, {
-    runBlocking { body() }
+    runBlocking(Unconfined) { body() }
 })

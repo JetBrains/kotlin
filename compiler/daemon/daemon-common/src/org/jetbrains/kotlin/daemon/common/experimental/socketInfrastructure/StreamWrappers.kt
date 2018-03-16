@@ -8,6 +8,7 @@ import kotlinx.coroutines.experimental.io.ByteReadChannel
 import kotlinx.coroutines.experimental.io.ByteWriteChannel
 import kotlinx.coroutines.experimental.launch
 import kotlinx.io.core.readBytes
+import org.jetbrains.kotlin.daemon.common.CompileService
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
@@ -31,6 +32,8 @@ class ByteReadChannelWrapper(private val readChannel: ByteReadChannel) {
                     readBytes(-length)
                 ).readBytes()
             )
+        }.also {
+            println("object : ${if (it is CompileService.CallResult<*> && it.isGood) it.get() else it}")
         }
 
     private suspend fun getLength(): Int {
@@ -64,6 +67,9 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
                 printBytes(bytes)
             }
         }
+            .also {
+                println("sent object : $obj")
+            }
 
     private suspend fun printString(s: String) {
         printLength(-s.length)
@@ -76,6 +82,9 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
             .allocate(4)
             .putInt(length)
             .array()
+            .also {
+                println("printLength $length")
+            }
     )
 
     suspend fun writeObject(obj: Any?) {

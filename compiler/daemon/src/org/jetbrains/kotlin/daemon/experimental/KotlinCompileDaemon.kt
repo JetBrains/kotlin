@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.daemon.experimental
 
 import javafx.concurrent.Task
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -115,7 +116,7 @@ object KotlinCompileDaemon {
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
 
-        runBlocking {
+        runBlocking(Unconfined) {
 
             var serverRun: Deferred<Unit>? = null
 

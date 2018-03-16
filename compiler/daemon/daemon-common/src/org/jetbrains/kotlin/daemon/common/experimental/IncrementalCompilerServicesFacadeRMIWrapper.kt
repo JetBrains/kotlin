@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
@@ -14,31 +15,31 @@ import java.io.Serializable
 class IncrementalCompilerServicesFacadeRMIWrapper(val clientSide: IncrementalCompilerServicesFacadeClientSide) :
     IncrementalCompilerServicesFacade {
 
-    override fun hasAnnotationsFileUpdater() = runBlocking {
+    override fun hasAnnotationsFileUpdater() = runBlocking(Unconfined) {
         clientSide.hasAnnotationsFileUpdater()
     }
 
-    override fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) = runBlocking {
+    override fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) = runBlocking(Unconfined) {
         clientSide.updateAnnotations(outdatedClassesJvmNames)
     }
 
-    override fun revert() = runBlocking {
+    override fun revert() = runBlocking(Unconfined) {
         clientSide.revert()
     }
 
-    override fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) = runBlocking {
+    override fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) = runBlocking(Unconfined) {
         clientSide.registerChanges(timestamp, dirtyData)
     }
 
-    override fun unknownChanges(timestamp: Long) = runBlocking {
+    override fun unknownChanges(timestamp: Long) = runBlocking(Unconfined) {
         clientSide.unknownChanges(timestamp)
     }
 
-    override fun getChanges(artifact: File, sinceTS: Long) = runBlocking {
+    override fun getChanges(artifact: File, sinceTS: Long) = runBlocking(Unconfined) {
         clientSide.getChanges(artifact, sinceTS)
     }
 
-    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking {
+    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking(Unconfined) {
         clientSide.report(category, severity, message, attachment)
     }
 

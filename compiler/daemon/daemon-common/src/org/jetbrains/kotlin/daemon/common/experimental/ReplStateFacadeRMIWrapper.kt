@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.daemon.common.CompileService
@@ -12,15 +13,15 @@ import org.jetbrains.kotlin.daemon.common.ReplStateFacade
 
 class ReplStateFacadeRMIWrapper(val clientSide: ReplStateFacadeClientSide) : ReplStateFacade {
 
-    override fun getId() = runBlocking { clientSide.getId() }
+    override fun getId() = runBlocking(Unconfined) { clientSide.getId() }
 
-    override fun getHistorySize() = runBlocking { clientSide.getHistorySize() }
+    override fun getHistorySize() = runBlocking(Unconfined) { clientSide.getHistorySize() }
 
-    override fun historyGet(index: Int) = runBlocking { clientSide.historyGet(index) }
+    override fun historyGet(index: Int) = runBlocking(Unconfined) { clientSide.historyGet(index) }
 
-    override fun historyReset() = runBlocking { clientSide.historyReset() }
+    override fun historyReset() = runBlocking(Unconfined) { clientSide.historyReset() }
 
-    override suspend fun historyResetTo(id: ILineId) = runBlocking { clientSide.historyResetTo(id) }
+    override fun historyResetTo(id: ILineId) = runBlocking(Unconfined) { clientSide.historyResetTo(id) }
 
     init {
         clientSide.connectToServer()

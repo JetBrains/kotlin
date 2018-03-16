@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.report.experimental
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.ReportCategory
@@ -37,7 +38,7 @@ private class DaemonMessageReporterAsyncAsyncImpl(
     private val servicesFacade: CompilerServicesFacadeBaseAsync,
     private val mySeverity: ReportSeverity
 ) : DaemonMessageReporterAsync {
-    override fun report(severity: ReportSeverity, message: String) = runBlocking {
+    override fun report(severity: ReportSeverity, message: String) = runBlocking(Unconfined) {
         if (severity.code <= mySeverity.code) {
             servicesFacade.report(ReportCategory.DAEMON_MESSAGE.code, severity.code, message, attachment = null)
         }

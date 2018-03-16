@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import io.ktor.network.sockets.aSocket
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.IOException
@@ -103,7 +104,7 @@ object LoopbackNetworkInterface {
 
     class ClientLoopbackSocketFactoryKtor : AbstractClientLoopbackSocketFactory<io.ktor.network.sockets.Socket>() {
         override fun socketCreate(host: String, port: Int): io.ktor.network.sockets.Socket =
-            runBlocking { aSocket().tcp().connect(InetSocketAddress(host, port)) }
+            runBlocking(Unconfined) { aSocket().tcp().connect(InetSocketAddress(host, port)) }
     }
 
 }

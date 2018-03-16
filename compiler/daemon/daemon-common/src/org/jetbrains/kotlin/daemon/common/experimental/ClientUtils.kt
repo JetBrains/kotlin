@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.*
@@ -36,7 +37,7 @@ suspend fun walkDaemonsAsync(
     filter: (File, Int) -> Boolean = { _, _ -> true },
     report: (DaemonReportCategory, String) -> Unit = { _, _ -> },
     useRMI: Boolean = true
-): List<DaemonWithMetadataAsync> = runBlocking {
+): List<DaemonWithMetadataAsync> = runBlocking(Unconfined) {
     // : Sequence<DaemonWithMetadataAsync>
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
     val portExtractor = org.jetbrains.kotlin.daemon.common.makePortFromRunFilenameExtractor(classPathDigest)
@@ -86,6 +87,7 @@ suspend fun walkDaemonsAsync(
                             println("DaemonWithMetadataAsync == $it)")
                         }
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     report(
                         org.jetbrains.kotlin.daemon.common.DaemonReportCategory.INFO,
                         "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}"
@@ -120,8 +122,8 @@ private inline fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportC
     try {
         Report.log("tryConnectToDaemonBySockets(port = $port)", "ClientUtils")
         val daemon = CompileServiceClientSideImpl(
-            port//,
-            //LoopbackNetworkInterface.loopbackInetAddressName
+            port,
+            LoopbackNetworkInterface.loopbackInetAddressName
         )
         Report.log("daemon($port) = $daemon", "ClientUtils")
         Report.log("daemon($port) connecting to server...", "ClientUtils")

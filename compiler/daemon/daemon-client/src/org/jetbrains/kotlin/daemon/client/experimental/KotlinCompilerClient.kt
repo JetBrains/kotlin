@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.client.experimental
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -59,6 +60,7 @@ object KotlinCompilerClient {
         autostart: Boolean = true,
         checkId: Boolean = true
     ): CompileServiceClientSide? {
+        println("in connectToCompileService")
         val flagFile = getOrCreateClientFlagFile(daemonOptions)
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
@@ -99,7 +101,7 @@ object KotlinCompilerClient {
 
         println("connectAndLease")
 
-        fun CompileServiceClientSide.leaseImpl(): CompileServiceSession? = runBlocking {
+        fun CompileServiceClientSide.leaseImpl(): CompileServiceSession? = runBlocking(Unconfined) {
             // the newJVMOptions could be checked here for additional parameters, if needed
             registerClient(clientAliveFlagFile.absolutePath)
             reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
@@ -114,7 +116,7 @@ object KotlinCompilerClient {
         }
 
         ensureServerHostnameIsSetUp()
-        val (service, newJVMOptions) = runBlocking {
+        val (service, newJVMOptions) = runBlocking(Unconfined) {
             tryFindSuitableDaemonOrNewOpts(
                 File(daemonOptions.runFilesPath),
                 compilerId,
@@ -156,10 +158,10 @@ object KotlinCompilerClient {
 
 
     fun leaseCompileSession(compilerService: CompileServiceClientSide, aliveFlagPath: String?): Int =
-        runBlocking { compilerService.leaseCompileSession(aliveFlagPath) }.get()
+        runBlocking(Unconfined) { compilerService.leaseCompileSession(aliveFlagPath) }.get()
 
     fun releaseCompileSession(compilerService: CompileServiceClientSide, sessionId: Int): Unit {
-        runBlocking { compilerService.releaseCompileSession(sessionId) }
+        runBlocking(Unconfined) { compilerService.releaseCompileSession(sessionId) }
     }
 
     fun compile(
@@ -174,8 +176,9 @@ object KotlinCompilerClient {
         port: Int = findCallbackServerSocket(),
         profiler: Profiler = DummyProfiler()
     ): Int = profiler.withMeasure(this) {
-        runBlocking {
+        runBlocking(Unconfined) {
             val services = BasicCompilerServicesWithResultsFacadeServerServerSide(messageCollector, outputsCollector, port)
+            println("[BasicCompilerServicesWithResultsFacadeServerServerSide] services.runServer()")
             val serverRun = services.runServer()
             compilerService.compile(
                 sessionId,
@@ -195,7 +198,7 @@ object KotlinCompilerClient {
                 services.clientSide,
                 null
             )
-        }.get()
+        }.get().also { println("CODE = $it") }
     }
 
     val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
@@ -270,25 +273,25 @@ object KotlinCompilerClient {
         } else when {
             clientOptions.stop -> {
                 println("Shutdown the daemon")
-                runBlocking { daemon.shutdown() }
+                runBlocking(Unconfined) { daemon.shutdown() }
                 println("Daemon shut down successfully")
             }
             filteredArgs.none() -> {
                 // so far used only in tests
                 println(
-                    "Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${runBlocking {
+                    "Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${runBlocking(Unconfined) {
                         daemon.checkCompilerId(
                             compilerId
                         )
                     }}"
                 )
             }
-            else -> runBlocking {
+            else -> runBlocking(Unconfined) {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
                 val servicesFacade = CompilerCallbackServicesFacadeServerSide()
                 val serverRun = servicesFacade.runServer()
                 try {
-                    val memBefore = runBlocking { daemon.getUsedMemory().get() } / 1024
+                    val memBefore = runBlocking(Unconfined) { daemon.getUsedMemory().get() } / 1024
                     val startTime = System.nanoTime()
 
                     val compResults = object : CompilationResultsServerSide {
@@ -408,7 +411,7 @@ object KotlinCompilerClient {
         val aliveWithMetadata = try {
             walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report).also {
                 println(
-                    "daemons : ${it.map { "daemon(params : " + it.jvmOptions.jvmParams.joinToString(", ") + ")" }.joinToString(
+                    "daemons (${it.size}): ${it.map { "daemon(params : " + it.jvmOptions.jvmParams.joinToString(", ") + ")" }.joinToString(
                         ", ", "[", "]"
                     )}"
                 )
@@ -449,6 +452,8 @@ object KotlinCompilerClient {
         println("in startDaemon() - 0.3")
         val args = listOf(
             javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)
+//                    + File.pathSeparator + "/Users/Vadim/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-network/0.9.1-alpha-10/827a6912addc183dd672694b301d32ec3eaa48f6/ktor-network-0.9.1-alpha-10.jar"
+//                    + File.pathSeparator + "/Users/Vadim/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-io-jvm/0.0.8/23a9d59c9dfda747fe547761284d5b944d1ec287/kotlinx-io-jvm-0.0.8.jar"
         ) +
                 platformSpecificOptions +
                 daemonJVMOptions.mappers.flatMap { it.toArgs("-") } +
@@ -480,7 +485,7 @@ object KotlinCompilerClient {
                                     "Received the message signalling that the daemon is ready"
                                 )
                                 isEchoRead.release()
-                                return@forEachLine
+                                //TODO return@forEachLine
                             } else {
                                 reportingTargets.report(DaemonReportCategory.INFO, it, "daemon")
                             }

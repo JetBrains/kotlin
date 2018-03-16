@@ -22,7 +22,7 @@ interface CompileServiceClientSide : CompileServiceAsync, Client
 
 class CompileServiceClientSideImpl(
     val serverPort: Int,
-    val serverHost: String? = null
+    val serverHost: String
 ) : CompileServiceClientSide, Client by DefaultClient(serverPort, serverHost) {
 
     override suspend fun compile(

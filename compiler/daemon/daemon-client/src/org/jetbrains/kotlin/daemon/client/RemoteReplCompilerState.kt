@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.client
 
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.common.ReplStateFacade
@@ -24,7 +25,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 
 // NOTE: the lock is local
 // TODO: verify that locla lock doesn't lead to any synch problems
-class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState) : IReplStageHistory<Unit>, AbstractList<ReplHistoryRecord<Unit>>() {
+class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState) : IReplStageHistory<Unit>,
+    AbstractList<ReplHistoryRecord<Unit>>() {
     override val size: Int
         get() = state.replStateFacade.getHistorySize()
 
@@ -42,10 +44,8 @@ class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState)
         currentGeneration.incrementAndGet()
     }
 
-    override fun resetTo(id: ILineId): Iterable<ILineId> = runBlocking {
-        state.replStateFacade.historyResetTo(id).apply {
-            currentGeneration.incrementAndGet()
-        }
+    override fun resetTo(id: ILineId): Iterable<ILineId> = state.replStateFacade.historyResetTo(id).apply {
+        currentGeneration.incrementAndGet()
     }
 
     val currentGeneration = AtomicInteger(REPL_CODE_LINE_FIRST_GEN)
@@ -53,7 +53,10 @@ class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState)
     override val lock: ReentrantReadWriteLock get() = state.lock
 }
 
-class RemoteReplCompilerState(internal val replStateFacade: ReplStateFacade, override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : IReplStageState<Unit> {
+class RemoteReplCompilerState(
+    internal val replStateFacade: ReplStateFacade,
+    override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+) : IReplStageState<Unit> {
 
     override val currentGeneration: Int get() = (history as RemoteReplCompilerStateHistory).currentGeneration.get()
 
