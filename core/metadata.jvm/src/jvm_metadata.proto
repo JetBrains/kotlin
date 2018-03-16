@@ -102,6 +102,7 @@ extend Function {
 
 extend Property {
   optional JvmPropertySignature property_signature = 100;
+  optional int32 is_moved_from_interface_companion = 101;
 }
 
 extend Type {
