@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.script
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -38,13 +39,15 @@ class ScriptContentLoader(private val project: Project) {
     private fun loadAnnotations(scriptDefinition: KotlinScriptDefinition, file: VirtualFile): List<Annotation> {
         val classLoader = scriptDefinition.template.java.classLoader
         // TODO_R: report error on failure to load annotation class
-        return getAnnotationEntries(file, project)
+        return ApplicationManager.getApplication().runReadAction<List<Annotation>> {
+            getAnnotationEntries(file, project)
                 .mapNotNull { psiAnn ->
                     // TODO: consider advanced matching using semantic similar to actual resolving
                     scriptDefinition.acceptedAnnotations.find { ann ->
                         psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
                     }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
                 }
+        }
     }
 
     private fun getAnnotationEntries(file: VirtualFile, project: Project): Iterable<KtAnnotationEntry> {
