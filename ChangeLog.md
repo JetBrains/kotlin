@@ -1,6 +1,16 @@
 # CHANGELOG
 
-## 1.2.30 - Work In Progress
+## 1.2.31
+
+### IDE. Inspections and Intentions
+
+- [`KT-22804`](https://youtrack.jetbrains.com/issue/KT-22804) "Remove redundant backticks" inspection reports all names and quick fix fails for non-applicable names
+
+### Tools. Gradle
+
+- [`KT-23192`](https://youtrack.jetbrains.com/issue/KT-23192) Issue with android experimental extensions and canary gradle plugin 3.2.0-alpha05
+
+## 1.2.30
 
 ### Android
 
