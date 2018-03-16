@@ -191,7 +191,7 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         val identifier = element.nameIdentifier ?: return false
         if (!identifier.textRange.containsOffset(caretOffset)) return false
-        return element.delegate == null && !element.isVar && !element.isLocal
+        return element.delegate == null && !element.isVar && !element.isLocal && (element.initializer == null || element.getter == null)
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
