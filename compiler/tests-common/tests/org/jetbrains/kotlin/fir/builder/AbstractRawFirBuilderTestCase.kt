@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
@@ -89,6 +91,12 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
             it.result
         }
 
+    private fun FirFile.transformChildren(): Set<FirElement> =
+        ConsistencyTransformer().let {
+            this@transformChildren.accept(it, Unit)
+            it.result
+        }
+
     protected fun FirFile.checkChildren() {
         val children = traverseChildren()
         val visitedChildren = visitChildren()
@@ -97,6 +105,17 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
             val element = children.first()
             val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
             throw AssertionError("FirElement ${element.javaClass} is not visited: $elementDump")
+        }
+    }
+
+    protected fun FirFile.checkTransformedChildren() {
+        val children = traverseChildren()
+        val transformedChildren = transformChildren()
+        children.removeAll(transformedChildren)
+        if (children.isNotEmpty()) {
+            val element = children.first()
+            val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
+            throw AssertionError("FirElement ${element.javaClass} is not transformed: $elementDump")
         }
     }
 
@@ -113,6 +132,22 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
             } else {
                 element.acceptChildren(this)
             }
+        }
+    }
+
+    private class ConsistencyTransformer : FirTransformer<Unit>() {
+        var result = hashSetOf<FirElement>()
+
+        override fun <E : FirElement> transformElement(element: E, data: Unit): CompositeTransformResult<E> {
+            if (!result.add(element)) {
+                if (element !is FirType) {
+                    val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
+                    throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
+                }
+            } else {
+                element.acceptChildren(this, Unit)
+            }
+            return CompositeTransformResult(element)
         }
     }
 
