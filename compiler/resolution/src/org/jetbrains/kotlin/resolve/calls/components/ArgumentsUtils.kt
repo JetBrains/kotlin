@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
@@ -70,20 +69,44 @@ fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     return DFS.ifAny(
         listOf(this),
         { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
-        { it.declaresDefaultValue() || it.isActualParameterWithExpectedDefault }
+        { it.declaresDefaultValue() || it.isActualParameterWithAnyExpectedDefault }
     )
 }
 
-val ValueParameterDescriptor.isActualParameterWithExpectedDefault: Boolean
-    get() {
-        val function = containingDeclaration
-        if (function is FunctionDescriptor && function.isActual) {
-            with(ExpectedActualResolver) {
-                val expected = function.findCompatibleExpectedForActual(function.module).firstOrNull()
-                return expected is FunctionDescriptor && expected.valueParameters[index].hasDefaultValue()
-            }
+fun ValueParameterDescriptor.checkExpectedParameter(checker: (ValueParameterDescriptor) -> Boolean) : Boolean {
+    val function = containingDeclaration
+    if (function is FunctionDescriptor && function.isActual) {
+        with(ExpectedActualResolver) {
+            val expected = function.findCompatibleExpectedForActual(function.module).firstOrNull()
+            return expected is FunctionDescriptor && checker(expected.valueParameters[index])
         }
-        return false
+    }
+    return false
+}
+
+/**
+ * The following two properties describe two different situations:
+ *
+ * Consider hierarchy:
+ * expect open class A { foo(p = 1) }
+ * expect open class B  : A { foo(p) }
+ *
+ * actual open class A { foo(p) }
+ * actual open class B : A { foo(p) }
+ *
+ * For parameter `p` of method `foo`:
+ * `Any` property returns `true` for both actual A and B
+ * `Corresponding` property returns `true` only for `actual A` because `expect B` declaration doesn't have an default value
+ */
+
+val ValueParameterDescriptor.isActualParameterWithAnyExpectedDefault: Boolean
+    get() {
+        return checkExpectedParameter { it.hasDefaultValue() }
+    }
+
+val ValueParameterDescriptor.isActualParameterWithCorrespondingExpectedDefault: Boolean
+    get() {
+        return checkExpectedParameter { it.declaresDefaultValue() }
     }
 
 private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
