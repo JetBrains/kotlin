@@ -84,8 +84,8 @@ object Kapt3ConfigurationKeys {
     val JAVAC_CLI_OPTIONS: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>(JAVAC_CLI_OPTIONS_OPTION.description)
 
-    val ANNOTATION_PROCESSORS: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(ANNOTATION_PROCESSORS_OPTION.description)
+    val ANNOTATION_PROCESSORS: CompilerConfigurationKey<List<String>> =
+            CompilerConfigurationKey.create<List<String>>(ANNOTATION_PROCESSORS_OPTION.description)
 
     val VERBOSE_MODE: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>(VERBOSE_MODE_OPTION.description)
@@ -174,7 +174,8 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
-            ANNOTATION_PROCESSORS_OPTION -> configuration.put(Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS, value)
+            ANNOTATION_PROCESSORS_OPTION -> configuration.appendList(
+                Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS, value.split(',').map { it.trim() }.filter { it.isNotEmpty() })
             APT_OPTIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_OPTIONS, value)
             JAVAC_CLI_OPTIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.JAVAC_CLI_OPTIONS, value)
             SOURCE_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR, value)
@@ -237,7 +238,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val stubsOutputDir = configuration.get(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR)?.let(::File)
         val incrementalDataOutputDir = configuration.get(Kapt3ConfigurationKeys.INCREMENTAL_DATA_OUTPUT_DIR)?.let(::File)
 
-        val annotationProcessors = configuration.get(Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS) ?: ""
+        val annotationProcessors = configuration.get(Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS) ?: emptyList()
 
         val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File) ?: emptyList()
 
@@ -289,7 +290,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Incremental data output directory: $incrementalDataOutputDir")
             logger.info("Compile classpath: " + compileClasspath.joinToString())
             logger.info("Annotation processing classpath: " + apClasspath.joinToString())
-            logger.info("Annotation processors: " + annotationProcessors)
+            logger.info("Annotation processors: " + annotationProcessors.joinToString())
             logger.info("Java source roots: " + javaSourceRoots.joinToString())
             logger.info("Options: $apOptions")
         }
