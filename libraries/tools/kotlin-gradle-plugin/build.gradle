@@ -30,6 +30,7 @@ dependencies {
     compile project(':kotlin-gradle-plugin-api')
     compileOnly project(':compiler')
     compileOnly project(':compiler:incremental-compilation-impl')
+    compileOnly project(':compiler:daemon-common')
 
     compile project(':kotlin-stdlib')
     compileOnly project(':kotlin-reflect-api')
