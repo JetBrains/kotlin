@@ -233,10 +233,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         override val dependencyResolver: DependenciesResolver = ErrorScriptDependenciesResolver(message)
 
         override fun getScriptName(script: KtScript) =
-            Name.identifier(script.containingKtFile.name.removeSuffix(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION))
+            Name.identifier(script.containingKtFile.name.removeSuffix(".gradle.kts"))
 
         override fun isScript(fileName: String): Boolean =
-            fileName.endsWith(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION)
+            fileName.endsWith(".gradle.kts")
     }
 
     private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {
