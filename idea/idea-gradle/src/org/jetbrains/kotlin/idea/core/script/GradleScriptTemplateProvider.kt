@@ -267,7 +267,7 @@ class ReloadGradleTemplatesOnSync : ExternalSystemTaskNotificationListenerAdapte
         internal val gradleState = GradleSyncState()
     }
 
-    override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
+    override fun onStart(id: ExternalSystemTaskId) {
         if (id.type == ExternalSystemTaskType.RESOLVE_PROJECT && id.projectSystemId == GRADLE_SYSTEM_ID) {
             gradleState.isSyncInProgress = true
         }
