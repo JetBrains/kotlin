@@ -72,7 +72,7 @@ abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSuppressab
     }
 }
 
-private fun toSeverity(highlightDisplayLevel: HighlightDisplayLevel): Severity  {
+fun toSeverity(highlightDisplayLevel: HighlightDisplayLevel): Severity  {
     return when (highlightDisplayLevel) {
         HighlightDisplayLevel.DO_NOT_SHOW -> Severity.INFO
 

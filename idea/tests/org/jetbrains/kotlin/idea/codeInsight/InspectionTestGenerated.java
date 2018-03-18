@@ -174,6 +174,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/hasPlatformType/inspectionData/inspections.test");
         }
 
+        @TestMetadata("incompatibleAPI/inspectionData/inspections.test")
+        public void testIncompatibleAPI_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/incompatibleAPI/inspectionData/inspections.test");
+        }
+
         @TestMetadata("javaCollectionsStaticMethodOnImmutableList/inspectionData/inspections.test")
         public void testJavaCollectionsStaticMethodOnImmutableList_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/javaCollectionsStaticMethodOnImmutableList/inspectionData/inspections.test");

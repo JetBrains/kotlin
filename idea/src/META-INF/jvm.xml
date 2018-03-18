@@ -57,6 +57,10 @@
                 text="Kotlin Project Post-Open Activity" internal="true">
             <add-to-group group-id="KotlinInternalGroup"/>
         </action>
+
+        <action id="AddToProblemApiInspection" class="org.jetbrains.kotlin.idea.inspections.api.AddIncompatibleApiAction"
+                text="Report as incompatible API">
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -117,6 +121,14 @@
                                  implementationClass="org.jetbrains.kotlin.idea.debugger.surroundWith.KotlinDebuggerExpressionSurroundDescriptor"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
+
+        <localInspection
+            groupName="Plugin DevKit"
+            shortName="IncompatibleAPI"
+            enabledByDefault="false"
+            level="ERROR"
+            displayName="Incompatible API usage"
+            implementationClass="org.jetbrains.kotlin.idea.inspections.api.IncompatibleAPIInspection"/>
 
         <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
                         serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>

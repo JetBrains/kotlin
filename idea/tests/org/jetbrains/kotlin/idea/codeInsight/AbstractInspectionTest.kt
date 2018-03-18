@@ -21,6 +21,8 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.TestLoggerFactory
+import org.jdom.Document
+import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -66,6 +68,13 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
         val inspectionsTestDir = optionsFile.parentFile!!
         val srcDir = inspectionsTestDir.parentFile!!
 
+        val settingsFile = File(inspectionsTestDir, "settings.xml")
+        val settingsElement = if (settingsFile.exists()) {
+            (SAXBuilder().build(settingsFile) as Document).rootElement
+        } else {
+            null
+        }
+
         with(myFixture) {
             testDataPath = "${KotlinTestUtils.getHomeDirectory()}/$srcDir"
 
@@ -110,7 +119,9 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                 configExtra(psiFiles, options)
 
                 val presentation = runInspection(
-                    inspectionClass, project, files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path
+                    inspectionClass, project,
+                    settings = settingsElement,
+                    files = psiFiles.map { it.virtualFile!! }, withTestDir = inspectionsTestDir.path
                 )
 
                 if (afterFiles.isNotEmpty()) {
