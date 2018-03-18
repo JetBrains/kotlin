@@ -194,6 +194,54 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
+    fun testRemoveJavaClassICRebuild() {
+        testICRebuild { project ->
+            project.projectFile("Foo.java").delete()
+        }
+    }
+
+    @Test
+    fun testChangeClasspathICRebuild() {
+        testICRebuild { project ->
+            project.projectFile("build.gradle").modify {
+                "$it\ndependencies { compile 'org.jetbrains.kotlin:kotlin-reflect:' + kotlin_version }"
+            }
+        }
+    }
+
+    // tests all output directories are cleared when IC rebuilds
+    private fun testICRebuild(performChange: (Project) -> Unit) {
+        val project = Project("incrementalRebuild", directoryPrefix = "kapt2")
+        val options = defaultBuildOptions().copy(incremental = true)
+        val generatedSrc = "build/generated/source/kapt/main"
+
+        project.build("build", options = options) {
+            assertSuccessful()
+
+            // generated sources
+            assertFileExists("$generatedSrc/bar/UseBar_MembersInjector.java")
+        }
+
+        performChange(project)
+        project.projectFile("UseBar.kt").modify { it.replace("package bar", "package foo.bar") }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertTasksExecuted(listOf(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava"))
+
+            // generated sources
+            assertFileExists("$generatedSrc/foo/bar/UseBar_MembersInjector.java")
+            assertNoSuchFile("$generatedSrc/bar/UseBar_MembersInjector.java")
+
+            // classes
+            assertFileExists(kotlinClassesDir() + "foo/bar/UseBar.class")
+            assertNoSuchFile(kotlinClassesDir() + "bar/UseBar.class")
+            assertFileExists(javaClassesDir() + "foo/bar/UseBar_MembersInjector.class")
+            assertNoSuchFile(javaClassesDir() + "bar/UseBar_MembersInjector.class")
+        }
+    }
+
+    @Test
     fun testRemoveAnnotationIC() {
         val project = Project("simple", directoryPrefix = "kapt2")
         val options = defaultBuildOptions().copy(incremental = true)
