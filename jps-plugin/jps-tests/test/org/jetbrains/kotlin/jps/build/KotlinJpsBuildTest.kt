@@ -94,16 +94,6 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         private val PATH_TO_KOTLIN_JS_LIBRARY = AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "general/KotlinJavaScriptProjectWithDirectoryAsLibrary/" + KOTLIN_JS_LIBRARY
         private val KOTLIN_JS_LIBRARY_JAR = "$KOTLIN_JS_LIBRARY.jar"
 
-        private fun k2jsOutput(vararg moduleNames: String): Array<String> {
-            val list = arrayListOf<String>()
-            for (moduleName in moduleNames) {
-                val outputDir = File("out/production/$moduleName")
-                list.add(toSystemIndependentName(JpsJsModuleUtils.getOutputFile(outputDir, moduleName, false).path))
-                list.add(toSystemIndependentName(JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName, false).path))
-            }
-            return list.toTypedArray()
-        }
-
         private fun getMethodsOfClass(classFile: File): Set<String> {
             val result = TreeSet<String>()
             ClassReader(FileUtil.loadFileBytes(classFile)).accept(object : ClassVisitor(Opcodes.ASM5) {
@@ -255,6 +245,21 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         checkOutputFilesList()
         checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
+    }
+
+    private fun k2jsOutput(vararg moduleNames: String): Array<String> {
+        val list = arrayListOf<String>()
+        for (moduleName in moduleNames) {
+            val outputDir = File("out/production/$moduleName")
+            list.add(toSystemIndependentName(JpsJsModuleUtils.getOutputFile(outputDir, moduleName, false).path))
+            list.add(toSystemIndependentName(JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName, false).path))
+
+            val kjsmFiles = File(workDir, outputDir.path).walk()
+                .filter { it.isFile && it.extension.equals("kjsm", ignoreCase = true) }
+            list.addAll(kjsmFiles.map { toSystemIndependentName(it.relativeTo(workDir).path) })
+
+        }
+        return list.toTypedArray()
     }
 
     fun testKotlinJavaScriptProjectWithSourceMap() {

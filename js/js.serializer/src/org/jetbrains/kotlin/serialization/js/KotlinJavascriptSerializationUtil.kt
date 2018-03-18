@@ -115,8 +115,10 @@ object KotlinJavascriptSerializationUtil {
         private val jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
         private val languageVersionSettings: LanguageVersionSettings
     ) {
-        fun asContentMap(): Map<String, ByteArray> {
-            val contentMap = mutableMapOf<String, ByteArray>()
+        class SerializedPackage(val fqName: FqName, val bytes: ByteArray)
+
+        fun serializedPackages(): List<SerializedPackage> {
+            val packages = arrayListOf<SerializedPackage>()
 
             for ((fqName, part) in serializedFragments) {
                 val stream = ByteArrayOutputStream()
@@ -129,10 +131,10 @@ object KotlinJavascriptSerializationUtil {
                 serializeHeader(jsDescriptor.data, fqName, languageVersionSettings).writeDelimitedTo(stream)
                 part.writeTo(stream)
 
-                contentMap[JsSerializerProtocol.getKjsmFilePath(fqName)] = stream.toByteArray()
+                packages.add(SerializedPackage(fqName, stream.toByteArray()))
             }
 
-            return contentMap
+            return packages
         }
 
         fun asString(): String =
