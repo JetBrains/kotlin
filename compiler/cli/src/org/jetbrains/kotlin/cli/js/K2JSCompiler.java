@@ -27,8 +27,6 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.HashMap;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
-import kotlin.io.FilesKt;
-import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -66,7 +64,6 @@ import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.utils.*;
 
@@ -297,21 +294,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        if (config.getConfiguration().getBoolean(JSConfigurationKeys.META_INFO)) {
-            removeKjsmFilesFromOutput(outputDir);
-        }
         OutputUtilsKt.writeAll(outputFiles, outputDir, messageCollector,
                                configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES));
 
         return OK;
-    }
-
-    private static void removeKjsmFilesFromOutput(File outputDir) {
-        for (File file : SequencesKt.toList(FilesKt.walkTopDown(outputDir))) {
-            if (file.isFile() && file.getPath().endsWith(KotlinJavascriptSerializationUtil.INSTANCE.getCLASS_METADATA_FILE_EXTENSION())) {
-                file.delete();
-            }
-        }
     }
 
     private static void checkDuplicateSourceFileNames(

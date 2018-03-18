@@ -32,10 +32,12 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.util.TextOutput
 import org.jetbrains.kotlin.js.util.TextOutputImpl
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
+import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
@@ -114,9 +116,9 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)
 
-                serializedMetadata.asContentMap().forEach {
-                    // TODO Add correct source files
-                    outputFiles.add(SimpleOutputBinaryFile(emptyList(), config.moduleId + VfsUtilCore.VFS_SEPARATOR_CHAR + it.key, it.value))
+                for (serializedPackage in serializedMetadata.serializedPackages()) {
+                    val outputBinaryFile = kjsmFileForPackage(serializedPackage.fqName, serializedPackage.bytes)
+                    outputFiles.add(outputBinaryFile)
                 }
             }
 
@@ -128,6 +130,15 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             }
 
             return SimpleOutputFileCollection(outputFiles)
+        }
+
+        private fun kjsmFileForPackage(packageFqName: FqName, bytes: ByteArray): SimpleOutputBinaryFile {
+            val ktFiles = (bindingContext.get(BindingContext.PACKAGE_TO_FILES, packageFqName) ?: emptyList())
+            val sourceFiles = ktFiles.map { VfsUtilCore.virtualToIoFile(it.virtualFile) }
+            val relativePath = config.moduleId +
+                    VfsUtilCore.VFS_SEPARATOR_CHAR +
+                    JsSerializerProtocol.getKjsmFilePath(packageFqName)
+            return SimpleOutputBinaryFile(sourceFiles, relativePath, bytes)
         }
 
         private fun getCode(output: TextOutput, sourceLocationConsumer: SourceLocationConsumer?) {
