@@ -71,7 +71,8 @@ fun makeIncrementally(
                 sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
                 versions, reporter,
                 // Use precise setting in case of non-Gradle build
-                usePreciseJavaTracking = true
+                usePreciseJavaTracking = true,
+                localStateDirs = emptyList()
         )
         compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
@@ -104,14 +105,16 @@ class IncrementalJvmCompilerRunner(
         changesRegistry: ChangesRegistry? = null,
         private val buildHistoryFile: File? = null,
         private val friendBuildHistoryFile: File? = null,
-        private val usePreciseJavaTracking: Boolean
+        private val usePreciseJavaTracking: Boolean,
+        localStateDirs: Collection<File>
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
         workingDir,
         "caches-jvm",
         cacheVersions,
         reporter,
         artifactChangesProvider,
-        changesRegistry
+        changesRegistry,
+        localStateDirs = localStateDirs
 ) {
     override fun isICEnabled(): Boolean =
             IncrementalCompilation.isEnabled()

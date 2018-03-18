@@ -341,13 +341,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     @Internal
     override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer)
 
-    protected open fun clearOutputsBeforeNonIncrementalBuild() {
-        logger.kotlinDebug { "Removing all kotlin classes in $destinationDir" }
-
-        destinationDir.deleteRecursively()
-        destinationDir.mkdirs()
-    }
-
     override fun callCompiler(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.ForJvm
 
@@ -371,13 +364,14 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                         artifactFile = artifactFile,
                         buildHistoryFile = buildHistoryFile,
                         friendBuildHistoryFile = friendTask?.buildHistoryFile,
-                        usePreciseJavaTracking = usePreciseJavaTracking
+                        usePreciseJavaTracking = usePreciseJavaTracking,
+                        localStateDirs = outputDirectories
                 )
             }
         }
 
         if (!incremental) {
-            clearOutputsBeforeNonIncrementalBuild()
+            clearOutputDirectories(reason = "IC is disabled for the task")
         }
 
         try {
