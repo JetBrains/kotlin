@@ -14,6 +14,7 @@ val generatorClasspath by configurations.creating
 
 dependencies {
     compile(project(":core:descriptors"))
+    compile(project(":compiler:fir:cones"))
     generatorClasspath(project("visitors-generator"))
     // Necessary only to store bound PsiElement inside FirElement
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "annotations") }
