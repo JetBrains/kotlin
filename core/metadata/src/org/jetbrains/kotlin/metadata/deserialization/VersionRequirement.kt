@@ -1,23 +1,11 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.serialization.deserialization.descriptors
+package org.jetbrains.kotlin.metadata.deserialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.protobuf.MessageLite
 
 class VersionRequirementTable private constructor(private val infos: List<ProtoBuf.VersionRequirement>) {
@@ -27,24 +15,26 @@ class VersionRequirementTable private constructor(private val infos: List<ProtoB
         val EMPTY = VersionRequirementTable(emptyList())
 
         fun create(table: ProtoBuf.VersionRequirementTable): VersionRequirementTable =
-                if (table.requirementCount == 0) EMPTY else VersionRequirementTable(table.requirementList)
+            if (table.requirementCount == 0) EMPTY else VersionRequirementTable(
+                table.requirementList
+            )
     }
 }
 
 class VersionRequirement(
-        val version: Version,
-        val kind: ProtoBuf.VersionRequirement.VersionKind,
-        val level: DeprecationLevel,
-        val errorCode: Int?,
-        val message: String?
+    val version: Version,
+    val kind: ProtoBuf.VersionRequirement.VersionKind,
+    val level: DeprecationLevel,
+    val errorCode: Int?,
+    val message: String?
 ) {
     data class Version(val major: Int, val minor: Int, val patch: Int = 0) {
         fun asString(): String =
-                if (patch == 0) "$major.$minor" else "$major.$minor.$patch"
+            if (patch == 0) "$major.$minor" else "$major.$minor.$patch"
 
         fun encode(
-                writeVersion: (Int) -> Unit,
-                writeVersionFull: (Int) -> Unit
+            writeVersion: (Int) -> Unit,
+            writeVersionFull: (Int) -> Unit
         ) = when {
             this == INFINITY -> {
                 // Do nothing: absence of version means INFINITY
@@ -73,22 +63,22 @@ class VersionRequirement(
 
             fun decode(version: Int?, versionFull: Int?): Version = when {
                 versionFull != null -> Version(
-                        major = versionFull and 255,
-                        minor = (versionFull shr 8) and 255,
-                        patch = (versionFull shr 16) and 255
+                    major = versionFull and 255,
+                    minor = (versionFull shr 8) and 255,
+                    patch = (versionFull shr 16) and 255
                 )
                 version != null -> Version(
-                        major = version and MAJOR_MASK,
-                        minor = (version shr MAJOR_BITS) and MINOR_MASK,
-                        patch = (version shr (MAJOR_BITS + MINOR_BITS)) and PATCH_MASK
+                    major = version and MAJOR_MASK,
+                    minor = (version shr MAJOR_BITS) and MINOR_MASK,
+                    patch = (version shr (MAJOR_BITS + MINOR_BITS)) and PATCH_MASK
                 )
-                else -> Version.INFINITY
+                else -> INFINITY
             }
         }
     }
 
     override fun toString(): String =
-            "since $version $level" + (if (errorCode != null) " error $errorCode" else "") + (if (message != null) ": $message" else "")
+        "since $version $level" + (if (errorCode != null) " error $errorCode" else "") + (if (message != null) ": $message" else "")
 
     companion object {
         fun create(proto: MessageLite, nameResolver: NameResolver, table: VersionRequirementTable): VersionRequirement? {
@@ -104,8 +94,8 @@ class VersionRequirement(
             val info = table[id] ?: return null
 
             val version = Version.decode(
-                    if (info.hasVersion()) info.version else null,
-                    if (info.hasVersionFull()) info.versionFull else null
+                if (info.hasVersion()) info.version else null,
+                if (info.hasVersionFull()) info.versionFull else null
             )
 
             val level = when (info.level!!) {
