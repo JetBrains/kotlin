@@ -28,6 +28,7 @@
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
   <!-- CLION-PLUGIN-PLACEHOLDER-START -->
+  <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="jvm.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
   <!-- CLION-PLUGIN-PLACEHOLDER-END -->
