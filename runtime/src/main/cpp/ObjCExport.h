@@ -31,6 +31,9 @@ extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj);
 -(KRef)toKotlin:(KRef*)OBJ_RESULT;
 @end;
 
+extern "C" id Kotlin_Interop_CreateNSStringFromKString(KRef str);
+extern "C" OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str);
+
 #endif // KONAN_OBJC_INTEROP
 
 #endif // RUNTIME_OBJCEXPORT_H

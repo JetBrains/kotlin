@@ -130,23 +130,33 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
     fun getSelector(method: FunctionDescriptor): String = methodSelectors.getOrPut(method) {
         assert(mapper.isBaseMethod(method))
 
-        val parameters = mapper.objCValueParameters(method)
+        val parameters = mapper.bridgeMethod(method).valueParametersAssociated(method)
 
         StringBuilder().apply {
             append(method.getMangledName(forSwift = false))
 
-            parameters.forEachIndexed { index, it ->
-                val name = when {
-                    it is ReceiverParameterDescriptor -> ""
-                    method is PropertySetterDescriptor -> when (parameters.size) {
-                        1 -> ""
-                        else -> "value"
+            parameters.forEachIndexed { index, (bridge, it) ->
+                val name = when (bridge) {
+                    is MethodBridgeValueParameter.Mapped -> when {
+                        it is ReceiverParameterDescriptor -> ""
+                        method is PropertySetterDescriptor -> when (parameters.size) {
+                            1 -> ""
+                            else -> "value"
+                        }
+                        else -> it!!.name.asString()
                     }
-                    else -> it.name.asString()
+                    MethodBridgeValueParameter.ErrorOutParameter -> "error"
+                    is MethodBridgeValueParameter.KotlinResultOutParameter -> "result"
                 }
 
                 if (index == 0) {
-                    if (method is ConstructorDescriptor) append("With")
+                    append(when {
+                        bridge is MethodBridgeValueParameter.ErrorOutParameter ||
+                                bridge is MethodBridgeValueParameter.KotlinResultOutParameter -> "AndReturn"
+
+                        method is ConstructorDescriptor -> "With"
+                        else -> ""
+                    })
                     append(name.capitalize())
                 } else {
                     append(name)
@@ -168,21 +178,26 @@ internal class ObjCExportNamer(val context: Context, val mapper: ObjCExportMappe
     fun getSwiftName(method: FunctionDescriptor): String = methodSwiftNames.getOrPut(method) {
         assert(mapper.isBaseMethod(method))
 
-        val parameters = mapper.objCValueParameters(method)
+        val parameters = mapper.bridgeMethod(method).valueParametersAssociated(method)
         
         StringBuilder().apply {
             append(method.getMangledName(forSwift = true))
             append("(")
 
-            parameters.forEach {
-                val label = when {
-                    it is ReceiverParameterDescriptor -> "_"
-                    method is PropertySetterDescriptor -> when (parameters.size) {
-                        1 -> "_"
-                        else -> "value"
+            parameters@ for ((bridge, it) in parameters) {
+                val label = when (bridge) {
+                    is MethodBridgeValueParameter.Mapped -> when {
+                        it is ReceiverParameterDescriptor -> "_"
+                        method is PropertySetterDescriptor -> when (parameters.size) {
+                            1 -> "_"
+                            else -> "value"
+                        }
+                        else -> it!!.name.asString()
                     }
-                    else -> it.name.asString()
+                    MethodBridgeValueParameter.ErrorOutParameter -> continue@parameters
+                    is MethodBridgeValueParameter.KotlinResultOutParameter -> "result"
                 }
+
                 append(label)
                 append(":")
             }
@@ -402,8 +417,8 @@ private fun ObjCExportMapper.canHaveSameSelector(first: FunctionDescriptor, seco
 
     // Otherwise both are Kotlin member methods should merge in any common subclass.
 
-    // Taking into account the conditions above, check if methods have the same ABI:
-    return bridgeReturnType(first) == bridgeReturnType(second)
+    // Check if methods have the same bridge (and thus the same ABI):
+    return bridgeMethod(first) == bridgeMethod(second)
 }
 
 private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: PropertyDescriptor): Boolean {

@@ -16,26 +16,29 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
+import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.descriptors.isSuspend
-import org.jetbrains.kotlin.backend.konan.KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
-import org.jetbrains.kotlin.backend.konan.ValueType
-import org.jetbrains.kotlin.backend.konan.correspondingValueType
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.isObjCObjectType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal interface ObjCExportMapper {
-    fun getCategoryMembersFor(descriptor: ClassDescriptor): List<CallableMemberDescriptor>
+internal abstract class ObjCExportMapper {
+    abstract fun getCategoryMembersFor(descriptor: ClassDescriptor): List<CallableMemberDescriptor>
     val maxFunctionTypeParameterCount get() = KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
-    fun isSpecialMapped(descriptor: ClassDescriptor): Boolean
+    abstract fun isSpecialMapped(descriptor: ClassDescriptor): Boolean
+
+    private val methodBridgeCache = mutableMapOf<FunctionDescriptor, MethodBridge>()
+
+    fun bridgeMethod(descriptor: FunctionDescriptor) = methodBridgeCache.getOrPut(descriptor) {
+        bridgeMethodImpl(descriptor)
+    }
 }
 
 private fun ObjCExportMapper.isRepresentedAsObjCInterface(descriptor: ClassDescriptor): Boolean =
@@ -98,35 +101,111 @@ internal tailrec fun KotlinType.getErasedTypeClass(): ClassDescriptor =
 internal fun ObjCExportMapper.isTopLevel(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.containingDeclaration !is ClassDescriptor && this.getClassIfCategory(descriptor) == null
 
-internal fun ObjCExportMapper.objCValueParameters(method: FunctionDescriptor): List<ParameterDescriptor> =
-        when {
-            method is ConstructorDescriptor ->
-                listOfNotNull(method.dispatchReceiverParameter) + method.valueParameters
-
-            getClassIfCategory(method) == null ->
-                listOfNotNull(method.extensionReceiverParameter) + method.valueParameters
-
-            else -> method.valueParameters
-        }
-
 internal fun ObjCExportMapper.isObjCProperty(property: PropertyDescriptor): Boolean =
-        this.objCValueParameters(property.getter!!).isEmpty() && // Which is false e.g. if it has two receivers.
-                !this.isTopLevel(property) // Because Objective-C has no class (e.g. static) properties.
+        property.extensionReceiverParameter == null || getClassIfCategory(property) != null
+
+internal fun ObjCExportMapper.doesThrow(method: FunctionDescriptor): Boolean = method.allOverriddenDescriptors.any {
+    it.overriddenDescriptors.isEmpty() && it.annotations.hasAnnotation(KonanBuiltIns.FqNames.throws)
+}
 
 // TODO: generalize type bridges to support such things as selectors, ignored class method receivers etc.
 
-internal sealed class ReturnableTypeBridge
-internal object VoidBridge : ReturnableTypeBridge()
-internal sealed class TypeBridge : ReturnableTypeBridge()
+internal sealed class TypeBridge
 internal object ReferenceBridge : TypeBridge()
 internal data class ValueTypeBridge(val objCValueType: ObjCValueType) : TypeBridge()
-internal object HashCodeBridge : TypeBridge()
+
+internal sealed class MethodBridgeParameter
+
+internal sealed class MethodBridgeReceiver : MethodBridgeParameter() {
+    object Static : MethodBridgeReceiver()
+    object Factory : MethodBridgeReceiver()
+    object Instance : MethodBridgeReceiver()
+}
+
+internal object MethodBridgeSelector : MethodBridgeParameter()
+
+internal sealed class MethodBridgeValueParameter : MethodBridgeParameter() {
+    data class Mapped(val bridge: TypeBridge) : MethodBridgeValueParameter()
+    object ErrorOutParameter : MethodBridgeValueParameter()
+    data class KotlinResultOutParameter(val bridge: TypeBridge) : MethodBridgeValueParameter()
+}
 
 internal data class MethodBridge(
-        val returnBridge: ReturnableTypeBridge,
-        val paramBridges: List<TypeBridge>,
-        val isKotlinTopLevel: Boolean = false
-)
+        val returnBridge: ReturnValue,
+        val receiver: MethodBridgeReceiver,
+        val valueParameters: List<MethodBridgeValueParameter>
+) {
+
+    sealed class ReturnValue {
+        object Void : ReturnValue()
+        object HashCode : ReturnValue()
+        data class Mapped(val bridge: TypeBridge) : ReturnValue()
+        sealed class Instance : ReturnValue() {
+            object InitResult : Instance()
+            object FactoryResult : Instance()
+        }
+
+        sealed class WithError : ReturnValue() {
+            object Success : WithError()
+            data class RefOrNull(val successBridge: ReturnValue) : WithError()
+        }
+    }
+
+    val paramBridges: List<MethodBridgeParameter> =
+            listOf(receiver) + MethodBridgeSelector + valueParameters
+
+    // TODO: it is not exactly true in potential future cases.
+    val isInstance: Boolean get() = when (receiver) {
+        MethodBridgeReceiver.Static,
+        MethodBridgeReceiver.Factory -> false
+
+        MethodBridgeReceiver.Instance -> true
+    }
+}
+
+internal fun MethodBridge.valueParametersAssociated(
+        descriptor: FunctionDescriptor
+): List<Pair<MethodBridgeValueParameter, ParameterDescriptor?>> {
+    val kotlinParameters = descriptor.allParameters.iterator()
+    val skipFirstKotlinParameter = when (this.receiver) {
+        MethodBridgeReceiver.Static -> false
+        MethodBridgeReceiver.Factory, MethodBridgeReceiver.Instance -> true
+    }
+    if (skipFirstKotlinParameter) {
+        kotlinParameters.next()
+    }
+
+    return this.valueParameters.map {
+        when (it) {
+            is MethodBridgeValueParameter.Mapped -> it to kotlinParameters.next()
+
+            is MethodBridgeValueParameter.ErrorOutParameter,
+            is MethodBridgeValueParameter.KotlinResultOutParameter -> it to null
+        }
+    }.also { assert(!kotlinParameters.hasNext()) }
+}
+
+internal fun MethodBridge.parametersAssociated(
+        descriptor: FunctionDescriptor
+): List<Pair<MethodBridgeParameter, ParameterDescriptor?>> {
+    val kotlinParameters = descriptor.allParameters.iterator()
+
+    return this.paramBridges.map {
+        when (it) {
+            is MethodBridgeValueParameter.Mapped, MethodBridgeReceiver.Instance ->
+                it to kotlinParameters.next()
+
+            MethodBridgeReceiver.Static, MethodBridgeSelector, MethodBridgeValueParameter.ErrorOutParameter,
+            is MethodBridgeValueParameter.KotlinResultOutParameter ->
+                it to null
+
+            MethodBridgeReceiver.Factory -> {
+                kotlinParameters.next()
+                it to null
+            }
+        }
+    }.also { assert(!kotlinParameters.hasNext()) }
+}
 
 private fun ObjCExportMapper.bridgeType(kotlinType: KotlinType): TypeBridge {
     val valueType = kotlinType.correspondingValueType
@@ -138,49 +217,86 @@ private fun ObjCExportMapper.bridgeType(kotlinType: KotlinType): TypeBridge {
     return ValueTypeBridge(objCValueType)
 }
 
-private fun ObjCExportMapper.bridgeReturnType(kotlinType: KotlinType): ReturnableTypeBridge = if (kotlinType.isUnit()) {
-    VoidBridge
-} else {
-    bridgeType(kotlinType)
-}
+private fun ObjCExportMapper.bridgeParameter(parameter: ParameterDescriptor): MethodBridgeValueParameter =
+        MethodBridgeValueParameter.Mapped(bridgeType(parameter.type))
 
-internal fun ObjCExportMapper.bridgeReturnType(descriptor: FunctionDescriptor): ReturnableTypeBridge {
+private fun ObjCExportMapper.bridgeReturnType(
+        descriptor: FunctionDescriptor,
+        valueParameters: MutableList<MethodBridgeValueParameter>,
+        convertExceptionsToErrors: Boolean
+): MethodBridge.ReturnValue {
     val returnType = descriptor.returnType!!
     return when {
-        descriptor.containingDeclaration == descriptor.builtIns.any && descriptor.name.asString() == "hashCode" ->
-            HashCodeBridge
+        descriptor is ConstructorDescriptor -> if (descriptor.constructedClass.isArray) {
+            MethodBridge.ReturnValue.Instance.FactoryResult
+        } else {
+            MethodBridge.ReturnValue.Instance.InitResult
+        }.let {
+            if (convertExceptionsToErrors) MethodBridge.ReturnValue.WithError.RefOrNull(it) else it
+        }
 
-        descriptor is PropertyGetterDescriptor -> bridgePropertyType(descriptor.correspondingProperty)
+        descriptor.containingDeclaration == descriptor.builtIns.any && descriptor.name.asString() == "hashCode" -> {
+            assert(!convertExceptionsToErrors)
+            MethodBridge.ReturnValue.HashCode
+        }
 
-        else -> bridgeReturnType(returnType)
+        descriptor is PropertyGetterDescriptor -> {
+            assert(!convertExceptionsToErrors)
+            MethodBridge.ReturnValue.Mapped(bridgePropertyType(descriptor.correspondingProperty))
+        }
+
+        returnType.isUnit() -> if (convertExceptionsToErrors) {
+            MethodBridge.ReturnValue.WithError.Success
+        } else {
+            MethodBridge.ReturnValue.Void
+        }
+
+        else -> {
+            val returnTypeBridge = bridgeType(returnType)
+            if (convertExceptionsToErrors) {
+                if (returnTypeBridge is ReferenceBridge && !TypeUtils.isNullableType(returnType)) {
+                    MethodBridge.ReturnValue.WithError.RefOrNull(MethodBridge.ReturnValue.Mapped(returnTypeBridge))
+                } else {
+                    valueParameters += MethodBridgeValueParameter.KotlinResultOutParameter(returnTypeBridge)
+                    MethodBridge.ReturnValue.WithError.Success
+                }
+            } else {
+                MethodBridge.ReturnValue.Mapped(returnTypeBridge)
+            }
+        }
     }
 }
 
-internal fun ObjCExportMapper.bridgeMethod(descriptor: FunctionDescriptor): MethodBridge {
+private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): MethodBridge {
     assert(isBaseMethod(descriptor))
 
-    val returnBridge = bridgeReturnType(descriptor)
+    val convertExceptionsToErrors = this.doesThrow(descriptor)
 
-    val paramBridges = mutableListOf<TypeBridge>()
-
-    if (descriptor is ConstructorDescriptor) {
-        if (descriptor.constructedClass.isArray) {
-            // Generated as class factory method.
-            paramBridges += ReferenceBridge // Receiver of class method.
-        } else {
-            // Generated as Objective-C instance init method.
-            paramBridges += ReferenceBridge // Receiver of init method.
-        }
-    }
+    val kotlinParameters = descriptor.allParameters.iterator()
 
     val isTopLevel = isTopLevel(descriptor)
-    if (isTopLevel) {
-        paramBridges += ReferenceBridge
+
+    val receiver = if (descriptor is ConstructorDescriptor && descriptor.constructedClass.isArray) {
+        kotlinParameters.next()
+        MethodBridgeReceiver.Factory
+    } else if (isTopLevel) {
+        MethodBridgeReceiver.Static
+    } else {
+        kotlinParameters.next()
+        MethodBridgeReceiver.Instance
     }
 
-    descriptor.explicitParameters.mapTo(paramBridges) { bridgeType(it.type) }
+    val valueParameters = mutableListOf<MethodBridgeValueParameter>()
+    kotlinParameters.forEach {
+        valueParameters += bridgeParameter(it)
+    }
 
-    return MethodBridge(returnBridge, paramBridges, isKotlinTopLevel = isTopLevel)
+    val returnBridge = bridgeReturnType(descriptor, valueParameters, convertExceptionsToErrors)
+    if (convertExceptionsToErrors) {
+        valueParameters += MethodBridgeValueParameter.ErrorOutParameter
+    }
+
+    return MethodBridge(returnBridge, receiver, valueParameters)
 }
 
 internal fun ObjCExportMapper.bridgePropertyType(descriptor: PropertyDescriptor): TypeBridge {

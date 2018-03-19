@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -345,4 +346,29 @@ object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationPare
             error("$declaration for ${declaration.descriptor} has unexpected parent $parent")
         }
     }
+}
+
+tailrec fun IrDeclaration.getContainingFile(): IrFile? {
+    val parent = this.parent
+
+    return when (parent) {
+        is IrFile -> parent
+        is IrDeclaration -> parent.getContainingFile()
+        else -> null
+    }
+}
+
+fun CommonBackendContext.report(declaration: IrDeclaration, message: String, isError: Boolean) {
+    val irFile = declaration.getContainingFile()
+    this.report(
+            declaration,
+            irFile,
+            if (irFile != null) {
+                message
+            } else {
+                val renderer = org.jetbrains.kotlin.renderer.DescriptorRenderer.COMPACT_WITH_SHORT_TYPES
+                "$message\n${renderer.render(declaration.descriptor)}"
+            },
+            isError
+    )
 }

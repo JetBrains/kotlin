@@ -428,6 +428,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_ObjCExport_convertUnit by lazyRtFunction
     val Kotlin_ObjCExport_GetAssociatedObject by lazyRtFunction
     val Kotlin_ObjCExport_AbstractMethodCalled by lazyRtFunction
+    val Kotlin_ObjCExport_RethrowExceptionAsNSError by lazyRtFunction
+    val Kotlin_ObjCExport_RethrowNSErrorAsException by lazyRtFunction
 
     val kObjectReservedTailSize = if (context.config.produce.isNativeBinary) {
         // Note: this defines the global declared in runtime (if any).

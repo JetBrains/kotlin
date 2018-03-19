@@ -502,6 +502,49 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBuildLandingPad(builder, landingpadType, personalityFunction, numClauses, name)!!
     }
 
+    fun kotlinExceptionHandler(
+            block: FunctionGenerationContext.(exception: LLVMValueRef) -> Unit
+    ): ExceptionHandler {
+        val lpBlock = basicBlock("kotlinExceptionHandler", null)
+
+        appendingTo(lpBlock) {
+            val exception = catchKotlinException()
+            block(exception)
+        }
+
+        return object : ExceptionHandler.Local() {
+            override val unwind: LLVMBasicBlockRef get() = lpBlock
+        }
+    }
+
+    fun catchKotlinException(): LLVMValueRef {
+        val landingpadResult = gxxLandingpad(numClauses = 1, name = "lp")
+
+        LLVMAddClause(landingpadResult, LLVMConstNull(kInt8Ptr))
+
+        // FIXME: properly handle C++ exceptions: currently C++ exception can be thrown out from try-finally
+        // bypassing the finally block.
+
+        val exceptionRecord = extractValue(landingpadResult, 0, "er")
+
+        // __cxa_begin_catch returns pointer to C++ exception object.
+        val beginCatch = context.llvm.cxaBeginCatchFunction
+        val exceptionRawPtr = call(beginCatch, listOf(exceptionRecord))
+
+        // Pointer to KotlinException instance:
+        val exceptionPtrPtr = bitcast(codegen.kObjHeaderPtrPtr, exceptionRawPtr, "")
+
+        // Pointer to Kotlin exception object:
+        // We do need a slot here, as otherwise exception instance could be freed by _cxa_end_catch.
+        val exceptionPtr = loadSlot(exceptionPtrPtr, true, "exception")
+
+        // __cxa_end_catch performs some C++ cleanup, including calling `KotlinException` class destructor.
+        val endCatch = context.llvm.cxaEndCatchFunction
+        call(endCatch, listOf())
+
+        return exceptionPtr
+    }
+
     inline fun ifThenElse(
             condition: LLVMValueRef,
             thenValue: LLVMValueRef,
@@ -527,6 +570,20 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         positionAtEnd(bbExit)
         return resultPhi
+    }
+
+    inline fun ifThen(condition: LLVMValueRef, thenBlock: () -> Unit) {
+        val bbExit = basicBlock(locationInfo = position())
+        val bbThen = basicBlock(locationInfo = position())
+
+        condBr(condition, bbThen, bbExit)
+
+        appendingTo(bbThen) {
+            thenBlock()
+            if (!isAfterTerminator()) br(bbExit)
+        }
+
+        positionAtEnd(bbExit)
     }
 
     internal fun debugLocation(locationInfo: LocationInfo): DILocationRef? {

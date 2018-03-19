@@ -268,3 +268,54 @@ internal class NSEnumeratorAsKIterator : AbstractIterator<Any?>() {
 @ExportForCppRuntime private fun Kotlin_NSEnumeratorAsKIterator_create() = NSEnumeratorAsKIterator()
 @ExportForCppRuntime private fun Kotlin_NSSetAsKSet_create() = NSSetAsKSet()
 @ExportForCppRuntime private fun Kotlin_NSDictionaryAsKMap_create() = NSDictionaryAsKMap()
+
+@ExportForCppRuntime private fun Kotlin_ObjCExport_RethrowNSErrorAsExceptionImpl(
+        message: String?,
+        error: Any
+) {
+    throw ObjCErrorException(message, error)
+}
+
+class ObjCErrorException(
+        message: String?,
+        internal val error: Any
+) : Exception(message) {
+    override fun toString(): String = "NSError-based exception: $message"
+}
+
+private val uncheckedExceptionMessage: String
+    get() = "Instances of kotlin.Error, kotlin.RuntimeException and subclasses " +
+            "aren't propagated from Kotlin to Objective-C/Swift."
+
+private fun Throwable.isUncheckedException(): Boolean = this is kotlin.Error || this is kotlin.RuntimeException
+
+@ExportForCppRuntime
+private fun Kotlin_ObjCExport_abortIfUnchecked(exception: Throwable) {
+    if (exception.isUncheckedException()) {
+        println(uncheckedExceptionMessage)
+        konan.internal.ReportUnhandledException(exception)
+        kotlin.system.exitProcess(1)
+    }
+}
+
+@ExportForCompiler
+private fun trapOnUndeclaredException(exception: Throwable) {
+    if (exception.isUncheckedException()) {
+        println(uncheckedExceptionMessage)
+        println("Other exceptions can be propagated as NSError if method has or inherits @Throws annotation.")
+    } else {
+        println("Exceptions are propagated from Kotlin to Objective-C/Swift as NSError " +
+                "only if method has or inherits @Throws annotation")
+    }
+
+    konan.internal.ReportUnhandledException(exception)
+    kotlin.system.exitProcess(1)
+
+}
+
+@ExportForCppRuntime
+private fun Kotlin_Throwable_getMessage(throwable: Throwable): String? = throwable.message
+
+@ExportForCppRuntime
+private fun Kotlin_ObjCExport_getWrappedError(throwable: Throwable): Any? =
+        (throwable as? ObjCErrorException)?.error

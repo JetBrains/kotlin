@@ -23,14 +23,18 @@
 #import <Foundation/NSValue.h>
 #import <Foundation/NSString.h>
 #import <Foundation/NSMethodSignature.h>
+#import <Foundation/NSError.h>
 #import <Foundation/NSException.h>
+#import <Foundation/NSDictionary.h>
 #import <objc/runtime.h>
+#import <objc/objc-exception.h>
 #import <dispatch/dispatch.h>
 
 #import "ObjCExport.h"
 #import "MemoryPrivate.hpp"
 #import "Runtime.h"
 #import "Utils.h"
+#import "Exceptions.h"
 
 struct ObjCToKotlinMethodAdapter {
   const char* selector;
@@ -329,8 +333,6 @@ extern "C" id objc_retainAutoreleaseReturnValue(id self);
 @interface NSString (NSStringToKotlin) <ConvertibleToKotlin>
 @end;
 
-extern "C" OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str);
-
 @implementation NSString (NSStringToKotlin)
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
   RETURN_RESULT_OF(Kotlin_Interop_CreateKStringFromNSString, self);
@@ -522,8 +524,6 @@ static id convertKotlinObject(ObjHeader* obj) {
   RuntimeAssert(clazz != nullptr, "");
   return [clazz createWrapper:obj];
 }
-
-extern "C" id Kotlin_Interop_CreateNSStringFromKString(KRef str);
 
 static convertReferenceToObjC findConverterFromInterfaces(const TypeInfo* typeInfo) {
   const TypeInfo* foundTypeInfo = nullptr;

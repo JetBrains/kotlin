@@ -16,19 +16,18 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanCompilationException
-import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
-import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
-import org.jetbrains.kotlin.backend.konan.descriptors.isArray
-import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.backend.konan.reportCompilationError
-import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.util.report
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -37,7 +36,7 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class ObjCExportHeaderGenerator(val context: Context) {
-    val mapper: ObjCExportMapper = object : ObjCExportMapper {
+    val mapper: ObjCExportMapper = object : ObjCExportMapper() {
         override fun getCategoryMembersFor(descriptor: ClassDescriptor) =
                 extensions[descriptor].orEmpty()
 
@@ -376,12 +375,18 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
         assert(mapper.isBaseProperty(baseProperty))
         assert(mapper.isObjCProperty(baseProperty))
 
-        val type = mapType(property.type, mapper.bridgeMethod(baseProperty.getter!!).returnBridge)
+        val getterBridge = mapper.bridgeMethod(baseProperty.getter!!)
+        val type = mapReturnType(getterBridge.returnBridge, property.getter!!)
         val name = namer.getName(baseProperty)
 
         append("@property ")
 
         val attributes = mutableListOf<String>()
+
+        if (!getterBridge.isInstance) {
+            attributes += "class"
+        }
+
         val getterSelector = getSelector(baseProperty.getter!!)
         if (getterSelector != name) {
             attributes += "getter=$getterSelector"
@@ -408,32 +413,36 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
         assert(mapper.isBaseMethod(baseMethod))
         val methodBridge = mapper.bridgeMethod(baseMethod)
 
+        exportThrownFromThisAndOverridden(method)
+
         val selectorParts = getSelector(baseMethod).split(':')
 
-        val isArrayConstructor = method is ConstructorDescriptor && method.constructedClass.isArray
-        if (methodBridge.isKotlinTopLevel || isArrayConstructor) {
-            append("+")
-        } else {
+        if (methodBridge.isInstance) {
             append("-")
+        } else {
+            append("+")
         }
 
         append("(")
-        val returnType = if (method is ConstructorDescriptor) {
-            "instancetype"
-        } else {
-            mapType(method.returnType!!, methodBridge.returnBridge).render()
-        }
-        append(returnType)
+        append(mapReturnType(methodBridge.returnBridge, method).render())
         append(")")
 
-        val valueParameters = mapper.objCValueParameters(method)
+        val valueParametersAssociated = methodBridge.valueParametersAssociated(method)
+
         val valueParameterNames = mutableListOf<String>()
-        valueParameters.forEach { p ->
-            // TODO: mangle only the extension receiver parameter.
-            var candidate = when {
-                p is ReceiverParameterDescriptor -> "receiver"
-                method is PropertySetterDescriptor -> "value"
-                else -> p.name.asString()
+
+        valueParametersAssociated.forEach { (bridge, p) ->
+            var candidate = when (bridge) {
+                is MethodBridgeValueParameter.Mapped -> {
+                    p!!
+                    when {
+                        p is ReceiverParameterDescriptor -> "receiver"
+                        method is PropertySetterDescriptor -> "value"
+                        else -> p.name.asString()
+                    }
+                }
+                MethodBridgeValueParameter.ErrorOutParameter -> "error"
+                is MethodBridgeValueParameter.KotlinResultOutParameter -> "result"
             }
             while (candidate in valueParameterNames) {
                 candidate += "_"
@@ -443,8 +452,17 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
 
         append(selectorParts[0])
 
-        valueParameters.forEachIndexed { index, p ->
+        valueParametersAssociated.forEachIndexed { index, (bridge, p) ->
             val name = valueParameterNames[index]
+            val type = when (bridge) {
+                is MethodBridgeValueParameter.Mapped -> mapType(p!!.type, bridge.bridge)
+                MethodBridgeValueParameter.ErrorOutParameter ->
+                    ObjCPointerType(ObjCNullableReferenceType(ObjCClassType("NSError")), nullable = true)
+
+                is MethodBridgeValueParameter.KotlinResultOutParameter ->
+                    ObjCPointerType(mapType(method.returnType!!, bridge.bridge), nullable = true)
+            }
+
             if (index != 0) {
                 append(' ')
                 append(selectorParts[index])
@@ -452,7 +470,7 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
 
             append(":")
             append("(")
-            append(mapType(p.type, methodBridge.paramBridges[index + 1]).render())
+            append(type.render())
             append(")")
             append(name)
         }
@@ -461,9 +479,76 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
 
         append(" NS_SWIFT_NAME($swiftName)")
 
-        if (method is ConstructorDescriptor && !isArrayConstructor) {
+        if (method is ConstructorDescriptor && !method.constructedClass.isArray) { // TODO: check methodBridge instead.
             append(" NS_DESIGNATED_INITIALIZER")
         }
+
+        // TODO: consider adding swift_error attribute.
+    }
+
+    private val methodsWithThrowAnnotationConsidered = mutableSetOf<FunctionDescriptor>()
+
+    private val uncheckedExceptionClasses = listOf("Error", "RuntimeException").map {
+        context.builtIns.builtInsPackageScope
+                .getContributedClassifier(Name.identifier(it), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+    }
+
+    private fun exportThrown(method: FunctionDescriptor) {
+        if (!method.kind.isReal) return
+        val throwsAnnotation = method.annotations.findAnnotation(KonanBuiltIns.FqNames.throws) ?: return
+
+        if (!mapper.doesThrow(method)) {
+            context.report(
+                    context.ir.get(method),
+                    "@${KonanBuiltIns.FqNames.throws.shortName()} annotation should also be added to a base method",
+                    isError = false
+            )
+        }
+
+        if (method in methodsWithThrowAnnotationConsidered) return
+        methodsWithThrowAnnotationConsidered += method
+
+        val arguments = (throwsAnnotation.allValueArguments.values.single() as ArrayValue).value
+        for (argument in arguments) {
+            val classDescriptor = TypeUtils.getClassDescriptor((argument as KClassValue).value) ?: continue
+
+            uncheckedExceptionClasses.firstOrNull { classDescriptor.isSubclassOf(it) }?.let {
+                context.report(
+                        context.ir.get(method),
+                        "Method is declared to throw ${classDescriptor.fqNameSafe}, " +
+                                "but instances of ${it.fqNameSafe} and its subclasses aren't propagated " +
+                                "from Kotlin to Objective-C/Swift",
+                        isError = false
+                )
+            }
+
+            scheduleClassToBeGenerated(classDescriptor)
+        }
+    }
+
+    private fun exportThrownFromThisAndOverridden(method: FunctionDescriptor) {
+        method.allOverriddenDescriptors.forEach { exportThrown(it) }
+    }
+
+    private fun mapReturnType(
+            returnBridge: MethodBridge.ReturnValue,
+            method: FunctionDescriptor
+    ): ObjCType = when (returnBridge) {
+        MethodBridge.ReturnValue.Void -> ObjCVoidType
+        MethodBridge.ReturnValue.HashCode -> ObjCPrimitiveType("NSUInteger")
+        is MethodBridge.ReturnValue.Mapped -> mapType(method.returnType!!, returnBridge.bridge)
+        MethodBridge.ReturnValue.WithError.Success -> ObjCPrimitiveType("BOOL")
+        is MethodBridge.ReturnValue.WithError.RefOrNull -> {
+            val successReturnType = mapReturnType(returnBridge.successBridge, method)
+            if (successReturnType !is ObjCNonNullReferenceType) {
+                error("Function is expected to have non-null return type: $method")
+            }
+
+            ObjCNullableReferenceType(successReturnType)
+        }
+
+        MethodBridge.ReturnValue.Instance.InitResult,
+        MethodBridge.ReturnValue.Instance.FactoryResult -> ObjCInstanceType
     }
 
     fun build(): List<String> = mutableListOf<String>().apply {
@@ -505,6 +590,11 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
         add("@end;")
         add("")
 
+        add("@interface NSError (NSErrorKotlinException)")
+        add("@property (readonly) id _Nullable kotlinException;")
+        add("@end;")
+        add("")
+
         stubs.forEach {
             addAll(it.lines)
             add("")
@@ -517,52 +607,60 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
 internal sealed class ObjCType {
     final override fun toString(): String = this.render()
 
-    open fun render(varName: String): String = "${this.render()} $varName"
-    abstract fun render(): String
+    abstract fun render(attrsAndName: String): String
+
+    fun render() = render("")
+
+    protected fun String.withAttrsAndName(attrsAndName: String) =
+            if (attrsAndName.isEmpty()) this else "$this ${attrsAndName.trimStart()}"
 }
 
-internal sealed class ObjCReferenceType(kotlinType: KotlinType) : ObjCType() {
-    val attributes = if (TypeUtils.isNullableType(kotlinType)) " _Nullable" else ""
+internal sealed class ObjCReferenceType : ObjCType()
+
+internal sealed class ObjCNonNullReferenceType : ObjCReferenceType()
+
+internal data class ObjCNullableReferenceType(val nonNullType: ObjCNonNullReferenceType) : ObjCReferenceType() {
+    override fun render(attrsAndName: String) = nonNullType.render(" _Nullable".withAttrsAndName(attrsAndName))
 }
 
 private class ObjCClassType(
-        kotlinType: KotlinType,
         val className: String,
-        val typeArguments: List<ObjCReferenceType> = emptyList()
-) : ObjCReferenceType(kotlinType) {
+        val typeArguments: List<ObjCNonNullReferenceType> = emptyList()
+) : ObjCNonNullReferenceType() {
 
-    override fun render() = buildString {
+    override fun render(attrsAndName: String) = buildString {
         append(className)
         if (typeArguments.isNotEmpty()) {
             append("<")
             typeArguments.joinTo(this) { it.render() }
             append(">")
         }
-        append('*')
-
-        append(attributes)
+        append(" *")
+        append(attrsAndName)
     }
 }
 
-private class ObjCProtocolType(kotlinType: KotlinType, val protocolName: String) : ObjCReferenceType(kotlinType) {
-    override fun render() = "id<$protocolName>$attributes" // TODO: check
+private class ObjCProtocolType(val protocolName: String) : ObjCNonNullReferenceType() {
+
+    override fun render(attrsAndName: String) = "id<$protocolName>".withAttrsAndName(attrsAndName)
 }
 
-private class ObjCIdType(kotlinType: KotlinType) : ObjCReferenceType(kotlinType) {
-    override fun render() = "id$attributes"
+private object ObjCIdType : ObjCNonNullReferenceType() {
+    override fun render(attrsAndName: String) = "id".withAttrsAndName(attrsAndName)
+}
+
+private object ObjCInstanceType : ObjCNonNullReferenceType() {
+    override fun render(attrsAndName: String): String = "instancetype".withAttrsAndName(attrsAndName)
 }
 
 private class ObjCBlockPointerType(
-        kotlinType: KotlinType, val returnType: ObjCReferenceType, val parameterTypes: List<ObjCReferenceType>
-) : ObjCReferenceType(kotlinType) {
+        val returnType: ObjCReferenceType, val parameterTypes: List<ObjCReferenceType>
+) : ObjCNonNullReferenceType() {
 
-    override fun render() = render("")
-
-    override fun render(varName: String) = buildString {
+    override fun render(attrsAndName: String) = buildString {
         append(returnType.render())
-        append("(^")
-        append(attributes)
-        append(varName)
+        append(" (^")
+        append(attrsAndName)
         append(")(")
         if (parameterTypes.isEmpty()) append("void")
         parameterTypes.joinTo(this) { it.render() }
@@ -571,25 +669,33 @@ private class ObjCBlockPointerType(
 }
 
 private class ObjCPrimitiveType(val cName: String) : ObjCType() {
-    override fun render() = cName
+    override fun render(attrsAndName: String) = cName.withAttrsAndName(attrsAndName)
+}
+
+private class ObjCPointerType(val pointee: ObjCType, val nullable: Boolean = false) : ObjCType() {
+    override fun render(attrsAndName: String) =
+            pointee.render("*${if (nullable) {
+                " _Nullable".withAttrsAndName(attrsAndName)
+            } else {
+                attrsAndName
+            }}")
 }
 
 private object ObjCVoidType : ObjCType() {
-    override fun render() = "void"
-    override fun render(varName: String) = error("variables can't have `void` type")
+    override fun render(attrsAndName: String) = "void".withAttrsAndName(attrsAndName)
 }
 
 internal interface CustomTypeMapper {
     val mappedClassDescriptor: ClassDescriptor
-    fun mapType(type: KotlinType, mappedSuperType: KotlinType): ObjCReferenceType
+    fun mapType(mappedSuperType: KotlinType): ObjCNonNullReferenceType
 
     class Simple(
             override val mappedClassDescriptor: ClassDescriptor,
             private val objCClassName: String
     ) : CustomTypeMapper {
 
-        override fun mapType(type: KotlinType, mappedSuperType: KotlinType): ObjCReferenceType =
-                ObjCClassType(type, objCClassName)
+        override fun mapType(mappedSuperType: KotlinType): ObjCNonNullReferenceType =
+                ObjCClassType(objCClassName)
     }
 
     class Collection(
@@ -597,18 +703,18 @@ internal interface CustomTypeMapper {
             override val mappedClassDescriptor: ClassDescriptor,
             private val objCClassName: String
     ) : CustomTypeMapper {
-        override fun mapType(type: KotlinType, mappedSuperType: KotlinType): ObjCReferenceType {
+        override fun mapType(mappedSuperType: KotlinType): ObjCNonNullReferenceType {
             val typeArguments = mappedSuperType.arguments.map {
                 val argument = it.type
                 if (TypeUtils.isNullableType(argument)) {
                     // Kotlin `null` keys and values are represented as `NSNull` singleton.
-                    ObjCIdType(generator.context.builtIns.anyType)
+                    ObjCIdType
                 } else {
-                    generator.mapReferenceType(argument)
+                    generator.mapReferenceTypeIgnoringNullability(argument)
                 }
             }
 
-            return ObjCClassType(type, objCClassName, typeArguments)
+            return ObjCClassType(objCClassName, typeArguments)
         }
     }
 
@@ -618,7 +724,7 @@ internal interface CustomTypeMapper {
     ) : CustomTypeMapper {
         override val mappedClassDescriptor = generator.context.builtIns.getFunction(parameterCount)
 
-        override fun mapType(type: KotlinType, mappedSuperType: KotlinType): ObjCReferenceType {
+        override fun mapType(mappedSuperType: KotlinType): ObjCNonNullReferenceType {
             val functionType = mappedSuperType
 
             val returnType = functionType.getReturnTypeFromFunctionType()
@@ -626,7 +732,6 @@ internal interface CustomTypeMapper {
                     functionType.getValueParameterTypesFromFunctionType().map { it.type }
 
             return ObjCBlockPointerType(
-                    type,
                     generator.mapReferenceType(returnType),
                     parameterTypes.map { generator.mapReferenceType(it) }
             )
@@ -634,8 +739,18 @@ internal interface CustomTypeMapper {
     }
 }
 
-private fun ObjCExportHeaderGenerator.mapReferenceType(kotlinType: KotlinType): ObjCReferenceType {
+private fun ObjCExportHeaderGenerator.mapReferenceType(kotlinType: KotlinType): ObjCReferenceType =
+        mapReferenceTypeIgnoringNullability(kotlinType).let {
+            if (TypeUtils.isNullableType(kotlinType)) {
+                ObjCNullableReferenceType(it)
+            } else {
+                it
+            }
+        }
 
+private fun ObjCExportHeaderGenerator.mapReferenceTypeIgnoringNullability(
+        kotlinType: KotlinType
+): ObjCNonNullReferenceType {
     val typeToMapper = (listOf(kotlinType) + kotlinType.supertypes()).mapNotNull { type ->
         val mapper = customTypeMappers[type.constructor.declarationDescriptor]
         if (mapper != null) {
@@ -665,7 +780,7 @@ private fun ObjCExportHeaderGenerator.mapReferenceType(kotlinType: KotlinType): 
     }
 
     mostSpecificTypeToMapper.entries.firstOrNull()?.let { (type, mapper) ->
-        return mapper.mapType(kotlinType, type)
+        return mapper.mapType(type)
     }
 
     val classDescriptor = kotlinType.getErasedTypeClass()
@@ -673,25 +788,28 @@ private fun ObjCExportHeaderGenerator.mapReferenceType(kotlinType: KotlinType): 
     // TODO: translate `where T : BaseClass, T : SomeInterface` to `BaseClass* <SomeInterface>`
 
     if (classDescriptor == context.builtIns.any || classDescriptor in hiddenTypes) {
-        return ObjCIdType(kotlinType)
+        return ObjCIdType
     }
 
-    if (classDescriptor !in generatedClasses) {
-        extraClassesToTranslate += classDescriptor
-    }
+    scheduleClassToBeGenerated(classDescriptor)
 
     return if (classDescriptor.isInterface) {
-        ObjCProtocolType(kotlinType, translateClassName(classDescriptor))
+        ObjCProtocolType(translateClassName(classDescriptor))
     } else {
-        ObjCClassType(kotlinType, translateClassName(classDescriptor))
+        ObjCClassType(translateClassName(classDescriptor))
+    }
+}
+
+private fun ObjCExportHeaderGenerator.scheduleClassToBeGenerated(classDescriptor: ClassDescriptor) {
+    if (classDescriptor !in generatedClasses) {
+        extraClassesToTranslate += classDescriptor
     }
 }
 
 private fun ObjCExportHeaderGenerator.mapType(
         kotlinType: KotlinType,
-        typeBridge: ReturnableTypeBridge
+        typeBridge: TypeBridge
 ): ObjCType = when (typeBridge) {
-    VoidBridge -> ObjCVoidType
     ReferenceBridge -> mapReferenceType(kotlinType)
     is ValueTypeBridge -> {
         val cName = when (typeBridge.objCValueType) {
@@ -707,7 +825,6 @@ private fun ObjCExportHeaderGenerator.mapType(
         // TODO: consider other namings.
         ObjCPrimitiveType(cName)
     }
-    HashCodeBridge -> ObjCPrimitiveType("NSUInteger")
 }
 
 private data class Stub(val lines: List<String>)

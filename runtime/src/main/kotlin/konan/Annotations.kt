@@ -16,6 +16,8 @@
 
 package konan
 
+import kotlin.reflect.KClass
+
 /**
  * Forces the compiler to use specified symbol name for the target `external` function.
  *
@@ -42,6 +44,22 @@ annotation class VolatileLambda
  * Preserve the function entry point during global optimizations
  */
 public annotation class Used
+
+// TODO: merge with [kotlin.jvm.Throws]
+/**
+ * This annotation indicates what exceptions should be declared by a function when compiled to a platform method.
+ *
+ * When compiling to Objective-C/Swift framework, methods having or inheriting this annotation are represented as
+ * `NSError*`-producing methods in Objective-C and as `throws` methods in Swift.
+ * When such a method called through framework API throws an exception, it is either propagated as
+ * `NSError` or considered unhandled (if exception `is` [kotlin.Error] or [kotlin.RuntimeException]).
+ * In any case exception is not checked to be instance of one of the [exceptionClasses].
+ *
+ * @property exceptionClasses the list of checked exception classes that may be thrown by the function.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.SOURCE)
+public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
 /**
  * Need to be fixed because of reification support.

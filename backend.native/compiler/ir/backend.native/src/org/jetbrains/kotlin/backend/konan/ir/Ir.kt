@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
 import org.jetbrains.kotlin.backend.konan.ValueType
+import org.jetbrains.kotlin.backend.konan.descriptors.konanInternal
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -136,6 +137,12 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
             symbolTable.referenceSimpleFunction(context.interopBuiltIns.objCPointerHolderValue.getter!!)
 
     val allocObjCObject = symbolTable.referenceSimpleFunction(context.interopBuiltIns.allocObjCObject)
+
+    val objCExportTrapOnUndeclaredException =
+            symbolTable.referenceSimpleFunction(context.builtIns.konanInternal.getContributedFunctions(
+                    Name.identifier("trapOnUndeclaredException"),
+                    NoLookupLocation.FROM_BACKEND
+            ).single())
 
     val getNativeNullPtr = symbolTable.referenceSimpleFunction(context.builtIns.getNativeNullPtr)
 

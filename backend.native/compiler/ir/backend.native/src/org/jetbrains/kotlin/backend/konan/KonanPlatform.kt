@@ -49,6 +49,8 @@ class KonanBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageMana
         val packageName = FqName("konan.internal")
 
         val nativePtr = packageName.child(Name.identifier(nativePtrName)).toUnsafe()
+
+        val throws = FqName("konan.Throws")
     }
 
     private val packageScope by lazy { builtInsModule.getPackage(FqNames.packageName).memberScope }
