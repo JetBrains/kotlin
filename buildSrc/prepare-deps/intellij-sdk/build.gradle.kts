@@ -150,15 +150,22 @@ val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(
 
 val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
-val copyIntellijSdkSources by tasks.creating(ShadowJar::class.java) {
-    from(sources)
+val copyAsmShadedSources by tasks.creating(Copy::class.java) {
     from(`asm-shaded-sources`)
+    rename(".zip", ".jar")
+    destinationDir = File(repoDir, `asm-shaded-sources`.name)
+}
+
+val copyIntellijSdkSources by tasks.creating(ShadowJar::class.java) {
+    from(copyAsmShadedSources)
+    from(sources)
+    baseName = "ideaIC"
+    version = intellijVersion
+    classifier = "sources"
     destinationDir = File(repoDir, sources.name)
 }
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }
-
-val copyAsmShadedSources by tasks.creating { configureExtractFromConfigurationTask(`asm-shaded-sources`) { it.singleFile } }
 
 val unzipNodeJSPlugin by tasks.creating { configureExtractFromConfigurationTask(`plugins-NodeJS`) { zipTree(it.singleFile) } }
 
