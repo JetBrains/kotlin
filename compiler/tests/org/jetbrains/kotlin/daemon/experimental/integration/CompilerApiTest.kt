@@ -55,7 +55,10 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     }
     private val externalLogFile: File by lazy { createNewLogFile() }
 
-    private val log by lazy { Logger.getLogger("test") }
+    private val log by lazy {
+        currentLogFile
+        Logger.getLogger("test")
+    }
 
     val compilerClassPath = listOf(
         File(compilerLibDir, "kotlin-compiler.jar")
@@ -193,8 +196,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             log.info("in runBlocking")
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
         }
-//        currentLogFile.delete()
-//        externalLogFile.delete()
+        currentLogFile.delete()
+        externalLogFile.delete()
     }
 
     fun testHelloApp() {
@@ -270,9 +273,6 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                 verbose = true,
                 reportPerf = true
             )
-
-            val currentLogFile = createTempFile("kotlin-daemon-test.", ".log")
-
             val daemonJVMOptions = configureDaemonJVMOptions(
                 "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${externalLogFile.loggerCompatiblePath}\"",
                 inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false

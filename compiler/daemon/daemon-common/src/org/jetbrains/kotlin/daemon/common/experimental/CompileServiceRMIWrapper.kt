@@ -36,7 +36,10 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
     }
 
     override fun getDaemonJVMOptions() = runBlocking(Unconfined) {
-        server.getDaemonJVMOptions()
+        log.info("in wrapper's getDaemonJVMOptions")
+        server.getDaemonJVMOptions().also {
+            log.info("server returned ${if (it.isGood) it.get() else it}")
+        }
     }
 
     override fun registerClient(aliveFlagPath: String?) = runBlocking(Unconfined) {
@@ -170,11 +173,14 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
 
     init {
         // assuming logically synchronized
+        println("_______________________________ [RMI WRAPPER] <init> _________________________________")
         try {
             // cleanup for the case of incorrect restart and many other situations
             UnicastRemoteObject.unexportObject(this, false)
+            println("_______________________________ [RMI WRAPPER] unexportObject_________________________________")
         } catch (e: NoSuchObjectException) {
             // ignoring if object already exported
+            println("_______________________________ [RMI WRAPPER] // ignoring if object already exported_________________________________")
         }
 
         val (registry, port) = findPortAndCreateRegistry(
@@ -183,6 +189,8 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
             RMI_WRAPPER_PORTS_RANGE_END
         )
 
+        println("_______________________________ [RMI WRAPPER] port = $port , registry = $registry _________________________________")
+
         val stub = UnicastRemoteObject.exportObject(
             this,
             port,
@@ -190,7 +198,10 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
             LoopbackNetworkInterface.serverLoopbackSocketFactory
         ) as CompileService
 
+        println("_______________________________ [RMI WRAPPER] stub = $stub _________________________________")
+
         registry.rebind(COMPILER_SERVICE_RMI_NAME, stub)
+        println("_______________________________ [RMI WRAPPER] rebinded! _________________________________")
 
         // create file :
         val runFileDir = File(daemonOptions.runFilesPathOrDefault)
