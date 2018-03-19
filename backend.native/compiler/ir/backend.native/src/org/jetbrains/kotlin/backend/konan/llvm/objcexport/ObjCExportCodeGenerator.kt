@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -459,7 +460,7 @@ private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
 }
 
 private fun ObjCExportCodeGenerator.generateObjCImp(
-        target: FunctionDescriptor?,
+        target: IrFunction?,
         methodBridge: MethodBridge,
         isVirtual: Boolean = false
 ): LLVMValueRef {
@@ -497,16 +498,15 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
             }
         }
 
-        val targetIr = context.ir.get(target)
         val llvmTarget = if (!isVirtual) {
-            codegen.llvmFunction(targetIr)
+            codegen.llvmFunction(target)
         } else {
-            lookupVirtualImpl(args.first(), targetIr)
+            lookupVirtualImpl(args.first(), target)
         }
 
         val targetResult = callFromBridge(llvmTarget, args, Lifetime.ARGUMENT)
 
-        if (target is ConstructorDescriptor) {
+        if (target is IrConstructor) {
             ret(param(0))
         } else when (returnType) {
             VoidBridge -> ret(null)
@@ -652,14 +652,14 @@ private fun ObjCExportCodeGenerator.createMethodVirtualAdapter(
     val selector = namer.getSelector(baseMethod)
 
     val methodBridge = mapper.bridgeMethod(baseMethod)
-    val objCToKotlin = constPointer(generateObjCImp(baseMethod, methodBridge, isVirtual = true))
+    val objCToKotlin = constPointer(generateObjCImp(context.ir.get(baseMethod), methodBridge, isVirtual = true))
     return ObjCToKotlinMethodAdapter(selector, getEncoding(methodBridge), objCToKotlin)
 }
 
 private fun ObjCExportCodeGenerator.createMethodAdapter(
         implementation: FunctionDescriptor?,
         baseMethod: FunctionDescriptor
-) = createMethodAdapter(DirectAdapterRequest(implementation, baseMethod))
+) = createMethodAdapter(DirectAdapterRequest(implementation?.let { context.ir.get(it) }, baseMethod))
 
 private fun ObjCExportCodeGenerator.createMethodAdapter(
         request: DirectAdapterRequest
@@ -856,7 +856,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
     )
 }
 
-internal data class DirectAdapterRequest(val implementation: FunctionDescriptor?, val base: FunctionDescriptor)
+internal data class DirectAdapterRequest(val implementation: IrFunction?, val base: FunctionDescriptor)
 
 private fun ObjCExportCodeGenerator.createDirectAdapters(
         method: FunctionDescriptor
@@ -871,7 +871,7 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
                     context.ir.get(base) as IrSimpleFunction
             ).getImplementation(context)
         }
-        DirectAdapterRequest(implementation?.descriptor, base)
+        DirectAdapterRequest(implementation, base)
     }
 
     val superClassMethod = method.overriddenDescriptors
