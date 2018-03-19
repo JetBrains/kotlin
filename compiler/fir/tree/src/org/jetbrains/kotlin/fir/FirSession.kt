@@ -5,4 +5,16 @@
 
 package org.jetbrains.kotlin.fir
 
-interface FirSession
+import kotlin.reflect.KClass
+
+interface FirSession {
+
+
+    val components: Map<KClass<*>, Any>
+
+    fun <T : Any> getService(kclass: KClass<T>): T =
+        components[kclass] as T
+}
+
+inline fun <reified T : Any> FirSession.service(): T =
+    getService(T::class)

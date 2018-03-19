@@ -16,7 +16,7 @@ import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.cli.common.script.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -58,7 +58,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         val file = createFile(filePath, fileType) as KtFile
         myFile = file
 
-        val firFile = RawFirBuilder(object : FirSession {}).buildFirFile(file)
+        val firFile = RawFirBuilder(object : FirSessionBase() {}).buildFirFile(file)
         val firFileDump = StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
         val expectedPath = filePath.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
