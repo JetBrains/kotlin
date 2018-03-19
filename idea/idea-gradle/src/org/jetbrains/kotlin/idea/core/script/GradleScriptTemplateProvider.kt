@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -50,6 +51,7 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
+import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class GradleScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionContributor {
@@ -206,7 +208,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             templateClasspath,
             createEnvironment(gradleExeSettings),
             additionalResolverClasspath(gradleLibDir)
-        )
+        ).map {
+            // Expand scope for old gradle script definition
+            if (!it.scriptExpectedLocations.contains(ScriptExpectedLocation.Project)) GradleKotlinScriptDefinitionFromAnnotatedTemplate(it) else it
+        }
     }
 
     fun reloadIfNeccessary() {
@@ -248,6 +253,13 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
 internal class GradleSyncState {
     var isSyncInProgress: Boolean = false
+}
+
+class GradleKotlinScriptDefinitionFromAnnotatedTemplate(
+    base: KotlinScriptDefinitionFromAnnotatedTemplate
+) : KotlinScriptDefinitionFromAnnotatedTemplate(base.template, base.environment, base.templateClasspath) {
+    override val scriptExpectedLocations: List<ScriptExpectedLocation>
+        get() = listOf(ScriptExpectedLocation.Project)
 }
 
 class ReloadGradleTemplatesOnSync : ExternalSystemTaskNotificationListenerAdapter() {

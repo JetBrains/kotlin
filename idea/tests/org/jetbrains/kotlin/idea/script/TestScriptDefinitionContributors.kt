@@ -25,6 +25,8 @@ import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
+import kotlin.script.experimental.location.ScriptExpectedLocation
+import kotlin.script.experimental.location.ScriptExpectedLocations
 import kotlin.script.templates.ScriptTemplateDefinition
 
 
@@ -64,6 +66,7 @@ class FromTextDependenciesResolver : AsyncDependenciesResolver {
     }
 }
 
+@ScriptExpectedLocations([ScriptExpectedLocation.Everywhere])
 @Suppress("unused")
 @ScriptTemplateDefinition(FromTextDependenciesResolver::class, scriptFilePattern = "script.kts")
 class Template
