@@ -22,6 +22,6 @@ FILE: simpleClass.kt
 
         unknown final property fau(var): Double
             unknown get(): Double
-            unknown set(value: Double): R/Unit/
+            unknown set(value: Double): R/kotlin.Unit/
 
     }

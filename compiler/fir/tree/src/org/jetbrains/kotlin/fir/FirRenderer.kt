@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
@@ -364,10 +365,34 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitTypeWithNullability(functionType)
     }
 
+    private fun ConeKotlinType.asString(): String {
+        return when (this) {
+            is ConeKotlinErrorType -> "error: $reason"
+            is ConeClassType -> {
+                val sb = StringBuilder()
+                val fqName = fqName
+                sb.append(fqName.packageFqName.asString().replace('.', '/'))
+                sb.append('.')
+                sb.append(fqName.classFqName.asString())
+                sb.append(typeArguments.joinToString { it ->
+                    when (it) {
+                        StarProjection -> "*"
+                        is ConeKotlinTypeProjectionIn -> "in ${it.type.asString()}"
+                        is ConeKotlinTypeProjectionOut -> "out ${it.type.asString()}"
+                        is ConeKotlinType -> it.asString()
+                    }
+                })
+                sb.toString()
+            }
+            else -> "Unsupported: $this"
+        }
+    }
+
     override fun visitResolvedType(resolvedType: FirResolvedType) {
         resolvedType.annotations.renderAnnotations()
         print("R/")
-        print(resolvedType.type)
+        val coneType = resolvedType.type
+        print(coneType.asString())
         print("/")
         visitTypeWithNullability(resolvedType)
     }

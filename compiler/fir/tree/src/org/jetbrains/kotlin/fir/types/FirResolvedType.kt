@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 interface FirResolvedType : FirTypeWithNullability {
-    val type: KotlinType
+    val type: ConeKotlinType
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedType(this, data)
