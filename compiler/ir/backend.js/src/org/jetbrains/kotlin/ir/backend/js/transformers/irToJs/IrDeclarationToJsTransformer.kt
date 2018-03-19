@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.js.backend.ast.*
 
-class IrDeclarationToJsTransformer : IrElementToJsNodeTransformer<JsStatement, Nothing?> {
+class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, Nothing?> {
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): JsStatement {
         return JsExpressionStatement(transformIrFunctionToJsFunction(declaration))
     }

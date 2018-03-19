@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 
-class IrModuleTransformer : IrElementToJsNodeTransformer<JsNode, Nothing?> {
+class IrModuleToJsTransformer : BaseIrElementToJsNodeTransformer<JsNode, Nothing?> {
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): JsNode {
         val program = JsProgram()
 
         declaration.files.forEach {
-            program.globalBlock.statements.add(it.accept(IrFileTransformer(), null))
+            program.globalBlock.statements.add(it.accept(IrFileToJsTransformer(), null))
         }
 
         return program

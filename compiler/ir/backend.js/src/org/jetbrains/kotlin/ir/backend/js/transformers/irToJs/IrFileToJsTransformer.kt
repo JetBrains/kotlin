@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
-class IrFileTransformer : IrElementToJsNodeTransformer<JsStatement, Nothing?> {
+class IrFileToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, Nothing?> {
     override fun visitFile(declaration: IrFile, data: Nothing?): JsStatement {
         val block = JsBlock()
 

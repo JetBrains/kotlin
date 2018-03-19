@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.js.backend.ast.JsEmpty
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 
-interface IrElementToJsNodeTransformer<out R : JsNode, in D> : IrElementVisitor<R, D> {
+interface BaseIrElementToJsNodeTransformer<out R : JsNode, in D> : IrElementVisitor<R, D> {
     override fun visitElement(element: IrElement, data: D): R {
         TODO(element)
     }

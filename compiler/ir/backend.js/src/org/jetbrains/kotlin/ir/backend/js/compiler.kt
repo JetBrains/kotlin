@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleTransformer
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -27,7 +27,7 @@ fun compile(
 
     val moduleFragment = Psi2IrTranslator().generateModule(analysisResult.moduleDescriptor, files, analysisResult.bindingContext)
 
-    val program = moduleFragment.accept(IrModuleTransformer(), null)
+    val program = moduleFragment.accept(IrModuleToJsTransformer(), null)
 
     return program.toString()
 }

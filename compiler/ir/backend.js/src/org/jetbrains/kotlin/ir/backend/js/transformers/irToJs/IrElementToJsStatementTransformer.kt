@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsReturn
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
-class IrElementToJsStatementTransformer : IrElementToJsNodeTransformer<JsStatement, Nothing?> {
+class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, Nothing?> {
     override fun visitBlockBody(body: IrBlockBody, data: Nothing?): JsStatement {
         return JsBlock(body.statements.map { it.accept(this, data) })
     }

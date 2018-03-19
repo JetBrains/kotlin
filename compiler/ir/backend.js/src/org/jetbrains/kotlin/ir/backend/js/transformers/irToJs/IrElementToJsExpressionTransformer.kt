@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral
 
-class IrElementToJsExpressionTransformer : IrElementToJsNodeTransformer<JsExpression, Nothing?> {
+class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, Nothing?> {
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): JsExpression {
         return JsStringLiteral(expression.value.toString())
     }
