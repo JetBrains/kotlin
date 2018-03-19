@@ -1,0 +1,3 @@
+FILE: simpleImportNested.kt
+    unknown final class YourClass() : R/a.MyClass.MyNested/ {
+    }

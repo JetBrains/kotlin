@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirTypeResolverImpl
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -24,10 +25,17 @@ abstract class AbstractFirResolveTestCase : KotlinTestWithEnvironment() {
 
     fun doTest(path: String) {
         val file = File(path)
-        val text = KotlinTestUtils.doLoadFile(file)
 
-        val ktFile = KotlinTestUtils.createFile(file.name, text, project)
+        val allFiles = listOf(file) + file.parentFile.listFiles { sibling ->
+            sibling.name.removePrefix(file.nameWithoutExtension).removeSuffix(file.extension).matches("\\.[0-9]+\\.".toRegex())
+        }
 
+
+        val ktFiles = allFiles.map {
+            val text = KotlinTestUtils.doLoadFile(it)
+            KotlinTestUtils.createFile(it.name, text, project)
+
+        }
 
         val session = object : FirSessionBase() {
             init {
@@ -38,14 +46,17 @@ abstract class AbstractFirResolveTestCase : KotlinTestWithEnvironment() {
         }
 
         val builder = RawFirBuilder(session)
-        val firFile = builder.buildFirFile(ktFile)
-
-        (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
 
         val transformer = FirClassifierResolveTransformer()
-        firFile.transform<FirFile, Nothing?>(transformer, null)
+        val firFiles = ktFiles.map {
+            val firFile = builder.buildFirFile(it)
+            (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
+            firFile
+        }.onEach {
+            it.transform<FirFile, Nothing?>(transformer, null)
+        }
 
-        val firFileDump = StringBuilder().also { firFile.accept(FirRenderer(it), null) }.toString()
+        val firFileDump = StringBuilder().also { firFiles.first().accept(FirRenderer(it), null) }.toString()
         val expectedPath = path.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
     }

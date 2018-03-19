@@ -1,0 +1,3 @@
+FILE: simpleImportOuter.kt
+    unknown final class My() : R/a.Outer.Nested/ {
+    }

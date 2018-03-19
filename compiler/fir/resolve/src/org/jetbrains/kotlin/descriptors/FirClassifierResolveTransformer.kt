@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassImpl
 import org.jetbrains.kotlin.fir.descriptors.ConeClassifierDescriptor
 import org.jetbrains.kotlin.fir.descriptors.ConeTypeParameterDescriptor
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
+import org.jetbrains.kotlin.fir.scopes.FirImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSelfImportingScope
 import org.jetbrains.kotlin.fir.types.FirResolvedType
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
@@ -29,15 +33,27 @@ class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
 
     lateinit var packageFqName: FqNameUnsafe
 
+    lateinit var importingScope: FirImportingScope
+
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         packageFqName = file.packageFqName.toUnsafe()
+        importingScope = FirCompositeImportingScope(
+            FirExplicitImportingScope(file.imports),
+            FirSelfImportingScope(file.packageFqName.toUnsafe(), file.session)
+        )
         return file.also { it.acceptChildren(this, null) }.compose()
     }
 
     // TODO: Extract to separate transformer?
     override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
         val typeResolver = FirTypeResolver.getInstance(type.session)
-        return FirResolvedTypeImpl(type.session, type.psi, typeResolver.resolveType(type), false, type.annotations).compose()
+        return FirResolvedTypeImpl(
+            type.session,
+            type.psi,
+            typeResolver.resolveType(type, importingScope),
+            false,
+            type.annotations
+        ).compose()
     }
 
     override fun transformResolvedType(resolvedType: FirResolvedType, data: Nothing?): CompositeTransformResult<FirType> {

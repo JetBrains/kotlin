@@ -7,17 +7,26 @@ package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
+import org.jetbrains.kotlin.fir.scopes.FirImportingScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeKotlinErrorType
 
 class FirTypeResolverImpl : FirTypeResolver {
-    override fun resolveType(type: FirType): ConeKotlinType {
+    override fun resolveType(type: FirType, importingScope: FirImportingScope): ConeKotlinType {
         return when (type) {
             is FirResolvedType -> type.type
             is FirUserType -> {
+
                 val qualifierResolver = FirQualifierResolver.getInstance(type.session)
+
+                var resolvedType: ConeKotlinType? = null
+                importingScope.processClassifiersByName(type.qualifier.first().name) { fqName ->
+                    resolvedType = qualifierResolver.resolveTypeWithPrefix(type.qualifier.drop(1), fqName)
+                    resolvedType == null
+                }
+
                 // TODO: Imports
-                qualifierResolver.resolveType(type.qualifier) ?: ConeKotlinErrorType("Failed to resolve qualified type")
+                resolvedType ?: qualifierResolver.resolveType(type.qualifier) ?: ConeKotlinErrorType("Failed to resolve qualified type")
             }
             is FirErrorType -> {
                 ConeKotlinErrorType(type.reason)

@@ -1,0 +1,3 @@
+FILE: simpleImport.kt
+    unknown final class YourClass() : R/b.MyClass/ {
+    }

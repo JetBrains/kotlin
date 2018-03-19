@@ -1,0 +1,5 @@
+FILE: TwoDeclarationsInSameFile.kt
+    unknown open class A() {
+    }
+    unknown final class B() : R/p.A/ {
+    }
