@@ -13,8 +13,9 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
+import java.util.logging.Logger
 
-class ByteReadChannelWrapper(private val readChannel: ByteReadChannel) {
+class ByteReadChannelWrapper(private val readChannel: ByteReadChannel, private val log: Logger) {
 
     private suspend fun readBytes(length: Int) =
         readChannel.readPacket(length).readBytes()
@@ -33,16 +34,16 @@ class ByteReadChannelWrapper(private val readChannel: ByteReadChannel) {
                 ).readBytes()
             )
         }.also {
-            println("object : ${if (it is CompileService.CallResult<*> && it.isGood) it.get() else it}")
+            log.info("object : ${if (it is CompileService.CallResult<*> && it.isGood) it.get() else it}")
         }
 
     private suspend fun getLength(): Int {
-        println("length : ")
+        log.info("length : ")
         val packet = readBytes(4)
-        println("length : ${packet.toList()}")
+        log.info("length : ${packet.toList()}")
         val (b1, b2, b3, b4) = packet.map(Byte::toInt)
         return (0xFF and b1 shl 24 or (0xFF and b2 shl 16) or
-                (0xFF and b3 shl 8) or (0xFF and b4)).also { println("   $it") }
+                (0xFF and b3 shl 8) or (0xFF and b4)).also { log.info("   $it") }
     }
 
     suspend fun nextObject() = getObject(getLength())
@@ -50,7 +51,7 @@ class ByteReadChannelWrapper(private val readChannel: ByteReadChannel) {
 }
 
 
-class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
+class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel, private val log: Logger) {
 
     private suspend fun printBytes(bytes: ByteArray) {
         bytes.forEach { writeChannel.writeByte(it) }
@@ -68,7 +69,7 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
             }
         }
             .also {
-                println("sent object : $obj")
+                log.info("sent object : $obj")
             }
 
     private suspend fun printString(s: String) {
@@ -83,7 +84,7 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
             .putInt(length)
             .array()
             .also {
-                println("printLength $length")
+                log.info("printLength $length")
             }
     )
 
@@ -95,12 +96,12 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel) {
     }
 }
 
-fun ByteReadChannel.toWrapper() = ByteReadChannelWrapper(this)
-fun ByteWriteChannel.toWrapper() = ByteWriteChannelWrapper(this)
+fun ByteReadChannel.toWrapper(log: Logger) = ByteReadChannelWrapper(this, log)
+fun ByteWriteChannel.toWrapper(log: Logger) = ByteWriteChannelWrapper(this, log)
 
-fun Socket.openAndWrapReadChannel() = this.openReadChannel().toWrapper()
-fun Socket.openAndWrapWriteChannel() = this.openWriteChannel().toWrapper()
+fun Socket.openAndWrapReadChannel(log: Logger) = this.openReadChannel().toWrapper(log)
+fun Socket.openAndWrapWriteChannel(log: Logger) = this.openWriteChannel().toWrapper(log)
 
 data class IOPair(val input: ByteReadChannelWrapper, val output: ByteWriteChannelWrapper)
 
-fun Socket.openIO() = IOPair(this.openAndWrapReadChannel(), this.openAndWrapWriteChannel())
+fun Socket.openIO(log: Logger) = IOPair(this.openAndWrapReadChannel(log), this.openAndWrapWriteChannel(log))

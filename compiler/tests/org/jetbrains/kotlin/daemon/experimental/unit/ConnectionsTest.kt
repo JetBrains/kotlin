@@ -19,6 +19,7 @@ import java.util.*
 import kotlin.concurrent.schedule
 
 class ConnectionsTest : KotlinIntegrationTestBase() {
+
     fun testConnectionMechanism() {
         val daemonJVMOptions = configureDaemonJVMOptions(
             inheritMemoryLimits = true,
@@ -81,4 +82,5 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         println("info : $info")
         assert(info.isGood)
     }
+
 }

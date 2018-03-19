@@ -123,7 +123,7 @@ class CompileServiceServerSideImpl(
 
     init {
 
-        Report.log("init(port= $serverPort)", "CompileServiceServerSideImpl")
+        log.info("init(port= $serverPort)")
 
         // assuming logically synchronized
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
@@ -270,7 +270,7 @@ class CompileServiceServerSideImpl(
     init {
         val runFileDir = File(daemonOptions.runFilesPathOrDefault)
         runFileDir.mkdirs()
-        Report.log("port.toString() = $port | serverPort = $serverPort", "CompileServiceServerSideImpl")
+        log.info("port.toString() = $port | serverPort = $serverPort")
         runFile = File(
             runFileDir,
             makeRunFilenameString(
@@ -285,7 +285,7 @@ class CompileServiceServerSideImpl(
             throw IllegalStateException("Unable to create runServer file '${runFile.absolutePath}'", e)
         }
         runFile.deleteOnExit()
-        Report.log("last_init_end", "CompileServiceServerSideImpl")
+        log.info("last_init_end")
     }
 
     // RMI-exposed API
@@ -702,7 +702,6 @@ class CompileServiceServerSideImpl(
 
     // TODO: handover should include mechanism for client to switch to a new daemon then previous "handed over responsibilities" and shot down
     private fun initiateElections() {
-        return // TODO fix!!!!!!
         ifAliveUnit {
 
             log.info("initiate elections")
