@@ -66,6 +66,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformClass(enumEntry, data)
     }
 
+    open fun transformResolvedClass(resolvedClass: FirResolvedClass, data: D): CompositeTransformResult<FirDeclaration> {
+        return transformClass(resolvedClass, data)
+    }
+
     open fun transformTypeAlias(typeAlias: FirTypeAlias, data: D): CompositeTransformResult<FirDeclaration> {
         return transformMemberDeclaration(typeAlias, data)
     }
@@ -244,6 +248,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirElement> {
         return transformEnumEntry(enumEntry, data)
+    }
+
+    final override fun visitResolvedClass(resolvedClass: FirResolvedClass, data: D): CompositeTransformResult<FirElement> {
+        return transformResolvedClass(resolvedClass, data)
     }
 
     final override fun visitCallableMember(callableMember: FirCallableMember, data: D): CompositeTransformResult<FirElement> {

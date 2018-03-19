@@ -66,6 +66,10 @@ abstract class FirVisitor<out R, in D> {
         return visitClass(enumEntry, data)
     }
 
+    open fun visitResolvedClass(resolvedClass: FirResolvedClass, data: D): R {
+        return visitClass(resolvedClass, data)
+    }
+
     open fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): R {
         return visitMemberDeclaration(typeAlias, data)
     }

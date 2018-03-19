@@ -371,7 +371,12 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             is ConeClassType -> {
                 val sb = StringBuilder()
                 val fqName = fqName
-                sb.append(fqName.packageFqName.asString().replace('.', '/'))
+                val packageFqName = fqName.packageFqName
+                if (packageFqName.isRoot) {
+                    sb.append("<root>")
+                } else {
+                    sb.append(packageFqName.asString().replace('.', '/'))
+                }
                 sb.append('.')
                 sb.append(fqName.classFqName.asString())
                 sb.append(typeArguments.joinToString { it ->

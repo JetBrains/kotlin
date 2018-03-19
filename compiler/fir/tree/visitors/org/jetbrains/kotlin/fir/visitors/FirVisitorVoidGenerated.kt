@@ -66,6 +66,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitClass(enumEntry, null)
     }
 
+    open fun visitResolvedClass(resolvedClass: FirResolvedClass) {
+        visitClass(resolvedClass, null)
+    }
+
     open fun visitTypeAlias(typeAlias: FirTypeAlias) {
         visitMemberDeclaration(typeAlias, null)
     }
@@ -244,6 +248,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
         visitEnumEntry(enumEntry)
+    }
+
+    final override fun visitResolvedClass(resolvedClass: FirResolvedClass, data: Nothing?) {
+        visitResolvedClass(resolvedClass)
     }
 
     final override fun visitCallableMember(callableMember: FirCallableMember, data: Nothing?) {

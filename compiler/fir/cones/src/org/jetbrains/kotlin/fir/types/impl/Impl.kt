@@ -13,7 +13,7 @@ class ConeClassTypeImpl(
     override val typeArguments: List<ConeKotlinTypeProjection>
 ) : ConeClassType()
 
-class NewKotlinTypeProjectionInImpl(override val type: ConeKotlinType) : ConeKotlinTypeProjectionIn()
+class ConeKotlinTypeProjectionInImpl(override val type: ConeKotlinType) : ConeKotlinTypeProjectionIn()
 
 class ConeKotlinTypeProjectionOutImpl(override val type: ConeKotlinType) : ConeKotlinTypeProjectionOut()
 

@@ -1,0 +1,5 @@
+FILE: F.kt
+    unknown open class A() {
+    }
+    unknown final class B() : R/<root>.A/ {
+    }
