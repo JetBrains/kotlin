@@ -7,6 +7,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.actor
 import java.io.Serializable
 import java.net.InetSocketAddress
+import java.util.logging.Logger
 
 /*
  * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
@@ -18,6 +19,9 @@ interface ServerBase
 interface Server<out T : ServerBase> : ServerBase {
 
     val serverPort: Int
+
+    private val log: Logger
+        get() = Logger.getLogger("default server")
 
     enum class State {
         WORKING, CLOSED, ERROR, DOWNING
@@ -31,7 +35,7 @@ interface Server<out T : ServerBase> : ServerBase {
     }
 
     suspend fun attachClient(client: Socket): Deferred<State>  = async {
-        val (input, output) = client.openIO()
+        val (input, output) = client.openIO(log)
         var finalState = Server.State.WORKING
         loop@
         while (true) {
@@ -58,14 +62,14 @@ interface Server<out T : ServerBase> : ServerBase {
     class ServerDownMessage<ServerType : ServerBase> : AnyMessage<ServerType>
 
     fun runServer(): Deferred<Unit> {
-        Report.log("binding to address($serverPort)", "DefaultServer")
+        log.info("binding to address($serverPort)")
         val serverSocket = aSocket().tcp().bind(InetSocketAddress(serverPort))
         return async {
             serverSocket.use {
-                Report.log("accepting clientSocket...", "DefaultServer")
+                log.info("accepting clientSocket...")
                 while (true) {
                     val client = serverSocket.accept()
-                    Report.log("client accepted! (${client.remoteAddress})", "DefaultServer")
+                    log.info("client accepted! (${client.remoteAddress})")
                     attachClient(client).invokeOnCompletion {
                         when (it) {
                             Server.State.DOWNING -> TODO("DOWN")

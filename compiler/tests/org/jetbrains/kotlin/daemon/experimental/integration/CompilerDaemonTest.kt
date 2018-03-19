@@ -39,6 +39,7 @@ import kotlin.test.fail
 import java.rmi.ConnectException
 import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
+import java.util.*
 
 
 val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
@@ -113,6 +114,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val additionalArgs = arrayListOf<String>()
         if (logFile != null) {
             additionalArgs.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"")
+            println("LPATH:" + logFile.loggerCompatiblePath)
         }
         args.forEach { additionalArgs.add(it) }
         val baseOpts = if (xmx > 0) DaemonJVMOptions(maxMemory = "${xmx}m") else DaemonJVMOptions()
@@ -1102,15 +1104,17 @@ fun restoreSystemProperty(propertyName: String, backupValue: String?) {
 
 internal inline fun withFlagFile(prefix: String, suffix: String? = null, body: (File) -> Unit) {
     val file = createTempFile(prefix, suffix)
+    println("LOG FILE : ${file.path}")
     try {
         body(file)
     } finally {
-        file.delete()
+//        file.delete()
     }
 }
 
 internal inline fun withLogFile(prefix: String, suffix: String = ".log", printLogOnException: Boolean = true, body: (File) -> Unit) {
     val logFile = createTempFile(prefix, suffix)
+    println("LOG FILE : ${logFile.path}")
     try {
         body(logFile)
     } catch (e: Exception) {

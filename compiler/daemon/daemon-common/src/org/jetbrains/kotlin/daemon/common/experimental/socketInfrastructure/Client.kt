@@ -9,6 +9,7 @@ import java.io.Serializable
 import java.net.InetSocketAddress
 import java.util.ArrayList
 import java.util.function.Function
+import java.util.logging.Logger
 
 interface Client : Serializable, AutoCloseable {
     @Throws(Exception::class)
@@ -25,6 +26,9 @@ class DefaultClient(
     val serverPort: Int,
     val serverHost: String? = null
 ) : Client {
+
+    val log: Logger
+        @Transient get() = Logger.getLogger("default client")
 
     lateinit var input: ByteReadChannelWrapper
         @Transient get
@@ -48,16 +52,16 @@ class DefaultClient(
 
     override fun connectToServer() {
         runBlocking(Unconfined) {
-            Report.log("connectToServer(port =$serverPort | host = $serverHost)", "DefaultClient")
+            log.info("connectToServer(port =$serverPort | host = $serverHost)")
             try {
                 socket = aSocket().tcp().connect(InetSocketAddress(serverPort))
             } catch (e: Throwable) {
-                Report.log("EXCEPTION ($e)", "DefaultClient")
+                log.info("EXCEPTION ($e)")
                 throw e
             }
-            Report.log("connected (port = $serverPort, serv =$serverPort)", "DefaultClient")
-            socket!!.openIO().also {
-                Report.log("OK serv.openIO() |port=$serverPort|", "DefaultClient")
+            log.info("connected (port = $serverPort, serv =$serverPort)")
+            socket!!.openIO(log).also {
+                log.info("OK serv.openIO() |port=$serverPort|")
                 input = it.input
                 output = it.output
             }

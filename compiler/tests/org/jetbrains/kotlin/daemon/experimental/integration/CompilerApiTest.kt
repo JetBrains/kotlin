@@ -18,9 +18,6 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.experimental.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.experimental.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
-import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
-import org.jetbrains.kotlin.daemon.experimental.KotlinCompileDaemon
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.scripts.captureOut
@@ -29,13 +26,36 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import java.io.File
 import java.net.URLClassLoader
-import java.util.*
-import kotlin.concurrent.schedule
-import kotlin.math.log
+import java.util.logging.LogManager
+import java.util.logging.Logger
 
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
     private val compilerLibDir = getCompilerLib()
+    private fun createNewLogFile() : File {
+        println("creating logFile")
+        val newLogFile = createTempFile("kotlin-daemon-experimental-test.", ".log")
+        println("logFile created (${newLogFile.loggerCompatiblePath})")
+        return newLogFile
+    }
+    private val currentLogFile: File by lazy {
+        val newLogFile = createNewLogFile()
+        val cfg: String =
+            "handlers = java.util.logging.FileHandler\n" +
+                    "java.util.logging.FileHandler.level     = ALL\n" +
+                    "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+                    "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+                    "java.util.logging.FileHandler.limit     = 0\n" + // if file is provided - disabled, else - 1Mb
+                    "java.util.logging.FileHandler.count     = 1\n" +
+                    "java.util.logging.FileHandler.append    = true\n" +
+                    "java.util.logging.FileHandler.pattern   = ${newLogFile.loggerCompatiblePath}\n" +
+                    "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
+        LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
+        newLogFile
+    }
+    private val externalLogFile: File by lazy { createNewLogFile() }
+
+    private val log by lazy { Logger.getLogger("test") }
 
     val compilerClassPath = listOf(
         File(compilerLibDir, "kotlin-compiler.jar")
@@ -75,7 +95,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         vararg args: String
     ): Pair<Int, Collection<OutputMessageUtil.Output>> {
 
-        println("KotlinCompilerClient.connectToCompileService() call")
+        log.info("KotlinCompilerClient.connectToCompileService() call")
         val daemon = KotlinCompilerClient.connectToCompileService(
             compilerId,
             clientAliveFile,
@@ -84,17 +104,17 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             DaemonReportingTargets(messageCollector = messageCollector),
             autostart = true
         )
-        println("KotlinCompilerClient.connectToCompileService() called! (daemon = $daemon)")
+        log.info("KotlinCompilerClient.connectToCompileService() called! (daemon = $daemon)")
 
         assertNotNull("failed to connect daemon", daemon)
 
-        println("runBlocking(Unconfined) { ")
+        log.info("runBlocking(Unconfined) { ")
         runBlocking(Unconfined) {
-            println("register client...")
+            log.info("register client...")
             daemon?.registerClient(clientAliveFile.absolutePath)
-            println("   client registered")
+            log.info("   client registered")
         }
-        println("} ^ runBlocking")
+        log.info("} ^ runBlocking")
 
 
         val outputs = arrayListOf<OutputMessageUtil.Output>()
@@ -167,46 +187,43 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         run(getHelloAppBaseDir(), "hello.run", "-cp", jar, "Hello.HelloKt")
     }
 
-    private fun terminate(daemonOptions: DaemonOptions, logFile: File) {
-        println("in finally")
+    private fun terminate(daemonOptions: DaemonOptions) {
+        log.info("in finally")
         runBlocking(Unconfined) {
-            println("in runBlocking")
+            log.info("in runBlocking")
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
         }
-        logFile.delete()
+//        currentLogFile.delete()
+//        externalLogFile.delete()
     }
 
     fun testHelloApp() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            println("sarting test...")
+            log.info("sarting test...")
 
-            println("assigning daemonOptions")
+            log.info("assigning daemonOptions")
             val daemonOptions = DaemonOptions(
                 runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
                 verbose = true,
                 reportPerf = true
             )
-            println("daemonOptions assigned")
+            log.info("daemonOptions assigned")
 
-            println("creating logFile")
-            val logFile = createTempFile("kotlin-daemon-experimental-test.", ".log")
-            println("logFile created")
-
-            println("creating daemonJVMOptions")
+            log.info("creating daemonJVMOptions")
             val daemonJVMOptions = configureDaemonJVMOptions(
-                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${externalLogFile.loggerCompatiblePath}\"",
                 inheritMemoryLimits = false,
                 inheritOtherJvmOptions = false,
                 inheritAdditionalProperties = false
             )
-            println("daemonJVMOptions created")
+            log.info("daemonJVMOptions created")
 
-            println("creating jar")
+            log.info("creating jar")
             val jar = tmpdir.absolutePath + File.separator + "hello.jar"
-            println("jar created")
+            log.info("jar created")
 
             try {
-                println("compileOnDaemon call")
+                log.info("compileOnDaemon call")
                 val (code, outputs) = compileOnDaemon(
                     flagFile,
                     compilerId,
@@ -219,14 +236,14 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                     jar,
                     "-Xreport-output-files"
                 )
-                println("compileOnDaemon called")
+                log.info("compileOnDaemon called")
 
                 Assert.assertEquals(0, code)
                 Assert.assertTrue(outputs.isNotEmpty())
                 Assert.assertEquals(jar, outputs.first().outputFile?.absolutePath)
                 run(getHelloAppBaseDir(), "hello.run", "-cp", jar, "Hello.HelloKt")
             } finally {
-                terminate(daemonOptions, logFile)
+                terminate(daemonOptions)
             }
         }
     }
@@ -254,10 +271,10 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                 reportPerf = true
             )
 
-            val logFile = createTempFile("kotlin-daemon-test.", ".log")
+            val currentLogFile = createTempFile("kotlin-daemon-test.", ".log")
 
             val daemonJVMOptions = configureDaemonJVMOptions(
-                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${externalLogFile.loggerCompatiblePath}\"",
                 inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false
             )
             try {
@@ -277,7 +294,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                 Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
                 runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", scriptRuntimeClassPath + tmpdir, "hi", "there")
             } finally {
-                terminate(daemonOptions, logFile)
+                terminate(daemonOptions)
             }
         }
     }

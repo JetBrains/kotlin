@@ -10,9 +10,9 @@ import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Report
 import java.io.File
 import java.rmi.registry.LocateRegistry
+import java.util.logging.Logger
 
 /*
 1) walkDaemonsAsync = walkDaemons + some async calls inside (also some used classes changed *** -> ***Async)
@@ -25,6 +25,8 @@ internal val MAX_PORT_NUMBER = 0xffff
 private const val ORPHANED_RUN_FILE_AGE_THRESHOLD_MS = 1000000L
 
 data class DaemonWithMetadataAsync(val daemon: CompileServiceClientSide, val runFile: File, val jvmOptions: DaemonJVMOptions)
+
+val log = Logger.getLogger("client utils")
 
 // TODO: write metadata into discovery file to speed up selection
 // TODO: consider using compiler jar signature (checksum) as a CompilerID (plus java version, plus ???) instead of classpath checksum
@@ -44,7 +46,7 @@ suspend fun walkDaemonsAsync(
     registryDir.walk().toList() // list, since walk returns Sequence and Sequence.map{...} is not inline => coroutines dont work
         .map { Pair(it, portExtractor(it.name)) }
         .filter { (file, port) -> port != null && filter(file, port) }
-        .map { println("(port = ${it.second}, path = ${it.first})"); it }
+        .map { log.info("(port = ${it.second}, path = ${it.first})"); it }
         .map { (file, port) ->
             // all actions process concurrently
             async {
@@ -54,9 +56,9 @@ suspend fun walkDaemonsAsync(
                     org.jetbrains.kotlin.daemon.common.DaemonReportCategory.DEBUG,
                     "found daemon on socketPort $port ($relativeAge ms old), trying to connect"
                 )
-                println("found daemon on socketPort $port ($relativeAge ms old), trying to connect")
+                log.info("found daemon on socketPort $port ($relativeAge ms old), trying to connect")
                 val daemon = tryConnectToDaemonAsync(port, report, useRMI)
-                println("daemon = $daemon (port= $port)")
+                log.info("daemon = $daemon (port= $port)")
                 // cleaning orphaned file; note: daemon should shut itself down if it detects that the runServer file is deleted
                 if (daemon == null) {
                     if (relativeAge - ORPHANED_RUN_FILE_AGE_THRESHOLD_MS <= 0) {
@@ -78,13 +80,13 @@ suspend fun walkDaemonsAsync(
                     }
                 }
                 try {
-                    println("try daemon = ...   ($daemon(port=$port)), daemon != null : ${daemon != null}")
+                    log.info("try daemon = ...   ($daemon(port=$port)), daemon != null : ${daemon != null}")
                     daemon
                         ?.let {
                             DaemonWithMetadataAsync(it, file, it.getDaemonJVMOptions().get())
                         }
                         .also {
-                            println("DaemonWithMetadataAsync == $it)")
+                            log.info("DaemonWithMetadataAsync == $it)")
                         }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -101,7 +103,7 @@ suspend fun walkDaemonsAsync(
 
 private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? {
     try {
-        Report.log("tryConnectToDaemonByRMI(port = $port)", "ClientUtils")
+        log.info("tryConnectToDaemonByRMI(port = $port)")
         val daemon = LocateRegistry.getRegistry(
             LoopbackNetworkInterface.loopbackInetAddressName,
             port,
@@ -120,15 +122,15 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
 
 private inline fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? {
     try {
-        Report.log("tryConnectToDaemonBySockets(port = $port)", "ClientUtils")
+        log.info("tryConnectToDaemonBySockets(port = $port)")
         val daemon = CompileServiceClientSideImpl(
             port,
             LoopbackNetworkInterface.loopbackInetAddressName
         )
-        Report.log("daemon($port) = $daemon", "ClientUtils")
-        Report.log("daemon($port) connecting to server...", "ClientUtils")
+        log.info("daemon($port) = $daemon")
+        log.info("daemon($port) connecting to server...")
         daemon.connectToServer()
-        Report.log("OK - daemon($port) connected to server!!!", "ClientUtils")
+        log.info("OK - daemon($port) connected to server!!!")
         return daemon
     } catch (e: Throwable) {
         report(DaemonReportCategory.INFO, "cannot find or connect to socket")

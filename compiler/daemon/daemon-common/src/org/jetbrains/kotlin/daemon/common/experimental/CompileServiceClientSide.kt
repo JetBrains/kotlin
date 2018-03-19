@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Clie
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import java.io.File
+import java.util.logging.Logger
 
 interface CompileServiceClientSide : CompileServiceAsync, Client
 
@@ -24,6 +25,8 @@ class CompileServiceClientSideImpl(
     val serverPort: Int,
     val serverHost: String
 ) : CompileServiceClientSide, Client by DefaultClient(serverPort, serverHost) {
+    
+    val log = Logger.getLogger("CompileServiceClientSideImpl")
 
     override suspend fun compile(
         sessionId: Int,
@@ -85,13 +88,13 @@ class CompileServiceClientSideImpl(
     }
 
     override suspend fun getDaemonJVMOptions(): CallResult<DaemonJVMOptions> {
-        println("sending message (GetDaemonJVMOptionsMessage) ... (deaemon port = $serverPort)")
+        log.info("sending message (GetDaemonJVMOptionsMessage) ... (deaemon port = $serverPort)")
         sendMessage(GetDaemonJVMOptionsMessage()).await()
-        println("message is sent!")
+        log.info("message is sent!")
         val resAsync = readMessage<CallResult<DaemonJVMOptions>>()
-        println("reading message...")
+        log.info("reading message...")
         val res = resAsync.await()
-        println("reply : $res")
+        log.info("reply : $res")
         return res
     }
 

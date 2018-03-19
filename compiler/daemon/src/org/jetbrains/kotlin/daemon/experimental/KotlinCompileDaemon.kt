@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import javafx.concurrent.Task
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
@@ -16,9 +15,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Report
-import java.awt.BorderLayout
-import java.awt.Label
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
@@ -31,9 +27,7 @@ import java.util.jar.Manifest
 import java.util.logging.Level
 import java.util.logging.LogManager
 import java.util.logging.Logger
-import javax.swing.JFrame
 import kotlin.concurrent.schedule
-import kotlin.concurrent.timerTask
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
 val DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS = 60000L
@@ -58,12 +52,6 @@ class LogStream(name: String) : OutputStream() {
 object KotlinCompileDaemon {
 
     init {
-
-//        val f = File("_LOG_2_.txt").printWriter()
-//        File("_LOG_2_.txt").printWriter().println("[KotlinCompileDaemon] :  init")
-//        f.close()
-        Report.log("init", "KotlinCompileDaemon")
-
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
         val (logPath: String, fileIsGiven: Boolean) =
                 System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)
@@ -101,7 +89,7 @@ object KotlinCompileDaemon {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        Report.log("main", "KotlinCompileDaemon")
+        log.info("main")
 
         ensureServerHostnameIsSetUp()
 
@@ -135,7 +123,7 @@ object KotlinCompileDaemon {
                         prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX
                     )
 
-                Report.log("filteredArgs", "KotlinCompileDaemon")
+                log.info("filteredArgs")
 
                 if (filteredArgs.any()) {
                     val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
@@ -145,7 +133,7 @@ object KotlinCompileDaemon {
                     throw IllegalArgumentException("Unknown arguments: " + filteredArgs.joinToString(" "))
                 }
 
-                Report.log("starting_daemon", "KotlinCompileDaemon")
+                log.info("starting_daemon")
                 log.info("starting daemon")
 
                 // TODO: find minimal set of permissions and restore security management
@@ -160,7 +148,7 @@ object KotlinCompileDaemon {
                     COMPILE_DAEMON_PORTS_RANGE_START,
                     COMPILE_DAEMON_PORTS_RANGE_END
                 )
-                Report.log("findPortForSocket() returned port= $port", "KotlinCompileDaemon")
+                log.info("findPortForSocket() returned port= $port")
 
 
                 val compilerSelector = object : CompilerSelector {
@@ -173,11 +161,11 @@ object KotlinCompileDaemon {
                         CompileService.TargetPlatform.METADATA -> metadata
                     }
                 }
-                Report.log("compilerSelector_ok", "KotlinCompileDaemon")
+                log.info("compilerSelector_ok")
 
                 // timer with a daemon thread, meaning it should not prevent JVM to exit normally
                 val timer = Timer(true)
-                Report.log("_STARTING_COMPILE_SERVICE", "KotlinCompileDaemon")
+                log.info("_STARTING_COMPILE_SERVICE")
                 val compilerService = CompileServiceServerSideImpl(
                     port,
                     compilerSelector,
@@ -198,10 +186,10 @@ object KotlinCompileDaemon {
                             timer.cancel()
                         }
                     })
-                Report.log("_COMPILE_SERVICE_STARTED", "KotlinCompileDaemon")
-                Report.log("_compile_service_RUNNING_SEERVER", "KotlinCompileDaemon")
+                log.info("_COMPILE_SERVICE_STARTED")
+                log.info("_compile_service_RUNNING_SEERVER")
                 serverRun = compilerService.runServer()
-                Report.log("_compile_service_SEERVER_IS_RUNNING", "KotlinCompileDaemon")
+                log.info("_compile_service_SEERVER_IS_RUNNING")
 
 
                 println(COMPILE_DAEMON_IS_READY_MESSAGE)
@@ -215,16 +203,16 @@ object KotlinCompileDaemon {
                 System.setErr(PrintStream(LogStream("stderr")))
                 System.setOut(PrintStream(LogStream("stdout")))
             } catch (e: Exception) {
-                System.err.println("Exception: " + e.message)
+                log.log(Level.ALL, "Exception: " + e.message)
                 e.printStackTrace(System.err)
                 // repeating it to log for the cases when stderr is not redirected yet
                 log.log(Level.INFO, "Exception: ", e)
                 // TODO consider exiting without throwing
                 throw e
             }
-            Report.log("awaiting", "KotlinCompileDaemon")
+            log.info("awaiting")
             serverRun.await()
-            Report.log("downing", "KotlinCompileDaemon")
+            log.info("downing")
         }
     }
 
