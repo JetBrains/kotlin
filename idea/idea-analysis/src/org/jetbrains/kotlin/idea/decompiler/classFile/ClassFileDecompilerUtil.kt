@@ -42,7 +42,7 @@ fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
     if (!IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)) return false
 
     val kotlinClass = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file)
-    return kotlinClass != null && kotlinClass.classHeader.metadataVersion.isCompatible()
+    return kotlinClass != null && kotlinClass.metadataVersion.isCompatible()
 }
 
 /**
@@ -69,17 +69,17 @@ fun isKotlinInternalCompiledFile(file: VirtualFile, fileContent: ByteArray? = nu
         return true
     }
 
-    val (header, classId) = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file, fileContent) ?: return false
-    if (classId.isLocal) return true
+    val header = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file, fileContent) ?: return false
+    if (header.classId.isLocal) return true
 
     return header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS ||
            header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
 }
 
-fun findMultifileClassParts(file: VirtualFile, classId: ClassId, header: KotlinClassHeader): List<KotlinJvmBinaryClass> {
+fun findMultifileClassParts(file: VirtualFile, classId: ClassId, partNames: List<String>): List<KotlinJvmBinaryClass> {
     val packageFqName = classId.packageFqName
     val partsFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
-    val partNames = header.data ?: return emptyList()
+
     return partNames.mapNotNull {
         partsFinder.findKotlinClass(ClassId(packageFqName, Name.identifier(it.substringAfterLast('/'))))
     }

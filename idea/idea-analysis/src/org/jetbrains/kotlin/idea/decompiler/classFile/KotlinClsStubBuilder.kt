@@ -64,7 +64,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
 
         val components = createStubBuilderComponents(file, packageFqName, fileContent)
         if (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
-            val partFiles = findMultifileClassParts(file, classId, header)
+            val partFiles = findMultifileClassParts(file, classId, header.multifilePartNames)
             return createMultifileClassStub(header, partFiles, classId.asSingleFqName(), components)
         }
 
