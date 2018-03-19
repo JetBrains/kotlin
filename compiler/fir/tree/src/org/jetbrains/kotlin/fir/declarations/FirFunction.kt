@@ -15,7 +15,7 @@ interface FirFunction : FirDeclarationWithBody, FirAnnotationContainer {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitFunction(this, data)
 
-    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         acceptAnnotations(visitor, data)
         for (parameter in valueParameters) {
             parameter.accept(visitor, data)

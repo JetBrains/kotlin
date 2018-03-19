@@ -22,11 +22,13 @@ interface FirElement {
     fun accept(visitor: FirVisitorVoid) =
         accept(visitor, null)
 
-    fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {}
+    fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     fun acceptChildren(visitor: FirVisitorVoid) =
         acceptChildren(visitor, null)
 
     fun <E : FirElement, D> transform(visitor: FirTransformer<D>, data: D): CompositeTransformResult<E> =
-        accept(visitor, data) as CompositeTransformResult<E>
+        CompositeTransformResult(accept(visitor, data))
+
+    fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
 }

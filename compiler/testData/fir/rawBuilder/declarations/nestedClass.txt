@@ -1,0 +1,15 @@
+FILE: nestedClass.kt
+    unknown abstract class Base() {
+        unknown constructor(s: String)
+
+    }
+    unknown final class Outer() {
+        unknown final class Derived() : Base {
+            unknown constructor(s: String)STUB
+
+        }
+
+        unknown final object Obj() : Base {
+        }
+
+    }

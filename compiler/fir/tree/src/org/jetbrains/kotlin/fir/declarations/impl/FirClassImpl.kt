@@ -12,20 +12,32 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-class FirClassImpl(
+open class FirClassImpl(
     session: FirSession,
     psi: PsiElement?,
     name: Name,
     visibility: Visibility,
     modality: Modality,
-    override val classKind: ClassKind,
-    override val isCompanion: Boolean,
-    override val isData: Boolean
+    final override val classKind: ClassKind,
+    final override val isInner: Boolean,
+    final override val isCompanion: Boolean,
+    final override val isData: Boolean
 ) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality), FirClass {
     override val superTypes = mutableListOf<FirType>()
 
     override val declarations = mutableListOf<FirDeclaration>()
+
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirClass {
+        typeParameters.transformInplace(transformer, data)
+        superTypes.transformInplace(transformer, data)
+        declarations.transformInplace(transformer, data)
+
+        return this
+    }
 }

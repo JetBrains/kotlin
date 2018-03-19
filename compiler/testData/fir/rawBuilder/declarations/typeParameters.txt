@@ -1,5 +1,5 @@
 FILE: typeParameters.kt
-    <out T : Any> unknown final class List() {
+    <out T : Any> unknown final interface List() {
         unknown final operator function get(index: Int): T
 
         unknown final infix function concat(other: List<T>): List<T>

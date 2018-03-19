@@ -1,0 +1,27 @@
+FILE: enums2.kt
+    unknown final interface Some() {
+    }
+    unknown final object O1() : Some {
+    }
+    unknown final object O2() : Some {
+    }
+    unknown final enum class SomeEnum() {
+        unknown constructor(x: Some)
+
+        unknown final enum entry FIRST() : SomeEnum {
+            unknown final override function check(y: Some): Boolean {
+                STUB
+            }
+
+        }
+
+        unknown final enum entry SECOND() : SomeEnum {
+            unknown final override function check(y: Some): Boolean {
+                STUB
+            }
+
+        }
+
+        unknown abstract function check(y: Some): Boolean
+
+    }

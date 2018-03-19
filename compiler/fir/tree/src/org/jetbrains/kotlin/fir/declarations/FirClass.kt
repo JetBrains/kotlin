@@ -6,16 +6,20 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // May be all containers should be properties and not base classes
 // About descriptors: introduce something like FirDescriptor which is FirUnresolved at the beginning and FirSymbol(descriptor) at the end
+@BaseTransformedType
 interface FirClass : FirDeclarationContainer, FirMemberDeclaration {
     // including delegated types
     val superTypes: List<FirType>
 
     val classKind: ClassKind
+
+    val isInner: Boolean
 
     val isCompanion: Boolean
 
@@ -24,7 +28,7 @@ interface FirClass : FirDeclarationContainer, FirMemberDeclaration {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
 
-    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         super.acceptChildren(visitor, data)
         for (superType in superTypes) {
             superType.accept(visitor, data)

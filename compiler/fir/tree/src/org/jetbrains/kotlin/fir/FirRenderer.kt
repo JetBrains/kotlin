@@ -118,7 +118,12 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             if (memberDeclaration.isInline) {
                 print("inline ")
             }
+        } else if (memberDeclaration is FirProperty) {
+            if (memberDeclaration.isConst) {
+                print("const ")
+            }
         }
+
         visitNamedDeclaration(memberDeclaration)
     }
 
@@ -130,7 +135,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     override fun visitDeclaration(declaration: FirDeclaration) {
         print(
             when (declaration) {
-                is FirClass -> "class"
+                is FirClass -> declaration.classKind.name.toLowerCase().replace("_", " ")
                 is FirTypeAlias -> "typealias"
                 is FirNamedFunction -> "function"
                 is FirProperty -> "property"
@@ -146,6 +151,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     override fun visitClass(klass: FirClass) {
         visitMemberDeclaration(klass)
         val attributes = listOfNotNull(
+            "inner".takeIf { klass.isInner },
             "companion".takeIf { klass.isCompanion },
             "data".takeIf { klass.isData }
         )
@@ -203,6 +209,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         constructor.valueParameters.renderParameters()
         constructor.delegatedConstructor?.accept(this)
         constructor.body?.accept(this)
+        if (constructor.body == null) {
+            println()
+        }
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
@@ -306,8 +315,8 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitCall(annotationCall)
     }
 
-    override fun visitConstructorCall(constructorCall: FirConstructorCall) {
-        visitCall(constructorCall)
+    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+        visitCall(delegatedConstructorCall)
     }
 
     override fun visitType(type: FirType) {
@@ -365,11 +374,16 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitUserType(userType: FirUserType) {
         userType.annotations.renderAnnotations()
-        print(userType.name)
-        if (userType.arguments.isNotEmpty()) {
-            print("<")
-            userType.arguments.renderSeparated()
-            print(">")
+        for ((index, qualifier) in userType.qualifier.withIndex()) {
+            if (index != 0) {
+                print(".")
+            }
+            print(qualifier.name)
+            if (qualifier.typeArguments.isNotEmpty()) {
+                print("<")
+                qualifier.typeArguments.renderSeparated()
+                print(">")
+            }
         }
         visitTypeWithNullability(userType)
     }

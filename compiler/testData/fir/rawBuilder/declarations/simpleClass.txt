@@ -1,5 +1,5 @@
 FILE: simpleClass.kt
-    unknown final class SomeInterface() {
+    unknown final interface SomeInterface() {
         unknown final function foo(x: Int, y: String): String
 
         unknown final property bar(val): Boolean
@@ -19,5 +19,9 @@ FILE: simpleClass.kt
             }
             unknown set(value: Boolean): <implicit> {
             }
+
+        unknown final property fau(var): Double
+            unknown get(): Double
+            unknown set(value: Double): R/Unit/
 
     }

@@ -6,21 +6,26 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.expressions.FirConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
+@BaseTransformedType
 interface FirConstructor : FirFunction, FirAnnotationContainer {
-    val delegatedConstructor: FirConstructorCall?
+    val delegatedConstructor: FirDelegatedConstructorCall?
 
     val visibility: Visibility
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitConstructor(this, data)
 
-    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         acceptAnnotations(visitor, data)
         delegatedConstructor?.accept(visitor, data)
-        super.acceptChildren(visitor, data)
+        for (parameter in valueParameters) {
+            parameter.accept(visitor, data)
+        }
+        body?.accept(visitor, data)
     }
 }

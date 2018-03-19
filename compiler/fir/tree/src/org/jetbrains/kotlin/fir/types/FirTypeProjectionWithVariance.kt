@@ -16,7 +16,7 @@ interface FirTypeProjectionWithVariance : FirTypeProjection {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitTypeProjectionWithVariance(this, data)
 
-    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         type.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }

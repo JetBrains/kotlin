@@ -6,5 +6,5 @@
 package org.jetbrains.kotlin.fir.types
 
 interface FirTypeProjectionContainer {
-    val arguments: List<FirTypeProjection>
+    val typeArguments: List<FirTypeProjection>
 }

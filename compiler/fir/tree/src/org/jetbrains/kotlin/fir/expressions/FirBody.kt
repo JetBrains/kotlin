@@ -15,7 +15,7 @@ interface FirBody : FirExpression {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitBody(this, data)
 
-    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         for (statement in statements) {
             statement.accept(visitor, data)
         }

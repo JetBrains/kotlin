@@ -1,0 +1,22 @@
+FILE: typeParameterVsNested.kt
+    unknown final interface Some() {
+    }
+    <T : Some> unknown abstract class My() {
+        unknown final class T(inner) {
+        }
+
+        unknown abstract property x(val): T
+            unknown get(): T
+
+        unknown abstract function foo(arg: T): <implicit>
+
+        unknown abstract property y(val): My.T
+            unknown get(): My.T
+
+        unknown abstract property z(val): test.My.T
+            unknown get(): test.My.T
+
+        unknown final class Some() : T {
+        }
+
+    }

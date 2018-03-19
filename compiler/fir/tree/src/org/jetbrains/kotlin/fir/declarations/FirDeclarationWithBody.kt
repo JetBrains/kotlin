@@ -14,7 +14,7 @@ interface FirDeclarationWithBody : FirDeclaration {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitDeclarationWithBody(this, data)
 
-    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         body?.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }

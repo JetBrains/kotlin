@@ -1,0 +1,12 @@
+FILE: derivedClass.kt
+    <T> unknown open class Base() {
+        unknown constructor(x: T)
+
+    }
+    <T : Any> unknown final class Derived() : Base<T> {
+        unknown constructor(x: T)STUB
+
+    }
+    <T : Any> unknown final function create(x: T): Derived<T> {
+        STUB
+    }

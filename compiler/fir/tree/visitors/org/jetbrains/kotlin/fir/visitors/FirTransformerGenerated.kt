@@ -1,10 +1,10 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
  * that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.fir.visitors
 
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.*
@@ -26,10 +26,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformDeclaration(declarationWithBody, data)
     }
 
-    open fun transformAnonymousInitializer(
-        anonymousInitializer: FirAnonymousInitializer,
-        data: D
-    ): CompositeTransformResult<FirDeclaration> {
+    open fun transformAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): CompositeTransformResult<FirDeclaration> {
         return transformDeclarationWithBody(anonymousInitializer, data)
     }
 
@@ -101,82 +98,83 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(packageFragment, data)
     }
 
-    open fun <E : FirPackageFragment> transformFile(file: E, data: D): CompositeTransformResult<E> {
+    open fun transformFile(file: FirFile, data: D): CompositeTransformResult<FirFile> {
         return transformPackageFragment(file, data)
     }
 
-    open fun <E : FirElement> transformStatement(statement: E, data: D): CompositeTransformResult<E> {
+    open fun transformStatement(statement: FirStatement, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(statement, data)
     }
 
-    open fun <E : FirStatement> transformExpression(expression: E, data: D): CompositeTransformResult<E> {
+    open fun transformExpression(expression: FirExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformStatement(expression, data)
     }
 
-    open fun <E : FirExpression> transformBody(body: E, data: D): CompositeTransformResult<E> {
+    open fun transformBody(body: FirBody, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(body, data)
     }
 
-    open fun <E : FirExpression> transformCall(call: E, data: D): CompositeTransformResult<E> {
+    open fun transformCall(call: FirCall, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(call, data)
     }
 
-    open fun <E : FirCall> transformAnnotationCall(annotationCall: E, data: D): CompositeTransformResult<E> {
+    open fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: D): CompositeTransformResult<FirStatement> {
         return transformCall(annotationCall, data)
     }
 
-    open fun <E : FirCall> transformConstructorCall(constructorCall: E, data: D): CompositeTransformResult<E> {
-        return transformCall(constructorCall, data)
+    open fun transformDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): CompositeTransformResult<FirStatement> {
+        return transformCall(delegatedConstructorCall, data)
     }
 
-    open fun <E : FirElement> transformType(type: E, data: D): CompositeTransformResult<E> {
+    open fun transformErrorExpression(errorExpression: FirErrorExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformExpression(errorExpression, data)
+    }
+
+    open fun transformType(type: FirType, data: D): CompositeTransformResult<FirType> {
         return transformElement(type, data)
     }
 
-    open fun <E : FirType> transformDelegatedType(delegatedType: E, data: D): CompositeTransformResult<E> {
+    open fun transformDelegatedType(delegatedType: FirDelegatedType, data: D): CompositeTransformResult<FirType> {
         return transformType(delegatedType, data)
     }
 
-    open fun <E : FirType> transformErrorType(errorType: E, data: D): CompositeTransformResult<E> {
+    open fun transformErrorType(errorType: FirErrorType, data: D): CompositeTransformResult<FirType> {
         return transformType(errorType, data)
     }
 
-    open fun <E : FirType> transformImplicitType(implicitType: E, data: D): CompositeTransformResult<E> {
+    open fun transformImplicitType(implicitType: FirImplicitType, data: D): CompositeTransformResult<FirType> {
         return transformType(implicitType, data)
     }
 
-    open fun <E : FirType> transformTypeWithNullability(typeWithNullability: E, data: D): CompositeTransformResult<E> {
+    open fun transformTypeWithNullability(typeWithNullability: FirTypeWithNullability, data: D): CompositeTransformResult<FirType> {
         return transformType(typeWithNullability, data)
     }
 
-    open fun <E : FirTypeWithNullability> transformDynamicType(dynamicType: E, data: D): CompositeTransformResult<E> {
+    open fun transformDynamicType(dynamicType: FirDynamicType, data: D): CompositeTransformResult<FirType> {
         return transformTypeWithNullability(dynamicType, data)
     }
 
-    open fun <E : FirTypeWithNullability> transformFunctionType(functionType: E, data: D): CompositeTransformResult<E> {
+    open fun transformFunctionType(functionType: FirFunctionType, data: D): CompositeTransformResult<FirType> {
         return transformTypeWithNullability(functionType, data)
     }
 
-    open fun <E : FirTypeWithNullability> transformResolvedType(resolvedType: E, data: D): CompositeTransformResult<E> {
+    open fun transformResolvedType(resolvedType: FirResolvedType, data: D): CompositeTransformResult<FirType> {
         return transformTypeWithNullability(resolvedType, data)
     }
 
-    open fun <E : FirTypeWithNullability> transformUserType(userType: E, data: D): CompositeTransformResult<E> {
+    open fun transformUserType(userType: FirUserType, data: D): CompositeTransformResult<FirType> {
         return transformTypeWithNullability(userType, data)
     }
 
-    open fun <E : FirElement> transformTypeProjection(typeProjection: E, data: D): CompositeTransformResult<E> {
+    open fun transformTypeProjection(typeProjection: FirTypeProjection, data: D): CompositeTransformResult<FirTypeProjection> {
         return transformElement(typeProjection, data)
     }
 
-    open fun <E : FirTypeProjection> transformStarProjection(starProjection: E, data: D): CompositeTransformResult<E> {
+    open fun transformStarProjection(starProjection: FirStarProjection, data: D): CompositeTransformResult<FirTypeProjection> {
         return transformTypeProjection(starProjection, data)
     }
 
-    open fun <E : FirTypeProjection> transformTypeProjectionWithVariance(
-        typeProjectionWithVariance: E,
-        data: D
-    ): CompositeTransformResult<E> {
+    open fun transformTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): CompositeTransformResult<FirTypeProjection> {
         return transformTypeProjection(typeProjectionWithVariance, data)
     }
 
@@ -192,10 +190,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformDeclaration(declaration, data)
     }
 
-    final override fun visitDeclarationWithBody(
-        declarationWithBody: FirDeclarationWithBody,
-        data: D
-    ): CompositeTransformResult<FirElement> {
+    final override fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody, data: D): CompositeTransformResult<FirElement> {
         return transformDeclarationWithBody(declarationWithBody, data)
     }
 
@@ -235,10 +230,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformTypeProjection(typeProjection, data)
     }
 
-    final override fun visitTypeWithNullability(
-        typeWithNullability: FirTypeWithNullability,
-        data: D
-    ): CompositeTransformResult<FirElement> {
+    final override fun visitTypeWithNullability(typeWithNullability: FirTypeWithNullability, data: D): CompositeTransformResult<FirElement> {
         return transformTypeWithNullability(typeWithNullability, data)
     }
 
@@ -246,8 +238,8 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformAnnotationCall(annotationCall, data)
     }
 
-    final override fun visitConstructorCall(constructorCall: FirConstructorCall, data: D): CompositeTransformResult<FirElement> {
-        return transformConstructorCall(constructorCall, data)
+    final override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: D): CompositeTransformResult<FirElement> {
+        return transformDelegatedConstructorCall(delegatedConstructorCall, data)
     }
 
     final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirElement> {
@@ -278,10 +270,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformVariable(variable, data)
     }
 
-    final override fun visitAnonymousInitializer(
-        anonymousInitializer: FirAnonymousInitializer,
-        data: D
-    ): CompositeTransformResult<FirElement> {
+    final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): CompositeTransformResult<FirElement> {
         return transformAnonymousInitializer(anonymousInitializer, data)
     }
 
@@ -291,6 +280,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitBody(body: FirBody, data: D): CompositeTransformResult<FirElement> {
         return transformBody(body, data)
+    }
+
+    final override fun visitErrorExpression(errorExpression: FirErrorExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformErrorExpression(errorExpression, data)
     }
 
     final override fun visitConstructor(constructor: FirConstructor, data: D): CompositeTransformResult<FirElement> {
@@ -333,10 +326,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformStarProjection(starProjection, data)
     }
 
-    final override fun visitTypeProjectionWithVariance(
-        typeProjectionWithVariance: FirTypeProjectionWithVariance,
-        data: D
-    ): CompositeTransformResult<FirElement> {
+    final override fun visitTypeProjectionWithVariance(typeProjectionWithVariance: FirTypeProjectionWithVariance, data: D): CompositeTransformResult<FirElement> {
         return transformTypeProjectionWithVariance(typeProjectionWithVariance, data)
     }
 

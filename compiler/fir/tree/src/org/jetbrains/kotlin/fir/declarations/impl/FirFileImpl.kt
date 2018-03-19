@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.fir.transformInplace
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirFileImpl(
     session: FirSession,
@@ -21,4 +24,10 @@ class FirFileImpl(
     override val imports = mutableListOf<FirImport>()
 
     override val declarations = mutableListOf<FirDeclaration>()
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        imports.transformInplace(transformer, data)
+        declarations.transformInplace(transformer, data)
+        return this
+    }
 }

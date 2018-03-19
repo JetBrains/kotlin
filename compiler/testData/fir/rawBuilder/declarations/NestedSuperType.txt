@@ -1,0 +1,14 @@
+FILE: NestedSuperType.kt
+    unknown abstract class My() {
+        unknown abstract class NestedOne() : My {
+            unknown abstract class NestedTwo() : NestedOne {
+            }
+
+        }
+
+    }
+    unknown final class Your() : My {
+        unknown final class NestedThree() : NestedOne {
+        }
+
+    }

@@ -1,0 +1,9 @@
+FILE: functionTypes.kt
+    <T> unknown final function simpleRun(f: ( (<no name provided>: T): Unit )): Unit {
+        STUB
+    }
+    <T, R> unknown final function simpleMapList<T>.(f: ( (<no name provided>: T): R )): R {
+    }
+    <T> unknown final function simpleWith(t: T, f: ( T.(): Unit )): Unit {
+        STUB
+    }

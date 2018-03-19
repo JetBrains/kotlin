@@ -14,4 +14,6 @@ class SomeClass : SomeInterface {
     override var bar: Boolean
         get() = true
         set(value) {}
+
+    var fau: Double
 }

@@ -122,8 +122,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitCall(annotationCall, null)
     }
 
-    open fun visitConstructorCall(constructorCall: FirConstructorCall) {
-        visitCall(constructorCall, null)
+    open fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+        visitCall(delegatedConstructorCall, null)
+    }
+
+    open fun visitErrorExpression(errorExpression: FirErrorExpression) {
+        visitExpression(errorExpression, null)
     }
 
     open fun visitType(type: FirType) {
@@ -234,8 +238,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitAnnotationCall(annotationCall)
     }
 
-    final override fun visitConstructorCall(constructorCall: FirConstructorCall, data: Nothing?) {
-        visitConstructorCall(constructorCall)
+    final override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: Nothing?) {
+        visitDelegatedConstructorCall(delegatedConstructorCall)
     }
 
     final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
@@ -276,6 +280,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitBody(body: FirBody, data: Nothing?) {
         visitBody(body)
+    }
+
+    final override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Nothing?) {
+        visitErrorExpression(errorExpression)
     }
 
     final override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {

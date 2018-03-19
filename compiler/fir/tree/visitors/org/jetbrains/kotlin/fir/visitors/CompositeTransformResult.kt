@@ -32,4 +32,5 @@ inline class CompositeTransformResult<out T : Any>(val a: Any) {
         }
 }
 
-inline fun <reified T : FirElement> T.compose() = CompositeTransformResult.single(this)
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T : FirElement> T.compose() = CompositeTransformResult.single(this)

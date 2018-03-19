@@ -18,7 +18,7 @@ class FirDelegatedTypeImpl(
         return super<FirDelegatedType>.accept(visitor, data)
     }
 
-    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         type.acceptChildren(visitor, data)
         delegate?.accept(visitor, data)
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCase {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doRawFirTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInRawBuilder() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/fir/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
@@ -29,26 +33,92 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Declarations extends AbstractRawFirBuilderTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doRawFirTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInDeclarations() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/fir/rawBuilder/declarations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("complexTypes.kt")
+        public void testComplexTypes() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/complexTypes.kt");
+        }
+
+        @TestMetadata("derivedClass.kt")
+        public void testDerivedClass() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/derivedClass.kt");
+        }
+
+        @TestMetadata("enums.kt")
+        public void testEnums() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/enums.kt");
+        }
+
+        @TestMetadata("enums2.kt")
+        public void testEnums2() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/enums2.kt");
+        }
+
+        @TestMetadata("F.kt")
+        public void testF() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/F.kt");
+        }
+
+        @TestMetadata("functionTypes.kt")
+        public void testFunctionTypes() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/functionTypes.kt");
+        }
+
+        @TestMetadata("genericFunctions.kt")
+        public void testGenericFunctions() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/genericFunctions.kt");
+        }
+
+        @TestMetadata("nestedClass.kt")
+        public void testNestedClass() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/nestedClass.kt");
+        }
+
+        @TestMetadata("NestedOfAliasedType.kt")
+        public void testNestedOfAliasedType() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/NestedOfAliasedType.kt");
+        }
+
+        @TestMetadata("NestedSuperType.kt")
+        public void testNestedSuperType() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/NestedSuperType.kt");
+        }
+
         @TestMetadata("simpleClass.kt")
         public void testSimpleClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/rawBuilder/declarations/simpleClass.kt");
-            doRawFirTest(fileName);
+            runTest("compiler/testData/fir/rawBuilder/declarations/simpleClass.kt");
         }
 
         @TestMetadata("simpleFun.kt")
         public void testSimpleFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/rawBuilder/declarations/simpleFun.kt");
-            doRawFirTest(fileName);
+            runTest("compiler/testData/fir/rawBuilder/declarations/simpleFun.kt");
+        }
+
+        @TestMetadata("simpleTypeAlias.kt")
+        public void testSimpleTypeAlias() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/simpleTypeAlias.kt");
+        }
+
+        @TestMetadata("typeAliasWithGeneric.kt")
+        public void testTypeAliasWithGeneric() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/typeAliasWithGeneric.kt");
+        }
+
+        @TestMetadata("typeParameterVsNested.kt")
+        public void testTypeParameterVsNested() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/typeParameterVsNested.kt");
         }
 
         @TestMetadata("typeParameters.kt")
         public void testTypeParameters() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/rawBuilder/declarations/typeParameters.kt");
-            doRawFirTest(fileName);
+            runTest("compiler/testData/fir/rawBuilder/declarations/typeParameters.kt");
         }
     }
 }

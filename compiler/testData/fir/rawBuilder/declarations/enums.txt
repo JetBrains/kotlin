@@ -1,0 +1,45 @@
+FILE: enums.kt
+    unknown final enum class Order() {
+        unknown final enum entry FIRST() {
+        }
+
+        unknown final enum entry SECOND() {
+        }
+
+        unknown final enum entry THIRD() {
+        }
+
+    }
+    unknown final enum class Planet() {
+        unknown constructor(m: Double, r: Double)
+
+        unknown final enum entry MERCURY() : Planet {
+            unknown final override function sayHello(): <implicit> {
+            }
+
+        }
+
+        unknown final enum entry VENERA() : Planet {
+            unknown final override function sayHello(): <implicit> {
+            }
+
+        }
+
+        unknown final enum entry EARTH() : Planet {
+            unknown final override function sayHello(): <implicit> {
+            }
+
+        }
+
+        unknown final property g(val): Double = STUB
+            unknown get(): Double
+
+        unknown abstract function sayHello(): <implicit>
+
+        unknown final object Companion(companion) {
+            unknown final const property G(val): <implicit> = STUB
+                unknown get(): <implicit>
+
+        }
+
+    }

@@ -22,6 +22,7 @@ class FirMemberPropertyImpl(
     visibility: Visibility,
     modality: Modality,
     isOverride: Boolean,
+    override val isConst: Boolean,
     receiverType: FirType?,
     returnType: FirType,
     override val isVar: Boolean,

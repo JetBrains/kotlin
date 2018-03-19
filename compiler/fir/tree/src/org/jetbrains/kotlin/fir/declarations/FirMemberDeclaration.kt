@@ -18,7 +18,7 @@ interface FirMemberDeclaration : FirTypeParameterContainer, FirNamedDeclaration,
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitMemberDeclaration(this, data)
 
-    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         acceptAnnotations(visitor, data)
         for (typeParameter in typeParameters) {
             typeParameter.accept(visitor, data)

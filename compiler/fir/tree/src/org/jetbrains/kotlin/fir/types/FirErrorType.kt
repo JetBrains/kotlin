@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirErrorType : FirType {
+    val reason: String
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitErrorType(this, data)
 }

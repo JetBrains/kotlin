@@ -13,10 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirType
 
 class FirAnnotationCallImpl(
-    override val session: FirSession,
-    override val psi: PsiElement?,
+    session: FirSession,
+    psi: PsiElement?,
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override val annotationType: FirType
-) : FirAnnotationCall {
-    override val arguments = mutableListOf<FirExpression>()
-}
+) : FirAbstractCall(session, psi), FirAnnotationCall

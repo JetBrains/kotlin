@@ -19,7 +19,7 @@ interface FirFunctionType : FirTypeWithNullability {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitFunctionType(this, data)
 
-    override fun <D> acceptChildren(visitor: FirVisitor<Unit, D>, data: D) {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         receiverType?.accept(visitor, data)
         super.acceptChildren(visitor, data)
         for (parameter in valueParameters) {
