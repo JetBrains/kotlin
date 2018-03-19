@@ -5,13 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.js.backend.ast.JsBlock
-import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
-import org.jetbrains.kotlin.js.backend.ast.JsReturn
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.js.backend.ast.*
 
 class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, Nothing?> {
     override fun visitBlockBody(body: IrBlockBody, data: Nothing?): JsStatement {
@@ -22,7 +18,23 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return JsExpressionStatement(expression.accept(IrElementToJsExpressionTransformer(), data))
     }
 
+    override fun visitBreak(jump: IrBreak, data: Nothing?): JsStatement {
+        return JsBreak(jump.label?.let(::JsNameRef))
+    }
+
+    override fun visitContinue(jump: IrContinue, data: Nothing?): JsStatement {
+        return JsContinue(jump.label?.let(::JsNameRef))
+    }
+
     override fun visitReturn(expression: IrReturn, data: Nothing?): JsStatement {
-        return JsReturn(expression.value.accept(IrElementToJsExpressionTransformer(), null))
+        return JsReturn(expression.value.accept(IrElementToJsExpressionTransformer(), data))
+    }
+
+    override fun visitThrow(expression: IrThrow, data: Nothing?): JsStatement {
+        return JsThrow(expression.value.accept(IrElementToJsExpressionTransformer(), data))
+    }
+
+    override fun visitVariable(declaration: IrVariable, data: Nothing?): JsStatement {
+        return jsVar(declaration.name, declaration.initializer)
     }
 }
