@@ -27,15 +27,19 @@ import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.addSimpleDelegatingConstructor
 import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.backend.common.ir.createSimpleDelegatingConstructorDescriptor
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -44,6 +48,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 
 internal class EnumSyntheticFunctionsBuilder(val context: Context) {
     fun buildValuesExpression(startOffset: Int, endOffset: Int,
@@ -367,29 +372,37 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
         private val arrayGetSymbol = context.ir.symbols.array.functions.single { it.descriptor.name == Name.identifier("get") }
 
+        private val genericFreezeSymbol = context.ir.symbols.freeze
+        private val arrayType = context.builtIns.getArrayType(Variance.INVARIANT, irClass.defaultType)
+
         private fun createValuesPropertyInitializer(enumEntries: List<IrEnumEntry>): IrAnonymousInitializerImpl {
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
 
-            val statements = enumEntries
-                    .sortedBy { it.descriptor.name }
-                    .withIndex()
-                    .map {
-                        val instances = IrGetFieldImpl(startOffset, endOffset,
-                                loweredEnum.valuesField.symbol, IrGetValueImpl(startOffset, endOffset, loweredEnum.implObject.thisReceiver!!.symbol))
-                        val instance = IrCallImpl(startOffset, endOffset, arrayGetSymbol).apply {
-                            dispatchReceiver = instances
-                            putValueArgument(0, IrConstImpl(startOffset, endOffset, context.builtIns.intType, IrConstKind.Int, it.index))
-                        }
-                        val initializer = it.value.initializerExpression!! as IrCall
-                        IrCallImpl(startOffset, endOffset, initInstanceSymbol).apply {
-                            putValueArgument(0, instance)
-                            putValueArgument(1, initializer)
-                        }
+            val symbol = IrAnonymousInitializerSymbolImpl(loweredEnum.implObject.descriptor)
+            val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
+            return IrAnonymousInitializerImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, symbol).apply {
+                body = irBuilder.irBlockBody(irClass) {
+                    val instances = irTemporary(irGetField(irGet(loweredEnum.implObject.thisReceiver!!.symbol), loweredEnum.valuesField.symbol))
+                    enumEntries
+                            .sortedBy { it.descriptor.name }
+                            .withIndex()
+                            .forEach {
+                                val instance = irCall(arrayGetSymbol).apply {
+                                    dispatchReceiver = irGet(instances.symbol)
+                                    putValueArgument(0, irInt(it.index))
+                                }
+                                val initializer = it.value.initializerExpression!! as IrCall
+                                +irCall(initInstanceSymbol).apply {
+                                    putValueArgument(0, instance)
+                                    putValueArgument(1, initializer)
+                                }
+                            }
+                    +irCall(genericFreezeSymbol, listOf(arrayType)).apply {
+                        extensionReceiver = irGet(instances.symbol)
                     }
-            return IrAnonymousInitializerImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM,
-                    loweredEnum.implObject.descriptor, IrBlockBodyImpl(startOffset, endOffset, statements)
-            )
+                }
+            }
         }
 
         private fun createSyntheticValuesMethodBody(declaration: IrFunction): IrBody {

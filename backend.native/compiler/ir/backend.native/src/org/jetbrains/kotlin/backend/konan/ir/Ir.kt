@@ -251,6 +251,9 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val initInstance = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("initInstance").single())
 
+    val freeze = symbolTable.referenceSimpleFunction(
+            builtInsPackage("konan", "worker").getContributedFunctions(Name.identifier("freeze"), NoLookupLocation.FROM_BACKEND).single())
+
     val getContinuation = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("getContinuation").single())
 
