@@ -67,8 +67,10 @@ fun buildDecompiledTextForClassFile(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = DeserializerForClassfileDecompiler(classFile)
 ): DecompiledText {
-    val (classHeader, classId) = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
+    val classHeader = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
                                  ?: error("Decompiled data factory shouldn't be called on an unsupported file: " + classFile)
+
+    val classId = classHeader.classId
 
     if (!classHeader.metadataVersion.isCompatible()) {
         return createIncompatibleAbiVersionDecompiledText(JvmMetadataVersion.INSTANCE, classHeader.metadataVersion)
@@ -85,7 +87,7 @@ fun buildDecompiledTextForClassFile(
             buildText(listOfNotNull(resolver.resolveTopLevelClass(classId)))
         }
         KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
-            val partClasses = findMultifileClassParts(classFile, classId, classHeader)
+            val partClasses = findMultifileClassParts(classFile, classId, classHeader.partNamesIfMultifileFacade)
             val partMembers = partClasses.flatMap { partClass ->
                 resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName())
             }
