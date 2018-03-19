@@ -29,13 +29,27 @@ interface Server<out T : ServerBase> : ServerBase {
 
     suspend fun processMessage(msg: AnyMessage<in T>, output: ByteWriteChannelWrapper): State = when (msg) {
         is Server.Message<in T> -> Server.State.WORKING.also { msg.process(this as T, output) }
-        is Server.EndConnectionMessage<in T> -> Server.State.CLOSED
+        is Server.EndConnectionMessage<in T> -> {
+            println("!EndConnectionMessage!")
+            Server.State.CLOSED
+        }
         is Server.ServerDownMessage<in T> -> Server.State.DOWNING
         else -> Server.State.ERROR
     }
 
-    suspend fun attachClient(client: Socket): Deferred<State>  = async {
+    suspend fun attachClient(client: Socket): Deferred<State> = async {
         val (input, output) = client.openIO(log)
+        try {
+            val bytes = input.readBytes(BYTES_TOKEN.size)
+            log.info("bytes : ${bytes.toList()}")
+            if (bytes.zip(BYTES_TOKEN).any { it.first != it.second }) {
+                log.info("BAD TOKEN")
+                return@async Server.State.CLOSED
+            }
+        } catch (e: Throwable) {
+            log.info("NO TOKEN")
+            return@async Server.State.CLOSED
+        }
         var finalState = Server.State.WORKING
         loop@
         while (true) {
@@ -72,8 +86,11 @@ interface Server<out T : ServerBase> : ServerBase {
                     log.info("client accepted! (${client.remoteAddress})")
                     attachClient(client).invokeOnCompletion {
                         when (it) {
-                            Server.State.DOWNING -> TODO("DOWN")
+                            Server.State.DOWNING -> {
+                                client.close()
+                            }
                             else -> {
+                                client.close()
                             }
                         }
                     }

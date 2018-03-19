@@ -17,7 +17,7 @@ import java.util.logging.Logger
 
 class ByteReadChannelWrapper(private val readChannel: ByteReadChannel, private val log: Logger) {
 
-    private suspend fun readBytes(length: Int) =
+    suspend fun readBytes(length: Int) =
         readChannel.readPacket(length).readBytes()
 
     private suspend fun getObject(length: Int) =
@@ -53,7 +53,7 @@ class ByteReadChannelWrapper(private val readChannel: ByteReadChannel, private v
 
 class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel, private val log: Logger) {
 
-    private suspend fun printBytes(bytes: ByteArray) {
+    suspend fun printBytes(bytes: ByteArray) {
         bytes.forEach { writeChannel.writeByte(it) }
         writeChannel.flush()
     }

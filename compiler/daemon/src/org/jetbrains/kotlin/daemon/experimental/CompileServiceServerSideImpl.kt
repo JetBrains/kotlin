@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
@@ -35,9 +34,6 @@ import org.jetbrains.kotlin.daemon.KotlinJvmReplService
 import org.jetbrains.kotlin.daemon.LazyClasspathWatcher
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
-
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Report
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdaterAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteArtifactChangesProviderAsync
@@ -129,6 +125,7 @@ class CompileServiceServerSideImpl(
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
         // TODO UNCOMMENT THIS : this.toRMIServer(daemonOptions, compilerId) // also create RMI server in order to support old clients
+        this.toRMIServer(daemonOptions, compilerId)
 
         timer.schedule(10) {
             exceptionLoggingTimerThread { initiateElections() }
@@ -711,12 +708,15 @@ class CompileServiceServerSideImpl(
                     compilerId,
                     runFile,
                     filter = { _, p -> p != port },
-                    report = { _, msg -> log.info(msg) }, useRMI = false
+                    report = { _, msg -> log.info(msg) },
+                    useRMI = false
                 )
                 val comparator = compareByDescending<DaemonWithMetadataAsync, DaemonJVMOptions>(
                     DaemonJVMOptionsMemoryComparator(),
                     { it.jvmOptions }
-                ).thenBy(FileAgeComparator()) { it.runFile }
+                )
+                    .thenBy(FileAgeComparator()) { it.runFile }
+                    .thenBy { it.daemon.serverPort }
                 aliveWithOpts.maxWith(comparator)?.let { bestDaemonWithMetadata ->
                     val fattestOpts = bestDaemonWithMetadata.jvmOptions
                     if (fattestOpts memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(

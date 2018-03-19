@@ -11,6 +11,8 @@ import java.util.ArrayList
 import java.util.function.Function
 import java.util.logging.Logger
 
+val BYTES_TOKEN = byteArrayOf(1, 2, 3, 4)
+
 interface Client : Serializable, AutoCloseable {
     @Throws(Exception::class)
     fun connectToServer()
@@ -64,6 +66,7 @@ class DefaultClient(
                 log.info("OK serv.openIO() |port=$serverPort|")
                 input = it.input
                 output = it.output
+                output.printBytes(BYTES_TOKEN)
             }
         }
     }
