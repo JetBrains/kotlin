@@ -251,10 +251,9 @@ internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () 
     val value = get(key)
     if (value == null && !containsKey(key)) {
         return defaultValue()
-    } else {
-        @Suppress("UNCHECKED_CAST")
-        return value as V
     }
+    @Suppress("UNCHECKED_CAST")
+    return value as V
 }
 
 /**
@@ -275,16 +274,8 @@ public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
  *
  * @sample samples.collections.Maps.Usage.getOrPut
  */
-public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
-    val value = get(key)
-    return if (value == null) {
-        val answer = defaultValue()
-        put(key, answer)
-        answer
-    } else {
-        value
-    }
-}
+public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V
+        = get(key) ?: defaultValue().also { put(key, it) }
 
 /**
  * Returns an [Iterator] over the entries in the [Map].
