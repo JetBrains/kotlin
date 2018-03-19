@@ -89,7 +89,7 @@ public inline operator fun BigDecimal.dec(): BigDecimal = this.subtract(BigDecim
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
-public inline fun Int.toBigDecimal(): BigDecimal = BigDecimal(this)
+public inline fun Int.toBigDecimal(): BigDecimal = BigDecimal.valueOf(this)
 
 
 /**
