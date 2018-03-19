@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.project
 
+import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.isKotlinBinary
@@ -228,6 +230,11 @@ private inline fun <T> collectInfosByVirtualFile(
 
     projectFileIndex.getOrderEntriesForFile(virtualFile).forEach {
         it.toIdeaModuleInfo(project, virtualFile, treatAsLibrarySource)?.let(onOccurrence)
+    }
+
+    if (ScratchFileService.isInScratchRoot(virtualFile)) {
+        val scratchModule = virtualFile.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
+        onOccurrence(scratchModule?.testSourceInfo() ?: scratchModule?.productionSourceInfo())
     }
 
     val scriptDefinition = getScriptDefinition(virtualFile, project)
