@@ -12,6 +12,7 @@ class TestDependenciesResolver : DependenciesResolver {
     ): DependenciesResolver.ResolveResult {
         return DependenciesResolver.ResolveResult.Failure(
             ScriptReport("Error"),
+            ScriptReport("Fatal", ScriptReport.Severity.FATAL),
             ScriptReport("Info", ScriptReport.Severity.INFO),
             ScriptReport("Warning", ScriptReport.Severity.WARNING),
             ScriptReport("Debug", ScriptReport.Severity.DEBUG)
