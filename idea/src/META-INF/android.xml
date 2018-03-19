@@ -99,4 +99,8 @@
 
         <highlighterExtension implementation="org.jetbrains.kotlin.android.AndroidHighlighterExtension"/>
     </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin.android.model">
+        <androidModuleInfoProvider implementation="org.jetbrains.kotlin.android.model.impl.AndroidModuleInfoProviderImpl"/>
+    </extensions>
 </idea-plugin>

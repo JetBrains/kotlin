@@ -11,6 +11,10 @@
                         interface="org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.AndroidDexer"
                         area="IDEA_PROJECT"/>
 
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.android.model.androidModuleInfoProvider"
+                        interface="org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider"
+                        area="IDEA_MODULE"/>
+
         <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformSupport"
                         interface="org.jetbrains.kotlin.caches.resolve.IdePlatformSupport"/>
 
