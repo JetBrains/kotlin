@@ -34,6 +34,7 @@ public class AsmTypes {
     public static final Type NUMBER_TYPE = getType(Number.class);
     public static final Type BOOLEAN_WRAPPER_TYPE = getType(Boolean.class);
     public static final Type CHARACTER_WRAPPER_TYPE = getType(Character.class);
+    public static final Type VOID_TYPE = getType(Void.class);
 
     public static final Type UNIT_TYPE = Type.getObjectType("kotlin/Unit");
 
