@@ -126,9 +126,15 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 function.valueParameters.forEach { parameter ->
                     putDefault(parameter, irGet(irThis(), getPropertyGetterSymbol(parameter)))
                 }
-                +irReturn(irCall(constructorSymbol, dataClassConstructor.returnType).mapValueParameters {
-                    irGet(irFunction.valueParameters[it.index].symbol)
-                })
+                +irReturn(
+                    irCall(
+                        constructorSymbol,
+                        dataClassConstructor.returnType,
+                        dataClassConstructor.typeParameters.associate { it to it.defaultType }
+                    ).mapValueParameters {
+                        irGet(irFunction.valueParameters[it.index].symbol)
+                    }
+                )
             }
         }
 

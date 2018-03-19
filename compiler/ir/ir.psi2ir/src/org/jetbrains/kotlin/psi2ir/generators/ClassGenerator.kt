@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import java.lang.AssertionError
 
 class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
@@ -215,7 +216,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
             startOffset, endOffset, returnType,
             context.symbolTable.referenceFunction(overridden.original),
             substitutedOverridden,
-            null
+            getTypeArgumentsForOverriddenDescriptorDelegatingCall(delegated, overridden)
         )
         irCall.dispatchReceiver =
                 IrGetFieldImpl(
@@ -245,13 +246,32 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         overridden: FunctionDescriptor
     ): FunctionDescriptor {
         // TODO PropertyAccessorDescriptor doesn't support 'substitute' right now :(
-        if (overridden is PropertyAccessorDescriptor) return overridden
-
-        val typeArguments = HashMap<TypeParameterDescriptor, KotlinType>()
-        for ((i, overriddenTypeParameter) in overridden.typeParameters.withIndex()) {
-            typeArguments[overriddenTypeParameter] = delegated.typeParameters[i].defaultType
+        return if (overridden is PropertyAccessorDescriptor)
+            overridden
+        else {
+            val typeArguments = zipTypeParametersToDefaultTypes(overridden, delegated)
+            overridden.substitute(typeArguments)
         }
-        return overridden.substitute(typeArguments)
+    }
+
+    private fun getTypeArgumentsForOverriddenDescriptorDelegatingCall(
+        delegated: FunctionDescriptor,
+        overridden: FunctionDescriptor
+    ): Map<TypeParameterDescriptor, KotlinType>? =
+        if (overridden.original.typeParameters.isEmpty())
+            null
+        else
+            zipTypeParametersToDefaultTypes(overridden.original, delegated)
+
+    private fun zipTypeParametersToDefaultTypes(
+        keys: FunctionDescriptor,
+        values: FunctionDescriptor
+    ): Map<TypeParameterDescriptor, KotlinType> {
+        val typeArguments = newHashMapWithExpectedSize<TypeParameterDescriptor, KotlinType>(keys.typeParameters.size)
+        for ((i, overriddenTypeParameter) in keys.typeParameters.withIndex()) {
+            typeArguments[overriddenTypeParameter] = values.typeParameters[i].defaultType
+        }
+        return typeArguments
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClass, ktClassOrObject: KtClassOrObject) {

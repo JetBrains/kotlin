@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(): T {
@@ -327,16 +325,18 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
                     symbolRemapper.getReferencedFunction(expression.symbol),
                     symbolRemapper.getReferencedClassOrNull(expression.superQualifierSymbol)
                 )
-            else ->
+            else -> {
+                val newCallee = symbolRemapper.getReferencedFunction(expression.symbol)
                 IrCallImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type,
-                    symbolRemapper.getReferencedFunction(expression.symbol),
+                    newCallee,
                     expression.descriptor, // TODO substitute referenced descriptor
-                    expression.getTypeArgumentsMap(),
+                    remapTypeArguments(expression, newCallee.descriptor),
                     mapStatementOrigin(expression.origin),
                     symbolRemapper.getReferencedClassOrNull(expression.superQualifierSymbol)
                 )
+            }
         }
 
     private fun <T : IrMemberAccessExpression> T.transformReceiverArguments(original: T): T =
@@ -353,29 +353,24 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             }
         }
 
-    private fun IrMemberAccessExpression.getTypeArgumentsMap(): Map<TypeParameterDescriptor, KotlinType>? {
-        if (this is IrMemberAccessExpressionBase) return typeArguments
-
-        val typeParameters = descriptor.original.typeParameters
-        return if (typeParameters.isEmpty())
-            null
-        else
-            typeParameters.associateBy({ it }, { getTypeArgument(it)!! })
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrDelegatingConstructorCall {
+        val newConstructor = symbolRemapper.getReferencedConstructor(expression.symbol)
+        return IrDelegatingConstructorCallImpl(
+            expression.startOffset, expression.endOffset,
+            newConstructor,
+            expression.descriptor,
+            remapTypeArguments(expression, newConstructor.descriptor)
+        ).transformValueArguments(expression)
     }
 
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrDelegatingConstructorCall =
-        IrDelegatingConstructorCallImpl(
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall {
+        val newConstructor = symbolRemapper.getReferencedConstructor(expression.symbol)
+        return IrEnumConstructorCallImpl(
             expression.startOffset, expression.endOffset,
-            symbolRemapper.getReferencedConstructor(expression.symbol),
-            expression.descriptor,
-            expression.getTypeArgumentsMap()
+            newConstructor,
+            remapTypeArguments(expression, newConstructor.descriptor)
         ).transformValueArguments(expression)
-
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall =
-        IrEnumConstructorCallImpl(
-            expression.startOffset, expression.endOffset,
-            symbolRemapper.getReferencedConstructor(expression.symbol)
-        ).transformValueArguments(expression)
+    }
 
     override fun visitGetClass(expression: IrGetClass): IrGetClass =
         IrGetClassImpl(

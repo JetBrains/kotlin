@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/objectAsCallable.kt
     CONSTRUCTOR visibility:private <> () returnType:En flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: En
         INSTANCE_INITIALIZER_CALL classDescriptor='En'
     ENUM_ENTRY name:X
       init: ENUM_CONSTRUCTOR_CALL 'constructor En()'

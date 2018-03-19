@@ -40,10 +40,10 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
     BLOCK_BODY
       VAR name:b type:B<kotlin.Int> /* = A<kotlin.Int> */ flags:val
         CALL 'constructor A(Int)' type=A<kotlin.Int> origin=null
-          <Q>: null
+          <Q>: Int
           q: CONST Int type=kotlin.Int value=2
       VAR name:b2 type:B2<kotlin.Int> /* = A<A<kotlin.Int>> */ flags:val
         CALL 'constructor A(A<Int>)' type=A<A<kotlin.Int>> origin=null
-          <Q>: null
+          <Q>: A<Int>
           q: GET_VAR 'b: B<Int> /* = A<Int> */' type=B<kotlin.Int> /* = A<kotlin.Int> */ origin=null
 

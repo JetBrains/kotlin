@@ -849,6 +849,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("memberTypeArguments.kt")
+        public void testMemberTypeArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/memberTypeArguments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("membersImportedFromObject.kt")
         public void testMembersImportedFromObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/membersImportedFromObject.kt");

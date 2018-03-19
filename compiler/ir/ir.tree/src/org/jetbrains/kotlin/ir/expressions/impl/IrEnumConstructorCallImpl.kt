@@ -17,29 +17,34 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.types.KotlinType
 
 class IrEnumConstructorCallImpl(
     startOffset: Int,
     endOffset: Int,
-    override val symbol: IrConstructorSymbol
+    override val symbol: IrConstructorSymbol,
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>?
 ) : IrEnumConstructorCall,
     IrCallWithIndexedArgumentsBase(
         startOffset, endOffset,
         symbol.descriptor.builtIns.unitType,
         symbol.descriptor.valueParameters.size,
-        null
+        typeArguments
     ) {
+
     @Deprecated("Creates unbound symbols")
     constructor(
         startOffset: Int,
         endOffset: Int,
-        descriptor: ClassConstructorDescriptor
-    ) : this(startOffset, endOffset, IrConstructorSymbolImpl(descriptor))
+        descriptor: ClassConstructorDescriptor,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
+    ) : this(startOffset, endOffset, IrConstructorSymbolImpl(descriptor), typeArguments)
 
     override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
 

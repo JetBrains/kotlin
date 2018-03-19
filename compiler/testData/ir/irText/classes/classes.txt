@@ -82,7 +82,7 @@ FILE fqName:<root> fileName:/classes.kt
     CONSTRUCTOR visibility:private <> () returnType:TestEnumClass flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: TestEnumClass
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnumClass'
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<TestEnumClass>) returnType:Any flags:
       overridden:

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 inline fun <reified T : IrElement> T.deepCopyOld(): T =
@@ -153,6 +152,10 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                 copyTypeParameter(originalTypeParameter, myTypeParameters[originalTypeParameter.descriptor.index])
             }
         }
+
+    @Deprecated("Replace with remapTypeArguments")
+    protected fun IrMemberAccessExpression.transformTypeArguments(newCallee: CallableDescriptor) =
+        remapTypeArguments(this, newCallee)
 
     private fun FunctionDescriptor.getTypeParametersToTransform() =
         when {
@@ -402,7 +405,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     expression.startOffset, expression.endOffset,
                     expression.type,
                     newCallee,
-                    expression.transformTypeArguments(newCallee),
+                    remapTypeArguments(expression, newCallee),
                     mapStatementOrigin(expression.origin),
                     mapSuperQualifier(expression.superQualifier)
                 )
@@ -419,33 +422,24 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             Unit
         }
 
-    protected fun IrMemberAccessExpression.transformTypeArguments(newCallee: CallableDescriptor): Map<TypeParameterDescriptor, KotlinType>? {
-        if (this is IrMemberAccessExpressionBase) return typeArguments
-
-        val typeParameters = descriptor.original.typeParameters
-        return if (typeParameters.isEmpty())
-            null
-        else
-            typeParameters.associateBy(
-                { newCallee.typeParameters[it.index] },
-                { getTypeArgument(it)!! }
-            )
-    }
-
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrDelegatingConstructorCall {
         val newCallee = mapDelegatedConstructorCallee(expression.descriptor)
         return IrDelegatingConstructorCallImpl(
             expression.startOffset, expression.endOffset,
             newCallee,
-            expression.transformTypeArguments(newCallee)
+            remapTypeArguments(expression, newCallee)
         ).transformValueArguments(expression)
     }
 
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall =
-        IrEnumConstructorCallImpl(
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall {
+        val oldConstructor = expression.descriptor
+        val newConstructor = mapEnumConstructorCallee(oldConstructor)
+        return IrEnumConstructorCallImpl(
             expression.startOffset, expression.endOffset,
-            mapEnumConstructorCallee(expression.descriptor)
+            newConstructor,
+            remapTypeArguments(expression, newConstructor)
         ).transformValueArguments(expression)
+    }
 
     override fun visitGetClass(expression: IrGetClass): IrGetClass =
         IrGetClassImpl(
@@ -460,7 +454,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             expression.startOffset, expression.endOffset,
             expression.type,
             newCallee.original,
-            expression.transformTypeArguments(newCallee),
+            remapTypeArguments(expression, newCallee),
             mapStatementOrigin(expression.origin)
         ).transformValueArguments(expression)
     }
@@ -473,7 +467,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
         return IrPropertyReferenceImpl(
             expression.startOffset, expression.endOffset, expression.type,
             newProperty, newFieldSymbol, newGetterSymbol, newSetterSymbol,
-            expression.transformTypeArguments(newProperty),
+            remapTypeArguments(expression, newProperty),
             mapStatementOrigin(expression.origin)
         ).transformValueArguments(expression)
     }
@@ -638,4 +632,6 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             explicitReceiver = expression.explicitReceiver?.transform()
             expression.arguments.mapTo(arguments) { it.transform() }
         }
+
+
 }

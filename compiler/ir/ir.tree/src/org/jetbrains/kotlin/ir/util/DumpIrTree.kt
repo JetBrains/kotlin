@@ -177,7 +177,7 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
             val typeArgument = expression.getTypeArgument(typeParameter)
             val renderedType = typeArgument?.let {
                 DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.renderType(typeArgument)
-            } ?: "null"
+            } ?: "--- No type argument for $typeParameter declared in ${typeParameter.containingDeclaration}"
             printer.println("$renderedParameter: $renderedType")
         }
     }
