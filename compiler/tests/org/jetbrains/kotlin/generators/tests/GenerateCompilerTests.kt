@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.jvm.analyzer.AbstractIrAnalyzerTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
@@ -196,7 +197,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIrAnalyzerTest> {
-            model("ir/ir2psi")
+            model("cli/jvm/analyzer")
         }
 
         testClass<AbstractBytecodeListingTest> {

@@ -3,15 +3,19 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir
+package org.jetbrains.kotlin.cli.jvm.analyzer
 
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestWithStdLib
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.AbstractIrGeneratorTestCase
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.io.File
 
 abstract class AbstractIrAnalyzerTest: AbstractDiagnosticsTestWithStdLib() {
+    override fun skipDescriptorsValidation(): Boolean = true
+
+    override fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>): Boolean = true
+
     override fun performAdditionalChecksAfterDiagnostics(
         testDataFile: File,
         testFiles: List<TestFile>,
@@ -19,7 +23,6 @@ abstract class AbstractIrAnalyzerTest: AbstractDiagnosticsTestWithStdLib() {
         moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
         moduleBindings: Map<TestModule?, BindingContext>
     ) {
-        val actualIrDump = StringBuilder()
         for (module in moduleFiles.keys) {
             val ktFiles = moduleFiles[module]?.mapNotNull { it.ktFile } ?: continue
             val moduleDescriptor = moduleDescriptors[module] ?: continue
