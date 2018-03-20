@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Clie
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 import java.io.File
 
-class CompileServiceAsyncWrapper(val rmiCompileService: CompileService, override val serverPort: Int) : CompileServiceClientSide, Client by DefaultClientRMIWrapper() {
+class CompileServiceAsyncWrapper(
+    val rmiCompileService: CompileService,
+    override val serverPort: Int
+) : CompileServiceClientSide, Client by DefaultClientRMIWrapper() {
 
     override suspend fun compile(
         sessionId: Int,

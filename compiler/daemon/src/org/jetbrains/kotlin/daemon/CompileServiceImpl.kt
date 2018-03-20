@@ -113,6 +113,7 @@ class CompileServiceImpl(
     private val log by lazy { Logger.getLogger("compiler") }
 
     init {
+        log.info("Running OLD server (port = $port)")
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
     }
 

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.daemon.common
 import java.io.File
 import java.rmi.registry.LocateRegistry
 import java.util.*
+import java.util.logging.Logger
 
 
 internal val MAX_PORT_NUMBER = 0xffff
@@ -44,6 +45,8 @@ fun makePortFromRunFilenameExtractor(digest: String): (String) -> Int? {
 
 private const val ORPHANED_RUN_FILE_AGE_THRESHOLD_MS = 1000000L
 
+private val log = Logger.getLogger("ClientUtils(old)")
+
 data class DaemonWithMetadata(val daemon: CompileService, val runFile: File, val jvmOptions: DaemonJVMOptions)
 
 // TODO: write metadata into discovery file to speed up selection
@@ -61,16 +64,13 @@ fun walkDaemons(
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
         .map { Pair(it, portExtractor(it.name)) }
-        .also { it.forEach { println("[fileWalk 1/3] : daemon, port=${it.second}") } }
         .filter { (file, port) -> port != null && filter(file, port) }
-        .also { it.forEach { println("[fileWalk 2/3] : daemon, port=${it.second}") } }
         .mapNotNull { (file, port) ->
-            println("[fileWalk 3/3] : daemon, port=${port}")
-            println("[fileWalk] : daemon, port=$port")
             assert(port!! in 1..(MAX_PORT_NUMBER - 1))
             val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
             report(DaemonReportCategory.DEBUG, "found daemon on socketPort $port ($relativeAge ms old), trying to connect")
             val daemon = tryConnectToDaemon(port, report)
+            log.info("discovered daemon = $daemon")
             // cleaning orphaned file; note: daemon should shut itself down if it detects that the runServer file is deleted
             if (daemon == null) {
                 if (relativeAge - ORPHANED_RUN_FILE_AGE_THRESHOLD_MS <= 0) {
@@ -92,8 +92,10 @@ fun walkDaemons(
                 }
             }
             try {
+                log.info("it.getDaemonJVMOptions()")
                 daemon?.let { DaemonWithMetadata(it, file, it.getDaemonJVMOptions().get()) }
             } catch (e: Exception) {
+                log.info(e.message)
                 report(DaemonReportCategory.INFO, "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}")
                 null
             }
@@ -101,13 +103,18 @@ fun walkDaemons(
 }
 
 private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? {
-
+    log.info("trying to connect to daemon (using port $port)")
     try {
-        val daemon = LocateRegistry.getRegistry(
+        log.info("acquiring registry")
+        val registry = LocateRegistry.getRegistry(
             LoopbackNetworkInterface.loopbackInetAddressName,
             port,
             LoopbackNetworkInterface.clientLoopbackSocketFactory
-        )?.lookup(COMPILER_SERVICE_RMI_NAME)
+        )
+        log.info("registry = $registry")
+        log.info("looking up for daemon...")
+        val daemon = registry?.lookup(COMPILER_SERVICE_RMI_NAME)
+        log.info("connection result daemon = $daemon")
         when (daemon) {
             null -> report(DaemonReportCategory.INFO, "daemon not found")
             is CompileService -> return daemon
@@ -116,6 +123,7 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
     } catch (e: Throwable) {
         report(DaemonReportCategory.INFO, "cannot connect to registry: " + (e.cause?.message ?: e.message ?: "unknown error"))
     }
+    log.info("connection result daemon = NULL")
     return null
 }
 

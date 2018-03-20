@@ -1,15 +1,11 @@
 package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.Socket
-import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.BYTES_TOKEN
+import org.jetbrains.kotlin.daemon.common.experimental.FIRST_HANDSHAKE_BYTE_TOKEN
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
 import java.beans.Transient
 import java.io.Serializable
-import java.net.InetSocketAddress
-import java.util.ArrayList
-import java.util.function.Function
 import java.util.logging.Logger
 
 interface Client : Serializable, AutoCloseable {
@@ -25,7 +21,7 @@ interface Client : Serializable, AutoCloseable {
 @Suppress("UNCHECKED_CAST")
 class DefaultClient(
     val serverPort: Int,
-    val serverHost: String? = null
+    val serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName
 ) : Client {
 
     val log: Logger
@@ -53,11 +49,14 @@ class DefaultClient(
 
     override fun connectToServer() {
         runBlocking(Unconfined) {
-            log.info("connectToServer(port =$serverPort | host = $serverHost)")
+            log.info("connectToServer (port = $serverPort | host = $serverHost)")
             try {
-                socket = aSocket().tcp().connect(InetSocketAddress(serverPort))
+                socket = LoopbackNetworkInterface.clientLoopbackSocketFactoryKtor.createSocket(
+                    serverHost,
+                    serverPort
+                )
             } catch (e: Throwable) {
-                log.info("EXCEPTION ($e)")
+                log.info("EXCEPTION while connecting to server ($e)")
                 throw e
             }
             log.info("connected (port = $serverPort, serv =$serverPort)")
@@ -65,7 +64,8 @@ class DefaultClient(
                 log.info("OK serv.openIO() |port=$serverPort|")
                 input = it.input
                 output = it.output
-                output.printBytes(BYTES_TOKEN)
+                sendHandshakeMessage(output)
+                tryAcquireHandshakeMessage(input, log)
             }
         }
     }

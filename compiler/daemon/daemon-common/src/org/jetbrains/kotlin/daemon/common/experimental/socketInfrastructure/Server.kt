@@ -1,16 +1,13 @@
 package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.Socket
-import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.channels.actor
 import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.time.delay
 import org.jetbrains.kotlin.daemon.common.experimental.AUTH_TIMEOUT_IN_MILLISECONDS
-import org.jetbrains.kotlin.daemon.common.experimental.BYTES_TOKEN
+import org.jetbrains.kotlin.daemon.common.experimental.FIRST_HANDSHAKE_BYTE_TOKEN
+import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
 import java.io.Serializable
-import java.net.InetSocketAddress
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
@@ -18,6 +15,7 @@ import java.util.logging.Logger
  * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
+
 interface ServerBase
 
 @Suppress("UNCHECKED_CAST")
@@ -45,14 +43,8 @@ interface Server<out T : ServerBase> : ServerBase {
     suspend fun attachClient(client: Socket): Deferred<State> = async {
         val (input, output) = client.openIO(log)
         try {
-            val bytesAsync = async { input.readBytes(BYTES_TOKEN.size) }
-            delay(AUTH_TIMEOUT_IN_MILLISECONDS, TimeUnit.MILLISECONDS)
-            val bytes = bytesAsync.getCompleted()
-            log.info("bytes : ${bytes.toList()}")
-            if (bytes.zip(BYTES_TOKEN).any { it.first != it.second }) {
-                log.info("BAD TOKEN")
-                return@async Server.State.CLOSED
-            }
+            tryAcquireHandshakeMessage(input, log)
+            sendHandshakeMessage(output)
         } catch (e: Throwable) {
             log.info("NO TOKEN")
             return@async Server.State.CLOSED
@@ -84,7 +76,9 @@ interface Server<out T : ServerBase> : ServerBase {
 
     fun runServer(): Deferred<Unit> {
         log.info("binding to address($serverPort)")
-        val serverSocket = aSocket().tcp().bind(InetSocketAddress(serverPort))
+        val serverSocket = LoopbackNetworkInterface.serverLoopbackSocketFactoryKtor.createServerSocket(
+            serverPort
+        )
         return async {
             serverSocket.use {
                 log.info("accepting clientSocket...")
@@ -106,4 +100,21 @@ interface Server<out T : ServerBase> : ServerBase {
         }
     }
 
+}
+
+@Throws(Exception::class)
+suspend fun tryAcquireHandshakeMessage(input: ByteReadChannelWrapper, log: Logger): Boolean {
+    val bytesAsync = async { input.readBytes(FIRST_HANDSHAKE_BYTE_TOKEN.size) }
+    delay(AUTH_TIMEOUT_IN_MILLISECONDS, TimeUnit.MILLISECONDS)
+    val bytes = bytesAsync.getCompleted()
+    log.info("bytes : ${bytes.toList()}")
+    if (bytes.zip(FIRST_HANDSHAKE_BYTE_TOKEN).any { it.first != it.second }) {
+        log.info("BAD TOKEN")
+        return false
+    }
+    return true
+}
+
+suspend fun sendHandshakeMessage(output: ByteWriteChannelWrapper) {
+    output.printBytes(FIRST_HANDSHAKE_BYTE_TOKEN)
 }

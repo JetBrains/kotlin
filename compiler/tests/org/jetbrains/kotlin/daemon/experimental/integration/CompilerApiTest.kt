@@ -32,12 +32,14 @@ import java.util.logging.Logger
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
     private val compilerLibDir = getCompilerLib()
-    private fun createNewLogFile() : File {
+
+    private fun createNewLogFile(): File {
         println("creating logFile")
         val newLogFile = createTempFile("kotlin-daemon-experimental-test.", ".log")
         println("logFile created (${newLogFile.loggerCompatiblePath})")
         return newLogFile
     }
+
     private val currentLogFile: File by lazy {
         val newLogFile = createNewLogFile()
         val cfg: String =
@@ -53,6 +55,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
         newLogFile
     }
+
     private val externalLogFile: File by lazy { createNewLogFile() }
 
     private val log by lazy {
@@ -196,8 +199,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             log.info("in runBlocking")
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
         }
-        currentLogFile.delete()
-        externalLogFile.delete()
+//        currentLogFile.delete()
+//        externalLogFile.delete()
     }
 
     fun testHelloApp() {

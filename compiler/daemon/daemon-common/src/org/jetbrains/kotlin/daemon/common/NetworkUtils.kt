@@ -24,6 +24,7 @@ import java.rmi.registry.LocateRegistry
 import java.rmi.registry.Registry
 import java.rmi.server.RMIClientSocketFactory
 import java.rmi.server.RMIServerSocketFactory
+import java.security.*
 import java.util.*
 
 
@@ -37,6 +38,32 @@ const val DEFAULT_SOCKET_CONNECT_ATTEMPTS = 3
 const val DEFAULT_SOCKET_CONNECT_INTERVAL_MS = 10L
 
 object LoopbackNetworkInterface {
+
+
+    init {
+         val keyGen = KeyPairGenerator.getInstance("DSA",
+            "SUN");
+        val random = SecureRandom.getInstance("SHA1PRNG",
+                                              "SUN");
+
+        keyGen.initialize(1024, random);
+
+        val pair = keyGen.generateKeyPair();
+        val priv = pair.getPrivate();
+        val pub = pair.getPublic();
+
+        /*
+         * Create a Signature object and initialize it with the private
+         * key
+         */
+
+        val dsa = Signature.getInstance("SHA1withDSA", "SUN");
+
+        dsa.toString()
+
+        dsa.initSign(priv);
+
+    }
 
     const val IPV4_LOOPBACK_INET_ADDRESS = "127.0.0.1"
     const val IPV6_LOOPBACK_INET_ADDRESS = "::1"
