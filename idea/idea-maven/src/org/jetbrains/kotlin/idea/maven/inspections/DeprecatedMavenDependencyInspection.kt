@@ -51,7 +51,7 @@ class DeprecatedMavenDependencyInspection : DomElementsInspection<MavenDomProjec
                 }
 
             val dependencyManagementDependencies = pomFile.domModel.dependencyManagement.dependencies.findDependencies(libMavenId).filter {
-                val version = it.version?.value
+                val version = it.version?.stringValue
                 version != null && VersionComparatorUtil.COMPARATOR.compare(version, libInfo.outdatedAfterVersion) >= 0
             }
 
