@@ -384,7 +384,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
                     sb.append(packageFqName.asString().replace('.', '/'))
                 }
                 sb.append('.')
-                sb.append(fqName.classFqName.asString())
+                sb.append(fqName.relativeClassName.asString())
                 sb.append(typeArguments.joinToString { it ->
                     when (it) {
                         StarProjection -> "*"

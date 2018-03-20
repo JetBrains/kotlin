@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.UnambiguousFqName
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
 sealed class FirBuiltinType(
@@ -21,9 +20,9 @@ sealed class FirBuiltinType(
     val name: String
 ) : FirResolvedType {
     final override val type: ConeKotlinType = ConeClassTypeImpl(
-        UnambiguousFqName(
+        ClassId(
             KOTLIN_PACKAGE_FQ_NAME,
-            FqName.topLevel(Name.identifier(name))
+            Name.identifier(name)
         ), emptyList()
     )
 
@@ -33,7 +32,7 @@ sealed class FirBuiltinType(
         get() = emptyList()
 
     companion object {
-        private val KOTLIN_PACKAGE_FQ_NAME = FqNameUnsafe.topLevel(Name.identifier("kotlin"))
+        private val KOTLIN_PACKAGE_FQ_NAME = FqName.topLevel(Name.identifier("kotlin"))
     }
 }
 

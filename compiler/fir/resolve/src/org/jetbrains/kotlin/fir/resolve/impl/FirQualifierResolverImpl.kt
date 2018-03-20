@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.UnambiguousFqName
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
@@ -14,12 +13,13 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeKotlinTypeProjectionInImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeKotlinTypeProjectionOutImpl
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
 
-    private fun FirMemberDeclaration.toConeKotlinType(fqName: UnambiguousFqName, parts: List<FirQualifierPart>): ConeKotlinType? {
+    private fun FirMemberDeclaration.toConeKotlinType(fqName: ClassId, parts: List<FirQualifierPart>): ConeKotlinType? {
         return ConeClassTypeImpl(fqName, parts.flatMap {
             it.typeArguments.map {
                 when (it) {
@@ -38,10 +38,14 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
         })
     }
 
-    override fun resolveTypeWithPrefix(parts: List<FirQualifierPart>, prefix: UnambiguousFqName): ConeKotlinType? {
+    override fun resolveTypeWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): ConeKotlinType? {
         val firProvider = FirProvider.getInstance(session)
 
-        val fqName = UnambiguousFqName(prefix.packageFqName, parts.fold(prefix.classFqName) { prefix, suffix -> prefix.child(suffix.name) })
+        val fqName = ClassId(
+            prefix.packageFqName,
+            parts.fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
+            false
+        )
         val foundClassifier = firProvider.getFirClassifierByFqName(fqName)
 
         return foundClassifier?.toConeKotlinType(fqName, parts)
@@ -58,7 +62,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
                 lastPart.add(0, firstPart.last())
                 firstPart.removeAt(firstPart.lastIndex)
 
-                val fqName = UnambiguousFqName(firstPart.toFqNameUnsafe(), lastPart.toFqName())
+                val fqName = ClassId(firstPart.toFqName(), lastPart.toFqName(), false)
                 val foundClassifier = firProvider.getFirClassifierByFqName(fqName)
 
                 if (foundClassifier != null) {

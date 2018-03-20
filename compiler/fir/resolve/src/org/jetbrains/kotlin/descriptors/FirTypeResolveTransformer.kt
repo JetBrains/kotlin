@@ -29,7 +29,7 @@ class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         importingScope = FirCompositeImportingScope(
             FirExplicitImportingScope(file.imports),
-            FirSelfImportingScope(file.packageFqName.toUnsafe(), file.session)
+            FirSelfImportingScope(file.packageFqName, file.session)
         )
         return file.also { it.transformChildren(this, null) }.compose()
     }

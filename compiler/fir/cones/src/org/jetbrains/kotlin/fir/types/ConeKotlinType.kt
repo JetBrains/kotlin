@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.UnambiguousFqName
+import org.jetbrains.kotlin.name.ClassId
 
 sealed class ConeKotlinTypeProjection(val kind: ProjectionKind)
 
@@ -29,5 +29,5 @@ abstract class ConeKotlinType : ConeKotlinTypeProjection(ProjectionKind.INVARIAN
 }
 
 abstract class ConeClassType : ConeKotlinType() {
-    abstract val fqName: UnambiguousFqName
+    abstract val fqName: ClassId
 }

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.UnambiguousFqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 interface FirImportingScope {
-    fun processClassifiersByName(name: Name, processor: (UnambiguousFqName) -> Boolean): Boolean
+    fun processClassifiersByName(name: Name, processor: (ClassId) -> Boolean): Boolean
 }

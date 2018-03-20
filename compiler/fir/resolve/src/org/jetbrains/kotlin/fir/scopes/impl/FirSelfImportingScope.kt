@@ -6,20 +6,18 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.UnambiguousFqName
 import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.scopes.FirImportingScope
 import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
-class FirSelfImportingScope(val fqName: FqNameUnsafe, val session: FirSession) : FirImportingScope {
-    override fun processClassifiersByName(name: Name, processor: (UnambiguousFqName) -> Boolean): Boolean {
+class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirImportingScope {
+    override fun processClassifiersByName(name: Name, processor: (ClassId) -> Boolean): Boolean {
 
 
-        val unambiguousFqName = UnambiguousFqName(fqName, FqName.topLevel(name))
+        val unambiguousFqName = ClassId(fqName, name)
 
         val firProvider = session.service<FirProvider>()
 

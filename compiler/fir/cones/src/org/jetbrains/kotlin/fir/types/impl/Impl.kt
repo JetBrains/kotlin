@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import org.jetbrains.kotlin.fir.UnambiguousFqName
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 
 class ConeClassTypeImpl(
-    override val fqName: UnambiguousFqName,
+    override val fqName: ClassId,
     override val typeArguments: List<ConeKotlinTypeProjection>
 ) : ConeClassType()
 

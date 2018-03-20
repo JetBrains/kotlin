@@ -7,34 +7,29 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.fir.FirDescriptorOwner
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.UnambiguousFqName
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvedClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassImpl
 import org.jetbrains.kotlin.fir.descriptors.ConeClassifierDescriptor
 import org.jetbrains.kotlin.fir.descriptors.ConeTypeParameterDescriptor
-import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
-import org.jetbrains.kotlin.fir.scopes.FirImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirSelfImportingScope
 import org.jetbrains.kotlin.fir.types.FirResolvedType
-import org.jetbrains.kotlin.fir.types.FirType
-import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 
 class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
-    lateinit var packageFqName: FqNameUnsafe
+    lateinit var packageFqName: FqName
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        packageFqName = file.packageFqName.toUnsafe()
+        packageFqName = file.packageFqName
         return file.also { it.transformChildren(this, null) }.compose()
     }
 
@@ -60,7 +55,7 @@ class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
 
         val descriptor = ConeClassDescriptorImpl(
             typeParameters,
-            UnambiguousFqName(packageFqName, actualClassName),
+            ClassId(packageFqName, actualClassName, false),
             superTypes,
             nestedClassifiers
         )

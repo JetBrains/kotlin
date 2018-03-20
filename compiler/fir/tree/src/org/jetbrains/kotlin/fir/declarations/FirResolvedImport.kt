@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.UnambiguousFqName
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.name.ClassId
 
 interface FirResolvedImport : FirImport {
-    val resolvedFqName: UnambiguousFqName
+    val resolvedFqName: ClassId
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedImport(this, data)

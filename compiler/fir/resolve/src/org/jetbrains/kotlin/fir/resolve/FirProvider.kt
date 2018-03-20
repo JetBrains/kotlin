@@ -6,23 +6,23 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.UnambiguousFqName
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 interface FirProvider {
-    fun getFirFilesByPackage(fqName: FqNameUnsafe): List<FirFile>
+    fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration?
 
-    fun getFirClassifierByFqName(fqName: UnambiguousFqName): FirMemberDeclaration?
-
-    fun getFirTypeParameterByFqName(fqName: UnambiguousFqName, parameterName: Name): FirTypeParameter?
+    fun getFirTypeParameterByFqName(fqName: ClassId, parameterName: Name): FirTypeParameter?
 
 
     companion object {
         fun getInstance(session: FirSession): FirProvider = session.service()
     }
+
+    fun getFirFilesByPackage(fqName: FqName): List<FirFile>
 }

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.descriptors
 
-import org.jetbrains.kotlin.fir.UnambiguousFqName
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.name.ClassId
 
 
 interface ConeDescriptor
@@ -16,7 +16,7 @@ interface ConeClassifierDescriptor : ConeDescriptor
 interface ConeClassifierDescriptorWithTypeParameters : ConeClassifierDescriptor {
     val typeParameters: List<ConeTypeParameterDescriptor>
 
-    val fqName: UnambiguousFqName
+    val fqName: ClassId
 }
 
 interface ConeTypeParameterDescriptor : ConeClassifierDescriptor

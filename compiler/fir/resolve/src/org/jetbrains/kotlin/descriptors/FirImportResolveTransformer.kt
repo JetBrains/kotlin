@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.UnambiguousFqName
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 class FirImportResolveTransformer : FirTransformer<Nothing?>() {
@@ -37,7 +37,7 @@ class FirImportResolveTransformer : FirTransformer<Nothing?>() {
                 lastPart.add(0, firstPart.shortName().asString())
                 firstPart = firstPart.parent()
 
-                val resolvedFqName = UnambiguousFqName(firstPart.toUnsafe(), FqName.fromSegments(lastPart))
+                val resolvedFqName = ClassId(firstPart, FqName.fromSegments(lastPart), false)
                 val foundClassifier = firProvider.getFirClassifierByFqName(resolvedFqName)
 
                 if (foundClassifier != null) {

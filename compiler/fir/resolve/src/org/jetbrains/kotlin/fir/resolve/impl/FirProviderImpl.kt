@@ -7,18 +7,17 @@ package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.UnambiguousFqName
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
 class FirProviderImpl(val session: FirSession) : FirProvider {
 
     fun recordFile(file: FirFile) {
-        val packageName = file.packageFqName.toUnsafe()
+        val packageName = file.packageFqName
         fileMap.merge(packageName, listOf(file)) { a, b -> a + b }
 
         file.acceptChildren(object : FirVisitorVoid() {
@@ -28,7 +27,7 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
 
             override fun visitClass(klass: FirClass) {
                 val fqName = containerFqName.child(klass.name)
-                classifierMap[UnambiguousFqName(packageName, fqName)] = klass
+                classifierMap[ClassId(packageName, fqName, false)] = klass
 
                 containerFqName = fqName
                 klass.acceptChildren(this)
@@ -37,25 +36,23 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
 
             override fun visitTypeAlias(typeAlias: FirTypeAlias) {
                 val fqName = containerFqName.child(typeAlias.name)
-                classifierMap[UnambiguousFqName(packageName, fqName)] = typeAlias
+                classifierMap[ClassId(packageName, fqName, false)] = typeAlias
             }
         })
     }
 
-    private val fileMap = mutableMapOf<FqNameUnsafe, List<FirFile>>()
-    private val classifierMap = mutableMapOf<UnambiguousFqName, FirMemberDeclaration>()
+    private val fileMap = mutableMapOf<FqName, List<FirFile>>()
+    private val classifierMap = mutableMapOf<ClassId, FirMemberDeclaration>()
 
-    override fun getFirFilesByPackage(fqName: FqNameUnsafe): List<FirFile> {
-
-
+    override fun getFirFilesByPackage(fqName: FqName): List<FirFile> {
         return fileMap[fqName].orEmpty()
     }
 
-    override fun getFirClassifierByFqName(fqName: UnambiguousFqName): FirMemberDeclaration? {
+    override fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration? {
         return classifierMap[fqName]
     }
 
-    override fun getFirTypeParameterByFqName(fqName: UnambiguousFqName, parameterName: Name): FirTypeParameter? {
+    override fun getFirTypeParameterByFqName(fqName: ClassId, parameterName: Name): FirTypeParameter? {
         val typeParameterContainer = (getFirClassifierByFqName(fqName) as? FirTypeParameterContainer) ?: return null
         // TODO: Optimize search here
         return typeParameterContainer.typeParameters.find { it.name == parameterName }
