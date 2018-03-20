@@ -13,3 +13,5 @@ fun bar(): Int {
     val y = foo(x)
     return y + 10
 }
+
+fun foo(x: Int, y: Int) = x + y

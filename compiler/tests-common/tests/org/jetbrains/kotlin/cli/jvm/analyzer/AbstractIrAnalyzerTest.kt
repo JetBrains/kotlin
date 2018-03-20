@@ -29,7 +29,17 @@ abstract class AbstractIrAnalyzerTest: AbstractDiagnosticsTestWithStdLib() {
             val moduleBindingContext = moduleBindings[module] ?: continue
             val irModule = AbstractIrGeneratorTestCase.generateIrModule(ktFiles, moduleDescriptor, moduleBindingContext, true)
             // here we have BindingContext and IrTree
-            println("wow")
+            val analyzer = functionUsageAnalyzer()
+            analyzer.execute(irModule, moduleDescriptor, moduleBindingContext)
+            println("------------")
         }
     }
+
+    private fun functionUsageAnalyzer(): Analyzer =
+        analyzer {
+            functionIssue {
+                function("foo")
+                param("x")
+            }
+        }
 }
