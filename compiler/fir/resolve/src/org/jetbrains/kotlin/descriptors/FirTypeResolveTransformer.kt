@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -57,6 +58,11 @@ class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
         className = className.parent()
 
         return result
+    }
+
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        typeAlias.transformChildren(SuperTypeResolver(), null)
+        return super.transformTypeAlias(typeAlias, data)
     }
 
     override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {

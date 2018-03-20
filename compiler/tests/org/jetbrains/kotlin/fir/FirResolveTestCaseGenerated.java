@@ -31,6 +31,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("NestedOfAliasedType.kt")
+    public void testNestedOfAliasedType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/NestedOfAliasedType.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NestedSuperType.kt")
     public void testNestedSuperType() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/NestedSuperType.kt");
@@ -40,6 +46,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @TestMetadata("simpleClass.kt")
     public void testSimpleClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/simpleClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simpleTypeAlias.kt")
+    public void testSimpleTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/simpleTypeAlias.kt");
         doTest(fileName);
     }
 

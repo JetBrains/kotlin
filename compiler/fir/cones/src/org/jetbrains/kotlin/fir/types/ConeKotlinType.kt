@@ -31,3 +31,9 @@ abstract class ConeKotlinType : ConeKotlinTypeProjection(ProjectionKind.INVARIAN
 abstract class ConeClassType : ConeKotlinType() {
     abstract val fqName: ClassId
 }
+
+abstract class ConeAbbreviatedType : ConeClassType() {
+    abstract val abbreviationFqName: ClassId
+
+    abstract val directExpansion: ConeKotlinType
+}

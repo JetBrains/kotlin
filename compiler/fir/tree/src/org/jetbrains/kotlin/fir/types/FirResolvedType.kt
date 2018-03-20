@@ -14,3 +14,5 @@ interface FirResolvedType : FirTypeWithNullability {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedType(this, data)
 }
+
+inline fun <reified T> FirType.coneTypeUnsafe() = (this as FirResolvedType).type as T

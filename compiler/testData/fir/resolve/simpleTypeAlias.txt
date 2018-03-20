@@ -1,0 +1,6 @@
+FILE: simpleTypeAlias.kt
+    unknown final interface B() {
+    }
+    unknown final typealias C = R/<root>.B/
+    unknown final class D() : R/<root>.C = <root>.B/ {
+    }

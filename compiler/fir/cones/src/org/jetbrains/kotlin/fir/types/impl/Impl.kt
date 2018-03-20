@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types.impl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 
-class ConeClassTypeImpl(
+open class ConeClassTypeImpl(
     override val fqName: ClassId,
     override val typeArguments: List<ConeKotlinTypeProjection>
 ) : ConeClassType()
@@ -24,4 +24,13 @@ class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {
     override fun toString(): String {
         return "<ERROR TYPE: $reason>"
     }
+}
+
+class ConeAbbreviatedTypeImpl(
+    override val abbreviationFqName: ClassId,
+    override val typeArguments: List<ConeKotlinTypeProjection>,
+    override val directExpansion: ConeKotlinType
+) : ConeAbbreviatedType() {
+    override val fqName: ClassId
+        get() = abbreviationFqName
 }

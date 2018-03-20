@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeKotlinTypeProjectionInImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeKotlinTypeProjectionOutImpl
@@ -19,23 +22,38 @@ import org.jetbrains.kotlin.types.Variance
 
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
 
-    private fun FirMemberDeclaration.toConeKotlinType(fqName: ClassId, parts: List<FirQualifierPart>): ConeKotlinType? {
-        return ConeClassTypeImpl(fqName, parts.flatMap {
-            it.typeArguments.map {
-                when (it) {
-                    is FirStarProjection -> StarProjection
-                    is FirTypeProjectionWithVariance -> {
-                        val type = (it.type as FirResolvedType).type
-                        when (it.variance) {
-                            Variance.INVARIANT -> type
-                            Variance.IN_VARIANCE -> ConeKotlinTypeProjectionInImpl(type)
-                            Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOutImpl(type)
-                        }
+    private fun List<FirQualifierPart>.toTypeProjections() = flatMap {
+        it.typeArguments.map {
+            when (it) {
+                is FirStarProjection -> StarProjection
+                is FirTypeProjectionWithVariance -> {
+                    val type = (it.type as FirResolvedType).type
+                    when (it.variance) {
+                        Variance.INVARIANT -> type
+                        Variance.IN_VARIANCE -> ConeKotlinTypeProjectionInImpl(type)
+                        Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOutImpl(type)
                     }
-                    else -> error("!")
                 }
+                else -> error("!")
             }
-        })
+        }
+    }
+
+    private fun FirMemberDeclaration.toConeKotlinType(fqName: ClassId, parts: List<FirQualifierPart>): ConeKotlinType? {
+        return when (this) {
+            is FirClass -> {
+                ConeClassTypeImpl(fqName, parts.toTypeProjections())
+            }
+            is FirTypeAlias -> {
+                ConeAbbreviatedTypeImpl(
+                    abbreviationFqName = fqName,
+                    typeArguments = parts.toTypeProjections(),
+                    directExpansion = (this.abbreviatedType as FirResolvedType).type
+                )
+
+            }
+            else -> error("!")
+        }
     }
 
     override fun resolveTypeWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): ConeKotlinType? {

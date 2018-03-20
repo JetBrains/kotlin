@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
 class FirTypeAliasImpl(
@@ -18,5 +21,11 @@ class FirTypeAliasImpl(
     psi: PsiElement?,
     name: Name,
     visibility: Visibility,
-    override val abbreviatedType: FirType
-) : FirAbstractMemberDeclaration(session, psi, name, visibility, Modality.FINAL), FirTypeAlias
+    override var abbreviatedType: FirType
+) : FirAbstractMemberDeclaration(session, psi, name, visibility, Modality.FINAL), FirTypeAlias {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        abbreviatedType = abbreviatedType.transformSingle(transformer, data)
+
+        return this
+    }
+}
