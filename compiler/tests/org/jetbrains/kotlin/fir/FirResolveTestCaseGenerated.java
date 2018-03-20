@@ -37,6 +37,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("simpleClass.kt")
+    public void testSimpleClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/simpleClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TwoDeclarationsInSameFile.kt")
     public void testTwoDeclarationsInSameFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/TwoDeclarationsInSameFile.kt");

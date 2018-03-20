@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMember
+import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirAbstractCallableMember(
@@ -20,6 +23,14 @@ abstract class FirAbstractCallableMember(
     visibility: Visibility,
     modality: Modality,
     final override val isOverride: Boolean,
-    final override val receiverType: FirType?,
-    final override val returnType: FirType
-) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality), FirCallableMember
+    final override var receiverType: FirType?,
+    final override var returnType: FirType
+) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality), FirCallableMember {
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        receiverType = receiverType?.transformSingle(transformer, data)
+        returnType = returnType.transformSingle(transformer, data)
+
+        return this
+    }
+}

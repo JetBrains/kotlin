@@ -28,3 +28,7 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
     }
 }
 
+
+fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
+    return this.transform<T, D>(transformer, data).single
+}

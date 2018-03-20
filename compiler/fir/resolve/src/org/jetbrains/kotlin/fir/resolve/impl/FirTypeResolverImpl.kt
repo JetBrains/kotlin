@@ -32,7 +32,7 @@ class FirTypeResolverImpl : FirTypeResolver {
                 ConeKotlinErrorType(type.reason)
             }
             is FirFunctionType, is FirDynamicType, is FirImplicitType, is FirDelegatedType -> {
-                ConeKotlinErrorType("Not supported: $type")
+                ConeKotlinErrorType("Not supported: ${type::class.simpleName}")
             }
             else -> error("!")
         }

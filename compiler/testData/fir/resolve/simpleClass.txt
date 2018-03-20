@@ -1,0 +1,27 @@
+FILE: simpleClass.kt
+    unknown final interface SomeInterface() {
+        unknown final function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/
+
+        unknown final property bar(val): R/error: Failed to resolve qualified type/
+            unknown get(): R/error: Failed to resolve qualified type/
+
+    }
+    unknown final class SomeClass() : R/<root>.SomeInterface/ {
+        private final property baz(val): R/error: Not supported: FirImplicitTypeImpl/ = STUB
+            unknown get(): R/error: Not supported: FirImplicitTypeImpl/
+
+        unknown final override function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/ {
+        }
+
+        unknown final override property bar(var): R/error: Failed to resolve qualified type/
+            unknown get(): R/error: Not supported: FirImplicitTypeImpl/ {
+                STUB
+            }
+            unknown set(value: R/error: Failed to resolve qualified type/): R/error: Not supported: FirImplicitTypeImpl/ {
+            }
+
+        unknown final property fau(var): R/error: Failed to resolve qualified type/
+            unknown get(): R/error: Failed to resolve qualified type/
+            unknown set(value: R/error: Failed to resolve qualified type/): R/kotlin.Unit/
+
+    }

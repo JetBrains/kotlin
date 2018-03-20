@@ -84,7 +84,11 @@ class RawFirBuilder(val session: FirSession) {
             isGetter: Boolean
         ): FirPropertyAccessor {
             if (this == null) {
-                return FirDefaultPropertyAccessor(session, property, isGetter, propertyType)
+                return if (isGetter) {
+                    FirDefaultPropertyGetter(session, property, propertyType)
+                } else {
+                    FirDefaultPropertySetter(session, property, propertyType)
+                }
             }
             val firAccessor = FirPropertyAccessorImpl(
                 session,
