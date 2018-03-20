@@ -38,7 +38,7 @@ class KotlinCallCompleter(
         val candidate = prepareCandidateForCompletion(factory, candidates, resolutionCallbacks)
         val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
 
-        return if (resolutionCallbacks.inferenceSession.shouldFixTypeVariables(candidate))
+        return if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate))
             candidate.runCompletion(completionType, diagnosticHolder, resolutionCallbacks)
         else
             candidate.asCallResolutionResult(ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder)

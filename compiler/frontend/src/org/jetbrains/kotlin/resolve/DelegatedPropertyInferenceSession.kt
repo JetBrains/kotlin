@@ -86,7 +86,7 @@ class DelegatedPropertyInferenceSession(
 }
 
 object InferenceSessionForExistingCandidates : InferenceSession {
-    override fun shouldFixTypeVariables(candidate: KotlinResolutionCandidate): Boolean {
+    override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
         return !ErrorUtils.isError(candidate.resolvedCall.candidateDescriptor)
     }
 

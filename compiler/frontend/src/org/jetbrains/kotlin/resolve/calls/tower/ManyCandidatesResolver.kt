@@ -30,7 +30,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
 
     abstract fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>)
 
-    override fun shouldFixTypeVariables(candidate: KotlinResolutionCandidate): Boolean {
+    override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
         return false
     }
 

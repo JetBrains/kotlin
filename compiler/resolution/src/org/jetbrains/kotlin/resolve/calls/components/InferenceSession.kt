@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.resolve.calls.model.PartialCallResolutionResult
 interface InferenceSession {
     companion object {
         val default = object : InferenceSession {
-            override fun shouldFixTypeVariables(candidate: KotlinResolutionCandidate): Boolean = true
+            override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean = true
             override fun addPartialCallInfo(callInfo: PartialCallInfo) {}
             override fun addErrorCallInfo(callInfo: ErrorCallInfo) {}
             override fun currentConstraintSystem(): ConstraintStorage = ConstraintStorage.Empty
         }
     }
 
-    fun shouldFixTypeVariables(candidate: KotlinResolutionCandidate): Boolean
+    fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean
     fun addPartialCallInfo(callInfo: PartialCallInfo)
     fun addErrorCallInfo(callInfo: ErrorCallInfo)
     fun currentConstraintSystem(): ConstraintStorage
