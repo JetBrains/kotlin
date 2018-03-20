@@ -14,7 +14,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.help.HelpManager
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.openapi.project.DumbModePermission
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -53,6 +52,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     private val nameLabel = JBLabelDecorator.createJBLabelDecorator().setBold(true)
     private val targetDirectoryField = TextFieldWithHistoryWithBrowseButton()
+    private val searchReferencesCb = NonFocusableCheckBox("Search ${UIUtil.MNEMONIC}references").apply { isSelected = true }
     private val openInEditorCb = NonFocusableCheckBox("Open moved files in editor")
     private val updatePackageDirectiveCb = NonFocusableCheckBox()
 
@@ -67,6 +67,9 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
 
     val updatePackageDirective: Boolean
         get() = updatePackageDirectiveCb.isSelected
+
+    val searchReferences: Boolean
+        get() = searchReferencesCb.isSelected
 
     override fun createActions() = arrayOf(okAction, cancelAction, helpAction)
 
@@ -102,6 +105,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
                 .addComponent(nameLabel)
                 .addLabeledComponent(RefactoringBundle.message("move.files.to.directory.label"), targetDirectoryField, UIUtil.LARGE_VGAP)
                 .addTooltip(RefactoringBundle.message("path.completion.shortcut", shortcutText))
+                .addComponentToRightColumn(searchReferencesCb, UIUtil.LARGE_VGAP)
                 .addComponentToRightColumn(openInEditorCb, UIUtil.LARGE_VGAP)
                 .addComponentToRightColumn(updatePackageDirectiveCb, UIUtil.LARGE_VGAP)
                 .panel
