@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import java.util.concurrent.TimeUnit
+
 val RMI_WRAPPER_PORTS_RANGE_START: Int = 13001
 val RMI_WRAPPER_PORTS_RANGE_END: Int = 14000
 
@@ -19,3 +21,6 @@ val RESULTS_SERVER_PORTS_RANGE_START: Int = 16001
 val RESULTS_SERVER_PORTS_RANGE_END: Int = 17000
 
 val COMPILER_DAEMON_CLASS_FQN_EXPERIMENTAL: String = "org.jetbrains.kotlin.daemon.experimental.KotlinCompileDaemon"
+
+val BYTES_TOKEN = byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)
+val AUTH_TIMEOUT_IN_MILLISECONDS = 1000L

@@ -5,8 +5,13 @@ import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.actor
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.time.delay
+import org.jetbrains.kotlin.daemon.common.experimental.AUTH_TIMEOUT_IN_MILLISECONDS
+import org.jetbrains.kotlin.daemon.common.experimental.BYTES_TOKEN
 import java.io.Serializable
 import java.net.InetSocketAddress
+import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 /*
@@ -40,7 +45,9 @@ interface Server<out T : ServerBase> : ServerBase {
     suspend fun attachClient(client: Socket): Deferred<State> = async {
         val (input, output) = client.openIO(log)
         try {
-            val bytes = input.readBytes(BYTES_TOKEN.size)
+            val bytesAsync = async { input.readBytes(BYTES_TOKEN.size) }
+            delay(AUTH_TIMEOUT_IN_MILLISECONDS, TimeUnit.MILLISECONDS)
+            val bytes = bytesAsync.getCompleted()
             log.info("bytes : ${bytes.toList()}")
             if (bytes.zip(BYTES_TOKEN).any { it.first != it.second }) {
                 log.info("BAD TOKEN")
