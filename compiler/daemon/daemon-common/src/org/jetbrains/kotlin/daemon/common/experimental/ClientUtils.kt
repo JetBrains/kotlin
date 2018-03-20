@@ -90,7 +90,7 @@ suspend fun walkDaemonsAsync(
                             log.info("DaemonWithMetadataAsync == $it)")
                         }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    log.info(e.message)
                     report(
                         org.jetbrains.kotlin.daemon.common.DaemonReportCategory.INFO,
                         "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}"

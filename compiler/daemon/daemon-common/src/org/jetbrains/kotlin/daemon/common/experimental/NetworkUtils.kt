@@ -75,7 +75,10 @@ object LoopbackNetworkInterface {
         override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
-        fun createServerSocket(port: Int) = aSocket().tcp().bind(InetSocketAddress(port))
+        fun createServerSocket(port: Int) =
+            aSocket()
+                .tcp()
+                .bind(InetSocketAddress(InetAddress.getByName(null), port)) // TODO : NO BACKLOG SIZE CHANGE =(
     }
 
     abstract class AbstractClientLoopbackSocketFactory<SocketType> : Serializable {

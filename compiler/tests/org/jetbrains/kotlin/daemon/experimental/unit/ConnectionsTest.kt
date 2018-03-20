@@ -19,42 +19,48 @@ import org.jetbrains.kotlin.daemon.common.experimental.DaemonWithMetadataAsync
 import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
 import org.jetbrains.kotlin.daemon.common.experimental.walkDaemonsAsync
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
+import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import java.io.File
 import java.util.*
+import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
+
+private val logFile = createTempFile("/Users/jetbrains/Documents/kotlin/my_fork/kotlin", ".txt").also {
+    println("log file path : ${it.loggerCompatiblePath}")
+}
+
+private val cfg = "handlers = java.util.logging.FileHandler\n" +
+        "java.util.logging.FileHandler.level     = ALL\n" +
+        "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+        "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+        "java.util.logging.FileHandler.limit     = 0\n" + // if file is provided - disabled, else - 1Mb
+        "java.util.logging.FileHandler.count     = 1\n" +
+        "java.util.logging.FileHandler.append    = true\n" +
+        "java.util.logging.FileHandler.pattern   = ${logFile.loggerCompatiblePath}\n" +
+        "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
+
 
 class ConnectionsTest : KotlinIntegrationTestBase() {
 
     init {
-//        val logFile = createTempFile("/Users/jetbrains/Documents/kotlin/my_fork/kotlin", ".txt")
-//        println("log file path : ${logFile.loggerCompatiblePath}")
-//        val cfg: String =
-//            "handlers = java.util.logging.FileHandler\n" +
-//                    "java.util.logging.FileHandler.level     = ALL\n" +
-//                    "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
-//                    "java.util.logging.FileHandler.encoding  = UTF-8\n" +
-//                    "java.util.logging.FileHandler.limit     = 0\n" + // if file is provided - disabled, else - 1Mb
-//                    "java.util.logging.FileHandler.count     = 1\n" +
-//                    "java.util.logging.FileHandler.append    = true\n" +
-//                    "java.util.logging.FileHandler.pattern   = ${logFile.loggerCompatiblePath}\n" +
-//                    "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
-//        LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
+        LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
     }
 
-    private val log by lazy { Logger.getLogger("ConnectionsTest") }
+    val log by lazy { Logger.getLogger("ConnectionsTest") }
 
-    private val daemonJVMOptions
-        get() = configureDaemonJVMOptions(
+    private val daemonJVMOptions by lazy {
+        configureDaemonJVMOptions(
             inheritMemoryLimits = true,
             inheritOtherJvmOptions = true,
             inheritAdditionalProperties = true
         )
+    }
 
-    private val compilerId get() = CompilerId()
+    private val compilerId by lazy { CompilerId() }
 
-    private val daemonOptions get() = DaemonOptions()
+    private val daemonOptions by lazy { DaemonOptions() }
 
     private val port by lazy {
         findPortForSocket(
@@ -64,21 +70,20 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         )
     }
 
-    private val timer = Timer(true)
+    private val timer by lazy { Timer(true) }
 
-    private val runFile: File
-        get() {
-            val runFileDir = File(daemonOptions.runFilesPathOrDefault)
-            runFileDir.mkdirs()
-            return File(
-                runFileDir,
-                makeRunFilenameString(
-                    timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
-                    digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
-                    port = port.toString()
-                )
+    private val runFile by lazy {
+        val runFileDir = File(daemonOptions.runFilesPathOrDefault)
+        runFileDir.mkdirs()
+        File(
+            runFileDir,
+            makeRunFilenameString(
+                timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
+                digest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString(),
+                port = port.toString()
             )
-        }
+        )
+    }
 
     private val onShutdown: () -> Unit = {
         if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_TIMEOUT_INFINITE_MS) {
@@ -171,7 +176,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         log.info("daemons : $daemons")
         assert(daemons.isNotEmpty())
         val daemon = daemons[0].daemon
-        println("chosen : $daemon")
+        log.info("chosen : $daemon")
         val info = runBlocking(Unconfined) { daemon.getDaemonInfo() }
         log.info("info : $info")
         assert(info.isGood)
@@ -185,7 +190,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         log.info("daemons : $daemons")
         assert(daemons.isNotEmpty())
         val daemon = daemons.maxWith(comparator)!!.daemon
-        println("chosen : $daemon")
+        log.info("chosen : $daemon")
         val info = runBlocking(Unconfined) { daemon.getDaemonInfo() }
         log.info("info : $info")
         assert(info.isGood)
@@ -198,7 +203,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         log.info("daemons : $daemons")
         assert(daemons.isNotEmpty())
         val daemon = daemons[0].daemon
-        println("chosen : $daemon")
+        log.info("chosen : $daemon")
         val info = runBlocking(Unconfined) { daemon.getDaemonInfo() }
         log.info("info : $info")
         assert(info.isGood)
@@ -211,7 +216,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         log.info("daemons : $daemons")
         assert(daemons.isNotEmpty())
         val daemon = daemons.maxWith(comparator)!!.daemon
-        println("chosen : $daemon")
+        log.info("chosen : $daemon")
         val info = runBlocking(Unconfined) { daemon.getDaemonInfo() }
         log.info("info : $info")
         assert(info.isGood)

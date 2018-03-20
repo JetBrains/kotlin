@@ -14,8 +14,11 @@ import java.io.File
 import java.rmi.NoSuchObjectException
 import java.rmi.server.UnicastRemoteObject
 import java.util.*
+import java.util.logging.Logger
 
 class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptions: DaemonOptions, compilerId: CompilerId) : CompileService {
+
+    val log = Logger.getLogger("CompileServiceRMIWrapper")
 
     private fun deprecated(): Nothing = TODO("NEVER USE DEPRECATED METHODS, PLEASE!") // prints this todo message
 
@@ -173,14 +176,14 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
 
     init {
         // assuming logically synchronized
-        println("_______________________________ [RMI WRAPPER] <init> _________________________________")
+        log.info("<init>")
         try {
             // cleanup for the case of incorrect restart and many other situations
             UnicastRemoteObject.unexportObject(this, false)
-            println("_______________________________ [RMI WRAPPER] unexportObject_________________________________")
+            log.info("unexportObject_________________________________")
         } catch (e: NoSuchObjectException) {
             // ignoring if object already exported
-            println("_______________________________ [RMI WRAPPER] // ignoring if object already exported_________________________________")
+            log.info("// ignoring if object already exported_________________________________")
         }
 
         val (registry, port) = findPortAndCreateRegistry(
@@ -189,7 +192,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
             RMI_WRAPPER_PORTS_RANGE_END
         )
 
-        println("_______________________________ [RMI WRAPPER] port = $port , registry = $registry _________________________________")
+        log.info("port = $port , registry = $registry")
 
         val stub = UnicastRemoteObject.exportObject(
             this,
@@ -198,10 +201,10 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
             LoopbackNetworkInterface.serverLoopbackSocketFactory
         ) as CompileService
 
-        println("_______________________________ [RMI WRAPPER] stub = $stub _________________________________")
+        log.info("stub = $stub")
 
         registry.rebind(COMPILER_SERVICE_RMI_NAME, stub)
-        println("_______________________________ [RMI WRAPPER] rebinded! _________________________________")
+        log.info("rebinded!")
 
         // create file :
         val runFileDir = File(daemonOptions.runFilesPathOrDefault)
