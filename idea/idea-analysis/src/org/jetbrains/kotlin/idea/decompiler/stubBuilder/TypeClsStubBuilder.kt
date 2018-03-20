@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
+import org.jetbrains.kotlin.utils.doNothing
 import java.util.*
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
@@ -47,7 +48,11 @@ private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(KotlinBuiltIns.FQ_NAMES.par
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(parent: StubElement<out PsiElement>, type: Type, additionalAnnotations: () -> List<ClassIdWithTarget> = { emptyList() }) {
-        if (type.hasAbbreviatedType()) return createTypeReferenceStub(parent, type.abbreviatedType, additionalAnnotations)
+        val abbreviatedType = type.abbreviatedType(c.typeTable)
+        if (abbreviatedType != null) {
+            return createTypeReferenceStub(parent, abbreviatedType, additionalAnnotations)
+        }
+
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
 
         val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
@@ -64,6 +69,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 createTypeParameterStub(typeReference, type, c.typeParameters[type.typeParameter], allAnnotations)
             type.hasTypeParameterName() ->
                 createTypeParameterStub(typeReference, type, c.nameResolver.getName(type.typeParameterName), allAnnotations)
+            else -> {
+                doNothing()
+            }
         }
     }
 
@@ -208,7 +216,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             createTypeReferenceStub(functionType, returnType)
         }
         else {
-            createTypeReferenceStub(functionType, suspendParameterType.getArgument(0).type)
+            val continuationArgumentType = suspendParameterType.getArgument(0).type(c.typeTable)!!
+            createTypeReferenceStub(functionType, continuationArgumentType)
         }
     }
 

@@ -35,3 +35,5 @@ val DO_NOTHING_2: (Any?, Any?) -> Unit = { _, _ -> }
 val DO_NOTHING_3: (Any?, Any?, Any?) -> Unit = { _, _, _ -> }
 
 fun <T> doNothing(): (T) -> Unit = DO_NOTHING
+
+fun doNothing() {}
