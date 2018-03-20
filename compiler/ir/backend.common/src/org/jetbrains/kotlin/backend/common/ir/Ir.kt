@@ -34,7 +34,17 @@ abstract class Symbols<out T: CommonBackendContext>(val context: T, private val 
     protected fun builtInsPackage(vararg packageNameSegments: String) =
             context.builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 
-    val refClass = symbolTable.referenceClass(context.getInternalClass("Ref"))
+
+    // This hack allows to disable related symbol instantiation in descendants
+    // TODO move relevant symbols to non-common code
+    open fun <T> eager(initializer: () -> T): Lazy<T> {
+        return object : Lazy<T> {
+            override val value = initializer()
+            override fun isInitialized(): Boolean = true
+        }
+    }
+
+    val refClass by eager { symbolTable.referenceClass(context.getInternalClass("Ref")) }
 
     //abstract val areEqualByValue: List<IrFunctionSymbol>
 
@@ -44,7 +54,7 @@ abstract class Symbols<out T: CommonBackendContext>(val context: T, private val 
     abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
     abstract val ThrowTypeCastException: IrFunctionSymbol
 
-    abstract val ThrowUninitializedPropertyAccessException: IrFunctionSymbol
+    abstract val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol
 
     abstract val stringBuilder: IrClassSymbol
 
@@ -74,7 +84,7 @@ abstract class Symbols<out T: CommonBackendContext>(val context: T, private val 
 //    val getProgressionLast = context.getInternalFunctions("getProgressionLast")
 //            .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
 
-    val defaultConstructorMarker = symbolTable.referenceClass(context.getInternalClass("DefaultConstructorMarker"))
+    val defaultConstructorMarker by eager { symbolTable.referenceClass(context.getInternalClass("DefaultConstructorMarker")) }
 
     val any = symbolTable.referenceClass(builtIns.any)
     val unit = symbolTable.referenceClass(builtIns.unit)
@@ -137,13 +147,13 @@ abstract class Symbols<out T: CommonBackendContext>(val context: T, private val 
 
     abstract val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
 
-    val intAnd = symbolTable.referenceFunction(
+    val intAnd = symbolTable.referenceSimpleFunction(
             builtIns.intType.memberScope
                     .getContributedFunctions(OperatorNameConventions.AND, NoLookupLocation.FROM_BACKEND)
                     .single()
     )
 
-    val intPlusInt = symbolTable.referenceFunction(
+    val intPlusInt = symbolTable.referenceSimpleFunction(
             builtIns.intType.memberScope
                     .getContributedFunctions(OperatorNameConventions.PLUS, NoLookupLocation.FROM_BACKEND)
                     .single {
@@ -164,14 +174,14 @@ abstract class Symbols<out T: CommonBackendContext>(val context: T, private val 
 
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
 
-    val kFunctionImpl = symbolTable.referenceClass(context.reflectionTypes.kFunctionImpl)
+    val kFunctionImpl by eager { symbolTable.referenceClass(context.reflectionTypes.kFunctionImpl) }
 
-    val kProperty0Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty0Impl)
-    val kProperty1Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty1Impl)
-    val kProperty2Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty2Impl)
-    val kMutableProperty0Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty0Impl)
-    val kMutableProperty1Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty1Impl)
-    val kMutableProperty2Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty2Impl)
+    val kProperty0Impl by eager { symbolTable.referenceClass(context.reflectionTypes.kProperty0Impl) }
+    val kProperty1Impl by eager { symbolTable.referenceClass(context.reflectionTypes.kProperty1Impl) }
+    val kProperty2Impl by eager { symbolTable.referenceClass(context.reflectionTypes.kProperty2Impl) }
+    val kMutableProperty0Impl by eager { symbolTable.referenceClass(context.reflectionTypes.kMutableProperty0Impl) }
+    val kMutableProperty1Impl by eager { symbolTable.referenceClass(context.reflectionTypes.kMutableProperty1Impl) }
+    val kMutableProperty2Impl by eager { symbolTable.referenceClass(context.reflectionTypes.kMutableProperty2Impl) }
 //    val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
 //    val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
 
