@@ -1,0 +1,9 @@
+FILE: NestedSuperType.kt
+    unknown final class A() : R/b.B/ {
+        unknown final class NestedInA1() : R/b.B.NestedInB/ {
+        }
+
+        unknown final class NestedInA2() : R/c.C.NestedInC/ {
+        }
+
+    }

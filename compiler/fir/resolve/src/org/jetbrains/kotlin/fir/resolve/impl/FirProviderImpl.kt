@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirProviderImpl(val session: FirSession) : FirProvider {
+    override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
+        return classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")
+    }
 
     fun recordFile(file: FirFile) {
         val packageName = file.packageFqName
@@ -27,7 +30,9 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
 
             override fun visitClass(klass: FirClass) {
                 val fqName = containerFqName.child(klass.name)
-                classifierMap[ClassId(packageName, fqName, false)] = klass
+                val classId = ClassId(packageName, fqName, false)
+                classifierMap[classId] = klass
+                classifierContainerFileMap[classId] = file
 
                 containerFqName = fqName
                 klass.acceptChildren(this)
@@ -36,13 +41,16 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
 
             override fun visitTypeAlias(typeAlias: FirTypeAlias) {
                 val fqName = containerFqName.child(typeAlias.name)
-                classifierMap[ClassId(packageName, fqName, false)] = typeAlias
+                val classId = ClassId(packageName, fqName, false)
+                classifierMap[classId] = typeAlias
+                classifierContainerFileMap[classId] = file
             }
         })
     }
 
     private val fileMap = mutableMapOf<FqName, List<FirFile>>()
     private val classifierMap = mutableMapOf<ClassId, FirMemberDeclaration>()
+    private val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> {
         return fileMap[fqName].orEmpty()

@@ -69,6 +69,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/fir/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("NestedSuperType.kt")
+        public void testNestedSuperType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/multifile/NestedSuperType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleAliasedImport.kt")
         public void testSimpleAliasedImport() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/multifile/simpleAliasedImport.kt");

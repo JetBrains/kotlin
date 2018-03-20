@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 interface FirResolvedType : FirTypeWithNullability {
     val type: ConeKotlinType
@@ -15,4 +14,5 @@ interface FirResolvedType : FirTypeWithNullability {
         visitor.visitResolvedType(this, data)
 }
 
-inline fun <reified T> FirType.coneTypeUnsafe() = (this as FirResolvedType).type as T
+inline fun <reified T : ConeKotlinType> FirType.coneTypeUnsafe() = (this as FirResolvedType).type as T
+inline fun <reified T : ConeKotlinType> FirType.coneTypeSafe() = (this as FirResolvedType).type as? T

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -19,6 +20,7 @@ interface FirProvider {
 
     fun getFirTypeParameterByFqName(fqName: ClassId, parameterName: Name): FirTypeParameter?
 
+    fun getFirClassifierContainerFile(fqName: ClassId): FirFile
 
     companion object {
         fun getInstance(session: FirSession): FirProvider = session.service()
