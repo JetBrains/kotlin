@@ -119,6 +119,12 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             if (memberDeclaration.isInline) {
                 print("inline ")
             }
+            if (memberDeclaration.isTailRec) {
+                print("tailrec ")
+            }
+            if (memberDeclaration.isExternal) {
+                print("external ")
+            }
         } else if (memberDeclaration is FirProperty) {
             if (memberDeclaration.isConst) {
                 print("const ")

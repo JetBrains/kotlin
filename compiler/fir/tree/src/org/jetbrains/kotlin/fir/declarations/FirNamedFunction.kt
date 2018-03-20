@@ -17,6 +17,10 @@ interface FirNamedFunction : @VisitedSupertype FirFunction, FirCallableMember {
 
     val isInline: Boolean
 
+    val isTailRec: Boolean
+
+    val isExternal: Boolean
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitNamedFunction(this, data)
 
