@@ -125,14 +125,6 @@ internal class IrDescriptorSerializer(
     }
 
     fun serializeDescriptor(descriptor: DeclarationDescriptor): KonanIr.KotlinDescriptor {
-
-        if (descriptor is CallableMemberDescriptor &&  
-            descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            // TODO: It seems rather braindead. 
-            // Do we need to do anything more than that?
-            return serializeDescriptor(DescriptorUtils.unwrapFakeOverride(descriptor))
-        }
-
         val classOrPackage = descriptor.classOrPackage
         val parentFqNameIndex = if (classOrPackage is ClassOrPackageFragmentDescriptor) {
             stringTable.getClassOrPackageFqNameIndex(classOrPackage)
