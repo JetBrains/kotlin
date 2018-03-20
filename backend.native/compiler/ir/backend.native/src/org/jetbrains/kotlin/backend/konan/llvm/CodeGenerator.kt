@@ -56,7 +56,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
                     descriptor.objectInstanceFieldSymbolName,
                     llvmType,
                     origin = descriptor.llvmSymbolOrigin,
-                    threadLocal = true
+                    threadLocal = !descriptor.symbol.objectIsShared
             )
         }
         context.llvm.objects += llvmGlobal
@@ -450,6 +450,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     fun icmpLt(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSLT, arg0, arg1, name)!!
     fun icmpLe(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSLE, arg0, arg1, name)!!
     fun icmpNe(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntNE, arg0, arg1, name)!!
+    fun icmpUGt(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntUGT, arg0, arg1, name)!!
 
     /* floating-point comparisons */
     fun fcmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildFCmp(builder, LLVMRealPredicate.LLVMRealOEQ, arg0, arg1, name)!!
@@ -566,6 +567,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
     fun getObjectValue(
             descriptor: ClassDescriptor,
+            shared: Boolean,
             exceptionHandler: ExceptionHandler,
             locationInfo: LocationInfo?
     ): LLVMValueRef {
@@ -578,15 +580,16 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val bbInit    = basicBlock("label_init", locationInfo)
         val bbExit    = basicBlock("label_continue", locationInfo)
         val objectVal = loadSlot(objectPtr, false)
-        val condition = icmpNe(objectVal, codegen.kNullObjHeaderPtr)
+        val condition = icmpUGt(ptrToInt(objectVal, codegen.intPtrType), codegen.immOneIntPtrType)
         condBr(condition, bbExit, bbInit)
 
         positionAtEnd(bbInit)
         val typeInfo = codegen.typeInfoForAllocation(descriptor)
-        val initFunction = descriptor.constructors.first { it.valueParameters.size == 0 }
-        val ctor = codegen.llvmFunction(initFunction)
+        val defaultConstructor = descriptor.constructors.first { it.valueParameters.size == 0 }
+        val ctor = codegen.llvmFunction(defaultConstructor)
         val args = listOf(objectPtr, typeInfo, ctor)
-        val newValue = call(context.llvm.initInstanceFunction, args, Lifetime.GLOBAL, exceptionHandler)
+        val initFunction = if (shared) context.llvm.initSharedInstanceFunction else context.llvm.initInstanceFunction
+        val newValue = call(initFunction, args, Lifetime.GLOBAL, exceptionHandler)
         val bbInitResult = currentBlock
         br(bbExit)
 

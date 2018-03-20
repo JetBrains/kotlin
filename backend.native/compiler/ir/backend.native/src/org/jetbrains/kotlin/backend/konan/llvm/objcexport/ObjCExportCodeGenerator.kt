@@ -924,7 +924,7 @@ private fun ObjCExportCodeGenerator.createObjectInstanceAdapter(
     return generateObjCToKotlinMethodAdapter(methodBridge, selector) {
         initRuntimeIfNeeded() // For instance methods it gets called when allocating.
 
-        val value = getObjectValue(context.ir.get(descriptor), ExceptionHandler.Caller, locationInfo = null)
+        val value = getObjectValue(context.ir.get(descriptor), shared = false, locationInfo = null, exceptionHandler = ExceptionHandler.Caller)
         ret(kotlinToObjC(value, ReferenceBridge))
     }
 }

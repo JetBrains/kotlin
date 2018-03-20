@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -51,6 +48,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+
+val IrClassSymbol.objectIsShared get() = owner.origin == DECLARATION_ORIGIN_ENUM
 
 internal fun emitLLVM(context: Context) {
     val irModule = context.irModule!!
@@ -777,6 +776,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun evaluateGetObjectValue(value: IrGetObjectValue): LLVMValueRef =
             functionGenerationContext.getObjectValue(
                     value.symbol.owner,
+                    value.symbol.objectIsShared && context.config.threadsAreAllowed,
                     currentCodeContext.exceptionHandler,
                     value.startLocation
             )

@@ -398,6 +398,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val allocInstanceFunction = importRtFunction("AllocInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
     val initInstanceFunction = importRtFunction("InitInstance")
+    val initSharedInstanceFunction = importRtFunction("InitSharedInstance")
     val updateReturnRefFunction = importRtFunction("UpdateReturnRef")
     val updateRefFunction = importRtFunction("UpdateRef")
     val enterFrameFunction = importRtFunction("EnterFrame")

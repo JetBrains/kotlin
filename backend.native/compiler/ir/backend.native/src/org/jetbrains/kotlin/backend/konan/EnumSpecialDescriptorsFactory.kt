@@ -70,7 +70,7 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
         val constructorDescriptor = implObjectDescriptor.createSimpleDelegatingConstructorDescriptor(constructorOfAny, true)
 
         implObjectDescriptor.initialize(memberScope, setOf(constructorDescriptor), constructorDescriptor)
-        val implObject = IrClassImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, implObjectDescriptor).apply {
+        val implObject = IrClassImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, implObjectDescriptor).apply {
             createParameterDeclarations()
             addFakeOverrides()
             setSuperSymbols(listOf(context.ir.symbols.any.owner))

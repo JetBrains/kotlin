@@ -372,17 +372,14 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
         private val arrayGetSymbol = context.ir.symbols.array.functions.single { it.descriptor.name == Name.identifier("get") }
 
-        private val genericFreezeSymbol = context.ir.symbols.freeze
         private val arrayType = context.builtIns.getArrayType(Variance.INVARIANT, irClass.defaultType)
 
         private fun createValuesPropertyInitializer(enumEntries: List<IrEnumEntry>): IrAnonymousInitializerImpl {
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
 
-            val symbol = IrAnonymousInitializerSymbolImpl(loweredEnum.implObject.descriptor)
-            val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
-            return IrAnonymousInitializerImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, symbol).apply {
-                body = irBuilder.irBlockBody(irClass) {
+            return IrAnonymousInitializerImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, loweredEnum.implObject.descriptor).apply {
+                body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody(irClass) {
                     val instances = irTemporary(irGetField(irGet(loweredEnum.implObject.thisReceiver!!.symbol), loweredEnum.valuesField.symbol))
                     enumEntries
                             .sortedBy { it.descriptor.name }
@@ -398,8 +395,8 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                                     putValueArgument(1, initializer)
                                 }
                             }
-                    +irCall(genericFreezeSymbol, listOf(arrayType)).apply {
-                        extensionReceiver = irGet(instances.symbol)
+                    +irCall(this@EnumClassLowering.context.ir.symbols.freeze, listOf(arrayType)).apply {
+                        extensionReceiver = irGet(loweredEnum.implObject.thisReceiver!!.symbol)
                     }
                 }
             }
