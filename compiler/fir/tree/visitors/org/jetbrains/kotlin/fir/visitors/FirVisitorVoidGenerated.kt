@@ -98,6 +98,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(import, null)
     }
 
+    open fun visitResolvedImport(resolvedImport: FirResolvedImport) {
+        visitImport(resolvedImport, null)
+    }
+
     open fun visitPackageFragment(packageFragment: FirPackageFragment) {
         visitElement(packageFragment, null)
     }
@@ -210,6 +214,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitFunction(function)
     }
 
+    final override fun visitImport(import: FirImport, data: Nothing?) {
+        visitImport(import)
+    }
+
     final override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: Nothing?) {
         visitMemberDeclaration(memberDeclaration)
     }
@@ -282,10 +290,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitAnonymousInitializer(anonymousInitializer)
     }
 
-    final override fun visitImport(import: FirImport, data: Nothing?) {
-        visitImport(import)
-    }
-
     final override fun visitBody(body: FirBody, data: Nothing?) {
         visitBody(body)
     }
@@ -304,6 +308,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
         visitPropertyAccessor(propertyAccessor)
+    }
+
+    final override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: Nothing?) {
+        visitResolvedImport(resolvedImport)
     }
 
     final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {

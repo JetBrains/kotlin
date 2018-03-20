@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifierType
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
@@ -206,7 +207,7 @@ class RawFirBuilder(val session: FirSession) {
                     importDirective,
                     importDirective.importedFqName,
                     importDirective.isAllUnder,
-                    importDirective.aliasName
+                    importDirective.aliasName?.let { Name.identifier(it) }
                 )
             }
             for (declaration in file.declarations) {

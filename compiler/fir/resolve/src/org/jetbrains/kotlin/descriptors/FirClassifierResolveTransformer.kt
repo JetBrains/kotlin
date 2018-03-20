@@ -33,31 +33,9 @@ class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
 
     lateinit var packageFqName: FqNameUnsafe
 
-    lateinit var importingScope: FirImportingScope
-
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         packageFqName = file.packageFqName.toUnsafe()
-        importingScope = FirCompositeImportingScope(
-            FirExplicitImportingScope(file.imports),
-            FirSelfImportingScope(file.packageFqName.toUnsafe(), file.session)
-        )
-        return file.also { it.acceptChildren(this, null) }.compose()
-    }
-
-    // TODO: Extract to separate transformer?
-    override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
-        val typeResolver = FirTypeResolver.getInstance(type.session)
-        return FirResolvedTypeImpl(
-            type.session,
-            type.psi,
-            typeResolver.resolveType(type, importingScope),
-            false,
-            type.annotations
-        ).compose()
-    }
-
-    override fun transformResolvedType(resolvedType: FirResolvedType, data: Nothing?): CompositeTransformResult<FirType> {
-        return resolvedType.compose()
+        return file.also { it.transformChildren(this, null) }.compose()
     }
 
     var className: FqName = FqName.ROOT

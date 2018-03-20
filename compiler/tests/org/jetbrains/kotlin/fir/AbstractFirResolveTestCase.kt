@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.descriptors.FirClassifierResolveTransformer
+import org.jetbrains.kotlin.descriptors.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
+import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirTypeResolverImpl
@@ -47,13 +48,13 @@ abstract class AbstractFirResolveTestCase : KotlinTestWithEnvironment() {
 
         val builder = RawFirBuilder(session)
 
-        val transformer = FirClassifierResolveTransformer()
+        val transformer = FirTotalResolveTransformer()
         val firFiles = ktFiles.map {
             val firFile = builder.buildFirFile(it)
             (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
             firFile
-        }.onEach {
-            it.transform<FirFile, Nothing?>(transformer, null)
+        }.also {
+            transformer.processFiles(it)
         }
 
         val firFileDump = StringBuilder().also { firFiles.first().accept(FirRenderer(it), null) }.toString()

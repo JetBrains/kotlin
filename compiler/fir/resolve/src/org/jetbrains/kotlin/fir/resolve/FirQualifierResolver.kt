@@ -17,8 +17,6 @@ interface FirQualifierResolver {
 
     fun resolveType(parts: List<FirQualifierPart>): ConeKotlinType?
 
-    fun resolveImport(fqName: FqName): UnambiguousFqName?
-
     companion object {
         fun getInstance(session: FirSession): FirQualifierResolver = session.service()
     }

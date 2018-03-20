@@ -98,6 +98,10 @@ abstract class FirVisitor<out R, in D> {
         return visitElement(import, data)
     }
 
+    open fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): R {
+        return visitImport(resolvedImport, data)
+    }
+
     open fun visitPackageFragment(packageFragment: FirPackageFragment, data: D): R {
         return visitElement(packageFragment, data)
     }

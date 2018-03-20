@@ -71,33 +71,6 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
         }
     }
 
-    // TODO: extract common part from resolveType/Import
-    override fun resolveImport(fqName: FqName): UnambiguousFqName? {
-        val firProvider = FirProvider.getInstance(session)
-
-        if (!fqName.isRoot) {
-            val lastPart = mutableListOf<String>()
-            var firstPart = fqName
-
-            while (!firstPart.isRoot) {
-                lastPart.add(0, firstPart.shortName().asString())
-                firstPart = firstPart.parent()
-
-                val fqName = UnambiguousFqName(firstPart.toUnsafe(), FqName.fromSegments(lastPart))
-                val foundClassifier = firProvider.getFirClassifierByFqName(fqName)
-
-                if (foundClassifier != null) {
-                    return fqName
-                }
-            }
-            return null
-        } else {
-            return null
-        }
-    }
-
     private fun List<FirQualifierPart>.toFqNameUnsafe() = toFqName().toUnsafe()
     private fun List<FirQualifierPart>.toFqName() = fold(FqName.ROOT) { a, b -> a.child(b.name) }
-
-
 }

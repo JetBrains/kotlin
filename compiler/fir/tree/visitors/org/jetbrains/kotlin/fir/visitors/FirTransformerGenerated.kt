@@ -94,8 +94,12 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformDeclaration(variable, data)
     }
 
-    open fun <E : FirElement> transformImport(import: E, data: D): CompositeTransformResult<E> {
+    open fun transformImport(import: FirImport, data: D): CompositeTransformResult<FirImport> {
         return transformElement(import, data)
+    }
+
+    open fun transformResolvedImport(resolvedImport: FirResolvedImport, data: D): CompositeTransformResult<FirImport> {
+        return transformImport(resolvedImport, data)
     }
 
     open fun <E : FirElement> transformPackageFragment(packageFragment: E, data: D): CompositeTransformResult<E> {
@@ -210,6 +214,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformFunction(function, data)
     }
 
+    final override fun visitImport(import: FirImport, data: D): CompositeTransformResult<FirElement> {
+        return transformImport(import, data)
+    }
+
     final override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration, data: D): CompositeTransformResult<FirElement> {
         return transformMemberDeclaration(memberDeclaration, data)
     }
@@ -282,10 +290,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformAnonymousInitializer(anonymousInitializer, data)
     }
 
-    final override fun visitImport(import: FirImport, data: D): CompositeTransformResult<FirElement> {
-        return transformImport(import, data)
-    }
-
     final override fun visitBody(body: FirBody, data: D): CompositeTransformResult<FirElement> {
         return transformBody(body, data)
     }
@@ -304,6 +308,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): CompositeTransformResult<FirElement> {
         return transformPropertyAccessor(propertyAccessor, data)
+    }
+
+    final override fun visitResolvedImport(resolvedImport: FirResolvedImport, data: D): CompositeTransformResult<FirElement> {
+        return transformResolvedImport(resolvedImport, data)
     }
 
     final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): CompositeTransformResult<FirElement> {

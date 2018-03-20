@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
+@BaseTransformedType
 interface FirImport : FirElement {
     val importedFqName: FqName?
 
     val isAllUnder: Boolean
 
-    val aliasName: String?
+    val aliasName: Name?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitImport(this, data)
