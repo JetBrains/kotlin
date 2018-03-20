@@ -237,9 +237,9 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
 
         def out = new ByteArrayOutputStream()
         //TODO Add test timeout
-        ExecResult execResult = project.execRemote {
+        ExecResult execResult = project.execute {
 
-            commandLine executionCommandLine(exe)
+            commandLine exe
 
             if (arguments != null) {
                 args arguments
@@ -276,23 +276,6 @@ fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = ob
         }
 
         if (!exitCodeMismatch && !goldValueMismatch && this.expectedFail) println("Unexpected pass")
-    }
-
-    List<String> executionCommandLine(String exe) {
-
-        def absoluteTargetToolchain = platformManager.platform(target).absoluteTargetToolchain
-        def absoluteTargetSysRoot = platformManager.platform(target).absoluteTargetSysRoot
-        if (target instanceof KonanTarget.WASM32) {
-            def d8 = "$absoluteTargetToolchain/bin/d8"
-            def launcherJs = "${exe}.js"
-            return [d8, '--expose-wasm', launcherJs, '--', exe]
-        } else if (target instanceof KonanTarget.LINUX_MIPS32 || target instanceof KonanTarget.LINUX_MIPSEL32) {
-            def qemu = target instanceof KonanTarget.LINUX_MIPS32 ? "qemu-mips" : "qemu-mipsel"
-            def absoluteQemu = "$absoluteTargetToolchain/bin/$qemu"
-            return [absoluteQemu, "-L", absoluteTargetSysRoot, exe]
-        } else {
-            return [exe]
-        }
     }
 }
 

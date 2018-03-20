@@ -66,7 +66,9 @@ externalTestsDir.mkdirs()
 
 ext.platformManager = project.rootProject.platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
-project.convention.plugins.remoteExec = new org.jetbrains.kotlin.ExecRemote(project)
+
+// Add executor to run tests depending on a target
+project.convention.plugins.executor = ExecutorServiceKt.create(project)
 
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
@@ -2529,7 +2531,8 @@ if (isMac()) {
         if (!useCustomDist) {
             dependsOn ':distPlatformLibs'
         }
-        disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+        disabled = (project.testTarget == 'wasm32') ||    // No interop for wasm yet.
+                (project.testTarget == 'ios_x64')         // No GLUT in iOS
         run = false
         source = "interop/basics/opengl_teapot.kt"
     }
