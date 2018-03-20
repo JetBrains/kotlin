@@ -333,7 +333,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitErrorType(errorType: FirErrorType) {
         visitType(errorType)
-        print("<ERROR TYPE>")
+        print("<ERROR TYPE: ${errorType.reason}>")
     }
 
     override fun visitImplicitType(implicitType: FirImplicitType) {

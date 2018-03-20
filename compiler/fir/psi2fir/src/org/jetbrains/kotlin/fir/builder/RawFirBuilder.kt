@@ -69,7 +69,7 @@ class RawFirBuilder(val session: FirSession) {
             convertSafe() ?: FirImplicitTypeImpl(session, this)
 
         private fun KtTypeReference?.toFirOrErrorType(): FirType =
-            convertSafe() ?: FirErrorTypeImpl(session, this, false, if (this == null) "Incomplete code" else "Conversion failed")
+            convertSafe() ?: FirErrorTypeImpl(session, this, if (this == null) "Incomplete code" else "Conversion failed")
 
         private fun KtExpression?.toFirBody(): FirBody? =
             convertSafe<FirExpression>()?.let { it as? FirBody ?: FirExpressionBodyImpl(session, it) }
@@ -178,7 +178,7 @@ class RawFirBuilder(val session: FirSession) {
                 FirDelegatedConstructorCallImpl(
                     session,
                     constructorCallee,
-                    FirErrorTypeImpl(session, constructorCallee, false, "Not implemented yet"),
+                    FirErrorTypeImpl(session, constructorCallee, "Not implemented yet"),
                     isThis = false
                 ).apply {
                     superTypeCallEntry.extractArgumentsTo(this)
@@ -317,7 +317,7 @@ class RawFirBuilder(val session: FirSession) {
             val firConstructorCall = FirDelegatedConstructorCallImpl(
                 session,
                 call,
-                FirErrorTypeImpl(session, call, false, "Not implemented yet"),
+                FirErrorTypeImpl(session, call, "Not implemented yet"),
                 call.isCallToThis || call.isImplicit
             )
             call.extractArgumentsTo(firConstructorCall)
@@ -384,7 +384,7 @@ class RawFirBuilder(val session: FirSession) {
                         } while (referenceExpression != null)
                         userType
                     } else {
-                        FirErrorTypeImpl(session, typeReference, isNullable, "Incomplete user type")
+                        FirErrorTypeImpl(session, typeReference, "Incomplete user type")
                     }
                 }
                 is KtFunctionType -> {
@@ -400,7 +400,7 @@ class RawFirBuilder(val session: FirSession) {
                     }
                     functionType
                 }
-                null -> FirErrorTypeImpl(session, typeReference, isNullable, "Unwrapped type is null")
+                null -> FirErrorTypeImpl(session, typeReference, "Unwrapped type is null")
                 else -> throw AssertionError("Unexpected type element: ${unwrappedElement.text}")
             }
 

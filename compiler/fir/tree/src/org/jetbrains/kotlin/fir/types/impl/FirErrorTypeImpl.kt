@@ -13,9 +13,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 class FirErrorTypeImpl(
     session: FirSession,
     psi: PsiElement?,
-    isNullable: Boolean,
     override val reason: String
-) : FirAbstractAnnotatedType(session, psi, isNullable), FirErrorType {
+) : FirAbstractAnnotatedType(session, psi, false), FirErrorType {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
         return super<FirErrorType>.accept(visitor, data)
     }
