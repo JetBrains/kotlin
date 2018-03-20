@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.BYTES_TOKEN
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
 import java.beans.Transient
 import java.io.Serializable
@@ -10,8 +11,6 @@ import java.net.InetSocketAddress
 import java.util.ArrayList
 import java.util.function.Function
 import java.util.logging.Logger
-
-val BYTES_TOKEN = byteArrayOf(1, 2, 3, 4)
 
 interface Client : Serializable, AutoCloseable {
     @Throws(Exception::class)
