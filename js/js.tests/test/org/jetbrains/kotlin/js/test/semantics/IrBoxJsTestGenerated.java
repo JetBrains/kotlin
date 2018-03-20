@@ -18105,6 +18105,23 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
+        @TestMetadata("constantPropagation.kt")
+        public void testConstantPropagation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/constantPropagation.kt");
+            if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+                doTest(fileName);
+                return;
+            }
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                ignore.printStackTrace();
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
+        }
+
         @TestMetadata("conversionsWithTruncation.kt")
         public void testConversionsWithTruncation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/conversionsWithTruncation.kt");

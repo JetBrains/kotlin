@@ -7986,13 +7986,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("crossinline.kt")
             public void testCrossinline() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/crossinline.kt");
+                if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+                    doTest(fileName);
+                    return;
+                }
                 try {
                     doTest(fileName);
                 }
                 catch (Throwable ignore) {
+                    ignore.printStackTrace();
                     return;
                 }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
             }
 
             @TestMetadata("inlineWithStateMachine.kt")
