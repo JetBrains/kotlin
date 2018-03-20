@@ -7,3 +7,7 @@ abstract class My {
         }
     }
 }
+
+class Your : My() {
+    class NestedThree : NestedOne()
+}

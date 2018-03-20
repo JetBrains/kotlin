@@ -1,9 +1,14 @@
 FILE: NestedSuperType.kt
     unknown abstract class My() {
         unknown abstract class NestedOne() : R/p.My/ {
-            unknown abstract class NestedTwo() : R/error: Failed to resolve qualified type/ {
+            unknown abstract class NestedTwo() : R/p.My.NestedOne/ {
             }
 
+        }
+
+    }
+    unknown final class Your() : R/p.My/ {
+        unknown final class NestedThree() : R/p.My.NestedOne/ {
         }
 
     }

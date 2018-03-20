@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.scopes.FirImportingScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class FirCompositeImportingScope(vararg val scopes: FirImportingScope) : FirImportingScope {
+class FirCompositeScope(val scopes: MutableList<FirScope>) : FirScope {
     override fun processClassifiersByName(name: Name, processor: (ClassId) -> Boolean): Boolean {
         for (scope in scopes) {
             if (!scope.processClassifiersByName(name, processor)) {

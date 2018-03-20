@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-interface FirImportingScope {
+interface FirScope {
     fun processClassifiersByName(name: Name, processor: (ClassId) -> Boolean): Boolean
 }

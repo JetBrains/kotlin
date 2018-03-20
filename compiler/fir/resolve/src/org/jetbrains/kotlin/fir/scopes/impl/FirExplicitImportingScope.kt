@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
-import org.jetbrains.kotlin.fir.scopes.FirImportingScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class FirExplicitImportingScope(imports: List<FirImport>) : FirImportingScope {
+class FirExplicitImportingScope(imports: List<FirImport>) : FirScope {
 
     // TODO: Resolve imports! Instead of computing it resolution results here
     private val simpleImports =

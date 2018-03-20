@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.scopes.FirImportingScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirImportingScope {
+class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirScope {
     override fun processClassifiersByName(name: Name, processor: (ClassId) -> Boolean): Boolean {
 
 

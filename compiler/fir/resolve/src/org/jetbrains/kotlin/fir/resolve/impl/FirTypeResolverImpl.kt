@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
-import org.jetbrains.kotlin.fir.scopes.FirImportingScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeKotlinErrorType
 
 class FirTypeResolverImpl : FirTypeResolver {
-    override fun resolveType(type: FirType, importingScope: FirImportingScope): ConeKotlinType {
+    override fun resolveType(type: FirType, scope: FirScope): ConeKotlinType {
         return when (type) {
             is FirResolvedType -> type.type
             is FirUserType -> {
@@ -20,7 +20,7 @@ class FirTypeResolverImpl : FirTypeResolver {
                 val qualifierResolver = FirQualifierResolver.getInstance(type.session)
 
                 var resolvedType: ConeKotlinType? = null
-                importingScope.processClassifiersByName(type.qualifier.first().name) { fqName ->
+                scope.processClassifiersByName(type.qualifier.first().name) { fqName ->
                     resolvedType = qualifierResolver.resolveTypeWithPrefix(type.qualifier.drop(1), fqName)
                     resolvedType == null
                 }
