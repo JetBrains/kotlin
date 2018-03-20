@@ -3,7 +3,6 @@ buildscript {
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
     val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
     extra["versions.shadow"] = "2.0.2"
-    extra["versions.intellij-plugin"] = "0.3.0-SNAPSHOT"
     extra["versions.native-platform"] = "0.14"
 
     repositories {
