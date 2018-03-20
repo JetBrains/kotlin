@@ -103,7 +103,8 @@ class MoveDeclarationsDescriptor @JvmOverloads constructor(
         val moveCallback: MoveCallback? = null,
         val openInEditor: Boolean = false,
         val allElementsToMove: List<PsiElement>? = null,
-        val analyzeConflicts: Boolean = true
+        val analyzeConflicts: Boolean = true,
+        val searchReferences: Boolean = true
 )
 
 class ConflictUsageInfo(element: PsiElement, val messages: Collection<String>) : UsageInfo(element)
@@ -156,7 +157,7 @@ class MoveKotlinDeclarationsProcessor(
     fun getConflictsAsUsages(): List<UsageInfo> = conflicts.entrySet().map { ConflictUsageInfo(it.key, it.value) }
 
     public override fun findUsages(): Array<UsageInfo> {
-        if (elementsToMove.isEmpty()) return UsageInfo.EMPTY_ARRAY
+        if (!descriptor.searchReferences || elementsToMove.isEmpty()) return UsageInfo.EMPTY_ARRAY
 
         val newContainerName = descriptor.moveTarget.targetContainerFqName?.asString() ?: ""
 

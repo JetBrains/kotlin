@@ -211,6 +211,7 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
                     project,
                     elementsToMove,
                     targetDir,
+                    true,
                     searchInComments = true,
                     searchInNonJavaFiles = true,
                     moveCallback = null
