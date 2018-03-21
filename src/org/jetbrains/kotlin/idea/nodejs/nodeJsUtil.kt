@@ -17,26 +17,34 @@ import java.util.*
 
 const val NODE_PATH_VAR = "NODE_PATH"
 
-fun Module.getNodeJsEnvironmentVars(): EnvironmentVariablesData {
-    val nodeJsClasspath = getNodeJsClasspath(this).joinToString(File.pathSeparator) {
+fun Module.getNodeJsEnvironmentVars(isForTests: Boolean): EnvironmentVariablesData {
+    val nodeJsClasspath = getNodeJsClasspath(this, isForTests).joinToString(File.pathSeparator) {
         val basePath = project.basePath ?: return@joinToString it
         FileUtil.getRelativePath(basePath, it, '/') ?: it
     }
     return EnvironmentVariablesData.create(mapOf(NODE_PATH_VAR to nodeJsClasspath), true)
 }
 
-private fun addSingleModulePaths(target: Module, result: MutableList<String>) {
+private fun addSingleModulePaths(
+    target: Module,
+    isForTests: Boolean,
+    result: MutableList<String>
+) {
     val compilerExtension = CompilerModuleExtension.getInstance(target) ?: return
-    result.addIfNotNull(compilerExtension.compilerOutputPath?.path)
-    result.addIfNotNull(compilerExtension.compilerOutputPathForTests?.let { "${it.path}/lib" })
+    if (isForTests) {
+        result.addIfNotNull(compilerExtension.compilerOutputPath?.path)
+        result.addIfNotNull(compilerExtension.compilerOutputPathForTests?.let { "${it.path}/lib" })
+    } else {
+        result.addIfNotNull(compilerExtension.compilerOutputPath?.let { "${it.path}/lib" })
+    }
 }
 
-private fun getNodeJsClasspath(module: Module): List<String> {
+private fun getNodeJsClasspath(module: Module, isForTests: Boolean): List<String> {
     if (!module.shouldUseJpsOutput) return emptyList()
 
     val result = ArrayList<String>()
     ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule {
-        addSingleModulePaths(it, result)
+        addSingleModulePaths(it, isForTests, result)
         true
     }
     return result

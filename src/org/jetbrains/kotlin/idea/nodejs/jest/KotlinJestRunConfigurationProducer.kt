@@ -52,7 +52,7 @@ class KotlinJestRunConfigurationProducer : JestRunConfigurationProducer() {
                 builder.setScopeKind(JestScopeKind.TEST_FILE)
             }
         }
-        builder.setEnvData(module.getNodeJsEnvironmentVars())
+        builder.setEnvData(module.getNodeJsEnvironmentVars(true))
 
         return JestTestElementInfo(builder.build(), element)
     }
