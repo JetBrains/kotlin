@@ -41,4 +41,14 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitWhen(expression: IrWhen, data: Nothing?): JsStatement {
         return expression.toJsNode(this, data, ::JsIf) ?: JsEmpty
     }
+
+    override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): JsStatement {
+        //TODO what if body null?
+        return JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), data), loop.body?.accept(this, data))
+    }
+
+    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): JsStatement {
+        //TODO what if body null?
+        return JsDoWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), data), loop.body?.accept(this, data))
+    }
 }
