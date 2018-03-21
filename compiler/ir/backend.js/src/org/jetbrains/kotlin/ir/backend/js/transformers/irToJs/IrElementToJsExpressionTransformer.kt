@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -21,8 +22,19 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): JsExpression {
-        // TODO: support all cases
-        return JsStringLiteral(expression.value.toString())
+        val kind = expression.kind
+        return when (kind) {
+            is IrConstKind.String -> JsStringLiteral(kind.valueOf(expression))
+            is IrConstKind.Null -> JsNullLiteral()
+            is IrConstKind.Boolean -> JsBooleanLiteral(kind.valueOf(expression))
+            is IrConstKind.Byte -> JsIntLiteral(kind.valueOf(expression).toInt())
+            is IrConstKind.Short -> JsIntLiteral(kind.valueOf(expression).toInt())
+            is IrConstKind.Int -> JsIntLiteral(kind.valueOf(expression))
+            is IrConstKind.Long,
+            is IrConstKind.Char -> super.visitConst(expression, data)
+            is IrConstKind.Float -> JsDoubleLiteral(kind.valueOf(expression).toDouble())
+            is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
+        }
     }
 
     override fun visitCall(expression: IrCall, data: Nothing?): JsExpression {
