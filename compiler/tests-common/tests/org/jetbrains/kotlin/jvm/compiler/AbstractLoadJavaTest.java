@@ -119,7 +119,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
         }
-        updateConfigurationWithDirectives(ktFile, configuration);
+        String fileContent = FileUtil.loadFile(ktFile, true);
+        updateConfigurationWithDirectives(fileContent, configuration);
 
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
@@ -143,11 +144,17 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         DescriptorValidator.validate(errorTypesForbidden(), packageFromSource);
         DescriptorValidator.validate(new DeserializedScopeValidationVisitor(), packageFromBinary);
         Configuration comparatorConfiguration = COMPARATOR_CONFIGURATION.checkPrimaryConstructors(true).checkPropertyAccessors(true).checkFunctionContracts(true);
-        compareDescriptors(packageFromSource, packageFromBinary, comparatorConfiguration, txtFile);
+
+        if (InTextDirectivesUtils.isDirectiveDefined(fileContent, "NO_CHECK_SOURCE_VS_BINARY")) {
+            // If NO_CHECK_SOURCE_VS_BINARY is enabled, only check that binary descriptors correspond to the .txt file content
+            validateAndCompareDescriptorWithFile(packageFromBinary, comparatorConfiguration, txtFile);
+        }
+        else {
+            compareDescriptors(packageFromSource, packageFromBinary, comparatorConfiguration, txtFile);
+        }
     }
 
-    private static void updateConfigurationWithDirectives(File file, CompilerConfiguration configuration) throws IOException {
-        String content = FileUtil.loadFile(file, true);
+    private static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
         String version = InTextDirectivesUtils.findStringWithPrefixes(content, "// LANGUAGE_VERSION:");
         if (version != null) {
             LanguageVersion explicitVersion = LanguageVersion.fromVersionString(version);

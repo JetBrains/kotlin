@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.filterOutSourceAnnotations
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -250,7 +251,7 @@ object KotlinJavascriptSerializationUtil {
                 is KotlinPsiFileMetadata -> file.ktFile.annotationEntries.map { bindingContext[BindingContext.ANNOTATION, it]!! }
                 is KotlinDeserializedFileMetadata -> file.packageFragment.fileMap[file.fileId]!!.annotations
             }
-            for (annotation in annotations) {
+            for (annotation in annotations.filterOutSourceAnnotations()) {
                 fileProto.addAnnotation(serializer.serializeAnnotation(annotation))
             }
             filesProto.addFile(fileProto)

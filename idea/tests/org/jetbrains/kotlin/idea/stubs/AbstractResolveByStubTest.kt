@@ -24,21 +24,26 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.junit.Assert
 import java.io.File
 
 abstract class AbstractResolveByStubTest : KotlinLightCodeInsightFixtureTestCase() {
-    @Throws(Exception::class)
     protected fun doTest(testFileName: String) {
         doTest(testFileName, true, true)
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    @Throws(Exception::class)
     private fun doTest(path: String, checkPrimaryConstructors: Boolean, checkPropertyAccessors: Boolean) {
+        if (InTextDirectivesUtils.isDirectiveDefined(File(path).readText(), "NO_CHECK_SOURCE_VS_BINARY")) {
+            // If NO_CHECK_SOURCE_VS_BINARY is enabled, source vs binary descriptors differ, which means that we should not run this test:
+            // it would compare descriptors resolved from sources (by stubs) with .txt, which describes binary descriptors
+            return
+        }
+
         myFixture.configureByFile(path)
         val shouldFail = getTestName(false) == "ClassWithConstVal"
         AstAccessControl.testWithControlledAccessToAst(shouldFail, project, testRootDisposable) {

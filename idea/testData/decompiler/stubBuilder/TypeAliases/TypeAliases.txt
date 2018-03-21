@@ -97,13 +97,6 @@ PsiJetFileStubImpl[package=test]
             REFERENCE_EXPRESSION[referencedName=Unit]
       TYPEALIAS[fqName=test.TypeAliases.B, isTopLevel=false, name=B]
         MODIFIER_LIST[public]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Suppress]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=Suppress]
         TYPE_REFERENCE
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
@@ -127,13 +120,6 @@ PsiJetFileStubImpl[package=test]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=test]
                   REFERENCE_EXPRESSION[referencedName=Ann]
-          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Suppress]
-            CONSTRUCTOR_CALLEE
-              TYPE_REFERENCE
-                USER_TYPE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=kotlin]
-                  REFERENCE_EXPRESSION[referencedName=Suppress]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=F]

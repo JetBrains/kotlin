@@ -433,6 +433,11 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/SimpleTypeAnnotation.kt");
             }
 
+            @TestMetadata("SourceRetention.kt")
+            public void testSourceRetention() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/SourceRetention.kt");
+            }
+
             @TestMetadata("SupertypesAndBounds.kt")
             public void testSupertypesAndBounds() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/SupertypesAndBounds.kt");

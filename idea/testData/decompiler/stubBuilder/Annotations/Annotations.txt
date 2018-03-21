@@ -268,11 +268,6 @@ PsiJetFileStubImpl[package=]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=a]
-                ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
-                  CONSTRUCTOR_CALLEE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION[referencedName=b]
               USER_TYPE
                 USER_TYPE
                   USER_TYPE
@@ -286,11 +281,6 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=b]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=b]
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]

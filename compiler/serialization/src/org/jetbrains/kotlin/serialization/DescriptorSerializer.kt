@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSourceAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -396,7 +398,9 @@ class DescriptorSerializer private constructor(
             builder.versionRequirement = requirement
         }
 
-        builder.addAllAnnotation(descriptor.annotations.map { extension.annotationSerializer.serializeAnnotation(it) })
+        for (annotation in descriptor.nonSourceAnnotations) {
+            builder.addAnnotation(extension.annotationSerializer.serializeAnnotation(annotation))
+        }
 
         return builder
     }
@@ -775,7 +779,11 @@ class DescriptorSerializer private constructor(
             Variance.OUT_VARIANCE -> ProtoBuf.Type.Argument.Projection.OUT
         }
 
-        private fun hasAnnotations(descriptor: Annotated): Boolean = !descriptor.annotations.isEmpty()
+        private fun hasAnnotations(descriptor: Annotated): Boolean {
+            // Sadly, we can't just return `descriptor.nonSourceAnnotations.isNotEmpty()` because that would not
+            // consider use-site-targeted annotations
+            return descriptor.annotations.getAllAnnotations().filterNot { it.annotation.isSourceAnnotation }.isNotEmpty()
+        }
 
         fun <T : DeclarationDescriptor> sort(descriptors: Collection<T>): List<T> =
                 ArrayList(descriptors).apply {
