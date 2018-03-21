@@ -22,6 +22,21 @@ class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
             super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
 
+    @Test
+    fun testDuplicatedClass() {
+        val project = Project("duplicatedClass")
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val usagesFiles = listOf("useBuzz.kt", "useA.kt").map { project.projectFile(it) }
+        usagesFiles.forEach { file -> file.modify { "$it\n " } }
+
+        project.build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(usagesFiles))
+        }
+    }
 
     @Test
     fun testMoveFunctionFromLib() {

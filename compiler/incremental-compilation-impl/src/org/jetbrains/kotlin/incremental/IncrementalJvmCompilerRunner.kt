@@ -314,7 +314,9 @@ class IncrementalJvmCompilerRunner(
     override fun preBuildHook(args: K2JVMCompilerArguments, compilationMode: CompilationMode) {
         when (compilationMode) {
             is CompilationMode.Incremental -> {
-                args.classpathAsList += args.destinationAsFile.apply { mkdirs() }
+                val destinationDir = args.destinationAsFile
+                destinationDir.mkdirs()
+                args.classpathAsList = listOf(destinationDir) + args.classpathAsList
             }
             is CompilationMode.Rebuild -> {
                 // there is no point in updating annotation file since all files will be compiled anyway
