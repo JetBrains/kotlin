@@ -1,20 +1,20 @@
 FILE: typeParameters.kt
-    <out T : Any> public? final interface List() {
-        public? final operator function get(index: Int): T
+    <out T : Any> public? final? interface List() {
+        public? final? operator function get(index: Int): T
 
-        public? final infix function concat(other: List<T>): List<T>
+        public? final? infix function concat(other: List<T>): List<T>
 
     }
     public? final typealias StringList = List<out String>
     public? final typealias AnyList = List<*>
     <out T : Any> public? abstract class AbstractList() : List<T> {
     }
-    public? final class SomeList() : AbstractList<Int> {
-        public? final override function get(index: Int): Int {
+    public? final? class SomeList() : AbstractList<Int> {
+        public? open? override function get(index: Int): Int {
             STUB
         }
 
-        public? final override function concat(other: List<Int>): List<Int> {
+        public? open? override function concat(other: List<Int>): List<Int> {
             STUB
         }
 

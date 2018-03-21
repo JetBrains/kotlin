@@ -45,7 +45,7 @@ class RawFirBuilder(val session: FirSession) {
             }
         }
 
-    private val KtDeclaration.modality: Modality
+    private val KtDeclaration.modality: Modality?
         get() {
             val modifierType = modalityModifierType()
             return when (modifierType) {
@@ -53,7 +53,7 @@ class RawFirBuilder(val session: FirSession) {
                 KtTokens.SEALED_KEYWORD -> Modality.SEALED
                 KtTokens.ABSTRACT_KEYWORD -> Modality.ABSTRACT
                 KtTokens.OPEN_KEYWORD -> Modality.OPEN
-                else -> Modality.FINAL // FIX ME
+                else -> null
             }
         }
 

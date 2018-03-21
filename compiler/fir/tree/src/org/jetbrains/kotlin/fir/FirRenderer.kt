@@ -106,6 +106,16 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             else -> toString()
         }
 
+    private fun FirMemberDeclaration.modalityAsString(): String {
+        return modality?.name?.toLowerCase() ?: run {
+            if (this is FirCallableMember && this.isOverride) {
+                "open?"
+            } else {
+                "final?"
+            }
+        }
+    }
+
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         memberDeclaration.annotations.renderAnnotations()
         if (memberDeclaration.typeParameters.isNotEmpty()) {
@@ -113,7 +123,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             memberDeclaration.typeParameters.renderSeparated()
             print("> ")
         }
-        print(memberDeclaration.visibility.asString() + " " + memberDeclaration.modality.name.toLowerCase() + " ")
+        print(memberDeclaration.visibility.asString() + " " + memberDeclaration.modalityAsString() + " ")
         if (memberDeclaration is FirCallableMember && memberDeclaration.isOverride) {
             print("override ")
         }

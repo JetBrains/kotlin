@@ -21,7 +21,7 @@ abstract class FirAbstractCallableMember(
     psi: PsiElement?,
     name: Name,
     visibility: Visibility,
-    modality: Modality,
+    modality: Modality?,
     final override val isOverride: Boolean,
     final override var receiverType: FirType?,
     final override var returnType: FirType

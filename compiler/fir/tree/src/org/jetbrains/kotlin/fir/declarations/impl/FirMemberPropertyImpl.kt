@@ -23,7 +23,7 @@ class FirMemberPropertyImpl(
     psi: PsiElement?,
     name: Name,
     visibility: Visibility,
-    modality: Modality,
+    modality: Modality?,
     isOverride: Boolean,
     override val isConst: Boolean,
     receiverType: FirType?,

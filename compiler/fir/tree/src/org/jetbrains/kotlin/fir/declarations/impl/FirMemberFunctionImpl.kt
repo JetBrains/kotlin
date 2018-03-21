@@ -23,7 +23,7 @@ class FirMemberFunctionImpl(
     psi: PsiElement?,
     name: Name,
     visibility: Visibility,
-    modality: Modality,
+    modality: Modality?,
     isOverride: Boolean,
     override val isOperator: Boolean,
     override val isInfix: Boolean,

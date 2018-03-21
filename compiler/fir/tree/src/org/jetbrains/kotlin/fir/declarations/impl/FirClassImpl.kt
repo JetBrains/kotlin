@@ -22,7 +22,7 @@ open class FirClassImpl(
     psi: PsiElement?,
     name: Name,
     visibility: Visibility,
-    modality: Modality,
+    modality: Modality?,
     final override val classKind: ClassKind,
     final override val isInner: Boolean,
     final override val isCompanion: Boolean,

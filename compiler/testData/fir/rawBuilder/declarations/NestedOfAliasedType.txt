@@ -5,8 +5,8 @@ FILE: NestedOfAliasedType.kt
 
     }
     public? final typealias TA = A
-    public? final class B() : TA {
-        public? final class NestedInB() : Nested {
+    public? final? class B() : TA {
+        public? final? class NestedInB() : Nested {
         }
 
     }

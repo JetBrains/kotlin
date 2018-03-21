@@ -1,26 +1,26 @@
 FILE: simpleClass.kt
-    (resolved) public? final interface SomeInterface() {
-        public? final function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/
+    (resolved) public? abstract interface SomeInterface() {
+        public? final? function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/
 
-        public? final property bar(val): R/error: Failed to resolve qualified type/
+        public? final? property bar(val): R/error: Failed to resolve qualified type/
             public? get(): R/error: Failed to resolve qualified type/
 
     }
     (resolved) public? final class SomeClass() : R/<root>.SomeInterface/ {
-        private final property baz(val): R/error: Not supported: FirImplicitTypeImpl/ = STUB
+        private final? property baz(val): R/error: Not supported: FirImplicitTypeImpl/ = STUB
             public? get(): R/error: Not supported: FirImplicitTypeImpl/
 
-        public? final override function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/ {
+        public? open? override function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/ {
         }
 
-        public? final override property bar(var): R/error: Failed to resolve qualified type/
+        public? open? override property bar(var): R/error: Failed to resolve qualified type/
             public? get(): R/error: Not supported: FirImplicitTypeImpl/ {
                 STUB
             }
             public? set(value: R/error: Failed to resolve qualified type/): R/error: Not supported: FirImplicitTypeImpl/ {
             }
 
-        public? final property fau(var): R/error: Failed to resolve qualified type/
+        public? final? property fau(var): R/error: Failed to resolve qualified type/
             public? get(): R/error: Failed to resolve qualified type/
             public? set(value: R/error: Failed to resolve qualified type/): R/kotlin.Unit/
 

@@ -6,7 +6,7 @@ FILE: NestedOfAliasedType.kt
     }
     (resolved) public? final typealias TA = R/<root>.A/
     (resolved) public? final class B() : R/<root>.TA = <root>.A/ {
-        public? final class NestedInB() : R/<root>.A.Nested/ {
+        public? final? class NestedInB() : R/<root>.A.Nested/ {
         }
 
     }

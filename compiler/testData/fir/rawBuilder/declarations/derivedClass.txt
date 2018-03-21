@@ -3,10 +3,10 @@ FILE: derivedClass.kt
         public? constructor(x: T)
 
     }
-    <T : Any> public? final class Derived() : Base<T> {
+    <T : Any> public? final? class Derived() : Base<T> {
         public? constructor(x: T)STUB
 
     }
-    <T : Any> public? final function create(x: T): Derived<T> {
+    <T : Any> public? final? function create(x: T): Derived<T> {
         STUB
     }

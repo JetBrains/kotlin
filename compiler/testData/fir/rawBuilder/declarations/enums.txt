@@ -1,5 +1,5 @@
 FILE: enums.kt
-    public? final enum class Order() {
+    public? final? enum class Order() {
         public? final enum entry FIRST() {
         }
 
@@ -10,34 +10,34 @@ FILE: enums.kt
         }
 
     }
-    public? final enum class Planet() {
+    public? final? enum class Planet() {
         public? constructor(m: Double, r: Double)
 
         public? final enum entry MERCURY() : Planet {
-            public? final override function sayHello(): <implicit> {
+            public? open? override function sayHello(): <implicit> {
             }
 
         }
 
         public? final enum entry VENERA() : Planet {
-            public? final override function sayHello(): <implicit> {
+            public? open? override function sayHello(): <implicit> {
             }
 
         }
 
         public? final enum entry EARTH() : Planet {
-            public? final override function sayHello(): <implicit> {
+            public? open? override function sayHello(): <implicit> {
             }
 
         }
 
-        public? final property g(val): Double = STUB
+        public? final? property g(val): Double = STUB
             public? get(): Double
 
         public? abstract function sayHello(): <implicit>
 
-        public? final object Companion(companion) {
-            public? final const property G(val): <implicit> = STUB
+        public? final? object Companion(companion) {
+            public? final? const property G(val): <implicit> = STUB
                 public? get(): <implicit>
 
         }

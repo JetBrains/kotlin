@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirBasedDescriptor
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvedClass
@@ -16,6 +18,9 @@ class FirResolvedClassImpl(val delegate: FirClass, override val descriptor: FirB
     init {
         descriptor.bind(this)
     }
+
+    override val modality: Modality
+        get() = delegate.modality ?: if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
         return super<FirResolvedClass>.accept(visitor, data)

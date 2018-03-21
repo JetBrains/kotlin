@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 interface FirMemberDeclaration : FirTypeParameterContainer, FirNamedDeclaration, FirAnnotationContainer {
     val visibility: Visibility
 
-    val modality: Modality
+    val modality: Modality?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitMemberDeclaration(this, data)

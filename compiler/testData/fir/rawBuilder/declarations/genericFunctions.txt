@@ -1,7 +1,7 @@
 FILE: genericFunctions.kt
-    public? final interface Any() {
+    public? final? interface Any() {
     }
-    <T : Any> public? final inline function safeAsAny.(): T? {
+    <T : Any> public? final? inline function safeAsAny.(): T? {
         STUB
     }
     public? abstract class Summator() {

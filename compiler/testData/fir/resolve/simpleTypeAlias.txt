@@ -1,5 +1,5 @@
 FILE: simpleTypeAlias.kt
-    (resolved) public? final interface B() {
+    (resolved) public? abstract interface B() {
     }
     (resolved) public? final typealias C = R/<root>.B/
     (resolved) public? final class D() : R/<root>.C = <root>.B/ {

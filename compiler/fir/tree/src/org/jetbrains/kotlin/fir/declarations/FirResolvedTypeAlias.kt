@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirDescriptorOwner
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirResolvedTypeAlias : FirTypeAlias, FirDescriptorOwner<FirResolvedTypeAlias> {
+    override val modality: Modality
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedTypeAlias(this, data)
 }

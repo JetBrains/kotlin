@@ -1,22 +1,22 @@
 FILE: enums2.kt
-    public? final interface Some() {
+    public? final? interface Some() {
     }
-    public? final object O1() : Some {
+    public? final? object O1() : Some {
     }
-    public? final object O2() : Some {
+    public? final? object O2() : Some {
     }
-    public? final enum class SomeEnum() {
+    public? final? enum class SomeEnum() {
         public? constructor(x: Some)
 
         public? final enum entry FIRST() : SomeEnum {
-            public? final override function check(y: Some): Boolean {
+            public? open? override function check(y: Some): Boolean {
                 STUB
             }
 
         }
 
         public? final enum entry SECOND() : SomeEnum {
-            public? final override function check(y: Some): Boolean {
+            public? open? override function check(y: Some): Boolean {
                 STUB
             }
 

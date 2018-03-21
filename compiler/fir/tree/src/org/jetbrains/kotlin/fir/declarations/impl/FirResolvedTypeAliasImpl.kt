@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirBasedDescriptor
 import org.jetbrains.kotlin.fir.declarations.FirResolvedTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -12,6 +13,9 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirResolvedTypeAliasImpl(val delegate: FirTypeAlias, override val descriptor: FirBasedDescriptor<FirResolvedTypeAlias>) :
     FirResolvedTypeAlias, FirTypeAlias by delegate {
+
+    override val modality: Modality
+        get() = delegate.modality ?: Modality.FINAL
 
     init {
         descriptor.bind(this)
