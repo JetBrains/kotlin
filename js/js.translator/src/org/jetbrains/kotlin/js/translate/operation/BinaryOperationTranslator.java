@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.operation;
 
-import kotlin.jvm.functions.Function4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
+import org.jetbrains.kotlin.js.translate.intrinsic.operation.BinaryOperationIntrinsic;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.lexer.KtToken;
@@ -160,7 +160,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
     @Nullable
     private JsExpression tryApplyIntrinsic() {
-        Function4<KtBinaryExpression, JsExpression, JsExpression, TranslationContext, JsExpression> intrinsic =
+        BinaryOperationIntrinsic intrinsic =
                 context().intrinsics().getBinaryOperationIntrinsic(expression, context());
 
         if (intrinsic == null) return null;
