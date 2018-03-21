@@ -11,8 +11,6 @@ kotlinProject/
     file0.js
     jslib-example.js
     jslib-example.meta.js
-    kotlin-experimental.js
-    kotlin-experimental.meta.js
     kotlin.js
     kotlin.meta.js
     res0.js
