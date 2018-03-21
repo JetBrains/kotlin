@@ -35,7 +35,7 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
         pattern("Int|Short|Byte|Float|Double.compareTo(Long)") to binaryIntrinsic(toRight = { r, _ -> longToNumber(r) }),
         pattern("Long.compareTo(Int|Short|Byte|Float|Double)") to binaryIntrinsic(toLeft = { l, _ -> longToNumber(l) }),
         // L.compareTo(R) OP 0
-        pattern("Long.compareTo(Long)") to intrinsic({ l, r, _ -> compareForObject(l, r) }, { _, _, _-> JsIntLiteral(0) })
+        pattern("Long.compareTo(Long)") to complexBinaryIntrinsic({ l, r, _ -> compareForObject(l, r) }, { _, _, _-> JsIntLiteral(0) })
     )
 
     override fun getIntrinsic(descriptor: FunctionDescriptor, leftType: KotlinType?, rightType: KotlinType?): BinaryOperationIntrinsic? {
@@ -50,7 +50,7 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
             binaryIntrinsic(coerceTo(leftType), coerceTo(rightType))
         } else {
             // Kotlin.compareTo(L, R) OP 0
-            intrinsic({ l, r, _ -> compareTo(l, r) }, { _, _, _ -> JsIntLiteral(0) })
+            complexBinaryIntrinsic({ l, r, _ -> compareTo(l, r) }, { _, _, _ -> JsIntLiteral(0) })
         }
     }
 }

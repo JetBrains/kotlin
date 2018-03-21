@@ -32,9 +32,6 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-typealias BinaryOperationIntrinsic
-        = (expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext) -> JsExpression
-
 class BinaryOperationIntrinsics {
 
     private data class IntrinsicKey(
@@ -95,11 +92,11 @@ typealias OperatorSelector = (KtBinaryExpression) -> JsBinaryOperator
 val defaultOperatorSelector: OperatorSelector = { OperatorTable.getBinaryOperator(getOperationToken(it)) }
 
 // toLeft(L, R) OP toRight(L, R)
-fun intrinsic(
+fun complexBinaryIntrinsic(
     toLeft: (JsExpression, JsExpression, TranslationContext) -> JsExpression,
     toRight: (JsExpression, JsExpression, TranslationContext) -> JsExpression,
     operator: (KtBinaryExpression) -> JsBinaryOperator = defaultOperatorSelector
-): BinaryOperationIntrinsic = { expression, left, right, context ->
+) = BinaryOperationIntrinsic { expression, left, right, context ->
     JsBinaryOperation(operator(expression), toLeft(left, right, context), toRight(left, right, context))
 }
 
@@ -108,7 +105,7 @@ fun binaryIntrinsic(
     toLeft: (JsExpression, TranslationContext) -> JsExpression = { l, _ -> l },
     toRight: (JsExpression, TranslationContext) -> JsExpression = { r, _ -> r },
     operator: OperatorSelector = defaultOperatorSelector
-): BinaryOperationIntrinsic = intrinsic({ l, _, c -> toLeft(l, c) }, { _, r, c -> toRight(r, c) }, operator)
+) = complexBinaryIntrinsic({ l, _, c -> toLeft(l, c) }, { _, r, c -> toRight(r, c) }, operator)
 
 
 fun coerceTo(type: KotlinType): (JsExpression, TranslationContext) -> JsExpression =

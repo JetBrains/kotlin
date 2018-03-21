@@ -36,12 +36,12 @@ import org.jetbrains.kotlin.types.isDynamic
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
     override fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS!!
 
-    private val equalsNullIntrinsic: BinaryOperationIntrinsic = { expression, left, right, context ->
+    private val equalsNullIntrinsic = BinaryOperationIntrinsic { expression, left, right, context ->
         val (subject, ktSubject) = if (right is JsNullLiteral) Pair(left, expression.left!!) else Pair(right, expression.right!!)
         TranslationUtils.nullCheck(ktSubject, subject, context, isNegatedOperation(expression))
     }
 
-    private val kotlinEqualsIntrinsic: BinaryOperationIntrinsic = { expression, left, right, context ->
+    private val kotlinEqualsIntrinsic = BinaryOperationIntrinsic { expression, left, right, context ->
         val coercedLeft = TranslationUtils.coerce(context, left, context.currentModule.builtIns.anyType)
         val coercedRight = TranslationUtils.coerce(context, right, context.currentModule.builtIns.anyType)
         val result = TopLevelFIF.KOTLIN_EQUALS.apply(coercedLeft, listOf(coercedRight), context)
@@ -103,7 +103,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
             isEnumEqualsIntrinsicApplicable(descriptor, leftType, rightType) -> refEqIntrinsic
 
-            KotlinBuiltIns.isBuiltIn(descriptor) || TopLevelFIF.EQUALS_IN_ANY.test(descriptor) -> { expression, left, right, context ->
+            KotlinBuiltIns.isBuiltIn(descriptor) || TopLevelFIF.EQUALS_IN_ANY.test(descriptor) -> BinaryOperationIntrinsic { expression, left, right, context ->
                 when {
                     left is JsNullLiteral || right is JsNullLiteral -> equalsNullIntrinsic
                     leftType.primitive && rightType.primitive -> primitiveTypes(leftType, rightType)

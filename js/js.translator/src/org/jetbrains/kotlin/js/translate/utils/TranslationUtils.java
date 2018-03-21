@@ -526,7 +526,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsExpression voidToUnit(@NotNull TranslationContext context, @NotNull JsExpression expression) {
+    private static JsExpression voidToUnit(@NotNull TranslationContext context, @NotNull JsExpression expression) {
         ClassDescriptor unit = context.getCurrentModule().getBuiltIns().getUnit();
         JsExpression unitRef = ReferenceTranslator.translateAsValueReference(unit, context);
         return JsAstUtils.newSequence(Arrays.asList(expression, unitRef));
