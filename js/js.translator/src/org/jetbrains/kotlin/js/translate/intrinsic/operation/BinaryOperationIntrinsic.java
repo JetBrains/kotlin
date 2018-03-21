@@ -13,5 +13,10 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression;
 @FunctionalInterface
 public interface BinaryOperationIntrinsic {
     @NotNull
-    JsExpression invoke(KtBinaryExpression expression, JsExpression left, JsExpression right, TranslationContext context);
+    JsExpression invoke(
+            @NotNull KtBinaryExpression expression,
+            @NotNull JsExpression left,
+            @NotNull JsExpression right,
+            @NotNull TranslationContext context
+    );
 }
