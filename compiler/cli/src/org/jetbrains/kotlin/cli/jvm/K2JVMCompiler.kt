@@ -377,6 +377,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             )
 
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
+            configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, arguments.useTypeTable)
             configuration.put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
             configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, !arguments.useOldClassFilesReading)
 

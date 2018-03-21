@@ -138,6 +138,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xmultifile-parts-inherit", description = "Compile multifile classes as a hierarchy of parts and facade")
     var inheritMultifileParts: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xuse-type-table", description = "Use type table in metadata serialization")
+    var useTypeTable: Boolean by FreezableVar(false)
+
     @Argument(
         value = "-Xskip-runtime-version-check",
         description = "Allow Kotlin runtime libraries of incompatible versions in the classpath"
