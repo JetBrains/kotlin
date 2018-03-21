@@ -141,6 +141,10 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
         )
 
+        if (rootProject.findProperty("versions.androidStudioRelease") != null) {
+            jvmArgs("-Didea.platform.prefix=AndroidStudio")
+        }
+
         if (project.hasProperty("noPCE")) {
             jvmArgs("-Didea.ProcessCanceledException=disabled")
         }
