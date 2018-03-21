@@ -33,6 +33,7 @@ interface IrMemberAccessExpression : IrExpression {
     // NB `typeParameterDescriptor` should be taken from `descriptor.original`
     fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType?
 
+    val valueArgumentsCount: Int
     fun getValueArgument(index: Int): IrExpression?
     fun putValueArgument(index: Int, valueArgument: IrExpression?)
     fun removeValueArgument(index: Int)

@@ -26,12 +26,13 @@ import java.lang.AssertionError
 
 abstract class IrCallWithIndexedArgumentsBase(
     startOffset: Int, endOffset: Int, type: KotlinType,
-    numArguments: Int,
+    valueArgumentsCount: Int,
     typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
     override val origin: IrStatementOrigin? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArguments) {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArguments, valueArgumentsCount) {
+
     private val argumentsByParameterIndex =
-        arrayOfNulls<IrExpression>(numArguments)
+        arrayOfNulls<IrExpression>(valueArgumentsCount)
 
     override fun getValueArgument(index: Int): IrExpression? =
         argumentsByParameterIndex[index]

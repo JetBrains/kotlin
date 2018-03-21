@@ -27,7 +27,8 @@ abstract class IrMemberAccessExpressionBase(
     startOffset: Int,
     endOffset: Int,
     type: KotlinType,
-    val typeArguments: Map<TypeParameterDescriptor, KotlinType>?
+    val typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    override val valueArgumentsCount: Int
 ) : IrExpressionBase(startOffset, endOffset, type), IrMemberAccessExpression {
     override var dispatchReceiver: IrExpression? = null
     override var extensionReceiver: IrExpression? = null

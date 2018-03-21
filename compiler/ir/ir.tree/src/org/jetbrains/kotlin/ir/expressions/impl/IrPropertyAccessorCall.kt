@@ -38,9 +38,12 @@ abstract class IrPropertyAccessorCallBase(
     override val symbol: IrFunctionSymbol,
     override val descriptor: FunctionDescriptor,
     typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType!!, typeArguments), IrCall {
+) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType!!, typeArguments, valueArgumentsCount),
+    IrCall {
+
     override val superQualifier: ClassDescriptor? get() = superQualifierSymbol?.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
@@ -59,8 +62,9 @@ class IrGetterCallImpl(
     typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, symbol, descriptor, typeArguments, origin, superQualifierSymbol),
+) : IrPropertyAccessorCallBase(startOffset, endOffset, symbol, descriptor, typeArguments, 0, origin, superQualifierSymbol),
     IrCallWithShallowCopy {
+
     constructor(
         startOffset: Int, endOffset: Int,
         symbol: IrFunctionSymbol,
@@ -110,8 +114,9 @@ class IrSetterCallImpl(
     typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, symbol, descriptor, typeArguments, origin, superQualifierSymbol),
+) : IrPropertyAccessorCallBase(startOffset, endOffset, symbol, descriptor, typeArguments, 1, origin, superQualifierSymbol),
     IrCallWithShallowCopy {
+
     constructor(
         startOffset: Int, endOffset: Int,
         symbol: IrFunctionSymbol,

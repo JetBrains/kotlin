@@ -40,6 +40,7 @@ class IrFunctionReferenceImpl(
         typeArguments,
         origin
     ) {
+
     @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,
