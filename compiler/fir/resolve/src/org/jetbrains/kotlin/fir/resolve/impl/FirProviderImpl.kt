@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 class FirProviderImpl(val session: FirSession) : FirProvider {
-    override fun getFirClassifierBySymbol(symbol: ConeSymbol): FirMemberDeclaration? {
+    override fun getFirClassifierBySymbol(symbol: ConeSymbol): FirNamedDeclaration? {
         return when(symbol) {
-            is FirBasedSymbol<*> -> symbol.fir as? FirMemberDeclaration
+            is FirBasedSymbol<*> -> symbol.fir as? FirNamedDeclaration
             is ConeClassLikeSymbol -> getFirClassifierByFqName(symbol.classId)
             else -> error("!")
         }

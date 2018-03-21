@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirNamedDeclaration
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -18,7 +19,7 @@ interface FirProvider {
 
     fun getFirClassifierContainerFile(fqName: ClassId): FirFile
 
-    fun getFirClassifierBySymbol(symbol: ConeSymbol): FirMemberDeclaration?
+    fun getFirClassifierBySymbol(symbol: ConeSymbol): FirNamedDeclaration?
 
     companion object {
         fun getInstance(session: FirSession): FirProvider = session.service()

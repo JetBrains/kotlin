@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 interface FirQualifierResolver {
-    fun resolveTypeWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): ConeKotlinType?
+    fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): ConeSymbol?
 
-    fun resolveType(parts: List<FirQualifierPart>): ConeKotlinType?
+    fun resolveSymbol(parts: List<FirQualifierPart>): ConeSymbol?
 
     companion object {
         fun getInstance(session: FirSession): FirQualifierResolver = session.service()

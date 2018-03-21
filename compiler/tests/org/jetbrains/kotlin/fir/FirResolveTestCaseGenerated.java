@@ -110,5 +110,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/multifile/simpleImportOuter.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("TypeAliasExpansion.kt")
+        public void testTypeAliasExpansion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/multifile/TypeAliasExpansion.kt");
+            doTest(fileName);
+        }
     }
 }

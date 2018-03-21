@@ -1,0 +1,3 @@
+FILE: TypeAliasExpansion.kt
+    (resolved) public? final class MyClass() : R/b/TA = b/A/ {
+    }

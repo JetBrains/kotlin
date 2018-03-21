@@ -3,6 +3,6 @@ FILE: typeAliasWithGeneric.kt
     }
     (resolved) <(resolved) S, (resolved) T : R/A/> public? abstract interface B() {
     }
-    (resolved) <(resolved) T> public? final typealias C = R/B<T, A>/
     (resolved) public? final class D() : R/C<A> = B<T, A>/ {
     }
+    (resolved) <(resolved) T> public? final typealias C = R/B<T, A>/

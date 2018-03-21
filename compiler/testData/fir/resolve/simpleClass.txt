@@ -1,27 +1,27 @@
 FILE: simpleClass.kt
     (resolved) public? abstract interface SomeInterface() {
-        public? final? function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/
+        public? final? function foo(x: R/error: Symbol not found/, y: R/error: Symbol not found/): R/error: Symbol not found/
 
-        public? final? property bar(val): R/error: Failed to resolve qualified type/
-            public? get(): R/error: Failed to resolve qualified type/
+        public? final? property bar(val): R/error: Symbol not found/
+            public? get(): R/error: Symbol not found/
 
     }
     (resolved) public? final class SomeClass() : R/SomeInterface/ {
         private final? property baz(val): R/error: Not supported: FirImplicitTypeImpl/ = STUB
             public? get(): R/error: Not supported: FirImplicitTypeImpl/
 
-        public? open? override function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/ {
+        public? open? override function foo(x: R/error: Symbol not found/, y: R/error: Symbol not found/): R/error: Symbol not found/ {
         }
 
-        public? open? override property bar(var): R/error: Failed to resolve qualified type/
+        public? open? override property bar(var): R/error: Symbol not found/
             public? get(): R/error: Not supported: FirImplicitTypeImpl/ {
                 STUB
             }
-            public? set(value: R/error: Failed to resolve qualified type/): R/error: Not supported: FirImplicitTypeImpl/ {
+            public? set(value: R/error: Symbol not found/): R/error: Not supported: FirImplicitTypeImpl/ {
             }
 
-        public? final? property fau(var): R/error: Failed to resolve qualified type/
-            public? get(): R/error: Failed to resolve qualified type/
-            public? set(value: R/error: Failed to resolve qualified type/): R/kotlin/Unit/
+        public? final? property fau(var): R/error: Symbol not found/
+            public? get(): R/error: Symbol not found/
+            public? set(value: R/error: Symbol not found/): R/kotlin/Unit/
 
     }

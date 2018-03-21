@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
@@ -20,8 +23,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-
-fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(this)) }
 
 class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -94,11 +95,15 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
 
     override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
         val typeResolver = FirTypeResolver.getInstance(type.session)
-        type.transformChildren(this, data)
+        type.transformChildren(this, null)
+        return transformType(type, typeResolver.resolveType(type, scope))
+    }
+
+    private fun transformType(type: FirType, resolvedType: ConeKotlinType): CompositeTransformResult<FirType> {
         return FirResolvedTypeImpl(
             type.session,
             type.psi,
-            typeResolver.resolveType(type, scope),
+            resolvedType,
             false,
             type.annotations
         ).compose()
@@ -109,16 +114,27 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
     }
 
 
+    override fun transformTypeProjectionWithVariance(
+        typeProjectionWithVariance: FirTypeProjectionWithVariance,
+        data: Nothing?
+    ): CompositeTransformResult<FirTypeProjection> {
+        typeProjectionWithVariance.transformChildren(this, data)
+        return typeProjectionWithVariance.compose()
+    }
+
     private inner class SuperTypeResolver : FirTransformer<Nothing?>() {
         override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
             return element.compose()
         }
 
         override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
-            val transformedType = this@FirTypeResolveTransformer.transformType(type, data).single as FirResolvedType
+            val typeResolver = FirTypeResolver.getInstance(type.session)
+            val symbol = typeResolver.resolveToSymbol(type, scope)
+            val myTransformer = this@FirTypeResolveTransformer
 
-            val classId = (transformedType.type as? ConeClassLikeType)?.symbol?.classId ?: return transformedType.compose()
-            val firProvider = FirProvider.getInstance(transformedType.session)
+            if (type !is FirUserType) return myTransformer.transformType(type, data)
+            val classId = (symbol as? ConeClassLikeSymbol)?.classId ?: return myTransformer.transformType(type, data)
+            val firProvider = FirProvider.getInstance(type.session)
 
             val classes = generateSequence(classId) { it.outerClassId }.toList()
 
@@ -132,7 +148,9 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
                 firProvider.getFirClassifierByFqName(it)!!.transformSingle(transformer, data)
             }
 
-            return transformedType.compose()
+
+            type.transformChildren(myTransformer, null)
+            return myTransformer.transformType(type, typeResolver.resolveUserType(type, symbol, scope))
         }
     }
 

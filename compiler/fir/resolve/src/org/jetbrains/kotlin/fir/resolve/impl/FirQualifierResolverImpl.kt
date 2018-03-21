@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -20,43 +22,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
 
-    private fun List<FirQualifierPart>.toTypeProjections() = flatMap {
-        it.typeArguments.map {
-            when (it) {
-                is FirStarProjection -> StarProjection
-                is FirTypeProjectionWithVariance -> {
-                    val type = (it.type as FirResolvedType).type
-                    when (it.variance) {
-                        Variance.INVARIANT -> type
-                        Variance.IN_VARIANCE -> ConeKotlinTypeProjectionInImpl(type)
-                        Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOutImpl(type)
-                    }
-                }
-                else -> error("!")
-            }
-        }
-    }
-
-    private fun FirMemberDeclaration.toConeKotlinType(fqName: ClassId, parts: List<FirQualifierPart>): ConeKotlinType? {
-        return when (this) {
-            is FirClass -> {
-                ConeClassTypeImpl(fqName.toSymbol(), parts.toTypeProjections())
-            }
-            is FirTypeAlias -> {
-                val expansion = expandedType.coneTypeSafe<ConeClassLikeType>()
-                        ?: return ConeKotlinErrorType("Couldn't resolve expansion")
-
-                ConeAbbreviatedTypeImpl(
-                    abbreviationSymbol = fqName.toSymbol(),
-                    typeArguments = parts.toTypeProjections(),
-                    directExpansion = expansion
-                )
-            }
-            else -> error("!")
-        }
-    }
-
-    override fun resolveTypeWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): ConeKotlinType? {
+    override fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): ConeSymbol? {
         val firProvider = FirProvider.getInstance(session)
 
         val fqName = ClassId(
@@ -64,12 +30,12 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
             parts.drop(1).fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
             false
         )
-        val foundClassifier = firProvider.getFirClassifierByFqName(fqName)
+        firProvider.getFirClassifierByFqName(fqName) ?: return null
 
-        return foundClassifier?.toConeKotlinType(fqName, parts)
+        return ConeClassLikeSymbol(fqName)
     }
 
-    override fun resolveType(parts: List<FirQualifierPart>): ConeKotlinType? {
+    override fun resolveSymbol(parts: List<FirQualifierPart>): ConeSymbol? {
         val firProvider = FirProvider.getInstance(session)
 
         if (parts.isNotEmpty()) {
@@ -84,7 +50,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
                 val foundClassifier = firProvider.getFirClassifierByFqName(fqName)
 
                 if (foundClassifier != null) {
-                    return foundClassifier.toConeKotlinType(fqName, parts)
+                    return ConeClassLikeSymbol(fqName)
                 }
             }
             return null
