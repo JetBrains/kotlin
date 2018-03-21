@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.removeAll
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 
@@ -18,7 +19,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 // Remove all of them since these locals are
 //  1) going to be spilled into continuation object
 //  2) breaking tail-call elimination
-class RedundantLocalsEliminationMethodTransformer : MethodTransformer() {
+class RedundantLocalsEliminationMethodTransformer(private val languageVersionSettings: LanguageVersionSettings) : MethodTransformer() {
     lateinit var internalClassName: String
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         this.internalClassName = internalClassName
@@ -26,7 +27,7 @@ class RedundantLocalsEliminationMethodTransformer : MethodTransformer() {
             var changed = false
             changed = simpleRemove(methodNode) || changed
             changed = removeWithReplacement(methodNode) || changed
-            changed = removeAloadCheckcastContinuationAstore(methodNode) || changed
+            changed = removeAloadCheckcastContinuationAstore(methodNode, languageVersionSettings) || changed
         } while (changed)
     }
 
@@ -139,12 +140,12 @@ class RedundantLocalsEliminationMethodTransformer : MethodTransformer() {
     //  ...
     //  ALOAD K
     //  CHECKCAST Continuation
-    private fun removeAloadCheckcastContinuationAstore(methodNode: MethodNode): Boolean {
+    private fun removeAloadCheckcastContinuationAstore(methodNode: MethodNode, languageVersionSettings: LanguageVersionSettings): Boolean {
         // Here we ignore the duplicates of continuation in local variable table,
         // Since it increases performance greatly.
         val insns = findSafeAstorePredecessors(methodNode, ignoreLocalVariableTable = true) {
             it.opcode == Opcodes.CHECKCAST &&
-                    (it as TypeInsnNode).desc == CONTINUATION_ASM_TYPE.internalName &&
+                    (it as TypeInsnNode).desc == languageVersionSettings.continuationAsmType().internalName &&
                     it.previous?.opcode == Opcodes.ALOAD
         }
 

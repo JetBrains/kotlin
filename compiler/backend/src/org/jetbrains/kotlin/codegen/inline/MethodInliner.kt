@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
+import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
@@ -50,6 +50,7 @@ class MethodInliner(
         private val shouldPreprocessApiVersionCalls: Boolean = false
 ) {
     private val typeMapper = inliningContext.state.typeMapper
+    private val languageVersionSettings = inliningContext.state.languageVersionSettings
     private val invokeCalls = ArrayList<InvokeCall>()
     //keeps order
     private val transformations = ArrayList<TransformationInfo>()
@@ -292,7 +293,7 @@ class MethodInliner(
                         }
 
                         val isContinuationCreate = isContinuation && oldInfo != null && resultNode.name == "create" &&
-                                resultNode.desc.endsWith(")" + CONTINUATION_ASM_TYPE.descriptor)
+                                resultNode.desc.endsWith(")" + languageVersionSettings.continuationAsmType().descriptor)
 
                         for (capturedParamDesc in info.allRecapturedParameters) {
                             if (capturedParamDesc.fieldName == THIS && isContinuationCreate) {
@@ -660,7 +661,7 @@ class MethodInliner(
         // We can't have suspending constructors.
         assert(invoke.opcode != Opcodes.INVOKESPECIAL)
         if (Type.getReturnType(invoke.desc) != OBJECT_TYPE) return false
-        return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == CONTINUATION_ASM_TYPE }
+        return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == languageVersionSettings.continuationAsmType() }
     }
 
     private fun preprocessNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {

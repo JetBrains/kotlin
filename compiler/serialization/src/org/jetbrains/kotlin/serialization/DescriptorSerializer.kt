@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -502,7 +502,7 @@ class DescriptorSerializer private constructor(
         }
 
         if (type.isSuspendFunctionType) {
-            val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type))
+            val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type, extension.releaseCoroutines()))
             functionType.flags = Flags.getTypeFlags(true)
             return functionType
         }

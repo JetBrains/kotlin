@@ -35,10 +35,10 @@ abstract class AbstractUselessCallInspection : AbstractKotlinInspection() {
     protected abstract val uselessNames: Set<String>
 
     protected abstract fun QualifiedExpressionVisitor.suggestConversionIfNeeded(
-            expression: KtQualifiedExpression,
-            calleeExpression: KtExpression,
-            context: BindingContext,
-            conversion: Conversion
+        expression: KtQualifiedExpression,
+        calleeExpression: KtExpression,
+        context: BindingContext,
+        conversion: Conversion
     )
 
     inner class QualifiedExpressionVisitor internal constructor(val holder: ProblemsHolder, val isOnTheFly: Boolean) : KtVisitorVoid() {
