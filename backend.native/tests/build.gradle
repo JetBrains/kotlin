@@ -1958,6 +1958,11 @@ task lambda13(type: RunKonanTest) {
     source = "codegen/lambda/lambda13.kt"
 }
 
+task lambda14(type: RunStandaloneKonanTest) {
+    source = "codegen/lambda/lambda14.kt"
+    flags = ['-tr']
+}
+
 task objectExpression1(type: RunKonanTest) {
     goldValue = "aabb\n"
     source = "codegen/objectExpression/expr1.kt"
