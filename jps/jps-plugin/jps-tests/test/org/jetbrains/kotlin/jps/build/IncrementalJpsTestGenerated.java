@@ -117,6 +117,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("duplicatedClass")
+        public void testDuplicatedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/duplicatedClass/");
+            doTest(fileName);
+        }
+
         @TestMetadata("exportedDependency")
         public void testExportedDependency() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/exportedDependency/");
