@@ -1,6 +1,6 @@
 FILE: simpleTypeAlias.kt
-    unknown final interface B() {
+    public? final interface B() {
     }
-    unknown final typealias C = B
-    unknown final class D() : C {
+    public? final typealias C = B
+    public? final class D() : C {
     }

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.*
@@ -98,6 +100,12 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         callableMember.returnType.accept(this)
     }
 
+    private fun Visibility.asString() =
+        when (this) {
+            Visibilities.UNKNOWN -> "public?"
+            else -> toString()
+        }
+
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         memberDeclaration.annotations.renderAnnotations()
         if (memberDeclaration.typeParameters.isNotEmpty()) {
@@ -105,7 +113,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             memberDeclaration.typeParameters.renderSeparated()
             print("> ")
         }
-        print(memberDeclaration.visibility.toString() + " " + memberDeclaration.modality.name.toLowerCase() + " ")
+        print(memberDeclaration.visibility.asString() + " " + memberDeclaration.modality.name.toLowerCase() + " ")
         if (memberDeclaration is FirCallableMember && memberDeclaration.isOverride) {
             print("override ")
         }
@@ -217,7 +225,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitConstructor(constructor: FirConstructor) {
         constructor.annotations.renderAnnotations()
-        print(constructor.visibility.toString() + " constructor")
+        print(constructor.visibility.asString() + " constructor")
         constructor.valueParameters.renderParameters()
         constructor.delegatedConstructor?.accept(this)
         constructor.body?.accept(this)
@@ -228,7 +236,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
         propertyAccessor.annotations.renderAnnotations()
-        print(propertyAccessor.visibility.toString() + " ")
+        print(propertyAccessor.visibility.asString() + " ")
         print(if (propertyAccessor.isGetter) "get" else "set")
         propertyAccessor.valueParameters.renderParameters()
         print(": ")

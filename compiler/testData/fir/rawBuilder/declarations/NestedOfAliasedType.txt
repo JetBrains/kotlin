@@ -1,12 +1,12 @@
 FILE: NestedOfAliasedType.kt
-    unknown abstract class A() {
-        unknown abstract class Nested() {
+    public? abstract class A() {
+        public? abstract class Nested() {
         }
 
     }
-    unknown final typealias TA = A
-    unknown final class B() : TA {
-        unknown final class NestedInB() : Nested {
+    public? final typealias TA = A
+    public? final class B() : TA {
+        public? final class NestedInB() : Nested {
         }
 
     }

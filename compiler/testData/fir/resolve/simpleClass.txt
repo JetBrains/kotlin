@@ -1,27 +1,27 @@
 FILE: simpleClass.kt
-    (resolved) unknown final interface SomeInterface() {
-        unknown final function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/
+    (resolved) public? final interface SomeInterface() {
+        public? final function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/
 
-        unknown final property bar(val): R/error: Failed to resolve qualified type/
-            unknown get(): R/error: Failed to resolve qualified type/
+        public? final property bar(val): R/error: Failed to resolve qualified type/
+            public? get(): R/error: Failed to resolve qualified type/
 
     }
-    (resolved) unknown final class SomeClass() : R/<root>.SomeInterface/ {
+    (resolved) public? final class SomeClass() : R/<root>.SomeInterface/ {
         private final property baz(val): R/error: Not supported: FirImplicitTypeImpl/ = STUB
-            unknown get(): R/error: Not supported: FirImplicitTypeImpl/
+            public? get(): R/error: Not supported: FirImplicitTypeImpl/
 
-        unknown final override function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/ {
+        public? final override function foo(x: R/error: Failed to resolve qualified type/, y: R/error: Failed to resolve qualified type/): R/error: Failed to resolve qualified type/ {
         }
 
-        unknown final override property bar(var): R/error: Failed to resolve qualified type/
-            unknown get(): R/error: Not supported: FirImplicitTypeImpl/ {
+        public? final override property bar(var): R/error: Failed to resolve qualified type/
+            public? get(): R/error: Not supported: FirImplicitTypeImpl/ {
                 STUB
             }
-            unknown set(value: R/error: Failed to resolve qualified type/): R/error: Not supported: FirImplicitTypeImpl/ {
+            public? set(value: R/error: Failed to resolve qualified type/): R/error: Not supported: FirImplicitTypeImpl/ {
             }
 
-        unknown final property fau(var): R/error: Failed to resolve qualified type/
-            unknown get(): R/error: Failed to resolve qualified type/
-            unknown set(value: R/error: Failed to resolve qualified type/): R/kotlin.Unit/
+        public? final property fau(var): R/error: Failed to resolve qualified type/
+            public? get(): R/error: Failed to resolve qualified type/
+            public? set(value: R/error: Failed to resolve qualified type/): R/kotlin.Unit/
 
     }

@@ -1,5 +1,5 @@
 FILE: F.kt
-    unknown open class A() {
+    public? open class A() {
     }
-    unknown final class B() : A {
+    public? final class B() : A {
     }

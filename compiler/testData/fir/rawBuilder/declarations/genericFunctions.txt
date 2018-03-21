@@ -1,10 +1,10 @@
 FILE: genericFunctions.kt
-    unknown final interface Any() {
+    public? final interface Any() {
     }
-    <T : Any> unknown final inline function safeAsAny.(): T? {
+    <T : Any> public? final inline function safeAsAny.(): T? {
         STUB
     }
-    unknown abstract class Summator() {
-        <T> unknown abstract function plus(first: T, second: T): T
+    public? abstract class Summator() {
+        <T> public? abstract function plus(first: T, second: T): T
 
     }

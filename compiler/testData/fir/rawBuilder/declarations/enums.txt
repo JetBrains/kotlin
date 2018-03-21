@@ -1,44 +1,44 @@
 FILE: enums.kt
-    unknown final enum class Order() {
-        unknown final enum entry FIRST() {
+    public? final enum class Order() {
+        public? final enum entry FIRST() {
         }
 
-        unknown final enum entry SECOND() {
+        public? final enum entry SECOND() {
         }
 
-        unknown final enum entry THIRD() {
+        public? final enum entry THIRD() {
         }
 
     }
-    unknown final enum class Planet() {
-        unknown constructor(m: Double, r: Double)
+    public? final enum class Planet() {
+        public? constructor(m: Double, r: Double)
 
-        unknown final enum entry MERCURY() : Planet {
-            unknown final override function sayHello(): <implicit> {
+        public? final enum entry MERCURY() : Planet {
+            public? final override function sayHello(): <implicit> {
             }
 
         }
 
-        unknown final enum entry VENERA() : Planet {
-            unknown final override function sayHello(): <implicit> {
+        public? final enum entry VENERA() : Planet {
+            public? final override function sayHello(): <implicit> {
             }
 
         }
 
-        unknown final enum entry EARTH() : Planet {
-            unknown final override function sayHello(): <implicit> {
+        public? final enum entry EARTH() : Planet {
+            public? final override function sayHello(): <implicit> {
             }
 
         }
 
-        unknown final property g(val): Double = STUB
-            unknown get(): Double
+        public? final property g(val): Double = STUB
+            public? get(): Double
 
-        unknown abstract function sayHello(): <implicit>
+        public? abstract function sayHello(): <implicit>
 
-        unknown final object Companion(companion) {
-            unknown final const property G(val): <implicit> = STUB
-                unknown get(): <implicit>
+        public? final object Companion(companion) {
+            public? final const property G(val): <implicit> = STUB
+                public? get(): <implicit>
 
         }
 

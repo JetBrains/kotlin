@@ -1,11 +1,11 @@
 FILE: complexTypes.kt
-    <T, out S> unknown final class C() {
-        <R, in P> unknown final class D(inner) {
+    <T, out S> public? final class C() {
+        <R, in P> public? final class D(inner) {
         }
 
     }
-    unknown final interface Test() {
-        unknown final property x(val): a.b.C<out CharSequence, *>.D<in List<*>, *>
-            unknown get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
+    public? final interface Test() {
+        public? final property x(val): a.b.C<out CharSequence, *>.D<in List<*>, *>
+            public? get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
 
     }

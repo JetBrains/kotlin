@@ -1,6 +1,6 @@
 FILE: simpleTypeAlias.kt
-    (resolved) unknown final interface B() {
+    (resolved) public? final interface B() {
     }
-    (resolved) unknown final typealias C = R/<root>.B/
-    (resolved) unknown final class D() : R/<root>.C = <root>.B/ {
+    (resolved) public? final typealias C = R/<root>.B/
+    (resolved) public? final class D() : R/<root>.C = <root>.B/ {
     }

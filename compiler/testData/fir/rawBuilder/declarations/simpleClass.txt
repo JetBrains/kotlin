@@ -1,27 +1,27 @@
 FILE: simpleClass.kt
-    unknown final interface SomeInterface() {
-        unknown final function foo(x: Int, y: String): String
+    public? final interface SomeInterface() {
+        public? final function foo(x: Int, y: String): String
 
-        unknown final property bar(val): Boolean
-            unknown get(): Boolean
+        public? final property bar(val): Boolean
+            public? get(): Boolean
 
     }
-    unknown final class SomeClass() : SomeInterface {
+    public? final class SomeClass() : SomeInterface {
         private final property baz(val): <implicit> = STUB
-            unknown get(): <implicit>
+            public? get(): <implicit>
 
-        unknown final override function foo(x: Int, y: String): String {
+        public? final override function foo(x: Int, y: String): String {
         }
 
-        unknown final override property bar(var): Boolean
-            unknown get(): <implicit> {
+        public? final override property bar(var): Boolean
+            public? get(): <implicit> {
                 STUB
             }
-            unknown set(value: Boolean): <implicit> {
+            public? set(value: Boolean): <implicit> {
             }
 
-        unknown final property fau(var): Double
-            unknown get(): Double
-            unknown set(value: Double): R/kotlin.Unit/
+        public? final property fau(var): Double
+            public? get(): Double
+            public? set(value: Double): R/kotlin.Unit/
 
     }
