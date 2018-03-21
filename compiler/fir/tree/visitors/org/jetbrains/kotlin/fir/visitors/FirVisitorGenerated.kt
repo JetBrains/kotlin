@@ -82,6 +82,10 @@ abstract class FirVisitor<out R, in D> {
         return visitNamedDeclaration(typeParameter, data)
     }
 
+    open fun visitResolvedTypeParameter(resolvedTypeParameter: FirResolvedTypeParameter, data: D): R {
+        return visitTypeParameter(resolvedTypeParameter, data)
+    }
+
     open fun visitProperty(property: FirProperty, data: D): R {
         return visitDeclaration(property, data)
     }

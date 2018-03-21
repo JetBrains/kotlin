@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 class ConeClassDescriptorImpl(
     override val typeParameters: List<ConeTypeParameterDescriptor>,
-    override val fqName: ClassId,
+    override val classId: ClassId,
     override val superTypes: List<ConeKotlinType>,
     override val nestedClassifiers: List<ConeClassifierDescriptor>
 ) : ConeClassDescriptor, AbstractFirBasedDescriptor<FirResolvedClass>()

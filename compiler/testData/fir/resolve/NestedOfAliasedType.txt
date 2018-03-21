@@ -4,9 +4,9 @@ FILE: NestedOfAliasedType.kt
         }
 
     }
-    (resolved) public? final typealias TA = R/<root>.A/
-    (resolved) public? final class B() : R/<root>.TA = <root>.A/ {
-        (resolved) public? final class NestedInB() : R/<root>.A.Nested/ {
+    (resolved) public? final typealias TA = R/A/
+    (resolved) public? final class B() : R/TA = A/ {
+        (resolved) public? final class NestedInB() : R/A.Nested/ {
         }
 
     }

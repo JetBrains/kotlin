@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirExplicitImportingScope(imports: List<FirImport>) : FirScope {
@@ -19,10 +20,10 @@ class FirExplicitImportingScope(imports: List<FirImport>) : FirScope {
             .filter { !it.isAllUnder }
             .groupBy { it.aliasName ?: it.resolvedFqName.shortClassName }
 
-    override fun processClassifiersByName(name: Name, processor: (ClassId) -> Boolean): Boolean {
+    override fun processClassifiersByName(name: Name, processor: (ConeSymbol) -> Boolean): Boolean {
         val imports = simpleImports[name] ?: return true
         for (import in imports) {
-            if (!processor(import.resolvedFqName)) {
+            if (!processor(import.resolvedFqName.toSymbol())) {
                 return false
             }
         }

@@ -61,6 +61,18 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("typeAliasWithGeneric.kt")
+    public void testTypeAliasWithGeneric() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/typeAliasWithGeneric.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("typeParameterVsNested.kt")
+    public void testTypeParameterVsNested() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/typeParameterVsNested.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/fir/resolve/multifile")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

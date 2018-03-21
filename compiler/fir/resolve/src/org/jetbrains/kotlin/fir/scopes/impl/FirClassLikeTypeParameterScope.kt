@@ -8,23 +8,19 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirScope {
+class FirClassLikeTypeParameterScope(val classId: ClassId, val session: FirSession) : FirScope {
+
+    private val firProvider = FirProvider.getInstance(session)
+
+    val typeParameters = firProvider.getFirClassifierByFqName(classId)?.typeParameters.orEmpty().groupBy { it.name }
+
     override fun processClassifiersByName(name: Name, processor: (ConeSymbol) -> Boolean): Boolean {
-        val unambiguousFqName = ClassId(fqName, name)
+        val matchedTypeParameters = typeParameters[name] ?: return true
 
-        val firProvider = session.service<FirProvider>()
-
-        return if (firProvider.getFirClassifierByFqName(unambiguousFqName) != null) {
-            processor(unambiguousFqName.toSymbol())
-        } else {
-            true
-        }
+        return matchedTypeParameters.all { processor(it.symbol) }
     }
 }

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.Name
 
 interface FirScope {
-    fun processClassifiersByName(name: Name, processor: (ClassId) -> Boolean): Boolean
+    fun processClassifiersByName(name: Name, processor: (ConeSymbol) -> Boolean): Boolean
 }

@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -293,6 +296,11 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         println()
     }
 
+    override fun visitResolvedTypeParameter(resolvedTypeParameter: FirResolvedTypeParameter) {
+        print("(resolved) ")
+        visitTypeParameter(resolvedTypeParameter)
+    }
+
     override fun visitTypeParameter(typeParameter: FirTypeParameter) {
         typeParameter.annotations.renderAnnotations()
         typeParameter.variance.renderVariance()
@@ -399,32 +407,37 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitTypeWithNullability(functionType)
     }
 
+    private fun ConeSymbol.asString(): String {
+        return when (this) {
+            is ConeClassLikeSymbol -> classId.asString()
+            is FirTypeParameterSymbol -> fir.name.asString()
+            else -> "Unsupported: ${this::class}"
+        }
+    }
+
     private fun ConeKotlinType.asString(): String {
         return when (this) {
             is ConeKotlinErrorType -> "error: $reason"
-            is ConeClassType -> {
+            is ConeClassLikeType -> {
                 val sb = StringBuilder()
-                val fqName = fqName
-                val packageFqName = fqName.packageFqName
-                if (packageFqName.isRoot) {
-                    sb.append("<root>")
-                } else {
-                    sb.append(packageFqName.asString().replace('.', '/'))
+                sb.append(symbol.classId.asString())
+                if (typeArguments.isNotEmpty()) {
+                    sb.append(typeArguments.joinToString(prefix = "<", postfix = ">") { it ->
+                        when (it) {
+                            StarProjection -> "*"
+                            is ConeKotlinTypeProjectionIn -> "in ${it.type.asString()}"
+                            is ConeKotlinTypeProjectionOut -> "out ${it.type.asString()}"
+                            is ConeKotlinType -> it.asString()
+                        }
+                    })
                 }
-                sb.append('.')
-                sb.append(fqName.relativeClassName.asString())
-                sb.append(typeArguments.joinToString { it ->
-                    when (it) {
-                        StarProjection -> "*"
-                        is ConeKotlinTypeProjectionIn -> "in ${it.type.asString()}"
-                        is ConeKotlinTypeProjectionOut -> "out ${it.type.asString()}"
-                        is ConeKotlinType -> it.asString()
-                    }
-                })
                 if (this is ConeAbbreviatedType) {
                     sb.append(" = ${this.directExpansion.asString()}")
                 }
                 sb.toString()
+            }
+            is ConeTypeParameterType -> {
+                symbol.asString()
             }
             else -> "Unsupported: $this"
         }

@@ -10,14 +10,18 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedTypeAliasImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedTypeParameterImpl
 import org.jetbrains.kotlin.fir.descriptors.ConeClassifierDescriptor
 import org.jetbrains.kotlin.fir.descriptors.ConeTypeParameterDescriptor
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -31,11 +35,11 @@ class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
         return file.also { it.transformChildren(this, null) }.compose()
     }
 
-    var className: FqName = FqName.ROOT
+    private var classLikeName: FqName = FqName.ROOT
 
     override fun transformClass(klass: FirClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        val actualClassName = className.child(klass.name)
-        className = actualClassName
+        val actualClassName = classLikeName.child(klass.name)
+        classLikeName = actualClassName
 
         klass.transformChildren(this, data)
 
@@ -43,7 +47,7 @@ class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
             (it as FirResolvedType).type
         }
 
-        className = className.parent()
+        classLikeName = classLikeName.parent()
 
         val typeParameters =
             klass.typeParameters.filterIsInstance<FirDescriptorOwner<*>>().mapNotNull { it.descriptor as? ConeTypeParameterDescriptor }
@@ -65,15 +69,30 @@ class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
         return resolvedClass.compose()
     }
 
+    var memberName: Name? = null
+
+    override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        memberName = namedFunction.name
+        return super.transformNamedFunction(namedFunction, data).also {
+            memberName = null
+        }
+    }
+
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        val actualClassName = classLikeName.child(typeAlias.name)
+        classLikeName = actualClassName
+
         typeAlias.transformChildren(this, data)
+
+        classLikeName = classLikeName.parent()
+
         val expandedType = (typeAlias.expandedType as FirResolvedType).type
         val typeParameters =
             typeAlias.typeParameters.filterIsInstance<FirDescriptorOwner<*>>().mapNotNull { it.descriptor as? ConeTypeParameterDescriptor }
 
         val descriptor = ConeTypeAliasDescriptorImpl(
             typeParameters,
-            ClassId(packageFqName, className.child(typeAlias.name), false),
+            ClassId(packageFqName, classLikeName.child(typeAlias.name), false),
             expandedType
         )
 
@@ -85,5 +104,19 @@ class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
         data: Nothing?
     ): CompositeTransformResult<FirDeclaration> {
         return resolvedTypeAlias.compose()
+    }
+
+    override fun transformResolvedTypeParameter(
+        resolvedTypeParameter: FirResolvedTypeParameter,
+        data: Nothing?
+    ): CompositeTransformResult<FirDeclaration> {
+        return resolvedTypeParameter.compose()
+    }
+
+    override fun transformTypeParameter(typeParameter: FirTypeParameter, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        typeParameter.transformChildren(this, data)
+
+        val descriptor = ConeTypeParameterDescriptorImpl(typeParameter.symbol)
+        return FirResolvedTypeParameterImpl(typeParameter, descriptor).compose()
     }
 }

@@ -6,9 +6,14 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserType
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.types.TypeProjectionBase
 import java.util.*
 
 class FirUserTypeImpl(
@@ -17,4 +22,12 @@ class FirUserTypeImpl(
     isNullable: Boolean
 ) : FirAbstractAnnotatedType(session, psi, isNullable), FirUserType {
     override val qualifier = LinkedList<FirQualifierPart>()
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        for (part in qualifier) {
+            (part.typeArguments as MutableList<FirTypeProjection>).transformInplace(transformer, data)
+        }
+
+        return this
+    }
 }

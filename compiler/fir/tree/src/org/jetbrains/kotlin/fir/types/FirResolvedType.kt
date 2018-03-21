@@ -15,4 +15,4 @@ interface FirResolvedType : FirTypeWithNullability {
 }
 
 inline fun <reified T : ConeKotlinType> FirType.coneTypeUnsafe() = (this as FirResolvedType).type as T
-inline fun <reified T : ConeKotlinType> FirType.coneTypeSafe() = (this as FirResolvedType).type as? T
+inline fun <reified T : ConeKotlinType> FirType.coneTypeSafe() = (this as? FirResolvedType)?.type as? T

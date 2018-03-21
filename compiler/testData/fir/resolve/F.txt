@@ -1,5 +1,5 @@
 FILE: F.kt
     (resolved) public? open class A() {
     }
-    (resolved) public? final class B() : R/<root>.A/ {
+    (resolved) public? final class B() : R/A/ {
     }

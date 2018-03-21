@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -24,6 +25,7 @@ class FirTypeAliasImpl(
     override var expandedType: FirType
 ) : FirAbstractMemberDeclaration(session, psi, name, visibility, Modality.FINAL), FirTypeAlias {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        typeParameters.transformInplace(transformer, data)
         expandedType = expandedType.transformSingle(transformer, data)
 
         return this

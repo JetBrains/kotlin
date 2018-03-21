@@ -1,5 +1,5 @@
 FILE: TwoDeclarationsInSameFile.kt
     (resolved) public? open class A() {
     }
-    (resolved) public? final class B() : R/p.A/ {
+    (resolved) public? final class B() : R/p/A/ {
     }

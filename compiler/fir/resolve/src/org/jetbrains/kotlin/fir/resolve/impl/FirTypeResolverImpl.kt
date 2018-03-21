@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.fir.resolve.impl
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
 class FirTypeResolverImpl : FirTypeResolver {
     override fun resolveType(type: FirType, scope: FirScope): ConeKotlinType {
@@ -20,8 +23,17 @@ class FirTypeResolverImpl : FirTypeResolver {
                 val qualifierResolver = FirQualifierResolver.getInstance(type.session)
 
                 var resolvedType: ConeKotlinType? = null
-                scope.processClassifiersByName(type.qualifier.first().name) { fqName ->
-                    resolvedType = qualifierResolver.resolveTypeWithPrefix(type.qualifier.drop(1), fqName)
+                scope.processClassifiersByName(type.qualifier.first().name) { symbol ->
+                    resolvedType = when (symbol) {
+                        is ConeClassLikeSymbol -> {
+                            qualifierResolver.resolveTypeWithPrefix(type.qualifier, symbol.classId)
+                        }
+                        is ConeTypeParameterSymbol -> {
+                            assert(type.qualifier.size == 1)
+                            ConeTypeParameterTypeImpl(symbol)
+                        }
+                        else -> error("!")
+                    }
                     resolvedType == null
                 }
 

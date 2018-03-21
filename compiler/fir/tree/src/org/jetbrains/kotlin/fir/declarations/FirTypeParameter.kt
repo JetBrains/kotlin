@@ -7,15 +7,21 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.Variance
 
 @BaseTransformedType
-interface FirTypeParameter : FirNamedDeclaration, FirAnnotationContainer {
+interface FirTypeParameter : FirNamedDeclaration, FirAnnotationContainer, FirSymbolOwner<FirTypeParameter> {
     val variance: Variance
 
+    val isReified: Boolean
+
     val bounds: List<FirType>
+
+    override val symbol: FirTypeParameterSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)

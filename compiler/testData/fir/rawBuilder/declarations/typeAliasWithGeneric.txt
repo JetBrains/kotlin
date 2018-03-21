@@ -3,6 +3,6 @@ FILE: typeAliasWithGeneric.kt
     }
     <S, T : A> public? final? interface B() {
     }
-    public? final typealias C = B<T, A>
+    <T> public? final typealias C = B<T, A>
     public? final? class D() : C<A> {
     }

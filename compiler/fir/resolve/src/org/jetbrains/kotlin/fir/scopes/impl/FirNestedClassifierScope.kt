@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -20,8 +22,8 @@ class FirNestedClassifierScope(val classId: ClassId, val session: FirSession) : 
         return firProvider.getFirClassifierByFqName(this)
     }
 
-    override fun processClassifiersByName(name: Name, processor: (ClassId) -> Boolean): Boolean {
+    override fun processClassifiersByName(name: Name, processor: (ConeSymbol) -> Boolean): Boolean {
         val child = ClassId(classId.packageFqName, classId.relativeClassName.child(name), false)
-        return child.getFir() == null || processor(child)
+        return child.getFir() == null || processor(child.toSymbol())
     }
 }

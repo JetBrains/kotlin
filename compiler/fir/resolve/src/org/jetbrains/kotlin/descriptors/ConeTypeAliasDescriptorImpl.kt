@@ -13,6 +13,6 @@ import org.jetbrains.kotlin.name.ClassId
 
 class ConeTypeAliasDescriptorImpl(
     override val typeParameters: List<ConeTypeParameterDescriptor>,
-    override val fqName: ClassId,
+    override val classId: ClassId,
     override val expandedType: ConeKotlinType
 ) : ConeTypeAliasDescriptor, AbstractFirBasedDescriptor<FirResolvedTypeAlias>()

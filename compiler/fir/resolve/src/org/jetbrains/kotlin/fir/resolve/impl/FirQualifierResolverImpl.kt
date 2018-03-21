@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
+import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeKotlinTypeProjectionInImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeKotlinTypeProjectionOutImpl
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
@@ -42,15 +40,17 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
     private fun FirMemberDeclaration.toConeKotlinType(fqName: ClassId, parts: List<FirQualifierPart>): ConeKotlinType? {
         return when (this) {
             is FirClass -> {
-                ConeClassTypeImpl(fqName, parts.toTypeProjections())
+                ConeClassTypeImpl(fqName.toSymbol(), parts.toTypeProjections())
             }
             is FirTypeAlias -> {
-                ConeAbbreviatedTypeImpl(
-                    abbreviationFqName = fqName,
-                    typeArguments = parts.toTypeProjections(),
-                    directExpansion = (this.expandedType as FirResolvedType).type
-                )
+                val expansion = expandedType.coneTypeSafe<ConeClassLikeType>()
+                        ?: return ConeKotlinErrorType("Couldn't resolve expansion")
 
+                ConeAbbreviatedTypeImpl(
+                    abbreviationSymbol = fqName.toSymbol(),
+                    typeArguments = parts.toTypeProjections(),
+                    directExpansion = expansion
+                )
             }
             else -> error("!")
         }
@@ -61,7 +61,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
 
         val fqName = ClassId(
             prefix.packageFqName,
-            parts.fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
+            parts.drop(1).fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
             false
         )
         val foundClassifier = firProvider.getFirClassifierByFqName(fqName)

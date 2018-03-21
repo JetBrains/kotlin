@@ -6,7 +6,7 @@ FILE: simpleClass.kt
             public? get(): R/error: Failed to resolve qualified type/
 
     }
-    (resolved) public? final class SomeClass() : R/<root>.SomeInterface/ {
+    (resolved) public? final class SomeClass() : R/SomeInterface/ {
         private final? property baz(val): R/error: Not supported: FirImplicitTypeImpl/ = STUB
             public? get(): R/error: Not supported: FirImplicitTypeImpl/
 
@@ -22,6 +22,6 @@ FILE: simpleClass.kt
 
         public? final? property fau(var): R/error: Failed to resolve qualified type/
             public? get(): R/error: Failed to resolve qualified type/
-            public? set(value: R/error: Failed to resolve qualified type/): R/kotlin.Unit/
+            public? set(value: R/error: Failed to resolve qualified type/): R/kotlin/Unit/
 
     }

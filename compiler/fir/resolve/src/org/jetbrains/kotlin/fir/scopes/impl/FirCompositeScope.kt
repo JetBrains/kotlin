@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirCompositeScope(val scopes: MutableList<FirScope>) : FirScope {
-    override fun processClassifiersByName(name: Name, processor: (ClassId) -> Boolean): Boolean {
+    override fun processClassifiersByName(name: Name, processor: (ConeSymbol) -> Boolean): Boolean {
         for (scope in scopes) {
             if (!scope.processClassifiersByName(name, processor)) {
                 return false

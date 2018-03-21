@@ -1,0 +1,22 @@
+FILE: typeParameterVsNested.kt
+    (resolved) public? abstract interface Some() {
+    }
+    (resolved) <(resolved) T : R/test/Some/> public? abstract class My() {
+        (resolved) public? final class T(inner) {
+        }
+
+        public? abstract property x(val): R/T/
+            public? get(): R/T/
+
+        public? abstract function foo(arg: R/T/): R/error: Not supported: FirImplicitTypeImpl/
+
+        public? abstract property y(val): R/test/My.T/
+            public? get(): R/test/My.T/
+
+        public? abstract property z(val): R/test/My.T/
+            public? get(): R/test/My.T/
+
+        (resolved) public? final class Some() : R/T/ {
+        }
+
+    }

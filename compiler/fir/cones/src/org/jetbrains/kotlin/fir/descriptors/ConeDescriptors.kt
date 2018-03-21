@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.descriptors
 
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
-
 
 interface ConeDescriptor
 
@@ -16,10 +16,12 @@ interface ConeClassifierDescriptor : ConeDescriptor
 interface ConeClassifierDescriptorWithTypeParameters : ConeClassifierDescriptor {
     val typeParameters: List<ConeTypeParameterDescriptor>
 
-    val fqName: ClassId
+    val classId: ClassId
 }
 
-interface ConeTypeParameterDescriptor : ConeClassifierDescriptor
+interface ConeTypeParameterDescriptor : ConeClassifierDescriptor {
+    val symbol: ConeTypeParameterSymbol
+}
 
 interface ConeTypeAliasDescriptor : ConeClassifierDescriptorWithTypeParameters {
     val expandedType: ConeKotlinType

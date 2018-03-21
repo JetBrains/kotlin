@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.types.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedType
 import org.jetbrains.kotlin.name.ClassId
@@ -23,7 +24,8 @@ sealed class FirBuiltinType(
         ClassId(
             KOTLIN_PACKAGE_FQ_NAME,
             Name.identifier(name)
-        ), emptyList()
+        ).toSymbol(),
+        emptyList()
     )
 
     final override val isNullable = false

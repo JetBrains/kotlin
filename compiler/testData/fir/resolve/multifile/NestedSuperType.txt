@@ -1,9 +1,9 @@
 FILE: NestedSuperType.kt
-    (resolved) public? final class A() : R/b.B/ {
-        (resolved) public? final class NestedInA1() : R/b.B.NestedInB/ {
+    (resolved) public? final class A() : R/b/B/ {
+        (resolved) public? final class NestedInA1() : R/b/B.NestedInB/ {
         }
 
-        (resolved) public? final class NestedInA2() : R/c.C.NestedInC/ {
+        (resolved) public? final class NestedInA2() : R/c/C.NestedInC/ {
         }
 
     }

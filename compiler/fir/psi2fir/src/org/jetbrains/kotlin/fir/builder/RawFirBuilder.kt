@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBody
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -274,6 +275,7 @@ class RawFirBuilder(val session: FirSession) {
                 typeAlias.getTypeReference().toFirOrErrorType()
             )
             typeAlias.extractAnnotationsTo(firTypeAlias)
+            typeAlias.extractTypeParametersTo(firTypeAlias)
             return firTypeAlias
         }
 
@@ -433,7 +435,9 @@ class RawFirBuilder(val session: FirSession) {
                 session,
                 parameter,
                 parameter.nameAsSafeName,
-                parameter.variance
+                parameter.variance,
+                parameter.hasModifier(KtTokens.REIFIED_KEYWORD),
+                FirTypeParameterSymbol()
             )
             parameter.extractAnnotationsTo(firTypeParameter)
             val extendsBound = parameter.extendsBound

@@ -9,12 +9,22 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 class FirProviderImpl(val session: FirSession) : FirProvider {
+    override fun getFirClassifierBySymbol(symbol: ConeSymbol): FirMemberDeclaration? {
+        return when(symbol) {
+            is FirBasedSymbol<*> -> symbol.fir as? FirMemberDeclaration
+            is ConeClassLikeSymbol -> getFirClassifierByFqName(symbol.classId)
+            else -> error("!")
+        }
+    }
+
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")
     }
@@ -60,9 +70,4 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         return classifierMap[fqName]
     }
 
-    override fun getFirTypeParameterByFqName(fqName: ClassId, parameterName: Name): FirTypeParameter? {
-        val typeParameterContainer = (getFirClassifierByFqName(fqName) as? FirTypeParameterContainer) ?: return null
-        // TODO: Optimize search here
-        return typeParameterContainer.typeParameters.find { it.name == parameterName }
-    }
 }

@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 
 open class ConeClassTypeImpl(
-    override val fqName: ClassId,
+    override val symbol: ConeClassLikeSymbol,
     override val typeArguments: List<ConeKotlinTypeProjection>
-) : ConeClassType()
+) : ConeClassLikeType()
 
 class ConeKotlinTypeProjectionInImpl(override val type: ConeKotlinType) : ConeKotlinTypeProjectionIn()
 
 class ConeKotlinTypeProjectionOutImpl(override val type: ConeKotlinType) : ConeKotlinTypeProjectionOut()
 
 class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {
-    override val typeArguments: List<ConeKotlinTypeProjection>
-        get() = emptyList()
 
     override fun toString(): String {
         return "<ERROR TYPE: $reason>"
@@ -27,10 +26,12 @@ class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {
 }
 
 class ConeAbbreviatedTypeImpl(
-    override val abbreviationFqName: ClassId,
+    override val abbreviationSymbol: ConeClassLikeSymbol,
     override val typeArguments: List<ConeKotlinTypeProjection>,
-    override val directExpansion: ConeKotlinType
+    override val directExpansion: ConeClassLikeType
 ) : ConeAbbreviatedType() {
-    override val fqName: ClassId
-        get() = abbreviationFqName
+    override val symbol: ConeClassLikeSymbol
+        get() = abbreviationSymbol
 }
+
+class ConeTypeParameterTypeImpl(override val symbol: ConeTypeParameterSymbol) : ConeTypeParameterType()
