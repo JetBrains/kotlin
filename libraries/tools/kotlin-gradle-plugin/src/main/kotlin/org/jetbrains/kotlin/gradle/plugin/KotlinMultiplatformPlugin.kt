@@ -21,8 +21,9 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
@@ -110,7 +111,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
             // Since the two projects may add source sets in arbitrary order, and both may do that after the plugin is applied,
             // we need to handle all source sets of the two projects and connect them once we get a match:
             // todo warn if no match found
-            matchSymmetricallyByNames(commonProject.sourceSets, namedSourceSetsContainer(platformProject)) { commonSourceSet, _ ->
+            matchSymmetricallyByNames(commonProject.kotlinExtension.sourceSets, namedSourceSetsContainer(platformProject)) { commonSourceSet, _ ->
                 addCommonSourceSetToPlatformSourceSet(commonSourceSet, platformProject)
             }
         }
@@ -146,12 +147,12 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     protected open fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
             project.sourceSets
 
-    protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet, platformProject: Project) {
+    protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: KotlinSourceSet, platformProject: Project) {
         val platformTask = platformProject.tasks
             .filterIsInstance<AbstractKotlinCompile<*>>()
             .firstOrNull { it.sourceSetName == commonSourceSet.name }
 
-        platformTask?.source(commonSourceSet.kotlin!!)
+        platformTask?.source(commonSourceSet.kotlin)
     }
 
     protected val SourceSet.kotlin: SourceDirectorySet?
@@ -190,10 +191,11 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
     override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
         (project.extensions.getByName("android") as BaseExtension).sourceSets
 
-    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet, platformProject: Project) {
+    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: KotlinSourceSet, platformProject: Project) {
         val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
         val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
-        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: return
+        val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
+                ?: return
         kotlinSourceSet.kotlin.source(commonSourceSet.kotlin!!)
     }
 }
@@ -211,6 +213,3 @@ open class KotlinPlatformJsPlugin : KotlinPlatformImplementationPluginBase("js")
         super.apply(project)
     }
 }
-
-private val Project.sourceSets: SourceSetContainer
-    get() = convention.getPlugin(JavaPluginConvention::class.java).sourceSets

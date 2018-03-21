@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.SourceSet
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import java.io.File
 
@@ -57,7 +57,7 @@ interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
             javaCompile: AbstractCompile,
             variantData: Any?,
             androidProjectHandler: Any?,
-            javaSourceSet: SourceSet?
+            kotlinSourceSet: KotlinSourceSet?
     ): List<SubpluginOption>
 
     fun getSubpluginKotlinTasks(

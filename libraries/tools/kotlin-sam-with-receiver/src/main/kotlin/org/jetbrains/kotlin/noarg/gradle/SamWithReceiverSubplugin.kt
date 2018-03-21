@@ -18,15 +18,14 @@ package org.jetbrains.kotlin.samWithReceiver.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.internal.AbstractTask
 import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.internal.ConventionTask
-import org.gradle.api.tasks.SourceSet
+import org.gradle.api.internal.AbstractTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.JetBrainsSubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 
 class SamWithReceiverGradleSubplugin : Plugin<Project> {
     companion object {
@@ -54,7 +53,7 @@ class SamWithReceiverKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompi
             javaCompile: AbstractCompile,
             variantData: Any?,
             androidProjectHandler: Any?,
-            javaSourceSet: SourceSet?
+            kotlinSourceSet: KotlinSourceSet?
     ): List<SubpluginOption> {
         if (!SamWithReceiverGradleSubplugin.isEnabled(project)) return emptyList()
 

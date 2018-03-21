@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.*
 import kotlin.reflect.KClass
 
 internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProjectExtension>) {
@@ -25,9 +27,15 @@ internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinProj
     DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java)
 }
 
+internal val Project.kotlinExtension: KotlinProjectExtension
+    get() = extensions.getByType(KotlinProjectExtension::class.java)
+
 open class KotlinProjectExtension {
     val experimental: ExperimentalExtension
-            get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)!!
+        get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
+
+    open val sourceSets: KotlinSourceSetContainer<out KotlinSourceSet>
+        get() = DslObject(this).extensions.getByType(KotlinSourceSetContainer::class.java)
 }
 
 open class KotlinJvmProjectExtension : KotlinProjectExtension() {
@@ -36,6 +44,14 @@ open class KotlinJvmProjectExtension : KotlinProjectExtension() {
      * single classes directory per source set. With Gradle < 4.0, has no effect.
      * */
     var copyClassesToJavaOutput = false
+
+    override val sourceSets: KotlinSourceSetContainer<KotlinJavaSourceSet>
+        get() = DslObject(this).extensions.getByType(KotlinJavaSourceSetContainer::class.java)
+}
+
+open class KotlinOnlyProjectExtension: KotlinProjectExtension() {
+    override val sourceSets: KotlinSourceSetContainer<KotlinOnlySourceSet>
+        get() = DslObject(this).extensions.getByType(KotlinOnlySourceSetContainer::class.java)
 }
 
 open class ExperimentalExtension {
