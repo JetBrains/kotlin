@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.fir.FirDescriptorOwner
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvedClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedTypeAliasImpl
 import org.jetbrains.kotlin.fir.descriptors.ConeClassifierDescriptor
 import org.jetbrains.kotlin.fir.descriptors.ConeTypeParameterDescriptor
 import org.jetbrains.kotlin.fir.types.FirResolvedType
@@ -65,5 +63,27 @@ class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
 
     override fun transformResolvedClass(resolvedClass: FirResolvedClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return resolvedClass.compose()
+    }
+
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        typeAlias.transformChildren(this, data)
+        val expandedType = (typeAlias.expandedType as FirResolvedType).type
+        val typeParameters =
+            typeAlias.typeParameters.filterIsInstance<FirDescriptorOwner<*>>().mapNotNull { it.descriptor as? ConeTypeParameterDescriptor }
+
+        val descriptor = ConeTypeAliasDescriptorImpl(
+            typeParameters,
+            ClassId(packageFqName, className.child(typeAlias.name), false),
+            expandedType
+        )
+
+        return FirResolvedTypeAliasImpl(typeAlias, descriptor).compose()
+    }
+
+    override fun transformResolvedTypeAlias(
+        resolvedTypeAlias: FirResolvedTypeAlias,
+        data: Nothing?
+    ): CompositeTransformResult<FirDeclaration> {
+        return resolvedTypeAlias.compose()
     }
 }

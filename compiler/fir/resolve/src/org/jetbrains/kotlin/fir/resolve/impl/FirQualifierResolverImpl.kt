@@ -48,7 +48,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
                 ConeAbbreviatedTypeImpl(
                     abbreviationFqName = fqName,
                     typeArguments = parts.toTypeProjections(),
-                    directExpansion = (this.abbreviatedType as FirResolvedType).type
+                    directExpansion = (this.expandedType as FirResolvedType).type
                 )
 
             }

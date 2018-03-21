@@ -1,5 +1,5 @@
 FILE: F.kt
-    unknown open class A() {
+    (resolved) unknown open class A() {
     }
-    unknown final class B() : R/<root>.A/ {
+    (resolved) unknown final class B() : R/<root>.A/ {
     }

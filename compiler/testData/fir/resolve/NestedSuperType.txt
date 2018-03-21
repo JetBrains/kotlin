@@ -1,5 +1,5 @@
 FILE: NestedSuperType.kt
-    unknown abstract class My() {
+    (resolved) unknown abstract class My() {
         unknown abstract class NestedOne() : R/p.My/ {
             unknown abstract class NestedTwo() : R/p.My.NestedOne/ {
             }
@@ -7,7 +7,7 @@ FILE: NestedSuperType.kt
         }
 
     }
-    unknown final class Your() : R/p.My/ {
+    (resolved) unknown final class Your() : R/p.My/ {
         unknown final class NestedThree() : R/p.My.NestedOne/ {
         }
 

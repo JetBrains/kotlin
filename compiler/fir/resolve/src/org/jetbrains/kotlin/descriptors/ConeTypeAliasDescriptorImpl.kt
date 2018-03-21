@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.fir.declarations.FirResolvedClass
-import org.jetbrains.kotlin.fir.descriptors.ConeClassDescriptor
-import org.jetbrains.kotlin.fir.descriptors.ConeClassifierDescriptor
+import org.jetbrains.kotlin.fir.declarations.FirResolvedTypeAlias
+import org.jetbrains.kotlin.fir.descriptors.ConeTypeAliasDescriptor
 import org.jetbrains.kotlin.fir.descriptors.ConeTypeParameterDescriptor
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 
-class ConeClassDescriptorImpl(
+class ConeTypeAliasDescriptorImpl(
     override val typeParameters: List<ConeTypeParameterDescriptor>,
     override val fqName: ClassId,
-    override val superTypes: List<ConeKotlinType>,
-    override val nestedClassifiers: List<ConeClassifierDescriptor>
-) : ConeClassDescriptor, AbstractFirBasedDescriptor<FirResolvedClass>()
+    override val expandedType: ConeKotlinType
+) : ConeTypeAliasDescriptor, AbstractFirBasedDescriptor<FirResolvedTypeAlias>()

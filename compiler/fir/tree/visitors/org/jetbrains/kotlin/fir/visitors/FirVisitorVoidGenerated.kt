@@ -74,6 +74,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitMemberDeclaration(typeAlias, null)
     }
 
+    open fun visitResolvedTypeAlias(resolvedTypeAlias: FirResolvedTypeAlias) {
+        visitTypeAlias(resolvedTypeAlias, null)
+    }
+
     open fun visitTypeParameter(typeParameter: FirTypeParameter) {
         visitNamedDeclaration(typeParameter, null)
     }
@@ -238,6 +242,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitType(type)
     }
 
+    final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
+        visitTypeAlias(typeAlias)
+    }
+
     final override fun visitTypeProjection(typeProjection: FirTypeProjection, data: Nothing?) {
         visitTypeProjection(typeProjection)
     }
@@ -314,10 +322,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitResolvedImport(resolvedImport)
     }
 
-    final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
-        visitTypeAlias(typeAlias)
-    }
-
     final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: Nothing?) {
         visitTypeParameter(typeParameter)
     }
@@ -336,6 +340,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitImplicitType(implicitType: FirImplicitType, data: Nothing?) {
         visitImplicitType(implicitType)
+    }
+
+    final override fun visitResolvedTypeAlias(resolvedTypeAlias: FirResolvedTypeAlias, data: Nothing?) {
+        visitResolvedTypeAlias(resolvedTypeAlias)
     }
 
     final override fun visitStarProjection(starProjection: FirStarProjection, data: Nothing?) {

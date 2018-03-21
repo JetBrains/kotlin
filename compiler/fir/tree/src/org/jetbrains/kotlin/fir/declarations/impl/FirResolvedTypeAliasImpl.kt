@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirBasedDescriptor
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvedClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvedTypeAlias
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-class FirResolvedClassImpl(val delegate: FirClass, override val descriptor: FirBasedDescriptor<FirResolvedClass>) :
-    FirResolvedClass, FirClass by delegate {
+class FirResolvedTypeAliasImpl(val delegate: FirTypeAlias, override val descriptor: FirBasedDescriptor<FirResolvedTypeAlias>) :
+    FirResolvedTypeAlias, FirTypeAlias by delegate {
 
     init {
         descriptor.bind(this)
     }
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
-        return super<FirResolvedClass>.accept(visitor, data)
+        return super<FirResolvedTypeAlias>.accept(visitor, data)
     }
 }

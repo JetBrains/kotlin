@@ -1,5 +1,5 @@
 FILE: TwoDeclarationsInSameFile.kt
-    unknown open class A() {
+    (resolved) unknown open class A() {
     }
-    unknown final class B() : R/p.A/ {
+    (resolved) unknown final class B() : R/p.A/ {
     }

@@ -143,7 +143,7 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
                         classifier.superTypes.any { it.accept(this, data) }
                     }
                 }
-                is FirTypeAlias -> classifier.abbreviatedType.accept(this, data)
+                is FirTypeAlias -> classifier.expandedType.accept(this, data)
             }
             return true
         }

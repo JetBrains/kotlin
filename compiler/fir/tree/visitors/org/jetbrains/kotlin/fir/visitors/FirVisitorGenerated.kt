@@ -74,6 +74,10 @@ abstract class FirVisitor<out R, in D> {
         return visitMemberDeclaration(typeAlias, data)
     }
 
+    open fun visitResolvedTypeAlias(resolvedTypeAlias: FirResolvedTypeAlias, data: D): R {
+        return visitTypeAlias(resolvedTypeAlias, data)
+    }
+
     open fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): R {
         return visitNamedDeclaration(typeParameter, data)
     }
