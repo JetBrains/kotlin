@@ -133,6 +133,9 @@ fun removePathPrefix(path: String): String {
 val unzipIntellijSdk by tasks.creating {
     configureExtractFromConfigurationTask(intellij, pathRemap = { removePathPrefix(it) }) {
         zipTree(it.singleFile).matching {
+            if (OperatingSystem.current().isMacOsX && androidStudioRelease != null) {
+                exclude("Android Studio*.app/Contents/plugins/Kotlin/**")
+            }
             exclude("plugins/Kotlin/**")
         }
     }
