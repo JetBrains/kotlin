@@ -95,7 +95,7 @@ typealias OperatorSelector = (KtBinaryExpression) -> JsBinaryOperator
 val defaultOperatorSelector: OperatorSelector = { OperatorTable.getBinaryOperator(getOperationToken(it)) }
 
 // toLeft(L, R) OP toRight(L, R)
-fun intrinsic(
+fun complexBinaryIntrinsic(
     toLeft: (JsExpression, JsExpression, TranslationContext) -> JsExpression,
     toRight: (JsExpression, JsExpression, TranslationContext) -> JsExpression,
     operator: (KtBinaryExpression) -> JsBinaryOperator = defaultOperatorSelector
@@ -108,7 +108,7 @@ fun binaryIntrinsic(
     toLeft: (JsExpression, TranslationContext) -> JsExpression = { l, _ -> l },
     toRight: (JsExpression, TranslationContext) -> JsExpression = { r, _ -> r },
     operator: OperatorSelector = defaultOperatorSelector
-): BinaryOperationIntrinsic = intrinsic({ l, _, c -> toLeft(l, c) }, { _, r, c -> toRight(r, c) }, operator)
+): BinaryOperationIntrinsic = complexBinaryIntrinsic({ l, _, c -> toLeft(l, c) }, { _, r, c -> toRight(r, c) }, operator)
 
 
 fun coerceTo(type: KotlinType): (JsExpression, TranslationContext) -> JsExpression =
