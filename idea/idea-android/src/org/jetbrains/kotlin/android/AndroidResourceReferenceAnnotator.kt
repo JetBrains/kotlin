@@ -20,10 +20,10 @@ import com.android.SdkConstants
 import com.android.resources.ResourceType.*
 import com.android.tools.idea.AndroidPsiUtils.ResourceReferenceType.FRAMEWORK
 import com.android.tools.idea.rendering.GutterIconRenderer
-import com.android.tools.idea.res.ResourceHelper
+import com.android.tools.idea.res.resolveColor
+import com.android.tools.idea.res.resolveDrawable
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.android.AndroidColorAnnotator
 import org.jetbrains.android.facet.AndroidFacet
@@ -48,23 +48,24 @@ class AndroidResourceReferenceAnnotator : Annotator {
 
         val referenceType = referenceTarget.getResourceReferenceType()
         val configuration = pickConfiguration(androidFacet, androidFacet.module, element.containingFile) ?: return
-        val resourceValue = findResourceValue(resourceType,
-                                              reference.text,
-                                              referenceType == FRAMEWORK,
-                                              androidFacet.module,
-                                              configuration) ?: return
+        val resourceValue = findResourceValue(
+            resourceType,
+            reference.text,
+            referenceType == FRAMEWORK,
+            androidFacet.module,
+            configuration
+        ) ?: return
 
         val resourceResolver = configuration.resourceResolver ?: return
 
         if (resourceType == COLOR) {
-            val color = ResourceHelper.resolveColor(resourceResolver, resourceValue, element.project)
+            val color = resourceResolver.resolveColor(resourceValue, element.project)
             if (color != null) {
                 val annotation = holder.createInfoAnnotation(element, null)
                 annotation.gutterIconRenderer = ColorRenderer(element, color)
             }
-        }
-        else {
-            var file = ResourceHelper.resolveDrawable(resourceResolver, resourceValue, element.project)
+        } else {
+            var file = resourceResolver.resolveDrawable(resourceValue, element.project)
             if (file != null && file.path.endsWith(SdkConstants.DOT_XML)) {
                 file = pickBitmapFromXml(file, resourceResolver, element.project)
             }
@@ -77,5 +78,5 @@ class AndroidResourceReferenceAnnotator : Annotator {
     }
 
     private fun KtReferenceExpression.getResourceReferenceTargetDescriptor(): JavaPropertyDescriptor? =
-            analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, this] as? JavaPropertyDescriptor
+        analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, this] as? JavaPropertyDescriptor
 }
