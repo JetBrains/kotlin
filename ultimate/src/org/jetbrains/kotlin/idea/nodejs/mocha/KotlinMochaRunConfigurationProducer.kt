@@ -123,7 +123,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
             }
         }
 
-        builder.setEnvData(module.getNodeJsEnvironmentVars())
+        builder.setEnvData(module.getNodeJsEnvironmentVars(true))
 
         return MochaTestElementInfo(builder.build(), element)
     }
