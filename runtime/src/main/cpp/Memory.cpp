@@ -461,6 +461,35 @@ void DeinitInstanceBody(const TypeInfo* typeInfo, void* body) {
 
 namespace {
 
+template<typename func>
+void traverseContainerObjectFields(ContainerHeader* container, func process) {
+  ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
+  for (int object = 0; object < container->objectCount(); object++) {
+    const TypeInfo* typeInfo = obj->type_info();
+    for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
+      ObjHeader** location = reinterpret_cast<ObjHeader**>(
+          reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
+      process(location);
+    }
+    if (typeInfo == theArrayTypeInfo) {
+      ArrayHeader* array = obj->array();
+      for (int index = 0; index < array->count_; index++) {
+        process(ArrayAddressOfElementAt(array, index));
+      }
+    }
+    obj = reinterpret_cast<ObjHeader*>(
+      reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
+  }
+}
+
+template<typename func>
+void traverseContainerReferredObjects(ContainerHeader* container, func process) {
+  traverseContainerObjectFields(container, [process](ObjHeader** location) {
+    ObjHeader* ref = *location;
+    if (ref != nullptr) process(ref);
+  });
+}
+
 #if USE_GC
 inline void processFinalizerQueue(MemoryState* state) {
   // TODO: reuse elements of finalizer queue for new allocations.
@@ -482,7 +511,16 @@ inline void processFinalizerQueue(MemoryState* state) {
 #endif
 
 inline void scheduleDestroyContainer(
-    MemoryState* state, ContainerHeader* container) {
+    MemoryState* state, ContainerHeader* container, bool clearExternalRefs) {
+  if (clearExternalRefs) {
+    traverseContainerObjectFields(reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) & ~1),
+      [](ObjHeader** location) {
+        ObjHeader* ref = *location;
+        // Frozen object references do not participate in trial deletion, so shall be explicitly freed.
+        if (ref != nullptr && ref->container()->frozen())
+          UpdateRef(location, nullptr);
+      });
+  }
 #if USE_GC
   state->finalizerQueue->push_front(container);
   // We cannot clean finalizer queue while in GC.
@@ -550,35 +588,6 @@ inline void initThreshold(MemoryState* state, uint32_t gcThreshold) {
 }
 #endif // USE_GC
 
-template<typename func>
-void traverseContainerObjectFields(ContainerHeader* container, func process) {
-  ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
-  for (int object = 0; object < container->objectCount(); object++) {
-    const TypeInfo* typeInfo = obj->type_info();
-    for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
-      ObjHeader** location = reinterpret_cast<ObjHeader**>(
-          reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
-      process(location);
-    }
-    if (typeInfo == theArrayTypeInfo) {
-      ArrayHeader* array = obj->array();
-      for (int index = 0; index < array->count_; index++) {
-        process(ArrayAddressOfElementAt(array, index));
-      }
-    }
-    obj = reinterpret_cast<ObjHeader*>(
-      reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
-  }
-}
-
-template<typename func>
-void traverseContainerReferredObjects(ContainerHeader* container, func process) {
-  traverseContainerObjectFields(container, [process](ObjHeader** location) {
-    ObjHeader* ref = *location;
-    if (ref != nullptr) process(ref);
-  });
-}
-
 #if TRACE_MEMORY || USE_GC
 
 void dumpWorker(const char* prefix, ContainerHeader* header, ContainerHeaderSet* seen) {
@@ -597,7 +606,10 @@ void dumpWorker(const char* prefix, ContainerHeader* header, ContainerHeaderSet*
 void dumpReachable(const char* prefix, const ContainerHeaderSet* roots) {
   ContainerHeaderSet seen;
   for (auto container : *roots) {
-    MEMORY_LOG("%p is root\n", container)
+    MEMORY_LOG("%p: %s%s%s\n", container,
+        container->frozen() ? "frozen " : "",
+        container->permanent() ? "permanent " : "",
+        container->stack() ? "stack " : "")
     dumpWorker(prefix, container, &seen);
   }
 }
@@ -679,7 +691,7 @@ void MarkRoots(MemoryState* state) {
     } else {
       container->resetBuffered();
       if (color == CONTAINER_TAG_GC_BLACK && rcIsZero) {
-        scheduleDestroyContainer(state, reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1));
+        scheduleDestroyContainer(state, reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1), true);
       }
     }
   }
@@ -722,11 +734,11 @@ void CollectWhite(MemoryState* state, ContainerHeader* container) {
   traverseContainerReferredObjects(container, [state](ObjHeader* ref) {
     auto childContainer = ref->container();
     RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
-    if (!childContainer->permanent()) {
+    if (!childContainer->permanentOrFrozen()) {
       CollectWhite(state, childContainer);
     }
   });
-  scheduleDestroyContainer(state, reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1));
+  scheduleDestroyContainer(state, reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1), true);
 }
 
 inline void AddRef(ContainerHeader* header) {
@@ -832,7 +844,7 @@ void FreeContainer(ContainerHeader* header) {
 #if TRACE_MEMORY
     memoryState->containers->erase(header);
 #endif
-      scheduleDestroyContainer(state, header);
+      scheduleDestroyContainer(state, header, false);
     }
   }
 }
@@ -1026,9 +1038,8 @@ void DeinitMemory(MemoryState* memoryState) {
   bool lastMemoryState = atomicAdd(&aliveMemoryStatesCount, -1) == 0;
 
 #if TRACE_MEMORY
-  if (allocCount > 0) {
-    MEMORY_LOG("*** Memory leaks, leaked %d containers ***\n",
-               allocCount);
+  if (lastMemoryState && allocCount > 0) {
+    MEMORY_LOG("*** Memory leaks, leaked %d containers ***\n", allocCount);
     dumpReachable("", memoryState->containers);
   }
 #else
