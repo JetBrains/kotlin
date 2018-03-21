@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 
 internal class OverriddenFunctionDescriptor(
         val descriptor: SimpleFunctionDescriptor,
@@ -91,7 +93,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
             context.getVtableBuilder(superClass).vtableEntries
         }
 
-        val methods = classDescriptor.sortedContributedMethods
+        val methods = classDescriptor.sortedOverridableOrOverridingMethods
         val newVtableSlots = mutableListOf<OverriddenFunctionDescriptor>()
 
         val inheritedVtableSlots = superVtableEntries.map { superMethod ->
@@ -125,7 +127,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
     }
 
     val methodTableEntries: List<OverriddenFunctionDescriptor> by lazy {
-        classDescriptor.sortedContributedMethods
+        classDescriptor.sortedOverridableOrOverridingMethods
                 .flatMap { method -> method.allOverriddenDescriptors.map { OverriddenFunctionDescriptor(method, it) } }
                 .filter { it.canBeCalledVirtually }
                 .distinctBy { Triple(it.overriddenDescriptor.functionName, it.descriptor, it.needBridge) }
@@ -134,3 +136,9 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
     }
 
 }
+
+private val IrClass.sortedOverridableOrOverridingMethods: List<SimpleFunctionDescriptor>
+    get() =
+        this.simpleFunctions()
+                .filter { it.isOverridable || it.overriddenSymbols.isNotEmpty() }
+                .sortedBy { it.functionName.localHash.value }

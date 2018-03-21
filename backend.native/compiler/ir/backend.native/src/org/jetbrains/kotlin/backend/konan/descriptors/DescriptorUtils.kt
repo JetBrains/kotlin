@@ -122,14 +122,6 @@ internal val ClassDescriptor.isArray: Boolean
 internal val ClassDescriptor.isInterface: Boolean
     get() = (this.kind == ClassKind.INTERFACE)
 
-internal val IrClass.sortedContributedMethods: List<SimpleFunctionDescriptor>
-    get () = contributedMethods.sortedBy {
-            it.functionName.localHash.value
-    }
-
-internal val IrClass.contributedMethods: List<SimpleFunctionDescriptor>
-    get () = this.simpleFunctions()
-
 fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
         || this.kind == ClassKind.ENUM_CLASS
 
