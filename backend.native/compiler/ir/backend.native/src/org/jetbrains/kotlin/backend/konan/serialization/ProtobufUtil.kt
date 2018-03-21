@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
-import org.jetbrains.kotlin.serialization.KonanIr
-import org.jetbrains.kotlin.serialization.KonanLinkData
-import org.jetbrains.kotlin.serialization.KonanLinkData.*
-import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.metadata.KonanIr
+import org.jetbrains.kotlin.metadata.KonanLinkData
+import org.jetbrains.kotlin.metadata.KonanLinkData.*
+import org.jetbrains.kotlin.metadata.ProtoBuf
 
 fun newUniqId(index: Long): KonanIr.UniqId =
    KonanIr.UniqId.newBuilder().setIndex(index).build() 

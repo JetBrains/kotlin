@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.KonanLinkData
+import org.jetbrains.kotlin.metadata.KonanLinkData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
-import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.StorageManager
 
 class KonanPackageFragment(
@@ -34,11 +36,11 @@ class KonanPackageFragment(
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
-    private val protoForNames: KonanLinkData.PackageFragment by lazy {
+    private val protoForNames: KonanLinkData.LinkDataPackageFragment by lazy {
         parsePackageFragment(reader.packageMetadata(fqNameString))
     }
 
-    val proto: KonanLinkData.PackageFragment get() = protoForNames.also {
+    val proto: KonanLinkData.LinkDataPackageFragment get() = protoForNames.also {
         reader.markPackageAccessed(fqNameString)
     }
 

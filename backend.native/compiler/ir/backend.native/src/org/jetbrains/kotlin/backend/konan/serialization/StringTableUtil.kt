@@ -18,9 +18,10 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName
-import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 // TODO Come up with a better file name.
 
@@ -39,7 +40,7 @@ internal fun NameResolverImpl.getDescriptorByFqNameIndex(
         QualifiedName.Kind.LOCAL ->
             return module.findClassAcrossModuleDependencies(this.getClassId(fqNameIndex))!!
         QualifiedName.Kind.PACKAGE ->
-            return module.getPackage(packageName)
+            return module.getPackage(FqName(packageName))
     }
 }
 

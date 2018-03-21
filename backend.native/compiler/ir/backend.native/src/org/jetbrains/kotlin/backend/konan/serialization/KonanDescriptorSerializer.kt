@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,12 @@ import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionTy
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.serialization.Interner
+import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
+import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
+import org.jetbrains.kotlin.metadata.serialization.StringTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -32,15 +38,17 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinNames
+import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithExpectedDefault
 import org.jetbrains.kotlin.resolve.checkers.KotlinVersionStringAnnotationValueChecker
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.utils.Interner
+import org.jetbrains.kotlin.metadata.serialization.*
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -52,18 +60,13 @@ class KonanDescriptorSerializer private constructor(
         private val versionRequirementTable: MutableVersionRequirementTable,
         private val serializeTypeTableToFunction: Boolean
 ) {
-    fun serialize(message: MessageLite): ByteArray {
-        return ByteArrayOutputStream().apply {
-            stringTable.serializeTo(this)
-            message.writeTo(this)
-        }.toByteArray()
-    }
+    private val contractSerializer = ContractSerializer()
 
     fun createChildSerializer(descriptor: DeclarationDescriptor): KonanDescriptorSerializer =
             KonanDescriptorSerializer(descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
                                  serializeTypeTableToFunction = false)
 
-    val stringTable: StringTable
+    val stringTable: DescriptorAwareStringTable
         get() = extension.stringTable
 
     private fun useTypeTable(): Boolean = extension.shouldUseTypeTable()
@@ -72,9 +75,11 @@ class KonanDescriptorSerializer private constructor(
         val builder = ProtoBuf.Class.newBuilder()
 
         val flags = Flags.getClassFlags(
-                hasAnnotations(classDescriptor), classDescriptor.visibility, classDescriptor.modality, classDescriptor.kind,
-                classDescriptor.isInner, classDescriptor.isCompanionObject, classDescriptor.isData, classDescriptor.isExternal,
-                classDescriptor.isExpect, classDescriptor.isInline
+            hasAnnotations(classDescriptor),
+            ProtoEnumFlags.visibility(normalizeVisibility(classDescriptor)),
+            ProtoEnumFlags.modality(classDescriptor.modality),
+            ProtoEnumFlags.classKind(classDescriptor.kind, classDescriptor.isCompanionObject),
+            classDescriptor.isInner, classDescriptor.isData, classDescriptor.isExternal, classDescriptor.isExpect, classDescriptor.isInline
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -102,18 +107,24 @@ class KonanDescriptorSerializer private constructor(
             builder.addConstructor(constructorProto(descriptor))
         }
 
-        for (descriptor in sort(DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope))) {
-            if (descriptor is CallableMemberDescriptor) {
-                if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
+        val callableMembers =
+                extension.customClassMembersProducer?.getCallableMembers(classDescriptor)
+                ?: sort(
+                        DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope)
+                                .filterIsInstance<CallableMemberDescriptor>()
+                )
 
-                when (descriptor) {
-                    is PropertyDescriptor -> builder.addProperty(propertyProto(descriptor))
-                    is FunctionDescriptor -> builder.addFunction(functionProto(descriptor))
-                }
+        for (descriptor in callableMembers) {
+            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
+
+            when (descriptor) {
+                is PropertyDescriptor -> builder.addProperty(propertyProto(descriptor))
+                is FunctionDescriptor -> builder.addFunction(functionProto(descriptor))
             }
         }
 
-        for (descriptor in sort(DescriptorUtils.getAllDescriptors(classDescriptor.unsubstitutedInnerClassesScope))) {
+        val nestedClassifiers = sort(DescriptorUtils.getAllDescriptors(classDescriptor.unsubstitutedInnerClassesScope))
+        for (descriptor in nestedClassifiers) {
             if (descriptor is TypeAliasDescriptor) {
                 builder.addTypeAlias(typeAliasProto(descriptor))
             }
@@ -153,7 +164,6 @@ class KonanDescriptorSerializer private constructor(
         }
 
         extension.serializeClass(classDescriptor, builder)
-
         return builder
     }
 
@@ -164,15 +174,18 @@ class KonanDescriptorSerializer private constructor(
 
         var hasGetter = false
         var hasSetter = false
-        val lateInit = descriptor.isLateInit
-        val isConst = descriptor.isConst
 
         val compileTimeConstant = descriptor.compileTimeInitializer
         val hasConstant = compileTimeConstant != null && compileTimeConstant !is NullValue
 
         val hasAnnotations = descriptor.annotations.getAllAnnotations().isNotEmpty()
 
-        val propertyFlags = Flags.getAccessorFlags(hasAnnotations, descriptor.visibility, descriptor.modality, false, false, false)
+        val propertyFlags = Flags.getAccessorFlags(
+            hasAnnotations,
+            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.modality(descriptor.modality),
+            false, false, false
+        )
 
         val getter = descriptor.getter
         if (getter != null) {
@@ -200,9 +213,12 @@ class KonanDescriptorSerializer private constructor(
         }
 
         val flags = Flags.getPropertyFlags(
-                hasAnnotations, descriptor.visibility, descriptor.modality, descriptor.kind, descriptor.isVar,
-                hasGetter, hasSetter, hasConstant, isConst, lateInit, descriptor.isExternal,
-                @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isExpect
+            hasAnnotations,
+            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.modality(descriptor.modality),
+            ProtoEnumFlags.memberKind(descriptor.kind),
+            descriptor.isVar, hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
+            @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -238,8 +254,10 @@ class KonanDescriptorSerializer private constructor(
         else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
         }
+
         extension.serializeProperty(descriptor, builder)
 
+        /* Konan specific chunk */
         if (extension is IrAwareExtension) {
             descriptor.getter?.onlyIf({needsSerializedIr}) {
                 extension.addGetterIR(builder,
@@ -254,15 +272,25 @@ class KonanDescriptorSerializer private constructor(
         return builder
     }
 
+    private fun normalizeVisibility(descriptor: DeclarationDescriptorWithVisibility) =
+            // It can be necessary for Java classes serialization having package-private visibility
+            if (extension.shouldUseNormalizedVisibility())
+                descriptor.visibility.normalize()
+            else
+                descriptor.visibility
+
     fun functionProto(descriptor: FunctionDescriptor): ProtoBuf.Function.Builder {
         val builder = ProtoBuf.Function.newBuilder()
 
         val local = createChildSerializer(descriptor)
 
         val flags = Flags.getFunctionFlags(
-                hasAnnotations(descriptor), descriptor.visibility, descriptor.modality, descriptor.kind, descriptor.isOperator,
-                descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal, descriptor.isSuspend,
-                descriptor.isExpect
+            hasAnnotations(descriptor),
+            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.modality(descriptor.modality),
+            ProtoEnumFlags.memberKind(descriptor.kind),
+            descriptor.isOperator, descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal,
+            descriptor.isSuspend, descriptor.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -310,8 +338,12 @@ class KonanDescriptorSerializer private constructor(
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
         }
 
+        // TODO: K/N & Contracts???
+        // contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
+        //
         extension.serializeFunction(descriptor, builder)
 
+        /* Konan specific chunk */
         if (extension is IrAwareExtension && descriptor.needsSerializedIr) {
             extension.addFunctionIR(builder,
                     extension.serializeInlineBody(descriptor, local))
@@ -325,7 +357,9 @@ class KonanDescriptorSerializer private constructor(
 
         val local = createChildSerializer(descriptor)
 
-        val flags = Flags.getConstructorFlags(hasAnnotations(descriptor), descriptor.visibility, !descriptor.isPrimary)
+        val flags = Flags.getConstructorFlags(
+            hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)), !descriptor.isPrimary
+        )
         if (flags != builder.flags) {
             builder.flags = flags
         }
@@ -344,6 +378,7 @@ class KonanDescriptorSerializer private constructor(
 
         extension.serializeConstructor(descriptor, builder)
 
+        /* Konan specific chunk */
         if (extension is IrAwareExtension && descriptor.needsSerializedIr) {
             extension.addConstructorIR(builder, 
                 extension.serializeInlineBody(descriptor, local))
@@ -366,7 +401,7 @@ class KonanDescriptorSerializer private constructor(
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 
-        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), descriptor.visibility)
+        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)))
         if (flags != builder.flags) {
             builder.flags = flags
         }
@@ -393,6 +428,11 @@ class KonanDescriptorSerializer private constructor(
             builder.setExpandedType(local.type(expandedType))
         }
 
+        val requirement = serializeVersionRequirement(descriptor)
+        if (requirement != null) {
+            builder.versionRequirement = requirement
+        }
+
         builder.addAllAnnotation(descriptor.annotations.map { extension.annotationSerializer.serializeAnnotation(it) })
 
         return builder
@@ -408,9 +448,10 @@ class KonanDescriptorSerializer private constructor(
     private fun valueParameter(descriptor: ValueParameterDescriptor): ProtoBuf.ValueParameter.Builder {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
+        val declaresDefaultValue = descriptor.declaresDefaultValue() || descriptor.isActualParameterWithExpectedDefault
+
         val flags = Flags.getValueParameterFlags(
-                hasAnnotations(descriptor), descriptor.declaresDefaultValue(),
-                descriptor.isCrossinline, descriptor.isNoinline
+            hasAnnotations(descriptor), declaresDefaultValue, descriptor.isCrossinline, descriptor.isNoinline
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -472,9 +513,10 @@ class KonanDescriptorSerializer private constructor(
         return builder
     }
 
+    /* Konan needs public modifier */
     public fun typeId(type: KotlinType) = typeTable[type(type)]
 
-    private fun type(type: KotlinType): ProtoBuf.Type.Builder {
+    internal fun type(type: KotlinType): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
 
         if (type.isError) {
@@ -650,17 +692,17 @@ class KonanDescriptorSerializer private constructor(
 
         val level = (args[RequireKotlinNames.LEVEL] as? EnumValue)?.enumEntryName?.asString()
         when (level) {
-            DeprecationLevel.ERROR.toString() -> { /* ERROR is the default level */ }
-            DeprecationLevel.WARNING.toString() -> proto.level = ProtoBuf.VersionRequirement.Level.WARNING
-            DeprecationLevel.HIDDEN.toString() -> proto.level = ProtoBuf.VersionRequirement.Level.HIDDEN
+            DeprecationLevel.ERROR.name -> { /* ERROR is the default level */ }
+            DeprecationLevel.WARNING.name -> proto.level = ProtoBuf.VersionRequirement.Level.WARNING
+            DeprecationLevel.HIDDEN.name -> proto.level = ProtoBuf.VersionRequirement.Level.HIDDEN
         }
 
         val versionKind = (args[RequireKotlinNames.VERSION_KIND] as? EnumValue)?.enumEntryName?.asString()
         when (versionKind) {
-            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION.toString() -> { /* LANGUAGE_VERSION is the default kind */ }
-            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION.toString() ->
+            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION.name -> { /* LANGUAGE_VERSION is the default kind */ }
+            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION.name ->
                 proto.versionKind = ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION
-            ProtoBuf.VersionRequirement.VersionKind.API_VERSION.toString() ->
+            ProtoBuf.VersionRequirement.VersionKind.API_VERSION.name ->
                 proto.versionKind = ProtoBuf.VersionRequirement.VersionKind.API_VERSION
         }
 
@@ -680,6 +722,15 @@ class KonanDescriptorSerializer private constructor(
 
     private fun getTypeParameterId(descriptor: TypeParameterDescriptor): Int =
             typeParameters.intern(descriptor)
+
+    private fun getAccessorFlags(accessor: PropertyAccessorDescriptor): Int = Flags.getAccessorFlags(
+        hasAnnotations(accessor),
+        ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
+        ProtoEnumFlags.modality(accessor.modality),
+        !accessor.isDefault,
+        accessor.isExternal,
+        accessor.isInline
+    )
 
     companion object {
         @JvmStatic
@@ -719,15 +770,12 @@ class KonanDescriptorSerializer private constructor(
             return serializer
         }
 
-        private fun getAccessorFlags(accessor: PropertyAccessorDescriptor): Int {
-            return Flags.getAccessorFlags(
-                    hasAnnotations(accessor),
-                    accessor.visibility,
-                    accessor.modality,
-                    !accessor.isDefault,
-                    accessor.isExternal,
-                    accessor.isInline
-            )
+        @JvmStatic
+        fun serialize(message: MessageLite, stringTable: StringTable): ByteArray {
+            return ByteArrayOutputStream().apply {
+                stringTable.serializeTo(this)
+                message.writeTo(this)
+            }.toByteArray()
         }
 
         private fun variance(variance: Variance): ProtoBuf.TypeParameter.Variance = when (variance) {

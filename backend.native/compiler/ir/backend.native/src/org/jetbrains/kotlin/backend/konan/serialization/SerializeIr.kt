@@ -42,11 +42,11 @@ import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.setOverrides
 import org.jetbrains.kotlin.ir.util.setSuperSymbols
 import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
-import org.jetbrains.kotlin.serialization.KonanIr
-import org.jetbrains.kotlin.serialization.KonanIr.IrConst.ValueCase.*
-import org.jetbrains.kotlin.serialization.KonanIr.IrOperation.OperationCase.*
-import org.jetbrains.kotlin.serialization.KonanIr.IrVarargElement.VarargElementCase.*
-import org.jetbrains.kotlin.serialization.KonanLinkData
+import org.jetbrains.kotlin.metadata.KonanIr
+import org.jetbrains.kotlin.metadata.KonanIr.IrConst.ValueCase.*
+import org.jetbrains.kotlin.metadata.KonanIr.IrOperation.OperationCase.*
+import org.jetbrains.kotlin.metadata.KonanIr.IrVarargElement.VarargElementCase.*
+import org.jetbrains.kotlin.metadata.KonanLinkData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassConstructorDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor

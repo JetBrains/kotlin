@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.metadata.*
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.*
 import org.jetbrains.kotlin.types.KotlinType

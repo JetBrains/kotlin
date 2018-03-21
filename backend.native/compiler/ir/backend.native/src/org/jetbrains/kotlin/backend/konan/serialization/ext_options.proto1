@@ -15,7 +15,7 @@
  */
 
 syntax = "proto2";
-package org.jetbrains.kotlin.serialization;
+package org.jetbrains.kotlin.metadata;
 
 import "org/jetbrains/kotlin/backend/konan/serialization/google_descriptor.proto1";
 

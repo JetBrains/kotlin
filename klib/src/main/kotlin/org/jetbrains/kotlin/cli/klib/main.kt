@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.serialization.KonanLinkData
+import org.jetbrains.kotlin.metadata.KonanLinkData
 import java.lang.System.out
 import kotlin.system.exitProcess
 
@@ -88,7 +88,7 @@ fun error(text: String) {
 val defaultRepository = File(File.userHome, ".konan/klib")
 
 open class ModuleDeserializer(val library: ByteArray) {
-    protected val moduleHeader: KonanLinkData.Library
+    protected val moduleHeader: KonanLinkData.LinkDataLibrary
         get() = parseModuleHeader(library)
 
     val moduleName: String

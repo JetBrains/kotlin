@@ -17,24 +17,18 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.metadata.KonanLinkData
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.serialization.ClassData
-import org.jetbrains.kotlin.serialization.ClassDataWithSource
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.KonanLinkData
-import org.jetbrains.kotlin.serialization.StringTable
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class KonanClassDataFinder(
-        private val fragment: KonanLinkData.PackageFragment,
+        private val fragment: KonanLinkData.LinkDataPackageFragment,
         private val nameResolver: NameResolver
 ) : ClassDataFinder {
-    override fun findClassData(classId: ClassId): ClassDataWithSource? {
+    override fun findClassData(classId: ClassId): ClassData? {
         val proto = fragment.classes
         val nameList = proto.getClassNameList()
 
@@ -47,7 +41,7 @@ class KonanClassDataFinder(
         if (foundClass == null) 
             error("Could not find data for serialized class ${classId}")
 
-        return ClassDataWithSource(ClassData(nameResolver, foundClass), SourceElement.NO_SOURCE)
+        return ClassData(nameResolver, foundClass, SourceElement.NO_SOURCE)
     }
 }
 
