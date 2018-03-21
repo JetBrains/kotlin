@@ -53,7 +53,11 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat {
-            listOf(it) + buildWorkerBridges(it)
+            listOf(it) + buildWorkerBridges(it).also { bridges ->
+                // `buildWorkerBridges` builds bridges for all declarations inside `it` and nested declarations,
+                // so some bridges get incorrect parent. Fix it:
+                bridges.forEach { bridge -> bridge.parent = irDeclarationContainer }
+            }
         }
     }
 
