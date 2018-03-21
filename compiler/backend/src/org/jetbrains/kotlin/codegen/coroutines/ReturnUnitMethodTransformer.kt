@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 
 /*
  * Replace POP with ARETURN iff
@@ -47,7 +48,7 @@ object ReturnUnitMethodTransformer : MethodTransformer() {
 
         val pops = methodNode.instructions.asSequence().filter { it.opcode == Opcodes.POP }.toList()
         val popSuccessors = findSuccessors(methodNode, pops)
-        val sourceInsns = findSourceInstructions(internalClassName, methodNode, pops)
+        val sourceInsns = findSourceInstructions(internalClassName, methodNode, pops, ignoreCopy = true)
         val safePops = filterOutUnsafes(popSuccessors, units, sourceInsns)
 
         // Replace POP with ARETURN for tail call optimization
@@ -122,9 +123,14 @@ object ReturnUnitMethodTransformer : MethodTransformer() {
 internal fun findSourceInstructions(
     internalClassName: String,
     methodNode: MethodNode,
-    insns: Collection<AbstractInsnNode>
+    insns: Collection<AbstractInsnNode>,
+    ignoreCopy: Boolean
 ): Map<AbstractInsnNode, Collection<AbstractInsnNode>> {
-    val frames = MethodTransformer.analyze(internalClassName, methodNode, IgnoringCopyOperationSourceInterpreter())
+    val frames = MethodTransformer.analyze(
+        internalClassName,
+        methodNode,
+        if (ignoreCopy) IgnoringCopyOperationSourceInterpreter() else SourceInterpreter()
+    )
     return insns.keysToMap {
         val index = methodNode.instructions.indexOf(it)
         if (isUnreachable(index, frames)) return@keysToMap emptySet<AbstractInsnNode>()
