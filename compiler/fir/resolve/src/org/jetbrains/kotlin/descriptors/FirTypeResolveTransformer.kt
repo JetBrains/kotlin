@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
@@ -35,6 +33,7 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
 
     lateinit var scope: FirCompositeScope
     lateinit var packageFqName: FqName
+    lateinit var file: FirFile
     private var classLikeName: FqName = FqName.ROOT
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
@@ -45,6 +44,7 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
             )
         )
         packageFqName = file.packageFqName
+        this.file = file
         return super.transformFile(file, data)
     }
 
@@ -91,6 +91,16 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
         scope = scope.scopes[0] as FirCompositeScope
         classLikeName = classLikeName.parent()
         return super.transformTypeAlias(typeAlias, data)
+    }
+
+    override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        scope = FirCompositeScope(mutableListOf(scope))
+        scope.scopes += FirFunctionTypeParameterScope(file, classLikeName, namedFunction.name, namedFunction.session)
+
+        val result = super.transformNamedFunction(namedFunction, data)
+        scope = scope.scopes[0] as FirCompositeScope
+
+        return result
     }
 
     override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
