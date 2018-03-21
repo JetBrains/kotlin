@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirBasedDescriptor
 import org.jetbrains.kotlin.fir.declarations.FirResolvedTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 class FirResolvedTypeAliasImpl(val delegate: FirTypeAlias, override val descriptor: FirBasedDescriptor<FirResolvedTypeAlias>) :
     FirResolvedTypeAlias, FirTypeAlias by delegate {
@@ -19,6 +20,10 @@ class FirResolvedTypeAliasImpl(val delegate: FirTypeAlias, override val descript
 
     init {
         descriptor.bind(this)
+    }
+
+    override fun accept(visitor: FirVisitorVoid) {
+        return super<FirResolvedTypeAlias>.accept(visitor)
     }
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
