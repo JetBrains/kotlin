@@ -108,7 +108,7 @@ abstract class AbstractIrAnalyzerTest : AbstractDiagnosticsTestWithStdLib() {
         analyzer {
             functionIssue {
                 function("foo")
-                param("x")
+                param("x", Int::class)
             }
         }
 }

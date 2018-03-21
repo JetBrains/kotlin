@@ -9,27 +9,20 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import kotlin.reflect.KClass
 
-abstract class Issue {
-    abstract fun execute(
-        irModule: IrModuleFragment,
-        moduleDescriptor: ModuleDescriptor,
-        bindingContext: BindingContext
-    )
-}
-
-class FunctionUsageIssue(
-    private var packageName: String = ""
+class FunctionDeclarationIssue(
+    private var funcName: String? = null,
+    private var packageName: String? = null
 ) : Issue() {
-    private var funcName: String? = null
     private val params = mutableSetOf<String>()
-    private val predicates = mutableMapOf<String, (Any) -> Boolean>()
-    private val paramTypes = mutableMapOf<String, KClass<Any>>()
+    private val paramsWithType = mutableMapOf<String, KClass<*>>()
 
     fun setPackage(packageName: String) {
         this.packageName = packageName
@@ -43,20 +36,19 @@ class FunctionUsageIssue(
         params.add(param)
     }
 
+    fun <T : Any> param(param: String, clazz: KClass<T>) {
+        paramsWithType[param] = clazz
+    }
+
     fun params(params: List<String>) {
         this.params.addAll(params)
     }
 
-    fun <T> paramPredicate(param: String, paramClass: KClass<Any>, predicate: (Any) -> Boolean) {
-        predicates[param] = predicate
-        paramTypes[param] = paramClass
-    }
 
     override fun execute(irModule: IrModuleFragment, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext) {
         println("Issue")
         println(funcName)
         println(params)
-        println(predicates)
         irModule.acceptVoid(MyIrVisitor())
         println("executed")
     }
@@ -66,12 +58,21 @@ class FunctionUsageIssue(
             element.acceptChildrenVoid(this)
         }
 
+        override fun visitPackageFragment(declaration: IrPackageFragment) {
+            if (packageName != null && declaration.fqName.asString() != packageName) {
+                return
+            }
+            declaration.acceptChildrenVoid(this)
+        }
+
         override fun visitFunction(declaration: IrFunction) {
             checkFunction(declaration)
             declaration.acceptChildrenVoid(this)
         }
 
         private fun checkFunction(declaration: IrFunction) {
+            // TODO: add try catch on
+
             if (funcName == null) {
                 return
             }
@@ -79,36 +80,26 @@ class FunctionUsageIssue(
                 return
             }
 
-            if (declaration.valueParameters.map { it.name.asString() }.containsAll(params)) {
-                val offset = declaration.startOffset
-                println("function $funcName:$offset contains \"$params\" params")
+            val offset = declaration.startOffset
+            if (params.isNotEmpty() && declaration.valueParameters.map { it.name.identifier }.containsAll(params)) {
+                println("function $funcName:$offset contains \"$params\" parameters")
+            }
+
+            for (paramDeclaration in declaration.valueParameters) {
+                val paramName = paramDeclaration.name.identifier
+
+                if (paramName in paramsWithType) {
+                    val expectedType = classNameFromKClass(paramsWithType[paramName]!!)
+                    val actualType = classNameFromDescriptor(paramDeclaration)
+                    if (actualType != null && actualType == expectedType) {
+                        println("function $funcName:$offset contains \"$paramName:$actualType\" parameter")
+                    }
+                }
             }
         }
     }
-}
 
-class Analyzer {
-    private val issues = mutableListOf<Issue>()
+    private fun classNameFromDescriptor(declaration: IrValueParameter): String? = declaration.descriptor.toString().split(" ").getOrNull(2)
 
-    fun functionIssue(init: FunctionUsageIssue.() -> Unit) {
-        val issue = FunctionUsageIssue()
-        issue.init()
-        issues.add(issue)
-    }
-
-    fun execute(
-        irModule: IrModuleFragment,
-        moduleDescriptor: ModuleDescriptor,
-        bindingContext: BindingContext
-    ) {
-        issues.forEach { it.execute(irModule, moduleDescriptor, bindingContext) }
-    }
-}
-
-fun analyzer(
-    init: Analyzer.() -> Unit
-): Analyzer {
-    val analyzer = Analyzer()
-    analyzer.init()
-    return analyzer
+    private fun classNameFromKClass(clazz: KClass<*>): String? = clazz.toString().split(" ").getOrNull(1)
 }

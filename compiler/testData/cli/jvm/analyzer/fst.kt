@@ -1,4 +1,8 @@
-fun foo(x: Int): Int {
+package aaa.bbb
+
+class A {}
+
+fun foo(x: Int, a: A): Int {
     var y = x + 2
     if (y > 2) {
         return 10
@@ -14,4 +18,4 @@ fun bar(): Int {
     return y + 10
 }
 
-fun foo(x: Int, y: Int) = x + y
+//fun foo(x: Int, y: Int) = x + y
