@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.psi.KtBinaryExpression;
 
+@FunctionalInterface
 public interface BinaryOperationIntrinsic {
     @NotNull
     JsExpression invoke(KtBinaryExpression expression, JsExpression left, JsExpression right, TranslationContext context);
