@@ -247,7 +247,12 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                     typeInfoGlobal.pointer.getElementPtr(0).llvm,
                     typeInfoSymbolName)!!
 
-            if (!descriptor.isExported()) {
+            if (descriptor.isExported()) {
+                if (llvmTypeInfoPtr.name != typeInfoSymbolName) {
+                    // So alias name has been mangled by LLVM to avoid name clash.
+                    throw IllegalArgumentException("Global '$typeInfoSymbolName' already exists")
+                }
+            } else {
                 LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMInternalLinkage)
             }
 
