@@ -236,14 +236,12 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
     private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {
         override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
-            if (ReloadGradleTemplatesOnSync.gradleState.isSyncInProgress) {
-                return ResolveResult.Failure(ScriptReport("Highlighting is impossible during Gradle Import", ScriptReport.Severity.WARNING))
+            val failureMessage = if (ReloadGradleTemplatesOnSync.gradleState.isSyncInProgress) {
+                "Highlighting is impossible during Gradle Import"
+            } else {
+                message ?: "Failed to load script definitions by ${GradleScriptDefinitionsContributor::class.java.name}"
             }
-            return ResolveResult.Failure(
-                ScriptReport(
-                    message ?: "Failed to load script definitions by ${GradleScriptDefinitionsContributor::class.java.name}"
-                )
-            )
+            return ResolveResult.Failure(ScriptReport(failureMessage, ScriptReport.Severity.FATAL))
         }
     }
 }
