@@ -24,7 +24,7 @@ sourceSets {
             if(!System.properties.'idea.active') {
                 srcDir '../jvm/test'
                 srcDir '../common/test'
-                srcDir '../common/build/common-test-sources'
+                srcDir '../test'
             }
         }
     }
@@ -59,7 +59,6 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    dependsOn(":kotlin-stdlib-common:preprocessSourcesTest")
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
 }
 

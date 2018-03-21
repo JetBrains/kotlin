@@ -5,8 +5,8 @@ apply plugin: 'kotlin-platform-common'
 configureDist(project)
 configurePublishing(project)
 
-def commonSrcDir = "${buildDir}/common-sources"
-def commonTestSrcDir = "${buildDir}/common-test-sources"
+def commonSrcDir = "../src"
+def commonTestSrcDir = "../test"
 
 sourceSets {
     main {
@@ -28,11 +28,8 @@ dependencies {
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
 }
 
-createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
-createPreprocessorTask(project, "Test", "${projectDir}/../test", commonTestSrcDir)
-
 compileKotlinCommon {
-    dependsOn preprocessSourcesMain
+    dependsOn(":prepare:build.version:writeStdlibVersion")
 //    dependsOn ":prepare:compiler:prepare-compiler-with-bootstrap-runtime"
 //    compilerJarFile = compilerJarWithBootstrapRuntime
 }
@@ -48,9 +45,6 @@ compileKotlinCommon {
 }
 */
 
-compileTestKotlinCommon {
-    dependsOn preprocessSourcesTest
-}
 
 kotlin.experimental.coroutines 'enable'
 

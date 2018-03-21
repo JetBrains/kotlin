@@ -108,8 +108,6 @@ check.dependsOn(dexMethodCount)
 
 compileKotlin {
     dependsOn(":core:builtins:serialize")
-    dependsOn(":prepare:build.version:writeStdlibVersion")
-    dependsOn(":kotlin-stdlib-common:preprocessSourcesMain")
     classpath += files("${rootDir}/dist/builtins")
     kotlinOptions {
         freeCompilerArgs = [
@@ -121,10 +119,6 @@ compileKotlin {
                 "-module-name", "kotlin-stdlib"
         ]
     }
-}
-
-compileTestKotlin {
-    dependsOn(":kotlin-stdlib-common:preprocessSourcesTest")
 }
 
 

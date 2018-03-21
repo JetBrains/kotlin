@@ -13,7 +13,8 @@ configurePublishing(project)
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
-def commonSrcDir = "${projectDir}/../common/src/build/common-sources"
+def commonSrcDir = "${projectDir}/../src/kotlin"
+def commonSrcDir2 = "${projectDir}/../common/src"
 
 def builtinsDir = "${rootDir}/core/builtins"
 def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
@@ -43,7 +44,6 @@ sourceSets {
         kotlin {
             srcDir builtinsSrcDir
             srcDir jsSrcDir
-            srcDir commonSrcDir
         }
     }
 
@@ -130,13 +130,12 @@ compileBuiltinsKotlin2Js {
 }
 
 compileKotlin2Js {
-    dependsOn(":kotlin-stdlib-common:preprocessSourcesMain")
     dependsOn prepareBuiltinsSources
     kotlinOptions {
         outputFile = "${buildDir}/classes/main/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
-        freeCompilerArgs += ["-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir].collect { file(it).absoluteFile }.join(File.pathSeparator)]
+        freeCompilerArgs += ["-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir, commonSrcDir2].collect { file(it).absoluteFile }.join(File.pathSeparator)]
     }
 }
 
@@ -153,7 +152,6 @@ compileExperimentalKotlin2Js {
 }
 
 compileTestKotlin2Js {
-    dependsOn(":kotlin-stdlib-common:preprocessSourcesTest")
     kotlinOptions {
         moduleKind = "umd"
     }
@@ -213,7 +211,7 @@ task compileJs(type: JavaExec) {
             if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
         }
 
-        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, projectDir, experimentalSrcDir]
+        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir, experimentalSrcDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
             def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text
