@@ -17,11 +17,13 @@ def commonSrcDir = "${buildDir}/common-sources"
 def commonTestSrcDir = "${buildDir}/common-test-sources"
 def builtinsDir = "${rootDir}/core/builtins"
 def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
+def experimentalJsModuleName = 'kotlin-experimental'
 def jsSrcGeneratedDir = "${rootDir}/js/js.libraries/src/core/generated" // to be removed soon
 def jsSrcDir = "src"
 def jsTestSrcDir = "test"
 def jsSrcJsDir = "${jsSrcDir}/js"
 def jsOutputFile = "${buildDir}/classes/kotlin.js"
+def jsOutputMetaFile = "${buildDir}/classes/kotlin.meta.js"
 
 def kotlinTestJsOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/main/kotlin-test.js"
 
@@ -147,7 +149,7 @@ compileExperimentalKotlin2Js {
     kotlinOptions {
         languageVersion = "1.3"
         apiVersion = "1.3"
-        outputFile = "${buildDir}/classes/main/kotlin-experimental.js"
+        outputFile = "${buildDir}/classes/experimental/${experimentalJsModuleName}.js"
         sourceMap = true
         sourceMapPrefix = "./"
         freeCompilerArgs += ["-source-map-base-dirs", [experimentalSrcDir].join(File.pathSeparator)]
@@ -215,7 +217,7 @@ task compileJs(type: JavaExec) {
             if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
         }
 
-        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, jsSrcGeneratedDir, builtinsSrcDir, commonSrcDir, projectDir]
+        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, jsSrcGeneratedDir, builtinsSrcDir, commonSrcDir, projectDir, experimentalSrcDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
             def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text
@@ -224,6 +226,10 @@ task compileJs(type: JavaExec) {
         }
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
+
+        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text +
+                                      file(compileExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text
+                                              .replaceFirst(experimentalJsModuleName, 'kotlin')
     }
 }
 
@@ -248,8 +254,11 @@ task mergedJar(type: Jar, dependsOn: classes) {
     includeEmptyDirs false
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
     from jsOutputFile
+    from jsOutputMetaFile
     from "${jsOutputFile}.map"
     from sourceSets.main.output
+    from sourceSets.experimental.output
+    exclude "${experimentalJsModuleName}.*"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
