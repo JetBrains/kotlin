@@ -122,7 +122,7 @@ class RedundantLocalsEliminationMethodTransformer : MethodTransformer() {
             val succ = findImmediateSuccessors(insn, cfg, methodNode).singleOrNull() ?: continue
             if (succ.opcode != Opcodes.POP) continue
             if (insn.opcode == Opcodes.ALOAD && methodNode.localVariables.firstOrNull { it.index == insn.localIndex() } != null) continue
-            val sources = findSourceInstructions(internalClassName, methodNode, listOf(succ)).values.flatten()
+            val sources = findSourceInstructions(internalClassName, methodNode, listOf(succ), ignoreCopy = false).values.flatten()
             if (sources.size != 1) continue
             res[insn] = succ
         }
@@ -182,7 +182,7 @@ class RedundantLocalsEliminationMethodTransformer : MethodTransformer() {
                     it.opcode == Opcodes.ASTORE && it.localIndex() == succ.localIndex()
                 } != 1) continue
             if (!ignoreLocalVariableTable && methodNode.localVariables.firstOrNull { it.index == succ.localIndex() } != null) continue
-            val sources = findSourceInstructions(internalClassName, methodNode, listOf(succ)).values.flatten()
+            val sources = findSourceInstructions(internalClassName, methodNode, listOf(succ), ignoreCopy = false).values.flatten()
             if (sources.size > 1) continue
             res[insn] = succ
         }
