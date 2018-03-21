@@ -89,33 +89,6 @@ class PreconditionsTest() {
         }
     }
 
-    @kotlin.jvm.JvmVersion
-    @Test fun passingAssert() {
-        assert(true)
-        var called = false
-        assert(true) { called = true; "some message" }
-
-        assertFalse(called)
-    }
-
-
-    @kotlin.jvm.JvmVersion
-    @Test fun failingAssert() {
-        val error = assertFailsWith<AssertionError> {
-            assert(false)
-        }
-        assertEquals("Assertion failed", error.message)
-    }
-
-
-    @kotlin.jvm.JvmVersion
-    @Test fun failingAssertWithMessage() {
-        val error = assertFailsWith<AssertionError> {
-            assert(false) { "Hello" }
-        }
-        assertEquals("Hello", error.message)
-    }
-
     @Test fun error() {
         val error = assertFailsWith<IllegalStateException> {
             error("There was a problem")
