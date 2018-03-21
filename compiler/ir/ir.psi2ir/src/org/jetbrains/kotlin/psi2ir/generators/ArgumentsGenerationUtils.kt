@@ -396,7 +396,7 @@ fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): Cal
                 null
             else
                 unsubstitutedUnwrappedTypeParameters.associate {
-                    val originalTypeParameter = originalDescriptor.typeParameters[it.index]
+                    val originalTypeParameter = originalDescriptor.original.typeParameters[it.index]
                     val originalTypeArgument = originalTypeArguments[originalTypeParameter]
                             ?: throw AssertionError("No type argument for $originalTypeParameter")
                     it to originalTypeArgument
