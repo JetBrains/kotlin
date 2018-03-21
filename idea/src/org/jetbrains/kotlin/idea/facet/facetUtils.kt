@@ -47,8 +47,7 @@ import kotlin.reflect.KProperty1
 
 private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): TargetPlatformKind<*> {
     for (platform in TargetPlatformKind.ALL_PLATFORMS) {
-        if (platform.version == TargetPlatformVersion.NoVersion &&
-            getRuntimeLibraryVersions(module, rootModel, platform).isNotEmpty()) {
+        if (getRuntimeLibraryVersions(module, rootModel, platform).isNotEmpty()) {
             return platform
         }
     }
