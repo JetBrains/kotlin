@@ -14,6 +14,15 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return JsBlock(body.statements.map { it.accept(this, data) })
     }
 
+    override fun visitBlock(expression: IrBlock, data: Nothing?): JsBlock {
+        return JsBlock(expression.statements.map { it.accept(this, data) })
+    }
+
+    override fun visitComposite(expression: IrComposite, data: Nothing?): JsStatement {
+        // TODO introduce JsCompositeBlock?
+        return JsBlock(expression.statements.map { it.accept(this, data) })
+    }
+
     override fun visitExpression(expression: IrExpression, data: Nothing?): JsStatement {
         return JsExpressionStatement(expression.accept(IrElementToJsExpressionTransformer(), data))
     }

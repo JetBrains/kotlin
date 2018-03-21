@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 
 val IrFunctionSymbol.parameterCount get() = descriptor.valueParameters.size
 
 val IrConstructorSymbol.isPrimary get() = descriptor.isPrimary
+
+val IrValueSymbol.name get() = descriptor.name

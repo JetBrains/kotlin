@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.isPrimary
+import org.jetbrains.kotlin.ir.backend.js.utils.name
 import org.jetbrains.kotlin.ir.backend.js.utils.parameterCount
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -32,6 +33,27 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Float -> JsDoubleLiteral(kind.valueOf(expression).toDouble())
             is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
         }
+    }
+
+    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): JsExpression {
+        // TODO revisit
+        return expression.arguments.fold<IrExpression, JsExpression>(JsStringLiteral("")) { jsExpr, irExpr ->
+            JsBinaryOperation(
+                JsBinaryOperator.ADD,
+                jsExpr,
+                irExpr.accept(this, data)
+            )
+        }
+    }
+
+    override fun visitGetValue(expression: IrGetValue, data: Nothing?): JsExpression {
+        return JsNameRef(expression.symbol.name.toJsName())
+    }
+
+    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): JsExpression {
+        val ref = JsNameRef(expression.symbol.name.toJsName())
+        val value = expression.value.accept(this, data)
+        return JsBinaryOperation(JsBinaryOperator.ASG, ref, value)
     }
 
     override fun visitCall(expression: IrCall, data: Nothing?): JsExpression {
