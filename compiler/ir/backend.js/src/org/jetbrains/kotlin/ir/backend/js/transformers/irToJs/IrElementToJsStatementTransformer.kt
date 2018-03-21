@@ -37,4 +37,8 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitVariable(declaration: IrVariable, data: Nothing?): JsStatement {
         return jsVar(declaration.name, declaration.initializer)
     }
+
+    override fun visitWhen(expression: IrWhen, data: Nothing?): JsStatement {
+        return expression.toJsNode(this, data, ::JsIf) ?: JsEmpty
+    }
 }

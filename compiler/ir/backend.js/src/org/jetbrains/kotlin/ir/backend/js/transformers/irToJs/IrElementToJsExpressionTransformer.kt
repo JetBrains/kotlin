@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isPrimary
 import org.jetbrains.kotlin.ir.backend.js.utils.parameterCount
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
 
@@ -72,5 +69,10 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         }
 
         return JsInvocation(ref, extensionReceiver?.let { listOf(extensionReceiver) + arguments } ?: arguments)
+    }
+
+    override fun visitWhen(expression: IrWhen, data: Nothing?): JsExpression {
+        // TODO check when w/o else branch and empty when
+        return expression.toJsNode(this, data, ::JsConditional)!!
     }
 }
