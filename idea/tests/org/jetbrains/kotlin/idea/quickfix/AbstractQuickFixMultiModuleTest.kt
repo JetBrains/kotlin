@@ -12,6 +12,7 @@ import com.intellij.openapi.command.CommandProcessor
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
+import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -25,7 +26,12 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
 
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleQuickFix/"
 
-    protected fun doQuickFixTest() {
+    fun doTest(dirPath: String) {
+        setupMppProjectFromDirStructure(File(dirPath))
+        doQuickFixTest()
+    }
+
+    private fun doQuickFixTest() {
         val allFilesInProject = project.allKotlinFiles()
         val actionFile = allFilesInProject.single { file ->
             file.text.contains("// \"")

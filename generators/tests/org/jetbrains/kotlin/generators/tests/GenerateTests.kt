@@ -113,6 +113,7 @@ import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProje
 import org.jetbrains.kotlin.idea.navigation.*
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
+import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiModuleTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.idea.refactoring.AbstractNameSuggestionProviderTest
 import org.jetbrains.kotlin.idea.refactoring.copy.AbstractCopyTest
@@ -635,6 +636,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMultiFileHighlightingTest> {
             model("multiFileHighlighting", recursive = false)
+        }
+
+        testClass<AbstractQuickFixMultiModuleTest> {
+            model("multiModuleQuickFix", recursive = false, extension = null)
         }
 
         testClass<AbstractExtractionTest> {
