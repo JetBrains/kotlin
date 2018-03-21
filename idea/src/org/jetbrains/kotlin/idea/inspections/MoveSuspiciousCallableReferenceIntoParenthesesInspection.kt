@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.ConvertLambdaToReferenceIntention
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -67,12 +68,16 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                 ""
             } else {
                 val descriptor = receiverExpression.getCallableDescriptor()
-                if (descriptor == null || descriptor is ValueParameterDescriptor)
+                val literal = element.functionLiteral
+                if (descriptor == null ||
+                    descriptor is ValueParameterDescriptor && descriptor.containingDeclaration == literal.resolveToDescriptorIfAny()
+                ) {
                     callableReference.resolveToCall(BodyResolveMode.FULL)
                         ?.let { it.extensionReceiver ?: it.dispatchReceiver }
                         ?.let { "${it.type}" } ?: ""
-                else
+                } else {
                     receiverExpression.text
+                }
             }
             return "$receiver::${callableReference.text}"
         }
