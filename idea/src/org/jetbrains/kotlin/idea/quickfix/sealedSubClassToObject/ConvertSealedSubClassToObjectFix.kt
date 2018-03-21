@@ -15,7 +15,9 @@ import com.intellij.psi.impl.source.tree.JavaElementType
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class ConvertSealedSubClassToObjectFix : LocalQuickFix {
@@ -40,22 +42,18 @@ class ConvertSealedSubClassToObjectFix : LocalQuickFix {
     private fun changeDeclaration(element: KtClass) {
         val factory = KtPsiFactory(element)
 
-        element.removeOpen()
         element.changeToObject(factory)
         element.transformToObject(factory)
     }
 
-    private fun KtClass.removeOpen() {
-        modifierList?.getModifier(KtTokens.OPEN_KEYWORD)?.delete()
-    }
-
     private fun KtClass.changeToObject(factory: KtPsiFactory) {
         getClassOrInterfaceKeyword()?.replace(factory.createExpression(KtTokens.OBJECT_KEYWORD.value))
+        secondaryConstructors.forEach { delete() }
         primaryConstructor?.delete()
     }
 
     private fun KtClass.transformToObject(factory: KtPsiFactory) {
-        replace(factory.createDeclaration<KtObjectDeclaration>(text))
+        replace(factory.createObject(text))
     }
 
     /**

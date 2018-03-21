@@ -29,3 +29,19 @@ class SubSealedObjectWithSecondaryConstructor() : Sealed() {
 }
 
 object AlreadyObject: Sealed()
+
+class SubSealedWithCompanion: Sealed() {
+    companion object
+}
+
+class SubSealedWithInner: Sealed() {
+    inner class Inner
+}
+
+class SubSealedWithNested: Sealed() {
+    class Nested
+}
+
+class SubSealedWithFunction: Sealed() {
+    fun internalFunction() { }
+}
