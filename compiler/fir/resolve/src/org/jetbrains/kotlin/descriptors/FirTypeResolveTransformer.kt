@@ -67,7 +67,7 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
         classLikeName = classLikeName.child(klass.name)
         val classId = ClassId(packageFqName, classLikeName, false)
         scope = FirCompositeScope(mutableListOf(scope))
-        scope.scopes += FirClassLikeTypeParameterScope(classId, klass.session)
+        scope.scopes += FirClassLikeTypeParameterScope(klass)
         resolveSuperTypesAndExpansions(klass)
 
         scope.scopes += FirNestedClassifierScope(classId, klass.session)
@@ -82,9 +82,8 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         classLikeName = classLikeName.child(typeAlias.name)
-        val classId = ClassId(packageFqName, classLikeName, false)
         scope = FirCompositeScope(mutableListOf(scope))
-        scope.scopes += FirClassLikeTypeParameterScope(classId, typeAlias.session)
+        scope.scopes += FirClassLikeTypeParameterScope(typeAlias)
 
         resolveSuperTypesAndExpansions(typeAlias)
 
@@ -95,7 +94,7 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         scope = FirCompositeScope(mutableListOf(scope))
-        scope.scopes += FirFunctionTypeParameterScope(file, classLikeName, namedFunction.name, namedFunction.session)
+        scope.scopes += FirFunctionTypeParameterScope(namedFunction)
 
         val result = super.transformNamedFunction(namedFunction, data)
         scope = scope.scopes[0] as FirCompositeScope

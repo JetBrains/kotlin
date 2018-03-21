@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class FirClassLikeTypeParameterScope(val classId: ClassId, val session: FirSession) : FirScope {
+class FirClassLikeTypeParameterScope(classLike: FirMemberDeclaration) : FirScope {
 
-    private val firProvider = FirProvider.getInstance(session)
-
-    val typeParameters = firProvider.getFirClassifierByFqName(classId)?.typeParameters.orEmpty().groupBy { it.name }
+    val typeParameters = classLike.typeParameters.groupBy { it.name }
 
     override fun processClassifiersByName(name: Name, processor: (ConeSymbol) -> Boolean): Boolean {
         val matchedTypeParameters = typeParameters[name] ?: return true
