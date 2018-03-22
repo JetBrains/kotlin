@@ -12,8 +12,7 @@ dependencies {
 }
 
 compileKotlin2Js {
-    // TODO: Why "-Xmulti-platfrom" ?
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
     kotlinOptions {
         moduleKind = "umd"
         outputFile = "${buildDir}/classes/main/kotlin-test.js"
