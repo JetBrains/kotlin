@@ -8,6 +8,14 @@ class A {
 fun m() {
 }
 
+fun m1():Number {
+    return 1
+}
+
+fun m2():Any {
+    return 1
+}
+
 fun getJavaPrimitiveType1():Class<*>? {
     return Int::class.javaPrimitiveType
 }
@@ -74,12 +82,22 @@ fun box(): String {
     if (getJavaPrimitiveType7() !== null) {
         return "Failure 7"
     }
-    println(Void::class.javaPrimitiveType)
     if (getJavaPrimitiveType8() !== Void::class.javaPrimitiveType) {
         return "Failure 8"
     }
     if (getJavaPrimitiveType9() !== Boolean::class.javaPrimitiveType) {
         return "Failure 9"
     }
+    if (m1()::class.javaPrimitiveType !== Int::class.javaPrimitiveType) {
+        return "Failure 10"
+    }
+    if (m2()::class.javaPrimitiveType !== Int::class.javaPrimitiveType) {
+        return "Failure 11"
+    }
+    var x = 42
+    if ({ x *= 2; x }()::class.javaPrimitiveType !== Int::class.javaPrimitiveType || x != 84) {
+        return "Failure 12"
+    }
+
     return "OK"
 }

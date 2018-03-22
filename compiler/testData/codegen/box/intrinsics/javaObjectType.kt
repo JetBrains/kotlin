@@ -80,6 +80,10 @@ fun box(): String {
     if (getJavaObjectType9() !== java.lang.Boolean::class.javaObjectType) {
         return "Failure 9"
     }
+    var x = 42
+    if ({ x *= 2; x }()::class.javaObjectType != Int::class.javaObjectType || x != 84) {
+        return "Failure 10"
+    }
 
     return "OK"
 }

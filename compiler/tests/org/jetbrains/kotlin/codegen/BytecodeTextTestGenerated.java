@@ -2196,15 +2196,15 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/intrinsics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
-        @TestMetadata("kt22063_1.kt")
-        public void testKt22063_1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/intrinsics/kt22063_1.kt");
+        @TestMetadata("javaObjectType.kt")
+        public void testJavaObjectType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/intrinsics/javaObjectType.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("kt22063_2.kt")
-        public void testKt22063_2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/intrinsics/kt22063_2.kt");
+        @TestMetadata("javaPrimitiveType.kt")
+        public void testJavaPrimitiveType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/intrinsics/javaPrimitiveType.kt");
             doTest(fileName);
         }
     }

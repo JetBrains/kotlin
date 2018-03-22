@@ -26,36 +26,29 @@ class KClassJavaObjectTypeProperty : IntrinsicPropertyGetter() {
         val receiverExpression = classLiteralExpression.receiverExpression ?: return null
         val lhs = codegen.bindingContext.get(DOUBLE_COLON_LHS, receiverExpression) ?: return null
         return StackValue.operation(returnType) { iv ->
-            var lhsType = codegen.asmType(lhs.type)
             if (lhs is DoubleColonLHS.Expression && !lhs.isObjectQualifier) {
                 val receiverStackValue = codegen.gen(receiverExpression)
-                val extensionReceiverType  = receiverStackValue.type
+                val extensionReceiverType = receiverStackValue.type
+                receiverStackValue.put(extensionReceiverType, iv)
                 when {
                     extensionReceiverType == Type.VOID_TYPE -> {
-                        receiverStackValue.put(Type.VOID_TYPE, iv)
                         StackValue.unit().put(AsmTypes.UNIT_TYPE, iv)
                         iv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
                     }
                     AsmUtil.isPrimitive(extensionReceiverType) -> {
-                        receiverStackValue.put(extensionReceiverType, iv)
                         AsmUtil.pop(iv, extensionReceiverType)
                         iv.aconst(AsmUtil.boxType(extensionReceiverType))
                     }
                     else -> {
-                        receiverStackValue.put(extensionReceiverType, iv)
                         iv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
                     }
                 }
             } else {
-                if (AsmUtil.isPrimitive(lhsType)) {
-                    lhsType = AsmUtil.boxType(lhsType)
-                } else {
-                    if (TypeUtils.isTypeParameter(lhs.type)) {
-                        assert(TypeUtils.isReifiedTypeParameter(lhs.type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + lhs.type }
-                        codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(lhs.type, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
-                    }
+                if (TypeUtils.isTypeParameter(lhs.type)) {
+                    assert(TypeUtils.isReifiedTypeParameter(lhs.type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + lhs.type }
+                    codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(lhs.type, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
                 }
-                iv.aconst(lhsType)
+                iv.aconst(AsmUtil.boxType(codegen.asmType(lhs.type)))
             }
         }
     }

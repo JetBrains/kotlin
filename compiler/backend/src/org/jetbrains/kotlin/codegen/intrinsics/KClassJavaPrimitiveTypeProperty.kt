@@ -23,51 +23,50 @@ class KClassJavaPrimitiveTypeProperty : IntrinsicPropertyGetter() {
         val classLiteralExpression = receiverValue.expression as? KtClassLiteralExpression ?: return null
         val receiverExpression = classLiteralExpression.receiverExpression ?: return null
         val lhs = codegen.bindingContext.get(DOUBLE_COLON_LHS, receiverExpression) ?: return null
-        val lhsType = codegen.asmType(lhs.type)
         if (TypeUtils.isTypeParameter(lhs.type)) {
-            // Reified mechanism is not yet able to generate code that should generate a null value or a field access to TYPE based
-            // on a concrete type. To support it, it requires a new kind into ReifiedTypeInliner.OperationKind and add the corresponding
-            // rewriting support, thus keep the old mechanism for the moment.
+            // TODO: add new operation kind to ReifiedTypeInliner.OperationKind to generate a null value or a field access to TYPE
             return null
         }
-
+        val lhsType = codegen.asmType(lhs.type)
         return StackValue.operation(returnType) { iv ->
             if (lhs is DoubleColonLHS.Expression && !lhs.isObjectQualifier) {
                 val receiverStackValue = codegen.gen(receiverExpression)
                 val receiverType = receiverStackValue.type
+                receiverStackValue.put(receiverType, iv)
                 when {
                     receiverType == Type.VOID_TYPE -> {
-                        receiverStackValue.put(Type.VOID_TYPE, iv)
                         iv.aconst(null)
                     }
                     AsmUtil.isPrimitive(receiverType) -> {
-                        receiverStackValue.put(receiverType, iv)
                         AsmUtil.pop(iv, receiverType)
-                        iv.getstatic(AsmUtil.boxType(receiverType).getInternalName(), "TYPE", "Ljava/lang/Class;");
+                        iv.getstatic(AsmUtil.boxType(receiverType).internalName, "TYPE", "Ljava/lang/Class;")
                     }
                     else -> {
-                        receiverStackValue.put(receiverType, iv)
-                        AsmUtil.pop(iv, receiverType)
                         if (AsmUtil.unboxPrimitiveTypeOrNull(receiverType) != null) {
-                            iv.getstatic(receiverType.getInternalName(), "TYPE", "Ljava/lang/Class;");
+                            AsmUtil.pop(iv, receiverType)
+                            iv.getstatic(receiverType.internalName, "TYPE", "Ljava/lang/Class;")
                         } else {
-                            iv.aconst(null)
+                            if (receiverType == AsmTypes.OBJECT_TYPE || receiverType == AsmTypes.NUMBER_TYPE) {
+                                iv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
+                                AsmUtil.wrapJavaClassIntoKClass(iv)
+                                iv.invokestatic(
+                                    "kotlin/jvm/JvmClassMappingKt", "getJavaPrimitiveType",
+                                    "(Lkotlin/reflect/KClass;)Ljava/lang/Class;", false
+                                )
+                            } else {
+                                AsmUtil.pop(iv, receiverType)
+                                iv.aconst(null)
+                            }
                         }
                     }
                 }
+            } else if (AsmUtil.isPrimitive(lhsType)
+                || AsmUtil.unboxPrimitiveTypeOrNull(lhsType) != null
+                || AsmTypes.VOID_WRAPPER_TYPE == lhsType
+            ) {
+                iv.getstatic(AsmUtil.boxType(lhsType).internalName, "TYPE", "Ljava/lang/Class;")
             } else {
-                if (AsmUtil.isPrimitive(lhsType)
-                    || AsmUtil.unboxPrimitiveTypeOrNull(lhsType) != null
-                    || AsmTypes.VOID_TYPE.equals(lhsType)
-                ) {
-                    var type = lhsType
-                    if (AsmUtil.isPrimitive(lhsType)) {
-                        type = AsmUtil.boxType(lhsType)
-                    }
-                    iv.getstatic(type.getInternalName(), "TYPE", "Ljava/lang/Class;");
-                } else {
-                    iv.aconst(null)
-                }
+                iv.aconst(null)
             }
         }
     }
