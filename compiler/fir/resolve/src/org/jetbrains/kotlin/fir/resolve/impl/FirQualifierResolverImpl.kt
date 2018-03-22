@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
@@ -17,20 +18,18 @@ import org.jetbrains.kotlin.name.FqName
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
 
     override fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): ConeSymbol? {
-        val firProvider = FirProvider.getInstance(session)
+        val symbolProvider = FirSymbolProvider.getInstance(session)
 
         val fqName = ClassId(
             prefix.packageFqName,
             parts.drop(1).fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
             false
         )
-        val classifier = firProvider.getFirClassifierByFqName(fqName) ?: return null
-
-        return (classifier as? FirSymbolOwner<*>)?.symbol
+        return symbolProvider.getSymbolByFqName(fqName) ?: return null
     }
 
     override fun resolveSymbol(parts: List<FirQualifierPart>): ConeSymbol? {
-        val firProvider = FirProvider.getInstance(session)
+        val firProvider = FirSymbolProvider.getInstance(session)
 
         if (parts.isNotEmpty()) {
             val lastPart = mutableListOf<FirQualifierPart>()
@@ -41,9 +40,9 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
                 firstPart.removeAt(firstPart.lastIndex)
 
                 val fqName = ClassId(firstPart.toFqName(), lastPart.toFqName(), false)
-                val foundClassifier = firProvider.getFirClassifierByFqName(fqName)
-                if (foundClassifier != null) {
-                    return (foundClassifier as? FirSymbolOwner<*>)?.symbol
+                val foundSymbol = firProvider.getSymbolByFqName(fqName)
+                if (foundSymbol != null) {
+                    return foundSymbol
                 }
             }
         }

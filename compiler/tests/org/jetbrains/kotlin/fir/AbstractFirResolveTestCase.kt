@@ -11,29 +11,22 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.impl.FirQualifierResolverImpl
-import org.jetbrains.kotlin.fir.resolve.impl.FirTypeResolverImpl
+import org.jetbrains.kotlin.fir.resolve.impl.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import java.io.File
 
-abstract class AbstractFirResolveTestCase : KotlinTestWithEnvironment() {
+abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCase() {
     override fun createEnvironment(): KotlinCoreEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_NO_RUNTIME)
     }
 
     fun doCreateAndProcessFir(ktFiles: List<KtFile>): List<FirFile> {
-        val session = object : FirSessionBase() {
-            init {
-                registerComponent(FirProvider::class, FirProviderImpl(this))
-                registerComponent(FirQualifierResolver::class, FirQualifierResolverImpl(this))
-                registerComponent(FirTypeResolver::class, FirTypeResolverImpl())
-            }
-        }
+        val session = createSession()
 
         val builder = RawFirBuilder(session)
 
@@ -43,7 +36,12 @@ abstract class AbstractFirResolveTestCase : KotlinTestWithEnvironment() {
             (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
             firFile
         }.also {
-            transformer.processFiles(it)
+            try {
+                transformer.processFiles(it)
+            } catch (e: Exception) {
+                it.forEach { println(it.render()) }
+                throw e
+            }
         }
 
         return firFiles

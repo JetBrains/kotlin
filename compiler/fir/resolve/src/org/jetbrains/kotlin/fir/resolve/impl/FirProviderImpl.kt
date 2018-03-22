@@ -26,8 +26,8 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
         }
     }
 
-    override fun getSymbolByFqName(fqName: ClassId): ConeSymbol? {
-        return (getFirClassifierByFqName(fqName) as? FirSymbolOwner<*>)?.symbol
+    override fun getSymbolByFqName(classId: ClassId): ConeSymbol? {
+        return (getFirClassifierByFqName(classId) as? FirSymbolOwner<*>)?.symbol
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {

@@ -12,6 +12,7 @@ jvmTarget = "1.6"
 
 dependencies {
     compile(project(":core:descriptors"))
+    compile(project(":core:deserialization"))
     compile(project(":compiler:fir:cones"))
     compile(project(":compiler:fir:tree"))
 

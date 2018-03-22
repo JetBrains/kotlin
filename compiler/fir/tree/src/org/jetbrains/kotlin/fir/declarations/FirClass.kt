@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -25,6 +26,8 @@ interface FirClass : FirDeclarationContainer, FirMemberDeclaration, FirSymbolOwn
     val isCompanion: Boolean
 
     val isData: Boolean
+
+    override val symbol: FirClassSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)

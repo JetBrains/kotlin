@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.types.Variance
@@ -42,23 +40,19 @@ class FirTypeResolverImpl : FirTypeResolver {
     }
 
     private fun ConeSymbol.toConeKotlinType(parts: List<FirQualifierPart>, session: FirSession): ConeKotlinType? {
-        val firProvider = FirProvider.getInstance(session)
-        val fir = firProvider.getFirClassifierBySymbol(this) ?: return null
-        return when (fir) {
-            is FirTypeParameter -> {
-                ConeTypeParameterTypeImpl(this as ConeTypeParameterSymbol)
-            }
-            is FirClass -> {
-                ConeClassTypeImpl(this as ConeClassLikeSymbol, parts.toTypeProjections())
-            }
-            is FirTypeAlias -> {
-                val coneTypeSafe = fir.expandedType.coneTypeSafe<ConeClassLikeType>()
-                val expansion = coneTypeSafe ?: return ConeKotlinErrorType("Couldn't resolve expansion")
 
+        return when (this) {
+            is ConeTypeParameterSymbol -> {
+                ConeTypeParameterTypeImpl(this)
+            }
+            is ConeClassSymbol -> {
+                ConeClassTypeImpl(this, parts.toTypeProjections())
+            }
+            is ConeTypeAliasSymbol -> {
                 ConeAbbreviatedTypeImpl(
                     abbreviationSymbol = this as ConeClassLikeSymbol,
                     typeArguments = parts.toTypeProjections(),
-                    directExpansion = expansion
+                    directExpansion = expansionType ?: ConeClassErrorType("Unresolved expansion")
                 )
             }
             else -> error("!")

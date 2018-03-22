@@ -14,10 +14,15 @@ import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-interface FirProvider {
+interface FirProvider : FirSymbolProvider {
     fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration?
 
-    fun getSymbolByFqName(fqName: ClassId): ConeSymbol?
+    override fun getSymbolByFqName(classId: ClassId): ConeSymbol?
+
+    override fun getPackage(fqName: FqName): FqName? {
+        if (getFirFilesByPackage(fqName).isNotEmpty()) return fqName
+        return null
+    }
 
     fun getFirClassifierContainerFile(fqName: ClassId): FirFile
 

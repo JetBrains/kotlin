@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
-import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -25,7 +24,7 @@ class FirStarImportingScope(imports: List<FirImport>, val session: FirSession) :
         position: FirPosition,
         processor: (ConeSymbol) -> Boolean
     ): Boolean {
-        val provider = FirProvider.getInstance(session)
+        val provider = FirSymbolProvider.getInstance(session)
         for (import in starImports) {
             val relativeClassName = import.relativeClassName
             val classId = if (relativeClassName == null) {

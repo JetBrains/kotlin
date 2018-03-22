@@ -12,24 +12,19 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.impl.*
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransformer<Nothing?>() {
+open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        return if (superTypesOnly) {
-            element.compose()
-        } else {
-            (element.transformChildren(this, data) as E).compose()
-        }
+        return (element.transformChildren(this, data) as E).compose()
     }
 
     lateinit var scope: FirCompositeScope
@@ -50,9 +45,7 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
     }
 
     private fun lookupSuperTypes(klass: FirClass): List<ClassId> {
-        val superTypesBuilder = SuperClassHierarchyBuilder()
-        klass.superTypes.any { it.accept(superTypesBuilder, null) }
-        return superTypesBuilder.classes
+        return mutableListOf<ConeClassLikeType>().also { klass.symbol.collectSuperTypes(it) }.map { it.symbol.classId }
     }
 
     private fun resolveSuperTypesAndExpansions(element: FirMemberDeclaration) {
@@ -140,9 +133,45 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
         return typeProjectionWithVariance.compose()
     }
 
+    private class SuperTypeResolveTransformer(val elementIterator: Iterator<FirElement>) : FirTypeResolveTransformer() {
+        override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+            if (elementIterator.hasNext()) elementIterator.next().transformSingle(this, data)
+            return element.compose()
+        }
+    }
+
     private inner class SuperTypeResolver : FirTransformer<Nothing?>() {
         override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
             return element.compose()
+        }
+
+
+        private fun walkSymbols(symbol: ConeSymbol) {
+            if (symbol is ConeClassLikeSymbol) {
+                if (symbol is FirBasedSymbol<*>) {
+                    val classId = symbol.classId
+                    val firProvider = FirProvider.getInstance(symbol.fir.session)
+
+                    val classes = generateSequence(classId) { it.outerClassId }.toList().asReversed()
+
+
+                    val file = firProvider.getFirClassifierContainerFile(classes.first())
+
+                    val firElementsToVisit = classes.asSequence().map {
+                        firProvider.getFirClassifierByFqName(it)!!
+                    }
+
+                    val transformer = SuperTypeResolveTransformer(firElementsToVisit.iterator())
+                    file.transformSingle(transformer, null)
+
+                } else {
+                    if (symbol is ConeTypeAliasSymbol) {
+                        symbol.expansionType?.let { walkSymbols(it.symbol) }
+                    } else if (symbol is ConeClassSymbol) {
+                        symbol.superTypes.forEach { walkSymbols(it.symbol) }
+                    }
+                }
+            }
         }
 
         override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
@@ -150,21 +179,9 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
             val symbol = typeResolver.resolveToSymbol(type, scope, position = FirPosition.SUPER_TYPE_OR_EXPANSION)
             val myTransformer = this@FirTypeResolveTransformer
 
+            if (symbol != null) walkSymbols(symbol)
+
             if (type !is FirUserType) return myTransformer.transformType(type, data)
-            val classId = (symbol as? ConeClassLikeSymbol)?.classId ?: return myTransformer.transformType(type, data)
-            val firProvider = FirProvider.getInstance(type.session)
-
-            val classes = generateSequence(classId) { it.outerClassId }.toList()
-
-            val transformer = FirTypeResolveTransformer(superTypesOnly = true)
-
-            val file = firProvider.getFirClassifierContainerFile(classes.last())
-
-            file.transformSingle(transformer, null)
-
-            classes.forEach {
-                firProvider.getFirClassifierByFqName(it)!!.transformSingle(transformer, data)
-            }
 
 
             type.transformChildren(myTransformer, null)
@@ -172,36 +189,29 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
         }
     }
 
-    private inner class SuperClassHierarchyBuilder : FirVisitor<Boolean, Nothing?>() {
-
-        override fun visitElement(element: FirElement, data: Nothing?): Boolean {
-            return false
+    private tailrec fun ConeClassLikeType.computePartialExpansion(): ConeClassLikeType? {
+        return when (this) {
+            is ConeAbbreviatedType -> directExpansion.takeIf { it !is ConeClassErrorType }?.computePartialExpansion()
+            else -> return this
         }
-
-        private tailrec fun ConeClassLikeType.computePartialExpansion(): ClassId {
-            return when (this) {
-                !is ConeAbbreviatedType -> this.symbol.classId
-                else -> this.directExpansion.computePartialExpansion()
-            }
-        }
-
-        val classes = mutableListOf<ClassId>()
-
-        override fun visitResolvedType(resolvedType: FirResolvedType, data: Nothing?): Boolean {
-            val provider = FirProvider.getInstance(resolvedType.session)
-            val targetClassId = resolvedType.coneTypeSafe<ConeClassLikeType>()?.computePartialExpansion() ?: return false
-            val classifier = provider.getFirClassifierByFqName(targetClassId)!!
-            when (classifier) {
-                is FirClass -> {
-                    if (classifier.classKind == ClassKind.CLASS) {
-                        classes += targetClassId
-                        classifier.superTypes.any { it.accept(this, data) }
-                    }
-                }
-                is FirTypeAlias -> classifier.expandedType.accept(this, data)
-            }
-            return true
-        }
-
     }
+
+    private tailrec fun ConeClassLikeSymbol.collectSuperTypes(list: MutableList<ConeClassLikeType>) {
+        return when (this) {
+            is ConeClassSymbol -> {
+                val superClassType =
+                    this.superTypes
+                        .map { it.computePartialExpansion() }
+                        .firstOrNull { (it?.symbol as? ConeClassSymbol)?.kind == ClassKind.CLASS } ?: return
+                list += superClassType
+                superClassType.symbol.collectSuperTypes(list)
+            }
+            is ConeTypeAliasSymbol -> {
+                val expansion = expansionType?.computePartialExpansion() ?: return
+                expansion.symbol.collectSuperTypes(list)
+            }
+            else -> error("?!id:1")
+        }
+    }
+
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedPackageStarImport
 import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -28,13 +29,13 @@ class FirImportResolveTransformer : FirTransformer<Nothing?>() {
 
     override fun transformImport(import: FirImport, data: Nothing?): CompositeTransformResult<FirImport> {
         val fqName = import.importedFqName ?: return import.compose()
-        val firProvider = FirProvider.getInstance(import.session)
+        val firProvider = FirSymbolProvider.getInstance(import.session)
 
         if (!fqName.isRoot) {
             val lastPart = mutableListOf<String>()
             var firstPart = fqName
 
-            if (import.isAllUnder && firProvider.getFirFilesByPackage(firstPart).isNotEmpty()) {
+            if (import.isAllUnder && firProvider.getPackage(firstPart) != null) {
                 return FirResolvedPackageStarImport(import, firstPart).compose()
             }
 
@@ -43,9 +44,9 @@ class FirImportResolveTransformer : FirTransformer<Nothing?>() {
                 firstPart = firstPart.parent()
 
                 val resolvedFqName = ClassId(firstPart, FqName.fromSegments(lastPart), false)
-                val foundClassifier = firProvider.getFirClassifierByFqName(resolvedFqName)
+                val foundSymbol = firProvider.getSymbolByFqName(resolvedFqName)
 
-                if (foundClassifier != null) {
+                if (foundSymbol != null) {
                     return FirResolvedImportImpl(import, resolvedFqName).compose()
                 }
             }

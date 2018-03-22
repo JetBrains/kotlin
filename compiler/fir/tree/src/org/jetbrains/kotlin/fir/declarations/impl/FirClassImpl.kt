@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.name.Name
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 open class FirClassImpl(
     session: FirSession,
     psi: PsiElement?,
-    final override val symbol: FirBasedSymbol<FirClass>,
+    final override val symbol: FirClassSymbol,
     name: Name,
     visibility: Visibility,
     modality: Modality?,

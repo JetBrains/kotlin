@@ -85,6 +85,21 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         doTest(fileName);
     }
 
+    @TestMetadata("compiler/testData/fir/resolve/builtins")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Builtins extends AbstractFirResolveTestCase {
+        public void testAllFilesPresentInBuiltins() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/fir/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("lists.kt")
+        public void testLists() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/builtins/lists.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/fir/resolve/multifile")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

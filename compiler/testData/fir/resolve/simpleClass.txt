@@ -1,27 +1,27 @@
 FILE: simpleClass.kt
     (resolved) public? abstract interface SomeInterface() {
-        public? final? function foo(x: R/error: Symbol not found/, y: R/error: Symbol not found/): R/error: Symbol not found/
+        public? final? function foo(x: R/kotlin/Int/, y: R/kotlin/String/): R/kotlin/String/
 
-        public? final? property bar(val): R/error: Symbol not found/
-            public? get(): R/error: Symbol not found/
+        public? final? property bar(val): R/kotlin/Boolean/
+            public? get(): R/kotlin/Boolean/
 
     }
     (resolved) public? final class SomeClass() : R/SomeInterface/ {
         private final? property baz(val): R/error: Not supported: FirImplicitTypeImpl/ = STUB
             public? get(): R/error: Not supported: FirImplicitTypeImpl/
 
-        public? open? override function foo(x: R/error: Symbol not found/, y: R/error: Symbol not found/): R/error: Symbol not found/ {
+        public? open? override function foo(x: R/kotlin/Int/, y: R/kotlin/String/): R/kotlin/String/ {
         }
 
-        public? open? override property bar(var): R/error: Symbol not found/
+        public? open? override property bar(var): R/kotlin/Boolean/
             public? get(): R/error: Not supported: FirImplicitTypeImpl/ {
                 STUB
             }
-            public? set(value: R/error: Symbol not found/): R/error: Not supported: FirImplicitTypeImpl/ {
+            public? set(value: R/kotlin/Boolean/): R/error: Not supported: FirImplicitTypeImpl/ {
             }
 
-        public? final? property fau(var): R/error: Symbol not found/
-            public? get(): R/error: Symbol not found/
-            public? set(value: R/error: Symbol not found/): R/kotlin/Unit/
+        public? final? property fau(var): R/kotlin/Double/
+            public? get(): R/kotlin/Double/
+            public? set(value: R/kotlin/Double/): R/kotlin/Unit/
 
     }
