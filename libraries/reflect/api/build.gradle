@@ -30,3 +30,7 @@ compileKotlin {
                             "-Xdump-declarations-to=${buildDir}/reflect-declarations.json"]
     }
 }
+
+jar {
+    manifestAttributes(manifest, project, "internal")
+}
