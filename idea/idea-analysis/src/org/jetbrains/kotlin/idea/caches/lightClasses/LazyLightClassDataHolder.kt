@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.idea.caches.lightClasses
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -26,46 +22,55 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 typealias ExactLightClassContextProvider = () -> LightClassConstructionContext
 typealias DummyLightClassContextProvider = (() -> LightClassConstructionContext?)?
+typealias DiagnosticsHolderProvider = () -> LazyLightClassDataHolder.DiagnosticsHolder
 
 sealed class LazyLightClassDataHolder(
     builder: LightClassBuilder,
-    project: Project,
     exactContextProvider: ExactLightClassContextProvider,
     dummyContextProvider: DummyLightClassContextProvider,
-    isLocal: Boolean = false
+    private val diagnosticsHolderProvider: DiagnosticsHolderProvider
 ) : LightClassDataHolder {
 
-    private data class CachedLightClassBuilderResult(val stub: PsiJavaFileStub, val diagnostics: Diagnostics)
+    class DiagnosticsHolder(private val storageManager: StorageManager) {
+        private val computedLightClassDiagnostics = hashMapOf<LazyLightClassDataHolder, Diagnostics>()
 
-    private val exactResultCachedValue =
-        CachedValuesManager.getManager(project).createCachedValue(
-            {
-                val (stub, _, diagnostics) = builder(exactContextProvider())
-                val cachedResult = CachedLightClassBuilderResult(stub, diagnostics)
+        fun putDiagnostics(lazyLightClassDataHolder: LazyLightClassDataHolder, diagnostics: Diagnostics) {
+            storageManager.compute {
+                computedLightClassDiagnostics[lazyLightClassDataHolder] = diagnostics
+            }
+        }
 
-                CachedValueProvider.Result.create(
-                    cachedResult,
-                    if (isLocal)
-                        PsiModificationTracker.MODIFICATION_COUNT
-                    else
-                        PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
-                )
-            }, false
-        )
+        fun getComputedDiagnostics(lazyLightClassDataHolder: LazyLightClassDataHolder): Diagnostics? =
+            storageManager.compute { computedLightClassDiagnostics[lazyLightClassDataHolder] }
+    }
+
+    private val exactResultLazyValue = lazyPub {
+        val (stub, _, diagnostics) = builder(exactContextProvider())
+        diagnosticsHolderProvider().putDiagnostics(this, diagnostics)
+        stub
+    }
 
     private val lazyInexactStub by lazyPub {
         dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context).stub } }
     }
 
     private val inexactStub: PsiJavaFileStub?
-        get() = if (exactResultCachedValue.hasUpToDateValue()) null else lazyInexactStub
+        get() = if (exactResultLazyValue.isInitialized()) null else lazyInexactStub
 
-    override val javaFileStub get() = exactResultCachedValue.value.stub
-    override val extraDiagnostics get() = exactResultCachedValue.value.diagnostics
+    override val javaFileStub by exactResultLazyValue
+
+    override val extraDiagnostics: Diagnostics
+        get() {
+            // run light class builder
+            exactResultLazyValue.value
+
+            return diagnosticsHolderProvider().getComputedDiagnostics(this) ?: Diagnostics.EMPTY
+        }
 
     // for facade or defaultImpls
     override fun findData(findDelegate: (PsiJavaFileStub) -> PsiClass): LightClassData =
@@ -74,9 +79,12 @@ sealed class LazyLightClassDataHolder(
         }
 
     class ForClass(
-        builder: LightClassBuilder, project: Project, isLocal: Boolean,
-        exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
-    ) : LazyLightClassDataHolder(builder, project, exactContextProvider, dummyContextProvider, isLocal), LightClassDataHolder.ForClass {
+        builder: LightClassBuilder,
+        exactContextProvider: ExactLightClassContextProvider,
+        dummyContextProvider: DummyLightClassContextProvider,
+        diagnosticsHolderProvider: DiagnosticsHolderProvider
+    ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider, diagnosticsHolderProvider),
+        LightClassDataHolder.ForClass {
         override fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData =
             LazyLightClassData { stub ->
                 stub.findDelegate(classOrObject)
@@ -84,14 +92,20 @@ sealed class LazyLightClassDataHolder(
     }
 
     class ForFacade(
-        builder: LightClassBuilder, project: Project,
-        exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
-    ) : LazyLightClassDataHolder(builder, project, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForFacade
+        builder: LightClassBuilder,
+        exactContextProvider: ExactLightClassContextProvider,
+        dummyContextProvider: DummyLightClassContextProvider,
+        diagnosticsHolderProvider: DiagnosticsHolderProvider
+    ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider, diagnosticsHolderProvider),
+        LightClassDataHolder.ForFacade
 
     class ForScript(
-        builder: LightClassBuilder, project: Project,
-        exactContextProvider: ExactLightClassContextProvider, dummyContextProvider: DummyLightClassContextProvider
-    ) : LazyLightClassDataHolder(builder, project, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForScript
+        builder: LightClassBuilder,
+        exactContextProvider: ExactLightClassContextProvider,
+        dummyContextProvider: DummyLightClassContextProvider,
+        diagnosticsHolderProvider: DiagnosticsHolderProvider
+    ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider, diagnosticsHolderProvider),
+        LightClassDataHolder.ForScript
 
     private inner class LazyLightClassData(
         findDelegate: (PsiJavaFileStub) -> PsiClass
