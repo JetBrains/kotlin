@@ -72,7 +72,7 @@ class ResolveElementCache(
         }
     }
 
-    // drop whole cache after change "out of code block"
+    // drop whole cache after change "out of code block", each entry is checked with own modification stamp
     private val fullResolveCache: CachedValue<MutableMap<KtElement, CachedFullResolve>> =
         CachedValuesManager.getManager(project).createCachedValue(
             CachedValueProvider<MutableMap<KtElement, ResolveElementCache.CachedFullResolve>> {

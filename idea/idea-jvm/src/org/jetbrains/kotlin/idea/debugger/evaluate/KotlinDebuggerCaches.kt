@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
 import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
 import org.jetbrains.kotlin.idea.debugger.WeakBytecodeDebugInfoStorage
@@ -183,7 +183,7 @@ class KotlinDebuggerCaches(project: Project) {
 
         private fun createTypeMapperForSourceFile(file: KtFile): KotlinTypeMapper =
                 runInReadActionWithWriteActionPriorityWithPCE {
-                    createTypeMapper(file, file.analyzeFullyAndGetResult().apply(AnalysisResult::throwIfError))
+                    createTypeMapper(file, file.analyzeWithAllCompilerChecks().apply(AnalysisResult::throwIfError))
                 }
 
         private fun createTypeMapper(file: KtFile, analysisResult: AnalysisResult): KotlinTypeMapper {

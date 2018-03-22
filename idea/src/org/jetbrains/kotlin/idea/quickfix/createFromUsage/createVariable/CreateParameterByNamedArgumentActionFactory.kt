@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinTypeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
@@ -38,7 +38,7 @@ object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFact
     }
 
     override fun extractFixData(element: KtValueArgument, diagnostic: Diagnostic): CreateParameterData<KtValueArgument>? {
-        val result = (diagnostic.psiFile as? KtFile)?.analyzeFullyAndGetResult() ?: return null
+        val result = (diagnostic.psiFile as? KtFile)?.analyzeWithAllCompilerChecks() ?: return null
         val context = result.bindingContext
 
         val name = element.getArgumentName()?.text ?: return null
