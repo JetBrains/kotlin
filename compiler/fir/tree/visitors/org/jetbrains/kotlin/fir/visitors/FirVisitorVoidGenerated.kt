@@ -66,6 +66,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitClass(enumEntry, null)
     }
 
+    open fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry) {
+        visitEnumEntry(resolvedEnumEntry, null)
+    }
+
     open fun visitResolvedClass(resolvedClass: FirResolvedClass) {
         visitClass(resolvedClass, null)
     }
@@ -214,6 +218,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(element)
     }
 
+    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
+        visitEnumEntry(enumEntry)
+    }
+
     final override fun visitExpression(expression: FirExpression, data: Nothing?) {
         visitExpression(expression)
     }
@@ -270,10 +278,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitDelegatedConstructorCall(delegatedConstructorCall)
     }
 
-    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
-        visitEnumEntry(enumEntry)
-    }
-
     final override fun visitResolvedClass(resolvedClass: FirResolvedClass, data: Nothing?) {
         visitResolvedClass(resolvedClass)
     }
@@ -304,6 +308,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
         visitAnonymousInitializer(anonymousInitializer)
+    }
+
+    final override fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry, data: Nothing?) {
+        visitResolvedEnumEntry(resolvedEnumEntry)
     }
 
     final override fun visitBody(body: FirBody, data: Nothing?) {

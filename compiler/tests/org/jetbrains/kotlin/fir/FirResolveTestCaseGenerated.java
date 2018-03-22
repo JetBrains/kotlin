@@ -25,6 +25,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/fir/resolve"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("enum.kt")
+    public void testEnum() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/enum.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("F.kt")
     public void testF() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/F.kt");
@@ -93,6 +99,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("sealedStarImport.kt")
+        public void testSealedStarImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/multifile/sealedStarImport.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleAliasedImport.kt")
         public void testSimpleAliasedImport() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/multifile/simpleAliasedImport.kt");
@@ -114,6 +126,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @TestMetadata("simpleImportOuter.kt")
         public void testSimpleImportOuter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/multifile/simpleImportOuter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleStarImport.kt")
+        public void testSimpleStarImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/multifile/simpleStarImport.kt");
             doTest(fileName);
         }
 

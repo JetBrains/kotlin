@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirResolvedImportImpl(
+class FirResolvedPackageStarImport(
     val delegate: FirImport,
-    override val resolvedFqName: ClassId
-) : FirResolvedImport, FirImport by delegate {
     override val packageFqName: FqName
-        get() = resolvedFqName.packageFqName
+) : FirResolvedImport, FirImport by delegate {
+    override val relativeClassName: FqName?
+        get() = null
 
-    override val relativeClassName: FqName
-        get() = resolvedFqName.relativeClassName
+    override val resolvedFqName: ClassId?
+        get() = null
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedImport(this, data)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirDescriptorOwner
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedClassImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedEnumEntryImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedTypeAliasImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedTypeParameterImpl
 import org.jetbrains.kotlin.fir.descriptors.ConeClassifierDescriptor
@@ -55,14 +56,18 @@ class FirClassifierResolveTransformer : FirTransformer<Nothing?>() {
         val nestedClassifiers =
             klass.declarations.filterIsInstance<FirDescriptorOwner<*>>().mapNotNull { it.descriptor as? ConeClassifierDescriptor }
 
-        val descriptor = ConeClassDescriptorImpl(
-            typeParameters,
-            ClassId(packageFqName, actualClassName, false),
-            superTypes,
-            nestedClassifiers
-        )
+        val classId = ClassId(packageFqName, actualClassName, false)
 
-        return FirResolvedClassImpl(klass, descriptor).compose()
+        return when (klass) {
+            is FirEnumEntry -> {
+                val descriptor = ConeEnumEntryDescriptorImpl(typeParameters, classId, superTypes, nestedClassifiers)
+                FirResolvedEnumEntryImpl(klass, descriptor).compose()
+            }
+            else -> {
+                val descriptor = ConeClassDescriptorImpl(typeParameters, classId, superTypes, nestedClassifiers)
+                FirResolvedClassImpl(klass, descriptor).compose()
+            }
+        }
     }
 
     override fun transformResolvedClass(resolvedClass: FirResolvedClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {

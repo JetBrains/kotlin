@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedPackageStarImport
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -33,6 +34,10 @@ class FirImportResolveTransformer : FirTransformer<Nothing?>() {
             val lastPart = mutableListOf<String>()
             var firstPart = fqName
 
+            if (import.isAllUnder && firProvider.getFirFilesByPackage(firstPart).isNotEmpty()) {
+                return FirResolvedPackageStarImport(import, firstPart).compose()
+            }
+
             while (!firstPart.isRoot) {
                 lastPart.add(0, firstPart.shortName().asString())
                 firstPart = firstPart.parent()
@@ -44,9 +49,7 @@ class FirImportResolveTransformer : FirTransformer<Nothing?>() {
                     return FirResolvedImportImpl(import, resolvedFqName).compose()
                 }
             }
-            return import.compose()
-        } else {
-            return import.compose()
         }
+        return import.compose()
     }
 }

@@ -15,3 +15,8 @@ interface FirResolvedClass : FirClass, FirDescriptorOwner<FirResolvedClass> {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedClass(this, data)
 }
+
+interface FirResolvedEnumEntry : FirEnumEntry, FirDescriptorOwner<FirResolvedEnumEntry> {
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitResolvedEnumEntry(this, data)
+}

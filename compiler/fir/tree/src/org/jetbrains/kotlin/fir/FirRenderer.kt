@@ -182,6 +182,11 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         )
     }
 
+    override fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry) {
+        print("(resolved) ")
+        visitEnumEntry(resolvedEnumEntry)
+    }
+
     override fun visitEnumEntry(enumEntry: FirEnumEntry) {
         visitClass(enumEntry)
     }

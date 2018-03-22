@@ -66,6 +66,10 @@ abstract class FirVisitor<out R, in D> {
         return visitClass(enumEntry, data)
     }
 
+    open fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry, data: D): R {
+        return visitEnumEntry(resolvedEnumEntry, data)
+    }
+
     open fun visitResolvedClass(resolvedClass: FirResolvedClass, data: D): R {
         return visitClass(resolvedClass, data)
     }

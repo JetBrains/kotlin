@@ -66,6 +66,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformClass(enumEntry, data)
     }
 
+    open fun transformResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry, data: D): CompositeTransformResult<FirDeclaration> {
+        return transformEnumEntry(resolvedEnumEntry, data)
+    }
+
     open fun transformResolvedClass(resolvedClass: FirResolvedClass, data: D): CompositeTransformResult<FirDeclaration> {
         return transformClass(resolvedClass, data)
     }
@@ -214,6 +218,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(element, data)
     }
 
+    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirElement> {
+        return transformEnumEntry(enumEntry, data)
+    }
+
     final override fun visitExpression(expression: FirExpression, data: D): CompositeTransformResult<FirElement> {
         return transformExpression(expression, data)
     }
@@ -270,10 +278,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformDelegatedConstructorCall(delegatedConstructorCall, data)
     }
 
-    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirElement> {
-        return transformEnumEntry(enumEntry, data)
-    }
-
     final override fun visitResolvedClass(resolvedClass: FirResolvedClass, data: D): CompositeTransformResult<FirElement> {
         return transformResolvedClass(resolvedClass, data)
     }
@@ -304,6 +308,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): CompositeTransformResult<FirElement> {
         return transformAnonymousInitializer(anonymousInitializer, data)
+    }
+
+    final override fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry, data: D): CompositeTransformResult<FirElement> {
+        return transformResolvedEnumEntry(resolvedEnumEntry, data)
     }
 
     final override fun visitBody(body: FirBody, data: D): CompositeTransformResult<FirElement> {
