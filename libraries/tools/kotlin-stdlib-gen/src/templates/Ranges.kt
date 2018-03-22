@@ -73,7 +73,7 @@ object RangeOps : TemplateGroupBase() {
             """
             Returns a progression from this value down to the specified [to] value with the step -1.
 
-            The [to] value has to be less than this value.
+            The [to] value has to be less than or equal to this value.
             """
         }
 
