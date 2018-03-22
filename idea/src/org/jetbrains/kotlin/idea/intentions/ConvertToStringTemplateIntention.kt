@@ -87,13 +87,12 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
                     val type = bindingContext.getType(expression)!!
 
                     if (KotlinBuiltIns.isChar(type)) {
-                        val value = expressionText.removePrefix("'").removeSuffix("'")
-                        return when (value) { // escape double quote and unescape single one and $
-                            "\"" -> "\\\""
-                            "\\'" -> "'"
-                            "$" -> if (forceBraces) "\\$" else "$"
-                            else -> value
-                        }
+                        return expressionText
+                            .removePrefix("'")
+                            .removeSuffix("'")
+                            .replace("\"", "\\\"")
+                            .replace("\\'", "'")
+                            .run { if (forceBraces) replace("$", "\\$") else this }
                     }
 
                     val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)

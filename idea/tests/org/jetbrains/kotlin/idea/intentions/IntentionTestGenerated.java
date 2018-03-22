@@ -6858,6 +6858,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("invalidChar.kt")
+        public void testInvalidChar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/invalidChar.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt11295.kt")
         public void testKt11295() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/kt11295.kt");
