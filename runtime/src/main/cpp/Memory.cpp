@@ -366,11 +366,11 @@ THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
 constexpr int kFrameOverlaySlots = sizeof(FrameOverlay) / sizeof(ObjHeader**);
 
 inline bool isFreeable(const ContainerHeader* header) {
-  return (header->refCount_ & CONTAINER_TAG_MASK) < CONTAINER_TAG_PERMANENT;
+  return header->tag() < CONTAINER_TAG_PERMANENT;
 }
 
 inline bool isArena(const ContainerHeader* header) {
-  return (header->refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_STACK;
+  return header->stack();
 }
 
 inline container_size_t alignUp(container_size_t size, int alignment) {
@@ -409,8 +409,7 @@ inline FrameOverlay* asFrameOverlay(ObjHeader** slot) {
 }
 
 inline bool isRefCounted(KConstRef object) {
-  return (object->container()->refCount_ & CONTAINER_TAG_MASK) ==
-      CONTAINER_TAG_NORMAL;
+  return isFreeable(object->container());
 }
 } // namespace
 
@@ -491,18 +490,25 @@ void traverseContainerReferredObjects(ContainerHeader* container, func process) 
 }
 
 #if USE_GC
+
+inline bool isMarkedAsRemoved(ContainerHeader* container) {
+  return (reinterpret_cast<uintptr_t>(container) & 1) != 0;
+}
+
+inline ContainerHeader* markAsRemoved(ContainerHeader* container) {
+  return reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1);
+}
+
 inline void processFinalizerQueue(MemoryState* state) {
   // TODO: reuse elements of finalizer queue for new allocations.
   while (!state->finalizerQueue->empty()) {
     auto container = memoryState->finalizerQueue->back();
     state->finalizerQueue->pop_back();
-    if ((reinterpret_cast<uintptr_t>(container) & 1) != 0) {
-      container = reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) & ~1);
 #if TRACE_MEMORY
-      state->containers->erase(container);
+    state->containers->erase(container);
 #endif
-      runDeallocationHooks(container);
-    }
+    runDeallocationHooks(container);
+
     CONTAINER_DESTROY_EVENT(state, container)
     konanFreeMemory(container);
     atomicAdd(&allocCount, -1);
@@ -513,8 +519,7 @@ inline void processFinalizerQueue(MemoryState* state) {
 inline void scheduleDestroyContainer(
     MemoryState* state, ContainerHeader* container, bool clearExternalRefs) {
   if (clearExternalRefs) {
-    traverseContainerObjectFields(reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) & ~1),
-      [](ObjHeader** location) {
+    traverseContainerObjectFields(container, [](ObjHeader** location) {
         ObjHeader* ref = *location;
         // Frozen object references do not participate in trial deletion, so shall be explicitly freed.
         if (ref != nullptr && ref->container()->frozen())
@@ -681,7 +686,7 @@ void CollectCycles(MemoryState* state) {
 
 void MarkRoots(MemoryState* state) {
   for (auto container : *(state->toFree)) {
-    if ((reinterpret_cast<uintptr_t>(container) & 1) != 0)
+    if (isMarkedAsRemoved(container))
       continue;
     auto color = container->color();
     auto rcIsZero = container->refCount() == 0;
@@ -691,7 +696,7 @@ void MarkRoots(MemoryState* state) {
     } else {
       container->resetBuffered();
       if (color == CONTAINER_TAG_GC_BLACK && rcIsZero) {
-        scheduleDestroyContainer(state, reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1), true);
+        scheduleDestroyContainer(state, container, true);
       }
     }
   }
@@ -738,7 +743,7 @@ void CollectWhite(MemoryState* state, ContainerHeader* container) {
       CollectWhite(state, childContainer);
     }
   });
-  scheduleDestroyContainer(state, reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1), true);
+  scheduleDestroyContainer(state, container, true);
 }
 
 inline void AddRef(ContainerHeader* header) {
@@ -839,13 +844,8 @@ void FreeContainer(ContainerHeader* header) {
     runDeallocationHooks(header);
   } else {
     header->setColor(CONTAINER_TAG_GC_BLACK);
-    if (!header->buffered()) {
-      runDeallocationHooks(header);
-#if TRACE_MEMORY
-    memoryState->containers->erase(header);
-#endif
+    if (!header->buffered())
       scheduleDestroyContainer(state, header, false);
-    }
   }
 }
 
@@ -1404,7 +1404,7 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
       if (visited.find(container) != visited.end()) {
         container->resetBuffered();
         container->setColor(CONTAINER_TAG_GC_BLACK);
-        *it = reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1);
+        *it = markAsRemoved(container);
       }
     }
   }
@@ -1509,7 +1509,7 @@ void FreezeSubgraph(ObjHeader* root) {
   for (auto it = state->toFree->begin(); it != state->toFree->end(); ++it) {
       auto container = *it;
       if (container->frozen()) {
-        *it = reinterpret_cast<ContainerHeader*>(reinterpret_cast<uintptr_t>(container) | 1);
+        *it = markAsRemoved(container);
       }
   }
 
