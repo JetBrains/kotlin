@@ -2913,9 +2913,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantSemicolon"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("beforeAnnotationAndLambda.kt")
+        public void testBeforeAnnotationAndLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/beforeAnnotationAndLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("beforeCommentAndLambda.kt")
         public void testBeforeCommentAndLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/beforeCommentAndLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("beforeKDocAndLambda.kt")
+        public void testBeforeKDocAndLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantSemicolon/beforeKDocAndLambda.kt");
             doTest(fileName);
         }
 
