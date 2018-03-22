@@ -4,7 +4,7 @@ description = "Kotlin Scripting IDEA Plugin"
 apply { plugin("kotlin") }
 
 dependencies {
-    compile(project(":kotlin-scripting-compiler-plugin"))
+    compile(project(":kotlin-scripting-compiler"))
 }
 
 sourceSets {

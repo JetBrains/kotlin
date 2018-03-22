@@ -13,8 +13,8 @@ val packedJars by configurations.creating
 
 dependencies {
     compile(project(":kotlin-gradle-plugin-api"))
-    compileOnly(project(":kotlin-scripting-compiler-plugin"))
-    packedJars(project(":kotlin-scripting-compiler-plugin")) { isTransitive = false }
+    compileOnly(project(":kotlin-scripting-compiler"))
+    packedJars(project(":kotlin-scripting-compiler")) { isTransitive = false }
     runtime(project(":kotlin-scripting-common"))
     runtime(project(":kotlin-scripting-jvm"))
 }
