@@ -49,7 +49,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
         private val invalidBinaryVersion: V,
         stubVersion: Int
 ) : ClassFileDecompilers.Full() {
-    private val stubBuilder = KotlinMetadataStubBuilder(stubVersion, fileType, serializerProtocol, this::readFile)
+    private val stubBuilder = KotlinMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
 
     private val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
@@ -61,7 +61,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
         return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
-            if (readFile(provider.virtualFile) == null) {
+            if (readFileSafely(provider.virtualFile) == null) {
                 null
             }
             else {
@@ -70,13 +70,12 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
         }
     }
 
-    private fun readFile(file: VirtualFile): FileWithMetadata? {
+    private fun readFileSafely(file: VirtualFile, content: ByteArray? = null): FileWithMetadata? {
         if (!file.isValid) return null
 
         return try {
-            readFile(file.contentsToByteArray(false), file)
-        }
-        catch (e: IOException) {
+            readFile(content ?: file.contentsToByteArray(false), file)
+        } catch (e: IOException) {
             // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
             // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
             // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
@@ -90,7 +89,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
             error("Unexpected file type ${virtualFile.fileType}")
         }
 
-        val file = readFile(virtualFile)
+        val file = readFileSafely(virtualFile)
 
         return when (file) {
             null -> {
