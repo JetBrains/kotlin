@@ -1420,7 +1420,6 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
   * When we see GREY during DFS, it means we see cycle.
   */
 void depthFirstTraversal(ContainerHeader* container, bool* hasCycles) {
-  if (*hasCycles) return;
   // Mark GRAY.
   container->setSeen();
   traverseContainerObjectFields(container, [&hasCycles](ObjHeader** location) {
