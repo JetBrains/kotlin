@@ -37,6 +37,8 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         super(stub, KtStubElementTypes.IMPORT_DIRECTIVE);
     }
 
+    private volatile FqName importedFqName;
+
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitImportDirective(this, data);
@@ -78,7 +80,16 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
         if (stub != null) {
             return stub.getImportedFqName();
         }
-        return fqNameFromExpression(getImportedReference());
+
+        FqName importedFqName = this.importedFqName;
+        if (importedFqName != null) return importedFqName;
+        KtExpression importedReference = getImportedReference();
+        // in case it's not parsed
+        if (importedReference == null) return null;
+
+        importedFqName = fqNameFromExpression(importedReference);
+        this.importedFqName = importedFqName;
+        return importedFqName;
     }
 
     @Nullable
@@ -104,6 +115,12 @@ public class KtImportDirective extends KtElementImplStub<KotlinImportDirectiveSt
             return stub.isValid();
         }
         return !PsiTreeUtil.hasErrorElements(this);
+    }
+
+    @Override
+    public void subtreeChanged() {
+        super.subtreeChanged();
+        importedFqName = null;
     }
 
     @Nullable
