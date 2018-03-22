@@ -7,7 +7,7 @@ configurePublishing(project)
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
-    compile project(':kotlin-test:kotlin-test-annotations-common') // TODO: replace with impl-dependency
+    expectedBy project(':kotlin-test:kotlin-test-annotations-common')
     compile project(':kotlin-stdlib-js')
 }
 
