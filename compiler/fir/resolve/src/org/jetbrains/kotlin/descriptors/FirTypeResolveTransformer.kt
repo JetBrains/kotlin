@@ -81,22 +81,30 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         classLikeName = classLikeName.child(typeAlias.name)
-        scope = FirCompositeScope(mutableListOf(scope))
-        scope.scopes += FirClassLikeTypeParameterScope(typeAlias)
+        if (typeAlias.typeParameters.isNotEmpty()) {
+            scope = FirCompositeScope(mutableListOf(scope))
+            scope.scopes += FirClassLikeTypeParameterScope(typeAlias)
+        }
 
         resolveSuperTypesAndExpansions(typeAlias)
 
-        scope = scope.scopes[0] as FirCompositeScope
+        if (typeAlias.typeParameters.isNotEmpty()) {
+            scope = scope.scopes[0] as FirCompositeScope
+        }
         classLikeName = classLikeName.parent()
         return super.transformTypeAlias(typeAlias, data)
     }
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        scope = FirCompositeScope(mutableListOf(scope))
-        scope.scopes += FirFunctionTypeParameterScope(namedFunction)
+        if (namedFunction.typeParameters.isNotEmpty()) {
+            scope = FirCompositeScope(mutableListOf(scope))
+            scope.scopes += FirFunctionTypeParameterScope(namedFunction)
+        }
 
         val result = super.transformNamedFunction(namedFunction, data)
-        scope = scope.scopes[0] as FirCompositeScope
+        if (namedFunction.typeParameters.isNotEmpty()) {
+            scope = scope.scopes[0] as FirCompositeScope
+        }
 
         return result
     }
