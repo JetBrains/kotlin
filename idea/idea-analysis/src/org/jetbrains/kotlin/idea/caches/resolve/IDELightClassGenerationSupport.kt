@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassContexts
 import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
@@ -39,17 +40,15 @@ class IDELightClassGenerationSupport(project: Project) : LightClassGenerationSup
             classOrObject.shouldNotBeVisibleAsLightClass() -> InvalidLightClassDataHolder
             classOrObject.isLocal -> LazyLightClassDataHolder.ForClass(
                 builder,
-                classOrObject.project,
                 exactContextProvider = { IDELightClassContexts.contextForLocalClassOrObject(classOrObject) },
                 dummyContextProvider = null,
-                isLocal = true
+                diagnosticsHolderProvider = { classOrObject.getDiagnosticsHolder() }
             )
             else -> LazyLightClassDataHolder.ForClass(
                 builder,
-                classOrObject.project,
                 exactContextProvider = { IDELightClassContexts.contextForNonLocalClassOrObject(classOrObject) },
                 dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) },
-                isLocal = false
+                diagnosticsHolderProvider = { classOrObject.getDiagnosticsHolder() }
             )
         }
     }
@@ -62,21 +61,23 @@ class IDELightClassGenerationSupport(project: Project) : LightClassGenerationSup
 
         return LazyLightClassDataHolder.ForFacade(
             builder,
-            files.first().project,
             exactContextProvider = { IDELightClassContexts.contextForFacade(sortedFiles) },
-            dummyContextProvider = { IDELightClassContexts.lightContextForFacade(sortedFiles) }
+            dummyContextProvider = { IDELightClassContexts.lightContextForFacade(sortedFiles) },
+            diagnosticsHolderProvider = { files.first().getDiagnosticsHolder() }
         )
     }
 
     override fun createDataHolderForScript(script: KtScript, builder: LightClassBuilder): LightClassDataHolder.ForScript {
         return LazyLightClassDataHolder.ForScript(
             builder,
-            script.project,
             exactContextProvider = { IDELightClassContexts.contextForScript(script) },
-            dummyContextProvider = { IDELightClassContexts.lightContextForScript(script) }
+            dummyContextProvider = { IDELightClassContexts.lightContextForScript(script) },
+            diagnosticsHolderProvider = { script.getDiagnosticsHolder() }
         )
     }
 
+    private fun KtElement.getDiagnosticsHolder() =
+        getResolutionFacade().frontendService<LazyLightClassDataHolder.DiagnosticsHolder>()
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
         try {
