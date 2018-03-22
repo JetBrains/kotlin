@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.name.Name
@@ -23,11 +24,12 @@ open class FirClassImpl(
     name: Name,
     visibility: Visibility,
     modality: Modality?,
+    platformStatus: FirMemberPlatformStatus,
     final override val classKind: ClassKind,
     final override val isInner: Boolean,
     final override val isCompanion: Boolean,
     final override val isData: Boolean
-) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality), FirClass {
+) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, platformStatus), FirClass {
     override val superTypes = mutableListOf<FirType>()
 
     override val declarations = mutableListOf<FirDeclaration>()

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBody
@@ -24,6 +25,7 @@ class FirMemberFunctionImpl(
     name: Name,
     visibility: Visibility,
     modality: Modality?,
+    platformStatus: FirMemberPlatformStatus,
     isOverride: Boolean,
     override val isOperator: Boolean,
     override val isInfix: Boolean,
@@ -33,7 +35,7 @@ class FirMemberFunctionImpl(
     receiverType: FirType?,
     returnType: FirType,
     override val body: FirBody?
-) : FirAbstractCallableMember(session, psi, name, visibility, modality, isOverride, receiverType, returnType),
+) : FirAbstractCallableMember(session, psi, name, visibility, modality, platformStatus, isOverride, receiverType, returnType),
     FirNamedFunction {
     override val valueParameters = mutableListOf<FirValueParameter>()
 

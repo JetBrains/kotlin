@@ -61,6 +61,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
             runTest("compiler/testData/fir/rawBuilder/declarations/enums2.kt");
         }
 
+        @TestMetadata("expectActual.kt")
+        public void testExpectActual() throws Exception {
+            runTest("compiler/testData/fir/rawBuilder/declarations/expectActual.kt");
+        }
+
         @TestMetadata("F.kt")
         public void testF() throws Exception {
             runTest("compiler/testData/fir/rawBuilder/declarations/F.kt");

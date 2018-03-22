@@ -15,6 +15,12 @@ interface FirMemberDeclaration : FirTypeParameterContainer, FirNamedDeclaration,
 
     val modality: Modality?
 
+    val platformStatus: FirMemberPlatformStatus
+
+    val isExpect: Boolean get() = platformStatus == FirMemberPlatformStatus.EXPECT
+
+    val isActual: Boolean get() = platformStatus == FirMemberPlatformStatus.ACTUAL
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitMemberDeclaration(this, data)
 
@@ -25,4 +31,10 @@ interface FirMemberDeclaration : FirTypeParameterContainer, FirNamedDeclaration,
         }
         super.acceptChildren(visitor, data)
     }
+}
+
+enum class FirMemberPlatformStatus {
+    DEFAULT,
+    EXPECT,
+    ACTUAL
 }

@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifierType
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.types.Variance
@@ -55,6 +57,15 @@ class RawFirBuilder(val session: FirSession) {
                 KtTokens.ABSTRACT_KEYWORD -> Modality.ABSTRACT
                 KtTokens.OPEN_KEYWORD -> Modality.OPEN
                 else -> null
+            }
+        }
+
+    private val KtDeclaration.platformStatus: FirMemberPlatformStatus
+        get() {
+            return when {
+                hasExpectModifier() -> FirMemberPlatformStatus.EXPECT
+                hasActualModifier() -> FirMemberPlatformStatus.ACTUAL
+                else -> FirMemberPlatformStatus.DEFAULT
             }
         }
 
@@ -252,6 +263,7 @@ class RawFirBuilder(val session: FirSession) {
                 classOrObject.nameAsSafeName,
                 classOrObject.visibility,
                 classOrObject.modality,
+                classOrObject.platformStatus,
                 classKind,
                 isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD),
                 isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true,
@@ -272,6 +284,7 @@ class RawFirBuilder(val session: FirSession) {
                 typeAlias,
                 typeAlias.nameAsSafeName,
                 typeAlias.visibility,
+                typeAlias.platformStatus,
                 typeAlias.getTypeReference().toFirOrErrorType()
             )
             typeAlias.extractAnnotationsTo(firTypeAlias)
@@ -291,6 +304,7 @@ class RawFirBuilder(val session: FirSession) {
                 function.nameAsSafeName,
                 function.visibility,
                 function.modality,
+                function.platformStatus,
                 function.hasModifier(KtTokens.OVERRIDE_KEYWORD),
                 function.hasModifier(KtTokens.OPERATOR_KEYWORD),
                 function.hasModifier(KtTokens.INFIX_KEYWORD),
@@ -349,6 +363,7 @@ class RawFirBuilder(val session: FirSession) {
                 property.nameAsSafeName,
                 property.visibility,
                 property.modality,
+                property.platformStatus,
                 property.hasModifier(KtTokens.OVERRIDE_KEYWORD),
                 property.hasModifier(KtTokens.CONST_KEYWORD),
                 property.receiverTypeReference.convertSafe(),

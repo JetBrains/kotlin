@@ -121,6 +121,14 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
     }
 
+    private fun FirMemberPlatformStatus.asString(): String {
+        return when (this) {
+            FirMemberPlatformStatus.DEFAULT -> ""
+            FirMemberPlatformStatus.EXPECT -> "expect "
+            FirMemberPlatformStatus.ACTUAL -> "actual "
+        }
+    }
+
     override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         memberDeclaration.annotations.renderAnnotations()
         if (memberDeclaration.typeParameters.isNotEmpty()) {
@@ -129,6 +137,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             print("> ")
         }
         print(memberDeclaration.visibility.asString() + " " + memberDeclaration.modalityAsString() + " ")
+        print(memberDeclaration.platformStatus.asString())
         if (memberDeclaration is FirCallableMember && memberDeclaration.isOverride) {
             print("override ")
         }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.name.Name
 
@@ -24,6 +25,7 @@ class FirEnumEntryImpl(
     name,
     visibility = Visibilities.UNKNOWN,
     modality = Modality.FINAL,
+    platformStatus = FirMemberPlatformStatus.DEFAULT,
     classKind = ClassKind.ENUM_ENTRY,
     isInner = false,
     isCompanion = false,
