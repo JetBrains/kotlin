@@ -52,7 +52,7 @@ class IdeLightClassInheritanceHelper : LightClassInheritanceHelper {
     }
 
     private fun isAmongEntries(baseClass: PsiClass, entries: List<KtSuperTypeListEntry>): ImpreciseResolveResult {
-        val psiBasedResolver = PsiBasedClassResolver(baseClass)
+        val psiBasedResolver = PsiBasedClassResolver.getInstance(baseClass)
         entries@ for (entry in entries) {
             val reference: KtSimpleNameExpression = entry.typeAsUserType?.referenceExpression ?: continue@entries
             when (psiBasedResolver.canBeTargetReference(reference)) {

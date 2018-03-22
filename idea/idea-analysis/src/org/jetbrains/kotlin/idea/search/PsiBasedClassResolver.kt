@@ -16,9 +16,14 @@
 
 package org.jetbrains.kotlin.idea.search
 
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.search.PsiShortNamesCache
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.*
@@ -61,9 +66,28 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         @TestOnly val attempts = AtomicInteger()
         @TestOnly val trueHits = AtomicInteger()
         @TestOnly val falseHits = AtomicInteger()
+
+        private val PSI_BASED_CLASS_RESOLVER_KEY = Key<CachedValue<PsiBasedClassResolver>>("PsiBasedClassResolver")
+
+        fun getInstance(target: PsiClass): PsiBasedClassResolver {
+            target.getUserData(PSI_BASED_CLASS_RESOLVER_KEY)?.let { return it.value }
+
+            val cachedValue = CachedValuesManager.getManager(target.project).createCachedValue(
+                {
+                    CachedValueProvider.Result(
+                        PsiBasedClassResolver(target),
+                        PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                    )
+                }, false
+            )
+
+            target.putUserData(PSI_BASED_CLASS_RESOLVER_KEY, cachedValue)
+
+            return cachedValue.value
+        }
     }
 
-    constructor(target: PsiClass): this(target.qualifiedName ?: "") {
+    private constructor(target: PsiClass): this(target.qualifiedName ?: "") {
         if (target.qualifiedName == null || target.containingClass != null || targetPackage.isEmpty()) {
             forceAmbiguity = true
             return
