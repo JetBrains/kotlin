@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.nodejs.mocha
 
 import com.intellij.execution.RunManager
 import com.intellij.execution.actions.ConfigurationContext
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
@@ -30,6 +31,8 @@ import com.intellij.util.SmartList
 import com.intellij.util.containers.SmartHashSet
 import com.jetbrains.nodejs.mocha.MochaUtil
 import com.jetbrains.nodejs.mocha.execution.*
+import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
+import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
 import org.jetbrains.kotlin.idea.js.jsOrJsImpl
 import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementInfo
@@ -40,79 +43,52 @@ import org.jetbrains.kotlin.idea.util.projectStructure.module
 
 private typealias MochaTestElementInfo = TestElementInfo<MochaRunSettings>
 
-class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
+class MochaConfigData(
+    override val element: PsiElement,
+    override val module: Module,
+    override val jsOutputFilePath: String,
+    val testElementPath: TestElementPath
+) : KotlinJSRunConfigurationData
+
+class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer(), KotlinJSRunConfigurationDataProvider<MochaConfigData> {
     // Copied from MochaRunConfigurationProducer.collectMochaTestRoots()
     private fun collectMochaTestRoots(project: Project): List<VirtualFile> {
         return RunManager
-                .getInstance(project)
-                .getConfigurationsList(MochaConfigurationType.getInstance())
-                .filterIsInstance<MochaRunConfiguration>()
-                .mapNotNullTo(SmartList<VirtualFile>()) { configuration ->
-                    val settings = configuration.runSettings
-                    val path = when (settings.testKind) {
-                        MochaTestKind.DIRECTORY -> settings.testDirPath
-                        MochaTestKind.TEST_FILE,
-                        MochaTestKind.SUITE,
-                        MochaTestKind.TEST -> settings.testFilePath
-                        else -> null
-                    }
-                    if (path.isNullOrBlank()) return@mapNotNullTo null
-                    LocalFileSystem.getInstance().findFileByPath(path!!)
+            .getInstance(project)
+            .getConfigurationsList(MochaConfigurationType.getInstance())
+            .filterIsInstance<MochaRunConfiguration>()
+            .mapNotNullTo(SmartList<VirtualFile>()) { configuration ->
+                val settings = configuration.runSettings
+                val path = when (settings.testKind) {
+                    MochaTestKind.DIRECTORY -> settings.testDirPath
+                    MochaTestKind.TEST_FILE,
+                    MochaTestKind.SUITE,
+                    MochaTestKind.TEST -> settings.testFilePath
+                    else -> null
                 }
-    }
-
-    // Copied from MochaRunConfigurationProducer.isActiveFor()
-    private fun isActiveFor(element: PsiElement, context: ConfigurationContext): Boolean {
-        val module = element.module
-        val jsModule = module?.jsOrJsImpl() ?: return false
-        val file = if (jsModule != module) {
-            jsModule.moduleFile
-        }
-        else {
-            PsiUtilCore.getVirtualFile(element)
-        } ?: return false
-        val project = module.project
-
-        if (isTestRunnerPackageAvailableFor(project, file)) return true
-
-        if (context.getOriginalConfiguration(MochaConfigurationType.getInstance()) is MochaRunConfiguration) return true
-
-        val roots = collectMochaTestRoots(project)
-        if (roots.isEmpty()) return false
-
-        val dirs = SmartHashSet<VirtualFile>()
-        for (root in roots) {
-            if (root.isDirectory) {
-                dirs.add(root)
+                if (path.isNullOrBlank()) return@mapNotNullTo null
+                LocalFileSystem.getInstance().findFileByPath(path!!)
             }
-            else if (root == file) return true
-        }
-        return VfsUtilCore.isUnder(file, dirs)
     }
 
-    private fun createTestElementRunInfo(element: PsiElement, originalSettings: MochaRunSettings): MochaTestElementInfo? {
-        val module = element.module?.jsOrJsImpl() ?: return null
-        val project = module.project
-        val testFilePath = module.jsTestOutputFilePath ?: return null
+    private fun createTestElementRunInfo(configData: MochaConfigData, originalSettings: MochaRunSettings): MochaTestElementInfo {
+        val project = configData.module.project
         val settings = if (originalSettings.workingDir.isBlank()) {
             val workingDir = FileUtil.toSystemDependentName(project.baseDir.path)
             originalSettings.builder().setWorkingDir(workingDir).build()
-        }
-        else originalSettings
-        val testElementPath = TestElementPath.forElement(element, module) ?: return null
+        } else originalSettings
         val builder = settings.builder()
-        builder.setTestFilePath(testFilePath)
+        builder.setTestFilePath(configData.jsOutputFilePath)
         if (settings.ui.isEmpty()) {
             builder.setUi(MochaUtil.UI_BDD)
         }
-        when (testElementPath) {
+        when (configData.testElementPath) {
             is TestElementPath.BySuite -> {
-                val (suiteNames, testName) = testElementPath
+                val (suiteNames, testName) = configData.testElementPath
                 if (testName == null) {
                     builder.setTestKind(MochaTestKind.SUITE)
                     builder.setSuiteNames(suiteNames)
-                }
-                else {
+                } else {
                     builder.setTestKind(MochaTestKind.TEST)
                     builder.setTestNames(suiteNames + testName)
                 }
@@ -123,14 +99,53 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
             }
         }
 
-        builder.setEnvData(module.getNodeJsEnvironmentVars(true))
+        builder.setEnvData(configData.module.getNodeJsEnvironmentVars(true))
 
-        return MochaTestElementInfo(builder.build(), element)
+        return MochaTestElementInfo(builder.build(), configData.element)
+    }
+
+    private fun getConfigurationData(element: PsiElement, context: ConfigurationContext?): MochaConfigData? {
+        val module = element.module
+        val jsModule = module?.jsOrJsImpl() ?: return null
+        val file = if (jsModule != module) {
+            jsModule.moduleFile
+        } else {
+            PsiUtilCore.getVirtualFile(element)
+        } ?: return null
+        val project = module.project
+
+        if (isTestRunnerPackageAvailableFor(project, file)) return null
+
+        val testFilePath = module.jsTestOutputFilePath ?: return null
+        val testElementPath = TestElementPath.forElement(element, module) ?: return null
+
+        val configData = MochaConfigData(element, jsModule, testFilePath, testElementPath)
+
+        if (context?.getOriginalConfiguration(MochaConfigurationType.getInstance()) is MochaRunConfiguration) return configData
+
+        val roots = collectMochaTestRoots(project)
+        if (roots.isEmpty()) return null
+
+        val dirs = SmartHashSet<VirtualFile>()
+        for (root in roots) {
+            if (root.isDirectory) {
+                dirs.add(root)
+            } else if (root == file) return configData
+        }
+        return if (VfsUtilCore.isUnder(file, dirs)) configData else configData
+    }
+
+    override val isForTests: Boolean
+        get() = true
+
+    override fun getConfigurationData(element: PsiElement): MochaConfigData? {
+        return getConfigurationData(element)
     }
 
     override fun isConfigurationFromCompatibleContext(configuration: MochaRunConfiguration, context: ConfigurationContext): Boolean {
         val element = context.psiLocation ?: return false
-        val (thisRunSettings, _) = createTestElementRunInfo(element, configuration.runSettings) ?: return false
+        val configData = getConfigurationData(element) ?: return false
+        val (thisRunSettings, _) = createTestElementRunInfo(configData, configuration.runSettings)
         val thatRunSettings = configuration.runSettings
         val thisTestKind = thisRunSettings.testKind
         if (thisTestKind != thatRunSettings.testKind) return false
@@ -145,13 +160,13 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
     }
 
     override fun setupConfigurationFromCompatibleContext(
-            configuration: MochaRunConfiguration,
-            context: ConfigurationContext,
-            sourceElement: Ref<PsiElement>
+        configuration: MochaRunConfiguration,
+        context: ConfigurationContext,
+        sourceElement: Ref<PsiElement>
     ): Boolean {
         val element = context.psiLocation ?: return false
-        if (!isActiveFor(element, context)) return false
-        val (runSettings, enclosingTestElement) = createTestElementRunInfo(element, configuration.runSettings) ?: return false
+        val configData = getConfigurationData(element, context) ?: return false
+        val (runSettings, enclosingTestElement) = createTestElementRunInfo(configData, configuration.runSettings)
         if (runSettings.testKind == MochaTestKind.DIRECTORY) return false
         configuration.runSettings = runSettings
         sourceElement.set(enclosingTestElement)

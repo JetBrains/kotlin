@@ -55,6 +55,10 @@ fun AbstractMultiModuleTest.setupMppProjectFromDirStructure(testRoot: File) {
                     })
                 }
                 is CoroutinesDependency -> module.enableCoroutines()
+                is KotlinTestDependency -> when (id.platform) {
+                    is TargetPlatformKind.Jvm -> module.addLibrary(ForTestCompileRuntime.kotlinTestJUnitJarForTests())
+                    is TargetPlatformKind.JavaScript -> module.addLibrary(ForTestCompileRuntime.kotlinTestJsJarForTests(), kind = JSLibraryKind)
+                }
             }
         }
     }
@@ -142,6 +146,7 @@ private fun parseDependency(it: String): Dependency {
         dependencyString.equals("stdlib", ignoreCase = true) -> StdlibDependency
         dependencyString.equals("fulljdk", ignoreCase = true) -> FullJdkDependency
         dependencyString.equals("coroutines", ignoreCase = true) -> CoroutinesDependency
+        dependencyString.equals("kotlin-test", ignoreCase = true) -> KotlinTestDependency
         else -> ModuleDependency(parseModuleId(dependencyString.split("-")))
     }
 }
@@ -191,3 +196,4 @@ private class ModuleDependency(val moduleId: ModuleId) : Dependency()
 private object StdlibDependency : Dependency()
 private object FullJdkDependency : Dependency()
 private object CoroutinesDependency : Dependency()
+private object KotlinTestDependency : Dependency()
