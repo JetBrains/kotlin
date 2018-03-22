@@ -3,8 +3,8 @@
 import groovy.lang.Closure
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.CopySourceSpec
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.AbstractTask
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetOutput
@@ -13,6 +13,7 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
 import java.io.File
+import java.util.concurrent.Callable
 
 inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit) = tasks.creating(T::class, configuration)
 
@@ -62,3 +63,5 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
     if (v.isBlank()) true
     else v.toBoolean()
 }
+
+inline fun CopySourceSpec.from(crossinline filesProvider: () -> Any?): CopySourceSpec = from(Callable { filesProvider() })
