@@ -103,7 +103,7 @@ when (platform) {
     "AS32" -> {
         extra["versions.jar.guava"] = "21.0"
         extra["versions.jar.groovy-all"] = "2.4.12"
-        extra["versions.jar.swingx-core"] = "1.6.2"
+        extra["versions.jar.swingx-core"] = "1.6.2-2"
         extra["versions.jar.kxml2"] = "2.3.0"
         extra["versions.jar.streamex"] = "0.6.5"
         extra["versions.jar.gson"] = "2.8.2"
