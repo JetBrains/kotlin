@@ -59,7 +59,7 @@ internal class ResolutionFacadeImpl(
         return resolveElementCache.resolveToElements(elements, bodyResolveMode)
     }
 
-    override fun analyzeFullyAndGetResult(elements: Collection<KtElement>): AnalysisResult =
+    override fun analyzeWithAllCompilerChecks(elements: Collection<KtElement>): AnalysisResult =
         projectFacade.getAnalysisResultsForElements(elements)
 
     override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor {
