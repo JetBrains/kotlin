@@ -18,13 +18,6 @@ class ConeKotlinTypeProjectionInImpl(override val type: ConeKotlinType) : ConeKo
 
 class ConeKotlinTypeProjectionOutImpl(override val type: ConeKotlinType) : ConeKotlinTypeProjectionOut()
 
-class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {
-
-    override fun toString(): String {
-        return "<ERROR TYPE: $reason>"
-    }
-}
-
 class ConeAbbreviatedTypeImpl(
     override val abbreviationSymbol: ConeClassLikeSymbol,
     override val typeArguments: List<ConeKotlinTypeProjection>,

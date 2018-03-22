@@ -15,7 +15,6 @@ enum class ProjectionKind {
     STAR, IN, OUT, INVARIANT
 }
 
-
 object StarProjection : ConeKotlinTypeProjection(ProjectionKind.STAR)
 
 abstract class ConeKotlinTypeProjectionIn : ConeKotlinTypeProjection(ProjectionKind.IN) {
@@ -26,9 +25,17 @@ abstract class ConeKotlinTypeProjectionOut : ConeKotlinTypeProjection(Projection
     abstract val type: ConeKotlinType
 }
 
-abstract class ConeKotlinType : ConeKotlinTypeProjection(ProjectionKind.INVARIANT)
+// We assume type IS an invariant type projection to prevent additional wrapper here
+// (more exactly, invariant type projection contains type)
+sealed class ConeKotlinType : ConeKotlinTypeProjection(ProjectionKind.INVARIANT)
 
-abstract class ConeSymbolBasedType : ConeKotlinType() {
+class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {
+    override fun toString(): String {
+        return "<ERROR TYPE: $reason>"
+    }
+}
+
+sealed class ConeSymbolBasedType : ConeKotlinType() {
     abstract val symbol: ConeSymbol
 }
 
