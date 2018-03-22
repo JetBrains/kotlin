@@ -23,6 +23,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -74,7 +75,10 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
                 return false
         }
 
-        if (nextLeaf?.nextLeaf { it !is PsiWhiteSpace && it !is PsiComment }?.node?.elementType == KtTokens.LBRACE) {
+        if (nextLeaf?.nextLeaf {
+                it !is PsiWhiteSpace && it !is PsiComment && it.getStrictParentOfType<KDoc>() == null &&
+                        it.getStrictParentOfType<KtAnnotationEntry>() == null
+            }?.node?.elementType == KtTokens.LBRACE) {
             return false // case with statement starting with '{' and call on the previous line
         }
 
