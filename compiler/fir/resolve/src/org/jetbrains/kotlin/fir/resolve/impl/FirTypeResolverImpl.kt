@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
+import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
@@ -53,9 +53,7 @@ class FirTypeResolverImpl : FirTypeResolver {
             }
             is FirTypeAlias -> {
                 val coneTypeSafe = fir.expandedType.coneTypeSafe<ConeClassLikeType>()
-                val expansion = if (coneTypeSafe != null) coneTypeSafe else {
-                    return ConeKotlinErrorType("Couldn't resolve expansion")
-                }
+                val expansion = coneTypeSafe ?: return ConeKotlinErrorType("Couldn't resolve expansion")
 
                 ConeAbbreviatedTypeImpl(
                     abbreviationSymbol = this as ConeClassLikeSymbol,
@@ -67,7 +65,11 @@ class FirTypeResolverImpl : FirTypeResolver {
         }
     }
 
-    override fun resolveToSymbol(type: FirType, scope: FirScope): ConeSymbol? {
+    override fun resolveToSymbol(
+        type: FirType,
+        scope: FirScope,
+        position: FirPosition
+    ): ConeSymbol? {
         return when (type) {
             is FirResolvedType -> type.coneTypeSafe<ConeSymbolBasedType>()?.symbol
             is FirUserType -> {
@@ -75,7 +77,7 @@ class FirTypeResolverImpl : FirTypeResolver {
                 val qualifierResolver = FirQualifierResolver.getInstance(type.session)
 
                 var resolvedSymbol: ConeSymbol? = null
-                scope.processClassifiersByName(type.qualifier.first().name) { symbol ->
+                scope.processClassifiersByName(type.qualifier.first().name, position) { symbol ->
                     resolvedSymbol = when (symbol) {
                         is ConeClassLikeSymbol -> {
                             qualifierResolver.resolveSymbolWithPrefix(type.qualifier, symbol.classId)
@@ -101,11 +103,15 @@ class FirTypeResolverImpl : FirTypeResolver {
         return symbol.toConeKotlinType(type.qualifier, type.session) ?: ConeKotlinErrorType("Failed to resolve qualified type")
     }
 
-    override fun resolveType(type: FirType, scope: FirScope): ConeKotlinType {
+    override fun resolveType(
+        type: FirType,
+        scope: FirScope,
+        position: FirPosition
+    ): ConeKotlinType {
         return when (type) {
             is FirResolvedType -> type.type
             is FirUserType -> {
-                resolveUserType(type, resolveToSymbol(type, scope), scope)
+                resolveUserType(type, resolveToSymbol(type, scope, position), scope)
             }
             is FirErrorType -> {
                 ConeKotlinErrorType(type.reason)

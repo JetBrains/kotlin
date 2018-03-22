@@ -5,14 +5,21 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirCompositeScope(val scopes: MutableList<FirScope>) : FirScope {
-    override fun processClassifiersByName(name: Name, processor: (ConeSymbol) -> Boolean): Boolean {
+    override fun processClassifiersByName(
+        name: Name,
+        position: FirPosition,
+        processor: (ConeSymbol) -> Boolean
+    ): Boolean {
         for (scope in scopes) {
-            if (!scope.processClassifiersByName(name, processor)) {
+            if (!position.allowTypeParameters && scope is FirTypeParameterScope) continue
+            if (!scope.processClassifiersByName(name, position, processor)) {
                 return false
             }
         }

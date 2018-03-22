@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
+import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.transformSingle
@@ -33,7 +34,6 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
 
     lateinit var scope: FirCompositeScope
     lateinit var packageFqName: FqName
-    lateinit var file: FirFile
     private var classLikeName: FqName = FqName.ROOT
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
@@ -44,7 +44,6 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
             )
         )
         packageFqName = file.packageFqName
-        this.file = file
         return super.transformFile(file, data)
     }
 
@@ -105,7 +104,7 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
     override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
         val typeResolver = FirTypeResolver.getInstance(type.session)
         type.transformChildren(this, null)
-        return transformType(type, typeResolver.resolveType(type, scope))
+        return transformType(type, typeResolver.resolveType(type, scope, position = FirPosition.OTHER))
     }
 
     private fun transformType(type: FirType, resolvedType: ConeKotlinType): CompositeTransformResult<FirType> {
@@ -138,7 +137,7 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
 
         override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
             val typeResolver = FirTypeResolver.getInstance(type.session)
-            val symbol = typeResolver.resolveToSymbol(type, scope)
+            val symbol = typeResolver.resolveToSymbol(type, scope, position = FirPosition.SUPER_TYPE_OR_EXPANSION)
             val myTransformer = this@FirTypeResolveTransformer
 
             if (type !is FirUserType) return myTransformer.transformType(type, data)

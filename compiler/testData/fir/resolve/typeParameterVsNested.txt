@@ -16,7 +16,7 @@ FILE: typeParameterVsNested.kt
         public? abstract property z(val): R/test/My.T/
             public? get(): R/test/My.T/
 
-        (resolved) public? final class Some() : R/T/ {
+        (resolved) public? final class Some() : R/test/My.T/ {
         }
 
     }

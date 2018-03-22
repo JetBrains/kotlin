@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
@@ -15,8 +16,8 @@ import org.jetbrains.kotlin.fir.types.FirUserType
 
 interface FirTypeResolver {
 
-    fun resolveType(type: FirType, scope: FirScope): ConeKotlinType
-    fun resolveToSymbol(type: FirType, scope: FirScope): ConeSymbol?
+    fun resolveType(type: FirType, scope: FirScope, position: FirPosition): ConeKotlinType
+    fun resolveToSymbol(type: FirType, scope: FirScope, position: FirPosition): ConeSymbol?
 
     companion object {
         fun getInstance(session: FirSession): FirTypeResolver = session.service()

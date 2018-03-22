@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
@@ -16,7 +17,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirScope {
-    override fun processClassifiersByName(name: Name, processor: (ConeSymbol) -> Boolean): Boolean {
+    override fun processClassifiersByName(
+        name: Name,
+        position: FirPosition,
+        processor: (ConeSymbol) -> Boolean
+    ): Boolean {
         val unambiguousFqName = ClassId(fqName, name)
 
         val firProvider = session.service<FirProvider>()

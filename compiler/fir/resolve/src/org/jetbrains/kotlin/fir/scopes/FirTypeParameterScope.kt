@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.Name
 
-interface FirScope {
-    fun processClassifiersByName(
+interface FirTypeParameterScope : FirScope {
+    val typeParameters: Map<Name, List<FirTypeParameter>>
+
+    override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
         processor: (ConeSymbol) -> Boolean
-    ): Boolean
-}
+    ): Boolean {
+        val matchedTypeParameters = typeParameters[name] ?: return true
 
-enum class FirPosition(val allowTypeParameters: Boolean = true) {
-    SUPER_TYPE_OR_EXPANSION(allowTypeParameters = false),
-    OTHER
+        return matchedTypeParameters.all { processor(it.symbol) }
+    }
 }

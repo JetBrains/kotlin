@@ -6,17 +6,8 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
 
-class FirClassLikeTypeParameterScope(classLike: FirMemberDeclaration) : FirScope {
-
-    val typeParameters = classLike.typeParameters.groupBy { it.name }
-
-    override fun processClassifiersByName(name: Name, processor: (ConeSymbol) -> Boolean): Boolean {
-        val matchedTypeParameters = typeParameters[name] ?: return true
-
-        return matchedTypeParameters.all { processor(it.symbol) }
-    }
+class FirClassLikeTypeParameterScope(classLike: FirMemberDeclaration) : FirTypeParameterScope {
+    override val typeParameters = classLike.typeParameters.groupBy { it.name }
 }
