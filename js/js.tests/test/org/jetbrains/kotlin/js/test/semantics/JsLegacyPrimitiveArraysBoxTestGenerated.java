@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -58,37 +58,52 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
     @TestMetadata("arraysAreCloneable.kt")
     public void testArraysAreCloneable() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arraysAreCloneable.kt");
+        if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+            doTest(fileName);
+            return;
+        }
         try {
             doTest(fileName);
         }
         catch (Throwable ignore) {
+            ignore.printStackTrace();
             return;
         }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
     }
 
     @TestMetadata("cloneArray.kt")
     public void testCloneArray() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/cloneArray.kt");
+        if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+            doTest(fileName);
+            return;
+        }
         try {
             doTest(fileName);
         }
         catch (Throwable ignore) {
+            ignore.printStackTrace();
             return;
         }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
     }
 
     @TestMetadata("clonePrimitiveArrays.kt")
     public void testClonePrimitiveArrays() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/clonePrimitiveArrays.kt");
+        if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+            doTest(fileName);
+            return;
+        }
         try {
             doTest(fileName);
         }
         catch (Throwable ignore) {
+            ignore.printStackTrace();
             return;
         }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
     }
 
     @TestMetadata("collectionAssignGetMultiIndex.kt")
@@ -268,13 +283,18 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
     @TestMetadata("kt17134.kt")
     public void testKt17134() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt17134.kt");
+        if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+            doTest(fileName);
+            return;
+        }
         try {
             doTest(fileName);
         }
         catch (Throwable ignore) {
+            ignore.printStackTrace();
             return;
         }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
     }
 
     @TestMetadata("kt238.kt")
@@ -322,13 +342,18 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
     @TestMetadata("kt503.kt")
     public void testKt503() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt503.kt");
+        if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+            doTest(fileName);
+            return;
+        }
         try {
             doTest(fileName);
         }
         catch (Throwable ignore) {
+            ignore.printStackTrace();
             return;
         }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
     }
 
     @TestMetadata("kt594.kt")
@@ -340,13 +365,18 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
     @TestMetadata("kt602.kt")
     public void testKt602() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt602.kt");
+        if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+            doTest(fileName);
+            return;
+        }
         try {
             doTest(fileName);
         }
         catch (Throwable ignore) {
+            ignore.printStackTrace();
             return;
         }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
     }
 
     @TestMetadata("kt7009.kt")
@@ -364,13 +394,18 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
     @TestMetadata("kt7338.kt")
     public void testKt7338() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt7338.kt");
+        if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+            doTest(fileName);
+            return;
+        }
         try {
             doTest(fileName);
         }
         catch (Throwable ignore) {
+            ignore.printStackTrace();
             return;
         }
-        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
     }
 
     @TestMetadata("kt779.kt")

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
 import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 import java.util.*
@@ -156,6 +158,13 @@ class AnonymousObjectTransformer(
         val hasLambdasToInline =
             ((parentRemapper is RegeneratedLambdaFieldRemapper) && parentRemapper.recapturedLambdas.isNotEmpty()) || transformationInfo.capturedLambdasToInline.isNotEmpty()
 
+        val header = metadataReader.createHeader()
+        if (header?.data != null && header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS) {
+            transformationInfo.computeLambdaTransformedIntoSingleton()
+        } else {
+            transformationInfo.notLambdaTransformedIntoSingleton()
+        }
+
         for (next in methodsToTransform) {
             // Generate state machine for
             // 1) doResume method of suspend lambda
@@ -215,9 +224,11 @@ class AnonymousObjectTransformer(
             visitor.visitInnerClass(node.name, node.outerName, node.innerName, node.access)
         }
 
-        val header = metadataReader.createHeader()
         if (header != null) {
             writeTransformedMetadata(header, classBuilder)
+            if (transformationInfo.isLambdaTransformedIntoSingleton) {
+                synthesizeSingletonMembers(classBuilder)
+            }
         }
 
         writeOuterInfo(visitor)
@@ -230,6 +241,26 @@ class AnonymousObjectTransformer(
         }
 
         return transformationResult
+    }
+
+    private fun synthesizeSingletonMembers(classBuilder: ClassBuilder) {
+        val internalClassName = transformationInfo.newClassName
+        val classType = Type.getObjectType(internalClassName)
+
+        classBuilder.newField(
+            NO_ORIGIN, ACC_STATIC or ACC_FINAL or ACC_PUBLIC,
+            JvmAbi.INSTANCE_FIELD, classType.descriptor, null, null
+        )
+
+        val clinit = classBuilder.newMethod(NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null)
+        val adapter = InstructionAdapter(clinit)
+        adapter.anew(classType)
+        adapter.dup()
+        adapter.invokespecial(internalClassName, "<init>", "()V", false)
+        adapter.putstatic(internalClassName, JvmAbi.INSTANCE_FIELD, classType.descriptor)
+        adapter.visitInsn(RETURN)
+        adapter.visitMaxs(-1, -1)
+        adapter.visitEnd()
     }
 
     private fun writeTransformedMetadata(header: KotlinClassHeader, classBuilder: ClassBuilder) {

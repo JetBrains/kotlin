@@ -495,6 +495,57 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/stateless")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Stateless extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInStateless() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/stateless"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("differenceStaticInstances.kt")
+            public void testDifferenceStaticInstances() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/stateless/differenceStaticInstances.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt16084.kt")
+            public void testKt16084() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/stateless/kt16084.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt22663.kt")
+            public void testKt22663() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/stateless/kt22663.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt23168.kt")
+            public void testKt23168() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/stateless/kt23168.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFunction.kt")
+            public void testLocalFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/stateless/localFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFunction2.kt")
+            public void testLocalFunction2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/stateless/localFunction2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFunctionAndCapturing.kt")
+            public void testLocalFunctionAndCapturing() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/stateless/localFunctionAndCapturing.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1605,6 +1656,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("inlineChain2.kt")
         public void testInlineChain2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enclosingInfo/inlineChain2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineChain3.kt")
+        public void testInlineChain3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enclosingInfo/inlineChain3.kt");
             doTest(fileName);
         }
 
