@@ -14,7 +14,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import org.jetbrains.kotlin.cfg.LeakingThisDescriptor.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 class LeakingThisInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return expressionVisitor { expression ->
-            // We still use analyzeFully() here.
+            // We still use analyzeWithAllCompilerChecks() here.
             // It's possible to use analyze(), but then we should repeat class constructor consistency check
             // for different class internal elements, like KtProperty and KtClassInitializer.
             // It can affect performance, so yet we want to avoid this.
-            val context = expression.analyzeFully()
+            @Suppress("DEPRECATION")
+            val context = expression.analyzeWithAllCompilerChecks().bindingContext
             val leakingThisDescriptor = context.get(LEAKING_THIS, expression) ?: return@expressionVisitor
             val description = when (leakingThisDescriptor) {
                 is NonFinalClass ->
