@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -1118,6 +1118,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
             @TestMetadata("changeSignaturePackagePrivate")
             public void testChangeSignaturePackagePrivate() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignaturePackagePrivate/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("changeSignaturePackagePrivateNonRoot")
+            public void testChangeSignaturePackagePrivateNonRoot() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeSignaturePackagePrivateNonRoot/");
                 doTest(fileName);
             }
 

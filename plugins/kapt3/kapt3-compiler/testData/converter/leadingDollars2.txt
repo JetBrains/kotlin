@@ -1,0 +1,17 @@
+package te.st.a;
+
+import te.st.a.$Test.Inner;
+import te.st.a.Test$.Inner$;
+
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+@kotlin.Metadata()
+public final class TestKt {
+
+    public TestKt() {
+        super();
+    }
+
+    public static final void a(@org.jetbrains.annotations.NotNull()
+    te.st.a.$Test.Inner a) {
+    }
+}

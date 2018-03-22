@@ -10,6 +10,6 @@ expect class Their {
 
 }
 
-actual class Their {
+actual class <error descr="[ACTUAL_WITHOUT_EXPECT] Actual class 'Their' has no corresponding expected declaration">Their</error> {
 
 }

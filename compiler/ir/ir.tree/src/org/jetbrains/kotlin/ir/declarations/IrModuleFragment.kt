@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.name.Name
 
 interface IrModuleFragment : IrElement {
+    val name: Name
     val descriptor: ModuleDescriptor
     val irBuiltins: IrBuiltIns
     val files: MutableList<IrFile>
@@ -33,6 +35,6 @@ interface IrModuleFragment : IrElement {
     override val endOffset: Int get() = UNDEFINED_OFFSET
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
-            accept(transformer, data) as IrModuleFragment
+        accept(transformer, data) as IrModuleFragment
 }
 

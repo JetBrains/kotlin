@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.isDynamic
@@ -54,9 +55,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
 
     private fun KtLambdaArgument.outerCalleeDescriptor(): FunctionDescriptor? {
         val outerCallExpression = parent as? KtCallExpression ?: return null
-        val context = outerCallExpression.analyze()
-        val outerCallee = outerCallExpression.calleeExpression as? KtReferenceExpression ?: return null
-        return context[REFERENCE_TARGET, outerCallee] as? FunctionDescriptor
+        return outerCallExpression.resolveToCall()?.resultingDescriptor as? FunctionDescriptor
     }
 
     private fun isConvertibleCallInLambda(
@@ -222,8 +221,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
             return when (singleStatement) {
                 is KtCallExpression -> {
                     val calleeReferenceExpression = singleStatement.calleeExpression as? KtNameReferenceExpression ?: return null
-                    val context = singleStatement.analyze()
-                    val resolvedCall = calleeReferenceExpression.getResolvedCall(context) ?: return null
+                    val resolvedCall = calleeReferenceExpression.resolveToCall() ?: return null
                     val receiver = resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
                     val receiverText = when {
                         receiver == null -> ""

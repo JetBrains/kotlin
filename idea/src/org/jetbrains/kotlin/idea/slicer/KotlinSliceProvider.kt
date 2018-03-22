@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.slicer.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
@@ -31,11 +32,12 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPlainWithEscapes
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 
-class KotlinSliceProvider : SliceLanguageSupportProvider {
+class KotlinSliceProvider : SliceLanguageSupportProvider, SliceUsageTransformer {
     companion object {
         val LEAF_ELEMENT_EQUALITY = object : SliceLeafEquality() {
             override fun substituteElement(element: PsiElement) = (element as? KtReference)?.resolve() ?: element
@@ -53,10 +55,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider {
                 val types = when (element) {
                     is KtCallableDeclaration -> listOfNotNull((element.resolveToDescriptorIfAny() as? CallableDescriptor)?.returnType)
                     is KtDeclaration -> emptyList()
-                    is KtExpression -> {
-                        val (bindingContext, moduleDescriptor) = element.analyzeAndGetResult()
-                        element.guessTypes(bindingContext, moduleDescriptor).toList()
-                    }
+                    is KtExpression -> listOfNotNull(element.analyze(BodyResolveMode.PARTIAL).getType(element))
                     else -> emptyList()
                 }
                 return when {
@@ -71,6 +70,11 @@ class KotlinSliceProvider : SliceLanguageSupportProvider {
 
     override fun createRootUsage(element: PsiElement, params: SliceAnalysisParams) = KotlinSliceUsage(element, params)
 
+    override fun transform(usage: SliceUsage): Collection<SliceUsage>? {
+        if (usage is KotlinSliceUsage) return null
+        return listOf(KotlinSliceUsage(usage.element, usage.parent, 0, false))
+    }
+
     override fun getExpressionAtCaret(atCaret: PsiElement?, dataFlowToThis: Boolean): KtExpression? {
         val element =
                 atCaret?.parentsWithSelf
@@ -78,6 +82,7 @@ class KotlinSliceProvider : SliceLanguageSupportProvider {
                             it is KtProperty ||
                             it is KtParameter ||
                             it is KtDeclarationWithBody ||
+                            (it is KtClass && !it.hasExplicitPrimaryConstructor()) ||
                             (it is KtExpression && it !is KtDeclaration)
                         }
                         ?.let { KtPsiUtil.safeDeparenthesize(it as KtExpression) } ?: return null

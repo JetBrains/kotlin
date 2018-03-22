@@ -11,6 +11,7 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
     @Test
     fun testKaptProcessorPath() {
         val project = Project("kaptSimple", gradleVersion)
+        project.allowOriginalKapt()
 
         project.build("build") {
             assertSuccessful()
@@ -69,11 +70,11 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
 
     @Test
     fun testJavaIcCompatibility() {
-        val version = gradleVersion.split(".").map(String::toInt)
-        val expectIncrementalCompilation = version.let { (major, minor) -> major > 2 || major == 2 && minor >= 14 }
-        val expectVerboseIncrementalLogs = version.let { (major, minor) -> major < 3 || major == 3 && minor < 4 }
-
         val project = Project("kotlinJavaProject", gradleVersion)
+
+        val expectIncrementalCompilation = project.testGradleVersionAtLeast("2.14")
+        val expectVerboseIncrementalLogs = project.testGradleVersionBelow("3.4")
+
         project.setupWorkingDir()
 
         val buildScript = File(project.projectDir, "build.gradle")
@@ -129,12 +130,11 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
 
     @Test
     fun testJavaLibraryCompatibility() {
-        Assume.assumeTrue("The java-library plugin is supported only in Gradle 3.4+ (current: $gradleVersion)",
-                gradleVersion.split(".").map(String::toInt).let { (major, minor) ->
-                    major > 3 || major == 3 && minor >= 4
-                })
-
         val project = Project("javaLibraryProject", gradleVersion)
+
+        Assume.assumeTrue("The java-library plugin is supported only in Gradle 3.4+ (current: $gradleVersion)",
+                project.testGradleVersionAtLeast("3.4"))
+
         val compileKotlinTasks = listOf(":libA:compileKotlin", ":libB:compileKotlin", ":app:compileKotlin")
         project.build("build") {
             assertSuccessful()

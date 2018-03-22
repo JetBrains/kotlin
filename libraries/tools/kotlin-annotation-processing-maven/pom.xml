@@ -25,13 +25,6 @@
 
     <description>Annotation Processor wrapper for Kotlin Maven plugin</description>
 
-    <repositories>
-        <repository>
-            <id>jetbrains-utils</id>
-            <url>http://repository.jetbrains.com/utils</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -42,12 +35,6 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>gradle-api</artifactId>
-            <version>1.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

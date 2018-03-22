@@ -25,15 +25,16 @@ import kotlin.collections.ArrayList
 
 
 class MutableVariableWithConstraints(
-        override val typeVariable: NewTypeVariable,
-        constraints: Collection<Constraint> = emptyList()
+    override val typeVariable: NewTypeVariable,
+    constraints: Collection<Constraint> = emptyList()
 ) : VariableWithConstraints {
-    override val constraints: List<Constraint> get() {
-        if (simplifiedConstraints == null) {
-            simplifiedConstraints = simplifyConstraints()
+    override val constraints: List<Constraint>
+        get() {
+            if (simplifiedConstraints == null) {
+                simplifiedConstraints = simplifyConstraints()
+            }
+            return simplifiedConstraints!!
         }
-        return simplifiedConstraints!!
-    }
     private val mutableConstraints = ArrayList(constraints)
 
     private var simplifiedConstraints: List<Constraint>? = null
@@ -49,8 +50,7 @@ class MutableVariableWithConstraints(
         val actualConstraint = if (previousConstraintWithSameType.isNotEmpty()) {
             // i.e. previous is LOWER and new is UPPER or opposite situation
             Constraint(ConstraintKind.EQUALITY, constraint.type, constraint.position, constraint.typeHashCode)
-        }
-        else {
+        } else {
             constraint
         }
         mutableConstraints.add(actualConstraint)
@@ -72,16 +72,16 @@ class MutableVariableWithConstraints(
     }
 
     private fun newConstraintIsUseless(oldKind: ConstraintKind, newKind: ConstraintKind) =
-            when (oldKind) {
-                ConstraintKind.EQUALITY -> true
-                ConstraintKind.LOWER -> newKind == ConstraintKind.LOWER
-                ConstraintKind.UPPER -> newKind == ConstraintKind.UPPER
-            }
+        when (oldKind) {
+            ConstraintKind.EQUALITY -> true
+            ConstraintKind.LOWER -> newKind == ConstraintKind.LOWER
+            ConstraintKind.UPPER -> newKind == ConstraintKind.UPPER
+        }
 
     private fun simplifyConstraints(): List<Constraint> {
         val equalityConstraints = mutableConstraints
-                .filter { it.kind == ConstraintKind.EQUALITY }
-                .groupBy { it.typeHashCode }
+            .filter { it.kind == ConstraintKind.EQUALITY }
+            .groupBy { it.typeHashCode }
         return mutableConstraints.filter { isUsefulConstraint(it, equalityConstraints) }
     }
 

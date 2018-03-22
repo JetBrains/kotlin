@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrBreakImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        loop: IrLoop
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    loop: IrLoop
 ) : IrBreakContinueBase(startOffset, endOffset, type, loop), IrBreak {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitBreak(this, data)
+        visitor.visitBreak(this, data)
 }

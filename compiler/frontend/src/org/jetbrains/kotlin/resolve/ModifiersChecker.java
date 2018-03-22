@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve;
@@ -31,6 +20,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker;
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext;
 import org.jetbrains.kotlin.resolve.checkers.PublishedApiUsageChecker;
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker;
 
@@ -221,7 +211,7 @@ public class ModifiersChecker {
         }
 
         private void checkModifierListCommon(@NotNull KtDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {
-            AnnotationUseSiteTargetChecker.INSTANCE.check(modifierListOwner, descriptor, trace);
+            AnnotationUseSiteTargetChecker.INSTANCE.check(modifierListOwner, descriptor, trace, languageVersionSettings);
             runDeclarationCheckers(modifierListOwner, descriptor);
             annotationChecker.check(modifierListOwner, trace, descriptor);
             ModifierCheckerCore.INSTANCE.check(modifierListOwner, trace, descriptor, languageVersionSettings);
@@ -276,12 +266,12 @@ public class ModifiersChecker {
         }
 
 
-        public void runDeclarationCheckers(
-                @NotNull KtDeclaration declaration,
-                @NotNull DeclarationDescriptor descriptor
-        ) {
+        public void runDeclarationCheckers(@NotNull KtDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
+            DeclarationCheckerContext context = new DeclarationCheckerContext(
+                    trace, languageVersionSettings, deprecationResolver, moduleDescriptor, expectActualTracker
+            );
             for (DeclarationChecker checker : declarationCheckers) {
-                checker.check(declaration, descriptor, trace, trace.getBindingContext(), languageVersionSettings, expectActualTracker);
+                checker.check(declaration, descriptor, context);
             }
             OperatorModifierChecker.INSTANCE.check(declaration, descriptor, trace, languageVersionSettings);
             PublishedApiUsageChecker.INSTANCE.check(declaration, descriptor, trace);
@@ -296,28 +286,27 @@ public class ModifiersChecker {
         }
     }
 
-    @NotNull
     private final AnnotationChecker annotationChecker;
-
-    @NotNull
     private final Iterable<DeclarationChecker> declarationCheckers;
-
-    @NotNull
     private final LanguageVersionSettings languageVersionSettings;
-
-    @NotNull
     private final ExpectActualTracker expectActualTracker;
+    private final DeprecationResolver deprecationResolver;
+    private final ModuleDescriptor moduleDescriptor;
 
     public ModifiersChecker(
             @NotNull AnnotationChecker annotationChecker,
             @NotNull Iterable<DeclarationChecker> declarationCheckers,
             @NotNull LanguageVersionSettings languageVersionSettings,
-            @NotNull ExpectActualTracker expectActualTracker
+            @NotNull ExpectActualTracker expectActualTracker,
+            @NotNull DeprecationResolver deprecationResolver,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.annotationChecker = annotationChecker;
         this.declarationCheckers = declarationCheckers;
         this.languageVersionSettings = languageVersionSettings;
         this.expectActualTracker = expectActualTracker;
+        this.deprecationResolver = deprecationResolver;
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     @NotNull

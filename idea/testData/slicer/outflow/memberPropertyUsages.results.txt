@@ -1,4 +1,5 @@
 4 val <bold>x = 1</bold>
+3 	int x = new A().<bold>getX</bold>();
 6 	val y = <bold>x</bold>
 6 		val <bold>y = x</bold>
 11 	z = <bold>x</bold>

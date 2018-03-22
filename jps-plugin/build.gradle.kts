@@ -1,4 +1,5 @@
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 val compilerModules: Array<String> by rootProject.extra
 
@@ -12,25 +13,23 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(projectRuntimeJar(":kotlin-preloader"))
     compile(project(":idea:idea-jps-common"))
-    compile(ideaSdkDeps("jps-builders", "jps-builders-6", subdir = "jps"))
-    compile(ideaSdkDeps("jps-model.jar", subdir = "jps"))
+    compileOnly(intellijDep()) { includeJars("jdom", "trove4j", "jps-model", "openapi", "util", "asm-all") }
+    compileOnly(intellijDep("jps-standalone")) { includeJars("jps-builders", "jps-builders-6") }
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(project(":compiler:incremental-compilation-impl"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:incremental-compilation-impl"))
-    testCompile(ideaSdkDeps("openapi", "idea"))
-    testCompileOnly(ideaSdkDeps("jps-build-test", subdir = "jps/test"))
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))
+    testCompileOnly(intellijDep("jps-standalone")) { includeJars("jps-builders", "jps-builders-6") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "log4j") }
+    testCompile(intellijDep("jps-build-test"))
     compilerModules.forEach {
         testRuntime(project(it))
     }
+    testRuntime(intellijDep())
     testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(ideaSdkCoreDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar"))
-    testRuntime(ideaSdkDeps("*.jar", subdir = "jps/test"))
-    testRuntime(ideaSdkDeps("*.jar", subdir = "jps"))
 }
 
 sourceSets {

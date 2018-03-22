@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS
 // WITH_RUNTIME
 
 val DOUBLE_RANGE = 0.0 .. -0.0

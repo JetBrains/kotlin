@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
+import org.jetbrains.kotlin.storage.CacheWithNotNullValues
 
 class LazyJavaPackageFragmentProvider(
         components: JavaResolverComponents
@@ -28,17 +28,16 @@ class LazyJavaPackageFragmentProvider(
 
     private val c = LazyJavaResolverContext(components, TypeParameterResolver.EMPTY, lazyOf(null))
 
-    private val packageFragments: MemoizedFunctionToNullable<FqName, LazyJavaPackageFragment> =
-            c.storageManager.createMemoizedFunctionWithNullableValues {
-                fqName ->
-                val jPackage = c.components.finder.findPackage(fqName)
-                if (jPackage != null) {
-                    LazyJavaPackageFragment(c, jPackage)
-                }
-                else null
-            }
+    private val packageFragments: CacheWithNotNullValues<FqName, LazyJavaPackageFragment> =
+        c.storageManager.createCacheWithNotNullValues()
 
-    private fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
+    private fun getPackageFragment(fqName: FqName): LazyJavaPackageFragment? {
+        val jPackage = c.components.finder.findPackage(fqName) ?: return null
+
+        return packageFragments.computeIfAbsent(fqName) {
+            LazyJavaPackageFragment(c, jPackage)
+        }
+    }
 
     override fun getPackageFragments(fqName: FqName) = listOfNotNull(getPackageFragment(fqName))
 

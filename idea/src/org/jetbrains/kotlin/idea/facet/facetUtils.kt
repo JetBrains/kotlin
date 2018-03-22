@@ -35,11 +35,12 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.*
 import kotlin.reflect.KProperty1
@@ -122,17 +123,8 @@ val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
             .toMap()
 }
 
-private fun Module.findImplementedModuleName(modelsProvider: IdeModifiableModelsProvider): String? {
-    val facetModel = modelsProvider.getModifiableFacetModel(this)
-    val facet = facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
-    return facet?.configuration?.settings?.implementedModuleName
-}
-
-private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider): List<Module> {
-    return modelsProvider.modules.filter { module ->
-        module.findImplementedModuleName(modelsProvider) == name
-    }
-}
+internal fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider) =
+    modelsProvider.modules.filter { name in it.findImplementedModuleNames(modelsProvider) }
 
 val Module.implementingModules: List<Module>
     get() = cached(CachedValueProvider {
@@ -143,11 +135,11 @@ val Module.implementingModules: List<Module>
     })
 
 private fun Module.getModuleInfo(baseModuleSourceInfo: ModuleSourceInfo): ModuleSourceInfo? =
-        when (baseModuleSourceInfo) {
-            is ModuleProductionSourceInfo -> productionSourceInfo()
-            is ModuleTestSourceInfo -> testSourceInfo()
-            else -> null
-        }
+    when (baseModuleSourceInfo) {
+        is ModuleProductionSourceInfo -> productionSourceInfo()
+        is ModuleTestSourceInfo -> testSourceInfo()
+        else -> null
+    }
 
 private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo): List<ModuleSourceInfo> {
     val modelsProvider = IdeModifiableModelsProviderImpl(project)
@@ -172,17 +164,13 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
         })
     }
 
-val ModuleDescriptor.implementedDescriptor: ModuleDescriptor?
+val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
     get() {
-        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return null
-        val module = moduleSourceInfo.module
+        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
 
-        val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
-        val implementedModuleName = module.findImplementedModuleName(modelsProvider)
-        val implementedModule = implementedModuleName?.let { modelsProvider.findIdeModule(it) }
-        val implementedModuleInfo = implementedModule?.getModuleInfo(moduleSourceInfo)
-        return implementedModuleInfo?.let {
-            KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
+        return moduleSourceInfo.expectedBy.mapNotNull {
+            KotlinCacheService.getInstance(moduleSourceInfo.module.project)
+                .getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
         }
     }
 
@@ -279,12 +267,16 @@ private val CommonCompilerArguments.ignoredFields: List<String>
         else -> emptyList()
     }
 
-private fun Module.configureJdkIfPossible(compilerArguments: K2JVMCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
-    val jdkHome = compilerArguments.jdkHome ?: return
-    val jdk = ProjectJdkTable.getInstance().allJdks.firstOrNull {
-        it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0
-    } ?: return
-    modelsProvider.getModifiableRootModel(this).sdk = jdk
+private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
+    val allSdks = ProjectJdkTable.getInstance().allJdks
+    val sdk = if (compilerArguments is K2JVMCompilerArguments) {
+        val jdkHome = compilerArguments.jdkHome ?: return
+        allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 } ?: return
+    } else {
+        allSdks.firstOrNull { it.sdkType is KotlinSdkType } ?: KotlinSdkType.INSTANCE.createSdkWithUniqueName(allSdks.toList())
+    }
+
+    modelsProvider.getModifiableRootModel(this).sdk = sdk
 }
 
 fun parseCompilerArgumentsToFacet(
@@ -307,9 +299,7 @@ fun parseCompilerArgumentsToFacet(
         // Retain only fields exposed (and not explicitly ignored) in facet configuration editor.
         // The rest is combined into string and stored in CompilerSettings.additionalArguments
 
-        if (compilerArguments is K2JVMCompilerArguments) {
-            kotlinFacet.module.configureJdkIfPossible(compilerArguments, modelsProvider)
-        }
+        kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider)
 
         val primaryFields = compilerArguments.primaryFields
         val ignoredFields = compilerArguments.ignoredFields

@@ -28,7 +28,7 @@ import java.io.File
 
 class ScriptTemplatesFromCompilerSettingsProvider(private val project: Project) : ScriptDefinitionContributor {
     init {
-        project.messageBus.connect().subscribe(KotlinCompilerSettingsListener.TOPIC, object: KotlinCompilerSettingsListener {
+        project.messageBus.connect().subscribe(KotlinCompilerSettingsListener.TOPIC, object : KotlinCompilerSettingsListener {
             override fun <T> settingsChanged(newSettings: T) {
                 if (newSettings !is CompilerSettings) return
 
@@ -39,12 +39,13 @@ class ScriptTemplatesFromCompilerSettingsProvider(private val project: Project) 
 
     override fun getDefinitions(): List<KotlinScriptDefinition> {
         val kotlinSettings = KotlinCompilerSettings.getInstance(project).settings
-        return loadDefinitionsFromTemplates(
-                templateClassNames = kotlinSettings.scriptTemplates.split(',', ' '),
-                templateClasspath = kotlinSettings.scriptTemplatesClasspath.split(File.pathSeparator).map(::File),
-                environment = mapOf(
-                        "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File))
-
+        return if (kotlinSettings.scriptTemplates.isBlank()) emptyList()
+        else loadDefinitionsFromTemplates(
+            templateClassNames = kotlinSettings.scriptTemplates.split(',', ' '),
+            templateClasspath = kotlinSettings.scriptTemplatesClasspath.split(File.pathSeparator).map(::File),
+            environment = mapOf(
+                "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File)
+            )
         )
     }
 

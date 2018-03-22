@@ -1048,7 +1048,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             mark(lambdaExpression)
             val functionLiteral = lambdaExpression.functionLiteral
 
-            // NB. Behaviour here is implicitly controlled by the LanguageFeature 'CallsInPlaceEffect'
+            // NB. Behaviour here is implicitly controlled by the LanguageFeature 'UseCallsInPlaceEffect'
             // If this feature is turned off, then slice LAMBDA_INVOCATIONS is never written and invocationKind
             // in all subsequent calls always 'null', resulting in falling back to old behaviour
             visitFunction(functionLiteral, trace[BindingContext.LAMBDA_INVOCATIONS, lambdaExpression])

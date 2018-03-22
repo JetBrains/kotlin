@@ -42,15 +42,15 @@ abstract class DeclarationProviderFactoryService {
             project: Project,
             storageManager: StorageManager,
             syntheticFiles: Collection<KtFile>,
-            filesScope: GlobalSearchScope,
+            moduleContentScope: GlobalSearchScope,
             moduleInfo: ModuleInfo
         ): DeclarationProviderFactory {
             return ServiceManager.getService(project, DeclarationProviderFactoryService::class.java)!!
-                .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, filesScope), moduleInfo)
+                .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, moduleContentScope), moduleInfo)
         }
 
         private fun filteringScope(syntheticFiles: Collection<KtFile>, baseScope: GlobalSearchScope): GlobalSearchScope {
-            if (syntheticFiles.isEmpty()) {
+            if (syntheticFiles.isEmpty() || baseScope == GlobalSearchScope.EMPTY_SCOPE) {
                 return baseScope
             }
             return SyntheticFilesFilteringScope(syntheticFiles, baseScope)

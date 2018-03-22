@@ -5,7 +5,7 @@ public final annotation class Anno : kotlin.Annotation {
     public final val e: test.E
 }
 
-@test.Anno(e = Unresolved enum entry: test/E.ENTRY) public open class Class {
+@test.Anno(e = E.ENTRY) public open class Class {
     public constructor Class()
 }
 

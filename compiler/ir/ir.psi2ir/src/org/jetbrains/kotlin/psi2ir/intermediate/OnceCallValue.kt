@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.psi2ir.generators.StatementGenerator
 import org.jetbrains.kotlin.types.KotlinType
 
 class OnceCallValue(
-        val startOffset: Int,
-        val endOffset: Int,
-        val statementGenerator: StatementGenerator,
-        val call: CallBuilder,
-        val origin: IrStatementOrigin? = null
-): IntermediateValue {
+    val startOffset: Int,
+    val endOffset: Int,
+    val statementGenerator: StatementGenerator,
+    val call: CallBuilder,
+    val origin: IrStatementOrigin? = null
+) : IntermediateValue {
     private var instantiated = false
 
     override fun load(): IrExpression {

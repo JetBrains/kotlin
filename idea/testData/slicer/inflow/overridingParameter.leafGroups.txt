@@ -9,3 +9,8 @@
 10 			override val <bold>foo = 3</bold>
 10 				override val foo = <bold>3</bold>
 
+3 return <bold>5</bold>;
+15 	val <bold>y = b.foo</bold>
+15 		val y = <bold>b.foo</bold>
+3 			return <bold>5</bold>;
+

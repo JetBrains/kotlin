@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -920,6 +920,18 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             @TestMetadata("extractBlockContent.kt")
             public void testExtractBlockContent() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractBlockContent.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("extractFromPrivateInlineFun.kt")
+            public void testExtractFromPrivateInlineFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractFromPrivateInlineFun.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("extractFromPublicInlineFun.kt")
+            public void testExtractFromPublicInlineFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractFromPublicInlineFun.kt");
                 doExtractFunctionTest(fileName);
             }
 

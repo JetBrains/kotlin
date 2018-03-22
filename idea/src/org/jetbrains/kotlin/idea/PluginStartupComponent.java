@@ -73,6 +73,9 @@ public class PluginStartupComponent implements ApplicationComponent {
         });
 
         ServiceManager.getService(IndexPatternSearch.class).registerExecutor(new KotlinTodoSearcher());
+
+        //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also ConfigureKotlinInTempDirTest)
+        //KotlinSdkType.Companion.setUpIfNeeded();
     }
 
     private static void registerPathVariable() {

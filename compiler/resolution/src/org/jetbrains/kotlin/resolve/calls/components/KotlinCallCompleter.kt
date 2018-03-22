@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.components
@@ -27,15 +16,15 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
 
 class KotlinCallCompleter(
-        private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-        private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter
+    private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter
 ) {
 
     fun runCompletion(
-            factory: SimpleCandidateFactory,
-            candidates: Collection<KotlinResolutionCandidate>,
-            expectedType: UnwrappedType?,
-            resolutionCallbacks: KotlinResolutionCallbacks
+        factory: SimpleCandidateFactory,
+        candidates: Collection<KotlinResolutionCandidate>,
+        expectedType: UnwrappedType?,
+        resolutionCallbacks: KotlinResolutionCallbacks
     ): CallResolutionResult {
         val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
         if (candidates.isEmpty()) {
@@ -49,79 +38,75 @@ class KotlinCallCompleter(
         // this is needed at least for non-local return checker, because when we analyze lambda we should already bind descriptor for outer call
         candidate?.resolvedCall?.let { resolutionCallbacks.bindStubResolvedCallForCandidate(it) }
 
-        val diagnosticsFromResolutionParts = candidate?.diagnosticsFromResolutionParts ?: emptyList<KotlinCallDiagnostic>()
-
         if (candidate == null || candidate.csBuilder.hasContradiction) {
             val candidateForCompletion = candidate ?: factory.createErrorCandidate().forceResolution()
             candidateForCompletion.prepareForCompletion(expectedType, resolutionCallbacks)
-            runCompletion(candidateForCompletion.resolvedCall, ConstraintSystemCompletionMode.FULL, diagnosticHolder, candidateForCompletion.getSystem(), resolutionCallbacks)
-
-            val systemStorage = candidate?.getSystem()?.asReadOnlyStorage() ?: ConstraintStorage.Empty
-            return CallResolutionResult(
-                    CallResolutionResult.Type.ERROR,
-                    candidate?.resolvedCall,
-                    diagnosticHolder.getDiagnostics() + diagnosticsFromResolutionParts,
-                    systemStorage
+            runCompletion(
+                candidateForCompletion.resolvedCall,
+                ConstraintSystemCompletionMode.FULL,
+                diagnosticHolder,
+                candidateForCompletion.getSystem(),
+                resolutionCallbacks
             )
+
+            return candidate.asCallResolutionResult(CallResolutionResult.Type.ERROR, diagnosticHolder)
         }
 
         val completionType = candidate.prepareForCompletion(expectedType, resolutionCallbacks)
         val constraintSystem = candidate.getSystem()
         runCompletion(candidate.resolvedCall, completionType, diagnosticHolder, constraintSystem, resolutionCallbacks)
 
-        return if (completionType == ConstraintSystemCompletionMode.FULL) {
-            CallResolutionResult(
-                    CallResolutionResult.Type.COMPLETED,
-                    candidate.resolvedCall,
-                    diagnosticHolder.getDiagnostics() + diagnosticsFromResolutionParts,
-                    constraintSystem.asReadOnlyStorage()
-            )
-        }
-        else {
-            CallResolutionResult(
-                    CallResolutionResult.Type.PARTIAL,
-                    candidate.resolvedCall,
-                    diagnosticHolder.getDiagnostics() + diagnosticsFromResolutionParts,
-                    constraintSystem.asReadOnlyStorage()
-            )
-        }
+        val callResolutionType = if (completionType == ConstraintSystemCompletionMode.FULL)
+            CallResolutionResult.Type.COMPLETED
+        else
+            CallResolutionResult.Type.PARTIAL
+
+        return candidate.asCallResolutionResult(callResolutionType, diagnosticHolder)
     }
 
     fun createAllCandidatesResult(
-            candidates: Collection<KotlinResolutionCandidate>,
-            expectedType: UnwrappedType?,
-            resolutionCallbacks: KotlinResolutionCallbacks
+        candidates: Collection<KotlinResolutionCandidate>,
+        expectedType: UnwrappedType?,
+        resolutionCallbacks: KotlinResolutionCallbacks
     ): CallResolutionResult {
         val diagnosticsHolder = KotlinDiagnosticsHolder.SimpleHolder()
         for (candidate in candidates) {
             candidate.prepareForCompletion(expectedType, resolutionCallbacks)
             runCompletion(
-                    candidate.resolvedCall,
-                    ConstraintSystemCompletionMode.FULL,
-                    diagnosticsHolder,
-                    candidate.getSystem(),
-                    resolutionCallbacks,
-                    skipPostponedArguments = true)
+                candidate.resolvedCall,
+                ConstraintSystemCompletionMode.FULL,
+                diagnosticsHolder,
+                candidate.getSystem(),
+                resolutionCallbacks,
+                collectAllCandidatesMode = true
+            )
         }
         return CallResolutionResult(CallResolutionResult.Type.ALL_CANDIDATES, null, emptyList(), ConstraintStorage.Empty, candidates)
     }
 
-    private  fun runCompletion(
-            resolvedCallAtom: ResolvedCallAtom,
-            completionMode: ConstraintSystemCompletionMode,
-            diagnosticsHolder: KotlinDiagnosticsHolder,
-            constraintSystem: NewConstraintSystem,
-            resolutionCallbacks: KotlinResolutionCallbacks,
-            skipPostponedArguments: Boolean = false
+    private fun runCompletion(
+        resolvedCallAtom: ResolvedCallAtom,
+        completionMode: ConstraintSystemCompletionMode,
+        diagnosticsHolder: KotlinDiagnosticsHolder,
+        constraintSystem: NewConstraintSystem,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        collectAllCandidatesMode: Boolean = false
     ) {
         val returnType = resolvedCallAtom.freshReturnType ?: constraintSystem.builtIns.unitType
-        kotlinConstraintSystemCompleter.runCompletion(constraintSystem.asConstraintSystemCompleterContext(), completionMode, resolvedCallAtom, returnType) {
-            if (!skipPostponedArguments) {
+        kotlinConstraintSystemCompleter.runCompletion(
+            constraintSystem.asConstraintSystemCompleterContext(),
+            completionMode,
+            resolvedCallAtom,
+            returnType
+        ) {
+            if (collectAllCandidatesMode) {
+                it.setEmptyAnalyzedResults()
+            } else {
                 postponedArgumentsAnalyzer.analyze(
-                        constraintSystem.asPostponedArgumentsAnalyzerContext(),
-                        resolutionCallbacks,
-                        it,
-                        diagnosticsHolder
+                    constraintSystem.asPostponedArgumentsAnalyzerContext(),
+                    resolutionCallbacks,
+                    it,
+                    diagnosticsHolder
                 )
             }
         }
@@ -132,8 +117,8 @@ class KotlinCallCompleter(
 
     // true if we should complete this call
     private fun KotlinResolutionCandidate.prepareForCompletion(
-            expectedType: UnwrappedType?,
-            resolutionCallbacks: KotlinResolutionCallbacks
+        expectedType: UnwrappedType?,
+        resolutionCallbacks: KotlinResolutionCallbacks
     ): ConstraintSystemCompletionMode {
         val unsubstitutedReturnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return ConstraintSystemCompletionMode.PARTIAL
         val withSmartCastInfo = resolutionCallbacks.createReceiverWithSmartCastInfo(resolvedCall)
@@ -141,15 +126,32 @@ class KotlinCallCompleter(
         val actualType = withSmartCastInfo?.stableType ?: unsubstitutedReturnType
 
         val returnType = resolvedCall.substitutor.substituteKeepAnnotations(actualType)
-        if (expectedType != null && !TypeUtils.noExpectedType(expectedType) && !resolutionCallbacks.isCompileTimeConstant(resolvedCall, expectedType)) {
+        if (expectedType != null && !TypeUtils.noExpectedType(expectedType) && !resolutionCallbacks.isCompileTimeConstant(
+                resolvedCall,
+                expectedType
+            )) {
             csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
         }
 
         return if (expectedType != null || csBuilder.isProperType(returnType)) {
             ConstraintSystemCompletionMode.FULL
-        }
-        else {
+        } else {
             ConstraintSystemCompletionMode.PARTIAL
         }
+    }
+
+    private fun KotlinResolutionCandidate?.asCallResolutionResult(
+        type: CallResolutionResult.Type,
+        diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder
+    ): CallResolutionResult {
+        val diagnosticsFromResolutionParts = this?.diagnosticsFromResolutionParts ?: emptyList<KotlinCallDiagnostic>()
+        val systemStorage = this?.getSystem()?.asReadOnlyStorage() ?: ConstraintStorage.Empty
+
+        return CallResolutionResult(
+            type,
+            this?.resolvedCall,
+            diagnosticsHolder.getDiagnostics() + diagnosticsFromResolutionParts,
+            systemStorage
+        )
     }
 }

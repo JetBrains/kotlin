@@ -18,60 +18,56 @@ package org.jetbrains.kotlin.kapt3.stubs
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.kapt3.KaptContext
-import org.jetbrains.kotlin.kapt3.util.isJava9OrLater
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.*
-import java.util.*
 
-data class KotlinPosition(val path: String, val isRelativePath: Boolean, val line: Int, val column: Int)
+data class KotlinPosition(val path: String, val isRelativePath: Boolean, val pos: Int)
 
 private typealias LineInfoMap = MutableMap<String, KotlinPosition>
 
 class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
     companion object {
-        private val METADATA_COMMENT_PREFIX = "@KaptMetadata "
+        const val KAPT_METADATA_EXTENSION = ".kapt_metadata"
+        private const val METADATA_VERSION = 1
 
         fun parseFileInfo(file: JCTree.JCCompilationUnit): FileInfo {
-            fun getCommentTree(): Tokens.Comment? {
-                if (isJava9OrLater) {
-                    val packageElement = JCTree.JCCompilationUnit::class.java.getDeclaredMethod("getPackage").invoke(file) as JCTree?
-                    if (packageElement != null) {
-                        file.docComments.getComment(packageElement)?.let { return it }
-                    }
-                }
+            val sourceUri = file.sourcefile
+                ?.toUri()
+                ?.takeIf { it.isAbsolute && !it.isOpaque && it.path != null && it.scheme?.toLowerCase() == "file" } ?: return FileInfo.EMPTY
 
-                return file.docComments.getComment(file)
+            val sourceFile = File(sourceUri).takeIf { it.exists() } ?: return FileInfo.EMPTY
+            val kaptMetadataFile = File(sourceFile.parentFile, sourceFile.nameWithoutExtension + KAPT_METADATA_EXTENSION)
+
+            if (!kaptMetadataFile.isFile) {
+                return FileInfo.EMPTY
             }
 
-            val comment = getCommentTree()?.text?.trim()
-                ?.takeIf { it.startsWith(METADATA_COMMENT_PREFIX) }
-                ?.drop(METADATA_COMMENT_PREFIX.length)
-                    ?: return FileInfo.EMPTY
-
-            return FileInfo.parse(comment)
+            return deserialize(kaptMetadataFile.readBytes())
         }
 
-        private fun deserializeMetadata(data: String): Pair<LineInfoMap, Map<String, String>> {
+        private fun deserialize(data: ByteArray): FileInfo {
             val lineInfo: LineInfoMap = mutableMapOf()
             val signatureInfo = mutableMapOf<String, String>()
 
-            val ois = ObjectInputStream(ByteArrayInputStream(Base64.getDecoder().decode(data)))
+            val ois = ObjectInputStream(ByteArrayInputStream(data))
+
+            val version = ois.readInt()
+            if (version != METADATA_VERSION) {
+                return FileInfo.EMPTY
+            }
 
             val lineInfoCount = ois.readInt()
             repeat(lineInfoCount) {
                 val fqName = ois.readUTF()
                 val path = ois.readUTF()
                 val isRelative = ois.readBoolean()
-                val line = ois.readInt()
-                val column = ois.readInt()
+                val pos = ois.readInt()
 
-                lineInfo[fqName] = KotlinPosition(path, isRelative, line, column)
+                lineInfo[fqName] = KotlinPosition(path, isRelative, pos)
             }
 
             val signatureCount = ois.readInt()
@@ -82,7 +78,7 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
                 signatureInfo[javacSignature] = methodDesc
             }
 
-            return Pair(lineInfo, signatureInfo)
+            return FileInfo(lineInfo, signatureInfo)
         }
 
         private fun getJavacSignature(decl: JCTree.JCMethodDecl): String {
@@ -120,13 +116,9 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
 
     private fun register(fqName: String, psiElement: PsiElement) {
         val textRange = psiElement.textRange ?: return
-        val psiFile = psiElement.containingFile
-        val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(psiFile, textRange)
 
-        if (lineAndColumn.line >= 0 && lineAndColumn.column >= 0) {
-            val (path, isRelative) = getFilePathRelativePreferred(psiFile)
-            lineInfo[fqName] = KotlinPosition(path, isRelative, lineAndColumn.line, lineAndColumn.column)
-        }
+        val (path, isRelative) = getFilePathRelativePreferred(psiElement.containingFile)
+        lineInfo[fqName] = KotlinPosition(path, isRelative, textRange.startOffset)
     }
 
     private fun getFilePathRelativePreferred(file: PsiFile): Pair<String, Boolean> {
@@ -146,17 +138,18 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
         }
     }
 
-    fun getClassMetadataCommentText(): String {
+    fun serialize(): ByteArray {
         val os = ByteArrayOutputStream()
         val oos = ObjectOutputStream(os)
+
+        oos.writeInt(METADATA_VERSION)
 
         oos.writeInt(lineInfo.size)
         for ((fqName, kotlinPosition) in lineInfo) {
             oos.writeUTF(fqName)
             oos.writeUTF(kotlinPosition.path)
             oos.writeBoolean(kotlinPosition.isRelativePath)
-            oos.writeInt(kotlinPosition.line)
-            oos.writeInt(kotlinPosition.column)
+            oos.writeInt(kotlinPosition.pos)
         }
 
         oos.writeInt(signatureInfo.size)
@@ -166,17 +159,12 @@ class KaptLineMappingCollector(private val kaptContext: KaptContext<*>) {
         }
 
         oos.flush()
-        return METADATA_COMMENT_PREFIX + Base64.getEncoder().encodeToString(os.toByteArray())
+        return os.toByteArray()
     }
 
     class FileInfo(private val lineInfo: LineInfoMap, private val signatureInfo: Map<String, String>) {
         companion object {
             val EMPTY = FileInfo(mutableMapOf(), emptyMap())
-
-            fun parse(comment: String): FileInfo {
-                val (lineInfo, signatureInfo) = deserializeMetadata(comment)
-                return FileInfo(lineInfo, signatureInfo)
-            }
         }
 
         fun getPositionFor(fqName: String) = lineInfo[fqName]

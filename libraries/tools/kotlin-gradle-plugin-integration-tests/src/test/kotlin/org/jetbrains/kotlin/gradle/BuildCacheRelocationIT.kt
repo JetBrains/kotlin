@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -30,21 +31,22 @@ class BuildCacheRelocationIT : BaseGradleIT() {
             super.defaultBuildOptions().copy(
                     withBuildCache = true,
                     androidGradlePluginVersion = "3.0.0",
-                    androidHome = File(ANDROID_HOME_PATH))
+                    androidHome = KotlinTestUtils.findAndroidSdk())
 
     @Parameterized.Parameter
     lateinit var testCase: TestCase
+
+    val workingDirs = (0..1).map { createTempDir("BuildCacheRelocationIT$it") }
 
     @Test
     fun testRelocation() = with(testCase) {
         val localBuildCacheDirectory = createTempDir("buildCache$projectName")
 
         val originalWorkingDir = workingDir
-        val workingDirs = (0..1).map { createTempDir("BuildCacheRelocationIT$it") }
 
         val (firstProject, secondProject) = (0..1).map { id ->
             workingDir = workingDirs[id]
-            Project(projectName, "4.4", projectDirectoryPrefix).apply {
+            Project(projectName, GradleVersionRequired.AtLeast("4.3"), projectDirectoryPrefix).apply {
                 setupWorkingDir()
                 initProject()
                 prepareLocalBuildCache(localBuildCacheDirectory)

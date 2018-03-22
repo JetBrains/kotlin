@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -76,6 +76,12 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
     @TestMetadata("emptyAsyncResolver")
     public void testEmptyAsyncResolver() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/emptyAsyncResolver/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("errorResolver")
+    public void testErrorResolver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/errorResolver/");
         doTest(fileName);
     }
 

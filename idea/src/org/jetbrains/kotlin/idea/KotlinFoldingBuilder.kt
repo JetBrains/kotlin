@@ -37,8 +37,10 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
-    override fun buildLanguageFoldRegions(descriptors: MutableList<FoldingDescriptor>,
-                                          root: PsiElement, document: Document, quick: Boolean) {
+    override fun buildLanguageFoldRegions(
+        descriptors: MutableList<FoldingDescriptor>,
+        root: PsiElement, document: Document, quick: Boolean
+    ) {
         if (root !is KtFile) {
             return
         }
@@ -80,9 +82,9 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         val type = node.elementType
         val parentType = node.treeParent?.elementType
         return type == KtNodeTypes.FUNCTION_LITERAL ||
-               (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
-               type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC ||
-               type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR
+                (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
+                type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC ||
+                type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR
     }
 
     private fun getRangeToFold(node: ASTNode): TextRange {
@@ -103,7 +105,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         node.elementType == KtNodeTypes.STRING_TEMPLATE -> "\"\"\"${getTrimmedFirstLineOfString(node).addSpaceIfNeeded()}...\"\"\""
         node.elementType == KtNodeTypes.PRIMARY_CONSTRUCTOR -> "(...)"
         node.psi is KtImportList -> "..."
-        else ->  "{...}"
+        else -> "{...}"
     }
 
     private fun getTrimmedFirstLineOfString(node: ASTNode): String {
@@ -126,11 +128,11 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
 
     private fun getCommentContents(line: String): String {
         return line.trim()
-                .replace("/**", "")
-                .replace("/*", "")
-                .replace("*/", "")
-                .replace("*", "")
-                .trim()
+            .removePrefix("/**")
+            .removePrefix("/*")
+            .removePrefix("*/")
+            .removePrefix("*")
+            .trim()
     }
 
     override fun isRegionCollapsedByDefault(node: ASTNode): Boolean {
@@ -150,8 +152,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         return false
     }
 
-    override fun isCustomFoldingRoot(node: ASTNode)
-        = node.elementType == KtNodeTypes.BLOCK || node.elementType == KtNodeTypes.CLASS_BODY
+    override fun isCustomFoldingRoot(node: ASTNode) = node.elementType == KtNodeTypes.BLOCK || node.elementType == KtNodeTypes.CLASS_BODY
 
     private fun isFirstElementInFile(element: PsiElement): Boolean {
         val parent = element.parent

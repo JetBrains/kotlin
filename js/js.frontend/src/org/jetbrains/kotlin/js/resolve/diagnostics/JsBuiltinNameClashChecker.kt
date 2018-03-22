@@ -19,18 +19,14 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 
-class JsBuiltinNameClashChecker(private val nameSuggestion: NameSuggestion) : SimpleDeclarationChecker {
-    override fun check(
-            declaration: KtDeclaration, descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink, bindingContext: BindingContext
-    ) {
+class JsBuiltinNameClashChecker(private val nameSuggestion: NameSuggestion) : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (AnnotationsUtils.isNativeObject(descriptor)) return
         if (descriptor.containingDeclaration !is ClassDescriptor) return
 
@@ -40,12 +36,12 @@ class JsBuiltinNameClashChecker(private val nameSuggestion: NameSuggestion) : Si
 
         if (descriptor is ClassDescriptor) {
             if (simpleName in PROHIBITED_STATIC_NAMES) {
-                diagnosticHolder.report(ErrorsJs.JS_BUILTIN_NAME_CLASH.on(declaration, "Function.$simpleName"))
+                context.trace.report(ErrorsJs.JS_BUILTIN_NAME_CLASH.on(declaration, "Function.$simpleName"))
             }
         }
         else if (descriptor is CallableMemberDescriptor) {
             if (simpleName in PROHIBITED_MEMBER_NAMES) {
-                diagnosticHolder.report(ErrorsJs.JS_BUILTIN_NAME_CLASH.on(declaration, "Object.prototype.$simpleName"))
+                context.trace.report(ErrorsJs.JS_BUILTIN_NAME_CLASH.on(declaration, "Object.prototype.$simpleName"))
             }
         }
     }

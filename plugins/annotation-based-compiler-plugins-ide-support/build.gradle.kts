@@ -1,5 +1,6 @@
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 jvmTarget = "1.6"
 
@@ -8,13 +9,14 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:cli-common"))
     compile(project(":idea"))
+    compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":idea:idea-gradle"))
     compile(project(":idea:idea-maven"))
-    compileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
-    compileOnly(ideaPluginDeps("gradle-tooling-api", "gradle", plugin = "gradle"))
-    compileOnly(ideaSdkDeps("openapi", "idea"))
-}
+    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") } }
+    compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-tooling-api", "gradle", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "jdom", "util") }
+ }
 
 sourceSets {
     "main" { projectDefault() }

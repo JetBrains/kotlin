@@ -24,9 +24,8 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
-abstract class AbstractForInProgressionLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression)
-    : AbstractForInProgressionOrRangeLoopGenerator(codegen, forExpression)
-{
+abstract class AbstractForInProgressionLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) :
+    AbstractForInProgressionOrRangeLoopGenerator(codegen, forExpression) {
     protected var incrementVar: Int = -1
     protected val asmLoopRangeType: Type
     protected val incrementType: Type
@@ -73,8 +72,7 @@ abstract class AbstractForInProgressionLoopGenerator(codegen: ExpressionCodegen,
             v.lcmp()
             v.iflt(loopExit)
             v.mark(afterIf)
-        }
-        else {
+        } else {
             v.ifle(negativeIncrement) // if increment < 0, jump
 
             // increment > 0

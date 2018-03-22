@@ -34,21 +34,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(
-        rangeCall: ResolvedCall<out CallableDescriptor>
-): CallIntrinsicRangeValue(rangeCall) {
+    rangeCall: ResolvedCall<out CallableDescriptor>
+) : CallIntrinsicRangeValue(rangeCall) {
     protected val asmElementType = getAsmRangeElementTypeForPrimitiveRangeOrProgression(rangeCall.resultingDescriptor)
 
     override fun isIntrinsicInCall(resolvedCallForIn: ResolvedCall<out CallableDescriptor>) =
-            resolvedCallForIn.resultingDescriptor.let {
-                isPrimitiveRangeContains(it) ||
-                isClosedFloatingPointRangeContains(it) ||
-                isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(it)
-            }
+        resolvedCallForIn.resultingDescriptor.let {
+            isPrimitiveRangeContains(it) ||
+                    isClosedFloatingPointRangeContains(it) ||
+                    isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(it)
+        }
 
     override fun createIntrinsicInExpressionGenerator(
-            codegen: ExpressionCodegen,
-            operatorReference: KtSimpleNameExpression,
-            resolvedCall: ResolvedCall<out CallableDescriptor>
+        codegen: ExpressionCodegen,
+        operatorReference: KtSimpleNameExpression,
+        resolvedCall: ResolvedCall<out CallableDescriptor>
     ): InExpressionGenerator {
         val comparisonGenerator = getComparisonGeneratorForRangeContainsCall(codegen, resolvedCall)
         val comparedType = comparisonGenerator?.comparedType
@@ -57,14 +57,14 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
             comparisonGenerator == null -> CallBasedInExpressionGenerator(codegen, operatorReference)
 
             comparedType == Type.DOUBLE_TYPE || comparedType == Type.FLOAT_TYPE -> {
-                val rangeLiteral = getBoundedValue(codegen) as? SimpleBoundedValue ?:
-                                   throw AssertionError("Floating point intrinsic range value should be a range literal")
+                val rangeLiteral = getBoundedValue(codegen) as? SimpleBoundedValue
+                        ?: throw AssertionError("Floating point intrinsic range value should be a range literal")
                 InFloatingPointRangeLiteralExpressionGenerator(operatorReference, rangeLiteral, comparisonGenerator, codegen.frameMap)
             }
 
             else ->
                 InIntegralContinuousRangeExpressionGenerator(
-                        operatorReference, getBoundedValue(codegen), comparisonGenerator, codegen.frameMap
+                    operatorReference, getBoundedValue(codegen), comparisonGenerator, codegen.frameMap
                 )
         }
     }
@@ -72,12 +72,12 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
     protected abstract fun getBoundedValue(codegen: ExpressionCodegen): BoundedValue
 
     protected fun createConstBoundedForLoopGeneratorOrNull(
-            codegen: ExpressionCodegen,
-            forExpression: KtForExpression,
-            startValue: StackValue,
-            endExpression: KtExpression,
-            step: Int,
-            isStartInclusive: Boolean = true
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression,
+        startValue: StackValue,
+        endExpression: KtExpression,
+        step: Int,
+        isStartInclusive: Boolean = true
     ): ForLoopGenerator? {
         val endConstValue = codegen.getCompileTimeConstant(endExpression).safeAs<IntegerValueConstant<*>>() ?: return null
 
@@ -127,46 +127,46 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
     }
 
     private fun createConstBoundedIntForLoopGenerator(
-            codegen: ExpressionCodegen,
-            forExpression: KtForExpression,
-            startValue: StackValue,
-            endIntValue: Int,
-            step: Int,
-            isStartInclusive: Boolean
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression,
+        startValue: StackValue,
+        endIntValue: Int,
+        step: Int,
+        isStartInclusive: Boolean
     ): ForLoopGenerator? =
-            ForInDefinitelySafeSimpleProgressionLoopGenerator(
-                    codegen, forExpression,
-                    startValue = startValue,
-                    isStartInclusive = isStartInclusive,
-                    endValue = StackValue.integerConstant(endIntValue, asmElementType),
-                    isEndInclusive = true,
-                    step = step
-            )
+        ForInDefinitelySafeSimpleProgressionLoopGenerator(
+            codegen, forExpression,
+            startValue = startValue,
+            isStartInclusive = isStartInclusive,
+            endValue = StackValue.integerConstant(endIntValue, asmElementType),
+            isEndInclusive = true,
+            step = step
+        )
 
     private fun createConstBoundedLongForLoopGenerator(
-            codegen: ExpressionCodegen,
-            forExpression: KtForExpression,
-            startValue: StackValue,
-            endLongValue: Long,
-            step: Int,
-            isStartInclusive: Boolean
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression,
+        startValue: StackValue,
+        endLongValue: Long,
+        step: Int,
+        isStartInclusive: Boolean
     ): ForLoopGenerator? =
-            ForInDefinitelySafeSimpleProgressionLoopGenerator(
-                    codegen, forExpression,
-                    startValue = startValue,
-                    isStartInclusive = isStartInclusive,
-                    endValue = StackValue.constant(endLongValue, asmElementType),
-                    isEndInclusive = true,
-                    step = step
-            )
+        ForInDefinitelySafeSimpleProgressionLoopGenerator(
+            codegen, forExpression,
+            startValue = startValue,
+            isStartInclusive = isStartInclusive,
+            endValue = StackValue.constant(endLongValue, asmElementType),
+            isEndInclusive = true,
+            step = step
+        )
 
     private fun isProhibitedCharConstEndValue(step: Int, endValue: Char) =
-            endValue == if (step == 1) java.lang.Character.MAX_VALUE else java.lang.Character.MIN_VALUE
+        endValue == if (step == 1) java.lang.Character.MAX_VALUE else java.lang.Character.MIN_VALUE
 
     private fun isProhibitedIntConstEndValue(step: Int, endValue: Int) =
-            endValue == if (step == 1) Int.MAX_VALUE else Int.MIN_VALUE
+        endValue == if (step == 1) Int.MAX_VALUE else Int.MIN_VALUE
 
     private fun isProhibitedLongConstEndValue(step: Int, endValue: Long) =
-            endValue == if (step == 1) Long.MAX_VALUE else Long.MIN_VALUE
+        endValue == if (step == 1) Long.MAX_VALUE else Long.MIN_VALUE
 
 }

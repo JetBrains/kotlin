@@ -346,17 +346,25 @@ fun JsNode.collectBreakContinueTargets(): Map<JsContinue, JsStatement> {
 fun getImportTag(jsVars: JsVars): String? {
     if (jsVars.vars.size == 1) {
         val jsVar = jsVars.vars[0]
-        if (jsVar.initExpression != null && jsVar.name.imported) {
-            return extractImportTag(jsVar.initExpression)
+        if (jsVar.name.imported) {
+            return extractImportTag(jsVar)
         }
     }
 
     return null
 }
 
-fun extractImportTag(expression: JsExpression): String? {
+fun extractImportTag(jsVar: JsVars.JsVar): String? {
+    val initExpression = jsVar.initExpression ?: return null
+
     val sb = StringBuilder()
-    return if (extractImportTagImpl(expression, sb)) sb.toString() else null
+
+    // Handle Long const val import
+    if (initExpression is JsInvocation || initExpression is JsNew) {
+        sb.append(jsVar.name.toString()).append(":")
+    }
+
+    return if (extractImportTagImpl(initExpression, sb)) sb.toString() else null
 }
 
 private fun extractImportTagImpl(expression: JsExpression, sb: StringBuilder): Boolean {
@@ -378,6 +386,30 @@ private fun extractImportTagImpl(expression: JsExpression, sb: StringBuilder): B
             sb.append(JsToStringGenerationVisitor.javaScriptString(stringLiteral.value))
             return true
         }
+        is JsInvocation -> {
+            val invocation = expression
+            if (!extractImportTagImpl(invocation.qualifier, sb)) return false
+            if (!appendArguments(invocation.arguments, sb)) return false
+            return true
+        }
+        is JsNew -> {
+            val newExpr = expression
+            if (!extractImportTagImpl(newExpr.constructorExpression, sb)) return false
+            if (!appendArguments(newExpr.arguments, sb)) return false
+            return true
+        }
         else -> return false
     }
+}
+
+private fun appendArguments(arguments: List<JsExpression>, sb: StringBuilder): Boolean {
+    arguments.forEachIndexed { index, arg ->
+        if (arg !is JsIntLiteral) {
+            return false
+        }
+        sb.append(if (index == 0) "(" else ",")
+        sb.append(arg.value)
+    }
+    sb.append(")")
+    return true
 }

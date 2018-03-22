@@ -1,4 +1,5 @@
 3 class A(val <bold>n: Int</bold>) {
+3 	int n = new A(1).<bold>getN</bold>();
 4 	val x = <bold>n</bold>
 4 		val <bold>x = n</bold>
 9 	y = <bold>n</bold>

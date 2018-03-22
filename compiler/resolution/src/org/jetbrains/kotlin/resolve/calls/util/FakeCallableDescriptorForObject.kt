@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 
 open class FakeCallableDescriptorForObject(
-        val classDescriptor: ClassDescriptor
+    val classDescriptor: ClassDescriptor
 ) : DeclarationDescriptorWithVisibility by classDescriptor.getClassObjectReferenceTarget(), VariableDescriptor {
 
     init {

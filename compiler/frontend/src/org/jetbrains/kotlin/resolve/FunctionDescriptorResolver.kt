@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -142,7 +142,9 @@ class FunctionDescriptorResolver(
     ) {
         if (functionDescriptor.returnType != null) return
         assert(function.typeReference == null) {
-            "Return type must be initialized early for function: " + function.text + ", at: " + DiagnosticUtils.atLocation(function)
+            "Return type must be initialized early for function: " + function.text + ", at: " + PsiDiagnosticUtils.atLocation(
+                function
+            )
         }
 
         val inferredReturnType = when {
@@ -235,8 +237,7 @@ class FunctionDescriptorResolver(
         }
         val emptyContract = LazyContractProvider.createInitialized(null)
 
-        val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.CallsInPlaceEffect) ||
-                languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect) ||
+        val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
                 languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
 
@@ -348,12 +349,11 @@ class FunctionDescriptorResolver(
             isPrimary,
             declarationToTrace.toSourceElement()
         )
-        if (classDescriptor.isExpect) {
-            constructorDescriptor.isExpect = true
-        }
-        if (classDescriptor.isActual) {
-            constructorDescriptor.isActual = true
-        }
+        constructorDescriptor.isExpect = classDescriptor.isExpect
+        constructorDescriptor.isActual =
+                modifierList?.hasActualModifier() == true ||
+                // We don't require 'actual' for constructors of actual annotations
+                classDescriptor.kind == ClassKind.ANNOTATION_CLASS && classDescriptor.isActual
         if (declarationToTrace is PsiElement)
             trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         val parameterScope = LexicalWritableScope(

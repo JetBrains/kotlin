@@ -30,5 +30,5 @@ abstract class AbstractReducingFunctor : Functor {
 
     override fun invokeWithArguments(arguments: List<Computation>): List<ESEffect> = reducer.reduceEffects(doInvocation(arguments))
 
-    abstract protected fun doInvocation(arguments: List<Computation>): List<ESEffect>
+    protected abstract fun doInvocation(arguments: List<Computation>): List<ESEffect>
 }

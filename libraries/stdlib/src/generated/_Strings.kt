@@ -253,7 +253,7 @@ public fun String.dropLast(n: Int): String {
  * Returns a subsequence of this char sequence containing all characters except last characters that satisfy the given [predicate].
  */
 public inline fun CharSequence.dropLastWhile(predicate: (Char) -> Boolean): CharSequence {
-    for (index in this.indices.reversed())
+    for (index in lastIndex downTo 0)
         if (!predicate(this[index]))
             return subSequence(0, index + 1)
     return ""
@@ -263,7 +263,7 @@ public inline fun CharSequence.dropLastWhile(predicate: (Char) -> Boolean): Char
  * Returns a string containing all characters except last characters that satisfy the given [predicate].
  */
 public inline fun String.dropLastWhile(predicate: (Char) -> Boolean): String {
-    for (index in this.indices.reversed())
+    for (index in lastIndex downTo 0)
         if (!predicate(this[index]))
             return substring(0, index + 1)
     return ""
@@ -359,7 +359,7 @@ public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, pred
  * Appends all characters matching the given [predicate] to the given [destination].
  */
 public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C {
-    for (index in 0..length - 1) {
+    for (index in 0 until length) {
         val element = get(index)
         if (predicate(element)) destination.append(element)
     }
@@ -465,7 +465,7 @@ public inline fun String.takeLastWhile(predicate: (Char) -> Boolean): String {
  * Returns a subsequence of this char sequence containing the first characters that satisfy the given [predicate].
  */
 public inline fun CharSequence.takeWhile(predicate: (Char) -> Boolean): CharSequence {
-    for (index in 0..length - 1)
+    for (index in 0 until length)
         if (!predicate(get(index))) {
             return subSequence(0, index)
         }
@@ -476,7 +476,7 @@ public inline fun CharSequence.takeWhile(predicate: (Char) -> Boolean): CharSequ
  * Returns a string containing the first characters that satisfy the given [predicate].
  */
 public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
-    for (index in 0..length - 1)
+    for (index in 0 until length)
         if (!predicate(get(index))) {
             return substring(0, index)
         }
@@ -626,11 +626,10 @@ public fun CharSequence.toSet(): Set<Char> {
 }
 
 /**
- * Returns a [SortedSet] of all characters.
+ * Returns a [SortedSet][java.util.SortedSet] of all characters.
  */
-@kotlin.jvm.JvmVersion
-public fun CharSequence.toSortedSet(): SortedSet<Char> {
-    return toCollection(TreeSet<Char>())
+public fun CharSequence.toSortedSet(): java.util.SortedSet<Char> {
+    return toCollection(java.util.TreeSet<Char>())
 }
 
 /**
@@ -813,6 +812,8 @@ public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {
 
 /**
  * Returns `true` if all characters match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -821,6 +822,8 @@ public inline fun CharSequence.all(predicate: (Char) -> Boolean): Boolean {
 
 /**
  * Returns `true` if char sequence has at least one character.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun CharSequence.any(): Boolean {
     return !isEmpty()
@@ -828,6 +831,8 @@ public fun CharSequence.any(): Boolean {
 
 /**
  * Returns `true` if at least one character matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun CharSequence.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -1008,6 +1013,8 @@ public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
 
 /**
  * Returns `true` if the char sequence has no characters.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun CharSequence.none(): Boolean {
     return isEmpty()
@@ -1015,6 +1022,8 @@ public fun CharSequence.none(): Boolean {
 
 /**
  * Returns `true` if no characters match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun CharSequence.none(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -1321,7 +1330,7 @@ public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
 public inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char, b: Char) -> V): List<V> {
     val length = minOf(this.length, other.length)
     val list = ArrayList<V>(length)
-    for (i in 0..length-1) {
+    for (i in 0 until length) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -1352,7 +1361,7 @@ public inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> 
     val size = length - 1
     if (size < 1) return emptyList()
     val result = ArrayList<R>(size)
-    for (index in 0..size - 1) {
+    for (index in 0 until size) {
         result.add(transform(this[index], this[index + 1]))
     }
     return result

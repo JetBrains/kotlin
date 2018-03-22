@@ -29,16 +29,21 @@ import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfigurator.TEST_LIB_ID, false, KotlinJavaMavenConfigurator.NAME, KotlinJavaMavenConfigurator.PRESENTABLE_TEXT) {
+class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(
+    KotlinJavaMavenConfigurator.TEST_LIB_ID,
+    false,
+    KotlinJavaMavenConfigurator.NAME,
+    KotlinJavaMavenConfigurator.PRESENTABLE_TEXT
+) {
 
     override fun isKotlinModule(module: Module) =
-            hasKotlinJvmRuntimeInScope(module)
+        hasKotlinJvmRuntimeInScope(module)
 
     override fun isRelevantGoal(goalName: String) =
-            goalName == PomFile.KotlinGoals.Compile
+        goalName == PomFile.KotlinGoals.Compile
 
     override fun getStdlibArtifactId(module: Module, version: String): String =
-            getStdlibArtifactId(ModuleRootManager.getInstance(module).sdk, version)
+        getStdlibArtifactId(ModuleRootManager.getInstance(module).sdk, version)
 
     override fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module) {
         createExecution(pomFile, kotlinPlugin, PomFile.DefaultPhases.Compile, PomFile.KotlinGoals.Compile, module, false)
@@ -66,8 +71,8 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfi
         get() = JvmPlatform
 
     companion object {
-        private val NAME = "maven"
-        val TEST_LIB_ID = "kotlin-test"
-        private val PRESENTABLE_TEXT = "Maven"
+        private const val NAME = "maven"
+        const val TEST_LIB_ID = "kotlin-test"
+        private const val PRESENTABLE_TEXT = "Maven"
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -3075,6 +3075,12 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestMetadata("Generic.kt")
         public void testGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Generic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TypeAliasToExtension.kt")
+        public void testTypeAliasToExtension() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/TypeAliasToExtension.kt");
             doTest(fileName);
         }
     }

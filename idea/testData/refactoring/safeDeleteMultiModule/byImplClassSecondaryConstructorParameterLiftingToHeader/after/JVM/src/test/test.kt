@@ -1,7 +1,7 @@
 package test
 
 actual class Foo(s: String) {
-    constructor(): this("") {
+    actual constructor(): this("") {
         val x = n + 1
     }
 }

@@ -18,15 +18,13 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RemoveArgumentNameIntention
   : SelfTargetingRangeIntention<KtValueArgument>(KtValueArgument::class.java, "Remove argument name") {
@@ -39,7 +37,7 @@ class RemoveArgumentNameIntention
         if (arguments.takeWhile { it != element }.any { it.isNamed() }) return null
 
         val callExpr = argumentList.parent as? KtCallElement ?: return null
-        val resolvedCall = callExpr.getResolvedCall(callExpr.analyze(BodyResolveMode.PARTIAL)) ?: return null
+        val resolvedCall = callExpr.resolveToCall() ?: return null
         val argumentMatch = resolvedCall.getArgumentMapping(element) as? ArgumentMatch ?: return null
         if (argumentMatch.valueParameter.index != arguments.indexOf(element)) return null
 

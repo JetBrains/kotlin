@@ -29,18 +29,18 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 class AdditionalDiagnosticReporter(private val languageVersionSettings: LanguageVersionSettings) {
 
     fun reportAdditionalDiagnostics(
-            candidate: ResolvedCallAtom,
-            resultingDescriptor: CallableDescriptor,
-            kotlinDiagnosticsHolder: KotlinDiagnosticsHolder,
-            diagnostics: Collection<KotlinCallDiagnostic>
+        candidate: ResolvedCallAtom,
+        resultingDescriptor: CallableDescriptor,
+        kotlinDiagnosticsHolder: KotlinDiagnosticsHolder,
+        diagnostics: Collection<KotlinCallDiagnostic>
     ) {
         reportSmartCasts(candidate, resultingDescriptor, kotlinDiagnosticsHolder, diagnostics)
     }
 
     private fun createSmartCastDiagnostic(
-            candidate: ResolvedCallAtom,
-            argument: KotlinCallArgument,
-            expectedResultType: UnwrappedType
+        candidate: ResolvedCallAtom,
+        argument: KotlinCallArgument,
+        expectedResultType: UnwrappedType
     ): SmartCastDiagnostic? {
         if (argument !is ExpressionKotlinCallArgument) return null
         if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(argument.receiver.receiverValue.type, expectedResultType)) {
@@ -50,10 +50,10 @@ class AdditionalDiagnosticReporter(private val languageVersionSettings: Language
     }
 
     private fun reportSmartCastOnReceiver(
-            candidate: ResolvedCallAtom,
-            receiver: SimpleKotlinCallArgument?,
-            parameter: ReceiverParameterDescriptor?,
-            diagnostics: Collection<KotlinCallDiagnostic>
+        candidate: ResolvedCallAtom,
+        receiver: SimpleKotlinCallArgument?,
+        parameter: ReceiverParameterDescriptor?,
+        diagnostics: Collection<KotlinCallDiagnostic>
     ): SmartCastDiagnostic? {
         if (receiver == null || parameter == null) return null
         val expectedType = parameter.type.unwrap().let { if (receiver.isSafeCall) it.makeNullableAsSpecified(true) else it }
@@ -65,24 +65,34 @@ class AdditionalDiagnosticReporter(private val languageVersionSettings: Language
             diagnostics.filterIsInstance<UnsafeCallError>().none {
                 it.receiver == receiver
             }
-            &&
-            diagnostics.filterIsInstance<UnstableSmartCast>().none {
-                it.argument == receiver
-            }
+                    &&
+                    diagnostics.filterIsInstance<UnstableSmartCast>().none {
+                        it.argument == receiver
+                    }
         }
     }
 
     private fun reportSmartCasts(
-            candidate: ResolvedCallAtom,
-            resultingDescriptor: CallableDescriptor,
-            kotlinDiagnosticsHolder: KotlinDiagnosticsHolder,
-            diagnostics: Collection<KotlinCallDiagnostic>
+        candidate: ResolvedCallAtom,
+        resultingDescriptor: CallableDescriptor,
+        kotlinDiagnosticsHolder: KotlinDiagnosticsHolder,
+        diagnostics: Collection<KotlinCallDiagnostic>
     ) {
         kotlinDiagnosticsHolder.addDiagnosticIfNotNull(
-                reportSmartCastOnReceiver(candidate, candidate.extensionReceiverArgument, resultingDescriptor.extensionReceiverParameter, diagnostics)
+            reportSmartCastOnReceiver(
+                candidate,
+                candidate.extensionReceiverArgument,
+                resultingDescriptor.extensionReceiverParameter,
+                diagnostics
+            )
         )
         kotlinDiagnosticsHolder.addDiagnosticIfNotNull(
-                reportSmartCastOnReceiver(candidate, candidate.dispatchReceiverArgument, resultingDescriptor.dispatchReceiverParameter, diagnostics)
+            reportSmartCastOnReceiver(
+                candidate,
+                candidate.dispatchReceiverArgument,
+                resultingDescriptor.dispatchReceiverParameter,
+                diagnostics
+            )
         )
 
         for (parameter in resultingDescriptor.valueParameters) {

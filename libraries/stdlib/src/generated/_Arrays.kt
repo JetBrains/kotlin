@@ -2522,6 +2522,8 @@ public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char? {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Array<out T>.drop(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2530,6 +2532,8 @@ public fun <T> Array<out T>.drop(n: Int): List<T> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ByteArray.drop(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2538,6 +2542,8 @@ public fun ByteArray.drop(n: Int): List<Byte> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ShortArray.drop(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2546,6 +2552,8 @@ public fun ShortArray.drop(n: Int): List<Short> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun IntArray.drop(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2554,6 +2562,8 @@ public fun IntArray.drop(n: Int): List<Int> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun LongArray.drop(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2562,6 +2572,8 @@ public fun LongArray.drop(n: Int): List<Long> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun FloatArray.drop(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2570,6 +2582,8 @@ public fun FloatArray.drop(n: Int): List<Float> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun DoubleArray.drop(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2578,6 +2592,8 @@ public fun DoubleArray.drop(n: Int): List<Double> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun BooleanArray.drop(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2586,6 +2602,8 @@ public fun BooleanArray.drop(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun CharArray.drop(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2594,6 +2612,8 @@ public fun CharArray.drop(n: Int): List<Char> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Array<out T>.dropLast(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2602,6 +2622,8 @@ public fun <T> Array<out T>.dropLast(n: Int): List<T> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ByteArray.dropLast(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2610,6 +2632,8 @@ public fun ByteArray.dropLast(n: Int): List<Byte> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun ShortArray.dropLast(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2618,6 +2642,8 @@ public fun ShortArray.dropLast(n: Int): List<Short> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun IntArray.dropLast(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2626,6 +2652,8 @@ public fun IntArray.dropLast(n: Int): List<Int> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun LongArray.dropLast(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2634,6 +2662,8 @@ public fun LongArray.dropLast(n: Int): List<Long> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun FloatArray.dropLast(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2642,6 +2672,8 @@ public fun FloatArray.dropLast(n: Int): List<Float> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun DoubleArray.dropLast(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2650,6 +2682,8 @@ public fun DoubleArray.dropLast(n: Int): List<Double> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun BooleanArray.dropLast(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2658,6 +2692,8 @@ public fun BooleanArray.dropLast(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing all elements except last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun CharArray.dropLast(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -2666,6 +2702,8 @@ public fun CharArray.dropLast(n: Int): List<Char> {
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun <T> Array<out T>.dropLastWhile(predicate: (T) -> Boolean): List<T> {
     for (index in lastIndex downTo 0) {
@@ -2678,6 +2716,8 @@ public inline fun <T> Array<out T>.dropLastWhile(predicate: (T) -> Boolean): Lis
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun ByteArray.dropLastWhile(predicate: (Byte) -> Boolean): List<Byte> {
     for (index in lastIndex downTo 0) {
@@ -2690,6 +2730,8 @@ public inline fun ByteArray.dropLastWhile(predicate: (Byte) -> Boolean): List<By
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun ShortArray.dropLastWhile(predicate: (Short) -> Boolean): List<Short> {
     for (index in lastIndex downTo 0) {
@@ -2702,6 +2744,8 @@ public inline fun ShortArray.dropLastWhile(predicate: (Short) -> Boolean): List<
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun IntArray.dropLastWhile(predicate: (Int) -> Boolean): List<Int> {
     for (index in lastIndex downTo 0) {
@@ -2714,6 +2758,8 @@ public inline fun IntArray.dropLastWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun LongArray.dropLastWhile(predicate: (Long) -> Boolean): List<Long> {
     for (index in lastIndex downTo 0) {
@@ -2726,6 +2772,8 @@ public inline fun LongArray.dropLastWhile(predicate: (Long) -> Boolean): List<Lo
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun FloatArray.dropLastWhile(predicate: (Float) -> Boolean): List<Float> {
     for (index in lastIndex downTo 0) {
@@ -2738,6 +2786,8 @@ public inline fun FloatArray.dropLastWhile(predicate: (Float) -> Boolean): List<
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun DoubleArray.dropLastWhile(predicate: (Double) -> Boolean): List<Double> {
     for (index in lastIndex downTo 0) {
@@ -2750,6 +2800,8 @@ public inline fun DoubleArray.dropLastWhile(predicate: (Double) -> Boolean): Lis
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun BooleanArray.dropLastWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
     for (index in lastIndex downTo 0) {
@@ -2762,6 +2814,8 @@ public inline fun BooleanArray.dropLastWhile(predicate: (Boolean) -> Boolean): L
 
 /**
  * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun CharArray.dropLastWhile(predicate: (Char) -> Boolean): List<Char> {
     for (index in lastIndex downTo 0) {
@@ -2774,6 +2828,8 @@ public inline fun CharArray.dropLastWhile(predicate: (Char) -> Boolean): List<Ch
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean): List<T> {
     var yielding = false
@@ -2790,6 +2846,8 @@ public inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean): List<Byte> {
     var yielding = false
@@ -2806,6 +2864,8 @@ public inline fun ByteArray.dropWhile(predicate: (Byte) -> Boolean): List<Byte> 
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Short> {
     var yielding = false
@@ -2822,6 +2882,8 @@ public inline fun ShortArray.dropWhile(predicate: (Short) -> Boolean): List<Shor
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun IntArray.dropWhile(predicate: (Int) -> Boolean): List<Int> {
     var yielding = false
@@ -2838,6 +2900,8 @@ public inline fun IntArray.dropWhile(predicate: (Int) -> Boolean): List<Int> {
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun LongArray.dropWhile(predicate: (Long) -> Boolean): List<Long> {
     var yielding = false
@@ -2854,6 +2918,8 @@ public inline fun LongArray.dropWhile(predicate: (Long) -> Boolean): List<Long> 
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean): List<Float> {
     var yielding = false
@@ -2870,6 +2936,8 @@ public inline fun FloatArray.dropWhile(predicate: (Float) -> Boolean): List<Floa
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean): List<Double> {
     var yielding = false
@@ -2886,6 +2954,8 @@ public inline fun DoubleArray.dropWhile(predicate: (Double) -> Boolean): List<Do
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
     var yielding = false
@@ -2902,6 +2972,8 @@ public inline fun BooleanArray.dropWhile(predicate: (Boolean) -> Boolean): List<
 
 /**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public inline fun CharArray.dropWhile(predicate: (Char) -> Boolean): List<Char> {
     var yielding = false
@@ -3176,10 +3248,26 @@ public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal
 }
 
 /**
+ * Returns a list containing all elements that are instances of specified class.
+ */
+public fun <R> Array<*>.filterIsInstance(klass: Class<R>): List<R> {
+    return filterIsInstanceTo(ArrayList<R>(), klass)
+}
+
+/**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
 public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements that are instances of specified class to the given [destination].
+ */
+public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    @Suppress("UNCHECKED_CAST")
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }
 
@@ -3776,6 +3864,8 @@ public fun CharArray.sliceArray(indices: IntRange): CharArray {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Array<out T>.take(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3794,6 +3884,8 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun ByteArray.take(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3812,6 +3904,8 @@ public fun ByteArray.take(n: Int): List<Byte> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun ShortArray.take(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3830,6 +3924,8 @@ public fun ShortArray.take(n: Int): List<Short> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun IntArray.take(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3848,6 +3944,8 @@ public fun IntArray.take(n: Int): List<Int> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun LongArray.take(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3866,6 +3964,8 @@ public fun LongArray.take(n: Int): List<Long> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun FloatArray.take(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3884,6 +3984,8 @@ public fun FloatArray.take(n: Int): List<Float> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun DoubleArray.take(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3902,6 +4004,8 @@ public fun DoubleArray.take(n: Int): List<Double> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun BooleanArray.take(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3920,6 +4024,8 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
 
 /**
  * Returns a list containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun CharArray.take(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3938,6 +4044,8 @@ public fun CharArray.take(n: Int): List<Char> {
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Array<out T>.takeLast(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3946,13 +4054,15 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<T>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun ByteArray.takeLast(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3961,13 +4071,15 @@ public fun ByteArray.takeLast(n: Int): List<Byte> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Byte>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun ShortArray.takeLast(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3976,13 +4088,15 @@ public fun ShortArray.takeLast(n: Int): List<Short> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Short>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun IntArray.takeLast(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -3991,13 +4105,15 @@ public fun IntArray.takeLast(n: Int): List<Int> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Int>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun LongArray.takeLast(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4006,13 +4122,15 @@ public fun LongArray.takeLast(n: Int): List<Long> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Long>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun FloatArray.takeLast(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4021,13 +4139,15 @@ public fun FloatArray.takeLast(n: Int): List<Float> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Float>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun DoubleArray.takeLast(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4036,13 +4156,15 @@ public fun DoubleArray.takeLast(n: Int): List<Double> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Double>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun BooleanArray.takeLast(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4051,13 +4173,15 @@ public fun BooleanArray.takeLast(n: Int): List<Boolean> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Boolean>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
 
 /**
  * Returns a list containing last [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun CharArray.takeLast(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -4066,13 +4190,15 @@ public fun CharArray.takeLast(n: Int): List<Char> {
     if (n >= size) return toList()
     if (n == 1) return listOf(this[size - 1])
     val list = ArrayList<Char>(n)
-    for (index in size - n .. size - 1)
+    for (index in size - n until size)
         list.add(this[index])
     return list
 }
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun <T> Array<out T>.takeLastWhile(predicate: (T) -> Boolean): List<T> {
     for (index in lastIndex downTo 0) {
@@ -4085,6 +4211,8 @@ public inline fun <T> Array<out T>.takeLastWhile(predicate: (T) -> Boolean): Lis
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun ByteArray.takeLastWhile(predicate: (Byte) -> Boolean): List<Byte> {
     for (index in lastIndex downTo 0) {
@@ -4097,6 +4225,8 @@ public inline fun ByteArray.takeLastWhile(predicate: (Byte) -> Boolean): List<By
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun ShortArray.takeLastWhile(predicate: (Short) -> Boolean): List<Short> {
     for (index in lastIndex downTo 0) {
@@ -4109,6 +4239,8 @@ public inline fun ShortArray.takeLastWhile(predicate: (Short) -> Boolean): List<
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun IntArray.takeLastWhile(predicate: (Int) -> Boolean): List<Int> {
     for (index in lastIndex downTo 0) {
@@ -4121,6 +4253,8 @@ public inline fun IntArray.takeLastWhile(predicate: (Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun LongArray.takeLastWhile(predicate: (Long) -> Boolean): List<Long> {
     for (index in lastIndex downTo 0) {
@@ -4133,6 +4267,8 @@ public inline fun LongArray.takeLastWhile(predicate: (Long) -> Boolean): List<Lo
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun FloatArray.takeLastWhile(predicate: (Float) -> Boolean): List<Float> {
     for (index in lastIndex downTo 0) {
@@ -4145,6 +4281,8 @@ public inline fun FloatArray.takeLastWhile(predicate: (Float) -> Boolean): List<
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun DoubleArray.takeLastWhile(predicate: (Double) -> Boolean): List<Double> {
     for (index in lastIndex downTo 0) {
@@ -4157,6 +4295,8 @@ public inline fun DoubleArray.takeLastWhile(predicate: (Double) -> Boolean): Lis
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun BooleanArray.takeLastWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
     for (index in lastIndex downTo 0) {
@@ -4169,6 +4309,8 @@ public inline fun BooleanArray.takeLastWhile(predicate: (Boolean) -> Boolean): L
 
 /**
  * Returns a list containing last elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Char> {
     for (index in lastIndex downTo 0) {
@@ -4181,6 +4323,8 @@ public inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Ch
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T> {
     val list = ArrayList<T>()
@@ -4194,6 +4338,8 @@ public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T>
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte> {
     val list = ArrayList<Byte>()
@@ -4207,6 +4353,8 @@ public inline fun ByteArray.takeWhile(predicate: (Byte) -> Boolean): List<Byte> 
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Short> {
     val list = ArrayList<Short>()
@@ -4220,6 +4368,8 @@ public inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Shor
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int> {
     val list = ArrayList<Int>()
@@ -4233,6 +4383,8 @@ public inline fun IntArray.takeWhile(predicate: (Int) -> Boolean): List<Int> {
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long> {
     val list = ArrayList<Long>()
@@ -4246,6 +4398,8 @@ public inline fun LongArray.takeWhile(predicate: (Long) -> Boolean): List<Long> 
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Float> {
     val list = ArrayList<Float>()
@@ -4259,6 +4413,8 @@ public inline fun FloatArray.takeWhile(predicate: (Float) -> Boolean): List<Floa
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Double> {
     val list = ArrayList<Double>()
@@ -4272,6 +4428,8 @@ public inline fun DoubleArray.takeWhile(predicate: (Double) -> Boolean): List<Do
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
     val list = ArrayList<Boolean>()
@@ -4285,6 +4443,8 @@ public inline fun BooleanArray.takeWhile(predicate: (Boolean) -> Boolean): List<
 
 /**
  * Returns a list containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public inline fun CharArray.takeWhile(predicate: (Char) -> Boolean): List<Char> {
     val list = ArrayList<Char>()
@@ -5158,6 +5318,260 @@ public fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char> {
 }
 
 /**
+ * Returns a [List] that wraps the original array.
+ */
+public fun <T> Array<out T>.asList(): List<T> {
+    return ArraysUtilJVM.asList(this)
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun ByteArray.asList(): List<Byte> {
+    return object : AbstractList<Byte>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Byte): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Byte = this@asList[index]
+        override fun indexOf(element: Byte): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Byte): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun ShortArray.asList(): List<Short> {
+    return object : AbstractList<Short>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Short): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Short = this@asList[index]
+        override fun indexOf(element: Short): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Short): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun IntArray.asList(): List<Int> {
+    return object : AbstractList<Int>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Int): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Int = this@asList[index]
+        override fun indexOf(element: Int): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Int): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun LongArray.asList(): List<Long> {
+    return object : AbstractList<Long>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Long): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Long = this@asList[index]
+        override fun indexOf(element: Long): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Long): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun FloatArray.asList(): List<Float> {
+    return object : AbstractList<Float>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Float): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Float = this@asList[index]
+        override fun indexOf(element: Float): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Float): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun DoubleArray.asList(): List<Double> {
+    return object : AbstractList<Double>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Double): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Double = this@asList[index]
+        override fun indexOf(element: Double): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Double): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun BooleanArray.asList(): List<Boolean> {
+    return object : AbstractList<Boolean>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Boolean): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Boolean = this@asList[index]
+        override fun indexOf(element: Boolean): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Boolean): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun CharArray.asList(): List<Char> {
+    return object : AbstractList<Char>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Char): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Char = this@asList[index]
+        override fun indexOf(element: Char): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Char): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted according to the specified [comparator], otherwise the result is undefined.
+ * 
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * 
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted according to the specified [comparator].
+ */
+public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Int {
+    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)
+}
+
+/**
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * 
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * 
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
+ */
+public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size): Int {
+    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * 
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * 
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
+ */
+public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Int {
+    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * 
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * 
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
+ */
+public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: Int = size): Int {
+    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * 
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * 
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
+ */
+public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int = size): Int {
+    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * 
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * 
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
+ */
+public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: Int = size): Int {
+    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * 
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * 
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
+ */
+public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: Int = size): Int {
+    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * 
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * 
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
+ */
+public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex: Int = size): Int {
+    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
+ * The array is expected to be sorted, otherwise the result is undefined.
+ * 
+ * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
+ * 
+ * @return the index of the element, if it is contained in the array within the specified range;
+ * otherwise, the inverted insertion point `(-insertion point - 1)`.
+ * The insertion point is defined as the index at which the element should be inserted,
+ * so that the array (or the specified subrange of array) still remains sorted.
+ */
+public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: Int = size): Int {
+    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
+}
+
+/**
  * Returns `true` if the two specified arrays are *deeply* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  * 
@@ -5468,6 +5882,285 @@ public inline fun CharArray.contentToString(): String {
 }
 
 /**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(): Array<T> {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOf(): ByteArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOf(): ShortArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOf(): IntArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOf(): LongArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOf(): FloatArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOf(): DoubleArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOf(): BooleanArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOf(): CharArray {
+    return java.util.Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOf(newSize: Int): ByteArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOf(newSize: Int): ShortArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOf(newSize: Int): IntArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOf(newSize: Int): LongArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOf(newSize: Int): FloatArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOf(newSize: Int): CharArray {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of the original array, resized to the given [newSize].
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
+    return java.util.Arrays.copyOf(this, newSize)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Returns new array which is a copy of range of original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
+    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.fill(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.fill(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.fill(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.fill(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.fill(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.fill(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.fill(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.fill(this, fromIndex, toIndex, element)
+}
+
+/**
+ * Fills original array with the provided value.
+ */
+public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.fill(this, fromIndex, toIndex, element)
+}
+
+/**
  * Returns the range of valid indices for the array.
  */
 public val <T> Array<out T>.indices: IntRange
@@ -5720,6 +6413,430 @@ public val CharArray.lastIndex: Int
     get() = size - 1
 
 /**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public operator fun <T> Array<T>.plus(element: T): Array<T> {
+    val index = size
+    val result = java.util.Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public operator fun ByteArray.plus(element: Byte): ByteArray {
+    val index = size
+    val result = java.util.Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public operator fun ShortArray.plus(element: Short): ShortArray {
+    val index = size
+    val result = java.util.Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public operator fun IntArray.plus(element: Int): IntArray {
+    val index = size
+    val result = java.util.Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public operator fun LongArray.plus(element: Long): LongArray {
+    val index = size
+    val result = java.util.Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public operator fun FloatArray.plus(element: Float): FloatArray {
+    val index = size
+    val result = java.util.Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public operator fun DoubleArray.plus(element: Double): DoubleArray {
+    val index = size
+    val result = java.util.Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public operator fun BooleanArray.plus(element: Boolean): BooleanArray {
+    val index = size
+    val result = java.util.Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+public operator fun CharArray.plus(element: Char): CharArray {
+    val index = size
+    val result = java.util.Arrays.copyOf(this, index + 1)
+    result[index] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T> {
+    var index = size
+    val result = java.util.Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public operator fun ByteArray.plus(elements: Collection<Byte>): ByteArray {
+    var index = size
+    val result = java.util.Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public operator fun ShortArray.plus(elements: Collection<Short>): ShortArray {
+    var index = size
+    val result = java.util.Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public operator fun IntArray.plus(elements: Collection<Int>): IntArray {
+    var index = size
+    val result = java.util.Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public operator fun LongArray.plus(elements: Collection<Long>): LongArray {
+    var index = size
+    val result = java.util.Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public operator fun FloatArray.plus(elements: Collection<Float>): FloatArray {
+    var index = size
+    val result = java.util.Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public operator fun DoubleArray.plus(elements: Collection<Double>): DoubleArray {
+    var index = size
+    val result = java.util.Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public operator fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray {
+    var index = size
+    val result = java.util.Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
+ */
+public operator fun CharArray.plus(elements: Collection<Char>): CharArray {
+    var index = size
+    val result = java.util.Arrays.copyOf(this, index + elements.size)
+    for (element in elements) result[index++] = element
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public operator fun ByteArray.plus(elements: ByteArray): ByteArray {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public operator fun ShortArray.plus(elements: ShortArray): ShortArray {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public operator fun IntArray.plus(elements: IntArray): IntArray {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public operator fun LongArray.plus(elements: LongArray): LongArray {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public operator fun FloatArray.plus(elements: FloatArray): FloatArray {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public operator fun BooleanArray.plus(elements: BooleanArray): BooleanArray {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
+ */
+public operator fun CharArray.plus(elements: CharArray): CharArray {
+    val thisSize = size
+    val arraySize = elements.size
+    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
+    System.arraycopy(elements, 0, result, thisSize, arraySize)
+    return result
+}
+
+/**
+ * Returns an array containing all elements of the original array and then the given [element].
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.plusElement(element: T): Array<T> {
+    return plus(element)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun IntArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun LongArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun ByteArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun ShortArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun DoubleArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun FloatArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place.
+ */
+public fun CharArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts the array in-place according to the natural order of its elements.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T: Comparable<T>> Array<out T>.sort(): Unit {
+    @Suppress("UNCHECKED_CAST")
+    (this as Array<Any?>).sort()
+}
+
+/**
+ * Sorts the array in-place according to the natural order of its elements.
+ * 
+ * @throws ClassCastException if any element of the array is not [Comparable].
+ */
+public fun <T> Array<out T>.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ */
+public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ */
+public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ */
+public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ */
+public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ */
+public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ */
+public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ */
+public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts a range in the array in-place.
+ */
+public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex)
+}
+
+/**
+ * Sorts the array in-place according to the order specified by the given [comparator].
+ */
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
+    if (size > 1) java.util.Arrays.sort(this, comparator)
+}
+
+/**
+ * Sorts a range in the array in-place with the given [comparator].
+ */
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    java.util.Arrays.sort(this, fromIndex, toIndex, comparator)
+}
+
+/**
  * Returns an array of Boolean containing all of the elements of this generic array.
  */
 public fun Array<out Boolean>.toBooleanArray(): BooleanArray {
@@ -5797,6 +6914,94 @@ public fun Array<out Short>.toShortArray(): ShortArray {
     for (index in indices)
         result[index] = this[index]
     return result
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ByteArray.toTypedArray(): Array<Byte> {
+    val result = arrayOfNulls<Byte>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Byte>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun ShortArray.toTypedArray(): Array<Short> {
+    val result = arrayOfNulls<Short>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Short>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun IntArray.toTypedArray(): Array<Int> {
+    val result = arrayOfNulls<Int>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Int>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun LongArray.toTypedArray(): Array<Long> {
+    val result = arrayOfNulls<Long>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Long>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun FloatArray.toTypedArray(): Array<Float> {
+    val result = arrayOfNulls<Float>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Float>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun DoubleArray.toTypedArray(): Array<Double> {
+    val result = arrayOfNulls<Double>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Double>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun BooleanArray.toTypedArray(): Array<Boolean> {
+    val result = arrayOfNulls<Boolean>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Boolean>
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun CharArray.toTypedArray(): Array<Char> {
+    val result = arrayOfNulls<Char>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Char>
 }
 
 /**
@@ -6959,85 +8164,75 @@ public fun CharArray.toSet(): Set<Char> {
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun <T: Comparable<T>> Array<out T>.toSortedSet(): SortedSet<T> {
-    return toCollection(TreeSet<T>())
+public fun <T: Comparable<T>> Array<out T>.toSortedSet(): java.util.SortedSet<T> {
+    return toCollection(java.util.TreeSet<T>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun ByteArray.toSortedSet(): SortedSet<Byte> {
-    return toCollection(TreeSet<Byte>())
+public fun ByteArray.toSortedSet(): java.util.SortedSet<Byte> {
+    return toCollection(java.util.TreeSet<Byte>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun ShortArray.toSortedSet(): SortedSet<Short> {
-    return toCollection(TreeSet<Short>())
+public fun ShortArray.toSortedSet(): java.util.SortedSet<Short> {
+    return toCollection(java.util.TreeSet<Short>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun IntArray.toSortedSet(): SortedSet<Int> {
-    return toCollection(TreeSet<Int>())
+public fun IntArray.toSortedSet(): java.util.SortedSet<Int> {
+    return toCollection(java.util.TreeSet<Int>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun LongArray.toSortedSet(): SortedSet<Long> {
-    return toCollection(TreeSet<Long>())
+public fun LongArray.toSortedSet(): java.util.SortedSet<Long> {
+    return toCollection(java.util.TreeSet<Long>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun FloatArray.toSortedSet(): SortedSet<Float> {
-    return toCollection(TreeSet<Float>())
+public fun FloatArray.toSortedSet(): java.util.SortedSet<Float> {
+    return toCollection(java.util.TreeSet<Float>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun DoubleArray.toSortedSet(): SortedSet<Double> {
-    return toCollection(TreeSet<Double>())
+public fun DoubleArray.toSortedSet(): java.util.SortedSet<Double> {
+    return toCollection(java.util.TreeSet<Double>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun BooleanArray.toSortedSet(): SortedSet<Boolean> {
-    return toCollection(TreeSet<Boolean>())
+public fun BooleanArray.toSortedSet(): java.util.SortedSet<Boolean> {
+    return toCollection(java.util.TreeSet<Boolean>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-@kotlin.jvm.JvmVersion
-public fun CharArray.toSortedSet(): SortedSet<Char> {
-    return toCollection(TreeSet<Char>())
+public fun CharArray.toSortedSet(): java.util.SortedSet<Char> {
+    return toCollection(java.util.TreeSet<Char>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
-    return toCollection(TreeSet<T>(comparator))
+public fun <T> Array<out T>.toSortedSet(comparator: Comparator<in T>): java.util.SortedSet<T> {
+    return toCollection(java.util.TreeSet<T>(comparator))
 }
 
 /**
@@ -8876,6 +10071,8 @@ public infix fun CharArray.union(other: Iterable<Char>): Set<Char> {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -8884,6 +10081,8 @@ public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -8892,6 +10091,8 @@ public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -8900,6 +10101,8 @@ public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -8908,6 +10111,8 @@ public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -8916,6 +10121,8 @@ public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -8924,6 +10131,8 @@ public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -8932,6 +10141,8 @@ public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -8940,6 +10151,8 @@ public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -8948,6 +10161,8 @@ public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun <T> Array<out T>.any(): Boolean {
     return !isEmpty()
@@ -8955,6 +10170,8 @@ public fun <T> Array<out T>.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun ByteArray.any(): Boolean {
     return !isEmpty()
@@ -8962,6 +10179,8 @@ public fun ByteArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun ShortArray.any(): Boolean {
     return !isEmpty()
@@ -8969,6 +10188,8 @@ public fun ShortArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun IntArray.any(): Boolean {
     return !isEmpty()
@@ -8976,6 +10197,8 @@ public fun IntArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun LongArray.any(): Boolean {
     return !isEmpty()
@@ -8983,6 +10206,8 @@ public fun LongArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun FloatArray.any(): Boolean {
     return !isEmpty()
@@ -8990,6 +10215,8 @@ public fun FloatArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun DoubleArray.any(): Boolean {
     return !isEmpty()
@@ -8997,6 +10224,8 @@ public fun DoubleArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun BooleanArray.any(): Boolean {
     return !isEmpty()
@@ -9004,6 +10233,8 @@ public fun BooleanArray.any(): Boolean {
 
 /**
  * Returns `true` if array has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun CharArray.any(): Boolean {
     return !isEmpty()
@@ -9011,6 +10242,8 @@ public fun CharArray.any(): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -9019,6 +10252,8 @@ public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -9027,6 +10262,8 @@ public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -9035,6 +10272,8 @@ public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -9043,6 +10282,8 @@ public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -9051,6 +10292,8 @@ public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -9059,6 +10302,8 @@ public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -9067,6 +10312,8 @@ public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -9075,6 +10322,8 @@ public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -10693,6 +11942,8 @@ public fun CharArray.minWith(comparator: Comparator<in Char>): Char? {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun <T> Array<out T>.none(): Boolean {
     return isEmpty()
@@ -10700,6 +11951,8 @@ public fun <T> Array<out T>.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun ByteArray.none(): Boolean {
     return isEmpty()
@@ -10707,6 +11960,8 @@ public fun ByteArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun ShortArray.none(): Boolean {
     return isEmpty()
@@ -10714,6 +11969,8 @@ public fun ShortArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun IntArray.none(): Boolean {
     return isEmpty()
@@ -10721,6 +11978,8 @@ public fun IntArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun LongArray.none(): Boolean {
     return isEmpty()
@@ -10728,6 +11987,8 @@ public fun LongArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun FloatArray.none(): Boolean {
     return isEmpty()
@@ -10735,6 +11996,8 @@ public fun FloatArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun DoubleArray.none(): Boolean {
     return isEmpty()
@@ -10742,6 +12005,8 @@ public fun DoubleArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun BooleanArray.none(): Boolean {
     return isEmpty()
@@ -10749,6 +12014,8 @@ public fun BooleanArray.none(): Boolean {
 
 /**
  * Returns `true` if the array has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun CharArray.none(): Boolean {
     return isEmpty()
@@ -10756,6 +12023,8 @@ public fun CharArray.none(): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -10764,6 +12033,8 @@ public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -10772,6 +12043,8 @@ public inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -10780,6 +12053,8 @@ public inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -10788,6 +12063,8 @@ public inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -10796,6 +12073,8 @@ public inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -10804,6 +12083,8 @@ public inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -10812,6 +12093,8 @@ public inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -10820,6 +12103,8 @@ public inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -11799,7 +13084,7 @@ public infix fun <R> CharArray.zip(other: Array<out R>): List<Pair<Char, R>> {
 public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11811,7 +13096,7 @@ public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a:
 public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11823,7 +13108,7 @@ public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte,
 public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Short, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11835,7 +13120,7 @@ public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Shor
 public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11847,7 +13132,7 @@ public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b
 public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11859,7 +13144,7 @@ public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long,
 public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Float, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11871,7 +13156,7 @@ public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Floa
 public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Double, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11883,7 +13168,7 @@ public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Dou
 public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Boolean, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -11895,7 +13180,7 @@ public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Bo
 public inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (a: Char, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12152,7 +13437,7 @@ public infix fun CharArray.zip(other: CharArray): List<Pair<Char, Char>> {
 public inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: Byte) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12164,7 +13449,7 @@ public inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: By
 public inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b: Short) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12176,7 +13461,7 @@ public inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b:
 public inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12188,7 +13473,7 @@ public inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) 
 public inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Long) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12200,7 +13485,7 @@ public inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Lo
 public inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b: Float) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12212,7 +13497,7 @@ public inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b:
 public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double, b: Double) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12224,7 +13509,7 @@ public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double,
 public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boolean, b: Boolean) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12236,7 +13521,7 @@ public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boole
 public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Char) -> V): List<V> {
     val size = minOf(size, other.size)
     val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
+    for (i in 0 until size) {
         list.add(transform(this[i], other[i]))
     }
     return list
@@ -12247,6 +13532,8 @@ public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Ch
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -12267,6 +13554,8 @@ public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: CharSeq
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Byte) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -12290,6 +13579,8 @@ public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: CharSequence 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Short) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -12313,6 +13604,8 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -12336,6 +13629,8 @@ public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: CharSequence =
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Long) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -12359,6 +13654,8 @@ public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: CharSequence 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Float) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -12382,6 +13679,8 @@ public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: CharSequence
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Double) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -12405,6 +13704,8 @@ public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: CharSequenc
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Boolean) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -12428,6 +13729,8 @@ public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: CharSequen
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Char) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -12451,6 +13754,8 @@ public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: CharSequence 
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun <T> Array<out T>.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -12461,6 +13766,8 @@ public fun <T> Array<out T>.joinToString(separator: CharSequence = ", ", prefix:
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun ByteArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Byte) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -12471,6 +13778,8 @@ public fun ByteArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun ShortArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Short) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -12481,6 +13790,8 @@ public fun ShortArray.joinToString(separator: CharSequence = ", ", prefix: CharS
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun IntArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Int) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -12491,6 +13802,8 @@ public fun IntArray.joinToString(separator: CharSequence = ", ", prefix: CharSeq
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun LongArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Long) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -12501,6 +13814,8 @@ public fun LongArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun FloatArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Float) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -12511,6 +13826,8 @@ public fun FloatArray.joinToString(separator: CharSequence = ", ", prefix: CharS
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun DoubleArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Double) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -12521,6 +13838,8 @@ public fun DoubleArray.joinToString(separator: CharSequence = ", ", prefix: Char
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun BooleanArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Boolean) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -12531,6 +13850,8 @@ public fun BooleanArray.joinToString(separator: CharSequence = ", ", prefix: Cha
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun CharArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Char) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
@@ -12996,1096 +14317,5 @@ public fun DoubleArray.sum(): Double {
         sum += element
     }
     return sum
-}
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public fun <T> Array<out T>.asList(): List<T> {
-    return ArraysUtilJVM.asList(this)
-}
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public fun ByteArray.asList(): List<Byte> {
-    return object : AbstractList<Byte>(), RandomAccess {
-        override val size: Int get() = this@asList.size
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Byte): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Byte = this@asList[index]
-        override fun indexOf(element: Byte): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Byte): Int = this@asList.lastIndexOf(element)
-    }
-}
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public fun ShortArray.asList(): List<Short> {
-    return object : AbstractList<Short>(), RandomAccess {
-        override val size: Int get() = this@asList.size
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Short): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Short = this@asList[index]
-        override fun indexOf(element: Short): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Short): Int = this@asList.lastIndexOf(element)
-    }
-}
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public fun IntArray.asList(): List<Int> {
-    return object : AbstractList<Int>(), RandomAccess {
-        override val size: Int get() = this@asList.size
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Int): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Int = this@asList[index]
-        override fun indexOf(element: Int): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Int): Int = this@asList.lastIndexOf(element)
-    }
-}
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public fun LongArray.asList(): List<Long> {
-    return object : AbstractList<Long>(), RandomAccess {
-        override val size: Int get() = this@asList.size
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Long): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Long = this@asList[index]
-        override fun indexOf(element: Long): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Long): Int = this@asList.lastIndexOf(element)
-    }
-}
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public fun FloatArray.asList(): List<Float> {
-    return object : AbstractList<Float>(), RandomAccess {
-        override val size: Int get() = this@asList.size
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Float): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Float = this@asList[index]
-        override fun indexOf(element: Float): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Float): Int = this@asList.lastIndexOf(element)
-    }
-}
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public fun DoubleArray.asList(): List<Double> {
-    return object : AbstractList<Double>(), RandomAccess {
-        override val size: Int get() = this@asList.size
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Double): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Double = this@asList[index]
-        override fun indexOf(element: Double): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Double): Int = this@asList.lastIndexOf(element)
-    }
-}
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public fun BooleanArray.asList(): List<Boolean> {
-    return object : AbstractList<Boolean>(), RandomAccess {
-        override val size: Int get() = this@asList.size
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Boolean): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Boolean = this@asList[index]
-        override fun indexOf(element: Boolean): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Boolean): Int = this@asList.lastIndexOf(element)
-    }
-}
-
-/**
- * Returns a [List] that wraps the original array.
- */
-public fun CharArray.asList(): List<Char> {
-    return object : AbstractList<Char>(), RandomAccess {
-        override val size: Int get() = this@asList.size
-        override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(element: Char): Boolean = this@asList.contains(element)
-        override fun get(index: Int): Char = this@asList[index]
-        override fun indexOf(element: Char): Int = this@asList.indexOf(element)
-        override fun lastIndexOf(element: Char): Int = this@asList.lastIndexOf(element)
-    }
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<T>.copyOf(): Array<T> {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun ByteArray.copyOf(): ByteArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun ShortArray.copyOf(): ShortArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun IntArray.copyOf(): IntArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun LongArray.copyOf(): LongArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun FloatArray.copyOf(): FloatArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun DoubleArray.copyOf(): DoubleArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun BooleanArray.copyOf(): BooleanArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun CharArray.copyOf(): CharArray {
-    return java.util.Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-@kotlin.internal.InlineOnly
-public inline fun ByteArray.copyOf(newSize: Int): ByteArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-@kotlin.internal.InlineOnly
-public inline fun ShortArray.copyOf(newSize: Int): ShortArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-@kotlin.internal.InlineOnly
-public inline fun IntArray.copyOf(newSize: Int): IntArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-@kotlin.internal.InlineOnly
-public inline fun LongArray.copyOf(newSize: Int): LongArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-@kotlin.internal.InlineOnly
-public inline fun FloatArray.copyOf(newSize: Int): FloatArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-@kotlin.internal.InlineOnly
-public inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-@kotlin.internal.InlineOnly
-public inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-@kotlin.internal.InlineOnly
-public inline fun CharArray.copyOf(newSize: Int): CharArray {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array, resized to the given [newSize].
- */
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
-    return java.util.Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.internal.InlineOnly
-public inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
-    return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public operator fun <T> Array<T>.plus(element: T): Array<T> {
-    val index = size
-    val result = java.util.Arrays.copyOf(this, index + 1)
-    result[index] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public operator fun ByteArray.plus(element: Byte): ByteArray {
-    val index = size
-    val result = java.util.Arrays.copyOf(this, index + 1)
-    result[index] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public operator fun ShortArray.plus(element: Short): ShortArray {
-    val index = size
-    val result = java.util.Arrays.copyOf(this, index + 1)
-    result[index] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public operator fun IntArray.plus(element: Int): IntArray {
-    val index = size
-    val result = java.util.Arrays.copyOf(this, index + 1)
-    result[index] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public operator fun LongArray.plus(element: Long): LongArray {
-    val index = size
-    val result = java.util.Arrays.copyOf(this, index + 1)
-    result[index] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public operator fun FloatArray.plus(element: Float): FloatArray {
-    val index = size
-    val result = java.util.Arrays.copyOf(this, index + 1)
-    result[index] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public operator fun DoubleArray.plus(element: Double): DoubleArray {
-    val index = size
-    val result = java.util.Arrays.copyOf(this, index + 1)
-    result[index] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public operator fun BooleanArray.plus(element: Boolean): BooleanArray {
-    val index = size
-    val result = java.util.Arrays.copyOf(this, index + 1)
-    result[index] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-public operator fun CharArray.plus(element: Char): CharArray {
-    val index = size
-    val result = java.util.Arrays.copyOf(this, index + 1)
-    result[index] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public operator fun <T> Array<T>.plus(elements: Collection<T>): Array<T> {
-    var index = size
-    val result = java.util.Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public operator fun ByteArray.plus(elements: Collection<Byte>): ByteArray {
-    var index = size
-    val result = java.util.Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public operator fun ShortArray.plus(elements: Collection<Short>): ShortArray {
-    var index = size
-    val result = java.util.Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public operator fun IntArray.plus(elements: Collection<Int>): IntArray {
-    var index = size
-    val result = java.util.Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public operator fun LongArray.plus(elements: Collection<Long>): LongArray {
-    var index = size
-    val result = java.util.Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public operator fun FloatArray.plus(elements: Collection<Float>): FloatArray {
-    var index = size
-    val result = java.util.Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public operator fun DoubleArray.plus(elements: Collection<Double>): DoubleArray {
-    var index = size
-    val result = java.util.Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public operator fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray {
-    var index = size
-    val result = java.util.Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
- */
-public operator fun CharArray.plus(elements: Collection<Char>): CharArray {
-    var index = size
-    val result = java.util.Arrays.copyOf(this, index + elements.size)
-    for (element in elements) result[index++] = element
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public operator fun <T> Array<T>.plus(elements: Array<out T>): Array<T> {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public operator fun ByteArray.plus(elements: ByteArray): ByteArray {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public operator fun ShortArray.plus(elements: ShortArray): ShortArray {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public operator fun IntArray.plus(elements: IntArray): IntArray {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public operator fun LongArray.plus(elements: LongArray): LongArray {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public operator fun FloatArray.plus(elements: FloatArray): FloatArray {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public operator fun BooleanArray.plus(elements: BooleanArray): BooleanArray {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
- */
-public operator fun CharArray.plus(elements: CharArray): CharArray {
-    val thisSize = size
-    val arraySize = elements.size
-    val result = java.util.Arrays.copyOf(this, thisSize + arraySize)
-    System.arraycopy(elements, 0, result, thisSize, arraySize)
-    return result
-}
-
-/**
- * Returns an array containing all elements of the original array and then the given [element].
- */
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<T>.plusElement(element: T): Array<T> {
-    return plus(element)
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun IntArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun LongArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun ByteArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun ShortArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun DoubleArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun FloatArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place.
- */
-public fun CharArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts the array in-place according to the natural order of its elements.
- */
-@kotlin.internal.InlineOnly
-public inline fun <T: Comparable<T>> Array<out T>.sort(): Unit {
-    @Suppress("UNCHECKED_CAST")
-    (this as Array<Any?>).sort()
-}
-
-/**
- * Sorts the array in-place according to the order specified by the given [comparator].
- */
-public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1) java.util.Arrays.sort(this, comparator)
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun ByteArray.toTypedArray(): Array<Byte> {
-    val result = arrayOfNulls<Byte>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Byte>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun ShortArray.toTypedArray(): Array<Short> {
-    val result = arrayOfNulls<Short>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Short>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun IntArray.toTypedArray(): Array<Int> {
-    val result = arrayOfNulls<Int>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Int>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun LongArray.toTypedArray(): Array<Long> {
-    val result = arrayOfNulls<Long>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Long>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun FloatArray.toTypedArray(): Array<Float> {
-    val result = arrayOfNulls<Float>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Float>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun DoubleArray.toTypedArray(): Array<Double> {
-    val result = arrayOfNulls<Double>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Double>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun BooleanArray.toTypedArray(): Array<Boolean> {
-    val result = arrayOfNulls<Boolean>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Boolean>
-}
-
-/**
- * Returns a *typed* object array containing all of the elements of this primitive array.
- */
-public fun CharArray.toTypedArray(): Array<Char> {
-    val result = arrayOfNulls<Char>(size)
-    for (index in indices)
-        result[index] = this[index]
-    @Suppress("UNCHECKED_CAST")
-    return result as Array<Char>
-}
-
-/**
- * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
- * The array is expected to be sorted according to the specified [comparator], otherwise the result is undefined.
- * 
- * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
- * 
- * @return the index of the element, if it is contained in the array within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the array (or the specified subrange of array) still remains sorted according to the specified [comparator].
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Int {
-    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)
-}
-
-/**
- * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
- * The array is expected to be sorted, otherwise the result is undefined.
- * 
- * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
- * 
- * @return the index of the element, if it is contained in the array within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the array (or the specified subrange of array) still remains sorted.
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size): Int {
-    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
-}
-
-/**
- * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
- * The array is expected to be sorted, otherwise the result is undefined.
- * 
- * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
- * 
- * @return the index of the element, if it is contained in the array within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the array (or the specified subrange of array) still remains sorted.
- */
-@kotlin.jvm.JvmVersion
-public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Int {
-    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
-}
-
-/**
- * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
- * The array is expected to be sorted, otherwise the result is undefined.
- * 
- * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
- * 
- * @return the index of the element, if it is contained in the array within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the array (or the specified subrange of array) still remains sorted.
- */
-@kotlin.jvm.JvmVersion
-public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: Int = size): Int {
-    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
-}
-
-/**
- * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
- * The array is expected to be sorted, otherwise the result is undefined.
- * 
- * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
- * 
- * @return the index of the element, if it is contained in the array within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the array (or the specified subrange of array) still remains sorted.
- */
-@kotlin.jvm.JvmVersion
-public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int = size): Int {
-    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
-}
-
-/**
- * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
- * The array is expected to be sorted, otherwise the result is undefined.
- * 
- * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
- * 
- * @return the index of the element, if it is contained in the array within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the array (or the specified subrange of array) still remains sorted.
- */
-@kotlin.jvm.JvmVersion
-public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: Int = size): Int {
-    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
-}
-
-/**
- * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
- * The array is expected to be sorted, otherwise the result is undefined.
- * 
- * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
- * 
- * @return the index of the element, if it is contained in the array within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the array (or the specified subrange of array) still remains sorted.
- */
-@kotlin.jvm.JvmVersion
-public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: Int = size): Int {
-    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
-}
-
-/**
- * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
- * The array is expected to be sorted, otherwise the result is undefined.
- * 
- * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
- * 
- * @return the index of the element, if it is contained in the array within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the array (or the specified subrange of array) still remains sorted.
- */
-@kotlin.jvm.JvmVersion
-public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex: Int = size): Int {
-    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
-}
-
-/**
- * Searches the array or the range of the array for the provided [element] using the binary search algorithm.
- * The array is expected to be sorted, otherwise the result is undefined.
- * 
- * If the array contains multiple elements equal to the specified [element], there is no guarantee which one will be found.
- * 
- * @return the index of the element, if it is contained in the array within the specified range;
- * otherwise, the inverted insertion point `(-insertion point - 1)`.
- * The insertion point is defined as the index at which the element should be inserted,
- * so that the array (or the specified subrange of array) still remains sorted.
- */
-@kotlin.jvm.JvmVersion
-public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: Int = size): Int {
-    return java.util.Arrays.binarySearch(this, fromIndex, toIndex, element)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
- * Fills original array with the provided value.
- */
-@kotlin.jvm.JvmVersion
-public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.fill(this, fromIndex, toIndex, element)
-}
-
-/**
- * Returns a list containing all elements that are instances of specified class.
- */
-@kotlin.jvm.JvmVersion
-public fun <R> Array<*>.filterIsInstance(klass: Class<R>): List<R> {
-    return filterIsInstanceTo(ArrayList<R>(), klass)
-}
-
-/**
- * Appends all elements that are instances of specified class to the given [destination].
- */
-@kotlin.jvm.JvmVersion
-public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
-    @Suppress("UNCHECKED_CAST")
-    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
-    return destination
-}
-
-/**
- * Sorts the array in-place according to the natural order of its elements.
- * 
- * @throws ClassCastException if any element of the array is not [Comparable].
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-
-/**
- * Sorts a range in the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts a range in the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts a range in the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts a range in the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts a range in the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts a range in the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts a range in the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts a range in the array in-place.
- */
-@kotlin.jvm.JvmVersion
-public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex)
-}
-
-/**
- * Sorts a range in the array in-place with the given [comparator].
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    java.util.Arrays.sort(this, fromIndex, toIndex, comparator)
 }
 

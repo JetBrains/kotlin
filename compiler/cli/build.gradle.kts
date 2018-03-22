@@ -1,5 +1,6 @@
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 jvmTarget = "1.8"
 
@@ -17,10 +18,11 @@ dependencies {
     compile(project(":js:js.translator"))
     compile(project(":js:js.serializer"))
     compile(project(":js:js.dce"))
-    compile(ideaSdkCoreDeps(*(rootProject.extra["ideaCoreSdkJars"] as Array<String>)))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))

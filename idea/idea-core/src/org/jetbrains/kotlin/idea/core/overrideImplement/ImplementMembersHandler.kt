@@ -50,7 +50,7 @@ class ImplementAsConstructorParameter : ImplementMembersHandler() {
 
     override fun isValidForClass(classOrObject: KtClassOrObject): Boolean {
         if (classOrObject !is KtClass || classOrObject is KtEnumEntry || classOrObject.isInterface()) return false
-        val classDescriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
+        val classDescriptor = classOrObject.resolveToDescriptorIfAny() ?: return false
         return OverrideResolver.getMissingImplementations(classDescriptor).any { it is PropertyDescriptor }
     }
 

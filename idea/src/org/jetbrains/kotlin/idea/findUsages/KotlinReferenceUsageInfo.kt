@@ -28,3 +28,7 @@ class KotlinReferenceUsageInfo(reference: PsiReference) : UsageInfo(reference) {
         return element.references.singleOrNull { it::class.java == referenceType }
     }
 }
+
+class KotlinReferencePreservingUsageInfo(private val reference: PsiReference) : UsageInfo(reference) {
+    override fun getReference() = reference
+}

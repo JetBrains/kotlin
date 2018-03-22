@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -210,7 +211,8 @@ internal fun createSimplePSICallArgument(
     contextForArgument.trace.bindingContext, contextForArgument.statementFilter,
     contextForArgument.scope.ownerDescriptor, valueArgument,
     contextForArgument.dataFlowInfo, typeInfoForArgument,
-    contextForArgument.languageVersionSettings
+    contextForArgument.languageVersionSettings,
+    contextForArgument.dataFlowValueFactory
 )
 
 internal fun createSimplePSICallArgument(
@@ -220,7 +222,8 @@ internal fun createSimplePSICallArgument(
     valueArgument: ValueArgument,
     dataFlowInfoBeforeThisArgument: DataFlowInfo,
     typeInfoForArgument: KotlinTypeInfo,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
+    dataFlowValueFactory: DataFlowValueFactory
 ): SimplePSIKotlinCallArgument? {
 
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
@@ -235,7 +238,8 @@ internal fun createSimplePSICallArgument(
         ownerDescriptor, bindingContext,
         typeInfoForArgument.dataFlowInfo, // dataFlowInfoBeforeThisArgument cannot be used here, because of if() { if (x != null) return; x }
         ExpressionReceiver.create(ktExpression, baseType, bindingContext),
-        languageVersionSettings
+        languageVersionSettings,
+        dataFlowValueFactory
     ).let {
         if (onlyResolvedCall == null) it.prepareReceiverRegardingCaptureTypes() else it
     }

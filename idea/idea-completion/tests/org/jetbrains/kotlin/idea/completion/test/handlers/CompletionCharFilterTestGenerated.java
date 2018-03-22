@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -190,6 +190,24 @@ public class CompletionCharFilterTestGenerated extends AbstractCompletionCharFil
     @TestMetadata("Space.kt")
     public void testSpace() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/charFilter/Space.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("VariableName.kt")
+    public void testVariableName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/charFilter/VariableName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("VariableName2.kt")
+    public void testVariableName2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/charFilter/VariableName2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("VariableName3.kt")
+    public void testVariableName3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/charFilter/VariableName3.kt");
         doTest(fileName);
     }
 }

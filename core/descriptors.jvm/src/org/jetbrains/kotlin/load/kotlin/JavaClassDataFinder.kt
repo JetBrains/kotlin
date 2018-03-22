@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.ClassDataWithSource
+import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 
 class JavaClassDataFinder(
         internal val kotlinClassFinder: KotlinClassFinder,
         private val deserializedDescriptorResolver: DeserializedDescriptorResolver
 ) : ClassDataFinder {
-    override fun findClassData(classId: ClassId): ClassDataWithSource? {
+    override fun findClassData(classId: ClassId): ClassData? {
         val kotlinClass = kotlinClassFinder.findKotlinClass(classId) ?: return null
         assert(kotlinClass.classId == classId) {
             "Class with incorrect id found: expected $classId, actual ${kotlinClass.classId}"

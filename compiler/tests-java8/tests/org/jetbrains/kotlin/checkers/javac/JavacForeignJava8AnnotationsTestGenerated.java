@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -99,6 +99,18 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
         @TestMetadata("methodWithTypeParameter.kt")
         public void testMethodWithTypeParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/methodWithTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notNullVarargsOverrides.kt")
+        public void testNotNullVarargsOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/notNullVarargsOverrides.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableVarargsOverrides.kt")
+        public void testNullableVarargsOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/nullableVarargsOverrides.kt");
             doTest(fileName);
         }
 

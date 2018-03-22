@@ -22,20 +22,19 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
-abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression)
-    : AbstractForLoopGenerator(codegen, forExpression)
-{
+abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) :
+    AbstractForLoopGenerator(codegen, forExpression) {
     protected var endVar: Int = -1
 
     private var loopParameter: StackValue? = null
 
     init {
         assert(
-                asmElementType.sort == Type.INT ||
-                asmElementType.sort == Type.BYTE ||
-                asmElementType.sort == Type.SHORT ||
-                asmElementType.sort == Type.CHAR ||
-                asmElementType.sort == Type.LONG
+            asmElementType.sort == Type.INT ||
+                    asmElementType.sort == Type.BYTE ||
+                    asmElementType.sort == Type.SHORT ||
+                    asmElementType.sort == Type.CHAR ||
+                    asmElementType.sort == Type.LONG
         ) {
             "Unexpected range element type: " + asmElementType
         }
@@ -56,8 +55,7 @@ abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionC
         if (asmElementType.sort == Type.LONG) {
             v.lcmp()
             v.ifeq(loopExit)
-        }
-        else {
+        } else {
             v.ificmpeq(loopExit)
         }
     }
@@ -65,5 +63,5 @@ abstract class AbstractForInProgressionOrRangeLoopGenerator(codegen: ExpressionC
     override fun checkPreCondition(loopExit: Label) {}
 
     protected fun loopParameter(): StackValue =
-            loopParameter ?: StackValue.local(loopParameterVar, loopParameterType).also { loopParameter = it }
+        loopParameter ?: StackValue.local(loopParameterVar, loopParameterType).also { loopParameter = it }
 }

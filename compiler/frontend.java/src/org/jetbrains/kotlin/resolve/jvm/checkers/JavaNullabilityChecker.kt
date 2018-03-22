@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -44,7 +43,7 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
         doCheckType(
                 expressionType,
                 c.expectedType,
-                { DataFlowValueFactory.createDataFlowValue(expression, expressionType, c) } ,
+                { c.dataFlowValueFactory.createDataFlowValue(expression, expressionType, c) } ,
                 c.dataFlowInfo
         ) { expectedMustNotBeNull, actualMayBeNull ->
             c.trace.report(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.on(expression, expectedMustNotBeNull, actualMayBeNull))
@@ -61,7 +60,7 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
                         val context = c.trace.bindingContext
                         if (WhenChecker.getEnumMissingCases(expression, context, enumClassDescriptor).isEmpty()
                             && !WhenChecker.containsNullCase(expression, context)) {
-                            val subjectDataFlowValue = DataFlowValueFactory.createDataFlowValue(subjectExpression, type, c)
+                            val subjectDataFlowValue = c.dataFlowValueFactory.createDataFlowValue(subjectExpression, type, c)
                             val dataFlowInfo = c.trace[BindingContext.EXPRESSION_TYPE_INFO, subjectExpression]?.dataFlowInfo
                             if (dataFlowInfo != null && !dataFlowInfo.getStableNullability(subjectDataFlowValue).canBeNull()) {
                                 return
@@ -77,7 +76,7 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
                     val baseExpressionType = c.trace.getType(baseExpression) ?: return
                     doIfNotNull(
                             baseExpressionType,
-                            { DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c) },
+                            { c.dataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c) },
                             c
                     ) {
                         c.trace.report(Errors.UNNECESSARY_NOT_NULL_ASSERTION.on(expression.operationReference, baseExpressionType))
@@ -105,7 +104,7 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
 
     override fun checkReceiver(receiverParameter: ReceiverParameterDescriptor, receiverArgument: ReceiverValue, safeAccess: Boolean, c: CallResolutionContext<*>) {
         val dataFlowValue by lazy(LazyThreadSafetyMode.NONE) {
-            DataFlowValueFactory.createDataFlowValue(receiverArgument, c)
+            c.dataFlowValueFactory.createDataFlowValue(receiverArgument, c)
         }
 
         if (safeAccess) {

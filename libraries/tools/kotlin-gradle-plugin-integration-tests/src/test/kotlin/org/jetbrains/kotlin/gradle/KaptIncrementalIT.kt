@@ -19,7 +19,6 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
     }
 
     companion object {
-        private const val GRADLE_VERSION = "2.10"
         private val EXAMPLE_ANNOTATION_REGEX = "@(field:)?example.ExampleAnnotation".toRegex()
         private const val GENERATE_STUBS_PLACEHOLDER = "GENERATE_STUBS_PLACEHOLDER"
 
@@ -30,15 +29,21 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
     protected open val projectName = "kaptIncrementalCompilationProject"
 
     private fun getProject() =
-            Project(projectName, GRADLE_VERSION).apply {
-                setupWorkingDir()
-                val buildGradle = projectDir.parentFile.getFileByName("build.gradle")
-                buildGradle.modify { it.replace(GENERATE_STUBS_PLACEHOLDER, shouldUseStubs.toString()) }
+        Project(
+            projectName,
+            // When running with original kapt, use Gradle 3.5, because separate classes dirs (4.0+) are not supported
+            if (useKapt3) GradleVersionRequired.None else GradleVersionRequired.Exact("3.5")
+        ).apply {
+            setupWorkingDir()
+            val buildGradle = projectDir.parentFile.getFileByName("build.gradle")
+            buildGradle.modify { it.replace(GENERATE_STUBS_PLACEHOLDER, shouldUseStubs.toString()) }
 
-                if (useKapt3) {
-                    buildGradle.modify { it.replace(APPLY_KAPT3_PLUGIN_PLACEHOLDER, APPLY_KAPT3_PLUGIN) }
-                }
+            if (useKapt3) {
+                buildGradle.modify { it.replace(APPLY_KAPT3_PLUGIN_PLACEHOLDER, APPLY_KAPT3_PLUGIN) }
+            } else {
+                allowOriginalKapt()
             }
+        }
 
     private val annotatedElements =
             arrayOf("A", "funA", "valA", "funUtil", "valUtil", "B", "funB", "valB", "useB")
@@ -160,7 +165,9 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
                 assertFileExists("$kapt3IncDataPath/bar/B.class")
                 assertFileExists("$kapt3IncDataPath/bar/UseBKt.class")
                 assertFileExists("$kapt3StubsPath/bar/B.java")
+                assertFileExists("$kapt3StubsPath/bar/B.kapt_metadata")
                 assertFileExists("$kapt3StubsPath/bar/UseBKt.java")
+                assertFileExists("$kapt3StubsPath/bar/UseBKt.kapt_metadata")
             }
         }
 
@@ -176,7 +183,9 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
                 assertNoSuchFile("$kapt3IncDataPath/bar/B.class")
                 assertNoSuchFile("$kapt3IncDataPath/bar/UseBKt.class")
                 assertNoSuchFile("$kapt3StubsPath/bar/B.java")
+                assertNoSuchFile("$kapt3StubsPath/bar/B.kaptMetadata")
                 assertNoSuchFile("$kapt3StubsPath/bar/UseBKt.java")
+                assertNoSuchFile("$kapt3StubsPath/bar/UseBKt.kaptMetadata")
             }
         }
 

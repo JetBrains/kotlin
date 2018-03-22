@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls
@@ -33,14 +22,15 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstantChecker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DiagnosticReporterByTrackingStrategy(
     val constantExpressionEvaluator: ConstantExpressionEvaluator,
     val context: BasicCallResolutionContext,
-    val psiKotlinCall: PSIKotlinCall
+    val psiKotlinCall: PSIKotlinCall,
+    val dataFlowValueFactory: DataFlowValueFactory
 ) : DiagnosticReporter {
     private val trace = context.trace as TrackingBindingTrace
     private val tracingStrategy: TracingStrategy get() = psiKotlinCall.tracingStrategy
@@ -118,6 +108,14 @@ class DiagnosticReporterByTrackingStrategy(
 
             MixingNamedAndPositionArguments::class.java ->
                 trace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(callArgument.psiCallArgument.valueArgument.asElement()))
+
+            NoneCallableReferenceCandidates::class.java -> {
+                val expression =
+                    (diagnostic as NoneCallableReferenceCandidates).argument.psiExpression.safeAs<KtCallableReferenceExpression>()
+                reportIfNonNull(expression) {
+                    trace.report(UNRESOLVED_REFERENCE.on(it.callableReference, it.callableReference))
+                }
+            }
         }
     }
 
@@ -165,7 +163,7 @@ class DiagnosticReporterByTrackingStrategy(
                     expressionArgument.valueArgument.getArgumentExpression(),
                     context.statementFilter
                 )
-                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
+                val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
                 SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
                     recordExpressionType = true
@@ -174,7 +172,7 @@ class DiagnosticReporterByTrackingStrategy(
             is ReceiverExpressionKotlinCallArgument -> {
                 trace.markAsReported()
                 val receiverValue = expressionArgument.receiver.receiverValue
-                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, context)
+                val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverValue, context)
                 SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, (receiverValue as? ExpressionReceiver)?.expression, context, call,
                     recordExpressionType = true
@@ -242,9 +240,9 @@ class DiagnosticReporterByTrackingStrategy(
 
     private fun reportConstantTypeMismatch(constraintError: NewConstraintError, expression: KtExpression): Boolean {
         if (expression is KtConstantExpression) {
-            val builtIns = context.scope.ownerDescriptor.builtIns
+            val module = context.scope.ownerDescriptor.module
             val constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, trace, context.expectedType)
-            val hasConstantTypeError = CompileTimeConstantChecker(context, builtIns, true)
+            val hasConstantTypeError = CompileTimeConstantChecker(context, module, true)
                 .checkConstantExpressionType(constantValue, expression, constraintError.upperType)
             if (hasConstantTypeError) return true
         }

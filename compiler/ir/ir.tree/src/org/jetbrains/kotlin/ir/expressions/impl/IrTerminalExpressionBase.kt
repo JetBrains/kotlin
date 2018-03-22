@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrTerminalExpressionBase(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType
 ) : IrExpressionBase(startOffset, endOffset, type) {
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         // No children

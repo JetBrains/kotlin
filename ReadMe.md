@@ -29,7 +29,6 @@ Welcome to [Kotlin](https://kotlinlang.org/)! Some handy links:
 
 In order to build Kotlin distribution you need to have:
 
-- Apache Ant 1.9.4 and higher
 - JDK 1.6, 1.7 and 1.8
 - Setup environment variables as following:
 
@@ -46,24 +45,25 @@ You also can use [Gradle properties](https://docs.gradle.org/current/userguide/b
 
 ## Building
 
-To build this project, first time you try to build you need to run this:
+The project is built with Gradle. Run Gradle to build the project and to run the tests 
+using the following command on Unix/macOS:
 
-    ant -f update_dependencies.xml
+    ./gradlew <tasks-and-options>
+    
+or the following command on Windows:
 
-which will setup the dependencies on
+    gradlew <tasks-and-options>
+
+On the first project configuration gradle will download and setup the dependencies on
 
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
 
-Then, you may run Gradle to build the project and run tests, using:
-
-    ./gradlew <tasks-and-options>
+These dependencies are quite large, so depending on the quality of your internet connection 
+you might face timeouts getting them. In this case you can increase timeout by specifying the following 
+command line parameters on the first run: 
     
-command on Unix/macOS, or
-
-    gradlew <tasks-and-options>
-    
-on Windows.
+    ./gradlew -Dhttp.socketTimeout=60000 -Dhttp.connectionTimeout=60000
 
 ## Important gradle tasks
 
@@ -77,13 +77,10 @@ on Windows.
 - `compilerTest` - build and run all compiler tests
 - `ideaPluginTest` - build and run all IDEA plugin tests
 
-**OPTIONAL:** Some artifacts, mainly Maven plugin ones, are built separately by Maven: go into `libraries` directory after building the compiler and run:
-
-    mvn install
-
+**OPTIONAL:** Some artifacts, mainly Maven plugin ones, are built separately with Maven.
 Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
-## Working with the project in IntelliJ IDEA
+## <a name="working-in-idea"></a> Working with the project in IntelliJ IDEA
 
 Working with the Kotlin project requires IntelliJ IDEA 2017.3. You can download IntelliJ IDEA 2017.3 [here](https://www.jetbrains.com/idea/download).
 
@@ -94,7 +91,7 @@ In the import dialog, select `use default gradle wrapper`.
 
 To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` in the Gradle runner settings.
 
-At this time, you can use the latest released 1.1.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
+At this time, you can use the latest released 1.2.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
 
 ### Compiling and running
 
@@ -103,6 +100,18 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 * VCS -> Git -> Pull
 * Run the "IDEA" run configuration in the project
 * a child IntelliJ IDEA with the Kotlin plugin will then startup
+
+### Including into composite build
+
+To include kotlin compiler into [composite build](https://docs.gradle.org/current/userguide/composite_builds.html) you need to define `dependencySubstitution` for `kotlin-compiler` module in `settings.gradle`
+
+```
+includeBuild('/path/to/kotlin') {
+    dependencySubstitution {
+        substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':include:kotlin-compiler')
+    }
+}
+```
 
 # Contributing
 
@@ -125,7 +134,7 @@ macro to include code from a test function. The benefits of this approach are tw
 
 Also the [JavaScript translation](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) could really use your help. See the [JavaScript contribution section](https://github.com/JetBrains/kotlin/blob/master/js/ReadMe.md) for more details.
 
-Some of the code in the standard library is created by generating code from templates. See the [README](libraries/stdlib/ReadMe.md) in the stdlib section for how run the code generator. The existing templates can be used as examples for creating new ones.
+Some of the code in the standard library is created by generating code from templates. See the [README](libraries/stdlib/ReadMe.md) in the stdlib section for how to run the code generator. The existing templates can be used as examples for creating new ones.
 
 ## Submitting patches
 

@@ -1,6 +1,6 @@
 package test
 
-actual class <caret>C
+actual class C actual constructor<caret>()
 
 fun test() {
     C()

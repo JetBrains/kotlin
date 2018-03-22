@@ -1,4 +1,4 @@
-// !LANGUAGE: +CallsInPlaceEffect
+// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.internal.contracts.*

@@ -16,25 +16,26 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.codeInsight.daemon.RainbowVisitor
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.*
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTargetElementEvaluator
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class KotlinRainbowVisitor : RainbowVisitor() {
+    companion object {
+        val KOTLIN_TARGET_ELEMENT_EVALUATOR = KotlinTargetElementEvaluator()
+    }
+
     override fun suitableForFile(file: PsiFile) = file is KtFile
 
     override fun clone() = KotlinRainbowVisitor()
@@ -46,20 +47,24 @@ class KotlinRainbowVisitor : RainbowVisitor() {
                 addRainbowHighlight(element, rainbowElement)
             }
             element is KtSimpleNameExpression -> {
-                val qualifiedExpression = PsiTreeUtil.getParentOfType(element, KtQualifiedExpression::class.java, true,
-                                                                      KtLambdaExpression::class.java, KtValueArgumentList::class.java)
+                val qualifiedExpression = PsiTreeUtil.getParentOfType(
+                    element, KtQualifiedExpression::class.java, true,
+                    KtLambdaExpression::class.java, KtValueArgumentList::class.java
+                )
                 if (qualifiedExpression?.selectorExpression?.isAncestor(element) == true) return
 
-                val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-                val targets = element.getReferenceTargets(bindingContext)
-                val targetVariable = targets.firstIsInstanceOrNull<VariableDescriptor>()
-                if (targetVariable != null) {
-                    val targetElement = DescriptorToSourceUtils.getSourceFromDescriptor(targetVariable)
+                val reference = element.mainReference
+                val targetElement = reference.resolve()
+                if (targetElement != null) {
                     if (targetElement.isRainbowDeclaration()) {
-                        addRainbowHighlight(targetElement!!, element)
+                        addRainbowHighlight(targetElement, element)
                     }
-                    else if (targetElement == null && element.getReferencedName() == "it") {
-                        addRainbowHighlight(element, element)
+                } else if (element.getReferencedName() == "it") {
+                    val itTargetElement =
+                        KOTLIN_TARGET_ELEMENT_EVALUATOR.getElementByReference(reference, TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED)
+
+                    if (itTargetElement != null) {
+                        addRainbowHighlight(itTargetElement, element)
                     }
                 }
             }
@@ -72,14 +77,13 @@ class KotlinRainbowVisitor : RainbowVisitor() {
         }
     }
 
-    private fun addRainbowHighlight(target: PsiElement, rainbowElement: PsiElement,
-                                    attributesKey: TextAttributesKey? = null) {
+    private fun addRainbowHighlight(target: PsiElement, rainbowElement: PsiElement, attributesKey: TextAttributesKey? = null) {
         val lambdaSequenceIterator = target.parents
-                .takeWhile { it !is KtDeclaration || it.isAnonymousFunction() || it is KtFunctionLiteral }
-                .filter { it is KtLambdaExpression || it.isAnonymousFunction() }
-                .iterator()
+            .takeWhile { it !is KtDeclaration || it.isAnonymousFunction() || it is KtFunctionLiteral }
+            .filter { it is KtLambdaExpression || it.isAnonymousFunction() }
+            .iterator()
 
-       val attributesKeyToUse = attributesKey ?: (if (target is KtParameter) PARAMETER else LOCAL_VARIABLE)
+        val attributesKeyToUse = attributesKey ?: (if (target is KtParameter) PARAMETER else LOCAL_VARIABLE)
         if (lambdaSequenceIterator.hasNext()) {
             var lambda = lambdaSequenceIterator.next()
             var lambdaNestingLevel = 0
@@ -97,10 +101,10 @@ class KotlinRainbowVisitor : RainbowVisitor() {
         addInfo(getInfo(context, rainbowElement, rainbowElement.text, attributesKeyToUse))
     }
 
-    private fun PsiElement?.isRainbowDeclaration(): Boolean =
-            (this is KtProperty && isLocal) ||
-            (this is KtParameter && getStrictParentOfType<KtPrimaryConstructor>() == null) ||
-            this is KtDestructuringDeclarationEntry
+    private fun PsiElement.isRainbowDeclaration(): Boolean =
+        (this is KtProperty && isLocal) ||
+                (this is KtParameter && getStrictParentOfType<KtPrimaryConstructor>() == null) ||
+                this is KtDestructuringDeclarationEntry
 }
 
 private fun PsiElement.isAnonymousFunction(): Boolean = this is KtNamedFunction && nameIdentifier == null

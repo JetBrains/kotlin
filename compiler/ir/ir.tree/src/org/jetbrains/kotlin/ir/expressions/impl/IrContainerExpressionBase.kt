@@ -25,8 +25,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-abstract class IrContainerExpressionBase(startOffset: Int, endOffset: Int, type: KotlinType, override val origin: IrStatementOrigin? = null):
-        IrExpressionBase(startOffset, endOffset, type), IrContainerExpression {
+abstract class IrContainerExpressionBase(
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override val origin: IrStatementOrigin? = null
+) :
+    IrExpressionBase(startOffset, endOffset, type), IrContainerExpression {
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {

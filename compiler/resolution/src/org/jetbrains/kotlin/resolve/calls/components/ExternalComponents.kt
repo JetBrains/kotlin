@@ -38,11 +38,11 @@ interface KotlinResolutionStatelessCallbacks {
 // This components hold state (trace). Work with this carefully.
 interface KotlinResolutionCallbacks {
     fun analyzeAndGetLambdaReturnArguments(
-            lambdaArgument: LambdaKotlinCallArgument,
-            isSuspend: Boolean,
-            receiverType: UnwrappedType?,
-            parameters: List<UnwrappedType>,
-            expectedReturnType: UnwrappedType? // null means, that return type is not proper i.e. it depends on some type variables
+        lambdaArgument: LambdaKotlinCallArgument,
+        isSuspend: Boolean,
+        receiverType: UnwrappedType?,
+        parameters: List<UnwrappedType>,
+        expectedReturnType: UnwrappedType? // null means, that return type is not proper i.e. it depends on some type variables
     ): List<SimpleKotlinCallArgument>
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)

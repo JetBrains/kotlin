@@ -188,7 +188,7 @@ class ClassCodegen private constructor(
 
 fun ClassDescriptor.calculateClassFlags(): Int {
     var flags = 0
-    flags = flags or if (DescriptorUtils.isInterface(this) || DescriptorUtils.isAnnotationClass(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER
+    flags = flags or if (JvmCodegenUtil.isJvmInterface(this)) Opcodes.ACC_INTERFACE else Opcodes.ACC_SUPER
     flags = flags or calcModalityFlag()
     flags = flags or AsmUtil.getVisibilityAccessFlagForClass(this)
     flags = flags or if (kind == ClassKind.ENUM_CLASS) Opcodes.ACC_ENUM else 0

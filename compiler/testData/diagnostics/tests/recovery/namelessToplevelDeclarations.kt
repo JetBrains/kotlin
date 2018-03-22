@@ -23,4 +23,4 @@ object<!SYNTAX!><!> {
 
 enum class<!SYNTAX!><!> {}
 
-annotation class<!SYNTAX!><!> <!ANNOTATION_CLASS_WITH_BODY!>{}<!>
+annotation class<!SYNTAX!><!> {}

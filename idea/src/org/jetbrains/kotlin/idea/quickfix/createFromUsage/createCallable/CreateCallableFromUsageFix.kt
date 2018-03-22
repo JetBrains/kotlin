@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.codeInsight.intention.LowPriorityAction
-import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -38,30 +37,31 @@ import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.isAbstract
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import java.util.*
 
 open class CreateCallableFromUsageFix<E : KtElement>(
-        originalExpression: E,
-        callableInfos: List<CallableInfo>
+    originalExpression: E,
+    callableInfos: List<CallableInfo>
 ) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, false)
 
 class CreateExtensionCallableFromUsageFix<E : KtElement>(
-        originalExpression: E,
-        callableInfos: List<CallableInfo>
+    originalExpression: E,
+    callableInfos: List<CallableInfo>
 ) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, true), LowPriorityAction
 
 abstract class CreateCallableFromUsageFixBase<E : KtElement>(
-        originalExpression: E,
-        protected val callableInfos: List<CallableInfo>,
-        val isExtension: Boolean
+    originalExpression: E,
+    protected val callableInfos: List<CallableInfo>,
+    val isExtension: Boolean
 ) : KotlinCrossLanguageQuickFixAction<E>(originalExpression) {
     init {
-        assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${originalExpression.getElementTextWithContext()}" }
+        assert(callableInfos.isNotEmpty()) { "No CallableInfos: ${originalExpression.getElementTextWithContext()}" }
         if (callableInfos.size > 1) {
-            val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
+            val receiverSet = callableInfos.mapTo(HashSet()) { it.receiverTypeInfo }
             if (receiverSet.size > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
 
-            val possibleContainerSet = callableInfos.mapTo(HashSet<List<KtElement>>()) { it.possibleContainers }
+            val possibleContainerSet = callableInfos.mapTo(HashSet()) { it.possibleContainers }
             if (possibleContainerSet.size > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
         }
     }
@@ -106,20 +106,18 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 
                     val receiverType = if (!receiverTypeInfo.isOfThis) {
                         CallableBuilderConfiguration(callableInfos, element, isExtension = isExtension)
-                                .createBuilder()
-                                .computeTypeCandidates(receiverTypeInfo)
-                                .firstOrNull()
-                                ?.theType
-                    }
-                    else null
+                            .createBuilder()
+                            .computeTypeCandidates(receiverTypeInfo)
+                            .firstOrNull()
+                            ?.theType
+                    } else null
 
                     if (receiverType != null) {
                         if (isExtension) {
                             val receiverTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
                             val isFunctionType = receiverType.constructor.declarationDescriptor is FunctionClassDescriptor
                             append(if (isFunctionType) "($receiverTypeText)" else receiverTypeText).append('.')
-                        }
-                        else {
+                        } else {
                             receiverType.constructor.declarationDescriptor?.let {
                                 append(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderClassifierName(it)).append('.')
                             }
@@ -134,12 +132,10 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         return StringBuilder().apply {
             append("Create ")
 
-            val receiverInfo = receiverTypeInfo
             if (!callableInfos.any { it.isAbstract }) {
                 if (isExtension) {
                     append("extension ")
-                }
-                else if (receiverInfo !is TypeInfo.Empty) {
+                } else if (receiverTypeInfo != TypeInfo.Empty) {
                     append("member ")
                 }
             }
@@ -153,7 +149,7 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 
         val receiverInfo = callableInfos.first().receiverTypeInfo
 
-        if (receiverInfo is TypeInfo.Empty) {
+        if (receiverInfo == TypeInfo.Empty) {
             if (callableInfos.any { it is PropertyInfo && it.possibleContainers.isEmpty() }) return false
             return !isExtension
         }
@@ -191,15 +187,14 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         if (file is KtFile) {
             fileForBuilder = file
             editorForBuilder = editor
-        }
-        else {
+        } else {
             fileForBuilder = element.containingKtFile
             EditorHelper.openInEditor(element)
             editorForBuilder = FileEditorManager.getInstance(project).selectedTextEditor!!
         }
 
         val callableBuilder =
-                CallableBuilderConfiguration(callableInfos, element as KtElement, fileForBuilder, editorForBuilder, isExtension).createBuilder()
+            CallableBuilderConfiguration(callableInfos, element as KtElement, fileForBuilder, editorForBuilder, isExtension).createBuilder()
 
         fun runBuilder(placement: CallablePlacement) {
             callableBuilder.placement = placement
@@ -212,19 +207,24 @@ abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         }
 
         val popupTitle = "Choose target class or interface"
-        val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo).let {
-            if (callableInfo.isAbstract) it.filter { it.theType.isAbstract() } else it
+        val receiverTypeInfo = callableInfo.receiverTypeInfo
+        val receiverTypeCandidates = callableBuilder.computeTypeCandidates(receiverTypeInfo).let {
+            if (callableInfo.isAbstract)
+                it.filter { it.theType.isAbstract() }
+            else if (!isExtension && receiverTypeInfo != TypeInfo.Empty)
+                it.filter { !it.theType.isTypeParameter() }
+            else
+                it
         }
         if (receiverTypeCandidates.isNotEmpty()) {
             val containers = receiverTypeCandidates
-                    .mapNotNull { candidate -> getDeclarationIfApplicable(project, candidate)?.let { candidate to it } }
+                .mapNotNull { candidate -> getDeclarationIfApplicable(project, candidate)?.let { candidate to it } }
 
             chooseContainerElementIfNecessary(containers, editor, popupTitle, false, { it.second }) {
                 runBuilder(CallablePlacement.WithReceiver(it.first))
             }
-        }
-        else {
-            assert(callableInfo.receiverTypeInfo is TypeInfo.Empty) {
+        } else {
+            assert(receiverTypeInfo == TypeInfo.Empty) {
                 "No receiver type candidates: ${element.text} in ${file.text}"
             }
 

@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
+import org.jetbrains.kotlin.idea.framework.isExternalLibrary
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
@@ -27,15 +28,18 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
             "Automatic library version update for Maven and Gradle projects is currently unsupported. " +
                     "Please update your build scripts manually.",
             "Update Kotlin Runtime Library",
-            Messages.getErrorIcon())
+            Messages.getErrorIcon()
+        )
         return
     }
 
-    val kJvmConfigurator = getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator? ?:
-                           error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
+    val kJvmConfigurator =
+        getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator?
+                ?: error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
 
-    val kJsConfigurator = getConfiguratorByName(KotlinJsModuleConfigurator.NAME) as KotlinJsModuleConfigurator? ?:
-                          error("Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME)
+    val kJsConfigurator =
+        getConfiguratorByName(KotlinJsModuleConfigurator.NAME) as KotlinJsModuleConfigurator?
+                ?: error("Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME)
 
     val collector = createConfigureKotlinNotificationCollector(project)
     val sdk = ProjectRootManager.getInstance(project).projectSdk
@@ -56,16 +60,26 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
 }
 
 private fun updateJar(
-        project: Project,
-        library: Library,
-        libraryJarDescriptor: LibraryJarDescriptor) {
+    project: Project,
+    library: Library,
+    libraryJarDescriptor: LibraryJarDescriptor
+) {
     val fileToReplace = libraryJarDescriptor.findExistingJar(library)
+    if (fileToReplace == null) {
+        if (libraryJarDescriptor.shouldExist) {
+            error(
+                "Update for library was requested, but file for replacement isn't present: \n" +
+                        "name = ${library.name}\n" +
+                        "isExternal = `${isExternalLibrary(library)}`\n" +
+                        "entries = ${library.getUrls(libraryJarDescriptor.orderRootType)}\n" +
+                        "buildSystems = ${project.allModules().map { module -> module.getBuildSystemType() }.distinct()}"
+            )
+        }
 
-    if (fileToReplace == null && !libraryJarDescriptor.shouldExist) {
         return
     }
 
-    val oldUrl = fileToReplace?.url
+    val oldUrl = fileToReplace.url
     val jarPath: File = libraryJarDescriptor.getPathInPlugin()
 
     if (!jarPath.exists()) {
@@ -73,13 +87,15 @@ private fun updateJar(
         return
     }
 
-    val jarFileToReplace = getLocalJar(fileToReplace)!!
+    val jarFileToReplace = getLocalJar(fileToReplace) ?: error("Couldn't find local jar for ${fileToReplace.canonicalPath}")
     val newVFile = try {
         replaceFile(jarPath, jarFileToReplace)
     } catch (e: IOException) {
-        Messages.showErrorDialog(project,
-                                 "Failed to update $jarPath: ${e.message}",
-                                 "Library update failed")
+        Messages.showErrorDialog(
+            project,
+            "Failed to update $jarPath: ${e.message}",
+            "Library update failed"
+        )
         return
     }
 
@@ -87,13 +103,15 @@ private fun updateJar(
         val model = library.modifiableModel
         runWriteAction {
             try {
-                if (oldUrl != null) {
-                    model.removeRoot(oldUrl, libraryJarDescriptor.orderRootType)
+                model.removeRoot(oldUrl, libraryJarDescriptor.orderRootType)
+
+                val newRoot = JarFileSystem.getInstance().getJarRootForLocalFile(newVFile) ?: run {
+                    Messages.showErrorDialog(project, "Failed to find root for file: ${newVFile.canonicalPath}", "Library update failed")
+                    return@runWriteAction
                 }
-                val newRoot = JarFileSystem.getInstance().getJarRootForLocalFile(newVFile)!!
+
                 model.addRoot(newRoot, libraryJarDescriptor.orderRootType)
-            }
-            finally {
+            } finally {
                 model.commit()
             }
         }

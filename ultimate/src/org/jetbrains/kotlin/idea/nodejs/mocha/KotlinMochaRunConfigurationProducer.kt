@@ -18,15 +18,12 @@ package org.jetbrains.kotlin.idea.nodejs.mocha
 
 import com.intellij.execution.RunManager
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
@@ -35,25 +32,15 @@ import com.jetbrains.nodejs.mocha.MochaUtil
 import com.jetbrains.nodejs.mocha.execution.*
 import org.jetbrains.kotlin.idea.js.jsOrJsImpl
 import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
+import org.jetbrains.kotlin.idea.nodejs.TestElementInfo
+import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
+import org.jetbrains.kotlin.idea.run.addBuildTask
 import org.jetbrains.kotlin.idea.util.projectStructure.module
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+
+private typealias MochaTestElementInfo = TestElementInfo<MochaRunSettings>
 
 class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
-    private data class TestElementInfo(val runSettings: MochaRunSettings, val enclosingTestElement: PsiElement)
-    private sealed class TestElementPath {
-        data class BySuite(val suiteNames: List<String>, val testName: String?) : TestElementPath()
-        object BySingleFile : TestElementPath()
-    }
-
     // Copied from MochaRunConfigurationProducer.collectMochaTestRoots()
     private fun collectMochaTestRoots(project: Project): List<VirtualFile> {
         return RunManager
@@ -103,27 +90,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
         return VfsUtilCore.isUnder(file, dirs)
     }
 
-    private fun createSuiteOrTestData(element: PsiElement, module: Module): TestElementPath? {
-        if (element is PsiDirectory && module.getModuleDir() == element.virtualFile.path) {
-            return TestElementPath.BySingleFile
-        }
-
-        val declaration = element.getNonStrictParentOfType<KtNamedDeclaration>() ?: return null
-        val klass = when (declaration) {
-            is KtClassOrObject -> declaration
-            is KtNamedFunction -> declaration.containingClassOrObject ?: return null
-            else -> return null
-        }
-        val suiteNames = klass.parentsWithSelf
-                .filterIsInstance<KtClassOrObject>()
-                .mapNotNull { it.name }
-                .toList()
-                .asReversed()
-        val testName = (declaration as? KtNamedFunction)?.name
-        return TestElementPath.BySuite(suiteNames, testName)
-    }
-
-    private fun createTestElementRunInfo(element: PsiElement, originalSettings: MochaRunSettings): TestElementInfo? {
+    private fun createTestElementRunInfo(element: PsiElement, originalSettings: MochaRunSettings): MochaTestElementInfo? {
         val module = element.module?.jsOrJsImpl() ?: return null
         val project = module.project
         val testFilePath = module.jsTestOutputFilePath ?: return null
@@ -132,7 +99,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
             originalSettings.builder().setWorkingDir(workingDir).build()
         }
         else originalSettings
-        val testElementPath = createSuiteOrTestData(element, module) ?: return null
+        val testElementPath = TestElementPath.forElement(element, module) ?: return null
         val builder = settings.builder()
         builder.setTestFilePath(testFilePath)
         if (settings.ui.isEmpty()) {
@@ -158,7 +125,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
 
         builder.setEnvData(module.getNodeJsEnvironmentVars())
 
-        return TestElementInfo(builder.build(), element)
+        return MochaTestElementInfo(builder.build(), element)
     }
 
     override fun isConfigurationFromCompatibleContext(configuration: MochaRunConfiguration, context: ConfigurationContext): Boolean {
@@ -189,6 +156,7 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer() {
         configuration.runSettings = runSettings
         sourceElement.set(enclosingTestElement)
         configuration.setGeneratedName()
+        configuration.addBuildTask()
         return true
     }
 }

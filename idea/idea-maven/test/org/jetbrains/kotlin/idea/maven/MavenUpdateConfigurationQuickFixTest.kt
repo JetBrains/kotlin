@@ -33,7 +33,8 @@ import kotlin.reflect.KMutableProperty0
 class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
-    fun getTestDataPath() = KotlinTestUtils.getHomeDirectory() + "/idea/idea-maven/testData/languageFeature/" + getTestName(true).substringBefore('_')
+    private fun getTestDataPath() =
+        KotlinTestUtils.getHomeDirectory() + "/idea/idea-maven/testData/languageFeature/" + getTestName(true).substringBefore('_')
 
     override fun setUpFixtures() {
         myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).fixture
@@ -43,31 +44,38 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
 
     override fun tearDownFixtures() {
         codeInsightTestFixture.tearDown()
+        @Suppress("UNCHECKED_CAST")
         (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
         myTestFixture = null
     }
 
-    @Test fun testUpdateLanguageVersion() {
+    @Test
+    fun testUpdateLanguageVersion() {
         doTest("Set module language version to 1.1")
     }
 
-    @Test fun testUpdateLanguageVersionProperty() {
+    @Test
+    fun testUpdateLanguageVersionProperty() {
         doTest("Set module language version to 1.1")
     }
 
-    @Test fun testUpdateApiVersion() {
+    @Test
+    fun testUpdateApiVersion() {
         doTest("Set module API version to 1.1")
     }
 
-    @Test fun testUpdateLanguageAndApiVersion() {
+    @Test
+    fun testUpdateLanguageAndApiVersion() {
         doTest("Set module language version to 1.1")
     }
 
-    @Test fun testEnableCoroutines() {
+    @Test
+    fun testEnableCoroutines() {
         doTest("Enable coroutine support in the current module")
     }
 
-    @Test fun testAddKotlinReflect() {
+    @Test
+    fun testAddKotlinReflect() {
         doTest("Add kotlin-reflect.jar to the classpath")
     }
 

@@ -36,7 +36,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.retainMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -174,8 +175,8 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             val typeUsage = TypeUsage.COMMON.toAttributes()
             val parameterName = annotations
                     .findAnnotation(JvmAnnotationNames.PARAMETER_NAME_FQ_NAME)
-                    ?.firstArgumentValue()
-                    ?.safeAs<String>()
+                    ?.firstArgument()
+                    ?.safeAs<StringValue>()?.value
 
             val (outType, varargElementType) =
                     if (javaParameter.isVararg) {

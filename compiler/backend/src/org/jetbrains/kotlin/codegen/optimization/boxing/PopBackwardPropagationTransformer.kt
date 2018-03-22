@@ -44,11 +44,11 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
         }
 
         private inline fun Transformation(crossinline body: (AbstractInsnNode) -> Unit): Transformation =
-                object : Transformation {
-                    override fun apply(insn: AbstractInsnNode) {
-                        body(insn)
-                    }
+            object : Transformation {
+                override fun apply(insn: AbstractInsnNode) {
+                    body(insn)
                 }
+            }
 
         private val REPLACE_WITH_NOP = Transformation { insnList.set(it, createRemovableNopInsn()) }
         private val REPLACE_WITH_POP1 = Transformation { insnList.set(it, InsnNode(Opcodes.POP)) }
@@ -145,7 +145,12 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
                 return super.binaryOperation(insn, value1, value2)
             }
 
-            override fun ternaryOperation(insn: AbstractInsnNode, value1: SourceValue, value2: SourceValue, value3: SourceValue): SourceValue {
+            override fun ternaryOperation(
+                insn: AbstractInsnNode,
+                value1: SourceValue,
+                value2: SourceValue,
+                value3: SourceValue
+            ): SourceValue {
                 value1.insns.markAsDontTouch()
                 value2.insns.markAsDontTouch()
                 value3.insns.markAsDontTouch()
@@ -193,8 +198,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
                     if (sources.all { !isDontTouch(it) } && sources.any { isTransformableCheckcastOperand(it, resultType) }) {
                         transformations[insn] = replaceWithNopTransformation()
                         sources.forEach { propagatePopBackwards(it, inputTop.size) }
-                    }
-                    else {
+                    } else {
                         transformations[insn] = insertPopAfterTransformation(poppedValueSize)
                     }
                 }
@@ -214,8 +218,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
                     if (sources.all { !isDontTouch(it) }) {
                         transformations[insn] = replaceWithNopTransformation()
                         sources.forEach { propagatePopBackwards(it, inputTop.size) }
-                    }
-                    else {
+                    } else {
                         transformations[insn] = replaceWithPopTransformation(poppedValueSize)
                     }
                 }
@@ -252,8 +255,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             while (node != null && node != end) {
                 if (node in removableNops && !keepNop) {
                     node = insnList.removeNodeGetNext(node)
-                }
-                else {
+                } else {
                     if (node.isMeaningful) keepNop = false
                     node = node.next
                 }
@@ -261,24 +263,24 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
         }
 
         private fun replaceWithPopTransformation(size: Int): Transformation =
-                when (size) {
-                    1 -> REPLACE_WITH_POP1
-                    2 -> REPLACE_WITH_POP2
-                    else -> throw AssertionError("Unexpected pop value size: $size")
-                }
+            when (size) {
+                1 -> REPLACE_WITH_POP1
+                2 -> REPLACE_WITH_POP2
+                else -> throw AssertionError("Unexpected pop value size: $size")
+            }
 
         private fun insertPopAfterTransformation(size: Int): Transformation =
-                when (size) {
-                    1 -> INSERT_POP1_AFTER
-                    2 -> INSERT_POP2_AFTER
-                    else -> throw AssertionError("Unexpected pop value size: $size")
-                }
+            when (size) {
+                1 -> INSERT_POP1_AFTER
+                2 -> INSERT_POP2_AFTER
+                else -> throw AssertionError("Unexpected pop value size: $size")
+            }
 
         private fun replaceWithNopTransformation(): Transformation =
-                REPLACE_WITH_NOP
+            REPLACE_WITH_NOP
 
         private fun createRemovableNopInsn() =
-                InsnNode(Opcodes.NOP).apply { removableNops.add(this) }
+            InsnNode(Opcodes.NOP).apply { removableNops.add(this) }
 
         private fun getInputTop(insn: AbstractInsnNode): SourceValue {
             val i = insnList.indexOf(insn)
@@ -287,28 +289,28 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
         }
 
         private fun isTransformableCheckcastOperand(it: AbstractInsnNode, resultType: String) =
-                it.isPrimitiveBoxing() && (it as MethodInsnNode).owner == resultType
+            it.isPrimitiveBoxing() && (it as MethodInsnNode).owner == resultType
 
         private fun isTransformablePopOperand(insn: AbstractInsnNode) =
-                insn.opcode == Opcodes.CHECKCAST || insn.isPrimitiveBoxing() || insn.isPurePush()
+            insn.opcode == Opcodes.CHECKCAST || insn.isPrimitiveBoxing() || insn.isPurePush()
 
         private fun isDontTouch(insn: AbstractInsnNode) =
-                dontTouchInsnIndices[insnList.indexOf(insn)]
+            dontTouchInsnIndices[insnList.indexOf(insn)]
     }
 
 }
 
 fun AbstractInsnNode.isPurePush() =
-        isLoadOperation() ||
-        opcode in Opcodes.ACONST_NULL .. Opcodes.LDC + 2 ||
-        isUnitInstance()
+    isLoadOperation() ||
+            opcode in Opcodes.ACONST_NULL..Opcodes.LDC + 2 ||
+            isUnitInstance()
 
 fun AbstractInsnNode.isPop() =
-        opcode == Opcodes.POP || opcode == Opcodes.POP2
+    opcode == Opcodes.POP || opcode == Opcodes.POP2
 
 fun AbstractInsnNode.isUnitInstance() =
-        opcode == Opcodes.GETSTATIC &&
-        this is FieldInsnNode && owner == "kotlin/Unit" && name == "INSTANCE"
+    opcode == Opcodes.GETSTATIC &&
+            this is FieldInsnNode && owner == "kotlin/Unit" && name == "INSTANCE"
 
 fun AbstractInsnNode.isPrimitiveTypeConversion() =
-        opcode in Opcodes.I2L .. Opcodes.I2S
+    opcode in Opcodes.I2L..Opcodes.I2S

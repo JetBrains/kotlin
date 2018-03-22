@@ -4,28 +4,43 @@ import org.jetbrains.kotlin.gradle.util.allKotlinFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 
 class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
     companion object {
-        private val GRADLE_VERSION = "2.10"
         private val ANDROID_GRADLE_PLUGIN_VERSION = "1.5.+"
     }
 
     private fun androidBuildOptions() =
             BuildOptions(withDaemon = true,
-                    androidHome = File(ANDROID_HOME_PATH),
-                    androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
-                    incremental = true)
+                         androidHome = KotlinTestUtils.findAndroidSdk(),
+                         androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
+                         incremental = true)
 
     override fun defaultBuildOptions(): BuildOptions =
             super.defaultBuildOptions().copy(withDaemon = true, incremental = true)
 
+    @Test
+    fun testDuplicatedClass() {
+        val project = Project("duplicatedClass")
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val usagesFiles = listOf("useBuzz.kt", "useA.kt").map { project.projectFile(it) }
+        usagesFiles.forEach { file -> file.modify { "$it\n " } }
+
+        project.build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(usagesFiles))
+        }
+    }
 
     @Test
     fun testMoveFunctionFromLib() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.build("build") {
             assertSuccessful()
         }
@@ -45,7 +60,7 @@ class IncrementalCompilationMultiProjectIT : BaseGradleIT() {
 
     @Test
     fun testAddNewMethodToLib() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.build("build") {
             assertSuccessful()
         }
@@ -70,7 +85,7 @@ open class A {
 
     @Test
     fun testLibClassBecameFinal() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.build("build") {
             assertSuccessful()
         }
@@ -90,7 +105,11 @@ open class A {
 
     @Test
     fun testCleanBuildLib() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        // Test with Gradle 3.4, since Gradle 3.5+ uses classpath hash normalization for JARs
+        val project = Project("incrementalMultiproject", GradleVersionRequired.Exact("3.4"))
+
+        project.setupWorkingDir()
+
         project.build("build") {
             assertSuccessful()
         }
@@ -112,7 +131,7 @@ open class A {
 
     @Test
     fun testCompileErrorInLib() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
         project.build("build") {
             assertSuccessful()
         }
@@ -139,7 +158,8 @@ open class A {
     // that is not JavaCompile or KotlinCompile
     @Test
     fun testCompileLibWithGroovy() {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val gradleVersion = GradleVersionRequired.Exact("3.5") // With newer versions, Groovy uses separate classes dirs
+        val project = Project("incrementalMultiproject", gradleVersion)
         project.setupWorkingDir()
         val lib = File(project.projectDir, "lib")
         val libBuildGradle = File(lib, "build.gradle")
@@ -177,7 +197,7 @@ open class A {
 
     @Test
     fun testAndroid() {
-        val project = Project("AndroidProject", GRADLE_VERSION)
+        val project = Project("AndroidProject", GradleVersionRequired.Exact("2.10"))
         val options = androidBuildOptions()
 
         project.build("assembleDebug", options = options) {
@@ -185,7 +205,7 @@ open class A {
         }
 
         val libUtilKt = project.projectDir.getFileByName("libUtil.kt")
-        libUtilKt.modify { it.replace("fun libUtil(): String", "fun libUtil(): Any") }
+        libUtilKt.modify { it.replace("fun libUtil(): String", "fun libUtil(): None") }
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
@@ -198,19 +218,12 @@ open class A {
 class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = null) {
     @Test
     override fun testModifySignatureTrackedJavaInLib() {
-        doTest(trackedJavaClass, changeSignature,
-               expectedAffectedSources = listOf(
-                       "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
-                       "useTrackedJavaClassSameModule.kt"))
+        doTest(trackedJavaClass, changeSignature, expectedAffectedSources = listOf("TrackedJavaClassChild.kt", "useTrackedJavaClass.kt"))
     }
 
     @Test
     override fun testModifyBodyTrackedJavaInLib() {
-        doTest(trackedJavaClass, changeBody,
-               expectedAffectedSources = listOf(
-                       "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
-                       "useTrackedJavaClassSameModule.kt"
-               ))
+        doTest(trackedJavaClass, changeBody, expectedAffectedSources = listOf())
     }
 }
 
@@ -223,6 +236,30 @@ class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(use
     @Test
     override fun testModifyBodyTrackedJavaInLib() {
         doTest(trackedJavaClass, changeBody, expectedAffectedSources = listOf())
+    }
+}
+
+class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = false) {
+    @Test
+    override fun testModifySignatureTrackedJavaInLib() {
+        doTest(
+            trackedJavaClass, changeSignature,
+            expectedAffectedSources = listOf(
+                "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
+                "useTrackedJavaClassSameModule.kt"
+            )
+        )
+    }
+
+    @Test
+    override fun testModifyBodyTrackedJavaInLib() {
+        doTest(
+            trackedJavaClass, changeBody,
+            expectedAffectedSources = listOf(
+                "TrackedJavaClassChild.kt", "useTrackedJavaClass.kt", "useTrackedJavaClassFooMethodUsage.kt",
+                "useTrackedJavaClassSameModule.kt"
+            )
+        )
     }
 }
 
@@ -261,7 +298,7 @@ abstract class IncrementalCompilationJavaChangesBase(val usePreciseJavaTracking:
             transformFile: (String)->String,
             expectedAffectedSources: Collection<String>
     ) {
-        val project = Project("incrementalMultiproject", GRADLE_VERSION)
+        val project = Project("incrementalMultiproject")
 
         val options = defaultBuildOptions().copy(usePreciseJavaTracking = usePreciseJavaTracking)
         project.build("build", options = options) {

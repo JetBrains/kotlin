@@ -51,7 +51,7 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             setTestRoot(moduleWithSrcRootSet, name)
         }
 
-        ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, PluginTestCaseBase.jdk(jdk))
+        ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, PluginTestCaseBase.addJdk(testRootDisposable) { PluginTestCaseBase.jdk(jdk) })
 
         return moduleWithSrcRootSet
     }
@@ -121,7 +121,7 @@ fun Module.createFacet(
                     platformKind
             )
             if (implementedModuleName != null) {
-                this.implementedModuleName = implementedModuleName
+                this.implementedModuleNames = listOf(implementedModuleName)
             }
         }
         modelsProvider.commit()

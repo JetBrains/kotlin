@@ -43,8 +43,7 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         if (!isContractDescriptionCallFastCheck(expression) || ownerDescriptor !is FunctionDescriptor) return
         val contractProvider = ownerDescriptor.getUserData(ContractProviderKey) ?: return
 
-        val isFeatureTurnedOn = languageVersionSettings.supportsFeature(LanguageFeature.CallsInPlaceEffect) ||
-                languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect) ||
+        val isFeatureTurnedOn = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // This condition is here for technical purposes of compiling 1.2-runtime with contracts
                 languageVersionSettings.getFlag(AnalysisFlag.Flags.allowKotlinPackage)
 

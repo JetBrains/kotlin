@@ -277,7 +277,7 @@ class FunctionReader(
         })
 
         wrapperStatements?.forEach {
-            if (it is JsVars && it.vars.size == 1 && it.vars[0].initExpression?.let { extractImportTag(it) } != null) {
+            if (it is JsVars && it.vars.size == 1 && extractImportTag(it.vars[0]) != null) {
                 it.vars[0].name.imported = true
             }
         }

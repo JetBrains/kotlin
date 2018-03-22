@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
 class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfExpression>(KtIfExpression::class.java) {
 
@@ -42,21 +43,19 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
     override fun inspectionText(element: KtIfExpression) = "Foldable if-then"
 
     override fun inspectionHighlightType(element: KtIfExpression): ProblemHighlightType =
-            if (element.shouldBeTransformed()) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
+        if (element.shouldBeTransformed()) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
 
     override val defaultFixText = "Simplify foldable if-then"
 
-    override fun fixText(element: KtIfExpression) : String {
+    override fun fixText(element: KtIfExpression): String {
         val ifThenToSelectData = element.buildSelectTransformationData()
         return if (ifThenToSelectData?.baseClauseEvaluatesToReceiver() == true) {
             if (ifThenToSelectData.condition is KtIsExpression) {
                 "Replace 'if' expression with safe cast expression"
-            }
-            else {
+            } else {
                 "Remove redundant 'if' expression"
             }
-        }
-        else {
+        } else {
             "Replace 'if' expression with safe access expression"
         }
     }
@@ -84,6 +83,6 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
         negatedClause == null && baseClause.isUsedAsExpression(context) -> false
         negatedClause != null && !negatedClause.isNullExpression() -> false
         else -> baseClause.evaluatesTo(receiverExpression) || baseClause.hasFirstReceiverOf(receiverExpression) ||
-                receiverExpression is KtThisExpression && hasImplicitReceiver()
+                receiverExpression is KtThisExpression && getImplicitReceiver()?.let { it.type == receiverExpression.getType(context) } == true
     }
 }

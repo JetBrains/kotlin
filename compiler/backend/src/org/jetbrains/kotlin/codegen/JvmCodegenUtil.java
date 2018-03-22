@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -31,6 +20,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.*;
@@ -57,6 +47,7 @@ import static org.jetbrains.kotlin.descriptors.ClassKind.INTERFACE;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 
 public class JvmCodegenUtil {
@@ -127,11 +118,19 @@ public class JvmCodegenUtil {
                     !closure.isSuspend();
     }
 
-    private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {
+    private static boolean isCallInsideSameClassAsFieldRepresentingProperty(
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull CodegenContext context
+    ) {
         boolean isFakeOverride = descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         boolean isDelegate = descriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration().getOriginal();
+        if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
+            // For property with backed field, check if the access is done in the same class containing the backed field and
+            // not the class that declared the field.
+            containingDeclaration = containingDeclaration.getContainingDeclaration();
+        }
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
@@ -197,12 +196,12 @@ public class JvmCodegenUtil {
         if (KotlinTypeMapper.isAccessor(property)) return false;
 
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
-        // Inline functions can't use direct access because a field may not be visible at the call site
-        if (context.isInlineMethodContext()) {
+        // Inline functions or inline classes can't use direct access because a field may not be visible at the call site
+        if (context.isInlineMethodContext() || (context.getEnclosingClass() != null && context.getEnclosingClass().isInline())) {
             return false;
         }
 
-        if (!isCallInsideSameClassAsDeclared(property, context)) {
+        if (!isCallInsideSameClassAsFieldRepresentingProperty(property, context)) {
             if (!isDebuggerContext(context)) {
                 // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
                 return false;
@@ -226,9 +225,6 @@ public class JvmCodegenUtil {
 
         // Delegated and extension properties have no backing fields
         if (isDelegated || property.getExtensionReceiverParameter() != null) return false;
-
-        // Companion object properties cannot be accessed directly because their backing fields are stored in the containing class
-        if (DescriptorUtils.isCompanionObject(property.getContainingDeclaration())) return false;
 
         PropertyAccessorDescriptor accessor = forGetter ? property.getGetter() : property.getSetter();
 
@@ -329,5 +325,19 @@ public class JvmCodegenUtil {
         if (receiver instanceof TransientReceiver) return null;
 
         return receiver;
+    }
+
+    public static boolean isCompanionObjectInInterfaceNotIntrinsic(@NotNull DeclarationDescriptor companionObject) {
+        return isCompanionObject(companionObject) &&
+               isJvmInterface(companionObject.getContainingDeclaration()) &&
+               !JvmAbi.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
+    }
+
+    public static boolean hasBackingField(
+            @NotNull PropertyDescriptor descriptor, @NotNull OwnerKind kind, @NotNull BindingContext bindingContext
+    ) {
+        return !isJvmInterface(descriptor.getContainingDeclaration()) &&
+               kind != OwnerKind.DEFAULT_IMPLS &&
+               !Boolean.FALSE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor));
     }
 }

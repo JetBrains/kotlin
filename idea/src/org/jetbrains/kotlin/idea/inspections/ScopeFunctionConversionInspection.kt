@@ -13,13 +13,13 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.SmartPsiElementPointer
-import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
+import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.getReceiverTargetDescriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -55,8 +55,8 @@ class ScopeFunctionConversionInspection : AbstractKotlinInspection() {
             if (counterpartName != null) {
                 holder.registerProblem(
                     expression.calleeExpression!!,
-                    "Call can be replaced with another scope function",
-                    ProblemHighlightType.INFORMATION,
+                    "Call is replaceable with another scope function",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     if (counterpartName == "also" || counterpartName == "let")
                         ConvertScopeFunctionToParameter(counterpartName)
                     else
@@ -72,9 +72,9 @@ private fun getCounterpart(expression: KtCallExpression): String? {
     val callee = expression.calleeExpression as? KtNameReferenceExpression ?: return null
     val calleeName = callee.getReferencedName()
     val counterpartName = counterpartNames[calleeName]
-    val lambdaArgument = expression.lambdaArguments.singleOrNull()
-    if (counterpartName != null && lambdaArgument != null) {
-        if (lambdaArgument.getLambdaExpression().valueParameters.isNotEmpty()) {
+    val lambdaExpression = expression.lambdaArguments.singleOrNull()?.getLambdaExpression()
+    if (counterpartName != null && lambdaExpression != null) {
+        if (lambdaExpression.valueParameters.isNotEmpty()) {
             return null
         }
         val bindingContext = callee.analyze(BodyResolveMode.PARTIAL)
@@ -151,8 +151,11 @@ abstract class ConvertScopeFunctionFix(private val counterpartName: String) : Lo
         val bindingContext = callExpression.analyze()
 
         val lambda = callExpression.lambdaArguments.firstOrNull() ?: return
-        val functionLiteral = lambda.getLambdaExpression().functionLiteral
+        val functionLiteral = lambda.getLambdaExpression()?.functionLiteral ?: return
         val lambdaDescriptor = bindingContext[FUNCTION, functionLiteral] ?: return
+
+        functionLiteral.valueParameterList?.delete()
+        functionLiteral.arrow?.delete()
 
         val replacements = ReplacementCollection()
         analyzeLambda(bindingContext, lambda, lambdaDescriptor, replacements)
@@ -186,13 +189,13 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
     ) {
         val project = lambda.project
         val factory = KtPsiFactory(project)
-        val functionLiteral = lambda.getLambdaExpression().functionLiteral
+        val functionLiteral = lambda.getLambdaExpression()?.functionLiteral
         val lambdaExtensionReceiver = lambdaDescriptor.extensionReceiverParameter
         val lambdaDispatchReceiver = lambdaDescriptor.dispatchReceiverParameter
 
         var parameterName = "it"
         val scopes = mutableSetOf<LexicalScope>()
-        if (needUniqueNameForParameter(lambda, scopes)) {
+        if (functionLiteral != null && needUniqueNameForParameter(lambda, scopes)) {
             val parameterType = lambdaExtensionReceiver?.type ?: lambdaDispatchReceiver?.type
             parameterName = findUniqueParameterName(parameterType, scopes)
             replacements.createParameter = {
@@ -205,6 +208,7 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
         lambda.accept(object : KtTreeVisitorVoid() {
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 super.visitSimpleNameExpression(expression)
+                if (expression is KtOperationReferenceExpression) return
                 val resolvedCall = expression.getResolvedCall(bindingContext) ?: return
                 val dispatchReceiverTarget = resolvedCall.dispatchReceiver?.getReceiverTargetDescriptor(bindingContext)
                 val extensionReceiverTarget = resolvedCall.extensionReceiver?.getReceiverTargetDescriptor(bindingContext)
@@ -359,6 +363,6 @@ private fun PsiElement.startInPlaceRename() {
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
 
         editor.caretModel.moveToOffset(startOffset)
-        VariableInplaceRenameHandler().doRename(this, editor, null)
+        KotlinVariableInplaceRenameHandler().doRename(this, editor, null)
     }
 }

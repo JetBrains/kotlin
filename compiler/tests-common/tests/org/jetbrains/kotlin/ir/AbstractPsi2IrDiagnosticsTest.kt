@@ -25,11 +25,11 @@ import java.io.File
 
 abstract class AbstractPsi2IrDiagnosticsTest : AbstractDiagnosticsTest() {
     override fun performAdditionalChecksAfterDiagnostics(
-            testDataFile: File,
-            testFiles: List<TestFile>,
-            moduleFiles: Map<TestModule?, List<TestFile>>,
-            moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
-            moduleBindings: Map<TestModule?, BindingContext>
+        testDataFile: File,
+        testFiles: List<TestFile>,
+        moduleFiles: Map<TestModule?, List<TestFile>>,
+        moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
+        moduleBindings: Map<TestModule?, BindingContext>
     ) {
         val actualIrDump = StringBuilder()
         for (module in moduleFiles.keys) {

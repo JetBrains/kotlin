@@ -19,20 +19,23 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-
 internal fun unexpectedArgument(argument: KotlinCallArgument): Nothing =
-        error("Unexpected argument type: $argument, ${argument.javaClass.canonicalName}.")
+    error("Unexpected argument type: $argument, ${argument.javaClass.canonicalName}.")
 
 // if expression is not stable and has smart casts, then we create this type
 internal val ReceiverValueWithSmartCastInfo.unstableType: UnwrappedType?
@@ -49,19 +52,66 @@ internal val ReceiverValueWithSmartCastInfo.stableType: UnwrappedType
     }
 
 internal fun KotlinCallArgument.getExpectedType(parameter: ParameterDescriptor, languageVersionSettings: LanguageVersionSettings) =
-        if (this.isSpread || this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings)) {
-            parameter.type.unwrap()
-        }
-        else {
-            parameter.safeAs<ValueParameterDescriptor>()?.varargElementType?.unwrap() ?: parameter.type.unwrap()
-        }
+    if (this.isSpread || this.isArrayAssignedAsNamedArgumentInAnnotation(parameter, languageVersionSettings)) {
+        parameter.type.unwrap()
+    } else {
+        parameter.safeAs<ValueParameterDescriptor>()?.varargElementType?.unwrap() ?: parameter.type.unwrap()
+    }
 
 val ValueParameterDescriptor.isVararg: Boolean get() = varargElementType != null
 val ParameterDescriptor.isVararg: Boolean get() = this.safeAs<ValueParameterDescriptor>()?.isVararg ?: false
 
+/**
+ * @return `true` iff the parameter has a default value, i.e. declares it, inherits it by overriding a parameter which has a default value,
+ * or is a parameter of an 'actual' declaration, such that the corresponding 'expect' parameter has a default value.
+ */
+fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
+    return DFS.ifAny(
+        listOf(this),
+        { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
+        { it.declaresDefaultValue() || it.isActualParameterWithAnyExpectedDefault }
+    )
+}
+
+fun ValueParameterDescriptor.checkExpectedParameter(checker: (ValueParameterDescriptor) -> Boolean) : Boolean {
+    val function = containingDeclaration
+    if (function is FunctionDescriptor && function.isActual) {
+        with(ExpectedActualResolver) {
+            val expected = function.findCompatibleExpectedForActual(function.module).firstOrNull()
+            return expected is FunctionDescriptor && checker(expected.valueParameters[index])
+        }
+    }
+    return false
+}
+
+/**
+ * The following two properties describe two different situations:
+ *
+ * Consider hierarchy:
+ * expect open class A { foo(p = 1) }
+ * expect open class B  : A { foo(p) }
+ *
+ * actual open class A { foo(p) }
+ * actual open class B : A { foo(p) }
+ *
+ * For parameter `p` of method `foo`:
+ * `Any` property returns `true` for both actual A and B
+ * `Corresponding` property returns `true` only for `actual A` because `expect B` declaration doesn't have an default value
+ */
+
+val ValueParameterDescriptor.isActualParameterWithAnyExpectedDefault: Boolean
+    get() {
+        return checkExpectedParameter { it.hasDefaultValue() }
+    }
+
+val ValueParameterDescriptor.isActualParameterWithCorrespondingExpectedDefault: Boolean
+    get() {
+        return checkExpectedParameter { it.declaresDefaultValue() }
+    }
+
 private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
-        parameter: ParameterDescriptor,
-        languageVersionSettings: LanguageVersionSettings
+    parameter: ParameterDescriptor,
+    languageVersionSettings: LanguageVersionSettings
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 

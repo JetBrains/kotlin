@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
@@ -85,9 +84,6 @@ class KotlinSourceFilterScope private constructor(
 
         @JvmStatic
         fun projectSourceAndClassFiles(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, true, false, project)
-
-        @JvmStatic
-        fun sources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, false, true, project)
 
         @JvmStatic
         fun projectSources(delegate: GlobalSearchScope, project: Project) = create(delegate, true, false, false, false, project)

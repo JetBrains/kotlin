@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class SerializerExtension {
-    abstract val stringTable: StringTable
+    abstract val stringTable: DescriptorAwareStringTable
 
     val annotationSerializer by lazy { AnnotationSerializer(stringTable) }
 

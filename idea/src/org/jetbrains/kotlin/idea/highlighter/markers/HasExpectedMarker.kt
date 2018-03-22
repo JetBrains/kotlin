@@ -20,30 +20,32 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.implementedDescriptor
+import org.jetbrains.kotlin.idea.facet.implementedDescriptors
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
 
 private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
-        with(ExpectedActualDeclarationChecker) {
-            descriptor.findCompatibleExpectedForActual(this@declarationOf).firstOrNull()
-        }
+    with(ExpectedActualResolver) {
+        val expectedCompatibilityMap = findExpectedForActual(descriptor, this@declarationOf)
+        expectedCompatibilityMap?.get(Compatible)?.firstOrNull() ?: expectedCompatibilityMap?.values?.flatten()?.firstOrNull()
+    }
 
 fun getExpectedDeclarationTooltip(declaration: KtDeclaration?): String? {
     val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    val commonModuleDescriptor = platformModuleDescriptor.implementedDescriptor ?: return null
-    if (!commonModuleDescriptor.hasDeclarationOf(descriptor)) return null
+    val commonModuleDescriptors = platformModuleDescriptor.implementedDescriptors ?: return null
+    if (!commonModuleDescriptors.any { it.hasDeclarationOf(descriptor) }) return null
 
     return "Has declaration in common module"
 }
@@ -52,7 +54,10 @@ fun navigateToExpectedDeclaration(declaration: KtDeclaration?) {
     declaration?.expectedDeclarationIfAny()?.navigate(false)
 }
 
-internal fun MemberDescriptor.expectedDescriptor() = module.implementedDescriptor?.declarationOf(this)
+internal fun MemberDescriptor.expectedDescriptors() = module.implementedDescriptors.mapNotNull { it.declarationOf(this) }
+
+// TODO: Sort out the cases with multiple expected descriptors
+internal fun MemberDescriptor.expectedDescriptor() = expectedDescriptors().firstOrNull()
 
 internal fun KtDeclaration.expectedDeclarationIfAny(): KtDeclaration? {
     val expectedDescriptor = (toDescriptor() as? MemberDescriptor)?.expectedDescriptor() ?: return null
@@ -67,8 +72,7 @@ internal fun KtDeclaration.isExpectedOrExpectedClassMember(): Boolean {
 }
 
 internal fun KtClassOrObject.isExpected(): Boolean {
-    return this.hasExpectModifier() ||
-           this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
+    return this.hasExpectModifier() || this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
 }
 
 internal fun DeclarationDescriptor.liftToExpected(): DeclarationDescriptor? {

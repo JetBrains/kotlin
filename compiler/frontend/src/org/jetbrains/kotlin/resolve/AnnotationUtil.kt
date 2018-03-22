@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ErrorValue
 
 val JVM_STATIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
@@ -43,6 +44,6 @@ private val STRICTFP_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.Strictfp")
 fun DeclarationDescriptor.findStrictfpAnnotation() =
     DescriptorUtils.getAnnotationByFqName(annotations, STRICTFP_ANNOTATION_FQ_NAME)
 
-fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
-    return allValueArguments[Name.identifier(parameterName)].takeUnless { it is ErrorValue }?.value
+fun AnnotationDescriptor.argumentValue(parameterName: String): ConstantValue<*>? {
+    return allValueArguments[Name.identifier(parameterName)].takeUnless { it is ErrorValue }
 }

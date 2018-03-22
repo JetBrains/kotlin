@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve
@@ -80,7 +69,7 @@ object ModifierCheckerCore {
         COMPANION_KEYWORD to EnumSet.of(OBJECT),
         LATEINIT_KEYWORD to EnumSet.of(MEMBER_PROPERTY, TOP_LEVEL_PROPERTY, LOCAL_VARIABLE),
         DATA_KEYWORD to EnumSet.of(CLASS_ONLY, LOCAL_CLASS),
-        INLINE_KEYWORD to EnumSet.of(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER),
+        INLINE_KEYWORD to EnumSet.of(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER, CLASS_ONLY),
         NOINLINE_KEYWORD to EnumSet.of(VALUE_PARAMETER),
         TAILREC_KEYWORD to EnumSet.of(FUNCTION),
         SUSPEND_KEYWORD to EnumSet.of(MEMBER_FUNCTION, TOP_LEVEL_FUNCTION),
@@ -122,7 +111,7 @@ object ModifierCheckerCore {
 
     private val featureDependencies = mapOf(
         SUSPEND_KEYWORD to listOf(LanguageFeature.Coroutines),
-        INLINE_KEYWORD to listOf(LanguageFeature.InlineProperties),
+        INLINE_KEYWORD to listOf(LanguageFeature.InlineProperties, LanguageFeature.InlineClasses),
         HEADER_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
         IMPL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
         EXPECT_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
@@ -133,7 +122,8 @@ object ModifierCheckerCore {
     private val featureDependenciesTargets = mapOf(
         LanguageFeature.InlineProperties to setOf(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER),
         LanguageFeature.LateinitLocalVariables to setOf(LOCAL_VARIABLE),
-        LanguageFeature.LateinitTopLevelProperties to setOf(TOP_LEVEL_PROPERTY)
+        LanguageFeature.LateinitTopLevelProperties to setOf(TOP_LEVEL_PROPERTY),
+        LanguageFeature.InlineClasses to setOf(CLASS_ONLY)
     )
 
     // NOTE: deprecated targets must be possible!
@@ -158,7 +148,7 @@ object ModifierCheckerCore {
         PROTECTED_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS, COMPANION_OBJECT),
         INTERNAL_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, ENUM_CLASS, ENUM_ENTRY, FILE),
         PRIVATE_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
-        COMPANION_KEYWORD to always(CLASS_ONLY, ENUM_CLASS, INTERFACE),
+        COMPANION_KEYWORD to always(CLASS_ONLY, INTERFACE, ENUM_CLASS, ANNOTATION_CLASS),
         FINAL_KEYWORD to always(CLASS_ONLY, LOCAL_CLASS, OBJECT, OBJECT_LITERAL, ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE),
         VARARG_KEYWORD to always(CONSTRUCTOR, FUNCTION, CLASS)
     )

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -127,7 +126,9 @@ fun IrFunction.createParameterDeclarations() {
             innerStartOffset(this), innerEndOffset(this),
             IrDeclarationOrigin.DEFINED,
             this
-    )
+    ).also {
+        it.parent = this@createParameterDeclarations
+    }
 
     dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.irValueParameter()
     extensionReceiverParameter = descriptor.extensionReceiverParameter?.irValueParameter()
@@ -141,7 +142,9 @@ fun IrFunction.createParameterDeclarations() {
                 innerStartOffset(it), innerEndOffset(it),
                 IrDeclarationOrigin.DEFINED,
                 it
-        )
+        ).also { typeParameter ->
+            typeParameter.parent = this
+        }
     }
 }
 

@@ -28,17 +28,17 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class OptimizationMethodVisitor(
-        delegate: MethodVisitor,
-        private val disableOptimization: Boolean,
-        private val constructorCallNormalizationMode: JVMConstructorCallNormalizationMode,
-        access: Int,
-        name: String,
-        desc: String,
-        signature: String?,
-        exceptions: Array<String>?
+    delegate: MethodVisitor,
+    private val disableOptimization: Boolean,
+    private val constructorCallNormalizationMode: JVMConstructorCallNormalizationMode,
+    access: Int,
+    name: String,
+    desc: String,
+    signature: String?,
+    exceptions: Array<String>?
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
     private val constructorCallNormalizationTransformer =
-            UninitializedStoresMethodTransformer(constructorCallNormalizationMode)
+        UninitializedStoresMethodTransformer(constructorCallNormalizationMode)
 
     override fun performTransformations(methodNode: MethodNode) {
         normalizationMethodTransformer.transform("fake", methodNode)
@@ -55,22 +55,22 @@ class OptimizationMethodVisitor(
         private val MEMORY_LIMIT_BY_METHOD_MB = 50
 
         val normalizationMethodTransformer = CompositeMethodTransformer(
-                FixStackWithLabelNormalizationMethodTransformer(),
-                MethodVerifier("AFTER mandatory stack transformations")
+            FixStackWithLabelNormalizationMethodTransformer(),
+            MethodVerifier("AFTER mandatory stack transformations")
         )
 
         val optimizationTransformer = CompositeMethodTransformer(
-                CapturedVarsOptimizationMethodTransformer(),
-                RedundantNullCheckMethodTransformer(),
-                RedundantCheckCastEliminationMethodTransformer(),
-                ConstantConditionEliminationMethodTransformer(),
-                RedundantBoxingMethodTransformer(),
-                StackPeepholeOptimizationsTransformer(),
-                PopBackwardPropagationTransformer(),
-                DeadCodeEliminationMethodTransformer(),
-                RedundantGotoMethodTransformer(),
-                RedundantNopsCleanupMethodTransformer(),
-                MethodVerifier("AFTER optimizations")
+            CapturedVarsOptimizationMethodTransformer(),
+            RedundantNullCheckMethodTransformer(),
+            RedundantCheckCastEliminationMethodTransformer(),
+            ConstantConditionEliminationMethodTransformer(),
+            RedundantBoxingMethodTransformer(),
+            StackPeepholeOptimizationsTransformer(),
+            PopBackwardPropagationTransformer(),
+            DeadCodeEliminationMethodTransformer(),
+            RedundantGotoMethodTransformer(),
+            RedundantNopsCleanupMethodTransformer(),
+            MethodVerifier("AFTER optimizations")
         )
 
         fun canBeOptimized(node: MethodNode): Boolean {

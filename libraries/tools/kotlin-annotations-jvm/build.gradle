@@ -3,6 +3,7 @@ description = 'Kotlin annotations for JVM'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 
 sourceSets {

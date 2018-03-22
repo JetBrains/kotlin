@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
@@ -29,7 +29,7 @@ abstract class AbstractJvmWithLibBasicCompletionTest : KotlinFixtureCompletionBa
         if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
             return super.getProjectDescriptor()
         }
-        return JdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(false) + "Src", false)
+        return SdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(false) + "Src", false)
     }
 
     override fun getPlatform() = JvmPlatform

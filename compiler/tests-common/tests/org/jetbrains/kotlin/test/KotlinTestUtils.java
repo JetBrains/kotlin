@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test;
@@ -37,6 +26,7 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import kotlin.collections.CollectionsKt;
@@ -105,6 +95,9 @@ public class KotlinTestUtils {
 
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
     public static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
+
+    public static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
+            Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
 
     private static final List<File> filesToDelete = new ArrayList<>();
 
@@ -366,7 +359,32 @@ public class KotlinTestUtils {
     }
 
     public static File findAndroidApiJar() {
-        return new File(getHomeDirectory(), "dependencies/android.jar");
+        String androidJarProp = System.getProperty("android.jar");
+        File androidJarFile = androidJarProp == null ? null : new File(androidJarProp);
+        if (androidJarFile == null || !androidJarFile.isFile()) {
+            throw new RuntimeException(
+                    "Unable to get a valid path from 'android.jar' property (" +
+                    androidJarProp +
+                    "), please point it to the 'android.jar' file location");
+        }
+        return androidJarFile;
+    }
+
+    @NotNull
+    public static File findAndroidSdk() {
+        String androidSdkProp = System.getProperty("android.sdk");
+        File androidSdkDir = androidSdkProp == null ? null : new File(androidSdkProp);
+        if (androidSdkDir == null || !androidSdkDir.isDirectory()) {
+            throw new RuntimeException(
+                    "Unable to get a valid path from 'android.sdk' property (" +
+                    androidSdkProp +
+                    "), please point it to the android SDK location");
+        }
+        return androidSdkDir;
+    }
+
+    public static String getAndroidSdkSystemIndependentPath() {
+        return PathUtil.toSystemIndependentName(findAndroidSdk().getAbsolutePath());
     }
 
     public static File getAnnotationsJar() {
@@ -557,7 +575,7 @@ public class KotlinTestUtils {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJarForTests());
         }
         else if (configurationKind.getWithMockRuntime()) {
-            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.mockRuntimeJarForTests());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.minimalRuntimeJarForTests());
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.scriptRuntimeJarForTests());
         }
         if (configurationKind.getWithReflection()) {

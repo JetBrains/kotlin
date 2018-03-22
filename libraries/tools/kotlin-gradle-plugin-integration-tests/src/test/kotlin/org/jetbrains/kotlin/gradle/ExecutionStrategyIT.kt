@@ -19,10 +19,6 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
 }
 
 open class ExecutionStrategyIT : BaseGradleIT() {
-    companion object {
-        private const val GRADLE_VERSION = "2.10"
-    }
-
     @Test
     fun testDaemon() {
         doTestExecutionStrategy("daemon")
@@ -39,7 +35,7 @@ open class ExecutionStrategyIT : BaseGradleIT() {
     }
 
     private fun doTestExecutionStrategy(executionStrategy: String) {
-        val project = Project("kotlinBuiltins", GRADLE_VERSION)
+        val project = Project("kotlinBuiltins")
         setupProject(project)
 
         val strategyCLIArg = "-Dkotlin.compiler.execution.strategy=$executionStrategy"
@@ -69,6 +65,6 @@ open class ExecutionStrategyIT : BaseGradleIT() {
     }
 
     protected open fun CompiledProject.checkOutput() {
-        assertFileExists("app/build/classes/main/foo/MainKt.class")
+        assertFileExists(kotlinClassesDir(subproject = "app") + "foo/MainKt.class")
     }
 }

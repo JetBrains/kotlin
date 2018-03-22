@@ -65,10 +65,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.KotlinPaths;
-import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.StringsKt;
+import org.jetbrains.kotlin.utils.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -146,6 +143,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult);
         }
 
+        CollectionsKt.sortBy(allKotlinFiles, ktFile -> VfsUtilCore.virtualToIoFile(ktFile.getVirtualFile()));
         return translator.translate(reporter, allKotlinFiles, mainCallParameters, jsAnalysisResult);
     }
 
@@ -221,7 +219,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
+                messageCollector, CommonConfigurationKeysKt.getLanguageVersionSettings(configuration)
+        );
         analyzerWithCompilerReport.analyzeAndReport(sourcesFiles, () -> TopDownAnalyzerFacadeForJS.analyzeFiles(sourcesFiles, config));
         if (analyzerWithCompilerReport.hasErrors()) {
             return COMPILATION_ERROR;
@@ -384,8 +384,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (arguments.getMetaInfo()) {
             configuration.put(JSConfigurationKeys.META_INFO, true);
         }
-
-        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, arguments.getTypedArrays());
 
         configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.getFriendModulesDisabled());
 

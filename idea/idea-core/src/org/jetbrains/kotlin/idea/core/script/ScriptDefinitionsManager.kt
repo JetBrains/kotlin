@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -27,6 +27,7 @@ import com.intellij.openapi.projectRoots.ex.PathUtilEx
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
+import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
@@ -53,7 +54,17 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
         if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
 
         definitionsByContributor[contributor] = contributor.safeGetDefinitions()
+
         updateDefinitions()
+    }
+
+    fun getDefinitionsBy(contributor: ScriptDefinitionContributor): List<KotlinScriptDefinition> = lock.write {
+        val notLoadedYet = definitions.isEmpty()
+        if (notLoadedYet) return emptyList()
+
+        if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
+
+        return definitionsByContributor[contributor] ?: emptyList()
     }
 
     private fun currentDefinitions(): List<KotlinScriptDefinition> {
@@ -84,14 +95,18 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     }
 
     fun reloadScriptDefinitions() = lock.write {
-        definitionsByContributor = getContributors().associateByTo(mutableMapOf(), { it }, { it.safeGetDefinitions() })
+        for (contributor in getContributors()) {
+            val definitions = contributor.safeGetDefinitions()
+            definitionsByContributor[contributor] = definitions
+        }
+
         updateDefinitions()
     }
 
     private fun updateDefinitions() {
         definitions = definitionsByContributor.values.flattenTo(mutableListOf())
         // TODO: clear by script type/definition
-        project.service<ScriptDependenciesUpdater>().clear()
+        ServiceManager.getService(project, ScriptDependenciesUpdater::class.java).clear()
     }
 
     private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> {
@@ -106,7 +121,7 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     }
 
     companion object {
-        fun getInstance(project: Project): ScriptDefinitionsManager = project.service<ScriptDefinitionProvider>() as ScriptDefinitionsManager
+        fun getInstance(project: Project): ScriptDefinitionsManager = ServiceManager.getService(project, ScriptDefinitionProvider::class.java) as ScriptDefinitionsManager
     }
 }
 

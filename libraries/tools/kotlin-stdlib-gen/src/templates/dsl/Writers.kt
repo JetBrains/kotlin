@@ -87,7 +87,7 @@ fun List<MemberBuilder>.writeTo(file: File, platformSource: PlatformSourceFile) 
         }
         writer.appendln("import kotlin.comparisons.*")
 
-        if (platform != Platform.Common && sourceFile == SourceFile.Sequences) {
+        if (sourceFile == SourceFile.Sequences) {
             writer.appendln("import kotlin.coroutines.experimental.*")
         }
 

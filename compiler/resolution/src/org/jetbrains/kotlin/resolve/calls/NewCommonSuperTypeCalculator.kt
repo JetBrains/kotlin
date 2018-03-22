@@ -89,7 +89,7 @@ object NewCommonSuperTypeCalculator {
     private fun commonSuperTypeForNotNullTypes(types: List<SimpleType>, depth: Int): SimpleType {
         val uniqueTypes = types.uniquify()
         val filteredType = uniqueTypes.filterNot { type ->
-            uniqueTypes.any { other -> type != other && NewKotlinTypeChecker.isSubtypeOf(type, other)}
+            uniqueTypes.any { other -> type != other && NewKotlinTypeChecker.isSubtypeOf(type, other) }
         }
         // seems like all types are equal
         if (filteredType.isEmpty()) return uniqueTypes.first()
@@ -125,11 +125,16 @@ object NewCommonSuperTypeCalculator {
     }
 
     private fun superTypeWithGivenConstructor(
-            types: List<SimpleType>,
-            constructor: TypeConstructor,
-            depth: Int
+        types: List<SimpleType>,
+        constructor: TypeConstructor,
+        depth: Int
     ): SimpleType {
-        if (constructor.parameters.isEmpty()) return KotlinTypeFactory.simpleType(Annotations.EMPTY, constructor, emptyList(), nullable = false)
+        if (constructor.parameters.isEmpty()) return KotlinTypeFactory.simpleType(
+            Annotations.EMPTY,
+            constructor,
+            emptyList(),
+            nullable = false
+        )
 
         val typeCheckerContext = TypeCheckerContext(false)
 
@@ -158,12 +163,11 @@ object NewCommonSuperTypeCalculator {
             }
 
             val argument =
-                    if (thereIsStar || typeProjections.isEmpty()) {
-                        StarProjectionImpl(parameter)
-                    }
-                    else {
-                        calculateArgument(parameter, typeProjections, depth)
-                    }
+                if (thereIsStar || typeProjections.isEmpty()) {
+                    StarProjectionImpl(parameter)
+                } else {
+                    calculateArgument(parameter, typeProjections, depth)
+                }
 
             arguments.add(argument)
         }
@@ -185,20 +189,17 @@ object NewCommonSuperTypeCalculator {
         val asOut: Boolean
         if (parameter.variance != Variance.INVARIANT) {
             asOut = parameter.variance == Variance.OUT_VARIANCE
-        }
-        else {
+        } else {
             val thereIsOut = arguments.any { it.projectionKind == Variance.OUT_VARIANCE }
             val thereIsIn = arguments.any { it.projectionKind == Variance.IN_VARIANCE }
             if (thereIsOut) {
                 if (thereIsIn) {
                     // CS(Inv<out X>, Inv<in Y>) = Inv<*>
                     return StarProjectionImpl(parameter)
-                }
-                else {
+                } else {
                     asOut = true
                 }
-            }
-            else {
+            } else {
                 asOut = !thereIsIn
             }
         }
@@ -207,11 +208,16 @@ object NewCommonSuperTypeCalculator {
         // CS(In<X>, In<Y>) = In<X & Y>
         if (asOut) {
             val type = commonSuperType(arguments.map { it.type.unwrap() }, depth + 1)
-            return if (parameter.variance != Variance.INVARIANT) return type.asTypeProjection() else TypeProjectionImpl(Variance.OUT_VARIANCE, type)
-        }
-        else {
+            return if (parameter.variance != Variance.INVARIANT) return type.asTypeProjection() else TypeProjectionImpl(
+                Variance.OUT_VARIANCE,
+                type
+            )
+        } else {
             val type = intersectTypes(arguments.map { it.type.unwrap() })
-            return if (parameter.variance != Variance.INVARIANT) return type.asTypeProjection() else TypeProjectionImpl(Variance.IN_VARIANCE, type)
+            return if (parameter.variance != Variance.INVARIANT) return type.asTypeProjection() else TypeProjectionImpl(
+                Variance.IN_VARIANCE,
+                type
+            )
         }
     }
 }

@@ -26,8 +26,8 @@ import org.jetbrains.org.objectweb.asm.Type
 
 class CharSequenceRangeValue(private val canCacheLength: Boolean, private val charSequenceClassType: Type?) : RangeValue {
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInCharSequenceLoopGenerator(codegen, forExpression, canCacheLength, charSequenceClassType)
+        ForInCharSequenceLoopGenerator(codegen, forExpression, canCacheLength, charSequenceClassType)
 
     override fun createInExpressionGenerator(codegen: ExpressionCodegen, operatorReference: KtSimpleNameExpression): InExpressionGenerator =
-            CallBasedInExpressionGenerator(codegen, operatorReference)
+        CallBasedInExpressionGenerator(codegen, operatorReference)
 }

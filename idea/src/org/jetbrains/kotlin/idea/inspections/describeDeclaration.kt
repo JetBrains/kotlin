@@ -17,17 +17,19 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 
 /**
- * @returns string description of declaration, like Function ''name''
+ * @return string description of declaration, like `Function "describe"`
  */
 fun KtNamedDeclaration.describe(): String? = when (this) {
-    is KtClass -> "Class ''$name''"
-    is KtObjectDeclaration -> "Object ''$name''"
-    is KtNamedFunction -> "Function ''$name''"
+    is KtClass -> "Class \"$name\""
+    is KtObjectDeclaration -> "Object \"$name\""
+    is KtNamedFunction -> "Function \"$name\""
     is KtSecondaryConstructor -> "Constructor"
-    is KtProperty, is KtParameter -> "Property ''$name''"
-    is KtTypeParameter -> "Type parameter ''$name''"
-    is KtTypeAlias -> "Type alias ''$name''"
+    is KtProperty -> "Property \"$name\""
+    is KtParameter -> if (this.isPropertyParameter()) "Property \"$name\"" else "Parameter \"$name\""
+    is KtTypeParameter -> "Type parameter \"$name\""
+    is KtTypeAlias -> "Type alias \"$name\""
     else -> null
 }

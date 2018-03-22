@@ -29,7 +29,7 @@ import org.junit.Assert
 import java.io.File
 import java.io.IOException
 
-class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
+open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
     @Throws(IOException::class)
     override fun getIprFile(): File {
         val tempDir = FileUtil.generateRandomTemporaryPath()
@@ -128,4 +128,9 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
         val settings = myProject.getLanguageVersionSettings()
         Assert.assertEquals(ApiVersion.KOTLIN_1_1, settings.apiVersion)
     }
+
+    //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also PluginStartupComponent)
+    /*fun testKotlinSdkAdded() {
+        Assert.assertTrue(ProjectJdkTable.getInstance().allJdks.any { it.sdkType is KotlinSdkType })
+    }*/
 }

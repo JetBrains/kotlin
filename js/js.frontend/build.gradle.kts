@@ -1,5 +1,6 @@
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 jvmTarget = "1.6"
 
@@ -9,7 +10,8 @@ dependencies {
     compile(project(":js:js.ast"))
     compile(project(":js:js.parser"))
     compile(project(":js:js.serializer"))
-    compile(ideaSdkCoreDeps("intellij-core"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("guava", rootProject = rootProject) }
 }
 
 sourceSets {

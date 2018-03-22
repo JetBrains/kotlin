@@ -1,4 +1,6 @@
+// !LANGUAGE: +NestedClassesInAnnotations
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+
 <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>
 fun foo() {
     <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> val x = "A"
@@ -108,6 +110,13 @@ open class KKK : K {
     override val i: Int = 0
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     override final val j: Int = 0
+}
+
+annotation class L {
+    companion object {
+        <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+        var c = 3
+    }
 }
 
 object O {

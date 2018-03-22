@@ -30,11 +30,13 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class SubstitutingFunctor(private val basicEffects: List<ESEffect>, private val ownerFunction: FunctionDescriptor) : AbstractReducingFunctor() {
+class SubstitutingFunctor(private val basicEffects: List<ESEffect>, private val ownerFunction: FunctionDescriptor) :
+    AbstractReducingFunctor() {
     override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
         if (basicEffects.isEmpty()) return emptyList()
 
-        val receiver = listOfNotNull(ownerFunction.dispatchReceiverParameter?.toESVariable(), ownerFunction.extensionReceiverParameter?.toESVariable())
+        val receiver =
+            listOfNotNull(ownerFunction.dispatchReceiverParameter?.toESVariable(), ownerFunction.extensionReceiverParameter?.toESVariable())
         val parameters = receiver + ownerFunction.valueParameters.map { it.toESVariable() }
 
         assert(parameters.size == arguments.size) {

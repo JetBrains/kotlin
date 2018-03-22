@@ -26,18 +26,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrPropertyReferenceImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val descriptor: PropertyDescriptor,
-        override val field: IrFieldSymbol?,
-        override val getter: IrFunctionSymbol?,
-        override val setter: IrFunctionSymbol?,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        origin: IrStatementOrigin? = null
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override val descriptor: PropertyDescriptor,
+    override val field: IrFieldSymbol?,
+    override val getter: IrFunctionSymbol?,
+    override val setter: IrFunctionSymbol?,
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    origin: IrStatementOrigin? = null
 ) : IrPropertyReference,
-        IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArguments, origin)
-{
+    IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArguments, origin) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitPropertyReference(this, data)
+        visitor.visitPropertyReference(this, data)
 }

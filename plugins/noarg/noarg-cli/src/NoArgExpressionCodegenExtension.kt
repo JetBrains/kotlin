@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.noarg
 
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy.CodegenBased
+import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.codegen.FunctionGenerationStrategy.CodegenBased
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 class NoArgExpressionCodegenExtension(val invokeInitializers: Boolean = false) : ExpressionCodegenExtension {
@@ -93,7 +93,7 @@ class NoArgExpressionCodegenExtension(val invokeInitializers: Boolean = false) :
 
     private fun ClassConstructorDescriptor.isZeroParameterConstructor(): Boolean {
         val parameters = this.valueParameters
-        return parameters.isEmpty()
-               || (parameters.all { it.hasDefaultValue() } && (isPrimary || findJvmOverloadsAnnotation() != null))
+        return parameters.isEmpty() ||
+                (parameters.all { it.declaresDefaultValue() } && (isPrimary || findJvmOverloadsAnnotation() != null))
     }
 }

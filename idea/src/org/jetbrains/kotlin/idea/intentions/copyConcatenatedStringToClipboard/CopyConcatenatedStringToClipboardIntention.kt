@@ -19,11 +19,10 @@ package org.jetbrains.kotlin.idea.intentions.copyConcatenatedStringToClipboard
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.ide.CopyPasteManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import java.awt.datatransfer.StringSelection
 
 class CopyConcatenatedStringToClipboardIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
@@ -35,7 +34,7 @@ class CopyConcatenatedStringToClipboardIntention : SelfTargetingOffsetIndependen
 
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (element.operationToken != KtTokens.PLUS) return false
-        val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
+        val resolvedCall = element.resolveToCall() ?: return false
         return KotlinBuiltIns.isString(resolvedCall.candidateDescriptor.returnType)
     }
 }

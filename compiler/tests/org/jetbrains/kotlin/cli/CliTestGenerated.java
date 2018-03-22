@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -177,6 +177,54 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("experimentalAndUseExperimentalWithSameAnnotation.args")
+        public void testExperimentalAndUseExperimentalWithSameAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalAndUseExperimentalWithSameAnnotation.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalDeprecated.args")
+        public void testExperimentalDeprecated() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalDeprecated.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalDeprecatedWarning.args")
+        public void testExperimentalDeprecatedWarning() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalDeprecatedWarning.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalIsNotAnnotation.args")
+        public void testExperimentalIsNotAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalIsNotAnnotation.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalIsNotMarker.args")
+        public void testExperimentalIsNotMarker() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalIsNotMarker.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalNested.args")
+        public void testExperimentalNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalNested.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalRuntimeScope.args")
+        public void testExperimentalRuntimeScope() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalRuntimeScope.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("experimentalUnresolved.args")
+        public void testExperimentalUnresolved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/experimentalUnresolved.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("extraArgumentPassedInObsoleteForm.args")
         public void testExtraArgumentPassedInObsoleteForm() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
@@ -336,6 +384,12 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("kotlinPackage.args")
         public void testKotlinPackage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/kotlinPackage.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("kt22304.args")
+        public void testKt22304() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/kt22304.args");
             doJvmTest(fileName);
         }
 

@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.builtins.transformRuntimeFunctionTypeToSuspendFuncti
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.*
@@ -201,11 +201,11 @@ class TypeDeserializer(
                 StarProjectionImpl(parameter)
         }
 
-        val variance = Deserialization.variance(typeArgumentProto.projection)
+        val projection = ProtoEnumFlags.variance(typeArgumentProto.projection)
         val type = typeArgumentProto.type(c.typeTable) ?:
                 return TypeProjectionImpl(ErrorUtils.createErrorType("No type recorded"))
 
-        return TypeProjectionImpl(variance, type(type))
+        return TypeProjectionImpl(projection, type(type))
     }
 
     override fun toString() = debugName + (if (parent == null) "" else ". Child of ${parent.debugName}")

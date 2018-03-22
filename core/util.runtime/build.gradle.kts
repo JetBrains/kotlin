@@ -2,6 +2,7 @@
 apply {
     plugin("java")
     plugin("kotlin")
+    plugin("jps-compatible")
 }
 
 jvmTarget = "1.6"

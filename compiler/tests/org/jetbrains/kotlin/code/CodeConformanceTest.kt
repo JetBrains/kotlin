@@ -34,7 +34,8 @@ class CodeConformanceTest : TestCase() {
                 "js/js.translator/testData/node_modules",
                 "libraries/kotlin.test/js/it/.gradle",
                 "libraries/kotlin.test/js/it/node_modules",
-                "libraries/stdlib/js/node_modules",
+                "libraries/stdlib/js/.gradle",
+                "libraries/stdlib/js/build",
                 "libraries/reflect/build",
                 "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
                 "dependencies",
@@ -42,8 +43,6 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
                 "out",
                 "dist",
-                "ideaSDK",
-                "ultimate/ideaSDK",
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
                 "libraries/tools/kotlin-maven-plugin/target",
                 "compiler/testData/psi/kdoc",
@@ -55,18 +54,19 @@ class CodeConformanceTest : TestCase() {
                 "dependencies",
                 "out",
                 "dist",
-                "ideaSDK",
-                "ultimate/ideaSDK",
                 "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
                 "js/js.tests/.gradle",
                 "js/js.translator/testData/node_modules",
                 "libraries/stdlib/common/build",
                 "libraries/stdlib/common/target",
+                "libraries/stdlib/js/.gradle",
                 "libraries/stdlib/js/build",
                 "libraries/kotlin.test/js/it/.gradle",
                 "libraries/kotlin.test/js/it/node_modules",
-                "libraries/stdlib/js/node_modules"
+                "libraries/stdlib/js/node_modules",
+                "buildSrc/prepare-deps/android-dx/build",
+                "buildSrc/prepare-deps/intellij-sdk/build"
         )
     }
 

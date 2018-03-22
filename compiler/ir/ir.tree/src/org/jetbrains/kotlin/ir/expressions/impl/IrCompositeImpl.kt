@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.types.KotlinType
 
 
 class IrCompositeImpl(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin? = null) :
-        IrContainerExpressionBase(startOffset, endOffset, type, origin), IrComposite {
+    IrContainerExpressionBase(startOffset, endOffset, type, origin), IrComposite {
     constructor(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?, statements: List<IrStatement>) :
             this(startOffset, endOffset, type, origin) {
         this.statements.addAll(statements)
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitComposite(this, data)
+        visitor.visitComposite(this, data)
 
 }

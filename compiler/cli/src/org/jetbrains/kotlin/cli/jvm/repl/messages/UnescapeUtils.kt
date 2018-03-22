@@ -17,24 +17,9 @@
 package org.jetbrains.kotlin.cli.jvm.repl.messages
 
 import com.intellij.openapi.util.text.StringUtil
-import org.w3c.dom.Element
-import org.xml.sax.InputSource
-import java.io.ByteArrayInputStream
-import javax.xml.parsers.DocumentBuilderFactory
 
 // using '#' to avoid collisions with xml escaping
-val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
-val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
-
-fun parseXml(inputMessage: String): String {
-    fun strToSource(s: String) = InputSource(ByteArrayInputStream(s.toByteArray()))
-
-    val docFactory = DocumentBuilderFactory.newInstance()
-    val docBuilder = docFactory.newDocumentBuilder()
-    val input = docBuilder.parse(strToSource(inputMessage))
-
-    val root = input.firstChild as Element
-    return root.textContent
-}
+internal val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
+internal val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
 
 fun unescapeLineBreaks(s: String) = StringUtil.replace(s, XML_REPLACEMENTS, SOURCE_CHARS)

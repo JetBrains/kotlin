@@ -51,7 +51,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  */
 class EffectsExtractingVisitor(
     private val trace: BindingTrace,
-    private val moduleDescriptor: ModuleDescriptor
+    private val moduleDescriptor: ModuleDescriptor,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) : KtVisitor<Computation, Unit>() {
     fun extractOrGetCached(element: KtElement): Computation {
         trace[BindingContext.EXPRESSION_EFFECTS, element]?.let { return it }
@@ -143,7 +144,7 @@ class EffectsExtractingVisitor(
     }
 
     private fun KtExpression.createDataFlowValue(): DataFlowValue? {
-        return DataFlowValueFactory.createDataFlowValue(
+        return dataFlowValueFactory.createDataFlowValue(
             expression = this,
             type = trace.getType(this) ?: return null,
             bindingContext = trace.bindingContext,
@@ -172,7 +173,7 @@ class EffectsExtractingVisitor(
         valueArgumentsByIndex?.mapTo(arguments) {
             val valueArgument = (it as? ExpressionValueArgument)?.valueArgument ?: return null
             when (valueArgument) {
-                is KtLambdaArgument -> ESLambda(valueArgument.getLambdaExpression())
+                is KtLambdaArgument -> valueArgument.getLambdaExpression()?.let { ESLambda(it) } ?: return null
                 else -> extractOrGetCached(valueArgument.getArgumentExpression() ?: return null)
             }
         } ?: return null

@@ -37,15 +37,16 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ConditionalDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
-class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
+class EffectSystem(val languageVersionSettings: LanguageVersionSettings, val dataFlowValueFactory: DataFlowValueFactory) {
 
     fun getDataFlowInfoForFinishedCall(
         resolvedCall: ResolvedCall<*>,
         bindingTrace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ): DataFlowInfo {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect)) return DataFlowInfo.EMPTY
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.UseReturnsEffect)) return DataFlowInfo.EMPTY
 
         // Prevent launch of effect system machinery on pointless cases (constants/enums/constructors/etc.)
         val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return DataFlowInfo.EMPTY
@@ -62,7 +63,7 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
         bindingTrace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ): ConditionalDataFlowInfo {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect)) return ConditionalDataFlowInfo.EMPTY
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.UseReturnsEffect)) return ConditionalDataFlowInfo.EMPTY
         if (leftExpression == null || rightExpression == null) return ConditionalDataFlowInfo.EMPTY
 
         val leftComputation =
@@ -82,7 +83,7 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
     }
 
     fun recordDefiniteInvocations(resolvedCall: ResolvedCall<*>, bindingTrace: BindingTrace, moduleDescriptor: ModuleDescriptor) {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.CallsInPlaceEffect)) return
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.UseCallsInPlaceEffect)) return
 
         // Prevent launch of effect system machinery on pointless cases (constants/enums/constructors/etc.)
         val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return
@@ -102,7 +103,7 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
         bindingTrace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ): DataFlowInfo {
-        if (!languageVersionSettings.supportsFeature(LanguageFeature.ReturnsEffect)) return DataFlowInfo.EMPTY
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.UseReturnsEffect)) return DataFlowInfo.EMPTY
         if (condition == null) return DataFlowInfo.EMPTY
 
         return getContextInfoWhen(ESReturns(value.lift()), condition, bindingTrace, moduleDescriptor)
@@ -120,7 +121,7 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
     }
 
     private fun getNonTrivialComputation(expression: KtExpression, trace: BindingTrace, moduleDescriptor: ModuleDescriptor): Computation? {
-        val computation = EffectsExtractingVisitor(trace, moduleDescriptor).extractOrGetCached(expression)
+        val computation = EffectsExtractingVisitor(trace, moduleDescriptor, dataFlowValueFactory).extractOrGetCached(expression)
         return if (computation == UNKNOWN_COMPUTATION) null else computation
     }
 }

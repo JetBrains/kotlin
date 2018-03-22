@@ -1,0 +1,10 @@
+4 override fun foo() = <bold>3</bold>
+10 	val <bold>z = c.foo()</bold>
+10 		val z = <bold>c.foo()</bold>
+4 			override fun <bold>foo() = 3</bold>
+4 				override fun foo() = <bold>3</bold>
+
+13 return <bold>4</bold>;
+10 	val <bold>z = c.foo()</bold>
+10 		val z = <bold>c.foo()</bold>
+13 			return <bold>4</bold>;

@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 
 class ForInProgressionExpressionLoopGenerator(
-        codegen: ExpressionCodegen,
-        forExpression: KtForExpression,
-        private val rangeExpression: KtExpression
+    codegen: ExpressionCodegen,
+    forExpression: KtForExpression,
+    private val rangeExpression: KtExpression
 ) : AbstractForInProgressionLoopGenerator(codegen, forExpression) {
     override fun storeProgressionParametersToLocalVars() {
         codegen.gen(rangeExpression, asmLoopRangeType)

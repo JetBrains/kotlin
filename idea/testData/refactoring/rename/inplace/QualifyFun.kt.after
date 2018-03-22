@@ -1,0 +1,8 @@
+package test
+
+fun foo() {
+    fun foo() {
+        test.foo()
+    }
+    innerGoo()
+}

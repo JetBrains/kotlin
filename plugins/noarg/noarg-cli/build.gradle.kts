@@ -2,13 +2,18 @@
 description = "Kotlin NoArg Compiler Plugin"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 dependencies {
+    testRuntime(intellijDep())
+
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("asm-all") }
     runtime(projectRuntimeJar(":kotlin-compiler"))
     runtime(projectDist(":kotlin-stdlib"))
 
@@ -17,8 +22,6 @@ dependencies {
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-
-    testRuntime(ideaSdkDeps("*.jar"))
 }
 
 sourceSets {
@@ -36,7 +39,6 @@ dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kot
 
 ideaPlugin {
     from(jar)
-    rename("^kotlin-", "")
 }
 
 projectTest {

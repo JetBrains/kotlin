@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -56,7 +56,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     fun testMainInTest() {
         val createResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createResult.module, PluginTestCaseBase.mockJdk())
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createResult.module, addJdk(testRootDisposable, ::mockJdk))
 
         val runConfiguration = createConfigurationFromMain("some.main")
         val javaParameters = getJavaRunParameters(runConfiguration)
@@ -142,7 +142,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     fun testUpdateOnClassRename() {
         val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, PluginTestCaseBase.mockJdk())
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
 
@@ -155,7 +155,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     fun testUpdateOnPackageRename() {
         val createModuleResult = configureModule(moduleDirPath("module"), getTestProject().baseDir!!)
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, PluginTestCaseBase.mockJdk())
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
 
@@ -167,15 +167,15 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     }
 
     fun testWithModuleForJdk6() {
-        checkModuleInfoName(null, PluginTestCaseBase.mockJdk())
+        checkModuleInfoName(null, addJdk(testRootDisposable, ::mockJdk))
     }
 
     fun testWithModuleForJdk9() {
-        checkModuleInfoName("MAIN", PluginTestCaseBase.mockJdk9())
+        checkModuleInfoName("MAIN", addJdk(testRootDisposable, ::mockJdk9))
     }
 
     fun testWithModuleForJdk9WithoutModuleInfo() {
-        checkModuleInfoName(null, PluginTestCaseBase.mockJdk9())
+        checkModuleInfoName(null, addJdk(testRootDisposable, ::mockJdk9))
     }
 
     private fun checkModuleInfoName(moduleName: String?, sdk: Sdk) {
@@ -192,7 +192,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         val srcDir = createModuleResult.srcDir
 
-        configureRuntime(createModuleResult.module, PluginTestCaseBase.mockJdk())
+        configureRuntime(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
 
         try {
             val expectedClasses = ArrayList<String>()
@@ -222,7 +222,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
             Assert.assertEquals(expectedClasses, actualClasses)
         }
         finally {
-            ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(createModuleResult.module, PluginTestCaseBase.mockJdk())
+            ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(createModuleResult.module, mockJdk())
         }
     }
 
@@ -266,8 +266,8 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     private fun moduleDirPath(moduleName: String) = "${testDataPath}${getTestName(false)}/$moduleName"
 
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/run/"
-    override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
+    override fun getTestDataPath() = getTestDataPathBase() + "/run/"
+    override fun getTestProjectJdk() = mockJdk()
 
     private class CreateModuleResult(
             val module: Module,

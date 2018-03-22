@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,6 +28,18 @@ public class MultiModuleRenameTestGenerated extends AbstractMultiModuleRenameTes
     @TestMetadata("fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test")
     public void testFileNotUnderSourceRootWithNamesakeUnderSourceRoot_FileNotUnderSourceRootWithNamesakeUnderSourceRoot() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headerAndImplClassByImplTypeAlias/headerAndImplClassByImplTypeAlias.test")
+    public void testHeaderAndImplClassByImplTypeAlias_HeaderAndImplClassByImplTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headerAndImplClassByImplTypeAlias/headerAndImplClassByImplTypeAlias.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headerAndImplTypeAliasByImplClass/headerAndImplTypeAliasByImplClass.test")
+    public void testHeaderAndImplTypeAliasByImplClass_HeaderAndImplTypeAliasByImplClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headerAndImplTypeAliasByImplClass/headerAndImplTypeAliasByImplClass.test");
         doTest(fileName);
     }
 
@@ -136,6 +148,12 @@ public class MultiModuleRenameTestGenerated extends AbstractMultiModuleRenameTes
     @TestMetadata("headersAndImplsByImplVal/headersAndImplsByImplVal.test")
     public void testHeadersAndImplsByImplVal_HeadersAndImplsByImplVal() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplVal/headersAndImplsByImplVal.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("implClassAndTypeAliasByHeaderClass/implClassAndTypeAliasByHeaderClass.test")
+    public void testImplClassAndTypeAliasByHeaderClass_ImplClassAndTypeAliasByHeaderClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/implClassAndTypeAliasByHeaderClass/implClassAndTypeAliasByHeaderClass.test");
         doTest(fileName);
     }
 

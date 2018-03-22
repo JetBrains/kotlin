@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -58,6 +58,30 @@ public class SlicerNullnessGroupingTestGenerated extends AbstractSlicerNullnessG
     @TestMetadata("delegateGetter.kt")
     public void testDelegateGetter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/delegateGetter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("delegateToJavaGetter.kt")
+    public void testDelegateToJavaGetter() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/delegateToJavaGetter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("diamondHierarchyJKMiddleClassFun.kt")
+    public void testDiamondHierarchyJKMiddleClassFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyJKMiddleClassFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("diamondHierarchyJKMiddleInterfaceFun.kt")
+    public void testDiamondHierarchyJKMiddleInterfaceFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyJKMiddleInterfaceFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("diamondHierarchyJKRootInterfaceFun.kt")
+    public void testDiamondHierarchyJKRootInterfaceFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/diamondHierarchyJKRootInterfaceFun.kt");
         doTest(fileName);
     }
 
@@ -310,6 +334,12 @@ public class SlicerNullnessGroupingTestGenerated extends AbstractSlicerNullnessG
     @TestMetadata("settersViaDelegateForSimpleRef.kt")
     public void testSettersViaDelegateForSimpleRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaDelegateForSimpleRef.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("settersViaJavaDelegate.kt")
+    public void testSettersViaJavaDelegate() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/slicer/inflow/settersViaJavaDelegate.kt");
         doTest(fileName);
     }
 

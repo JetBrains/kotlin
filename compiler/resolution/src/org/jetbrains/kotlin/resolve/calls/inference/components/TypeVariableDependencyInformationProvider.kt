@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.SmartSet
 
 class TypeVariableDependencyInformationProvider(
-        private val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>,
-        private val postponedKtPrimitives: List<PostponedResolvedAtom>,
-        private val topLevelType: UnwrappedType?
+    private val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>,
+    private val postponedKtPrimitives: List<PostponedResolvedAtom>,
+    private val topLevelType: UnwrappedType?
 ) {
     // not oriented edges
     private val constrainEdges: MutableMap<TypeConstructor, MutableSet<TypeConstructor>> = hashMapOf()

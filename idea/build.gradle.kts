@@ -1,10 +1,11 @@
-
-
 import org.gradle.jvm.tasks.Jar
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 dependencies {
+    testRuntime(intellijDep())
+
     compile(project(":kotlin-stdlib"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
@@ -18,7 +19,10 @@ dependencies {
     compile(project(":js:js.serializer"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:util"))
-    compile(project(":kotlin-compiler-runner"))
+    compile(project(":kotlin-build-common"))
+    compile(project(":compiler:daemon-common"))
+    compile(projectRuntimeJar(":kotlin-daemon-client"))
+    compile(project(":kotlin-compiler-runner")) { isTransitive = false }
     compile(project(":compiler:plugin-api"))
     compile(project(":eval4j"))
     compile(project(":j2k"))
@@ -29,66 +33,71 @@ dependencies {
     compile(project(":idea:kotlin-gradle-tooling"))
     compile(project(":plugins:uast-kotlin"))
     compile(project(":plugins:uast-kotlin-idea"))
-//    compile(project(":kotlin-daemon-client")) { isTransitive = false }
     compile(project(":kotlin-script-util")) { isTransitive = false }
 
-    compile(ideaSdkCoreDeps("intellij-core", "util", "annotations"))
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    compile(commonDep("org.jetbrains", "markdown"))
 
-    compileOnly(ideaSdkDeps("openapi", "idea", "velocity", "boot", "gson", "swingx-core", "jsr305", "forms_rt"))
+    compileOnly(project(":kotlin-daemon-client"))
 
-    compile(ideaPluginDeps("IntelliLang", plugin = "IntelliLang"))
-    compile(ideaPluginDeps("copyright", plugin = "copyright"))
-    compile(ideaPluginDeps("properties", plugin = "properties"))
-    compile(ideaPluginDeps("java-i18n", plugin = "java-i18n"))
-
-    compile(preloadedDeps("markdown", "kotlinx-coroutines-core"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) {
+        includeJars("annotations", "openapi", "idea", "velocity", "boot", "gson", "log4j", "asm-all",
+                    "swingx-core", "forms_rt", "util", "jdom", "trove4j", "guava", rootProject = rootProject)
+    }
+    compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
+    compileOnly(intellijPluginDep("IntelliLang"))
+    compileOnly(intellijPluginDep("copyright"))
+    compileOnly(intellijPluginDep("properties"))
+    compileOnly(intellijPluginDep("java-i18n"))
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle")) { isTransitive = false }
     testCompile(project(":idea:idea-maven")) { isTransitive = false }
     testCompile(commonDep("junit:junit"))
 
-    testCompileOnly(ideaPluginDeps("gradle-base-services", "gradle-tooling-extension-impl", "gradle-wrapper", plugin = "gradle"))
-    testCompileOnly(ideaPluginDeps("Groovy", plugin = "Groovy"))
-    testCompileOnly(ideaPluginDeps("maven", "maven-server-api", plugin = "maven"))
-
-    testCompileOnly(ideaSdkDeps("groovy-all", "velocity", "gson", "jsr305", "idea_rt"))
-
-    testRuntime(ideaSdkDeps("*.jar"))
-
-    testRuntime(ideaPluginDeps("*.jar", plugin = "junit"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "properties"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "gradle"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "Groovy"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "coverage"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "maven"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "android"))
-    testRuntime(ideaPluginDeps("*.jar", plugin = "testng"))
-
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(projectDist(":kotlin-preloader"))
 
-    // deps below are test runtime deps, but made test compile to split compilation and running to reduce mem req
-    testCompile(project(":plugins:android-extensions-compiler"))
-    testCompile(project(":plugins:android-extensions-ide")) { isTransitive = false }
-    testCompile(project(":allopen-ide-plugin")) { isTransitive = false }
-    testCompile(project(":kotlin-allopen-compiler-plugin"))
-    testCompile(project(":noarg-ide-plugin")) { isTransitive = false }
-    testCompile(project(":kotlin-noarg-compiler-plugin"))
-    testCompile(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
-    testCompile(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
-    testCompile(project(":kotlin-sam-with-receiver-compiler-plugin"))
-    testCompile(project(":idea:idea-android")) { isTransitive = false }
-    testCompile(project(":plugins:lint")) { isTransitive = false }
-    testCompile(project(":plugins:uast-kotlin"))
+    testCompile(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
+
+    testRuntime(project(":plugins:android-extensions-compiler"))
+    testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
+    testRuntime(project(":allopen-ide-plugin")) { isTransitive = false }
+    testRuntime(project(":kotlin-allopen-compiler-plugin"))
+    testRuntime(project(":noarg-ide-plugin")) { isTransitive = false }
+    testRuntime(project(":kotlin-noarg-compiler-plugin"))
+    testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
+    testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
+    testRuntime(project(":idea:idea-android")) { isTransitive = false }
+    testRuntime(project(":plugins:lint")) { isTransitive = false }
+    testRuntime(project(":plugins:uast-kotlin"))
 
     (rootProject.extra["compilerModules"] as Array<String>).forEach {
-        testCompile(project(it))
+        testRuntime(project(it))
     }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(intellijPluginDep("IntelliLang"))
+    testCompile(intellijPluginDep("copyright"))
+    testCompile(intellijPluginDep("properties"))
+    testCompile(intellijPluginDep("java-i18n"))
+    testCompileOnly(intellijDep()) { includeJars("groovy-all", "velocity", "gson", "idea_rt", "util", "log4j", rootProject = rootProject) }
+    testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
+    testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-base-services", "gradle-tooling-extension-impl", "gradle-wrapper", rootProject = rootProject) }
+    testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
+    testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
+
+    testRuntime(intellijPluginDep("junit"))
+    testRuntime(intellijPluginDep("gradle"))
+    testRuntime(intellijPluginDep("Groovy"))
+    testRuntime(intellijPluginDep("coverage"))
+    testRuntime(intellijPluginDep("maven"))
+    testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("testng"))
 }
 
 sourceSets {
@@ -108,8 +117,11 @@ sourceSets {
 }
 
 projectTest {
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
+    dependsOn(":dist")
     workingDir = rootDir
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+    }
 }
 
 testsJar {}

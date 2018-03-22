@@ -36,6 +36,20 @@ public final expect class Bar5 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final expect class Bar6 {
+    public constructor Bar6()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final expect class Bar7 {
+    public constructor Bar7(/*0*/ s: kotlin.String)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public final expect class Foo1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -91,6 +105,21 @@ public final actual class Bar5 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final class Bar6 {
+    public constructor Bar6()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final actual class Bar7 {
+    public constructor Bar7()
+    public constructor Bar7(/*0*/ s: kotlin.String)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public final actual class Foo1 {
     public constructor Foo1(/*0*/ s: kotlin.String)
     public final val s: kotlin.String
@@ -120,5 +149,5 @@ public open class JavaFoo {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias Bar3 = JavaBar
-public typealias Foo3 = JavaFoo
+public actual typealias Bar3 = JavaBar
+public actual typealias Foo3 = JavaFoo

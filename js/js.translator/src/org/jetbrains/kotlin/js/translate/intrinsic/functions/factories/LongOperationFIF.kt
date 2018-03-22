@@ -59,7 +59,7 @@ object LongOperationFIF : FunctionIntrinsicFactory {
 
     private val floatBinaryIntrinsics: Map<String, BaseBinaryIntrinsic> =
             mapOf(
-                    "compareTo" to BaseBinaryIntrinsic(::primitiveCompareTo),
+                    "compareTo" to BaseBinaryIntrinsic(::compareTo),
                     "plus" to BaseBinaryIntrinsic(::sum),
                     "minus" to BaseBinaryIntrinsic(::subtract),
                     "times" to BaseBinaryIntrinsic(::mul),

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.model
@@ -56,6 +45,11 @@ sealed class ResolvedAtom {
 
         this.subResolvedAtoms = subResolvedAtoms
     }
+
+    // For AllCandidates mode to avoid analyzing postponed arguments
+    fun setEmptyAnalyzedResults() {
+        setAnalyzedResults(emptyList())
+    }
 }
 
 abstract class ResolvedCallAtom : ResolvedAtom() {
@@ -74,14 +68,15 @@ class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : 
         setAnalyzedResults(listOf())
     }
 }
+
 sealed class PostponedResolvedAtom : ResolvedAtom() {
     abstract val inputTypes: Collection<UnwrappedType>
     abstract val outputType: UnwrappedType?
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(
-        override val atom: LambdaKotlinCallArgument,
-        val expectedType: UnwrappedType
+    override val atom: LambdaKotlinCallArgument,
+    val expectedType: UnwrappedType
 ) : PostponedResolvedAtom() {
     override val inputTypes: Collection<UnwrappedType> get() = listOf(expectedType)
     override val outputType: UnwrappedType? get() = null
@@ -92,19 +87,19 @@ class LambdaWithTypeVariableAsExpectedTypeAtom(
 }
 
 class ResolvedLambdaAtom(
-        override val atom: LambdaKotlinCallArgument,
-        val isSuspend: Boolean,
-        val receiver: UnwrappedType?,
-        val parameters: List<UnwrappedType>,
-        val returnType: UnwrappedType,
-        val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
+    override val atom: LambdaKotlinCallArgument,
+    val isSuspend: Boolean,
+    val receiver: UnwrappedType?,
+    val parameters: List<UnwrappedType>,
+    val returnType: UnwrappedType,
+    val typeVariableForLambdaReturnType: TypeVariableForLambdaReturnType?
 ) : PostponedResolvedAtom() {
     lateinit var resultArguments: List<KotlinCallArgument>
         private set
 
     fun setAnalyzedResults(
-            resultArguments: List<KotlinCallArgument>,
-            subResolvedAtoms: List<ResolvedAtom>
+        resultArguments: List<KotlinCallArgument>,
+        subResolvedAtoms: List<ResolvedAtom>
     ) {
         this.resultArguments = resultArguments
         setAnalyzedResults(subResolvedAtoms)
@@ -115,15 +110,15 @@ class ResolvedLambdaAtom(
 }
 
 class ResolvedCallableReferenceAtom(
-        override val atom: CallableReferenceKotlinCallArgument,
-        val expectedType: UnwrappedType?
+    override val atom: CallableReferenceKotlinCallArgument,
+    val expectedType: UnwrappedType?
 ) : PostponedResolvedAtom() {
     var candidate: CallableReferenceCandidate? = null
         private set
 
     fun setAnalyzedResults(
-            candidate: CallableReferenceCandidate?,
-            subResolvedAtoms: List<ResolvedAtom>
+        candidate: CallableReferenceCandidate?,
+        subResolvedAtoms: List<ResolvedAtom>
     ) {
         this.candidate = candidate
         setAnalyzedResults(subResolvedAtoms)
@@ -145,8 +140,8 @@ class ResolvedCallableReferenceAtom(
 }
 
 class ResolvedCollectionLiteralAtom(
-        override val atom: CollectionLiteralKotlinCallArgument,
-        val expectedType: UnwrappedType?
+    override val atom: CollectionLiteralKotlinCallArgument,
+    val expectedType: UnwrappedType?
 ) : ResolvedAtom() {
     init {
         setAnalyzedResults(listOf())
@@ -154,11 +149,11 @@ class ResolvedCollectionLiteralAtom(
 }
 
 class CallResolutionResult(
-        val type: Type,
-        val resultCallAtom: ResolvedCallAtom?,
-        val diagnostics: List<KotlinCallDiagnostic>,
-        val constraintSystem: ConstraintStorage,
-        val allCandidates: Collection<KotlinResolutionCandidate>? = null
+    val type: Type,
+    val resultCallAtom: ResolvedCallAtom?,
+    val diagnostics: List<KotlinCallDiagnostic>,
+    val constraintSystem: ConstraintStorage,
+    val allCandidates: Collection<KotlinResolutionCandidate>? = null
 ) : ResolvedAtom() {
     override val atom: ResolutionAtom? get() = null
 
@@ -176,7 +171,8 @@ class CallResolutionResult(
     override fun toString() = "$type, resultCallAtom = $resultCallAtom, (${diagnostics.joinToString()})"
 }
 
-val ResolvedCallAtom.freshReturnType: UnwrappedType? get() {
-    val returnType = candidateDescriptor.returnType ?: return null
-    return substitutor.safeSubstitute(returnType.unwrap())
-}
+val ResolvedCallAtom.freshReturnType: UnwrappedType?
+    get() {
+        val returnType = candidateDescriptor.returnType ?: return null
+        return substitutor.safeSubstitute(returnType.unwrap())
+    }

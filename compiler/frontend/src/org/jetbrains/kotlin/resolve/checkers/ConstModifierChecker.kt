@@ -19,28 +19,21 @@ package org.jetbrains.kotlin.resolve.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.isError
 
-object ConstModifierChecker : SimpleDeclarationChecker {
-    override fun check(
-        declaration: KtDeclaration,
-        descriptor: DeclarationDescriptor,
-        diagnosticHolder: DiagnosticSink,
-        bindingContext: BindingContext
-    ) {
+object ConstModifierChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is VariableDescriptor || !declaration.hasModifier(KtTokens.CONST_KEYWORD)) return
 
         val constModifierPsiElement = declaration.modifierList!!.getModifier(KtTokens.CONST_KEYWORD)!!
 
         val diagnostic = checkCanBeConst(declaration, constModifierPsiElement, descriptor).diagnostic
         if (diagnostic != null) {
-            diagnosticHolder.report(diagnostic)
+            context.trace.report(diagnostic)
         }
     }
 

@@ -54,8 +54,7 @@ class Substitutor(private val substitutions: Map<ESVariable, Computation>) : ESE
         return CallComputation(DefaultBuiltIns.Instance.booleanType, or.functor.invokeWithArguments(left, right))
     }
 
-    override fun visitVariable(esVariable: ESVariable): Computation?
-            = substitutions[esVariable] ?: esVariable
+    override fun visitVariable(esVariable: ESVariable): Computation? = substitutions[esVariable] ?: esVariable
 
     override fun visitConstant(esConstant: ESConstant): Computation? = esConstant
 }

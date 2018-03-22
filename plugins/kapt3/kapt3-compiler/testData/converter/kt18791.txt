@@ -1,6 +1,3 @@
-/**
- * @KaptMetadata
- */
 package app;
 
 import java.lang.System;
@@ -58,9 +55,6 @@ public class B {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 package app;
 
 import java.lang.System;
@@ -74,9 +68,6 @@ public abstract @interface Bind {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 package app;
 
 import java.lang.System;

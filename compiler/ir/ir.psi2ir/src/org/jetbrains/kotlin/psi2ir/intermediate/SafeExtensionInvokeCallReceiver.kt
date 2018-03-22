@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class SafeExtensionInvokeCallReceiver(
-        val generator: GeneratorWithScope,
-        val startOffset: Int,
-        val endOffset: Int,
-        val callBuilder: CallBuilder,
-        val functionReceiver: IntermediateValue,
-        val extensionInvokeReceiver: IntermediateValue
+    val generator: GeneratorWithScope,
+    val startOffset: Int,
+    val endOffset: Int,
+    val callBuilder: CallBuilder,
+    val functionReceiver: IntermediateValue,
+    val extensionInvokeReceiver: IntermediateValue
 ) : CallReceiver {
     override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
         // extensionInvokeReceiver is actually a first argument:
@@ -54,17 +54,17 @@ class SafeExtensionInvokeCallReceiver(
         val resultType = irResult.type.makeNullable()
 
         return IrBlockImpl(
-                startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL,
-                arrayListOf(
-                        irTmp,
-                        IrIfThenElseImpl(
-                                startOffset, endOffset, resultType,
-                                generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
-                                generator.context.constNull(startOffset, endOffset),
-                                irResult,
-                                IrStatementOrigin.SAFE_CALL
-                        )
+            startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL,
+            arrayListOf(
+                irTmp,
+                IrIfThenElseImpl(
+                    startOffset, endOffset, resultType,
+                    generator.context.equalsNull(startOffset, endOffset, safeReceiverValue.load()),
+                    generator.context.constNull(startOffset, endOffset),
+                    irResult,
+                    IrStatementOrigin.SAFE_CALL
                 )
+            )
         )
     }
 }

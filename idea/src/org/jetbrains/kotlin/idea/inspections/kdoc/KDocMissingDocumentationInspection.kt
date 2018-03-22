@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import com.siyeh.ig.psiutils.TestUtils
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.unblockDocument
@@ -30,26 +29,28 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KDocMissingDocumentationInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
-            namedDeclarationVisitor { element ->
-                if (TestUtils.isInTestSourceContent(element)) {
-                    return@namedDeclarationVisitor
-                }
-                val nameIdentifier = element.nameIdentifier
-                val descriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL)
-                        as? DeclarationDescriptorWithVisibility
-                        as? MemberDescriptor ?: return@namedDeclarationVisitor
-                if (nameIdentifier != null && descriptor.isEffectivelyPublicApi) {
-                    if (descriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, it) } == null) {
+        namedDeclarationVisitor { element ->
+            if (TestUtils.isInTestSourceContent(element)) {
+                return@namedDeclarationVisitor
+            }
+            val nameIdentifier = element.nameIdentifier
+            if (nameIdentifier != null) {
+                if (element.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, it) } == null) {
+                    val descriptor =
+                        element.resolveToDescriptorIfAny() as? DeclarationDescriptorWithVisibility ?: return@namedDeclarationVisitor
+                    if (descriptor.isEffectivelyPublicApi) {
                         val message = element.describe()?.let { "$it is missing documentation" } ?: "Missing documentation"
                         holder.registerProblem(nameIdentifier, message, AddDocumentationFix())
                     }
                 }
-
             }
+
+        }
+
+    override fun runForWholeFile(): Boolean = true
 
     class AddDocumentationFix : LocalQuickFix {
         override fun getName(): String = "Add documentation"

@@ -21,8 +21,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public interface DiagnosticSink {
@@ -44,7 +42,8 @@ public interface DiagnosticSink {
                 PsiFile psiFile = diagnostic.getPsiFile();
                 List<TextRange> textRanges = diagnostic.getTextRanges();
                 String diagnosticText = DefaultErrorMessages.render(diagnostic);
-                throw new IllegalStateException(diagnostic.getFactory().getName() + ": " + diagnosticText + " " + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
+                throw new IllegalStateException(diagnostic.getFactory().getName() + ": " + diagnosticText + " " + PsiDiagnosticUtils
+                        .atLocation(psiFile, textRanges.get(0)));
             }
         }
 

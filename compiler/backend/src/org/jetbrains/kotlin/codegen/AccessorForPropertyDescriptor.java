@@ -47,7 +47,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl implem
     ) {
         this(property, property.getType(), DescriptorUtils.getReceiverParameterType(property.getExtensionReceiverParameter()),
              /* dispatchReceiverParameter = */
-             CodegenUtilKt.isJvmStaticInObjectOrClass(property) ? null : property.getDispatchReceiverParameter(),
+             CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(property) ? null : property.getDispatchReceiverParameter(),
              containingDeclaration, superCallTarget, nameSuffix,
              getterAccessorRequired, setterAccessorRequired);
     }

@@ -142,6 +142,8 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
 
         if (declaration !is KtClassOrObject && declaration !is KtNamedFunction) return null
 
+        if (declaration is KtNamedFunction && declaration.containingClassOrObject == null) return null
+
         // To prevent IDEA failing on red code
         val descriptor = declaration.resolveToDescriptorIfAny() ?: return null
 

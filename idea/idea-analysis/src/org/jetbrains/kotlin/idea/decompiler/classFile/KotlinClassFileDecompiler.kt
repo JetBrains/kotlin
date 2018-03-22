@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.idea.decompiler.classFile
 
-import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.BySignatureIndexer
+import org.jetbrains.kotlin.idea.caches.lightClasses.BySignatureIndexer
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
@@ -69,8 +67,10 @@ fun buildDecompiledTextForClassFile(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = DeserializerForClassfileDecompiler(classFile)
 ): DecompiledText {
-    val (classHeader, classId) = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
+    val classHeader = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
                                  ?: error("Decompiled data factory shouldn't be called on an unsupported file: " + classFile)
+
+    val classId = classHeader.classId
 
     if (!classHeader.metadataVersion.isCompatible()) {
         return createIncompatibleAbiVersionDecompiledText(JvmMetadataVersion.INSTANCE, classHeader.metadataVersion)
@@ -87,7 +87,7 @@ fun buildDecompiledTextForClassFile(
             buildText(listOfNotNull(resolver.resolveTopLevelClass(classId)))
         }
         KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
-            val partClasses = findMultifileClassParts(classFile, classId, classHeader)
+            val partClasses = findMultifileClassParts(classFile, classId, classHeader.partNamesIfMultifileFacade)
             val partMembers = partClasses.flatMap { partClass ->
                 resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName())
             }

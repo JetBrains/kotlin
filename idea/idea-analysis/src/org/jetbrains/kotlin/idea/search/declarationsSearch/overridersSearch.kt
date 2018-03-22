@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightMethod
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
@@ -198,14 +198,17 @@ fun PsiClass.forEachDeclaredMemberOverride(processor: (superMember: PsiElement, 
     forEachKotlinOverride(ktClass, members, scope, processor)
 }
 
-fun findDeepestSuperMethodsKotlinAware(method: PsiElement): List<PsiMethod> {
+fun findDeepestSuperMethodsNoWrapping(method: PsiElement): List<PsiElement> {
     val element = method.unwrapped
     return when (element) {
         is PsiMethod -> element.findDeepestSuperMethods().toList()
         is KtCallableDeclaration -> {
             val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return emptyList()
-            descriptor.getDeepestSuperDeclarations(false).mapNotNull { it.source.getPsi()?.getRepresentativeLightMethod() }
+            descriptor.getDeepestSuperDeclarations(false).mapNotNull { it.source.getPsi() }
         }
         else -> emptyList()
     }
 }
+
+fun findDeepestSuperMethodsKotlinAware(method: PsiElement) =
+    findDeepestSuperMethodsNoWrapping(method).mapNotNull { it.getRepresentativeLightMethod() }

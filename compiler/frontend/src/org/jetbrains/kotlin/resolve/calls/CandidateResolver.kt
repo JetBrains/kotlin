@@ -61,7 +61,8 @@ class CandidateResolver(
     private val genericCandidateResolver: GenericCandidateResolver,
     private val reflectionTypes: ReflectionTypes,
     private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
-    private val smartCastManager: SmartCastManager
+    private val smartCastManager: SmartCastManager,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     fun <D : CallableDescriptor> performResolutionForCandidateCall(
         context: CallCandidateResolutionContext<D>,
@@ -384,7 +385,7 @@ class CandidateResolver(
 
                     val spreadElement = argument.getSpreadElement()
                     if (spreadElement != null && !type.isFlexible() && type.isMarkedNullable) {
-                        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context)
+                        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expression, type, context)
                         val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
                             dataFlowValue, expectedType, expression, context,
                             call = null, recordExpressionType = false
@@ -530,7 +531,7 @@ class CandidateResolver(
         if (implicitInvokeCheck && call is CallForImplicitInvoke && call.isSafeCall()) {
             val outerCallReceiver = call.outerCall.explicitReceiver
             if (outerCallReceiver != call.explicitReceiver && outerCallReceiver is ReceiverValue) {
-                val outerReceiverDataFlowValue = DataFlowValueFactory.createDataFlowValue(outerCallReceiver, this)
+                val outerReceiverDataFlowValue = dataFlowValueFactory.createDataFlowValue(outerCallReceiver, this)
                 val outerReceiverNullability = dataFlowInfo.getStableNullability(outerReceiverDataFlowValue)
                 if (outerReceiverNullability.canBeNull() && !TypeUtils.isNullableType(expectedReceiverParameterType)) {
                     nullableImplicitInvokeReceiver = true
@@ -539,7 +540,7 @@ class CandidateResolver(
             }
         }
 
-        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
+        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverArgument, this)
         val nullability = dataFlowInfo.getStableNullability(dataFlowValue)
         val expression = (receiverArgument as? ExpressionReceiver)?.expression
         if (nullability.canBeNull() && !nullability.canBeNonNull()) {

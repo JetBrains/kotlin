@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestFile
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestModule
 import org.jetbrains.kotlin.checkers.CheckerTestUtil.ActualDiagnostic
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -45,6 +46,8 @@ import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.reflect.jvm.javaField
+
+internal const val JVM_TARGET = "JVM_TARGET"
 
 abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, TestFile>() {
     protected lateinit var environment: KotlinCoreEnvironment
@@ -125,6 +128,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private val createKtFile: Lazy<KtFile?>
         private val whatDiagnosticsToConsider: Condition<Diagnostic>
         val customLanguageVersionSettings: LanguageVersionSettings?
+        val jvmTarget: JvmTarget?
         val declareCheckType: Boolean
         val declareFlexibleType: Boolean
         val checkLazyLog: Boolean
@@ -137,6 +141,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             this.declareCheckType = CHECK_TYPE_DIRECTIVE in directives
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives, declareCheckType)
             this.customLanguageVersionSettings = parseLanguageVersionSettings(directives)
+            this.jvmTarget = parseJvmTarget(directives)
             this.checkLazyLog = CHECK_LAZY_LOG_DIRECTIVE in directives || CHECK_LAZY_LOG_DEFAULT
             this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
             this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
@@ -241,7 +246,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         return
                     }
 
-                    val message = "Missing " + diagnostic.description + DiagnosticUtils.atLocation(ktFile, TextRange(expectedStart, expectedEnd))
+                    val message = "Missing " + diagnostic.description + PsiDiagnosticUtils.atLocation(
+                        ktFile,
+                        TextRange(expectedStart, expectedEnd)
+                    )
                     System.err.println(message)
                     ok[0] = false
                 }
@@ -253,7 +261,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         end: Int
                 ) {
                     val message = "Parameters of diagnostic not equal at position " +
-                                  DiagnosticUtils.atLocation(ktFile, TextRange(start, end)) +
+                            PsiDiagnosticUtils.atLocation(ktFile, TextRange(start, end)) +
                                   ". Expected: ${expectedDiagnostic.asString()}, actual: $actualDiagnostic"
                     System.err.println(message)
                     ok[0] = false
@@ -265,7 +273,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         return
                     }
 
-                    val message = "Unexpected ${diagnostic.description}${DiagnosticUtils.atLocation(ktFile, TextRange(actualStart, actualEnd))}"
+                    val message = "Unexpected ${diagnostic.description}${PsiDiagnosticUtils.atLocation(
+                        ktFile,
+                        TextRange(actualStart, actualEnd)
+                    )}"
                     System.err.println(message)
                     ok[0] = false
                 }
@@ -413,4 +424,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             )
         }
     }
+
+    private fun parseJvmTarget(directiveMap: Map<String, String>) = directiveMap[JVM_TARGET]?.let { JvmTarget.fromString(it) }
 }

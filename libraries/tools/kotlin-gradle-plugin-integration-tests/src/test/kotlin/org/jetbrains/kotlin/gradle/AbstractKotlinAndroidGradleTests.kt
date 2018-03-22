@@ -1,17 +1,27 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.util.VersionNumber
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.0")
-class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.4", androidGradlePluginVersion = "2.3.+")
+class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
+class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(androidGradlePluginVersion = "2.3.+")
 
-class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = "4.1-rc-1", androidGradlePluginVersion = "3.0.0-beta1") {
+// TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
+class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.5"), "3.2.0-alpha06")
+
+class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.1"), "3.0.0")
+
+abstract class KotlinAndroid3GradleIT(
+    gradleVersionRequired: GradleVersionRequired,
+    androidGradlePluginVersion: String
+) : AbstractKotlinAndroidGradleTests(gradleVersionRequired, androidGradlePluginVersion) {
 
     @Test
     fun testApplyWithFeaturePlugin() {
@@ -40,15 +50,13 @@ class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion =
     }
 }
 
-const val ANDROID_HOME_PATH = "../../../dependencies/androidSDK"
-
 abstract class AbstractKotlinAndroidGradleTests(
-        protected val gradleVersion: String,
-        private val androidGradlePluginVersion: String
+    protected val gradleVersion: GradleVersionRequired,
+    private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
+            super.defaultBuildOptions().copy(androidHome = KotlinTestUtils.findAndroidSdk(),
                                              androidGradlePluginVersion = androidGradlePluginVersion)
 
     @Test
@@ -186,6 +194,8 @@ fun getSomething() = 10
     @Test
     fun testKaptKt15814() {
         val project = Project("kaptKt15814", gradleVersion)
+        project.allowOriginalKapt()
+
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assembleDebug", "test", options = options) {
@@ -252,29 +262,60 @@ fun getSomething() = 10
     @Test
     fun testAndroidKaptChangingDependencies() {
         val project = Project("AndroidKaptChangingDependencies", gradleVersion)
+        project.allowOriginalKapt()
 
         project.build("assembleDebug") {
             assertSuccessful()
             assertNotContains("Changed dependencies of configuration .+ after it has been included in dependency resolution".toRegex())
         }
     }
+
+    @Test
+    fun testMultiplatformAndroidCompile() {
+        val project = Project("multiplatformAndroidProject", gradleVersion)
+
+        project.build("build") {
+            assertSuccessful()
+            assertContains(
+                ":lib:compileKotlinCommon",
+                ":lib:compileTestKotlinCommon",
+                ":libJvm:compileKotlin",
+                ":libJvm:compileTestKotlin",
+                ":libAndroid:compileDebugKotlin",
+                ":libAndroid:compileReleaseKotlin",
+                ":libAndroid:compileDebugUnitTestKotlin",
+                ":libAndroid:compileReleaseUnitTestKotlin"
+            )
+
+            val kotlinFolder = if (project.testGradleVersionAtLeast("4.0")) "kotlin" else ""
+
+            assertFileExists("lib/build/classes/$kotlinFolder/main/foo/PlatformClass.kotlin_metadata")
+            assertFileExists("lib/build/classes/$kotlinFolder/test/foo/PlatformTest.kotlin_metadata")
+            assertFileExists("libJvm/build/classes/$kotlinFolder/main/foo/PlatformClass.class")
+            assertFileExists("libJvm/build/classes/$kotlinFolder/test/foo/PlatformTest.class")
+
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/debug/foo/PlatformClass.class")
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/release/foo/PlatformClass.class")
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
+            assertFileExists("libAndroid/build/tmp/kotlin-classes/debugUnitTest/foo/PlatformTest.class")
+        }
+    }
 }
 
 
 abstract class AbstractKotlinAndroidWithJackGradleTests(
-        private val gradleVersion: String,
         private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
     fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
+            super.defaultBuildOptions().copy(androidHome = KotlinTestUtils.findAndroidSdk(),
                     androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18()))
 
     @Test
     fun testSimpleCompile() {
-        val project = Project("AndroidJackProject", gradleVersion)
+        val project = Project("AndroidJackProject", GradleVersionRequired.Exact("3.4"))
 
         project.build("assemble") {
             assertFailed()
@@ -282,4 +323,3 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
         }
     }
 }
-

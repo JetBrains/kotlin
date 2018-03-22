@@ -86,7 +86,7 @@ open class CreateParameterFromUsageFix<E : KtElement>(
                 if (element !is KtSimpleNameExpression) return null
 
                 val classOrObject = element.getStrictParentOfType<KtClassOrObject>() ?: return null
-                receiverClassDescriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return null
+                receiverClassDescriptor = classOrObject.resolveToDescriptorIfAny() ?: return null
 
                 val paramInfo = CreateParameterByRefActionFactory.extractFixData(element)?.parameterInfo
                 if (paramInfo?.callableDescriptor == receiverClassDescriptor.unsubstitutedPrimaryConstructor) return null

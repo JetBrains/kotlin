@@ -36,16 +36,22 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -102,7 +108,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                         val expressionBody = getDefaultParameterExpressionBody(irFunction, valueParameter)
 
                         /* Use previously calculated values in next expression. */
-                        expressionBody.transformChildrenVoid(object:IrElementTransformerVoid() {
+                        expressionBody.transformChildrenVoid(object: IrElementTransformerVoid() {
                             override fun visitGetValue(expression: IrGetValue): IrExpression {
                                 log { "GetValue: ${expression.descriptor}" }
                                 val valueSymbol = variables[expression.descriptor] ?: return expression
@@ -194,7 +200,7 @@ private fun Scope.createTemporaryVariable(symbol: IrVariableSymbol, initializer:
             this.initializer = initializer
         }
 
-private fun getDefaultParameterExpressionBody(irFunction: IrFunction, valueParameter: ValueParameterDescriptor):IrExpressionBody {
+private fun getDefaultParameterExpressionBody(irFunction: IrFunction, valueParameter: ValueParameterDescriptor): IrExpressionBody {
     return irFunction.getDefault(valueParameter) ?: TODO("FIXME!!!")
 }
 
@@ -286,14 +292,14 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
             private fun parametersForCall(expression: IrMemberAccessExpression): Pair<IrFunctionSymbol, List<Pair<ValueParameterDescriptor, IrExpression?>>> {
                 val descriptor = expression.descriptor as FunctionDescriptor
                 val keyDescriptor = if (DescriptorUtils.isOverride(descriptor))
-                    DescriptorUtils.getAllOverriddenDescriptors(descriptor).first()
+                    DescriptorUtils.getAllOverriddenDescriptors(descriptor).first { it.needsDefaultArgumentsLowering }
                 else
                     descriptor.original
                 val realFunction = keyDescriptor.generateDefaultsFunction(context)
                 val realDescriptor = realFunction.descriptor
 
                 log { "$descriptor -> $realDescriptor" }
-                val maskValues = Array((descriptor.valueParameters.size + 31) / 32, {0})
+                val maskValues = Array((descriptor.valueParameters.size + 31) / 32, { 0 })
                 val params = mutableListOf<Pair<ValueParameterDescriptor, IrExpression?>>()
                 params.addAll(descriptor.valueParameters.mapIndexed { i, _ ->
                     val valueArgument = expression.getValueArgument(i)
@@ -441,7 +447,7 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
 object DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER :
         IrDeclarationOriginImpl("DEFAULT_PARAMETER_EXTENT")
 
-private fun valueParameter(descriptor: FunctionDescriptor, index: Int, name: Name, type: KotlinType):ValueParameterDescriptor {
+private fun valueParameter(descriptor: FunctionDescriptor, index: Int, name: Name, type: KotlinType): ValueParameterDescriptor {
     return ValueParameterDescriptorImpl(
             containingDeclaration = descriptor,
             original              = null,

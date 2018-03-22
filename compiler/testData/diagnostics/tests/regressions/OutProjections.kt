@@ -18,5 +18,5 @@ fun <T> fout(<!UNUSED_PARAMETER!>expression<!> : T) : Out<<!REDUNDANT_PROJECTION
 
 fun fooout() : Out<Point> {
   val p = Point();
-  return <!NI;TYPE_MISMATCH!>fout<Point>(p)<!>;
+  return fout<Point>(p);
 }

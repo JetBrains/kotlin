@@ -33,14 +33,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 
 open class ParcelableResolveExtension : SyntheticResolveExtension {
     companion object {
-        fun resolveParcelClassType(module: ModuleDescriptor): SimpleType {
-            return module.findClassAcrossModuleDependencies(
-                    ClassId.topLevel(FqName("android.os.Parcel")))?.defaultType ?: error("Can't resolve 'android.os.Parcel' class")
+        fun resolveParcelClassType(module: ModuleDescriptor): SimpleType? {
+            return module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("android.os.Parcel")))?.defaultType
         }
 
         fun createMethod(
@@ -103,7 +103,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
                 && result.none { it.isWriteToParcel() }
         ) {
             val builtIns = clazz.builtIns
-            val parcelClassType = resolveParcelClassType(clazz.module)
+            val parcelClassType = resolveParcelClassType(clazz.module) ?: ErrorUtils.createErrorType("Unresolved 'Parcel' type")
             result += createMethod(clazz, WRITE_TO_PARCEL, builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType)
         }
     }
@@ -113,18 +113,17 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
                && modality != Modality.ABSTRACT
                && typeParameters.isEmpty()
                && valueParameters.isEmpty()
-               && returnType?.let { type -> KotlinBuiltIns.isInt(type) } == true
+               // Unfortunately, we can't check the return type as it's unresolved in IDE light classes
     }
 }
 
 internal fun SimpleFunctionDescriptor.isWriteToParcel(): Boolean {
     return typeParameters.isEmpty()
            && valueParameters.size == 2
-           && valueParameters[0].type.isParcel()
+           // Unfortunately, we can't check the first parameter type as it's unresolved in IDE light classes
            && KotlinBuiltIns.isInt(valueParameters[1].type)
+           && returnType?.let { KotlinBuiltIns.isUnit(it) } == true
 }
-
-private fun KotlinType.isParcel() = constructor.declarationDescriptor?.fqNameSafe == ANDROID_PARCEL_CLASS_FQNAME
 
 interface ParcelableSyntheticComponent {
     val componentKind: ComponentKind

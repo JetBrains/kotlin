@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
@@ -340,7 +341,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                 }
 
         fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            if (classOrObject.hasExpectModifier()) {
+            if (classOrObject.shouldNotBeVisibleAsLightClass()) {
                 return null
             }
 
@@ -514,3 +515,6 @@ fun KtClassOrObject.defaultJavaAncestorQualifiedName(): String? {
         else -> CommonClassNames.JAVA_LANG_OBJECT
     }
 }
+
+fun KtClassOrObject.shouldNotBeVisibleAsLightClass() =
+    parentsWithSelf.filterIsInstance<KtClassOrObject>().any { it.hasExpectModifier() }

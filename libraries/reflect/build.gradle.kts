@@ -1,7 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
-import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
+import org.gradle.kotlin.dsl.extra
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import proguard.gradle.ProGuardTask
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
@@ -11,20 +12,12 @@ import java.io.DataOutputStream
 
 description = "Kotlin Full Reflection Library"
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath("net.sf.proguard:proguard-gradle:${property("versions.proguard")}")
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    }
-}
-
 plugins { java }
 
 callGroovy("configureJavaOnlyJvm6Project", this)
 publish()
+
+val jpsLibraryPath by extra(rootProject.extra["distLibDir"])
 
 val core = "$rootDir/core"
 val annotationsSrc = "$buildDir/annotations"
@@ -48,9 +41,11 @@ dependencies {
     compile(project(":kotlin-stdlib"))
 
     proguardDeps(project(":kotlin-stdlib"))
-    proguardDeps(files(firstFromJavaHomeThatExists("lib/rt.jar", "../Classes/classes.jar")))
+    proguardDeps(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = File(property("JDK_16") as String))))
 
     shadows(project(":kotlin-reflect-api"))
+    shadows(project(":core:metadata"))
+    shadows(project(":core:metadata.jvm"))
     shadows(project(":core:descriptors"))
     shadows(project(":core:descriptors.jvm"))
     shadows(project(":core:deserialization"))
@@ -88,11 +83,11 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
         val version = IntArray(input.readInt()) { input.readInt() }
         logger.info("Transforming ${context.path} with version ${version.toList()}")
 
-        val table = JvmPackageTable.PackageTable.parseFrom(context.`is`).toBuilder()
+        val table = JvmModuleProtoBuf.Module.parseFrom(context.`is`).toBuilder()
 
-        val newTable = JvmPackageTable.PackageTable.newBuilder().apply {
+        val newTable = JvmModuleProtoBuf.Module.newBuilder().apply {
             for (packageParts in table.packagePartsList + table.metadataPartsList) {
-                addPackageParts(JvmPackageTable.PackageParts.newBuilder(packageParts).apply {
+                addPackageParts(JvmModuleProtoBuf.PackageParts.newBuilder(packageParts).apply {
                     packageFqName = relocate(packageFqName)
                 })
             }
@@ -137,6 +132,8 @@ val reflectShadowJar by task<ShadowJar> {
     from(project(":core:deserialization").the<JavaPluginConvention>().sourceSets.getByName("main").resources) {
         include("META-INF/services/**")
     }
+
+    exclude("**/*.proto")
 
     transform(KotlinModuleShadowTransformer(logger))
 
@@ -183,6 +180,8 @@ val relocateCoreSources by task<Copy> {
     from("$core/descriptors.runtime/src")
     from("$core/deserialization/src")
     from("$core/util.runtime/src")
+
+    exclude("META-INF/services/**")
 
     into(relocatedCoreSrc)
     includeEmptyDirs = false

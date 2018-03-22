@@ -16,25 +16,49 @@
 
 package org.jetbrains.kotlin.idea.findUsages
 
+import com.intellij.find.findUsages.FindUsagesManager
 import com.intellij.find.findUsages.FindUsagesOptions
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.light.LightMemberReference
 import com.intellij.usageView.UsageInfo
+import com.intellij.usages.UsageViewManager
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.utils.SmartList
 
-fun KtDeclaration.processAllExactUsages(
+fun PsiElement.processAllExactUsages(
         options: () -> FindUsagesOptions,
         processor: (UsageInfo) -> Unit
 ) {
-    val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(this, true)
-    findUsagesHandler.processElementUsages(
-            this,
-            {
-                if (it.reference?.isReferenceTo(this) ?: false) {
-                    processor(it)
-                }
-                true
-            },
-            options()
-    )
+    fun elementsToCheckReferenceAgainst(reference: PsiReference): List<PsiElement> {
+        if (reference is KtReference || this !is KtDeclaration) return listOf(this)
+        return SmartList<PsiElement>().also { list ->
+            list += this
+            list += toLightElements()
+            if (this is KtConstructor<*>) {
+                getContainingClassOrObject().toLightClass()?.let { list += it }
+            }
+        }
+    }
+
+    val project = project
+    FindUsagesManager(project, UsageViewManager.getInstance(project))
+            .getFindUsagesHandler(this, true)
+            ?.processElementUsages(
+                    this,
+                    {
+                        val reference = it.reference ?: return@processElementUsages true
+                        if (reference is LightMemberReference || elementsToCheckReferenceAgainst(reference).any { reference.isReferenceTo(it) }) {
+                            processor(it)
+                        }
+                        true
+                    },
+                    options()
+            )
 }
 
 fun KtDeclaration.processAllUsages(

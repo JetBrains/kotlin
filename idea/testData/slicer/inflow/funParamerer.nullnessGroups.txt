@@ -1,3 +1,4 @@
 [NotNull Values]
-3 	fun foo(<bold>n: Int</bold>, s: String = "???") {
-3 		fun foo(<bold>n: Int</bold>, s: String = "???") {
+4 	fun foo(<bold>n: Int</bold>, s: String = "???") {
+4 		fun foo(<bold>n: Int</bold>, s: String = "???") {
+

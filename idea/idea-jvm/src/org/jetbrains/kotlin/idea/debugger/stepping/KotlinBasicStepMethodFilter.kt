@@ -69,7 +69,7 @@ class KotlinBasicStepMethodFilter(
             }
 
             if (declaration is KtClass && method.name() == "<init>") {
-                (declaration.resolveToDescriptorIfAny() as? ClassDescriptor)?.unsubstitutedPrimaryConstructor
+                declaration.resolveToDescriptorIfAny()?.unsubstitutedPrimaryConstructor
             } else {
                 declaration?.resolveToDescriptorIfAny()
             }

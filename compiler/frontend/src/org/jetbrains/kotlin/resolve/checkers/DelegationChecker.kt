@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
@@ -33,24 +31,17 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 
 class DelegationChecker : DeclarationChecker {
-    override fun check(
-        declaration: KtDeclaration,
-        descriptor: DeclarationDescriptor,
-        diagnosticHolder: DiagnosticSink,
-        bindingContext: BindingContext,
-        languageVersionSettings: LanguageVersionSettings,
-        expectActualTracker: ExpectActualTracker
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
         if (declaration !is KtClassOrObject) return
 
         for (specifier in declaration.superTypeListEntries) {
             if (specifier is KtDelegatedSuperTypeEntry) {
-                val superType = specifier.typeReference?.let { bindingContext.get(BindingContext.TYPE, it) } ?: continue
+                val superType = specifier.typeReference?.let { context.trace.get(BindingContext.TYPE, it) } ?: continue
                 val superTypeDescriptor = superType.constructor.declarationDescriptor as? ClassDescriptor ?: continue
 
                 for ((delegated, delegatedTo) in DelegationResolver.getDelegates(descriptor, superTypeDescriptor)) {
-                    checkDescriptor(declaration, delegated, delegatedTo, diagnosticHolder)
+                    checkDescriptor(declaration, delegated, delegatedTo, context.trace)
                 }
             }
         }

@@ -52,6 +52,9 @@ public class CodegenBinding {
     public static final WritableSlice<FunctionDescriptor, FunctionDescriptor> SUSPEND_FUNCTION_TO_JVM_VIEW =
             Slices.createSimpleSlice();
 
+    public static final WritableSlice<FunctionDescriptor, Boolean> CAPTURES_CROSSINLINE_SUSPEND_LAMBDA =
+            Slices.createSimpleSlice();
+
     public static final WritableSlice<ValueParameterDescriptor, ValueParameterDescriptor> PARAMETER_SYNONYM =
             Slices.createSimpleSlice();
 
@@ -95,23 +98,33 @@ public class CodegenBinding {
 
     @NotNull
     public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull KtElement expression) {
+        Type result = asmTypeForAnonymousClassOrNull(bindingContext, expression);
+        if (result == null) {
+            throw new IllegalStateException("Type must not be null: " + expression.getText());
+        }
+
+        return result;
+    }
+
+    @Nullable
+    public static Type asmTypeForAnonymousClassOrNull(@NotNull BindingContext bindingContext, @NotNull KtElement expression) {
         if (expression instanceof KtObjectLiteralExpression) {
             expression = ((KtObjectLiteralExpression) expression).getObjectDeclaration();
         }
 
         ClassDescriptor descriptor = bindingContext.get(CLASS, expression);
         if (descriptor != null) {
-            return getAsmType(bindingContext, descriptor);
+            return bindingContext.get(ASM_TYPE, descriptor);
         }
 
         SimpleFunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         if (functionDescriptor != null) {
-            return asmTypeForAnonymousClass(bindingContext, functionDescriptor);
+            return asmTypeForAnonymousClassOrNull(bindingContext, functionDescriptor);
         }
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
         if (variableDescriptor != null) {
-            return asmTypeForAnonymousClass(bindingContext, variableDescriptor);
+            return asmTypeForAnonymousClassOrNull(bindingContext, variableDescriptor);
         }
 
         throw new KotlinExceptionWithAttachments("Couldn't compute ASM type for expression")
@@ -120,7 +133,17 @@ public class CodegenBinding {
 
     @NotNull
     public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull CallableDescriptor descriptor) {
-        return getAsmType(bindingContext, anonymousClassForCallable(bindingContext, descriptor));
+        Type result = asmTypeForAnonymousClassOrNull(bindingContext, descriptor);
+        if (result == null) {
+            throw new IllegalStateException("Type must not be null: " + descriptor);
+        }
+
+        return result;
+    }
+
+    @Nullable
+    public static Type asmTypeForAnonymousClassOrNull(@NotNull BindingContext bindingContext, @NotNull CallableDescriptor descriptor) {
+        return bindingContext.get(ASM_TYPE, anonymousClassForCallable(bindingContext, descriptor));
     }
 
     public static boolean canHaveOuter(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
@@ -216,7 +239,9 @@ public class CodegenBinding {
     @NotNull
     public static Type getAsmType(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
         Type type = bindingContext.get(ASM_TYPE, klass);
-        assert type != null : "Type is not yet recorded for " + klass;
+        if (type == null) {
+            throw new IllegalStateException("Type is not yet recorded for " + klass);
+        }
         return type;
     }
 

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -47,12 +36,10 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap.PlatformMutabilityMapping;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DelegationResolver;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.*;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
@@ -64,7 +51,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.FieldVisitor;
+import org.jetbrains.org.objectweb.asm.Label;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -240,6 +230,54 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
+    protected void generateErasedInlineClassIfNeeded() {
+        if (!(myClass instanceof KtClass)) return;
+        if (!descriptor.isInline()) return;
+
+        Type erasedInlineClassType = state.getTypeMapper().mapErasedInlineClass(descriptor);
+        ClassBuilder builder = state.getFactory().newVisitor(
+                JvmDeclarationOriginKt.ErasedInlineClassOrigin(myClass.getPsiOrParent(), descriptor),
+                erasedInlineClassType,
+                myClass.getContainingKtFile()
+        );
+
+        CodegenContext parentContext = context.getParentContext();
+        assert parentContext != null : "Parent context of inline class declaration should not be null";
+
+        ClassContext erasedInlineClassContext = parentContext.intoWrapperForErasedInlineClass(descriptor, state);
+        new ErasedInlineClassBodyCodegen((KtClass) myClass, erasedInlineClassContext, builder, state, this).generate();
+    }
+
+    @Override
+    protected void generateUnboxMethodForInlineClass() {
+        if (!(myClass instanceof KtClass)) return;
+        if (!descriptor.isInline()) return;
+
+        Type ownerType = typeMapper.mapClass(descriptor);
+        ValueParameterDescriptor inlinedValue = InlineClassesUtilsKt.underlyingRepresentation(this.descriptor);
+        if (inlinedValue == null) return;
+
+        Type valueType = typeMapper.mapType(inlinedValue.getType());
+        SimpleFunctionDescriptor functionDescriptor = InlineClassDescriptorResolver.INSTANCE.createUnboxFunctionDescriptor(this.descriptor);
+        assert functionDescriptor != null : "FunctionDescriptor for unbox method should be not null during codegen";
+
+        functionCodegen.generateMethod(
+                JvmDeclarationOriginKt.UnboxMethodOfInlineClass(functionDescriptor), functionDescriptor,
+                new FunctionGenerationStrategy.CodegenBased(state) {
+                    @Override
+                    public void doGenerateBody(
+                            @NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature
+                    ) {
+                        InstructionAdapter iv = codegen.v;
+                        iv.load(0, OBJECT_TYPE);
+                        iv.getfield(ownerType.getInternalName(), inlinedValue.getName().asString(), valueType.getDescriptor());
+                        iv.areturn(valueType);
+                    }
+                }
+        );
+    }
+
+    @Override
     protected void generateKotlinMetadataAnnotation() {
         generateKotlinClassMetadataAnnotation(descriptor, false);
     }
@@ -380,10 +418,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (context.closure != null)
             genClosureFields(context.closure, v, typeMapper);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
-
         for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Companion.getInstances(state.getProject())) {
-            extension.generateClassSyntheticParts(this);
+            if (state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES
+                || extension.getShouldGenerateClassSyntheticPartsInLightClassesMode()
+            ) {
+                extension.generateClassSyntheticParts(this);
+            }
         }
     }
 
@@ -857,7 +897,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 deprecatedFieldForInvisibleCompanionObject &&
                 !properVisibilityForCompanionObjectInstanceField &&
                 (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
-        int fieldAccessFlags = ACC_PUBLIC | ACC_STATIC | ACC_FINAL;
+        boolean doNotGeneratePublic =
+                properVisibilityForCompanionObjectInstanceField && (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
+        int fieldAccessFlags;
+        if (doNotGeneratePublic) {
+            fieldAccessFlags = ACC_STATIC | ACC_FINAL;
+        }
+        else {
+            fieldAccessFlags = ACC_PUBLIC | ACC_STATIC | ACC_FINAL;
+        }
         if (properVisibilityForCompanionObjectInstanceField) {
             fieldAccessFlags |= properFieldVisibilityFlag;
         }
@@ -968,13 +1016,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void copyFieldFromCompanionObject(PropertyDescriptor propertyDescriptor) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, false, null, StackValue.none());
-        StackValue.Field field = StackValue
-                .field(property.type, classAsmType, propertyDescriptor.getName().asString(), true, StackValue.none(), propertyDescriptor);
+        StackValue.Field field = StackValue.field(
+                property.type, property.kotlinType, classAsmType, propertyDescriptor.getName().asString(),
+                true, StackValue.none(), propertyDescriptor
+        );
         field.store(property, codegen.v);
     }
 
     private void generatePrimaryConstructor(DelegationFieldsInfo delegationFieldsInfo) {
-        if (isInterface(descriptor) || isAnnotationClass(descriptor)) return;
+        if (isJvmInterface(descriptor)) return;
 
         ClassConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
         if (constructorDescriptor == null) return;

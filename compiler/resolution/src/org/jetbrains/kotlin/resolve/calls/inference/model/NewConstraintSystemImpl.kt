@@ -27,20 +27,21 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
 
 class NewConstraintSystemImpl(
-        private val constraintInjector: ConstraintInjector,
-        override val builtIns: KotlinBuiltIns
-):
-        NewConstraintSystem,
-        ConstraintSystemBuilder,
-        ConstraintInjector.Context,
-        ResultTypeResolver.Context,
-        KotlinConstraintSystemCompleter.Context,
-        PostponedArgumentsAnalyzer.Context
-{
+    private val constraintInjector: ConstraintInjector,
+    override val builtIns: KotlinBuiltIns
+) :
+    NewConstraintSystem,
+    ConstraintSystemBuilder,
+    ConstraintInjector.Context,
+    ResultTypeResolver.Context,
+    KotlinConstraintSystemCompleter.Context,
+    PostponedArgumentsAnalyzer.Context {
     private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
     private val typeVariablesTransaction: MutableList<NewTypeVariable> = SmartList()
@@ -83,10 +84,20 @@ class NewConstraintSystemImpl(
     }
 
     override fun addSubtypeConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition) =
-            constraintInjector.addInitialSubtypeConstraint(apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }, lowerType, upperType, position)
+        constraintInjector.addInitialSubtypeConstraint(
+            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
+            lowerType,
+            upperType,
+            position
+        )
 
     override fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition) =
-            constraintInjector.addInitialEqualityConstraint(apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }, a, b, position)
+        constraintInjector.addInitialEqualityConstraint(
+            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
+            a,
+            b,
+            position
+        )
 
     override fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
@@ -146,7 +157,14 @@ class NewConstraintSystemImpl(
 
     // ConstraintSystemBuilder, KotlinConstraintSystemCompleter.Context
     override val hasContradiction: Boolean
-        get() = diagnostics.any { !it.candidateApplicability.isSuccess }.apply { checkState(State.FREEZED, State.BUILDING, State.COMPLETION, State.TRANSACTION) }
+        get() = diagnostics.any { !it.candidateApplicability.isSuccess }.apply {
+            checkState(
+                State.FREEZED,
+                State.BUILDING,
+                State.COMPLETION,
+                State.TRANSACTION
+            )
+        }
 
     override fun addOtherSystem(otherSystem: ConstraintStorage) {
         storage.allTypeVariables.putAll(otherSystem.allTypeVariables)
@@ -154,7 +172,8 @@ class NewConstraintSystemImpl(
             notFixedTypeVariables[variable] = MutableVariableWithConstraints(constraints.typeVariable, constraints.constraints)
         }
         storage.initialConstraints.addAll(otherSystem.initialConstraints)
-        storage.maxTypeDepthFromInitialConstraints = Math.max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
+        storage.maxTypeDepthFromInitialConstraints =
+                Math.max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
     }
@@ -173,10 +192,11 @@ class NewConstraintSystemImpl(
     }
 
     // ConstraintInjector.Context
-    override val allTypeVariables: Map<TypeConstructor, NewTypeVariable> get() {
-        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
-        return storage.allTypeVariables
-    }
+    override val allTypeVariables: Map<TypeConstructor, NewTypeVariable>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.allTypeVariables
+        }
 
     override var maxTypeDepthFromInitialConstraints: Int
         get() = storage.maxTypeDepthFromInitialConstraints
@@ -191,10 +211,11 @@ class NewConstraintSystemImpl(
     }
 
     // ConstraintInjector.Context, FixationOrderCalculator.Context
-    override val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints> get() {
-        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
-        return storage.notFixedTypeVariables
-    }
+    override val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.notFixedTypeVariables
+        }
 
     // ConstraintInjector.Context, KotlinConstraintSystemCompleter.Context
     override fun addError(error: KotlinCallDiagnostic) {
@@ -228,5 +249,14 @@ class NewConstraintSystemImpl(
     override fun buildCurrentSubstitutor(): NewTypeSubstitutor {
         checkState(State.BUILDING, State.COMPLETION)
         return storage.buildCurrentSubstitutor()
+    }
+
+    // PostponedArgumentsAnalyzer.Context
+    override fun hasUpperUnitConstraint(type: UnwrappedType): Boolean {
+        checkState(State.BUILDING, State.COMPLETION, State.FREEZED)
+
+        val constraints = storage.notFixedTypeVariables[type.constructor]?.constraints ?: return false
+
+        return constraints.any { it.kind == ConstraintKind.UPPER && it.type.isUnit() }
     }
 }

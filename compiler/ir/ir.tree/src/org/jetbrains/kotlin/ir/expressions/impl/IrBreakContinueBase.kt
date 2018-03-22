@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrBreakContinueBase(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override var loop: IrLoop
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override var loop: IrLoop
 ) : IrTerminalExpressionBase(startOffset, endOffset, type), IrBreakContinue {
     override var label: String? = null
 }

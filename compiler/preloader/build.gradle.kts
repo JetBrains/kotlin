@@ -2,11 +2,12 @@
 description = "Kotlin Preloader"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 jvmTarget = "1.6"
 
 dependencies {
-    compile(ideaSdkDeps("asm-all"))
+    compileOnly(intellijDep()) { includeJars("asm-all") }
 }
 
 sourceSets {

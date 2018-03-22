@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -182,7 +183,8 @@ class ReferenceVariantsHelper(
                     bindingContext,
                     containingDeclaration,
                     dataFlowInfo,
-                    resolutionFacade.frontendService<LanguageVersionSettings>()
+                    resolutionFacade.frontendService<LanguageVersionSettings>(),
+                    resolutionFacade.frontendService<DataFlowValueFactory>()
             )
         }.toSet()
 

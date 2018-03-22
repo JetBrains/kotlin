@@ -45,7 +45,7 @@ public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDe
         this.nameSuffix = nameSuffix;
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
-                   descriptor instanceof ConstructorDescriptor || CodegenUtilKt.isJvmStaticInObjectOrClass(descriptor)
+                   descriptor instanceof ConstructorDescriptor || CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(descriptor)
                         ? null
                         : descriptor.getDispatchReceiverParameter(),
                    copyTypeParameters(descriptor),

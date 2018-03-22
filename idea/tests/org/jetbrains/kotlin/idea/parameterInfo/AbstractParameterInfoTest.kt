@@ -24,7 +24,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -38,7 +38,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
         val root = KotlinTestUtils.getTestsRoot(this::class.java)
         if (root.contains("Lib")) {
-            return JdkAndMockLibraryProjectDescriptor("$root/sharedLib", true, true, false, false)
+            return SdkAndMockLibraryProjectDescriptor("$root/sharedLib", true, true, false, false)
         }
 
         return ProjectDescriptorWithStdlibSources.INSTANCE

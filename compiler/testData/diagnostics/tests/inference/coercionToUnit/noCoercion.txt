@@ -1,0 +1,6 @@
+package
+
+public fun noCoercionBlockHasExplicitReturn(): kotlin.Unit
+public fun noCoercionBlockHasExplicitType(): kotlin.Unit
+public fun noCoercionInExpressionBody(): kotlin.Unit
+public fun noCoercionLastExpressionUsedAsReturnArgument(): kotlin.Unit

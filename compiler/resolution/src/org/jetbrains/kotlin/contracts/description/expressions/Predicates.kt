@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class IsInstancePredicate(val arg: VariableReference, val type: KotlinType, val isNegated: Boolean) : BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
-            contractDescriptionVisitor.visitIsInstancePredicate(this, data)
+        contractDescriptionVisitor.visitIsInstancePredicate(this, data)
 
     fun negated(): IsInstancePredicate = IsInstancePredicate(arg, type, isNegated.not())
 }
 
 class IsNullPredicate(val arg: VariableReference, val isNegated: Boolean) : BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
-            contractDescriptionVisitor.visitIsNullPredicate(this, data)
+        contractDescriptionVisitor.visitIsNullPredicate(this, data)
 
     fun negated(): IsNullPredicate = IsNullPredicate(arg, isNegated.not())
 }

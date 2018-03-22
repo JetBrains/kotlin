@@ -1,3 +1,5 @@
+// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+
 open class A {
     class X {
         fun A_X() {}
@@ -26,7 +28,7 @@ open class A {
 class Simple: A() {
     init {
         Y().A_Y()
-        Z().A_C_Z()
+        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Z()<!>.A_C_Z()
     }
 }
 

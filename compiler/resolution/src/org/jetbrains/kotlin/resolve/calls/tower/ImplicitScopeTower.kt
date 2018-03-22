@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -64,8 +62,9 @@ interface CandidateWithBoundDispatchReceiver {
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?
 }
 
-fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>) = diagnostics.maxBy { it.candidateApplicability }?.candidateApplicability
-                                                                      ?: RESOLVED
+fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>) =
+    diagnostics.maxBy { it.candidateApplicability }?.candidateApplicability
+            ?: RESOLVED
 
 enum class ResolutionCandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
@@ -80,31 +79,34 @@ enum class ResolutionCandidateApplicability {
     HIDDEN, // removed from resolve
 }
 
-abstract class ResolutionDiagnostic(candidateApplicability: ResolutionCandidateApplicability): KotlinCallDiagnostic(candidateApplicability) {
+abstract class ResolutionDiagnostic(candidateApplicability: ResolutionCandidateApplicability) :
+    KotlinCallDiagnostic(candidateApplicability) {
     override fun report(reporter: DiagnosticReporter) {
         // do nothing
     }
 }
 
 // todo error for this access from nested class
-class VisibilityError(val invisibleMember: DeclarationDescriptorWithVisibility): ResolutionDiagnostic(RUNTIME_ERROR) {
+class VisibilityError(val invisibleMember: DeclarationDescriptorWithVisibility) : ResolutionDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }
 }
 
-class NestedClassViaInstanceReference(val classDescriptor: ClassDescriptor): ResolutionDiagnostic(IMPOSSIBLE_TO_GENERATE)
-class InnerClassViaStaticReference(val classDescriptor: ClassDescriptor): ResolutionDiagnostic(IMPOSSIBLE_TO_GENERATE)
-class UnsupportedInnerClassCall(val message: String): ResolutionDiagnostic(IMPOSSIBLE_TO_GENERATE)
-class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType): ResolutionDiagnostic(RESOLVED)
+class NestedClassViaInstanceReference(val classDescriptor: ClassDescriptor) : ResolutionDiagnostic(IMPOSSIBLE_TO_GENERATE)
+class InnerClassViaStaticReference(val classDescriptor: ClassDescriptor) : ResolutionDiagnostic(IMPOSSIBLE_TO_GENERATE)
+class UnsupportedInnerClassCall(val message: String) : ResolutionDiagnostic(IMPOSSIBLE_TO_GENERATE)
+class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType) : ResolutionDiagnostic(RESOLVED)
 
 object ErrorDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED) // todo discuss and change to INAPPLICABLE
 object LowPriorityDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
-object DynamicDescriptorDiagnostic: ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
-object UnstableSmartCastDiagnostic: ResolutionDiagnostic(MAY_THROW_RUNTIME_ERROR)
-object HiddenExtensionRelatedToDynamicTypes: ResolutionDiagnostic(HIDDEN)
-object HiddenDescriptor: ResolutionDiagnostic(HIDDEN)
+object DynamicDescriptorDiagnostic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
+object UnstableSmartCastDiagnostic : ResolutionDiagnostic(MAY_THROW_RUNTIME_ERROR)
+object HiddenExtensionRelatedToDynamicTypes : ResolutionDiagnostic(HIDDEN)
+object HiddenDescriptor : ResolutionDiagnostic(HIDDEN)
 
 object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(CONVENTION_ERROR)
 object InfixCallNoInfixModifier : ResolutionDiagnostic(CONVENTION_ERROR)
 object DeprecatedUnaryPlusAsPlus : ResolutionDiagnostic(CONVENTION_ERROR)
+
+class ResolvedUsingDeprecatedVisbility(val baseSourceScope: ResolutionScope, val lookupLocation: LookupLocation) : ResolutionDiagnostic(RESOLVED)

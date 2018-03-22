@@ -28,8 +28,9 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinStructureViewModel(ktFile: KtFile, editor: Editor?) :
-        StructureViewModelBase(ktFile, editor, KotlinStructureViewElement(ktFile, false)),
-        StructureViewModel.ElementInfoProvider {
+    StructureViewModelBase(ktFile, editor, KotlinStructureViewElement(ktFile, false)),
+    StructureViewModel.ElementInfoProvider {
+
     init {
         withSuitableClasses(KtDeclaration::class.java)
         withSorters(Sorter.ALPHA_SORTER)

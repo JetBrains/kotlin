@@ -20,9 +20,13 @@ import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 abstract class HighlighterExtension {
-    abstract fun highlightReference(elementToHighlight: PsiElement, descriptor: DeclarationDescriptor): TextAttributesKey?
+    abstract fun highlightDeclaration(elementToHighlight: PsiElement, descriptor: DeclarationDescriptor): TextAttributesKey?
+
+    open fun highlightCall(elementToHighlight: PsiElement, resolvedCall: ResolvedCall<*>): TextAttributesKey?
+            = highlightDeclaration(elementToHighlight, resolvedCall.resultingDescriptor)
 
     companion object {
         val EP_NAME = ExtensionPointName.create<HighlighterExtension>("org.jetbrains.kotlin.highlighterExtension")

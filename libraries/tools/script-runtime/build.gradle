@@ -3,7 +3,10 @@ description 'Kotlin Script Runtime'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
+
+project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
 dependencies {
     compileOnly project(':kotlin-stdlib')

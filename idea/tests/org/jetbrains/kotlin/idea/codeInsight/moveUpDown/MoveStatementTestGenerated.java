@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -987,6 +987,12 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             doTestExpression(fileName);
         }
 
+        @TestMetadata("intoCatch.kt")
+        public void testIntoCatch() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoCatch.kt");
+            doTestExpression(fileName);
+        }
+
         @TestMetadata("intoClosure1.kt")
         public void testIntoClosure1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoClosure1.kt");
@@ -1017,6 +1023,30 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             doTestExpression(fileName);
         }
 
+        @TestMetadata("intoElse3.kt")
+        public void testIntoElse3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoElse3.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("intoElse4.kt")
+        public void testIntoElse4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoElse4.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("intoElseIf.kt")
+        public void testIntoElseIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoElseIf.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("intoFinally.kt")
+        public void testIntoFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoFinally.kt");
+            doTestExpression(fileName);
+        }
+
         @TestMetadata("intoNestedClosure1.kt")
         public void testIntoNestedClosure1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosure1.kt");
@@ -1032,6 +1062,18 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         @TestMetadata("intoNestedClosureWithParams1.kt")
         public void testIntoNestedClosureWithParams1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoNestedClosureWithParams1.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("intoWhenElse.kt")
+        public void testIntoWhenElse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoWhenElse.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("intoWhenEntry.kt")
+        public void testIntoWhenEntry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/intoWhenEntry.kt");
             doTestExpression(fileName);
         }
 
@@ -1086,6 +1128,18 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         @TestMetadata("multilineComment6.kt")
         public void testMultilineComment6() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineComment6.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("multilineExpressionWithClosure1.kt")
+        public void testMultilineExpressionWithClosure1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineExpressionWithClosure1.kt");
+            doTestExpression(fileName);
+        }
+
+        @TestMetadata("multilineExpressionWithClosure2.kt")
+        public void testMultilineExpressionWithClosure2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveUpDown/expressions/multilineExpressionWithClosure2.kt");
             doTestExpression(fileName);
         }
 

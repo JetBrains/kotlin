@@ -40,6 +40,8 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.kapt3.AptMode.*
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
+import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
+import org.jetbrains.kotlin.kapt3.stubs.KaptLineMappingCollector.Companion.KAPT_METADATA_EXTENSION
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.modules.TargetId
@@ -69,12 +71,13 @@ class ClasspathBasedKapt3Extension(
         aptMode: AptMode,
         val useLightAnalysis: Boolean,
         correctErrorTypes: Boolean,
+        mapDiagnosticLocations: Boolean,
         pluginInitializedTime: Long,
         logger: KaptLogger,
         compilerConfiguration: CompilerConfiguration
 ) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
                            classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, javacOptions, annotationProcessors,
-                           aptMode, pluginInitializedTime, logger, correctErrorTypes, compilerConfiguration) {
+                           aptMode, pluginInitializedTime, logger, correctErrorTypes, mapDiagnosticLocations, compilerConfiguration) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
 
@@ -127,6 +130,7 @@ abstract class AbstractKapt3Extension(
         val pluginInitializedTime: Long,
         val logger: KaptLogger,
         val correctErrorTypes: Boolean,
+        val mapDiagnosticLocations: Boolean,
         val compilerConfiguration: CompilerConfiguration
 ) : PartialAnalysisHandlerExtension() {
     val compileClasspath = compileClasspath.distinct()
@@ -202,7 +206,8 @@ abstract class AbstractKapt3Extension(
 
     private fun generateStubs(project: Project, module: ModuleDescriptor, context: BindingContext, files: Collection<KtFile>): KaptContext<*> {
         if (!aptMode.generateStubs) {
-            return KaptContext(logger, project, BindingContext.EMPTY, emptyList(), emptyMap(), null, options, javacOptions)
+            return KaptContext(logger, project, BindingContext.EMPTY, emptyList(), emptyMap(), null,
+                               mapDiagnosticLocations, options, javacOptions)
         }
 
         logger.info { "Kotlin files to compile: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
@@ -257,20 +262,21 @@ abstract class AbstractKapt3Extension(
         logger.info { "Stubs compilation took $classFilesCompilationTime ms" }
         logger.info { "Compiled classes: " + compiledClasses.joinToString { it.name } }
 
-        return KaptContext(logger, project, bindingContext, compiledClasses, origins, generationState, options, javacOptions)
+        return KaptContext(logger, project, bindingContext, compiledClasses, origins, generationState,
+                           mapDiagnosticLocations, options, javacOptions)
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContext<GenerationState>) {
         val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass = true, correctErrorTypes = correctErrorTypes)
 
-        val (stubGenerationTime, kotlinSourceStubs) = measureTimeMillis {
+        val (stubGenerationTime, kaptStubs) = measureTimeMillis {
             converter.convert()
         }
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }
-        logger.info { "Stubs for Kotlin classes: " + kotlinSourceStubs.joinToString { it.sourcefile.name } }
+        logger.info { "Stubs for Kotlin classes: " + kaptStubs.joinToString { it.file.sourcefile.name } }
 
-        saveStubs(kaptContext, kotlinSourceStubs)
+        saveStubs(kaptContext, kaptStubs)
         saveIncrementalData(kaptContext, logger.messageCollector, converter)
     }
 
@@ -283,14 +289,19 @@ abstract class AbstractKapt3Extension(
         return javaFilesFromJavaSourceRoots
     }
 
-    protected open fun saveStubs(kaptContext: KaptContext<*>, stubs: JavacList<JCTree.JCCompilationUnit>) {
-        for (stub in stubs) {
+    protected open fun saveStubs(kaptContext: KaptContext<*>, stubs: List<KaptStub>) {
+        for (kaptStub in stubs) {
+            val stub = kaptStub.file
             val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
 
             val packageName = stub.getPackageNameJava9Aware()?.toString() ?: ""
             val packageDir = if (packageName.isEmpty()) stubsOutputDir else File(stubsOutputDir, packageName.replace('.', '/'))
             packageDir.mkdirs()
-            File(packageDir, className + ".java").writeText(stub.prettyPrint(kaptContext.context))
+
+            val sourceFile = File(packageDir, className + ".java")
+            sourceFile.writeText(stub.prettyPrint(kaptContext.context))
+
+            kaptStub.writeMetadataIfNeeded(forSource = sourceFile)
         }
     }
 
@@ -307,8 +318,12 @@ abstract class AbstractKapt3Extension(
                     val stubFileObject = converter.bindings[file.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")]
                     if (stubFileObject != null) {
                         val stubFile = File(stubsOutputDir, stubFileObject.name)
-                        if (stubFile.exists()) {
-                            messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, stubFile))
+                        val lineMappingsFile = File(stubFile.parentFile, stubFile.nameWithoutExtension + KAPT_METADATA_EXTENSION)
+
+                        for (file in listOf(stubFile, lineMappingsFile)) {
+                            if (file.exists()) {
+                                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, file))
+                            }
                         }
                     }
 

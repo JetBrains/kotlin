@@ -26,7 +26,7 @@ import java.util.*;
 public class CompilerConfiguration {
     public static CompilerConfiguration EMPTY = new CompilerConfiguration();
 
-    private final Map<Key, Object> map = new HashMap<>();
+    private final Map<Key, Object> map = new LinkedHashMap<>();
     private boolean readOnly = false;
 
     static {

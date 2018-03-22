@@ -4,11 +4,12 @@
             
         },
         "configurations": [
-            "bootstrapCompile"
+            "bootstrapCompile",
+            "jpsTest"
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
-            "buildScan": "com.gradle.scan.plugin.internal.api.f",
+            "buildScan": "com.gradle.scan.plugin.internal.api.g",
             "idea": "org.gradle.plugins.ide.idea.model.IdeaModel"
         }
     },
@@ -18,6 +19,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -25,6 +27,7 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -32,6 +35,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -56,6 +60,7 @@
         "configurations": [
             "archives",
             "default",
+            "embeddedComponents",
             "runtimeJar"
         ],
         "extensions": {
@@ -70,6 +75,8 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
+            "antLauncherJar",
             "apiElements",
             "archives",
             "compile",
@@ -77,12 +84,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -128,6 +137,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -135,12 +145,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -174,6 +186,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -181,12 +194,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -209,6 +224,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "classes-dirs",
@@ -217,12 +233,15 @@
             "compileOnly",
             "default",
             "implementation",
+            "instrumentationClasspath",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -246,6 +265,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -253,12 +273,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -281,6 +303,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -288,12 +311,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -317,6 +342,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -324,12 +350,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -365,6 +393,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -372,7 +401,6 @@
             "compileOnly",
             "compilerDummyJar",
             "default",
-            "distJar",
             "implementation",
             "kapt",
             "kaptTest",
@@ -382,6 +410,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -406,6 +435,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -414,6 +444,7 @@
             "default",
             "distJar",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -421,6 +452,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -445,6 +477,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -461,6 +494,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -485,6 +519,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -493,6 +528,7 @@
             "default",
             "distJar",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -501,6 +537,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -525,6 +562,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -532,7 +570,9 @@
             "compileOnly",
             "default",
             "distJar",
+            "embeddedComponents",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -541,6 +581,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -585,6 +626,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -602,6 +644,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -626,6 +669,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -634,6 +678,7 @@
             "default",
             "distJar",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -642,6 +687,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -666,6 +712,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -682,6 +729,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -706,6 +754,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -721,6 +770,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -744,6 +794,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -759,6 +810,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -782,6 +834,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -789,6 +842,7 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -797,6 +851,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -822,6 +877,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -832,6 +888,8 @@
             "distJar",
             "fatJar",
             "fatJarContents",
+            "fatJarContentsStripMetadata",
+            "fatJarContentsStripServices",
             "fatSourcesJarContents",
             "implementation",
             "proguardLibraryJars",
@@ -841,6 +899,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -863,6 +922,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -879,6 +939,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -906,6 +967,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -921,6 +983,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -943,6 +1006,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -951,6 +1015,7 @@
             "compilerDummyJar",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -959,6 +1024,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -983,6 +1049,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -990,7 +1057,9 @@
             "compileOnly",
             "default",
             "distJar",
+            "embeddedComponents",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -999,6 +1068,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1023,6 +1093,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "agp25AnnotationProcessor",
             "agp25Compile",
             "agp25CompileClasspath",
             "agp25CompileOnly",
@@ -1030,6 +1101,7 @@
             "agp25Runtime",
             "agp25RuntimeClasspath",
             "agp25RuntimeOnly",
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1037,7 +1109,6 @@
             "compileOnly",
             "compilerDummyJar",
             "default",
-            "distJar",
             "implementation",
             "kapt",
             "kaptAgp25",
@@ -1048,6 +1119,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1061,6 +1133,7 @@
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension",
             "pluginBundle": "com.gradle.publish.PluginBundleExtension",
+            "gradlePlugin": "org.gradle.plugin.devel.GradlePluginDevelopmentExtension",
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "groovyRuntime": "org.gradle.api.tasks.GroovyRuntime",
@@ -1074,13 +1147,13 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
             "compileClasspath",
             "compileOnly",
             "default",
-            "distJar",
             "implementation",
             "kapt",
             "kaptTest",
@@ -1089,6 +1162,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1112,6 +1186,8 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "androidSdk",
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1125,6 +1201,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1141,6 +1218,42 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
+    ":kotlin-gradle-plugin-test-utils-embeddable": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "annotationProcessor",
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "compilerDummyJar",
+            "default",
+            "implementation",
+            "packedJars",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeJar",
+            "runtimeOnly",
+            "testAnnotationProcessor",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
     ":kotlin-gradle-subplugin-example": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
@@ -1148,11 +1261,13 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
             "compileClasspath",
             "compileOnly",
+            "compilerDummyJar",
             "default",
             "implementation",
             "kapt",
@@ -1160,7 +1275,9 @@
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1185,7 +1302,7 @@
         "configurations": [
             "archives",
             "default",
-            "fatJarContents",
+            "embeddedComponents",
             "runtimeJar"
         ],
         "extensions": {
@@ -1201,6 +1318,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1208,7 +1326,6 @@
             "compileOnly",
             "compilerDummyJar",
             "default",
-            "distJar",
             "implementation",
             "kapt",
             "kaptTest",
@@ -1218,6 +1335,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1242,6 +1360,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1250,6 +1369,7 @@
             "default",
             "distJar",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -1257,6 +1377,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1280,6 +1401,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1288,6 +1410,7 @@
             "default",
             "distJar",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -1295,6 +1418,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1318,6 +1442,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1334,6 +1459,7 @@
             "runtimeOnly",
             "shadows",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1355,6 +1481,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1368,6 +1495,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1390,6 +1518,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1398,6 +1527,7 @@
             "default",
             "distJar",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -1405,6 +1535,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1428,6 +1559,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1443,6 +1575,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1467,6 +1600,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1474,7 +1608,6 @@
             "compileOnly",
             "compilerDummyJar",
             "default",
-            "distJar",
             "implementation",
             "kapt",
             "kaptTest",
@@ -1484,6 +1617,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1508,6 +1642,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1516,6 +1651,7 @@
             "default",
             "distJar",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -1524,6 +1660,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1549,6 +1686,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1565,6 +1703,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1589,6 +1728,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1596,6 +1736,7 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -1604,6 +1745,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1628,6 +1770,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1636,6 +1779,7 @@
             "default",
             "distJar",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -1644,6 +1788,7 @@
             "runtimeJar",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1668,6 +1813,8 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
+            "annotationsAnnotationProcessor",
             "annotationsCompile",
             "annotationsCompileClasspath",
             "annotationsCompileOnly",
@@ -1678,6 +1825,7 @@
             "apiElements",
             "archives",
             "builtins",
+            "builtinsAnnotationProcessor",
             "builtinsCompile",
             "builtinsCompileClasspath",
             "builtinsCompileOnly",
@@ -1690,10 +1838,19 @@
             "compileOnly",
             "default",
             "distJar",
+            "experimentalAnnotationProcessor",
+            "experimentalCompile",
+            "experimentalCompileClasspath",
+            "experimentalCompileOnly",
+            "experimentalImplementation",
+            "experimentalRuntime",
+            "experimentalRuntimeClasspath",
+            "experimentalRuntimeOnly",
             "implementation",
             "kapt",
             "kaptAnnotations",
             "kaptBuiltins",
+            "kaptExperimental",
             "kaptTest",
             "mainJar",
             "runtime",
@@ -1701,6 +1858,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1725,6 +1883,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1738,6 +1897,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1761,6 +1921,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1776,6 +1937,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1800,6 +1962,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1815,6 +1978,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1839,6 +2003,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1854,6 +2019,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1878,6 +2044,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1893,6 +2060,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1917,8 +2085,10 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
+            "builtinsAnnotationProcessor",
             "builtinsCompile",
             "builtinsCompileClasspath",
             "builtinsCompileOnly",
@@ -1931,14 +2101,22 @@
             "compileOnly",
             "default",
             "distJar",
+            "experimentalAnnotationProcessor",
+            "experimentalCompile",
+            "experimentalCompileClasspath",
+            "experimentalCompileOnly",
+            "experimentalImplementation",
+            "experimentalRuntime",
+            "experimentalRuntimeClasspath",
+            "experimentalRuntimeOnly",
             "implementation",
             "merger",
-            "nodeDist",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -1950,7 +2128,6 @@
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
             "node": "com.moowork.gradle.node.NodeExtension",
-            "karma": "com.craigburke.gradle.KarmaModuleExtension",
             "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension",
@@ -1975,6 +2152,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -1982,6 +2160,7 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -1989,6 +2168,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2003,6 +2183,17 @@
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
             "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
             "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
+    ":pill": {
+        "conventions": {
+            
+        },
+        "configurations": [
+            
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension"
         }
     },
     ":plugins": {
@@ -2033,6 +2224,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2040,6 +2232,7 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -2047,6 +2240,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2069,6 +2263,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2082,6 +2277,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2115,6 +2311,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2129,6 +2326,8 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "springClasspath",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2151,6 +2350,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2158,12 +2358,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2186,6 +2388,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2193,12 +2396,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2221,6 +2426,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2228,12 +2434,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2256,6 +2464,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2263,12 +2472,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2292,6 +2503,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2299,12 +2511,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2327,6 +2541,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2334,12 +2549,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2362,6 +2579,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2369,12 +2587,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2398,6 +2618,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2405,12 +2626,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2433,6 +2656,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2440,12 +2664,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2468,6 +2694,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2475,12 +2702,15 @@
             "compileOnly",
             "default",
             "implementation",
+            "jflexPath",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2503,6 +2733,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2510,12 +2741,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2538,6 +2771,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2545,12 +2779,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2573,6 +2809,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2580,12 +2817,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2609,6 +2848,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2616,12 +2856,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2644,6 +2886,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2651,12 +2894,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2679,6 +2924,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2686,12 +2932,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2714,6 +2962,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2721,12 +2970,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2749,6 +3000,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2756,12 +3008,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2784,6 +3038,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2791,12 +3046,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2819,6 +3076,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2826,12 +3084,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2854,6 +3114,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2861,12 +3122,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2890,6 +3153,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2897,12 +3161,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2926,6 +3192,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2933,12 +3200,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2961,6 +3230,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -2968,12 +3238,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -2996,6 +3268,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3003,12 +3276,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3042,6 +3317,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3049,12 +3325,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3077,6 +3355,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3084,12 +3363,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3107,6 +3388,81 @@
         }
     },
     ":core:descriptors.runtime": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "annotationProcessor",
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "implementation",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeOnly",
+            "testAnnotationProcessor",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
+    ":core:deserialization": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "annotationProcessor",
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "implementation",
+            "jpsTest",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeOnly",
+            "testAnnotationProcessor",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
+    ":core:metadata": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention"
@@ -3141,7 +3497,7 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
-    ":core:deserialization": {
+    ":core:metadata.jvm": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention"
@@ -3182,6 +3538,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3189,12 +3546,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3211,18 +3570,54 @@
             "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension"
         }
     },
+    ":custom-dependencies:android-sdk": {
+        "conventions": {
+            
+        },
+        "configurations": [
+            "androidJar",
+            "androidPlatform",
+            "androidSdk",
+            "android_m2repository_r44",
+            "build-tools_r23.0.1",
+            "buildTools",
+            "dxSources",
+            "platform-tools_r25.0.3",
+            "platform_26_r02",
+            "tools_r24.3.4"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension"
+        }
+    },
     ":custom-dependencies:protobuf-lite": {
         "conventions": {
             
         },
         "configurations": [
+            "archives",
             "default",
-            "relocated",
-            "shadow"
+            "relocatedProtobuf",
+            "relocatedProtobufSources"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension"
+        }
+    },
+    ":custom-dependencies:protobuf-relocated": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention"
+        },
+        "configurations": [
+            "archives",
+            "baseProtobuf",
+            "baseProtobufSources",
+            "default",
+            "sources"
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
-            "shadow": "com.github.jengelman.gradle.plugins.shadow.ShadowExtension"
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet"
         }
     },
     ":examples:annotation-processor-example": {
@@ -3232,6 +3627,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3245,6 +3641,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3267,6 +3664,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3281,6 +3679,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3303,6 +3702,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3316,6 +3716,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3338,6 +3739,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3345,12 +3747,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3374,6 +3778,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3381,12 +3786,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3409,6 +3816,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3416,12 +3824,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3444,6 +3854,8 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "androidSdk",
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3451,12 +3863,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3480,6 +3894,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3493,6 +3908,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3515,6 +3931,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3522,12 +3939,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3550,6 +3969,8 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "androidSdk",
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3557,12 +3978,15 @@
             "compileOnly",
             "default",
             "implementation",
+            "instrumentationClasspath",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3586,6 +4010,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3593,12 +4018,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3621,6 +4048,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3628,12 +4056,15 @@
             "compileOnly",
             "default",
             "implementation",
+            "instrumentationClasspath",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3656,6 +4087,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3663,12 +4095,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3692,6 +4126,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3699,19 +4134,22 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
             "testImplementation",
             "testRuntime",
             "testRuntimeClasspath",
-            "testRuntimeOnly"
+            "testRuntimeOnly",
+            "tests-jar"
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
@@ -3727,6 +4165,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3734,6 +4173,7 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -3741,6 +4181,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3757,12 +4198,13 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
-    ":js:js.ast": {
+    ":jps-plugin:jps-services-declarations": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3770,12 +4212,48 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeOnly",
+            "testAnnotationProcessor",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
+    ":js:js.ast": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "annotationProcessor",
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3798,6 +4276,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3805,12 +4284,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3833,6 +4314,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3840,12 +4322,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3868,6 +4352,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3875,12 +4360,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3903,6 +4390,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3910,12 +4398,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3938,6 +4428,8 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
+            "antLauncherJar",
             "apiElements",
             "archives",
             "compile",
@@ -3945,12 +4437,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -3975,6 +4469,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -3982,12 +4477,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4012,19 +4509,20 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
             "compileClasspath",
             "compileOnly",
             "default",
-            "distJar",
             "implementation",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4047,19 +4545,20 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
             "compileClasspath",
             "compileOnly",
             "default",
-            "distJar",
             "implementation",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4082,19 +4581,20 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
             "compileClasspath",
             "compileOnly",
             "default",
-            "distJar",
             "implementation",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4110,12 +4610,52 @@
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
+    ":kotlin-stdlib:jvm-minimal-for-test": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "annotationProcessor",
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "distJar",
+            "implementation",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeJar",
+            "runtimeOnly",
+            "testAnnotationProcessor",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
     ":kotlin-stdlib:samples": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4129,6 +4669,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4152,6 +4693,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4165,6 +4707,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4188,6 +4731,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4201,6 +4745,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4224,6 +4769,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4239,6 +4785,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4262,6 +4809,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4279,6 +4827,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4303,6 +4852,7 @@
             "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4320,6 +4870,7 @@
             "runtimeElements",
             "runtimeOnly",
             "signatures",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4337,12 +4888,14 @@
             "signing": "org.gradle.plugins.signing.SigningExtension"
         }
     },
-    ":plugins:android-extensions-compiler": {
+    ":kotlin-test:kotlin-test-testng": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
-            "java": "org.gradle.api.plugins.JavaPluginConvention"
+            "java": "org.gradle.api.plugins.JavaPluginConvention",
+            "maven": "org.gradle.api.plugins.MavenPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4350,14 +4903,99 @@
             "compileOnly",
             "default",
             "distJar",
+            "expectedBy",
+            "implement",
             "implementation",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
+            "runtimeOnly",
+            "signatures",
+            "testAnnotationProcessor",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension",
+            "signing": "org.gradle.plugins.signing.SigningExtension"
+        }
+    },
+    ":pill:generate-all-tests": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "annotationProcessor",
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "implementation",
+            "jpsTest",
+            "kapt",
+            "kaptTest",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
+            "runtimeOnly",
+            "testAnnotationProcessor",
+            "testCompile",
+            "testCompileClasspath",
+            "testCompileOnly",
+            "testImplementation",
+            "testRuntime",
+            "testRuntimeClasspath",
+            "testRuntimeOnly"
+        ],
+        "extensions": {
+            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
+            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
+            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
+            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
+            "reporting": "org.gradle.api.reporting.ReportingExtension"
+        }
+    },
+    ":plugins:android-extensions-compiler": {
+        "conventions": {
+            "base": "org.gradle.api.plugins.BasePluginConvention",
+            "java": "org.gradle.api.plugins.JavaPluginConvention"
+        },
+        "configurations": [
+            "androidJar",
+            "annotationProcessor",
+            "apiElements",
+            "archives",
+            "compile",
+            "compileClasspath",
+            "compileOnly",
+            "default",
+            "distJar",
+            "embeddedComponents",
+            "implementation",
+            "jpsTest",
+            "kapt",
+            "kaptTest",
+            "robolectricClasspath",
+            "runtime",
+            "runtimeClasspath",
+            "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4381,6 +5019,9 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "androidJar",
+            "androidSdk",
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4388,6 +5029,7 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -4395,6 +5037,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4418,6 +5061,8 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "androidSdk",
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4425,12 +5070,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4454,6 +5101,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4461,12 +5109,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4489,6 +5139,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4496,6 +5147,7 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
@@ -4503,6 +5155,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4525,6 +5178,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4532,12 +5186,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4560,6 +5216,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4567,12 +5224,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4596,6 +5255,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4603,12 +5263,14 @@
             "compileOnly",
             "default",
             "implementation",
+            "jpsTest",
             "kapt",
             "kaptTest",
             "runtime",
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4642,6 +5304,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4654,6 +5317,7 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4674,6 +5338,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4686,13 +5351,15 @@
             "runtimeElements",
             "runtimeJar",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
             "testImplementation",
             "testRuntime",
             "testRuntimeClasspath",
-            "testRuntimeOnly"
+            "testRuntimeOnly",
+            "versions"
         ],
         "extensions": {
             "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
@@ -4718,49 +5385,13 @@
             "reporting": "org.gradle.api.reporting.ReportingExtension"
         }
     },
-    ":prepare:mock-runtime-for-test": {
-        "conventions": {
-            "base": "org.gradle.api.plugins.BasePluginConvention",
-            "java": "org.gradle.api.plugins.JavaPluginConvention"
-        },
-        "configurations": [
-            "apiElements",
-            "archives",
-            "compile",
-            "compileClasspath",
-            "compileOnly",
-            "default",
-            "distJar",
-            "implementation",
-            "kapt",
-            "kaptTest",
-            "runtime",
-            "runtimeClasspath",
-            "runtimeElements",
-            "runtimeJar",
-            "runtimeOnly",
-            "testCompile",
-            "testCompileClasspath",
-            "testCompileOnly",
-            "testImplementation",
-            "testRuntime",
-            "testRuntimeClasspath",
-            "testRuntimeOnly"
-        ],
-        "extensions": {
-            "ext": "org.gradle.api.plugins.ExtraPropertiesExtension",
-            "kotlin": "org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension",
-            "kapt": "org.jetbrains.kotlin.gradle.plugin.KaptExtension",
-            "defaultArtifacts": "org.gradle.api.internal.plugins.DefaultArtifactPublicationSet",
-            "reporting": "org.gradle.api.reporting.ReportingExtension"
-        }
-    },
     ":tools:binary-compatibility-validator": {
         "conventions": {
             "base": "org.gradle.api.plugins.BasePluginConvention",
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4774,6 +5405,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testArtifacts",
             "testCompile",
             "testCompileClasspath",
@@ -4797,6 +5429,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4810,6 +5443,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4832,6 +5466,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4845,6 +5480,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4867,6 +5503,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4880,6 +5517,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",
@@ -4902,6 +5540,7 @@
             "java": "org.gradle.api.plugins.JavaPluginConvention"
         },
         "configurations": [
+            "annotationProcessor",
             "apiElements",
             "archives",
             "compile",
@@ -4915,6 +5554,7 @@
             "runtimeClasspath",
             "runtimeElements",
             "runtimeOnly",
+            "testAnnotationProcessor",
             "testCompile",
             "testCompileClasspath",
             "testCompileOnly",

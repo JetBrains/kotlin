@@ -48,7 +48,13 @@ object Filtering : TemplateGroupBase() {
         include(CharSequences, Strings)
     } builder {
         val n = "\$n"
-        doc { "Returns a list containing all elements except first [n] elements." }
+        doc { 
+            """
+            Returns a list containing all elements except first [n] elements.
+
+            @sample samples.collections.Collections.Transformations.drop
+            """
+        }
         returns("List<T>")
         body {
             """
@@ -65,7 +71,7 @@ object Filtering : TemplateGroupBase() {
                 list = ArrayList<T>(resultSize)
                 if (this is List<T>) {
                     if (this is RandomAccess) {
-                        for (index in n..size - 1)
+                        for (index in n until size)
                             list.add(this[index])
                     } else {
                         for (item in listIterator(n))
@@ -129,7 +135,13 @@ object Filtering : TemplateGroupBase() {
         include(CharSequences, Strings)
     } builder {
         val n = "\$n"
-        doc { "Returns a list containing first [n] elements." }
+        doc { 
+            """
+            Returns a list containing first [n] elements.
+                        
+            @sample samples.collections.Collections.Transformations.take
+            """
+        }
         returns("List<T>")
         body {
             """
@@ -204,7 +216,13 @@ object Filtering : TemplateGroupBase() {
     } builder {
         val n = "\$n"
 
-        doc { "Returns a list containing all elements except last [n] elements." }
+        doc { 
+            """
+            Returns a list containing all elements except last [n] elements.
+            
+            @sample samples.collections.Collections.Transformations.drop
+            """
+        }
         returns("List<T>")
         body {
             """
@@ -228,7 +246,14 @@ object Filtering : TemplateGroupBase() {
         include(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
     } builder {
         val n = "\$n"
-        doc { "Returns a list containing last [n] elements." }
+        doc { 
+            """
+            Returns a list containing last [n] elements.
+            
+            @sample samples.collections.Collections.Transformations.take
+            """
+        }
+
         returns("List<T>")
         specialFor(Strings, CharSequences) {
             returns("SELF")
@@ -256,7 +281,7 @@ object Filtering : TemplateGroupBase() {
             if (n == 1) return listOf(this[size - 1])
 
             val list = ArrayList<T>(n)
-            for (index in size - n .. size - 1)
+            for (index in size - n until size)
                 list.add(this[index])
             return list
             """
@@ -271,7 +296,7 @@ object Filtering : TemplateGroupBase() {
 
             val list = ArrayList<T>(n)
             if (this is RandomAccess) {
-                for (index in size - n .. size - 1)
+                for (index in size - n until size)
                     list.add(this[index])
             } else {
                 for (item in listIterator(size - n))
@@ -288,7 +313,13 @@ object Filtering : TemplateGroupBase() {
     } builder {
         inline()
 
-        doc { "Returns a list containing all elements except first elements that satisfy the given [predicate]." }
+        doc { 
+            """
+            Returns a list containing all elements except first elements that satisfy the given [predicate].
+        
+            @sample samples.collections.Collections.Transformations.drop
+            """
+        }
         returns("List<T>")
         body {
             """
@@ -339,7 +370,13 @@ object Filtering : TemplateGroupBase() {
     } builder {
         inline()
 
-        doc { "Returns a list containing first elements satisfying the given [predicate]." }
+        doc { 
+            """
+            Returns a list containing first elements satisfying the given [predicate].
+            
+            @sample samples.collections.Collections.Transformations.take
+            """ 
+        }
         returns("List<T>")
         body {
             """
@@ -364,7 +401,7 @@ object Filtering : TemplateGroupBase() {
         }
         body(Strings, CharSequences) {
             """
-            for (index in 0..length - 1)
+            for (index in 0 until length)
                 if (!predicate(get(index))) {
                     return ${subsequence(f, "0", "index")}
                 }
@@ -384,7 +421,13 @@ object Filtering : TemplateGroupBase() {
         include(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
     } builder {
         inline()
-        doc { "Returns a list containing all elements except last elements that satisfy the given [predicate]." }
+        doc { 
+            """
+            Returns a list containing all elements except last elements that satisfy the given [predicate].
+
+            @sample samples.collections.Collections.Transformations.drop
+            """
+        }
         returns("List<T>")
 
         body {
@@ -422,7 +465,7 @@ object Filtering : TemplateGroupBase() {
         }
         body(CharSequences, Strings) {
             """
-            for (index in this.indices.reversed())
+            for (index in lastIndex downTo 0)
                 if (!predicate(this[index]))
                     return ${subsequence(f, "0", "index + 1")}
 
@@ -435,7 +478,13 @@ object Filtering : TemplateGroupBase() {
         include(Lists, ArraysOfObjects, ArraysOfPrimitives, CharSequences, Strings)
     } builder {
         inline()
-        doc { "Returns a list containing last elements satisfying the given [predicate]."}
+        doc { 
+            """
+            Returns a list containing last elements satisfying the given [predicate].
+                
+            @sample samples.collections.Collections.Transformations.take
+            """
+        }
         returns("List<T>")
 
         body {
@@ -537,7 +586,7 @@ object Filtering : TemplateGroupBase() {
 
         body(CharSequences) {
             """
-            for (index in 0..length - 1) {
+            for (index in 0 until length) {
                 val element = get(index)
                 if (predicate(element)) destination.append(element)
             }
@@ -754,6 +803,51 @@ object Filtering : TemplateGroupBase() {
             """
         }
     }
+
+    val f_filterIsInstanceTo_class = fn("filterIsInstanceTo(destination: C, klass: Class<R>)") {
+        platforms(Platform.JVM)
+        include(Iterables, ArraysOfObjects, Sequences)
+    } builder {
+        doc { "Appends all elements that are instances of specified class to the given [destination]." }
+        receiverAsterisk = true
+        typeParam("C : MutableCollection<in R>")
+        typeParam("R")
+        returns("C")
+        body {
+            """
+            @Suppress("UNCHECKED_CAST")
+            for (element in this) if (klass.isInstance(element)) destination.add(element as R)
+            return destination
+            """
+        }
+    }
+
+    val f_filterIsInstance_class = fn("filterIsInstance(klass: Class<R>)") {
+        platforms(Platform.JVM)
+        include(Iterables, ArraysOfObjects, Sequences)
+    } builder {
+        doc { "Returns a list containing all elements that are instances of specified class." }
+        receiverAsterisk= true
+        typeParam("R")
+        returns("List<R>")
+        body {
+            """
+            return filterIsInstanceTo(ArrayList<R>(), klass)
+            """
+        }
+
+        specialFor(Sequences) {
+            doc { "Returns a sequence containing all elements that are instances of specified class." }
+            returns("Sequence<R>")
+        }
+        body(Sequences) {
+            """
+            @Suppress("UNCHECKED_CAST")
+            return filter { klass.isInstance(it) } as Sequence<R>
+            """
+        }
+    }
+
 
 
     val f_slice = fn("slice(indices: Iterable<Int>)") {

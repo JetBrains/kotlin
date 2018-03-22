@@ -12,7 +12,8 @@ final class CoroutineContextIntrinsicKt$notTailCall$1 {
 @kotlin.Metadata
 public final class CoroutineContextIntrinsicKt {
     inner class CoroutineContextIntrinsicKt$notTailCall$1
-    public final static @org.jetbrains.annotations.Nullable method mustBeTailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method mustBeTailCallNew(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method mustBeTailCallOld(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method notTailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method retrieveCoroutineContext(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.CoroutineContext, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object

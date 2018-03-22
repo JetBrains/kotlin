@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isEnumCompanionPropertyWithEntryConflict
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -91,7 +92,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        val allReferences = super.findReferences(element)
+        val allReferences = super.findReferences(element).filterNot { it is KtDestructuringDeclarationReference }
         val (getterJvmName, setterJvmName) = getJvmNames(element)
         return when {
             getterJvmName == null && setterJvmName == null -> allReferences

@@ -18,26 +18,20 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.annotations.findStrictfpAnnotation
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class StrictfpApplicabilityChecker : SimpleDeclarationChecker {
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+class StrictfpApplicabilityChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val annotation = descriptor.findStrictfpAnnotation() ?: return
         if (declaration is KtClassOrObject && descriptor is ClassDescriptor) {
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
-            diagnosticHolder.report(ErrorsJvm.STRICTFP_ON_CLASS.on(annotationEntry))
+            context.trace.report(ErrorsJvm.STRICTFP_ON_CLASS.on(annotationEntry))
         }
     }
 }

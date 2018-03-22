@@ -18,10 +18,13 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
@@ -45,12 +48,17 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
     override fun extractFixData(element: KtExpression, diagnostic: Diagnostic): List<CallableInfo> {
         val context = element.analyze()
 
-        fun isApplicableForAccessor(accessor: PropertyAccessorDescriptor?): Boolean =
+        fun isApplicableForAccessor(accessor: VariableAccessorDescriptor?): Boolean =
                 accessor != null && context[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor] == null
 
         val property = element.getNonStrictParentOfType<KtProperty>() ?: return emptyList()
-        val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? PropertyDescriptor
+        val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptorWithAccessors
                                  ?: return emptyList()
+
+        if (propertyDescriptor is LocalVariableDescriptor
+                && !element.languageVersionSettings.supportsFeature(LanguageFeature.LocalDelegatedProperties)) {
+            return emptyList()
+        }
 
         val propertyReceiver = propertyDescriptor.extensionReceiverParameter ?: propertyDescriptor.dispatchReceiverParameter
         val propertyType = propertyDescriptor.type

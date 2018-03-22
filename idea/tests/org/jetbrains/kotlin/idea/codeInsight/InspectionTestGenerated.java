@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -198,6 +198,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("javaCollectionsStaticMethodOnImmutableList/inspectionData/inspections.test")
+        public void testJavaCollectionsStaticMethodOnImmutableList_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/javaCollectionsStaticMethodOnImmutableList/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt18195/inspectionData/inspections.test")
         public void testKt18195_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/kt18195/inspectionData/inspections.test");
@@ -288,6 +294,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("redundantNotNullExtensionReceiverOfInline/inspectionData/inspections.test")
+        public void testRedundantNotNullExtensionReceiverOfInline_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantNotNullExtensionReceiverOfInline/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("redundantSamConstructor/inspectionData/inspections.test")
         public void testRedundantSamConstructor_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/redundantSamConstructor/inspectionData/inspections.test");
@@ -357,6 +369,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("replaceRangeToWithUntil/inspectionData/inspections.test")
         public void testReplaceRangeToWithUntil_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/replaceRangeToWithUntil/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sortModifiers/inspectionData/inspections.test")
+        public void testSortModifiers_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/sortModifiers/inspectionData/inspections.test");
             doTest(fileName);
         }
 

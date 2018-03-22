@@ -25,4 +25,4 @@ public interface Ref</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias LateNR</*0*/ Nt>  = LateInitNumRef<Nt>
+public typealias LateNR</*0*/ Nt> = LateInitNumRef<Nt>

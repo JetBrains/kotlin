@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.NotNullLazyValue
@@ -358,7 +357,7 @@ class LazyJavaClassMemberScope(
             override ->
             override.newCopyBuilder().apply {
                 setValueParameters(copyValueParameters(
-                        overridden.valueParameters.map { ValueParameterData(it.type, it.hasDefaultValue()) },
+                        overridden.valueParameters.map { ValueParameterData(it.type, it.declaresDefaultValue()) },
                         override.valueParameters, overridden))
                 setSignatureChange()
                 setPreserveSourceElement()

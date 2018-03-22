@@ -1,6 +1,3 @@
-/**
- * @KaptMetadata
- */
 package test;
 
 import java.lang.System;
@@ -21,9 +18,6 @@ public final class M1 {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 package test;
 
 import java.lang.System;

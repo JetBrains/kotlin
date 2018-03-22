@@ -25,9 +25,6 @@ import java.io.File
 // todo: test daemon start (does not start every build)
 // todo: test daemon shutdown when gradle daemon dies
 class KotlinDaemonIT : BaseGradleIT() {
-    companion object {
-        private const val GRADLE_VERSION = "2.10"
-    }
 
     @Test
     fun testDaemonMultiproject() {
@@ -40,7 +37,7 @@ class KotlinDaemonIT : BaseGradleIT() {
             return result.toTypedArray()
         }
 
-        val project = Project("multiprojectWithDependency", GRADLE_VERSION)
+        val project = Project("multiprojectWithDependency")
         val strategyCLIArg = "-Dkotlin.compiler.execution.strategy=daemon"
 
         fun checkAfterNonIncrementalBuild(output: String) {
@@ -78,7 +75,7 @@ class KotlinDaemonIT : BaseGradleIT() {
 
     @Test
     fun testClientFileIsDeletedOnExit() {
-        val project = Project("kotlinProject", GRADLE_VERSION)
+        val project = Project("kotlinProject")
         val options = defaultBuildOptions().copy(withDaemon = false)
 
         project.build("assemble", options = options) {

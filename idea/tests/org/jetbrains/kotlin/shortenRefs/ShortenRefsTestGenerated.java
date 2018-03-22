@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -330,6 +330,45 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         @TestMetadata("staticMethodOnDemandImport.kt")
         public void testStaticMethodOnDemandImport() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/java/staticMethodOnDemandImport.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/shortenRefs/kt21515")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Kt21515 extends AbstractShortenRefsTest {
+        public void testAllFilesPresentInKt21515() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/shortenRefs/kt21515"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("callableReferenceOnClass.kt")
+        public void testCallableReferenceOnClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/kt21515/callableReferenceOnClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callableReferenceOnClassWithCompanion.kt")
+        public void testCallableReferenceOnClassWithCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/kt21515/callableReferenceOnClassWithCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("callableReferenceOnObject.kt")
+        public void testCallableReferenceOnObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/kt21515/callableReferenceOnObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/kt21515/constructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeReference.kt")
+        public void testTypeReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/kt21515/typeReference.kt");
             doTest(fileName);
         }
     }

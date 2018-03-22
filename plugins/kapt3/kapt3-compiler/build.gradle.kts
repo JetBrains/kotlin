@@ -2,23 +2,31 @@
 description = "Annotation Processor for Kotlin"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
+
+containsEmbeddedComponents()
 
 dependencies {
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntime(intellijDep())
+    testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "openapi") }
+
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:plugin-api"))
+    compileOnly(project(":kotlin-annotation-processing-runtime"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("asm-all") }
 
     testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(ideaSdkDeps("idea", "idea_rt", "openapi"))
-    
-    compileOnly(project(":kotlin-annotation-processing-runtime"))
-
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-annotation-processing-runtime"))
+
+    embeddedComponents(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }
 }
 
 sourceSets {
@@ -26,18 +34,17 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-runtimeJar {
-    from(getSourceSetsFrom(":kotlin-annotation-processing-runtime")["main"].output.classesDirs)
-}
-
 testsJar {}
 
 projectTest {
     workingDir = rootDir
-    dependsOnTaskIfExistsRec("dist", project = rootProject)
+    dependsOn(":dist")
 }
 
-runtimeJar()
+runtimeJar {
+    fromEmbeddedComponents()
+}
+
 sourcesJar()
 javadocJar()
 

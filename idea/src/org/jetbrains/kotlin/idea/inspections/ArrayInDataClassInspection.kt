@@ -10,8 +10,10 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
@@ -48,9 +50,7 @@ class ArrayInDataClassInspection : AbstractKotlinInspection() {
             if (declaration !is KtFunction) continue
             if (!declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) continue
             if (declaration.nameAsName == OperatorNameConventions.EQUALS && declaration.valueParameters.size == 1) {
-                val parameter = declaration.valueParameters.single()
-                val context = declaration.analyze(BodyResolveMode.PARTIAL)
-                val type = context.get(BindingContext.TYPE, parameter.typeReference)
+                val type = (declaration.resolveToDescriptorIfAny() as? FunctionDescriptor)?.valueParameters?.singleOrNull()?.type
                 if (type != null && KotlinBuiltIns.isNullableAny(type)) {
                     overriddenEquals = true
                 }

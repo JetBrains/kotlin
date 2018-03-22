@@ -151,6 +151,8 @@ private class VariablesCollector(
     }
 
     private fun isRefToProperty(expression: KtReferenceExpression): Boolean {
+        // NB: analyze() cannot be called here, because DELEGATED_PROPERTY_RESOLVED_CALL will be always null
+        // Looks like a bug
         val context = expression.analyzeFully()
         val descriptor = context[BindingContext.REFERENCE_TARGET, expression]
         if (descriptor is PropertyDescriptor) {

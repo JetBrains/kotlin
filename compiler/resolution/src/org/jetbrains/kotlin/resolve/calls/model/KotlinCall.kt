@@ -78,8 +78,7 @@ fun KotlinCall.checkCallInvariants() {
         assert(dispatchReceiverForInvokeExtension == null) {
             "Dispatch receiver for invoke should be null for not function call: $dispatchReceiverForInvokeExtension"
         }
-    }
-    else {
+    } else {
         assert(externalArgument == null || !externalArgument!!.isSpread) {
             "External argument cannot nave spread element: $externalArgument"
         }

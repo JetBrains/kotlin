@@ -23,31 +23,48 @@ import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
 
 class IrLocalDelegatedPropertyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val descriptor: VariableDescriptorWithAccessors,
+    override val name: Name,
+    override val type: KotlinType,
+    override val isVar: Boolean
+) : IrDeclarationBase(startOffset, endOffset, origin),
+    IrLocalDelegatedProperty {
+
+    constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: VariableDescriptorWithAccessors
-) : IrDeclarationBase(startOffset, endOffset, origin), IrLocalDelegatedProperty {
+        descriptor: VariableDescriptorWithAccessors
+    ) : this(
+        startOffset, endOffset, origin, descriptor,
+        descriptor.name, descriptor.type, descriptor.isVar
+    )
+
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: VariableDescriptorWithAccessors,
-            delegate: IrVariable
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: VariableDescriptorWithAccessors,
+        delegate: IrVariable
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.delegate = delegate
     }
 
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: VariableDescriptorWithAccessors,
-            delegate: IrVariable,
-            getter: IrFunction,
-            setter: IrFunction?
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: VariableDescriptorWithAccessors,
+        delegate: IrVariable,
+        getter: IrFunction,
+        setter: IrFunction?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.delegate = delegate
         this.getter = getter
@@ -59,7 +76,7 @@ class IrLocalDelegatedPropertyImpl(
     override var setter: IrFunction? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitLocalDelegatedProperty(this, data)
+        visitor.visitLocalDelegatedProperty(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         delegate.accept(visitor, data)

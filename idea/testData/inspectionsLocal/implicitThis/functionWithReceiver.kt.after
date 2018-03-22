@@ -1,0 +1,3 @@
+fun CharSequence.foo(bar: CharSequence.() -> Unit){
+    <caret>this.bar()
+}

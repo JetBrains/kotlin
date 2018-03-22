@@ -18,27 +18,20 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.annotations.findJvmSyntheticAnnotation
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class JvmSyntheticApplicabilityChecker : SimpleDeclarationChecker {
-
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+class JvmSyntheticApplicabilityChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val annotation = descriptor.findJvmSyntheticAnnotation() ?: return
         if (declaration is KtProperty && descriptor is VariableDescriptor && declaration.hasDelegate()) {
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: return
-            diagnosticHolder.report(ErrorsJvm.JVM_SYNTHETIC_ON_DELEGATE.on(annotationEntry))
+            context.trace.report(ErrorsJvm.JVM_SYNTHETIC_ON_DELEGATE.on(annotationEntry))
         }
     }
 }

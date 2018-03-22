@@ -43,7 +43,8 @@ abstract class IncrementalCompilerRunner<
         protected val cacheVersions: List<CacheVersion>,
         protected val reporter: ICReporter,
         protected val artifactChangesProvider: ArtifactChangesProvider?,
-        protected val changesRegistry: ChangesRegistry?
+        protected val changesRegistry: ChangesRegistry?,
+        private val localStateDirs: Collection<File> = emptyList()
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -70,7 +71,15 @@ abstract class IncrementalCompilerRunner<
 
             caches.clean()
             dirtySourcesSinceLastTimeFile.delete()
-            destinationDir(args).deleteRecursively()
+
+            reporter.report { "Deleting output directories on rebuild:" }
+            for (dir in sequenceOf(destinationDir(args)) + localStateDirs.asSequence()) {
+                if (!dir.isDirectory) continue
+
+                dir.deleteRecursively()
+                dir.mkdirs()
+                reporter.report { "deleted $dir" }
+            }
 
             caches = createCacheManager(args)
             if (providedChangedFiles == null) {

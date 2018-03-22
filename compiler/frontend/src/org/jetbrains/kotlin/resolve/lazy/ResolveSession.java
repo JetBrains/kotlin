@@ -63,7 +63,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private final BindingTrace trace;
     private final DeclarationProviderFactory declarationProviderFactory;
 
-    private final MemoizedFunctionToNullable<FqName, LazyPackageDescriptor> packages;
+    private final CacheWithNotNullValues<FqName, LazyPackageDescriptor> packages;
     private final PackageFragmentProvider packageFragmentProvider;
 
     private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> fileAnnotations;
@@ -169,7 +169,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         this.trace = lockBasedLazyResolveStorageManager.createSafeTrace(delegationTrace);
         this.module = rootDescriptor;
 
-        this.packages = storageManager.createMemoizedFunctionWithNullableValues(this::createPackage);
+        this.packages = storageManager.createCacheWithNotNullValues();
 
         this.declarationProviderFactory = declarationProviderFactory;
 
@@ -216,7 +216,15 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     @Nullable
     public LazyPackageDescriptor getPackageFragment(@NotNull FqName fqName) {
-        return packages.invoke(fqName);
+        PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
+        if (provider == null) {
+            return null;
+        }
+
+        return packages.computeIfAbsent(
+                fqName,
+                () -> new LazyPackageDescriptor(module, fqName, this, provider)
+        );
     }
 
 
@@ -229,15 +237,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
             assert false : "diagnoseMissingPackageFragment should throw!";
         }
         return packageDescriptor;
-    }
-
-    @Nullable
-    private LazyPackageDescriptor createPackage(FqName fqName) {
-        PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
-        if (provider == null) {
-            return null;
-        }
-        return new LazyPackageDescriptor(module, fqName, this, provider);
     }
 
     @NotNull

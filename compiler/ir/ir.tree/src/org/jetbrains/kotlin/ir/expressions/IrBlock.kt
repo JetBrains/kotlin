@@ -35,7 +35,7 @@ interface IrComposite : IrContainerExpression {
         get() = true
 }
 
-interface IrReturnableBlock: IrBlock, IrSymbolOwner {
+interface IrReturnableBlock : IrBlock, IrSymbolOwner {
     override val symbol: IrReturnableBlockSymbol
     val descriptor: FunctionDescriptor
     val sourceFileName: String

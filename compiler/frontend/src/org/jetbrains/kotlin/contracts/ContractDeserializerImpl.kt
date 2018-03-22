@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.ContractDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.TypeDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -38,7 +38,7 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
     ): Pair<FunctionDescriptor.UserDataKey<*>, LazyContractProvider>? {
         if (!proto.hasContract()) return null
 
-        if (!configuration.returnsEffectAllowed && !configuration.callsInPlaceEffectAllowed) return null
+        if (!configuration.readDeserializedContracts) return null
 
         val worker = ContractDeserializationWorker(typeTable, typeDeserializer, ownerFunction)
         val contract = worker.deserializeContract(proto.contract)

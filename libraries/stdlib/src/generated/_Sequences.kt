@@ -398,12 +398,33 @@ public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@kotlin.i
 }
 
 /**
+ * Returns a sequence containing all elements that are instances of specified class.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ */
+public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
+    @Suppress("UNCHECKED_CAST")
+    return filter { klass.isInstance(it) } as Sequence<R>
+}
+
+/**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  *
  * The operation is _terminal_.
  */
 public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
+    return destination
+}
+
+/**
+ * Appends all elements that are instances of specified class to the given [destination].
+ *
+ * The operation is _terminal_.
+ */
+public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    @Suppress("UNCHECKED_CAST")
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
     return destination
 }
 
@@ -675,25 +696,23 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  *
  * The operation is _terminal_.
  */
-@kotlin.jvm.JvmVersion
-public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): SortedSet<T> {
-    return toCollection(TreeSet<T>())
+public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): java.util.SortedSet<T> {
+    return toCollection(java.util.TreeSet<T>())
 }
 
 /**
- * Returns a [SortedSet] of all elements.
+ * Returns a [SortedSet][java.util.SortedSet] of all elements.
  * 
  * Elements in the set returned are sorted according to the given [comparator].
  *
  * The operation is _terminal_.
  */
-@kotlin.jvm.JvmVersion
-public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
-    return toCollection(TreeSet<T>(comparator))
+public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): java.util.SortedSet<T> {
+    return toCollection(java.util.TreeSet<T>(comparator))
 }
 
 /**
@@ -944,6 +963,8 @@ public fun <T> Sequence<T>.toMutableSet(): MutableSet<T> {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  *
  * The operation is _terminal_.
  */
@@ -954,6 +975,8 @@ public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if sequence has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  *
  * The operation is _terminal_.
  */
@@ -963,6 +986,8 @@ public fun <T> Sequence<T>.any(): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  *
  * The operation is _terminal_.
  */
@@ -1232,6 +1257,8 @@ public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
 
 /**
  * Returns `true` if the sequence has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  *
  * The operation is _terminal_.
  */
@@ -1241,6 +1268,8 @@ public fun <T> Sequence<T>.none(): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  *
  * The operation is _terminal_.
  */
@@ -1250,7 +1279,7 @@ public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns a sequence which performs the given [action] on each element of the original sequence as they pass though it.
+ * Returns a sequence which performs the given [action] on each element of the original sequence as they pass through it.
  *
  * The operation is _intermediate_ and _stateless_.
  */
@@ -1629,6 +1658,8 @@ public fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequenc
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  *
  * The operation is _terminal_.
  */
@@ -1651,6 +1682,8 @@ public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: CharSequ
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  *
  * The operation is _terminal_.
  */
@@ -1851,24 +1884,5 @@ public fun Sequence<Double>.sum(): Double {
         sum += element
     }
     return sum
-}
-
-/**
- * Returns a sequence containing all elements that are instances of specified class.
- */
-@kotlin.jvm.JvmVersion
-public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
-    @Suppress("UNCHECKED_CAST")
-    return filter { klass.isInstance(it) } as Sequence<R>
-}
-
-/**
- * Appends all elements that are instances of specified class to the given [destination].
- */
-@kotlin.jvm.JvmVersion
-public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
-    @Suppress("UNCHECKED_CAST")
-    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
-    return destination
 }
 

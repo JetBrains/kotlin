@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -28,13 +29,16 @@ import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.calls.checkers.isOperatorMod
 import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
+import org.jetbrains.kotlin.resolve.constants.AnnotationValue
+import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
@@ -42,6 +46,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
 
@@ -55,27 +60,22 @@ fun Deprecation.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedB
 
 fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? {
     val annotation = (this as? DeprecatedByAnnotation)?.annotation ?: return null
-    val replaceWithAnnotation = annotation.argumentValue(kotlin.Deprecated::replaceWith.name)
-            as? AnnotationDescriptor ?: return null
-
-    return replaceWithAnnotation.argumentValue(kotlin.ReplaceWith::expression.name) as String
+    val replaceWithAnnotation =
+        annotation.argumentValue(kotlin.Deprecated::replaceWith.name)?.safeAs<AnnotationValue>()?.value ?: return null
+    return replaceWithAnnotation.argumentValue(kotlin.ReplaceWith::expression.name)?.safeAs<StringValue>()?.value
 }
 
 private data class DeprecatedByAnnotation(val annotation: AnnotationDescriptor, override val target: DeclarationDescriptor) : Deprecation {
     override val deprecationLevel: DeprecationLevelValue
-        get() {
-            val level = annotation.argumentValue("level") as? ClassDescriptor
-
-            return when (level?.name?.asString()) {
-                "WARNING" -> WARNING
-                "ERROR" -> ERROR
-                "HIDDEN" -> HIDDEN
-                else -> WARNING
-            }
+        get() = when (annotation.argumentValue("level")?.safeAs<EnumValue>()?.enumEntryName?.asString()) {
+            "WARNING" -> WARNING
+            "ERROR" -> ERROR
+            "HIDDEN" -> HIDDEN
+            else -> WARNING
         }
 
     override val message: String?
-        get() = annotation.argumentValue("message") as? String
+        get() = annotation.argumentValue("message")?.safeAs<StringValue>()?.value
 }
 
 private data class DeprecatedByOverridden(private val deprecations: Collection<Deprecation>) : Deprecation {
@@ -201,10 +201,8 @@ class DeprecationResolver(
         descriptor.checkSinceKotlinVersionAccessibility(languageVersionSettings)
     }
 
-    fun getDeprecations(
-        descriptor: DeclarationDescriptor
-    ) = deprecations(descriptor.original)
-
+    fun getDeprecations(descriptor: DeclarationDescriptor): List<Deprecation> =
+        deprecations(descriptor.original)
 
     fun isDeprecatedHidden(descriptor: DeclarationDescriptor): Boolean =
         getDeprecations(descriptor).any { it.deprecationLevel == HIDDEN }
@@ -289,26 +287,7 @@ class DeprecationResolver(
                 result.add(deprecation)
             }
 
-            val versionRequirement =
-                (target as? DeserializedMemberDescriptor)?.versionRequirement
-                        ?: (target as? DeserializedClassDescriptor)?.versionRequirement
-            if (versionRequirement != null) {
-                // We're using ApiVersion because it's convenient to compare versions, "-api-version" is not involved in any way
-                // TODO: usage of ApiVersion is confusing here, refactor
-                val requiredVersion = ApiVersion.createByVersionRequirement(versionRequirement)
-                val currentVersion = when (versionRequirement.kind) {
-                    ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION ->
-                        ApiVersion.createByLanguageVersion(languageVersionSettings.languageVersion)
-                    ProtoBuf.VersionRequirement.VersionKind.API_VERSION ->
-                        languageVersionSettings.apiVersion
-                    ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION ->
-                        ApiVersion.LATEST_STABLE
-                    else -> null
-                }
-                if (currentVersion != null && currentVersion < requiredVersion) {
-                    result.add(DeprecatedByVersionRequirement(versionRequirement, target))
-                }
-            }
+            getDeprecationByVersionRequirement(target)?.let(result::add)
         }
 
         fun addUseSiteTargetedDeprecationIfPresent(annotatedDescriptor: DeclarationDescriptor, useSiteTarget: AnnotationUseSiteTarget?) {
@@ -335,9 +314,6 @@ class DeprecationResolver(
             is DescriptorDerivedFromTypeAlias -> {
                 result.addAll(typeAliasDescriptor.getOwnDeprecations())
             }
-            is ConstructorDescriptor -> {
-                addDeprecationIfPresent(containingDeclaration)
-            }
             is PropertyAccessorDescriptor -> {
                 addDeprecationIfPresent(correspondingProperty)
 
@@ -349,5 +325,32 @@ class DeprecationResolver(
         }
 
         return result.distinct()
+    }
+
+    private fun getDeprecationByVersionRequirement(target: DeclarationDescriptor): DeprecatedByVersionRequirement? {
+        fun createVersion(version: String): MavenComparableVersion? = try {
+            MavenComparableVersion(version)
+        } catch (e: Exception) {
+            null
+        }
+
+        val versionRequirement =
+            (target as? DeserializedMemberDescriptor)?.versionRequirement
+                    ?: (target as? DeserializedClassDescriptor)?.versionRequirement
+                    ?: return null
+        val requiredVersion = createVersion(versionRequirement.version.asString())
+        val currentVersion = when (versionRequirement.kind) {
+            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION ->
+                MavenComparableVersion(languageVersionSettings.languageVersion.versionString)
+            ProtoBuf.VersionRequirement.VersionKind.API_VERSION ->
+                languageVersionSettings.apiVersion.version
+            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION ->
+                KotlinCompilerVersion.getVersion()?.takeIf { "SNAPSHOT" !in it }?.let(::createVersion)
+            else -> null
+        }
+        if (currentVersion != null && currentVersion < requiredVersion) {
+            return DeprecatedByVersionRequirement(versionRequirement, target)
+        }
+        return null
     }
 }

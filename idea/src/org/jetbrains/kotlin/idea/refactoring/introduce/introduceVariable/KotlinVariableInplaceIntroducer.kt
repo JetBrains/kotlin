@@ -28,8 +28,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.ui.NonFocusableCheckBox
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -39,6 +37,8 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -142,7 +142,7 @@ class KotlinVariableInplaceIntroducer(
     override fun getInitialName() = super.getInitialName().quoteIfNeeded()
 
     override fun updateTitle(variable: KtProperty?, value: String?) {
-        expressionTypeCheckBox?.isEnabled = value == null || KotlinNameSuggester.isIdentifier(value)
+        expressionTypeCheckBox?.isEnabled = value == null || value.isIdentifier()
         // No preview to update
     }
 

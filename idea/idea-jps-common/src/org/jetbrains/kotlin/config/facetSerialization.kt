@@ -99,7 +99,12 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         val platformName = element.getAttributeValue("platform")
         val platformKind = TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == platformName } ?: TargetPlatformKind.DEFAULT_PLATFORM
         element.getChild("implements")?.let {
-            implementedModuleName = (it.content.firstOrNull() as? Text)?.textTrim
+            val items = it.getChildren("implement")
+            implementedModuleNames = if (items.isNotEmpty()) {
+                items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
+            } else {
+                listOfNotNull((it.content.firstOrNull() as? Text)?.textTrim)
+            }
         }
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
@@ -110,6 +115,9 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
             XmlSerializer.deserializeInto(compilerArguments!!, it)
             compilerArguments!!.detectVersionAutoAdvance()
         }
+        productionOutputPath = element.getChild("productionOutputPath")?.let {
+            PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
+        } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
         testOutputPath = element.getChild("testOutputPath")?.let {
             PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
         } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
@@ -234,8 +242,22 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())
     }
-    implementedModuleName?.let {
-        element.addContent(Element("implements").apply { addContent(it) })
+    if (implementedModuleNames.isNotEmpty()) {
+        element.addContent(
+                Element("implements").apply {
+                    val singleModule = implementedModuleNames.singleOrNull()
+                    if (singleModule != null) {
+                        addContent(singleModule)
+                    } else {
+                        implementedModuleNames.map { addContent(Element("implement").apply { addContent(it) }) }
+                    }
+                }
+        )
+    }
+    productionOutputPath?.let {
+        if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
+            element.addContent(Element("productionOutputPath").apply { addContent(PathUtil.toSystemIndependentName(it)) })
+        }
     }
     testOutputPath?.let {
         if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -90,7 +91,7 @@ private fun KtExpression.getBundleNameByContext(): String? {
 }
 
 private fun KtAnnotationEntry.getPropertyKeyResolvedCall(): ResolvedCall<*>? {
-    val resolvedCall = getResolvedCall(analyze(BodyResolveMode.PARTIAL)) ?: return null
+    val resolvedCall = resolveToCall() ?: return null
     val klass = (resolvedCall.resultingDescriptor as? ClassConstructorDescriptor)?.containingDeclaration ?: return null
     if (klass.kind != ClassKind.ANNOTATION_CLASS || klass.importableFqName != PROPERTY_KEY) return null
     return resolvedCall

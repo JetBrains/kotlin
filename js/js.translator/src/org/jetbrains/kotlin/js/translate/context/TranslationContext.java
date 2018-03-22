@@ -880,6 +880,34 @@ public class TranslationContext {
     }
 
     @NotNull
+    public JsExpression declareConstantValue(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression value) {
+        if (!isPublicInlineFunction() && isFromCurrentModule(descriptor)) {
+            return getQualifiedReference(descriptor);
+        }
+
+        // Tag shouldn't be null if we cannot reference this descriptor locally.
+        String tag = Objects.requireNonNull(staticContext.getTag(descriptor));
+        String suggestedName = StaticContext.getSuggestedName(descriptor);
+
+        return declareConstantValue(suggestedName, tag, value);
+    }
+
+    @NotNull
+    public JsExpression declareConstantValue(@NotNull String suggestedName, @NotNull String tag, @NotNull JsExpression value) {
+        if (inlineFunctionContext == null || !isPublicInlineFunction()) {
+            return staticContext.importDeclaration(suggestedName, tag, value).makeRef();
+        }
+        else {
+            return inlineFunctionContext.getImports().computeIfAbsent(tag, t -> {
+                JsName result = JsScope.declareTemporaryName(suggestedName);
+                MetadataProperties.setImported(result, true);
+                inlineFunctionContext.getImportBlock().getStatements().add(JsAstUtils.newVar(result, value));
+                return result;
+            }).makeRef();
+        }
+    }
+
+    @NotNull
     public JsName getNameForSpecialFunction(@NotNull SpecialFunction function) {
         if (inlineFunctionContext == null || !isPublicInlineFunction()) {
             return staticContext.getNameForSpecialFunction(function);

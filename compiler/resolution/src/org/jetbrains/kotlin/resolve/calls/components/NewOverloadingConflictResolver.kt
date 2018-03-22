@@ -28,21 +28,21 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class NewOverloadingConflictResolver(
-        builtIns: KotlinBuiltIns,
-        specificityComparator: TypeSpecificityComparator,
-        statelessCallbacks: KotlinResolutionStatelessCallbacks,
-        constraintInjector: ConstraintInjector
+    builtIns: KotlinBuiltIns,
+    specificityComparator: TypeSpecificityComparator,
+    statelessCallbacks: KotlinResolutionStatelessCallbacks,
+    constraintInjector: ConstraintInjector
 ) : OverloadingConflictResolver<KotlinResolutionCandidate>(
-        builtIns,
-        specificityComparator,
-        {
-            // todo investigate
-            it.resolvedCall.candidateDescriptor
-        },
-        { SimpleConstraintSystemImpl(constraintInjector, builtIns) },
-        Companion::createFlatSignature,
-        { it.variableCandidateIfInvoke },
-        { statelessCallbacks.isDescriptorFromSource(it) }
+    builtIns,
+    specificityComparator,
+    {
+        // todo investigate
+        it.resolvedCall.candidateDescriptor
+    },
+    { SimpleConstraintSystemImpl(constraintInjector, builtIns) },
+    Companion::createFlatSignature,
+    { it.variableCandidateIfInvoke },
+    { statelessCallbacks.isDescriptorFromSource(it) }
 ) {
 
     companion object {
@@ -57,8 +57,7 @@ class NewOverloadingConflictResolver(
             for ((valueParameter, resolvedValueArgument) in resolvedCall.argumentMappingByOriginal) {
                 if (resolvedValueArgument is ResolvedCallArgument.DefaultArgument) {
                     numDefaults++
-                }
-                else {
+                } else {
                     val originalValueParameter = originalValueParameters[valueParameter.index]
                     val parameterType = originalValueParameter.argumentValueType
                     for (valueArgument in resolvedValueArgument.arguments) {
@@ -71,7 +70,7 @@ class NewOverloadingConflictResolver(
                                         originalDescriptor,
                                         numDefaults,
                                         resolvedCall.atom.argumentsInParenthesis.map { valueArgumentToParameterType[it] } +
-                                        listOfNotNull(resolvedCall.atom.externalArgument?.let { valueArgumentToParameterType[it] })
+                                                listOfNotNull(resolvedCall.atom.externalArgument?.let { valueArgumentToParameterType[it] })
             )
 
         }

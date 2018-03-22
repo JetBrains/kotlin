@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.maven;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
@@ -91,6 +92,8 @@ class MavenExecutionResult {
                 while (m.find()) {
                     String[] compiledFiles = m.group(1).split(",");
                     for (String path : compiledFiles) {
+                        if (StringsKt.isBlank(path)) continue;
+
                         File file = new File(path.trim());
                         String relativePath = FileUtil.getRelativePath(workingDir, file);
                         normalizedActualPaths.add(FileUtil.normalize(relativePath));
@@ -107,6 +110,18 @@ class MavenExecutionResult {
                 String expected = StringUtil.join(expectedPaths, "\n");
                 String actual = StringUtil.join(actualPaths, "\n");
                 Assert.assertEquals("Compiled files differ", expected, actual);
+            }
+        });
+    }
+
+    MavenExecutionResult filesExist(@NotNull final String... paths) throws Exception {
+        return check(new Action<MavenExecutionResult>() {
+            @Override
+            public void run(MavenExecutionResult execResult) {
+                for (String path : paths) {
+                    File file = new File(workingDir, path);
+                    Assert.assertTrue(file + " does not exist", file.exists());
+                }
             }
         });
     }

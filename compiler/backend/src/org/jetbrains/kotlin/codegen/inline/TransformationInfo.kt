@@ -34,7 +34,7 @@ interface TransformationInfo {
 
     fun canRemoveAfterTransformation(): Boolean
 
-    fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*>
+    fun createTransformer(inliningContext: InliningContext, sameModule: Boolean, continuationClassName: String?): ObjectTransformer<*>
 }
 
 class WhenMappingTransformationInfo(
@@ -52,7 +52,7 @@ class WhenMappingTransformationInfo(
 
     override fun canRemoveAfterTransformation(): Boolean = true
 
-    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> =
+    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean, continuationClassName: String?): ObjectTransformer<*> =
             WhenMappingTransformer(this, inliningContext)
 
     companion object {
@@ -103,6 +103,10 @@ class AnonymousObjectTransformationInfo internal constructor(
         return !isStaticOrigin
     }
 
-    override fun createTransformer(inliningContext: InliningContext, sameModule: Boolean): ObjectTransformer<*> =
-            AnonymousObjectTransformer(this, inliningContext, sameModule)
+    override fun createTransformer(
+        inliningContext: InliningContext,
+        sameModule: Boolean,
+        continuationClassName: String?
+    ): ObjectTransformer<*> =
+        AnonymousObjectTransformer(this, inliningContext, sameModule, continuationClassName)
 }

@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrSpreadElementImpl(
-        startOffset: Int,
-        endOffset: Int
+    startOffset: Int,
+    endOffset: Int
 ) : IrElementBase(startOffset, endOffset), IrSpreadElement {
     constructor(startOffset: Int, endOffset: Int, expression: IrExpression) : this(startOffset, endOffset) {
         this.expression = expression

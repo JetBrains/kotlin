@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTest() {
 
     protected open fun checkHighlightingInAllFiles(
-            shouldCheckFile: () -> Boolean = { !file.text.contains("// !CHECK_HIGHLIGHTING") }
+        shouldCheckFile: () -> Boolean = { !file.text.contains("// !CHECK_HIGHLIGHTING") }
     ) {
         checkFiles(shouldCheckFile) {
             checkHighlighting(myEditor, true, false)
@@ -35,10 +35,10 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
     }
 
     protected fun doMultiPlatformTest(
-            vararg platforms: TargetPlatformKind<*>,
-            withStdlibCommon: Boolean = false,
-            configureModule: (Module, TargetPlatformKind<*>) -> Unit = { _, _ -> },
-            jdk: TestJdkKind = TestJdkKind.MOCK_JDK
+        vararg platforms: TargetPlatformKind<*>,
+        withStdlibCommon: Boolean = false,
+        configureModule: (Module, TargetPlatformKind<*>) -> Unit = { _, _ -> },
+        jdk: TestJdkKind = TestJdkKind.MOCK_JDK
     ) {
         val commonModuleName = "common"
         val commonModule = module(commonModuleName, jdk)

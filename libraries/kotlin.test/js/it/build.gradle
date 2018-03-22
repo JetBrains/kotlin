@@ -33,7 +33,7 @@ node {
 
 def createFrameworkTest(def name) {
     return tasks.create("test$name", NpmTask) {
-        dependsOn(compileKotlin2Js, populateNodeModules, npmInstall)
+        dependsOn(compileTestKotlin2Js, populateNodeModules, npmInstall)
         def lowerName = name.toLowerCase()
         args = ['run', "test-$lowerName"]
         group = 'verification'

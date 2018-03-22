@@ -19,18 +19,35 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.SmartList
 
 class IrTypeParameterImpl(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val symbol: IrTypeParameterSymbol
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrTypeParameterSymbol,
+    override val name: Name,
+    override val index: Int,
+    override val variance: Variance,
+    override val upperBounds: List<KotlinType>
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrTypeParameter {
-    override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
+
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrTypeParameterSymbol) :
+            this(
+                startOffset, endOffset, origin, symbol,
+                symbol.descriptor.name,
+                symbol.descriptor.index,
+                symbol.descriptor.variance,
+                symbol.descriptor.upperBounds.toMutableList()
+            )
 
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: TypeParameterDescriptor) :
             this(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor))
@@ -39,11 +56,15 @@ class IrTypeParameterImpl(
         symbol.bind(this)
     }
 
+    override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
+
+    override val superClassifiers: MutableList<IrClassifierSymbol> = SmartList<IrClassifierSymbol>()
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitTypeParameter(this, data)
+        visitor.visitTypeParameter(this, data)
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrTypeParameter =
-            transformer.visitTypeParameter(this, data) as IrTypeParameter
+        transformer.visitTypeParameter(this, data) as IrTypeParameter
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         // no children

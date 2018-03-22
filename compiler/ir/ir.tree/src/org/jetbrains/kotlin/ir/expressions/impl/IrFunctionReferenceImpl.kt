@@ -26,31 +26,30 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrFunctionReferenceImpl(
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    override val symbol: IrFunctionSymbol,
+    override val descriptor: FunctionDescriptor,
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    origin: IrStatementOrigin? = null
+) : IrFunctionReference,
+    IrCallWithIndexedArgumentsBase(
+        startOffset, endOffset, type,
+        symbol.descriptor.valueParameters.size,
+        typeArguments,
+        origin
+    ) {
+    @Deprecated("Creates unbound symbol")
+    constructor(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        override val symbol: IrFunctionSymbol,
-        override val descriptor: FunctionDescriptor,
+        descriptor: FunctionDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null
-) : IrFunctionReference,
-        IrCallWithIndexedArgumentsBase(
-                startOffset, endOffset, type,
-                symbol.descriptor.valueParameters.size,
-                typeArguments,
-                origin
-        )
-{
-    @Deprecated("Creates unbound symbol")
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            descriptor: FunctionDescriptor,
-            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-            origin: IrStatementOrigin? = null
     ) : this(startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor, typeArguments, origin)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitFunctionReference(this, data)
+        visitor.visitFunctionReference(this, data)
 }

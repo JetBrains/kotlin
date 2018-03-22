@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
  */
 class Reducer : ESExpressionVisitor<ESExpression?> {
     fun reduceEffects(schema: List<ESEffect>): List<ESEffect> =
-            schema.mapNotNull { reduceEffect(it) }
+        schema.mapNotNull { reduceEffect(it) }
 
     private fun reduceEffect(effect: ESEffect): ESEffect? {
         when (effect) {

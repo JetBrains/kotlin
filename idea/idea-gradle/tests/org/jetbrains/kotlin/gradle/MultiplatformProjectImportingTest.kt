@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.gradle
 
 import com.intellij.openapi.roots.DependencyScope
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.facetSettings
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
-import java.io.File
 
 class MultiplatformProjectImportingTest : GradleImportingTestCase() {
     @Test
@@ -32,7 +32,8 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
 
         val kotlinVersion = "1.1.0"
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
              buildscript {
                 repositories {
                     mavenCentral()
@@ -62,7 +63,8 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                     implement project(':common')
                 }
             }
-        """)
+        """
+        )
 
         importProject()
         assertModuleModuleDepScope("jvm_main", "common_main", DependencyScope.COMPILE)
@@ -73,11 +75,69 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
 
     @Test
     fun testPlatformToCommonExpectedByDependency() {
-        createProjectSubFile("settings.gradle", "include ':common', ':jvm', ':js'")
+        createProjectSubFile("settings.gradle", "include ':common1', ':common2', ':jvm', ':js'")
+
+        val kotlinVersion = "1.2.40-dev-610"
+
+        createProjectSubFile(
+            "build.gradle", """
+             buildscript {
+                repositories {
+                    mavenCentral()
+                    maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                }
+            }
+
+            project('common1') {
+                apply plugin: 'kotlin-platform-common'
+            }
+
+            project('common2') {
+                apply plugin: 'kotlin-platform-common'
+            }
+
+            project('jvm') {
+                apply plugin: 'kotlin-platform-jvm'
+
+                dependencies {
+                    expectedBy project(':common1')
+                    expectedBy project(':common2')
+                }
+            }
+
+            project('js') {
+                apply plugin: 'kotlin-platform-js'
+
+                dependencies {
+                    expectedBy project(':common1')
+                }
+            }
+        """
+        )
+
+        importProject()
+        assertModuleModuleDepScope("jvm_main", "common1_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm_main", "common2_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm_test", "common1_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("jvm_test", "common2_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("js_main", "common1_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("js_test", "common1_test", DependencyScope.COMPILE)
+        assertNoDepForModule("js_main", "common2_main")
+        assertNoDepForModule("js_test", "common2_test")
+    }
+
+    @Test
+    fun testPlatformToCommonExpectedByDependencyInComposite() {
+        createProjectSubFile("toInclude/settings.gradle", "include ':common', ':jvm', ':js'")
 
         val kotlinVersion = "1.2.0-beta-74"
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "toInclude/build.gradle", """
              buildscript {
                 repositories {
                     mavenCentral()
@@ -108,7 +168,26 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                     expectedBy project(':common')
                 }
             }
-        """)
+        """
+        )
+
+        createProjectSubFile("settings.gradle", "includeBuild('toInclude')")
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                }
+            }
+
+            apply plugin: 'kotlin'
+        """.trimIndent()
+        )
 
         importProject()
         assertModuleModuleDepScope("jvm_main", "common_main", DependencyScope.COMPILE)
@@ -123,7 +202,8 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
 
         val kotlinVersion = "1.1.0"
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
              buildscript {
                 repositories {
                     mavenCentral()
@@ -151,7 +231,8 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                     implement project(':')
                 }
             }
-        """)
+        """
+        )
 
         importProject()
         assertModuleModuleDepScope("jvm_main", "foo_main", DependencyScope.COMPILE)
@@ -166,7 +247,8 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
 
         val kotlinVersion = "1.1.0"
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
              buildscript {
                 repositories {
                     mavenCentral()
@@ -222,7 +304,8 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                     compile project(':js-lib')
                 }
             }
-        """)
+        """
+        )
 
         importProject()
 
@@ -238,13 +321,14 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
     @Test
     fun testDependenciesReachableViaImpl() {
         createProjectSubFile(
-                "settings.gradle",
-                "include ':common-lib1', ':common-lib2', ':jvm-lib1', ':jvm-lib2', ':jvm-app'"
+            "settings.gradle",
+            "include ':common-lib1', ':common-lib2', ':jvm-lib1', ':jvm-lib2', ':jvm-app'"
         )
 
         val kotlinVersion = "1.1.0"
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
              buildscript {
                 repositories {
                     mavenCentral()
@@ -287,7 +371,8 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                     compile project(':jvm-lib2')
                 }
             }
-        """)
+        """
+        )
 
         importProject()
 
@@ -305,13 +390,14 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
     @Test
     fun testTransitiveImplement() {
         createProjectSubFile(
-                "settings.gradle",
-                "include ':project1', ':project2', ':project3'"
+            "settings.gradle",
+            "include ':project1', ':project2', ':project3'"
         )
 
         val kotlinVersion = "1.1.51"
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             buildscript {
                 repositories {
                     mavenCentral()
@@ -364,43 +450,59 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                     testCompile(project(':project2').sourceSets.test.output)
                 }
             }
-        """)
+        """
+        )
 
-        importProject()
+        val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
 
-        assertModuleModuleDepScope("project1_test", "project1_main", DependencyScope.COMPILE)
+        try {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = true
+            importProject()
 
-        assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project1_test", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project2_test", "project2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project2_test", "project1_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project2_test", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project2_custom", "project1_custom", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_test", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_test", "project1_test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_test", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_main", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project2_custom", "project1_custom", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project3_test", "project3_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project2_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project1_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_test", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_main", "project1_main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("project3_custom", "project1_custom", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3_custom", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project3_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project2_test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project2_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project1_test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_test", "project1_main", DependencyScope.COMPILE)
+
+            assertModuleModuleDepScope("project3_custom", "project1_custom", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3_custom", "project2_main", DependencyScope.COMPILE)
+
+            currentExternalProjectSettings.isResolveModulePerSourceSet = false
+            importProject()
+
+            assertModuleModuleDepScope("project2", "project1", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3", "project2", DependencyScope.TEST, DependencyScope.PROVIDED, DependencyScope.RUNTIME)
+            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+        } finally {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
+        }
     }
 
     @Test
     fun testTransitiveImplementWithAndroid() {
         createProjectSubFile(
-                "settings.gradle",
-                "include ':project1', ':project2', ':project3'"
+            "settings.gradle",
+            "include ':project1', ':project2', ':project3'"
         )
 
         val kotlinVersion = "1.1.51"
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             buildscript {
                 repositories {
                     jcenter()
@@ -450,7 +552,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                 }
 
                 android {
-                    compileSdkVersion 23
+                    compileSdkVersion 26
                     buildToolsVersion "23.0.1"
                     defaultConfig {
                         applicationId "org.jetbrains.kotlin"
@@ -468,29 +570,45 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                     testCompile(project(':project2').sourceSets.test.output)
                 }
             }
-        """)
-        createProjectSubFile("local.properties", """
-            sdk.dir=/${StringUtil.escapeBackSlashes(File(homePath).parent + "/dependencies/androidSDK")}
-        """)
+        """
+        )
+        createProjectSubFile(
+            "local.properties", """
+            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
+        """
+        )
 
+        val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
+        try {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = true
+            importProject()
 
-        importProject()
+            assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+            TestCase.assertEquals(listOf("project1"), facetSettings("project2").implementedModuleNames)
 
-        assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+            currentExternalProjectSettings.isResolveModulePerSourceSet = false
+            importProject()
 
+            assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+            TestCase.assertEquals(listOf("project1"), facetSettings("project2").implementedModuleNames)
+        } finally {
+            currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
+        }
     }
 
     @Test
     fun testJsTestOutputFile() {
         createProjectSubFile(
-                "settings.gradle",
-                "include ':project1', ':project2', ':project3'"
+            "settings.gradle",
+            "include ':project1', ':project2', ':project3'"
         )
 
         val kotlinVersion = "1.1.51"
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             buildscript {
                 repositories {
                     jcenter()
@@ -518,30 +636,85 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                     implement project(':project1')
                 }
             }
-        """)
+        """
+        )
 
         importProject()
 
         TestCase.assertEquals(
-                projectPath + "/project2/build/classes/test/project2_test.js",
-                PathUtil.toSystemIndependentName(KotlinFacet.get (getModule("project2_main"))!!.configuration.settings.testOutputPath)
+            projectPath + "/project2/build/classes/test/project2_test.js",
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2_main"))!!.configuration.settings.testOutputPath)
         )
         TestCase.assertEquals(
-                projectPath + "/project2/build/classes/test/project2_test.js",
-                PathUtil.toSystemIndependentName(KotlinFacet.get (getModule("project2_test"))!!.configuration.settings.testOutputPath)
+            projectPath + "/project2/build/classes/test/project2_test.js",
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2_test"))!!.configuration.settings.testOutputPath)
+        )
+    }
+
+    @Test
+    fun testJsProductionOutputFile() {
+        createProjectSubFile(
+            "settings.gradle",
+            "include ':project1', ':project2', ':project3'"
+        )
+
+        val kotlinVersion = "1.1.51"
+
+        createProjectSubFile(
+            "build.gradle", """
+            buildscript {
+                repositories {
+                    jcenter()
+                    maven { url 'https://maven.google.com' }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+                    classpath 'com.android.tools.build:gradle:2.3.3'
+                }
+            }
+
+            project('project1') {
+                apply plugin: 'kotlin-platform-common'
+            }
+
+            project('project2') {
+                repositories {
+                    mavenCentral()
+                }
+
+                apply plugin: 'kotlin-platform-js'
+
+                dependencies {
+                    implement project(':project1')
+                }
+            }
+        """
+        )
+
+        importProject()
+
+        TestCase.assertEquals(
+            projectPath + "/project2/build/classes/main/project2.js",
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2_main"))!!.configuration.settings.productionOutputPath)
+        )
+        TestCase.assertEquals(
+            projectPath + "/project2/build/classes/main/project2.js",
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2_test"))!!.configuration.settings.productionOutputPath)
         )
     }
 
     @Test
     fun testJsTestOutputFileInProjectWithAndroid() {
         createProjectSubFile(
-                "settings.gradle",
-                "include ':project1', ':project2', ':project3'"
+            "settings.gradle",
+            "include ':project1', ':project2', ':project3'"
         )
 
         val kotlinVersion = "1.1.51"
 
-        createProjectSubFile("build.gradle", """
+        createProjectSubFile(
+            "build.gradle", """
             buildscript {
                 repositories {
                     jcenter()
@@ -583,7 +756,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                 }
 
                 android {
-                    compileSdkVersion 23
+                    compileSdkVersion 26
                     buildToolsVersion "23.0.1"
                     defaultConfig {
                         applicationId "org.jetbrains.kotlin"
@@ -595,16 +768,19 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
                     }
                 }
             }
-        """)
-        createProjectSubFile("local.properties", """
-            sdk.dir=/${StringUtil.escapeBackSlashes(File(homePath).parent + "/dependencies/androidSDK")}
-        """)
+        """
+        )
+        createProjectSubFile(
+            "local.properties", """
+            sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}
+        """
+        )
 
         importProject()
 
         TestCase.assertEquals(
-                projectPath + "/project2/build/classes/test/project2_test.js",
-                PathUtil.toSystemIndependentName(KotlinFacet.get (getModule("project2"))!!.configuration.settings.testOutputPath)
+            projectPath + "/project2/build/classes/test/project2_test.js",
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2"))!!.configuration.settings.testOutputPath)
         )
     }
 }

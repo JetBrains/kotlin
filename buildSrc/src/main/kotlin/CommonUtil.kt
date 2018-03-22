@@ -20,26 +20,6 @@ fun Project.callGroovy(name: String, vararg args: Any?): Any? {
     return (property(name) as Closure<*>).call(*args)
 }
 
-fun AbstractTask.dependsOnTaskIfExists(task: String, project: Project?, parentProject: Project?) {
-    val thisTask = this
-    val p = project ?: this.project
-    p.afterEvaluate {
-        p.tasks.firstOrNull { it.name == task }?.also {
-            if (parentProject != null) {
-                parentProject.evaluationDependsOn(p.path)
-            }
-            thisTask.dependsOn(it)
-        }
-    }
-}
-
-fun AbstractTask.dependsOnTaskIfExistsRec(task: String, project: Project? = null, parentProject: Project? = null) {
-    dependsOnTaskIfExists(task, project, parentProject)
-    (project ?: this.project).subprojects.forEach {
-        dependsOnTaskIfExistsRec(task, it, this.project)
-    }
-}
-
 inline fun<T: Any> Project.withJavaPlugin(crossinline body: () -> T?): T? {
     var res: T? = null
     pluginManager.withPlugin("java") {
@@ -75,4 +55,10 @@ fun Project.generator(fqName: String) = task<JavaExec> {
     classpath = the<JavaPluginConvention>().sourceSets["test"].runtimeClasspath
     main = fqName
     workingDir = rootDir
+}
+
+fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
+    val v = it.toString()
+    if (v.isBlank()) true
+    else v.toBoolean()
 }

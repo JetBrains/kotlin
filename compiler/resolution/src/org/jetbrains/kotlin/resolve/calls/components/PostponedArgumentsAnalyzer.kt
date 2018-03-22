@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class PostponedArgumentsAnalyzer(
-        private val callableReferenceResolver: CallableReferenceResolver
+    private val callableReferenceResolver: CallableReferenceResolver
 ) {
     interface Context {
         fun buildCurrentSubstitutor(): NewTypeSubstitutor
@@ -34,12 +34,20 @@ class PostponedArgumentsAnalyzer(
         // type can be proper if it not contains not fixed type variables
         fun canBeProper(type: UnwrappedType): Boolean
 
+        fun hasUpperUnitConstraint(type: UnwrappedType): Boolean
+
         // mutable operations
         fun addOtherSystem(otherSystem: ConstraintStorage)
+
         fun getBuilder(): ConstraintSystemBuilder
     }
 
-    fun analyze(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, argument: ResolvedAtom, diagnosticsHolder: KotlinDiagnosticsHolder) {
+    fun analyze(
+        c: Context,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        argument: ResolvedAtom,
+        diagnosticsHolder: KotlinDiagnosticsHolder
+    ) {
         when (argument) {
             is ResolvedLambdaAtom ->
                 analyzeLambda(c, resolutionCallbacks, argument, diagnosticsHolder)
@@ -56,15 +64,35 @@ class PostponedArgumentsAnalyzer(
         }
     }
 
-    private fun analyzeLambda(c: Context, resolutionCallbacks: KotlinResolutionCallbacks, lambda: ResolvedLambdaAtom, diagnosticHolder: KotlinDiagnosticsHolder) {
+    private fun analyzeLambda(
+        c: Context,
+        resolutionCallbacks: KotlinResolutionCallbacks,
+        lambda: ResolvedLambdaAtom,
+        diagnosticHolder: KotlinDiagnosticsHolder
+    ) {
         val currentSubstitutor = c.buildCurrentSubstitutor()
         fun substitute(type: UnwrappedType) = currentSubstitutor.safeSubstitute(type)
 
         val receiver = lambda.receiver?.let(::substitute)
         val parameters = lambda.parameters.map(::substitute)
-        val expectedType = lambda.returnType.takeIf { c.canBeProper(it) }?.let(::substitute)
+        val rawReturnType = lambda.returnType
 
-        val returnArguments = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(lambda.atom, lambda.isSuspend, receiver, parameters, expectedType)
+        val expectedTypeForReturnArguments = when {
+            c.canBeProper(rawReturnType) -> substitute(rawReturnType)
+
+            // For Unit-coercion
+            c.hasUpperUnitConstraint(rawReturnType) -> lambda.returnType.builtIns.unitType
+
+            else -> null
+        }
+
+        val returnArguments = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(
+            lambda.atom,
+            lambda.isSuspend,
+            receiver,
+            parameters,
+            expectedTypeForReturnArguments
+        )
 
         returnArguments.forEach { c.addSubsystemFromArgument(it) }
 

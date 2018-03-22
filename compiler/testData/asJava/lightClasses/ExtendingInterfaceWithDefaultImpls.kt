@@ -8,3 +8,7 @@ interface A {
 interface B: A {
     fun b() = "b"
 }
+
+// TODO: could be lazy
+// see KT-22819
+// LAZINESS:NoLaziness

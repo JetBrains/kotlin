@@ -28,44 +28,45 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeUtils
 
-object JsExternalChecker : SimpleDeclarationChecker {
+object JsExternalChecker : DeclarationChecker {
     val DEFINED_EXTERNALLY_PROPERTY_NAMES = setOf(FqNameUnsafe("kotlin.js.noImpl"), FqNameUnsafe("kotlin.js.definedExternally"))
 
-    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
-                       bindingContext: BindingContext) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!AnnotationsUtils.isNativeObject(descriptor)) return
 
+        val trace = context.trace
         if (!DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             if (isDirectlyExternal(declaration, descriptor) && descriptor !is PropertyAccessorDescriptor) {
-                diagnosticHolder.report(ErrorsJs.NESTED_EXTERNAL_DECLARATION.on(declaration))
+                trace.report(ErrorsJs.NESTED_EXTERNAL_DECLARATION.on(declaration))
             }
         }
 
         if (DescriptorUtils.isAnnotationClass(descriptor)) {
-            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "annotation class"))
+            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "annotation class"))
         }
         else if (descriptor is ClassDescriptor && descriptor.isData) {
-            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "data class"))
+            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "data class"))
         }
         else if (descriptor is PropertyAccessorDescriptor && isDirectlyExternal(declaration, descriptor)) {
-            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "property accessor"))
+            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "property accessor"))
         }
         else if (descriptor is ClassDescriptor && descriptor.isInner) {
-            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "inner class"))
+            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "inner class"))
         }
         else if (isPrivateMemberOfExternalClass(descriptor)) {
-            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "private member of class"))
+            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "private member of class"))
         }
 
         if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.INTERFACE &&
             descriptor.containingDeclaration.let { it is ClassDescriptor && it.kind == ClassKind.INTERFACE }
         ) {
-            diagnosticHolder.report(ErrorsJs.NESTED_CLASS_IN_EXTERNAL_INTERFACE.on(declaration))
+            trace.report(ErrorsJs.NESTED_CLASS_IN_EXTERNAL_INTERFACE.on(declaration))
         }
 
         if (descriptor !is PropertyAccessorDescriptor && descriptor.isExtension) {
@@ -74,7 +75,7 @@ object JsExternalChecker : SimpleDeclarationChecker {
                 is PropertyDescriptor -> "extension property"
                 else -> "extension member"
             }
-            diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, target))
+            trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, target))
         }
 
         if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ANNOTATION_CLASS) {
@@ -83,19 +84,19 @@ object JsExternalChecker : SimpleDeclarationChecker {
                 superClasses.removeAll { it.fqNameUnsafe == KotlinBuiltIns.FQ_NAMES._enum }
             }
             if (superClasses.any { !AnnotationsUtils.isNativeObject(it) && it.fqNameSafe != KotlinBuiltIns.FQ_NAMES.throwable }) {
-                diagnosticHolder.report(ErrorsJs.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE.on(declaration))
+                trace.report(ErrorsJs.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE.on(declaration))
             }
         }
 
         if (descriptor is FunctionDescriptor && descriptor.isInline) {
-            diagnosticHolder.report(ErrorsJs.INLINE_EXTERNAL_DECLARATION.on(declaration))
+            trace.report(ErrorsJs.INLINE_EXTERNAL_DECLARATION.on(declaration))
         }
 
         if (descriptor is CallableMemberDescriptor && !(descriptor is PropertyAccessorDescriptor && descriptor.isDefault)) {
             for (p in descriptor.valueParameters) {
                 if ((p.varargElementType ?: p.type).isExtensionFunctionType) {
                     val ktParam = p.source.getPsi() as? KtParameter ?: declaration
-                    diagnosticHolder.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(ktParam))
+                    trace.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(ktParam))
                 }
             }
 
@@ -104,21 +105,21 @@ object JsExternalChecker : SimpleDeclarationChecker {
                                               !(descriptor.getter?.isDefault ?: true && descriptor.setter?.isDefault ?: true)
 
             if (!propertyWithCustomAccessors && descriptor.returnType?.isExtensionFunctionType ?: false) {
-                diagnosticHolder.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(declaration))
+                trace.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(declaration))
             }
         }
 
         if (descriptor is CallableMemberDescriptor && descriptor.isNonAbstractMemberOfInterface() &&
             !descriptor.isNullableProperty()
         ) {
-            diagnosticHolder.report(ErrorsJs.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE.on(declaration))
+            trace.report(ErrorsJs.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE.on(declaration))
         }
 
-        checkBody(declaration, descriptor, diagnosticHolder, bindingContext)
-        checkDelegation(declaration, descriptor, diagnosticHolder)
-        checkAnonymousInitializer(declaration, diagnosticHolder)
-        checkEnumEntry(declaration, diagnosticHolder)
-        checkConstructorPropertyParam(declaration, descriptor, diagnosticHolder)
+        checkBody(declaration, descriptor, trace, trace.bindingContext)
+        checkDelegation(declaration, descriptor, trace)
+        checkAnonymousInitializer(declaration, trace)
+        checkEnumEntry(declaration, trace)
+        checkConstructorPropertyParam(declaration, descriptor, trace)
     }
 
     private fun checkBody(

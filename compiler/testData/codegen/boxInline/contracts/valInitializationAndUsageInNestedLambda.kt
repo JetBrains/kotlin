@@ -1,4 +1,4 @@
-// !LANGUAGE: +CallsInPlaceEffect
+// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect +ReadDeserializedContracts
 // FILE: 1.kt
 package test
 

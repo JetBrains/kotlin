@@ -1,24 +1,15 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
@@ -138,7 +129,8 @@ class CoroutineCodegenForLambda private constructor(
         element: KtElement,
         private val closureContext: ClosureContext,
         classBuilder: ClassBuilder,
-        private val originalSuspendFunctionDescriptor: FunctionDescriptor
+        private val originalSuspendFunctionDescriptor: FunctionDescriptor,
+        private val forInline: Boolean
 ) : AbstractCoroutineCodegen(
         outerExpressionCodegen, element, closureContext, classBuilder,
         userDataForDoResume = mapOf(INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME to originalSuspendFunctionDescriptor)
@@ -199,7 +191,7 @@ class CoroutineCodegenForLambda private constructor(
             val bridgeParameters = (1 until delegate.argumentTypes.size).map { AsmTypes.OBJECT_TYPE } + delegate.argumentTypes.last()
             val bridge = Method(delegate.name, delegate.returnType, bridgeParameters.toTypedArray())
 
-            generateBridge(bridge, delegate)
+            generateBridge(bridge, createCoroutineDescriptor.returnType, delegate, createCoroutineDescriptor.returnType)
         }
     }
 
@@ -311,13 +303,14 @@ class CoroutineCodegenForLambda private constructor(
                 object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
 
                     override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
+                        if (forInline) return super.wrapMethodVisitor(mv, access, name, desc)
                         return CoroutineTransformerMethodVisitor(
-                                mv, access, name, desc, null, null,
-                                obtainClassBuilderForCoroutineState = { v },
-                                element = element,
-                                shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                                containingClassInternalName = v.thisName,
-                                isForNamedFunction = false
+                            mv, access, name, desc, null, null,
+                            obtainClassBuilderForCoroutineState = { v },
+                            lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+                            shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
+                            containingClassInternalName = v.thisName,
+                            isForNamedFunction = false
                         )
                     }
 
@@ -347,7 +340,9 @@ class CoroutineCodegenForLambda private constructor(
                             originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     classBuilder,
-                    originalSuspendLambdaDescriptor
+                    originalSuspendLambdaDescriptor,
+                    // Local suspend lambdas, which call crossinline suspend parameters of containing functions must be generated after inlining
+                    expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_SUSPEND_LAMBDA, originalSuspendLambdaDescriptor] == true
             )
         }
     }

@@ -47,7 +47,10 @@ fun makeModuleFile(
     builder.addModule(
             name,
             outputDir.absolutePath,
-            sourcesToCompile,
+            // important to transform file to absolute paths,
+            // otherwise compiler will use module file's parent as base path (a temporary file; see below)
+            // (see org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.getAbsolutePaths)
+            sourcesToCompile.map { it.absoluteFile },
             javaSourceRoots,
             classpath,
             null,

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.config
@@ -21,10 +10,10 @@ import org.jetbrains.kotlin.utils.DescriptionAware
 import java.util.*
 
 enum class LanguageFeature(
-        val sinceVersion: LanguageVersion?,
-        val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
-        val hintUrl: String? = null,
-        val defaultState: State = State.ENABLED
+    val sinceVersion: LanguageVersion?,
+    val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
+    val hintUrl: String? = null,
+    val defaultState: State = State.ENABLED
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
     TypeAliases(KOTLIN_1_1),
@@ -67,8 +56,6 @@ enum class LanguageFeature(
     DefaultMethodsCallFromJava6TargetError(KOTLIN_1_2),
 
     BooleanElvisBoundSmartCasts(KOTLIN_1_3),
-    ReturnsEffect(KOTLIN_1_3),
-    CallsInPlaceEffect(KOTLIN_1_3),
     RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3),
     NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3),
     ProhibitDataClassesOverridingCopy(KOTLIN_1_3),
@@ -76,12 +63,27 @@ enum class LanguageFeature(
     ProhibitInnerClassesOfGenericClassExtendingThrowable(KOTLIN_1_3),
     ProperVisibilityForCompanionObjectInstanceField(KOTLIN_1_3),
     ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3),
+    NestedClassesInAnnotations(KOTLIN_1_3),
+    JvmStaticInInterface(KOTLIN_1_3),
+    InlineClasses(KOTLIN_1_3),
+    ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3),
+    ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
+    ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),
+
+    ReadDeserializedContracts(KOTLIN_1_3),
+    UseReturnsEffect(KOTLIN_1_3),
+    UseCallsInPlaceEffect(KOTLIN_1_3),
+    AllowContractsForCustomFunctions(KOTLIN_1_3),
 
     // Experimental features
 
-    Coroutines(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, "https://kotlinlang.org/docs/diagnostics/experimental-coroutines", State.ENABLED_WITH_WARNING),
+    Coroutines(
+        KOTLIN_1_1, ApiVersion.KOTLIN_1_1,
+        "https://kotlinlang.org/docs/diagnostics/experimental-coroutines",
+        State.ENABLED_WITH_WARNING
+    ),
 
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
@@ -90,7 +92,7 @@ enum class LanguageFeature(
     ;
 
     val presentableName: String
-        // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
+    // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
         get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::toLowerCase)
 
     val presentableText get() = if (hintUrl == null) presentableName else "$presentableName (See: $hintUrl)"
@@ -130,7 +132,8 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
         fun fromVersionString(str: String?) = values().find { it.versionString == str }
 
         @JvmStatic
-        fun fromFullVersionString(str: String) = str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
+        fun fromFullVersionString(str: String) =
+            str.split(".", "-").let { if (it.size >= 2) fromVersionString("${it[0]}.${it[1]}") else null }
 
         @JvmField
         val LATEST_STABLE = KOTLIN_1_2
@@ -141,7 +144,7 @@ interface LanguageVersionSettings {
     fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State
 
     fun supportsFeature(feature: LanguageFeature): Boolean =
-            getFeatureSupport(feature).let { it == LanguageFeature.State.ENABLED || it == LanguageFeature.State.ENABLED_WITH_WARNING }
+        getFeatureSupport(feature).let { it == LanguageFeature.State.ENABLED || it == LanguageFeature.State.ENABLED_WITH_WARNING }
 
     fun <T> getFlag(flag: AnalysisFlag<T>): T
 
@@ -152,10 +155,10 @@ interface LanguageVersionSettings {
 }
 
 class LanguageVersionSettingsImpl @JvmOverloads constructor(
-        override val languageVersion: LanguageVersion,
-        override val apiVersion: ApiVersion,
-        analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
-        specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
+    override val languageVersion: LanguageVersion,
+    override val apiVersion: ApiVersion,
+    analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
+    specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
 ) : LanguageVersionSettings {
     private val analysisFlags: Map<AnalysisFlag<*>, *> = Collections.unmodifiableMap(analysisFlags)
     private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = Collections.unmodifiableMap(specificFeatures)
@@ -193,7 +196,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
 }
 
 fun LanguageVersionSettings.isPreRelease(): Boolean =
-        languageVersion.isPreRelease()
+    languageVersion.isPreRelease()
 
 fun LanguageVersion.isPreRelease(): Boolean {
     if (!isStable) return true

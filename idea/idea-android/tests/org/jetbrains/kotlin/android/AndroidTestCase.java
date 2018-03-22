@@ -29,6 +29,8 @@ import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.LanguageLevelProjectExtension;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.Disposer;
@@ -153,6 +155,11 @@ public abstract class AndroidTestCase extends AndroidTestBase {
     @Override
     protected void tearDown() throws Exception {
         try {
+            Sdk androidSdk = ProjectJdkTable.getInstance().findJdk(ANDROID_SDK_NAME);
+            if (androidSdk != null) {
+                ApplicationManager.getApplication().runWriteAction(() -> ProjectJdkTable.getInstance().removeJdk(androidSdk));
+            }
+
             CodeStyleSettingsManager.getInstance(getProject()).dropTemporarySettings();
             myModule = null;
             myAdditionalModules = null;

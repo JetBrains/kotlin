@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -6606,13 +6606,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("passExtLambdaToNative.kt")
         public void testPassExtLambdaToNative() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/passExtLambdaToNative.kt");
+            if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+                doTest(fileName);
+                return;
+            }
             try {
                 doTest(fileName);
             }
             catch (Throwable ignore) {
+                ignore.printStackTrace();
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("passMemberOrExtFromNative.kt")
@@ -6624,13 +6629,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("passMemberOrExtToNative.kt")
         public void testPassMemberOrExtToNative() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/passMemberOrExtToNative.kt");
+            if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+                doTest(fileName);
+                return;
+            }
             try {
                 doTest(fileName);
             }
             catch (Throwable ignore) {
+                ignore.printStackTrace();
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("passTopLevelFunctionFromNative.kt")
@@ -6828,6 +6838,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("byteAndShortConversions.kt")
         public void testByteAndShortConversions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/byteAndShortConversions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constantPropagation.kt")
+        public void testConstantPropagation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/constantPropagation.kt");
             doTest(fileName);
         }
 

@@ -34,7 +34,13 @@ object Aggregates : TemplateGroupBase() {
         include(Maps, CharSequences)
     } builder {
         inline()
-        doc { "Returns `true` if all ${f.element.pluralize()} match the given [predicate]." }
+        doc {
+            """
+            Returns `true` if all ${f.element.pluralize()} match the given [predicate].
+
+            @sample samples.collections.Collections.Aggregates.all
+            """
+        }
         returns("Boolean")
         body {
             """
@@ -55,7 +61,13 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         inline()
 
-        doc { "Returns `true` if no ${f.element.pluralize()} match the given [predicate]." }
+        doc {
+            """
+            Returns `true` if no ${f.element.pluralize()} match the given [predicate].
+
+            @sample samples.collections.Collections.Aggregates.noneWithPredicate
+            """
+        }
         returns("Boolean")
         body {
             """
@@ -74,7 +86,13 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(Maps, CharSequences)
     } builder {
-        doc { "Returns `true` if the ${f.collection} has no ${f.element.pluralize()}." }
+        doc {
+            """
+            Returns `true` if the ${f.collection} has no ${f.element.pluralize()}.
+
+            @sample samples.collections.Collections.Aggregates.none
+            """
+        }
         returns("Boolean")
         body {
             "return !iterator().hasNext()"
@@ -98,7 +116,13 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         inline()
 
-        doc { "Returns `true` if at least one ${f.element} matches the given [predicate]." }
+        doc {
+            """
+            Returns `true` if at least one ${f.element} matches the given [predicate].
+
+            @sample samples.collections.Collections.Aggregates.anyWithPredicate
+            """
+        }
         returns("Boolean")
         body {
             """
@@ -117,7 +141,13 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(Maps, CharSequences)
     } builder {
-        doc { "Returns `true` if ${f.collection} has at least one ${f.element}." }
+        doc {
+            """
+            Returns `true` if ${f.collection} has at least one ${f.element}.
+
+            @sample samples.collections.Collections.Aggregates.any
+            """
+        }
         returns("Boolean")
         body {
             "return iterator().hasNext()"
@@ -843,7 +873,7 @@ object Aggregates : TemplateGroupBase() {
 
         specialFor(Sequences) {
             returns("SELF")
-            doc { "Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass though it." }
+            doc { "Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass through it." }
             sequenceClassification(intermediate, stateless)
             body {
                 """

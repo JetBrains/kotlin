@@ -27,10 +27,10 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
 class ForInArrayLoopGenerator(
-        codegen: ExpressionCodegen,
-        forExpression: KtForExpression,
-        private val canCacheArrayLength: Boolean,
-        private val shouldAlwaysStoreArrayInNewVar: Boolean
+    codegen: ExpressionCodegen,
+    forExpression: KtForExpression,
+    private val canCacheArrayLength: Boolean,
+    private val shouldAlwaysStoreArrayInNewVar: Boolean
 ) : AbstractForLoopGenerator(codegen, forExpression) {
     private var indexVar: Int = 0
     private var arrayVar: Int = 0
@@ -47,8 +47,7 @@ class ForInArrayLoopGenerator(
         val asmLoopRangeType = codegen.asmType(loopRangeType)
         if (!shouldAlwaysStoreArrayInNewVar && value is StackValue.Local && value.type == asmLoopRangeType) {
             arrayVar = value.index // no need to copy local variable into another variable
-        }
-        else {
+        } else {
             arrayVar = createLoopTempVariable(OBJECT_TYPE)
             value.put(asmLoopRangeType, v)
             v.store(arrayVar, OBJECT_TYPE)
@@ -71,8 +70,7 @@ class ForInArrayLoopGenerator(
         v.load(indexVar, Type.INT_TYPE)
         if (canCacheArrayLength) {
             v.load(arrayLengthVar, Type.INT_TYPE)
-        }
-        else {
+        } else {
             v.load(arrayVar, OBJECT_TYPE)
             v.arraylength()
         }

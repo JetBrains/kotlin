@@ -2,11 +2,15 @@
 description = "Kotlin SourceSections Compiler Plugin"
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
+
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:frontend.script"))
     compileOnly(project(":compiler:plugin-api"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+
     testCompile(project(":compiler:frontend"))
     testCompile(project(":compiler:frontend.script"))
     testCompile(project(":compiler:plugin-api"))
@@ -15,10 +19,11 @@ dependencies {
     testCompile(project(":compiler:cli-common"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(project(":compiler:daemon-common"))
-    testCompile(project(":kotlin-daemon-client"))
+    testCompile(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(ideaSdkDeps("idea", "idea_rt", "openapi"))
     testCompile(commonDep("junit:junit"))
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(intellijDep()) { includeJars("idea", "idea_rt", "openapi", "log4j", "jdom", "jps-model") }
     testRuntime(projectDist(":kotlin-reflect"))
 }
 

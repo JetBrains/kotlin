@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 const val UNDEFINED_OFFSET: Int = -1
 
 data class SourceRangeInfo(
-        val filePath: String,
-        val startOffset: Int,
-        val startLineNumber: Int,
-        val startColumnNumber: Int,
-        val endOffset: Int,
-        val endLineNumber: Int,
-        val endColumnNumber: Int
+    val filePath: String,
+    val startOffset: Int,
+    val startLineNumber: Int,
+    val startColumnNumber: Int,
+    val endOffset: Int,
+    val endLineNumber: Int,
+    val endColumnNumber: Int
 )
 
 interface SourceManager {

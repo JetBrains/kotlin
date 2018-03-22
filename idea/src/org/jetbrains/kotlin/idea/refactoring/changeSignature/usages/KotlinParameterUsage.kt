@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 
 // Explicit reference to function parameter or outer this
 abstract class KotlinExplicitReferenceUsage<T : KtElement>(element: T) : KotlinUsageInfo<T>(element) {
@@ -59,7 +59,7 @@ class KotlinParameterUsage(
         if (changeInfo.receiverParameterInfo != parameterInfo) return parameterInfo.getInheritedName(containingCallable)
 
         val newName = changeInfo.newName
-        if (KotlinNameSuggester.isIdentifier(newName)) return "this@$newName"
+        if (newName.isIdentifier()) return "this@$newName"
 
         return "this"
     }

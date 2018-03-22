@@ -18,7 +18,7 @@ fun test1(int: Int, any: Any) {
 
     val a2 : MyList<out Any> = getMyList(int)
 
-    val a3 : MyList<out Any> = <!NI;TYPE_MISMATCH!>getMyListToReadFrom(int)<!>
+    val a3 : MyList<out Any> = getMyListToReadFrom(int)
 
     val a4 : MyList<in Int> = getMyList(any)
 

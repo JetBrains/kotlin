@@ -26,8 +26,8 @@ class LogTest {
     }
 
     fun checkWrongTag(tag: String) {
-        if (Log.isLoggable(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `getTAG1` versus `getTAG2` (Conflicting tag)">TAG1</error>, Log.DEBUG)) {
-            Log.d(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `getTAG1` versus `getTAG2`">TAG2</error>, "message") // warn: mismatched tags!
+        if (Log.isLoggable(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `TAG1` versus `TAG2` (Conflicting tag)">TAG1</error>, Log.DEBUG)) {
+            Log.d(<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `TAG1` versus `TAG2`">TAG2</error>, "message") // warn: mismatched tags!
         }
         if (Log.isLoggable("<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `\"my_tag\"` versus `\"other_tag\"` (Conflicting tag)">my_tag</error>", Log.DEBUG)) {
             Log.d("<error descr="Mismatched tags: the `d()` and `isLoggable()` calls typically should pass the same tag: `\"my_tag\"` versus `\"other_tag\"`">other_tag</error>", "message") // warn: mismatched tags!

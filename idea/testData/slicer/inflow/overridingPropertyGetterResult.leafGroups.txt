@@ -10,3 +10,8 @@
 14 			override val <bold>foo: Int</bold>
 15 				get() = <bold>3</bold>
 
+3 return <bold>5</bold>;
+20 	val <bold>y = b.foo</bold>
+20 		val y = <bold>b.foo</bold>
+3 			return <bold>5</bold>;
+

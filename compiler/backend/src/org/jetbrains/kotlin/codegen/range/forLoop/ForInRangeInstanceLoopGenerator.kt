@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 
 class ForInRangeInstanceLoopGenerator(
-        codegen: ExpressionCodegen,
-        forExpression: KtForExpression,
-        private val rangeExpression: KtExpression,
-        private val reversed: Boolean
+    codegen: ExpressionCodegen,
+    forExpression: KtForExpression,
+    private val rangeExpression: KtExpression,
+    private val reversed: Boolean
 ) : AbstractForInRangeLoopGenerator(codegen, forExpression, if (reversed) -1 else 1) {
 
     override fun storeRangeStartAndEnd() {
@@ -37,8 +37,7 @@ class ForInRangeInstanceLoopGenerator(
         if (reversed) {
             generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, loopParameterType, loopParameterVar)
             generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, asmElementType, endVar)
-        }
-        else {
+        } else {
             generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterType, loopParameterVar)
             generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, asmElementType, endVar)
         }

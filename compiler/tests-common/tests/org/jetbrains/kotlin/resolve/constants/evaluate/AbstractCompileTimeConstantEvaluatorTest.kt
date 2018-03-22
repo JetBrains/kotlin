@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationDescriptorResolveTest
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -65,12 +65,11 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnnotationDesc
 
     private fun evaluateInitializer(context: BindingContext, property: VariableDescriptor): CompileTimeConstant<*>? {
         val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) as KtProperty
-        val compileTimeConstant = ConstantExpressionEvaluator(property.builtIns, LanguageVersionSettingsImpl.DEFAULT).evaluateExpression(
+        return ConstantExpressionEvaluator(property.module, LanguageVersionSettingsImpl.DEFAULT).evaluateExpression(
                 propertyDeclaration.initializer!!,
                 DelegatingBindingTrace(context, "trace for evaluating compile time constant"),
                 property.type
         )
-        return compileTimeConstant
     }
 
     private fun doTest(path: String, getValueToTest: (VariableDescriptor, BindingContext) -> String) {

@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrErrorDeclarationImpl(
-        startOffset: Int,
-        endOffset: Int,
-        override val descriptor: DeclarationDescriptor
+    startOffset: Int,
+    endOffset: Int,
+    override val descriptor: DeclarationDescriptor
 ) : IrDeclarationBase(startOffset, endOffset, IrDeclarationOrigin.DEFINED), IrErrorDeclaration {
     override val declarationKind: IrDeclarationKind get() = IrDeclarationKind.ERROR
 

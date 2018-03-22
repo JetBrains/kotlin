@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -52,6 +52,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("annotations2.kt")
     public void testAnnotations2() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/annotations2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("annotations3.kt")
+    public void testAnnotations3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/annotations3.kt");
         doTest(fileName);
     }
 
@@ -118,6 +124,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("importsForErrorTypes.kt")
     public void testImportsForErrorTypes() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/importsForErrorTypes.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("importsKt22083.kt")
+    public void testImportsKt22083() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/importsKt22083.kt");
         doTest(fileName);
     }
 
@@ -226,6 +238,18 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("kt19750.kt")
     public void testKt19750() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/kt19750.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("leadingDollars.kt")
+    public void testLeadingDollars() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/leadingDollars.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("leadingDollars2.kt")
+    public void testLeadingDollars2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/leadingDollars2.kt");
         doTest(fileName);
     }
 

@@ -21,12 +21,14 @@ import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.light.LightMemberReference
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.CommonProcessors
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
+import org.jetbrains.kotlin.idea.findUsages.KotlinReferencePreservingUsageInfo
 import org.jetbrains.kotlin.idea.findUsages.KotlinReferenceUsageInfo
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import java.util.*
@@ -118,7 +120,13 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
         val LOG = Logger.getInstance(KotlinFindUsagesHandler::class.java)
 
         internal fun processUsage(processor: Processor<UsageInfo>, ref: PsiReference): Boolean =
-            processor.processIfNotNull { if (ref.element.isValid) KotlinReferenceUsageInfo(ref) else null }
+            processor.processIfNotNull {
+                when {
+                    ref is LightMemberReference -> KotlinReferencePreservingUsageInfo(ref)
+                    ref.element.isValid -> KotlinReferenceUsageInfo(ref)
+                    else -> null
+                }
+            }
 
         internal fun processUsage(processor: Processor<UsageInfo>, element: PsiElement): Boolean =
             processor.processIfNotNull { if (element.isValid) UsageInfo(element) else null }

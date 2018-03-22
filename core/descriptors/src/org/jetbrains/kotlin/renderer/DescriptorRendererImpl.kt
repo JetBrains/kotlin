@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.renderer
@@ -32,7 +21,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
@@ -772,7 +761,9 @@ internal class DescriptorRendererImpl(
 
         renderVariable(valueParameter, includeName, builder, topLevel)
 
-        val withDefaultValue = defaultParameterValueRenderer != null && (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.hasDefaultValue())
+        val withDefaultValue =
+            defaultParameterValueRenderer != null &&
+            (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.declaresOrInheritsDefaultValue())
         if (withDefaultValue) {
             builder.append(" = ${defaultParameterValueRenderer!!(valueParameter)}")
         }
@@ -847,10 +838,11 @@ internal class DescriptorRendererImpl(
     private fun renderTypeAlias(typeAlias: TypeAliasDescriptor, builder: StringBuilder) {
         builder.renderAnnotations(typeAlias)
         renderVisibility(typeAlias.visibility, builder)
+        renderMemberModifiers(typeAlias, builder)
         builder.append(renderKeyword("typealias")).append(" ")
         renderName(typeAlias, builder)
 
-        renderTypeParameters(typeAlias.declaredTypeParameters, builder, true)
+        renderTypeParameters(typeAlias.declaredTypeParameters, builder, false)
         renderCapturedTypeParametersIfRequired(typeAlias, builder)
 
         builder.append(" = ").append(renderType(typeAlias.underlyingType))
@@ -883,6 +875,7 @@ internal class DescriptorRendererImpl(
             renderMemberModifiers(klass, builder)
             renderModifier(builder, DescriptorRendererModifier.INNER in modifiers && klass.isInner, "inner")
             renderModifier(builder, DescriptorRendererModifier.DATA in modifiers && klass.isData, "data")
+            renderModifier(builder, DescriptorRendererModifier.INLINE in modifiers && klass.isInline, "inline")
             renderClassKindPrefix(klass, builder)
         }
 

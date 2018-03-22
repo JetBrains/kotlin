@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -40,9 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment.Companion.DOT_METADATA_FILE_EXTENSION
-import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
@@ -62,7 +62,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
             return
         }
 
-        val analyzer = AnalyzerWithCompilerReport(messageCollector)
+        val analyzer = AnalyzerWithCompilerReport(messageCollector, configuration.languageVersionSettings)
         analyzer.analyzeAndReport(files) {
             CommonAnalyzerFacade.analyzeFiles(files, moduleName, dependOnOldBuiltIns, configuration.languageVersionSettings) { _, content ->
                 environment.createPackagePartProvider(content.moduleContentScope)
@@ -121,11 +121,11 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
 
         val kotlinModuleFile = File(destDir, JvmCodegenUtil.getMappingFileName(JvmCodegenUtil.getModuleName(module)))
-        val packageTableBytes = JvmPackageTable.PackageTable.newBuilder().apply {
+        val packageTableBytes = JvmModuleProtoBuf.Module.newBuilder().apply {
             for (table in packageTable.values) {
                 table.addTo(this)
             }
-        }.serializeToByteArray()
+        }.build().serializeToByteArray()
 
         kotlinModuleFile.parentFile.mkdirs()
         kotlinModuleFile.writeBytes(packageTableBytes)

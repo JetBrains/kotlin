@@ -26,9 +26,9 @@ import java.io.File
 
 class IntentionDescriptionTest : LightPlatformTestCase() {
 
-    val necessaryNormalNames = listOf("description.html", "before.kt.template", "after.kt.template")
-    val necessaryXmlNames = listOf("description.html", "before.xml.template", "after.xml.template")
-    val necessaryMavenNames = listOf("description.html")
+    private val necessaryNormalNames = listOf("description.html", "before.kt.template", "after.kt.template")
+    private val necessaryXmlNames = listOf("description.html", "before.xml.template", "after.xml.template")
+    private val necessaryMavenNames = listOf("description.html")
 
     fun testDescriptionsAndShortNames() {
         val intentionTools = loadKotlinIntentions()
@@ -39,8 +39,7 @@ class IntentionDescriptionTest : LightPlatformTestCase() {
             val directory = File("idea/resources/intentionDescriptions/$shortName")
             if (!directory.exists() || !directory.isDirectory) {
                 errors.append("No description directory for intention '").append(className).append("'\n")
-            }
-            else {
+            } else {
                 val necessaryNames = when {
                     shortName.isMavenIntentionName() -> necessaryMavenNames
                     shortName.isXmlIntentionName() -> necessaryXmlNames

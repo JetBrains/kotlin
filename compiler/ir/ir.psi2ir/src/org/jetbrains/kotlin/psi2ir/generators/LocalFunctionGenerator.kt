@@ -35,38 +35,37 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         val irBlock = IrBlockImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType, IrStatementOrigin.LAMBDA)
         irBlock.statements.add(irLambdaFunction)
         irBlock.statements.add(
-                IrFunctionReferenceImpl(
-                        ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
-                        irLambdaFunction.symbol, irLambdaFunction.symbol.descriptor,
-                        null, IrStatementOrigin.LAMBDA
-                )
+            IrFunctionReferenceImpl(
+                ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
+                irLambdaFunction.symbol, irLambdaFunction.symbol.descriptor,
+                null, IrStatementOrigin.LAMBDA
+            )
         )
         return irBlock
     }
 
     fun generateFunction(ktFun: KtNamedFunction): IrStatement =
-            if (ktFun.name != null) {
-                generateFunctionDeclaration(ktFun)
-            }
-            else {
-                // anonymous function expression
-                val funExpressionType = getInferredTypeWithImplicitCastsOrFail(ktFun)
-                val irBlock = IrBlockImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, IrStatementOrigin.ANONYMOUS_FUNCTION)
+        if (ktFun.name != null) {
+            generateFunctionDeclaration(ktFun)
+        } else {
+            // anonymous function expression
+            val funExpressionType = getInferredTypeWithImplicitCastsOrFail(ktFun)
+            val irBlock = IrBlockImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, IrStatementOrigin.ANONYMOUS_FUNCTION)
 
-                val irFun = generateFunctionDeclaration(ktFun)
-                irBlock.statements.add(irFun)
+            val irFun = generateFunctionDeclaration(ktFun)
+            irBlock.statements.add(irFun)
 
-                irBlock.statements.add(
-                        IrFunctionReferenceImpl(
-                                ktFun.startOffset, ktFun.endOffset, funExpressionType,
-                                irFun.symbol, irFun.symbol.descriptor,
-                                null, IrStatementOrigin.ANONYMOUS_FUNCTION
-                        )
+            irBlock.statements.add(
+                IrFunctionReferenceImpl(
+                    ktFun.startOffset, ktFun.endOffset, funExpressionType,
+                    irFun.symbol, irFun.symbol.descriptor,
+                    null, IrStatementOrigin.ANONYMOUS_FUNCTION
                 )
+            )
 
-                irBlock
-            }
+            irBlock
+        }
 
     private fun generateFunctionDeclaration(ktFun: KtNamedFunction): IrFunction =
-            FunctionGenerator(context).generateFunctionDeclaration(ktFun)
+        FunctionGenerator(context).generateFunctionDeclaration(ktFun)
 }

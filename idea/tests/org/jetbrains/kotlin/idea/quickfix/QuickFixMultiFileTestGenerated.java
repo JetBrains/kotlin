@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -1407,6 +1407,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         public static class CreateTypeAlias extends AbstractQuickFixMultiFileTest {
             public void testAllFilesPresentInCreateTypeAlias() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeAlias"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createTypeAlias/typeReference")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class TypeReference extends AbstractQuickFixMultiFileTest {
+                public void testAllFilesPresentInTypeReference() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeAlias/typeReference"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("javaUserTypeReceiver.test")
+                public void testJavaUserTypeReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createTypeAlias/typeReference/javaUserTypeReceiver.test");
+                    doTestWithExtraFile(fileName);
+                }
             }
         }
 

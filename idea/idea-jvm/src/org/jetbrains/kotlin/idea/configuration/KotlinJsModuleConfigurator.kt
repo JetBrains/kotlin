@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryType
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.LibraryJarDescriptor
-import org.jetbrains.kotlin.idea.versions.isKotlinJsRuntime
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -60,10 +59,12 @@ open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {
         get() = JSLibraryStdDescription.JAVA_SCRIPT_LIBRARY_CREATION
 
     override fun getLibraryJarDescriptors(sdk: Sdk?): List<LibraryJarDescriptor> =
-            listOf(LibraryJarDescriptor.JS_STDLIB_JAR,
-                  LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
+        listOf(
+            LibraryJarDescriptor.JS_STDLIB_JAR,
+            LibraryJarDescriptor.JS_STDLIB_SRC_JAR
+        )
 
-    override val libraryMatcher: (Library) -> Boolean = ::isKotlinJsRuntime
+    override val libraryMatcher: (Library) -> Boolean = { library -> JsLibraryStdDetectionUtil.hasJsStdlibJar(library) }
 
     override val libraryType: LibraryType<DummyLibraryProperties>?
         get() = JSLibraryType.getInstance()

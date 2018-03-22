@@ -1,0 +1,14 @@
+class MyClass {
+    fun foo() = 1
+}
+
+MyClass().foo()    // RESULT: 1
+
+interface I {
+    fun foo(): Int
+}
+
+val i = object: I {
+    override fun foo(): Int = 1
+}
+i.foo()    // RESULT: 1

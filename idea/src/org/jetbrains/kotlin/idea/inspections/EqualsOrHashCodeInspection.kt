@@ -12,7 +12,6 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction
 import org.jetbrains.kotlin.idea.actions.generate.findDeclaredEquals
@@ -30,7 +29,7 @@ object DeleteEqualsAndHashCodeFix : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
         val objectDeclaration = descriptor.psiElement.getStrictParentOfType<KtObjectDeclaration>() ?: return
-        val classDescriptor = objectDeclaration.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
+        val classDescriptor = objectDeclaration.resolveToDescriptorIfAny() ?: return
         classDescriptor.findDeclaredEquals(false)?.source?.getPsi()?.delete()
         classDescriptor.findDeclaredHashCode(false)?.source?.getPsi()?.delete()
     }
@@ -59,7 +58,7 @@ class EqualsOrHashCodeInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return classOrObjectVisitor(fun(classOrObject) {
             val nameIdentifier = classOrObject.nameIdentifier ?: return
-            val classDescriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
+            val classDescriptor = classOrObject.resolveToDescriptorIfAny() ?: return
             val hasEquals = classDescriptor.findDeclaredEquals(false) != null
             val hasHashCode = classDescriptor.findDeclaredHashCode(false) != null
             if (!hasEquals && !hasHashCode) return

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstruction
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -608,7 +609,9 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
 
 fun ExtractionData.isVisibilityApplicable(): Boolean {
     val parent = targetSibling.parent
-    return parent is KtClassBody || (parent is KtFile && !parent.isScript())
+    if (parent !is KtClassBody && (parent !is KtFile || parent.isScript())) return false
+    if (commonParent.parentsWithSelf.any { it is KtNamedFunction && it.hasModifier(KtTokens.INLINE_KEYWORD) && it.isPublic }) return false
+    return true
 }
 
 fun ExtractionData.getDefaultVisibility(): String {
@@ -711,11 +714,11 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
             emptyList()
     )
 
-    val body = ExtractionGeneratorConfiguration(
+    val generatedDeclaration = ExtractionGeneratorConfiguration(
             descriptor,
             ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
-    ).generateDeclaration().declaration.getGeneratedBody()
-    val virtualContext = body.analyzeFully()
+    ).generateDeclaration().declaration
+    val virtualContext = generatedDeclaration.analyzeWithContent()
     if (virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL || it.factory == Errors.ILLEGAL_SUSPEND_PROPERTY_ACCESS }) {
         descriptor = descriptor.copy(modifiers = listOf(KtTokens.SUSPEND_KEYWORD))
     }
@@ -784,8 +787,8 @@ fun ExtractableCodeDescriptor.validate(target: ExtractionTarget = ExtractionTarg
 
     val valueParameterList = (result.declaration as? KtNamedFunction)?.valueParameterList
     val typeParameterList = (result.declaration as? KtNamedFunction)?.typeParameterList
-    val body = result.declaration.getGeneratedBody()
-    val bindingContext = body.analyzeFully()
+    val generatedDeclaration = result.declaration
+    val bindingContext = generatedDeclaration.analyzeWithContent()
 
     fun processReference(currentRefExpr: KtSimpleNameExpression) {
         val resolveResult = currentRefExpr.resolveResult ?: return

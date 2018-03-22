@@ -1,0 +1,1 @@
+expect fun foo(my: My)

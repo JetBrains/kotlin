@@ -18,13 +18,9 @@
 
 package kotlin.reflect.jvm
 
-import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
-import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.EmptyContainerForLocal
 import kotlin.reflect.jvm.internal.KFunctionImpl
@@ -38,10 +34,7 @@ import kotlin.reflect.jvm.internal.deserializeToDescriptor
 fun <R> Function<R>.reflect(): KFunction<R>? {
     val annotation = javaClass.getAnnotation(Metadata::class.java) ?: return null
     val data = annotation.d1.takeUnless(Array<String>::isEmpty) ?: return null
-    val input = BitEncoding.decodeBytes(data).inputStream()
-    val stringTableTypes = JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
-    val nameResolver = JvmNameResolver(stringTableTypes, annotation.d2)
-    val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
+    val (nameResolver, proto) = JvmProtoBufUtil.readFunctionDataFrom(data, annotation.d2)
 
     val descriptor = deserializeToDescriptor(javaClass, proto, nameResolver, TypeTable(proto.typeTable), MemberDeserializer::loadFunction)
                      ?: return null

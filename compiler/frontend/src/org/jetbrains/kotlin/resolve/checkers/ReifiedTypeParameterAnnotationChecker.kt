@@ -25,25 +25,18 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtTypeParameter
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
-class ReifiedTypeParameterAnnotationChecker : SimpleDeclarationChecker {
-
-    override fun check(
-        declaration: KtDeclaration,
-        descriptor: DeclarationDescriptor,
-        diagnosticHolder: DiagnosticSink,
-        bindingContext: BindingContext
-    ) {
+class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor is CallableDescriptor &&
             !(InlineUtil.isInline(descriptor) || InlineUtil.isPropertyWithAllAccessorsAreInline(descriptor))) {
-            checkTypeParameterDescriptorsAreNotReified(descriptor.typeParameters, diagnosticHolder)
+            checkTypeParameterDescriptorsAreNotReified(descriptor.typeParameters, context.trace)
         }
 
         if (descriptor is ClassDescriptor) {
-            checkTypeParameterDescriptorsAreNotReified(descriptor.declaredTypeParameters, diagnosticHolder)
+            checkTypeParameterDescriptorsAreNotReified(descriptor.declaredTypeParameters, context.trace)
         }
     }
 

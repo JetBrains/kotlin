@@ -37,10 +37,13 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectComponent(project) {
     private val syncDepth = AtomicInteger()
-    @Volatile private var notificationPostponed = false
+
+    @Volatile
+    private var notificationPostponed = false
 
     init {
-        NotificationsConfiguration.getNotificationsConfiguration().register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true)
+        NotificationsConfiguration.getNotificationsConfiguration()
+            .register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true)
 
         val connection = project.messageBus.connect()
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
@@ -50,8 +53,10 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
                         DumbService.getInstance(myProject).waitForSmartMode()
                         if (!isSyncing) {
                             notificationPostponed = false
-                            showConfigureKotlinNotificationIfNeeded(myProject,
-                                                                    collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(myProject)))
+                            showConfigureKotlinNotificationIfNeeded(
+                                myProject,
+                                collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(myProject))
+                            )
                         }
                     }
                 }
@@ -65,26 +70,29 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
         super.projectOpened()
 
         StartupManager.getInstance(myProject).registerPostStartupActivity {
-            ApplicationManager.getApplication().executeOnPooledThread {
-                DumbService.getInstance(myProject).waitForSmartMode()
+            performProjectPostOpenActions()
+        }
+    }
 
-                for (module in getModulesWithKotlinFiles(myProject)) {
-                    module.getAndCacheLanguageLevelByDependencies()
-                }
+    fun performProjectPostOpenActions() {
+        ApplicationManager.getApplication().executeOnPooledThread {
+            DumbService.getInstance(myProject).waitForSmartMode()
 
-                val libraries = findOutdatedKotlinLibraries(myProject)
-                if (!libraries.isEmpty()) {
-                    ApplicationManager.getApplication().invokeLater {
-                        notifyOutdatedKotlinRuntime(myProject, libraries)
-                    }
+            for (module in getModulesWithKotlinFiles(myProject)) {
+                module.getAndCacheLanguageLevelByDependencies()
+            }
+
+            val libraries = findOutdatedKotlinLibraries(myProject)
+            if (!libraries.isEmpty()) {
+                ApplicationManager.getApplication().invokeLater {
+                    notifyOutdatedKotlinRuntime(myProject, libraries)
                 }
-                if (!isSyncing) {
-                    val excludeModules = collectModulesWithOutdatedRuntime(libraries)
-                    showConfigureKotlinNotificationIfNeeded(myProject, excludeModules)
-                }
-                else {
-                    notificationPostponed = true
-                }
+            }
+            if (!isSyncing) {
+                val excludeModules = collectModulesWithOutdatedRuntime(libraries)
+                showConfigureKotlinNotificationIfNeeded(myProject, excludeModules)
+            } else {
+                notificationPostponed = true
             }
         }
     }
@@ -100,9 +108,9 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
     }
 
     companion object {
-        val CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project"
+        const val CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project"
 
-        fun getInstance(project: Project): KotlinConfigurationCheckerComponent
-                = project.getComponent(KotlinConfigurationCheckerComponent::class.java)
+        fun getInstance(project: Project): KotlinConfigurationCheckerComponent =
+            project.getComponent(KotlinConfigurationCheckerComponent::class.java)
     }
 }

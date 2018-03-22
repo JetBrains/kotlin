@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -149,6 +149,24 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CompilationErrors extends AbstractIdeLightClassTest {
+        @TestMetadata("ActualClass.kt")
+        public void testActualClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ActualClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ActualTypeAlias.kt")
+        public void testActualTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ActualTypeAlias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ActualTypeAliasCustomJvmPackageName.kt")
+        public void testActualTypeAliasCustomJvmPackageName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ActualTypeAliasCustomJvmPackageName.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInCompilationErrors() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
@@ -162,6 +180,36 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         @TestMetadata("AnnotationModifiers.kt")
         public void testAnnotationModifiers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/AnnotationModifiers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectClass.kt")
+        public void testExpectClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectObject.kt")
+        public void testExpectObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectedNestedClass.kt")
+        public void testExpectedNestedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectedNestedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpectedNestedClassInObject.kt")
+        public void testExpectedNestedClassInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/ExpectedNestedClassInObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("JvmPackageName.kt")
+        public void testJvmPackageName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/JvmPackageName.kt");
             doTest(fileName);
         }
 

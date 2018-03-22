@@ -951,7 +951,7 @@ object Generators : TemplateGroupBase() {
             val size = ${if (f == CharSequences) "length" else "size" } - 1
             if (size < 1) return emptyList()
             val result = ArrayList<R>(size)
-            for (index in 0..size - 1) {
+            for (index in 0 until size) {
                 result.add(transform(this[index], this[index + 1]))
             }
             return result
@@ -1064,7 +1064,7 @@ object Generators : TemplateGroupBase() {
             """
             val size = minOf(size, other.size)
             val list = ArrayList<V>(size)
-            for (i in 0..size-1) {
+            for (i in 0 until size) {
                 list.add(transform(this[i], other[i]))
             }
             return list
@@ -1088,7 +1088,7 @@ object Generators : TemplateGroupBase() {
             """
             val size = minOf(size, other.size)
             val list = ArrayList<V>(size)
-            for (i in 0..size-1) {
+            for (i in 0 until size) {
                 list.add(transform(this[i], other[i]))
             }
             return list
@@ -1131,7 +1131,7 @@ object Generators : TemplateGroupBase() {
             val length = minOf(this.length, other.length)
 
             val list = ArrayList<V>(length)
-            for (i in 0..length-1) {
+            for (i in 0 until length) {
                 list.add(transform(this[i], other[i]))
             }
             return list

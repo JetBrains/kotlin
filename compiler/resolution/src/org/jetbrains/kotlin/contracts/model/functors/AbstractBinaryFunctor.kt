@@ -56,5 +56,8 @@ abstract class AbstractBinaryFunctor : AbstractReducingFunctor() {
     }
 
     protected abstract fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect>
-    protected abstract fun invokeWithReturningEffects(left: List<ConditionalEffect>, right: List<ConditionalEffect>): List<ConditionalEffect>
+    protected abstract fun invokeWithReturningEffects(
+        left: List<ConditionalEffect>,
+        right: List<ConditionalEffect>
+    ): List<ConditionalEffect>
 }

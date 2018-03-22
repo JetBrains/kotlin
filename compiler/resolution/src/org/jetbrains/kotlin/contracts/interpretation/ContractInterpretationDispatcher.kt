@@ -35,9 +35,10 @@ class ContractInterpretationDispatcher {
     private val conditionInterpreter = ConditionInterpreter(this)
     private val conditionalEffectInterpreter = ConditionalEffectInterpreter(this)
     private val effectsInterpreters: List<EffectDeclarationInterpreter> = listOf(
-            ReturnsEffectInterpreter(this),
-            CallsEffectInterpreter(this)
+        ReturnsEffectInterpreter(this),
+        CallsEffectInterpreter(this)
     )
+
     fun resolveFunctor(functionDescriptor: FunctionDescriptor): Functor? {
         val contractDescriptor = functionDescriptor.getUserData(ContractProviderKey)?.getContractDescription() ?: return null
         return convertContractDescriptorToFunctor(contractDescriptor)
@@ -47,8 +48,7 @@ class ContractInterpretationDispatcher {
         val resultingClauses = contractDescription.effects.map { effect ->
             if (effect is ConditionalEffectDeclaration) {
                 conditionalEffectInterpreter.interpret(effect) ?: return null
-            }
-            else {
+            } else {
                 effectsInterpreters.mapNotNull { it.tryInterpret(effect) }.singleOrNull() ?: return null
             }
         }
@@ -62,10 +62,10 @@ class ContractInterpretationDispatcher {
     }
 
     internal fun interpretConstant(constantReference: ConstantReference): ESConstant? =
-            constantsInterpreter.interpretConstant(constantReference)
+        constantsInterpreter.interpretConstant(constantReference)
 
     internal fun interpretCondition(booleanExpression: BooleanExpression): ESExpression? =
-            booleanExpression.accept(conditionInterpreter, Unit)
+        booleanExpression.accept(conditionInterpreter, Unit)
 
     internal fun interpretVariable(variableReference: VariableReference): ESVariable? = ESVariable(variableReference.descriptor)
 }

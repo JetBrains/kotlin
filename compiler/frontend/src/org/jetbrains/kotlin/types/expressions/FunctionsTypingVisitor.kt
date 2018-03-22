@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYieldBeforeLambda
@@ -91,7 +91,9 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
                 context.scope.ownerDescriptor, context.scope, function, context.trace, context.dataFlowInfo
             )
             assert(statementScope != null) {
-                "statementScope must be not null for function: " + function.name + " at location " + DiagnosticUtils.atLocation(function)
+                "statementScope must be not null for function: " + function.name + " at location " + PsiDiagnosticUtils.atLocation(
+                    function
+                )
             }
             statementScope!!.addFunctionDescriptor(functionDescriptor)
         } else {
@@ -176,7 +178,12 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun checkReservedYield(context: ExpressionTypingContext, expression: PsiElement) {
-        checkReservedPrefixWord(context.trace, expression, "yield", "yield block/lambda. Use 'yield() { ... }' or 'yield(fun...)'")
+        checkReservedPrefixWord(
+            context.trace,
+            expression,
+            "yield",
+            "yield block/lambda. Use 'yield() { ... }' or 'yield(fun...)'"
+        )
     }
 
     private fun createFunctionLiteralDescriptor(

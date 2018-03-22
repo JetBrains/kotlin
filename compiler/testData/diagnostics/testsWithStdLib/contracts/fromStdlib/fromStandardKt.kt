@@ -1,4 +1,4 @@
-// !LANGUAGE: +CallsInPlaceEffect
+// !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 fun testRunWithUnitReturn() {

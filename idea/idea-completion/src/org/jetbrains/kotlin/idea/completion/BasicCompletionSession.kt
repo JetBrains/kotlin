@@ -32,7 +32,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
@@ -70,7 +70,6 @@ import org.jetbrains.kotlin.util.kind
 import org.jetbrains.kotlin.util.supertypesWithAny
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 class BasicCompletionSession(
         configuration: CompletionSessionConfiguration,
@@ -222,6 +221,13 @@ class BasicCompletionSession(
 
                     collector.addElements(additionalItems)
                 }
+            }
+
+            withCollectRequiredContextVariableTypes { lookupFactory ->
+                DslMembersCompletion(
+                    prefixMatcher, lookupFactory, receiverTypes,
+                    collector, indicesHelper(true), callTypeAndReceiver
+                ).completeDslFunctions()
             }
 
             val contextVariableTypesForSmartCompletion = withCollectRequiredContextVariableTypes(::completeWithSmartCompletion)
@@ -458,8 +464,14 @@ class BasicCompletionSession(
                                         .filterNot { it.original in foundDescriptors }
                                         .onEach { foundDescriptors += it.original }
 
-                                collector.addDescriptorElements(unique.toList(), factory)
-                                collector.addDescriptorElements(uniqueNotImportedExtensions.toList(), factory, notImported = true)
+                                collector.addDescriptorElements(
+                                    unique.toList(), factory,
+                                    prohibitDuplicates = true
+                                )
+                                collector.addDescriptorElements(
+                                    uniqueNotImportedExtensions.toList(), factory,
+                                    notImported = true, prohibitDuplicates = true
+                                )
 
                                 flushToResultSet()
                             }
@@ -488,11 +500,6 @@ class BasicCompletionSession(
                 override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
             })
             collector.restartCompletionOnPrefixChange(prefixPattern)
-
-            collector.addLookupElementPostProcessor { lookupElement ->
-                lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
-                lookupElement
-            }
 
             variableNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
             flushToResultSet()
@@ -682,11 +689,6 @@ class BasicCompletionSession(
             })
             collector.restartCompletionOnPrefixChange(prefixPattern)
 
-            collector.addLookupElementPostProcessor { lookupElement ->
-                lookupElement.putUserData(KotlinCompletionCharFilter.HIDE_LOOKUP_ON_COLON, Unit)
-                lookupElement
-            }
-
             parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
             flushToResultSet()
 
@@ -790,8 +792,14 @@ class BasicCompletionSession(
 
     private fun addReferenceVariantElements(lookupElementFactory: LookupElementFactory, descriptorKindFilter: DescriptorKindFilter) {
         fun addReferenceVariants(referenceVariants: ReferenceVariants) {
-            collector.addDescriptorElements(referenceVariantsHelper.excludeNonInitializedVariable(referenceVariants.imported, position), lookupElementFactory)
-            collector.addDescriptorElements(referenceVariants.notImportedExtensions, lookupElementFactory, notImported = true)
+            collector.addDescriptorElements(
+                referenceVariantsHelper.excludeNonInitializedVariable(referenceVariants.imported, position),
+                lookupElementFactory, prohibitDuplicates = true
+            )
+            collector.addDescriptorElements(
+                referenceVariants.notImportedExtensions, lookupElementFactory,
+                notImported = true, prohibitDuplicates = true
+            )
         }
 
         val referenceVariantsCollector = referenceVariantsCollector!!

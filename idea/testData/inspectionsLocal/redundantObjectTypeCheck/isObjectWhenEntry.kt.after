@@ -1,8 +1,0 @@
-object O
-
-fun foo(arg: Any) {
-    when (arg) {
-        O -> {
-        }
-    }
-}

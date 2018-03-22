@@ -17,6 +17,7 @@
  */
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
@@ -51,6 +52,12 @@ fun Project.configureInstrumentation() {
         }
     }
 
+    val instrumentationClasspathCfg = configurations.create("instrumentationClasspath")
+
+    dependencies {
+        instrumentationClasspathCfg(intellijDep()) { includeJars("javac2", "jdom", "asm-all", "jgoodies-forms") }
+    }
+
     afterEvaluate {
         the<JavaPluginConvention>().sourceSets.all { sourceSetParam ->
             // This copy will ignore filters, but they are unlikely to be used.
@@ -66,6 +73,7 @@ fun Project.configureInstrumentation() {
             instrumentTask.apply {
                 dependsOn(sourceSetParam.classesTaskName).onlyIf { !classesDirsCopy.isEmpty }
                 sourceSet = sourceSetParam
+                instrumentationClasspath = instrumentationClasspathCfg
                 originalClassesDirs = classesDirsCopy
                 output = instrumentedClassesDir
             }
@@ -88,6 +96,8 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
 
     var sourceSet: SourceSet? = null
 
+    var instrumentationClasspath: Configuration? = null
+
     @Input
     var originalClassesDirs: FileCollection? = null
 
@@ -101,9 +111,10 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
     @TaskAction
     fun instrumentClasses() {
         logger.info("input files are: ${originalClassesDirs?.joinToString("; ", transform = { "'${it.name}'${if (it.exists()) "" else " (does not exists)" }"})}")
+        output?.deleteRecursively()
         copyOriginalClasses()
 
-        val classpath = project.ideaSdkDeps("javac2.jar", "jdom.jar", "asm-all.jar", "jgoodies-forms.jar")
+        val classpath = instrumentationClasspath!!
 
         ant.withGroovyBuilder {
             "taskdef"("name" to "instrumentIdeaExtensions",
@@ -113,7 +124,7 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         }
 
         logger.info("Compiling forms and instrumenting code with nullability preconditions")
-        val instrumentNotNull = prepareNotNullInstrumenting(classpath)
+        val instrumentNotNull = prepareNotNullInstrumenting(classpath.asPath)
         instrumentCode(sourceDirs, instrumentNotNull)
     }
 
@@ -124,10 +135,10 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         }
     }
 
-    private fun prepareNotNullInstrumenting(classpath: ConfigurableFileCollection): Boolean {
+    private fun prepareNotNullInstrumenting(classpath: String): Boolean {
         ant.withGroovyBuilder {
             "typedef"("name"  to "skip",
-                      "classpath" to classpath.asPath,
+                      "classpath" to classpath,
                       "loaderref" to LOADER_REF,
                       "classname" to FILTER_ANNOTATION_REGEXP_CLASS)
         }

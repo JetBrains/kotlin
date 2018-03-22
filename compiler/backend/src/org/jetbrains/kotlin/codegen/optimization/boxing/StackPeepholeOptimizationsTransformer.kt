@@ -84,8 +84,7 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                             it.set(insn, InsnNode(Opcodes.NOP))
                             it.remove(prevNonNop)
                         }
-                    }
-                    else if (i > 1) {
+                    } else if (i > 1) {
                         val prevNonNop2 = prevNonNop.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue@forInsn
                         if (prevNonNop.isEliminatedByPop() && prevNonNop2.isEliminatedByPop()) {
                             actions.add {
@@ -112,24 +111,24 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
     }
 
     private fun AbstractInsnNode.isEliminatedByPop() =
-            isPurePushOfSize1() ||
-            opcode == Opcodes.DUP
+        isPurePushOfSize1() ||
+                opcode == Opcodes.DUP
 
     private fun AbstractInsnNode.isPurePushOfSize1(): Boolean =
-            opcode in Opcodes.ACONST_NULL..Opcodes.FCONST_2 ||
-            opcode in Opcodes.BIPUSH..Opcodes.ILOAD ||
-            opcode == Opcodes.FLOAD ||
-            opcode == Opcodes.ALOAD ||
-            isUnitInstance()
+        opcode in Opcodes.ACONST_NULL..Opcodes.FCONST_2 ||
+                opcode in Opcodes.BIPUSH..Opcodes.ILOAD ||
+                opcode == Opcodes.FLOAD ||
+                opcode == Opcodes.ALOAD ||
+                isUnitInstance()
 
     private fun AbstractInsnNode.isEliminatedByPop2() =
-            isPurePushOfSize2() ||
-            opcode == Opcodes.DUP2
+        isPurePushOfSize2() ||
+                opcode == Opcodes.DUP2
 
     private fun AbstractInsnNode.isPurePushOfSize2(): Boolean =
-            opcode == Opcodes.LCONST_0 || opcode == Opcodes.LCONST_1 ||
-            opcode == Opcodes.DCONST_0 || opcode == Opcodes.DCONST_1 ||
-            opcode == Opcodes.LLOAD ||
-            opcode == Opcodes.DLOAD
+        opcode == Opcodes.LCONST_0 || opcode == Opcodes.LCONST_1 ||
+                opcode == Opcodes.DCONST_0 || opcode == Opcodes.DCONST_1 ||
+                opcode == Opcodes.LLOAD ||
+                opcode == Opcodes.DLOAD
 }
 

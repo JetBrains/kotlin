@@ -703,7 +703,7 @@ internal fun CharSequence.regionMatchesImpl(thisOffset: Int, other: CharSequence
         return false
     }
 
-    for (index in 0..length-1) {
+    for (index in 0 until length) {
         if (!this[thisOffset + index].equals(other[otherOffset + index], ignoreCase))
             return false
     }
@@ -800,24 +800,6 @@ public fun CharSequence.commonSuffixWith(other: CharSequence, ignoreCase: Boolea
 
 // indexOfAny()
 
-private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase: Boolean, last: Boolean): Pair<Int, Char>? {
-    if (!ignoreCase && chars.size == 1 && this is String) {
-        val char = chars.single()
-        val index = if (!last) nativeIndexOf(char, startIndex) else nativeLastIndexOf(char, startIndex)
-        return if (index < 0) null else index to char
-    }
-
-    val indices = if (!last) startIndex.coerceAtLeast(0)..lastIndex else startIndex.coerceAtMost(lastIndex) downTo 0
-    for (index in indices) {
-        val charAtIndex = get(index)
-        val matchingCharIndex = chars.indexOfFirst { it.equals(charAtIndex, ignoreCase) }
-        if (matchingCharIndex >= 0)
-            return index to chars[matchingCharIndex]
-    }
-
-    return null
-}
-
 /**
  * Finds the index of the first occurrence of any of the specified [chars] in this char sequence,
  * starting from the specified [startIndex] and optionally ignoring the case.
@@ -826,8 +808,19 @@ private fun CharSequence.findAnyOf(chars: CharArray, startIndex: Int, ignoreCase
  * @returns An index of the first occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
-public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
-    findAnyOf(chars, startIndex, ignoreCase, last = false)?.first ?: -1
+public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
+    if (!ignoreCase && chars.size == 1 && this is String) {
+        val char = chars.single()
+        return nativeIndexOf(char, startIndex)
+    }
+
+    for (index in startIndex.coerceAtLeast(0)..lastIndex) {
+        val charAtIndex = get(index)
+        if (chars.any { it.equals(charAtIndex, ignoreCase) })
+            return index
+    }
+    return -1
+}
 
 /**
  * Finds the index of the last occurrence of any of the specified [chars] in this char sequence,
@@ -838,8 +831,21 @@ public fun CharSequence.indexOfAny(chars: CharArray, startIndex: Int = 0, ignore
  * @returns An index of the last occurrence of matched character from [chars] or -1 if none of [chars] are found.
  *
  */
-public fun CharSequence.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
-    findAnyOf(chars, startIndex, ignoreCase, last = true)?.first ?: -1
+public fun CharSequence.lastIndexOfAny(chars: CharArray, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
+    if (!ignoreCase && chars.size == 1 && this is String) {
+        val char = chars.single()
+        return nativeLastIndexOf(char, startIndex)
+    }
+
+
+    for (index in startIndex.coerceAtMost(lastIndex) downTo 0) {
+        val charAtIndex = get(index)
+        if (chars.any { it.equals(charAtIndex, ignoreCase) })
+            return index
+    }
+
+    return -1
+}
 
 
 private fun CharSequence.indexOf(other: CharSequence, startIndex: Int, endIndex: Int, ignoreCase: Boolean, last: Boolean = false): Int {
@@ -1067,7 +1073,7 @@ private class DelimitedRangesSequence(private val input: CharSequence, private v
                     }
                     else {
                         val (index,length) = match
-                        nextItem = currentStartIndex..index-1
+                        nextItem = currentStartIndex until index
                         currentStartIndex = index + length
                         nextSearchIndex = currentStartIndex + if (length == 0) 1 else 0
                     }
@@ -1109,7 +1115,8 @@ private class DelimitedRangesSequence(private val input: CharSequence, private v
 private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
     require(limit >= 0, { "Limit must be non-negative, but was $limit." })
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimiters, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to 1 } })
+    return DelimitedRangesSequence(this, startIndex, limit, { startIndex ->
+        indexOfAny(delimiters, startIndex, ignoreCase = ignoreCase).let { if (it < 0) null else it to 1 } })
 }
 
 
@@ -1163,8 +1170,16 @@ public fun CharSequence.splitToSequence(vararg delimiters: String, ignoreCase: B
  * the beginning to the end of this string, and matches at each position the first element in [delimiters]
  * that is equal to a delimiter in this instance at that position.
  */
-public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
-        rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
+public fun CharSequence.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> {
+    if (delimiters.size == 1) {
+        val delimiter = delimiters[0]
+        if (!delimiter.isEmpty()) {
+            return split(delimiter, ignoreCase, limit)
+        }
+    }
+
+    return rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
+}
 
 /**
  * Splits this char sequence to a sequence of strings around occurrences of the specified [delimiters].
@@ -1183,8 +1198,44 @@ public fun CharSequence.splitToSequence(vararg delimiters: Char, ignoreCase: Boo
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return.
  */
-public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
-        rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
+public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = false, limit: Int = 0): List<String> {
+    if (delimiters.size == 1) {
+        return split(delimiters[0].toString(), ignoreCase, limit)
+    }
+
+    return rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).asIterable().map { substring(it) }
+}
+
+/**
+ * Splits this char sequence to a list of strings around occurrences of the specified [delimiter].
+ * This is specialized version of split which receives single non-empty delimiter and offers better performance
+ *
+ * @param delimiter String used as delimiter
+ * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
+ * @param limit The maximum number of substrings to return.
+ */
+private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: Int): List<String> {
+    require(limit >= 0, { "Limit must be non-negative, but was $limit." })
+
+    var currentOffset = 0
+    var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
+    if (nextIndex == -1 || limit == 1) {
+        return listOf(this.toString())
+    }
+
+    val isLimited = limit > 0
+    val result = ArrayList<String>(if (isLimited) limit.coerceAtMost(10) else 10)
+    do {
+        result.add(substring(currentOffset, nextIndex))
+        currentOffset = nextIndex + delimiter.length
+        // Do not search for next occurrence if we're reaching limit
+        if (isLimited && result.size == limit - 1) break
+        nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
+    } while (nextIndex != -1)
+
+    result.add(substring(currentOffset, length))
+    return result
+}
 
 /**
  * Splits this char sequence around matches of the given regular expression.

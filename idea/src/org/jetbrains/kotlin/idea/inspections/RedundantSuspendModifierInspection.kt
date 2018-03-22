@@ -12,7 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.highlighter.hasSuspendCalls
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
@@ -31,7 +31,7 @@ class RedundantSuspendModifierInspection : AbstractKotlinInspection() {
             if (!function.hasBody()) return
             if (function.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
 
-            val context = function.analyzeFully()
+            val context = function.analyzeWithContent()
             val descriptor = context[BindingContext.FUNCTION, function] ?: return
             if (descriptor.modality == Modality.OPEN) return
 

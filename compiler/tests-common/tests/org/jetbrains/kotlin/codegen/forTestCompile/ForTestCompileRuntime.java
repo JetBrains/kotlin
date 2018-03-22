@@ -37,17 +37,13 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
-    public static File mockRuntimeJarForTests() {
-        return assertExists(new File("dist/kotlin-mock-runtime-for-test.jar"));
+    public static File minimalRuntimeJarForTests() {
+        return assertExists(new File("dist/kotlin-stdlib-minimal-for-test.jar"));
     }
 
     @NotNull
     public static File kotlinTestJarForTests() {
         return assertExists(new File("dist/kotlinc/lib/kotlin-test.jar"));
-    }
-    @NotNull
-    public static File kotlinTestJunitJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-test-junit.jar"));
     }
 
     @NotNull
@@ -83,14 +79,6 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File androidAnnotationsForTests() {
         return assertExists(new File("dist/kotlinc/lib/kotlin-annotations-android.jar"));
-    }
-
-    // TODO: Do not use these classes, remove them after stdlib tests are merged in the same build as the compiler
-    @NotNull
-    @Deprecated
-    public static File[] runtimeClassesForTests() {
-        // TODO: replace hardcoded path with something flexible
-        return new File[] { assertExists(new File("dist/builtins")), assertExists(new File("build/kotlin-stdlib/classes/java/builtins")), assertExists(new File("build/kotlin-stdlib/classes/java/main")) };
     }
 
     @NotNull

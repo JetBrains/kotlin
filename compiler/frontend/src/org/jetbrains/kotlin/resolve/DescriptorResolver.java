@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
@@ -40,12 +39,12 @@ import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
@@ -66,7 +65,8 @@ import java.util.*;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
+import static org.jetbrains.kotlin.resolve.BindingContext.CONSTRUCTOR;
+import static org.jetbrains.kotlin.resolve.BindingContext.TYPE_ALIAS;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveMemberModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
@@ -88,6 +88,7 @@ public class DescriptorResolver {
     private final SyntheticResolveExtension syntheticResolveExtension;
     private final TypeApproximator typeApproximator;
     private final DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer;
+    private final DataFlowValueFactory dataFlowValueFactory;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -105,7 +106,8 @@ public class DescriptorResolver {
             @NotNull WrappedTypeFactory wrappedTypeFactory,
             @NotNull Project project,
             @NotNull TypeApproximator approximator,
-            @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer
+            @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -123,6 +125,7 @@ public class DescriptorResolver {
         this.syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
         typeApproximator = approximator;
         this.declarationReturnTypeSanitizer = declarationReturnTypeSanitizer;
+        this.dataFlowValueFactory = dataFlowValueFactory;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -340,7 +343,8 @@ public class DescriptorResolver {
                                 scope,
                                 destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
                                 ExpressionTypingContext.newContext(
-                                        trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings
+                                        trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE,
+                                        languageVersionSettings, dataFlowValueFactory
                                 )
                         );
 
@@ -785,7 +789,7 @@ public class DescriptorResolver {
         KtExpression initializer = destructuringDeclaration.getInitializer();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings
+                trace, scopeForDeclarationResolution, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory
         );
 
         ExpressionReceiver receiver = createReceiverForDestructuringDeclaration(destructuringDeclaration, context);
@@ -1337,17 +1341,5 @@ public class DescriptorResolver {
     @Nullable
     public static ClassDescriptor getContainingClass(@NotNull LexicalScope scope) {
         return getParentOfType(scope.getOwnerDescriptor(), ClassDescriptor.class, false);
-    }
-
-    public static void registerFileInPackage(@NotNull BindingTrace trace, @NotNull KtFile file) {
-        // Register files corresponding to this package
-        // The trace currently does not support bi-di multimaps that would handle this task nicer
-        FqName fqName = file.getPackageFqName();
-        Collection<KtFile> files = trace.get(PACKAGE_TO_FILES, fqName);
-        if (files == null) {
-            files = Sets.newIdentityHashSet();
-        }
-        files.add(file);
-        trace.record(BindingContext.PACKAGE_TO_FILES, fqName, files);
     }
 }

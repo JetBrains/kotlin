@@ -1,5 +1,6 @@
 
 apply { plugin("kotlin") }
+apply { plugin("jps-compatible") }
 
 jvmTarget = "1.6"
 
@@ -11,6 +12,8 @@ dependencies {
     compile(project(":compiler:ir.tree"))
     compile(project(":compiler:ir.psi2ir"))
     compile(project(":compiler:serialization"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijDep()) { includeJars("annotations", "asm-all", "trove4j", "guava", rootProject = rootProject) }
 }
 
 sourceSets {

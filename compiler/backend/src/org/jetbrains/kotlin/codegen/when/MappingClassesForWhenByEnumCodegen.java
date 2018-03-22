@@ -108,11 +108,11 @@ public class MappingClassesForWhenByEnumCodegen {
         v.putstatic(cb.getThisName(), mapping.getFieldName(), MAPPINGS_FIELD_DESCRIPTOR);
 
         for (Map.Entry<EnumValue, Integer> item : mapping.enumValuesToIntMapping()) {
-            EnumValue enumEntry = item.getKey();
+            EnumValue enumValue = item.getKey();
             int mappedValue = item.getValue();
 
             v.getstatic(cb.getThisName(), mapping.getFieldName(), MAPPINGS_FIELD_DESCRIPTOR);
-            v.getstatic(enumType.getInternalName(), enumEntry.getValue().getName().asString(), enumType.getDescriptor());
+            v.getstatic(enumType.getInternalName(), enumValue.getEnumEntryName().asString(), enumType.getDescriptor());
             v.invokevirtual(enumType.getInternalName(), "ordinal", Type.getMethodDescriptor(Type.INT_TYPE), false);
             v.iconst(mappedValue);
             v.astore(Type.INT_TYPE);

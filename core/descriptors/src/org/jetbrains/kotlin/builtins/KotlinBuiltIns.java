@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory;
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter;
@@ -574,29 +572,6 @@ public abstract class KotlinBuiltIns {
         return getBuiltInClassByName("Throwable");
     }
 
-    @Nullable
-    private static ClassDescriptor getEnumEntry(@NotNull ClassDescriptor enumDescriptor, @NotNull String entryName) {
-        ClassifierDescriptor result = enumDescriptor.getUnsubstitutedInnerClassesScope().getContributedClassifier(
-                Name.identifier(entryName), NoLookupLocation.FROM_BUILTINS
-        );
-        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
-    }
-
-    @Nullable
-    public ClassDescriptor getDeprecationLevelEnumEntry(@NotNull String level) {
-        return getEnumEntry(getBuiltInClassByName(FQ_NAMES.deprecationLevel.shortName()), level);
-    }
-
-    @Nullable
-    public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
-        return getEnumEntry(getAnnotationClassByName(FQ_NAMES.annotationTarget.shortName()), target.name());
-    }
-
-    @Nullable
-    public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
-        return getEnumEntry(getAnnotationClassByName(FQ_NAMES.annotationRetention.shortName()), retention.name());
-    }
-
     @NotNull
     public ClassDescriptor getString() {
         return getBuiltInClassByName("String");
@@ -971,6 +946,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._long);
     }
 
+    public static boolean isLongOrNullableLong(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._long);
+    }
+
     public static boolean isShort(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._short);
     }
@@ -997,12 +976,12 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNothing(@NotNull KotlinType type) {
         return isNothingOrNullableNothing(type)
-               && !type.isMarkedNullable();
+               && !TypeUtils.isNullableType(type);
     }
 
     public static boolean isNullableNothing(@NotNull KotlinType type) {
         return isNothingOrNullableNothing(type)
-               && type.isMarkedNullable();
+               && TypeUtils.isNullableType(type);
     }
 
     public static boolean isNothingOrNullableNothing(@NotNull KotlinType type) {

@@ -61,7 +61,10 @@ abstract class AbstractNavigateToLibraryTest : KotlinCodeInsightTestCase() {
 
 
     open fun getProjectDescriptor(): KotlinLightProjectDescriptor =
-            JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library", withSource)
+        SdkAndMockLibraryProjectDescriptor(
+            PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/library",
+            withSource
+        )
 }
 
 abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibraryTest() {

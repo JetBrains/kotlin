@@ -25,7 +25,7 @@ internal class ConstantValuesInterpreter {
     fun interpretConstant(constantReference: ConstantReference): ESConstant? = when (constantReference) {
         BooleanConstantReference.TRUE -> true.lift()
         BooleanConstantReference.FALSE -> false.lift()
-        ConstantReference.NULL-> ESConstant.NULL
+        ConstantReference.NULL -> ESConstant.NULL
         ConstantReference.NOT_NULL -> ESConstant.NOT_NULL
         ConstantReference.WILDCARD -> ESConstant.WILDCARD
         else -> null

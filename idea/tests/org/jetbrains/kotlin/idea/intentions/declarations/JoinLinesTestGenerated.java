@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -429,6 +429,18 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lineWithMultiStringLiteral.kt")
+        public void testLineWithMultiStringLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/lineWithMultiStringLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lineWithMultiStringLiteralAndVariable.kt")
+        public void testLineWithMultiStringLiteralAndVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/lineWithMultiStringLiteralAndVariable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("secondLineVariable.kt")
         public void testSecondLineVariable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/secondLineVariable.kt");
@@ -444,6 +456,12 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         @TestMetadata("threeLines.kt")
         public void testThreeLines() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/threeLines.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("threeLines2.kt")
+        public void testThreeLines2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/joinLines/stringTemplate/threeLines2.kt");
             doTest(fileName);
         }
     }

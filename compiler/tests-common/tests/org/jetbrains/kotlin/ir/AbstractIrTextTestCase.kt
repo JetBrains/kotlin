@@ -21,10 +21,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -92,8 +89,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         try {
             TestCase.assertEquals(irFileDump, expected.toString(), actual.toString())
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             println(irFileDump)
             throw rethrow(e)
         }
@@ -116,6 +112,12 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             errors.add(message)
         }
 
+        private inline fun require(condition: Boolean, message: () -> String) {
+            if (!condition) {
+                errors.add(message())
+            }
+        }
+
         fun verifyWithAssert(irFile: IrFile) {
             irFile.acceptChildrenVoid(this)
             TestCase.assertFalse(errorsAsMessage + "\n\n\n" + irFile.dump(), hasErrors)
@@ -129,8 +131,20 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             if (declaration is IrSymbolOwner) {
                 declaration.symbol.checkBinding("decl", declaration)
 
-                if (declaration.symbol.owner != declaration) {
-                    error("Symbol is not bound to declaration: ${declaration.render()}")
+                require(declaration.symbol.owner == declaration) {
+                    "Symbol is not bound to declaration: ${declaration.render()}"
+                }
+            }
+
+            val containingDeclarationDescriptor = declaration.descriptor.containingDeclaration
+            if (containingDeclarationDescriptor != null) {
+                val parent = declaration.parent
+                if (parent is IrDeclaration) {
+                    require(parent.descriptor == containingDeclarationDescriptor) {
+                        "In declaration ${declaration.descriptor}: " +
+                                "Mismatching parent descriptor (${parent.descriptor}) " +
+                                "and containing declaration descriptor ($containingDeclarationDescriptor)"
+                    }
                 }
             }
         }
@@ -144,27 +158,28 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
             val expectedDispatchReceiver = functionDescriptor.dispatchReceiverParameter
             val actualDispatchReceiver = declaration.dispatchReceiverParameter?.descriptor
-            if (expectedDispatchReceiver != actualDispatchReceiver) {
-                error("$functionDescriptor: Dispatch receiver parameter mismatch: " +
-                      "expected $expectedDispatchReceiver, actual $actualDispatchReceiver")
+            require(expectedDispatchReceiver == actualDispatchReceiver) {
+                "$functionDescriptor: Dispatch receiver parameter mismatch: " +
+                        "expected $expectedDispatchReceiver, actual $actualDispatchReceiver"
+
             }
 
-            val expectedExtensionReceiver  = functionDescriptor.extensionReceiverParameter
+            val expectedExtensionReceiver = functionDescriptor.extensionReceiverParameter
             val actualExtensionReceiver = declaration.extensionReceiverParameter?.descriptor
-            if (expectedExtensionReceiver != actualExtensionReceiver) {
-                error("$functionDescriptor: Extension receiver parameter mismatch: " +
-                      "expected $expectedExtensionReceiver, actual $actualExtensionReceiver")
+            require(expectedExtensionReceiver == actualExtensionReceiver) {
+                "$functionDescriptor: Extension receiver parameter mismatch: " +
+                        "expected $expectedExtensionReceiver, actual $actualExtensionReceiver"
+
             }
 
             val declaredValueParameters = declaration.valueParameters.map { it.descriptor }
             val actualValueParameters = functionDescriptor.valueParameters
             if (declaredValueParameters.size != actualValueParameters.size) {
                 error("$functionDescriptor: Value parameters mismatch: $declaredValueParameters != $actualValueParameters")
-            }
-            else {
+            } else {
                 declaredValueParameters.zip(actualValueParameters).forEach { (declaredValueParameter, actualValueParameter) ->
-                    if (declaredValueParameter != actualValueParameter) {
-                        error("$functionDescriptor: Value parameters mismatch: $declaredValueParameter != $actualValueParameter")
+                    require(declaredValueParameter == actualValueParameter) {
+                        "$functionDescriptor: Value parameters mismatch: $declaredValueParameter != $actualValueParameter"
                     }
                 }
             }
@@ -207,19 +222,26 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             checkTypeParameters(declaration.descriptor, declaration, declaration.descriptor.declaredTypeParameters)
         }
 
-        private fun checkTypeParameters(descriptor: DeclarationDescriptor, declaration: IrTypeParametersContainer, expectedTypeParameters: List<TypeParameterDescriptor>) {
+        private fun checkTypeParameters(
+            descriptor: DeclarationDescriptor,
+            declaration: IrTypeParametersContainer,
+            expectedTypeParameters: List<TypeParameterDescriptor>
+        ) {
             val declaredTypeParameters = declaration.typeParameters.map { it.descriptor }
 
             if (declaredTypeParameters.size != expectedTypeParameters.size) {
                 error("$descriptor: Type parameters mismatch: $declaredTypeParameters != $expectedTypeParameters")
-            }
-            else {
+            } else {
                 declaredTypeParameters.zip(expectedTypeParameters).forEach { (declaredTypeParameter, expectedTypeParameter) ->
-                    if (declaredTypeParameter != expectedTypeParameter) {
-                        error("$descriptor: Type parameters mismatch: $declaredTypeParameter != $expectedTypeParameter")
+                    require(declaredTypeParameter == expectedTypeParameter) {
+                        "$descriptor: Type parameters mismatch: $declaredTypeParameter != $expectedTypeParameter"
                     }
                 }
             }
+        }
+
+        override fun visitTypeOperator(expression: IrTypeOperatorCall) {
+            expression.typeOperandClassifier.checkBinding("type operand", expression)
         }
     }
 
@@ -240,13 +262,13 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         private val EXTERNAL_FILE_PATTERN = Regex("""// EXTERNAL_FILE""")
 
         internal fun shouldDumpDependencies(wholeFile: File): Boolean =
-                DUMP_DEPENDENCIES_PATTERN.containsMatchIn(wholeFile.readText())
+            DUMP_DEPENDENCIES_PATTERN.containsMatchIn(wholeFile.readText())
 
         internal fun TestFile.isExternalFile() =
-                EXTERNAL_FILE_PATTERN.containsMatchIn(content)
+            EXTERNAL_FILE_PATTERN.containsMatchIn(content)
 
         internal fun KtFile.isExternalFile() =
-                EXTERNAL_FILE_PATTERN.containsMatchIn(text)
+            EXTERNAL_FILE_PATTERN.containsMatchIn(text)
 
         internal fun parseExpectations(dir: File, testFile: TestFile): Expectations {
             val regexps = ArrayList<RegexpInText>()
@@ -255,8 +277,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             for (line in testFile.content.split("\n")) {
                 EXPECTED_OCCURRENCES_PATTERN.matchEntire(line)?.let { matchResult ->
                     regexps.add(RegexpInText(matchResult.groupValues[1], matchResult.groupValues[2].trim()))
-                }
-                ?: IR_FILE_TXT_PATTERN.find(line)?.let { matchResult ->
+                } ?: IR_FILE_TXT_PATTERN.find(line)?.let { matchResult ->
                     val fileName = matchResult.groupValues[1].trim()
                     val file = createExpectedTextFile(testFile, dir, fileName)
                     treeFiles.add(IrTreeFileLabel(file, 0))

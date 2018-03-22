@@ -281,5 +281,5 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
 }
 
 
-private fun java.util.regex.MatchResult.range(): IntRange = start()..end()-1
-private fun java.util.regex.MatchResult.range(groupIndex: Int): IntRange = start(groupIndex)..end(groupIndex)-1
+private fun java.util.regex.MatchResult.range(): IntRange = start() until end()
+private fun java.util.regex.MatchResult.range(groupIndex: Int): IntRange = start(groupIndex) until end(groupIndex)

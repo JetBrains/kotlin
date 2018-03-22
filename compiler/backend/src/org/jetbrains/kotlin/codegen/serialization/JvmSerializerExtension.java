@@ -29,16 +29,20 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl;
-import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer;
 import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.serialization.*;
-import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite;
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.serialization.AnnotationSerializer;
+import org.jetbrains.kotlin.serialization.DescriptorSerializer;
+import org.jetbrains.kotlin.serialization.SerializerExtension;
 import org.jetbrains.kotlin.types.FlexibleType;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -52,7 +56,7 @@ public class JvmSerializerExtension extends SerializerExtension {
     private final JvmSerializationBindings bindings;
     private final BindingContext codegenBinding;
     private final KotlinTypeMapper typeMapper;
-    private final StringTable stringTable;
+    private final JvmCodegenStringTable stringTable;
     private final AnnotationSerializer annotationSerializer;
     private final boolean useTypeTable;
     private final String moduleName;
@@ -62,7 +66,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         this.bindings = bindings;
         this.codegenBinding = state.getBindingContext();
         this.typeMapper = state.getTypeMapper();
-        this.stringTable = new JvmStringTable(typeMapper);
+        this.stringTable = new JvmCodegenStringTable(typeMapper);
         this.annotationSerializer = new AnnotationSerializer(stringTable);
         this.useTypeTable = state.getUseTypeTableInSerializer();
         this.moduleName = state.getModuleName();
@@ -71,7 +75,7 @@ public class JvmSerializerExtension extends SerializerExtension {
 
     @NotNull
     @Override
-    public StringTable getStringTable() {
+    public JvmCodegenStringTable getStringTable() {
         return stringTable;
     }
 
@@ -127,7 +131,7 @@ public class JvmSerializerExtension extends SerializerExtension {
             @NotNull ProtoBuf.Type.Builder lowerProto,
             @NotNull ProtoBuf.Type.Builder upperProto
     ) {
-        lowerProto.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(JavaFlexibleTypeDeserializer.INSTANCE.getId()));
+        lowerProto.setFlexibleTypeCapabilitiesId(getStringTable().getStringIndex(JvmProtoBufUtil.PLATFORM_TYPE_ID));
 
         if (flexibleType instanceof RawTypeImpl) {
             lowerProto.setExtension(JvmProtoBuf.isRaw, true);
@@ -259,23 +263,8 @@ public class JvmSerializerExtension extends SerializerExtension {
         private String mapTypeDefault(@NotNull KotlinType type) {
             ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
             if (!(classifier instanceof ClassDescriptor)) return null;
-            ClassId classId = classId((ClassDescriptor) classifier);
-            return classId == null ? null : ClassMapperLite.mapClass(classId);
-        }
-
-        @Nullable
-        private ClassId classId(@NotNull ClassDescriptor descriptor) {
-            DeclarationDescriptor container = descriptor.getContainingDeclaration();
-            if (container instanceof PackageFragmentDescriptor) {
-                return ClassId.topLevel(((PackageFragmentDescriptor) container).getFqName().child(descriptor.getName()));
-            }
-            else if (container instanceof ClassDescriptor) {
-                ClassId outerClassId = classId((ClassDescriptor) container);
-                return outerClassId == null ? null : outerClassId.createNestedClassId(descriptor.getName());
-            }
-            else {
-                return null;
-            }
+            ClassId classId = DescriptorUtilsKt.getClassId((ClassDescriptor) classifier);
+            return classId == null ? null : ClassMapperLite.mapClass(classId.asString());
         }
 
         @NotNull

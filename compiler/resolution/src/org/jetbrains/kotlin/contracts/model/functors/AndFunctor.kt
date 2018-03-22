@@ -30,7 +30,7 @@ class AndFunctor : AbstractBinaryFunctor() {
         ESConstant.TRUE -> computation.effects
         ESConstant.FALSE -> emptyList()
 
-        // This means that expression isn't typechecked properly
+    // This means that expression isn't typechecked properly
         else -> computation.effects
     }
 

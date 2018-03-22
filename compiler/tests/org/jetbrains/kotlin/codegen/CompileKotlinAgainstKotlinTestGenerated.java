@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -79,6 +79,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest(fileName);
     }
 
+    @TestMetadata("copySamOnInline2.kt")
+    public void testCopySamOnInline2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/copySamOnInline2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("coroutinesBinary.kt")
     public void testCoroutinesBinary() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt");
@@ -124,6 +130,12 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
     @TestMetadata("innerClassConstructor.kt")
     public void testInnerClassConstructor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/innerClassConstructor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("internalSetterOverridden.kt")
+    public void testInternalSetterOverridden() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
         doTest(fileName);
     }
 

@@ -30,7 +30,7 @@ Tester.prototype._check = function (name, result) {
     }
 
     if (result !== expected) {
-        this._errors.push('Unexpected test: "' + name + '"');
+        this._errors.push('Test "' + name + '" expected result "' + expected + '", actual result "' + result + '"');
         return;
     }
 

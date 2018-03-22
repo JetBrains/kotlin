@@ -1,0 +1,6 @@
+// MOVE: up
+fun test() {
+    <caret>println()
+    (0..10)
+        .map { it }
+}

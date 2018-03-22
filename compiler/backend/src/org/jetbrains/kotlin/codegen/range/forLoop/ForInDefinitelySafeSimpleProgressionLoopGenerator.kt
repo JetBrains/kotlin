@@ -39,35 +39,35 @@ import org.jetbrains.org.objectweb.asm.Type
  * This generator is suitable for cases where arithmetic overflow is impossible.
  */
 class ForInDefinitelySafeSimpleProgressionLoopGenerator(
-        codegen: ExpressionCodegen,
-        forExpression: KtForExpression,
-        private val startValue: StackValue,
-        private val isStartInclusive: Boolean,
-        private val endValue: StackValue,
-        private val isEndInclusive: Boolean,
-        step: Int
+    codegen: ExpressionCodegen,
+    forExpression: KtForExpression,
+    private val startValue: StackValue,
+    private val isStartInclusive: Boolean,
+    private val endValue: StackValue,
+    private val isEndInclusive: Boolean,
+    step: Int
 ) : AbstractForInRangeLoopGenerator(codegen, forExpression, step) {
 
     constructor(
-            codegen: ExpressionCodegen,
-            forExpression: KtForExpression,
-            boundedValue: SimpleBoundedValue,
-            step: Int
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression,
+        boundedValue: SimpleBoundedValue,
+        step: Int
     ) : this(
-            codegen, forExpression,
-            startValue = if (step == 1) boundedValue.lowBound else boundedValue.highBound,
-            isStartInclusive = if (step == 1) boundedValue.isLowInclusive else boundedValue.isHighInclusive,
-            endValue = if (step == 1) boundedValue.highBound else boundedValue.lowBound,
-            isEndInclusive = if (step == 1) boundedValue.isHighInclusive else boundedValue.isLowInclusive,
-            step = step
+        codegen, forExpression,
+        startValue = if (step == 1) boundedValue.lowBound else boundedValue.highBound,
+        isStartInclusive = if (step == 1) boundedValue.isLowInclusive else boundedValue.isHighInclusive,
+        endValue = if (step == 1) boundedValue.highBound else boundedValue.lowBound,
+        isEndInclusive = if (step == 1) boundedValue.isHighInclusive else boundedValue.isLowInclusive,
+        step = step
     )
 
     companion object {
         fun fromBoundedValueWithStep1(codegen: ExpressionCodegen, forExpression: KtForExpression, boundedValue: SimpleBoundedValue) =
-                ForInDefinitelySafeSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, 1)
+            ForInDefinitelySafeSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, 1)
 
         fun fromBoundedValueWithStepMinus1(codegen: ExpressionCodegen, forExpression: KtForExpression, boundedValue: SimpleBoundedValue) =
-                ForInDefinitelySafeSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, -1)
+            ForInDefinitelySafeSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, -1)
     }
 
     override fun storeRangeStartAndEnd() {
@@ -89,34 +89,27 @@ class ForInDefinitelySafeSimpleProgressionLoopGenerator(
             if (step > 0) {
                 if (isEndInclusive) {
                     v.ifgt(loopExit)
-                }
-                else {
+                } else {
                     v.ifge(loopExit)
                 }
-            }
-            else {
+            } else {
                 if (isEndInclusive) {
                     v.iflt(loopExit)
-                }
-                else {
+                } else {
                     v.ifle(loopExit)
                 }
             }
-        }
-        else {
+        } else {
             if (step > 0) {
                 if (isEndInclusive) {
                     v.ificmpgt(loopExit)
-                }
-                else {
+                } else {
                     v.ificmpge(loopExit)
                 }
-            }
-            else {
+            } else {
                 if (isEndInclusive) {
                     v.ificmplt(loopExit)
-                }
-                else {
+                } else {
                     v.ificmple(loopExit)
                 }
             }

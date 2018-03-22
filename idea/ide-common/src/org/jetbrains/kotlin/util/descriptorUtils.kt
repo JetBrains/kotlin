@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
@@ -101,3 +103,6 @@ val ClassifierDescriptorWithTypeParameters.kind: ClassKind?
         is ClassDescriptor -> kind
         else -> null
     }
+
+val DeclarationDescriptor.isJavaDescriptor
+    get() = this is JavaClassDescriptor || this is JavaCallableMemberDescriptor

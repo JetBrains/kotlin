@@ -62,6 +62,34 @@ class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
         assertInContexts(Generic::class.java, Class::class.java, ObjectDeclaration::class.java)
     }
 
+    fun testStatementInBlock() {
+        assertInContexts(Generic::class.java, Statement::class.java, Expression::class.java)
+    }
+
+    fun testStatementInDoWhile() {
+        assertInContexts(Generic::class.java, Statement::class.java, Expression::class.java)
+    }
+
+    fun testStatementInFor() {
+        assertInContexts(Generic::class.java, Statement::class.java, Expression::class.java)
+    }
+
+    fun testStatementInIfElse() {
+        assertInContexts(Generic::class.java, Statement::class.java, Expression::class.java)
+    }
+
+    fun testStatementInIfThen() {
+        assertInContexts(Generic::class.java, Statement::class.java, Expression::class.java)
+    }
+
+    fun testStatementInWhile() {
+        assertInContexts(Generic::class.java, Statement::class.java, Expression::class.java)
+    }
+
+    fun testStatementInWhen() {
+        assertInContexts(Generic::class.java, Statement::class.java, Expression::class.java)
+    }
+
     private fun assertInContexts(vararg expectedContexts: java.lang.Class<out KotlinTemplateContextType>) {
         myFixture.configureByFile(getTestName(false) + ".kt")
         val allContexts = TemplateContextType.EP_NAME.extensions.filter { it is KotlinTemplateContextType }

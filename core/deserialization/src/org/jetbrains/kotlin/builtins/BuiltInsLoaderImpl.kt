@@ -84,7 +84,8 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
                 notFoundClasses,
                 ContractDeserializer.DEFAULT,
                 additionalClassPartsProvider,
-                platformDependentDeclarationFilter
+                platformDependentDeclarationFilter,
+                BuiltInSerializerProtocol.extensionRegistry
         )
 
         for (packageFragment in packageFragments) {

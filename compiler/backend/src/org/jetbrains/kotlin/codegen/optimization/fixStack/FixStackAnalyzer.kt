@@ -24,16 +24,19 @@ import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsn
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
+import org.jetbrains.org.objectweb.asm.tree.LabelNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 
 internal class FixStackAnalyzer(
-        owner: String,
-        val method: MethodNode,
-        val context: FixStackContext,
-        private val skipBreakContinueGotoEdges: Boolean = true
+    owner: String,
+    val method: MethodNode,
+    val context: FixStackContext,
+    private val skipBreakContinueGotoEdges: Boolean = true
 ) {
     companion object {
         // Stack size is always non-negative
@@ -79,7 +82,7 @@ internal class FixStackAnalyzer(
         }
 
         override fun newFrame(nLocals: Int, nStack: Int): Frame<BasicValue> =
-                FixStackFrame(nLocals, nStack)
+            FixStackFrame(nLocals, nStack)
 
         private fun indexOf(node: AbstractInsnNode) = method.instructions.indexOf(node)
 
@@ -128,8 +131,7 @@ internal class FixStackAnalyzer(
             override fun push(value: BasicValue) {
                 if (super.getStackSize() < maxStackSize) {
                     super.push(value)
-                }
-                else {
+                } else {
                     extraStack.add(value)
                     maxExtraStackSize = Math.max(maxExtraStackSize, extraStack.size)
                 }
@@ -142,8 +144,7 @@ internal class FixStackAnalyzer(
             override fun pop(): BasicValue {
                 return if (extraStack.isNotEmpty()) {
                     extraStack.pop()
-                }
-                else {
+                } else {
                     super.pop()
                 }
             }
@@ -151,8 +152,7 @@ internal class FixStackAnalyzer(
             override fun getStack(i: Int): BasicValue {
                 return if (i < super.getMaxStackSize()) {
                     super.getStack(i)
-                }
-                else {
+                } else {
                     extraStack[i - maxStackSize]
                 }
             }
@@ -176,8 +176,7 @@ internal class FixStackAnalyzer(
                 val savedValues = spilledStacks[beforeInlineMarker]
                 pushAll(savedValues!!)
                 push(returnValue)
-            }
-            else {
+            } else {
                 val savedValues = spilledStacks[beforeInlineMarker]
                 pushAll(savedValues!!)
             }
@@ -195,7 +194,6 @@ internal class FixStackAnalyzer(
             saveStackAndClear(insn)
         }
     }
-
 
 
 }

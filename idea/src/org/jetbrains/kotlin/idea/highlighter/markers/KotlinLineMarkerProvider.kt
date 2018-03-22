@@ -34,12 +34,12 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightMethod
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.implementedDescriptor
+import org.jetbrains.kotlin.idea.facet.implementedDescriptors
 import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -96,6 +96,7 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
             when (element) {
                 is KtClass -> {
                     collectInheritedClassMarker(element, result)
+                    collectHighlightingColorsMarkers(element, result)
                 }
                 is KtNamedFunction -> {
                     functions.add(element)
@@ -378,8 +379,7 @@ private fun collectExpectedMarkers(declaration: KtNamedDeclaration,
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
-    val commonModuleDescriptor = platformModuleDescriptor.implementedDescriptor ?: return
-    if (!commonModuleDescriptor.hasDeclarationOf(descriptor)) return
+    if (!platformModuleDescriptor.implementedDescriptors.any { it.hasDeclarationOf(descriptor) }) return
 
     val anchor = declaration.expectOrActualAnchor
 

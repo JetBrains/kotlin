@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.jvm
 
-import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.*
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.*
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.util.*
 

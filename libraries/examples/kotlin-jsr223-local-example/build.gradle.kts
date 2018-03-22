@@ -5,7 +5,7 @@ apply { plugin("kotlin") }
 
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
-    compile(projectDist(":kotlin-script-runtime"))
+    compile(project(":kotlin-script-runtime"))
     compile(projectRuntimeJar(":kotlin-compiler-embeddable"))
     compile(project(":kotlin-script-util"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))

@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.idea.stubindex.resolve
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService
@@ -57,15 +57,17 @@ class PluginDeclarationProviderFactory(
         }
     }
 
-    private fun packageExists(name: FqName): Boolean {
-        return if (moduleInfo is ModuleSourceInfo)
-            project.service<PerModulePackageCacheService>().packageExists(name, moduleInfo)
-        else
-            PackageIndexUtil.packageExists(name, indexedFilesScope, project)
+    override fun packageExists(fqName: FqName) =
+        fileBasedDeclarationProviderFactory.packageExists(fqName) || stubBasedPackageExists(fqName)
+
+    private fun stubBasedPackageExists(name: FqName): Boolean {
+        // We're only looking for source-based declarations
+        val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return false
+        return PerModulePackageCacheService.getInstance(project).packageExists(name, moduleInfo)
     }
 
     private fun getStubBasedPackageMemberDeclarationProvider(name: FqName): PackageMemberDeclarationProvider? {
-        if (!packageExists(name)) return null
+        if (!stubBasedPackageExists(name)) return null
 
         return StubBasedPackageMemberDeclarationProvider(name, project, indexedFilesScope)
     }
@@ -95,7 +97,7 @@ class PluginDeclarationProviderFactory(
         val packageExists = PackageIndexUtil.packageExists(fqName, indexedFilesScope, project)
         val spiPackageExists = subpackagesIndex.packageExists(fqName)
         val oldPackageExists = oldPackageExists(fqName)
-        val cachedPackageExists = moduleSourceInfo?.let { project.service<PerModulePackageCacheService>().packageExists(fqName, it) }
+        val cachedPackageExists = moduleSourceInfo?.let { ServiceManager.getService(project, PerModulePackageCacheService::class.java).packageExists(fqName, it) }
         val moduleModificationCount = moduleSourceInfo?.createModificationTracker()?.modificationCount
 
         val common = """

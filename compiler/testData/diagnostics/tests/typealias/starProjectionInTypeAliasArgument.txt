@@ -11,4 +11,4 @@ public final class NumCharSeq</*0*/ N : kotlin.Number, /*1*/ M : kotlin.CharSequ
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias Test</*0*/ X, /*1*/ Y>  = NumCharSeq<X, Y>
+public typealias Test</*0*/ X, /*1*/ Y> = NumCharSeq<X, Y>

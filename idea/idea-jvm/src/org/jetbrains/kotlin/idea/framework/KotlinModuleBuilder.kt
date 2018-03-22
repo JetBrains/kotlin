@@ -20,8 +20,10 @@ import com.intellij.ide.util.projectWizard.JavaModuleBuilder
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import javax.swing.Icon
 
 class KotlinModuleBuilder(
@@ -37,5 +39,10 @@ class KotlinModuleBuilder(
 
     override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep {
         return KotlinModuleSettingStep(targetPlatform, this, settingsStep)
+    }
+
+    override fun isSuitableSdkType(sdkType: SdkTypeId?) = when (targetPlatform) {
+        is JvmPlatform -> super.isSuitableSdkType(sdkType)
+        else -> sdkType is KotlinSdkType
     }
 }

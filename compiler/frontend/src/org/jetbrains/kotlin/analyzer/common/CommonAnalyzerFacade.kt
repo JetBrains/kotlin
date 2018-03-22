@@ -112,7 +112,7 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project, moduleContext.storageManager, syntheticFiles,
-            if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope,
+            moduleContentScope,
             moduleInfo
         )
 

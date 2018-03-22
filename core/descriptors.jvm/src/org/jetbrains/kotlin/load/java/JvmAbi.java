@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.java;
@@ -29,10 +18,10 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 
 public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
+    public static final String ERASED_INLINE_CLASS_NAME = "Erased";
 
     /**
      * Warning: use DEFAULT_IMPLS_CLASS_NAME and TypeMappingConfiguration.innerClassNameFactory when possible.
@@ -62,6 +51,8 @@ public final class JvmAbi {
 
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT = "$i$a$";
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION = "$i$f$";
+
+    public static final String ERASED_INLINE_CLASS_SUFFIX = "$" + ERASED_INLINE_CLASS_NAME;
 
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
@@ -117,11 +108,5 @@ public final class JvmAbi {
 
     public static boolean isMappedIntrinsicCompanionObject(@NotNull ClassDescriptor companionObject) {
         return CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(companionObject);
-    }
-
-    public static boolean isCompanionObjectInInterfaceNotIntrinsic(@NotNull DeclarationDescriptor companionObject) {
-        return isCompanionObject(companionObject) &&
-               isInterface(companionObject.getContainingDeclaration()) &&
-               !isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 }

@@ -20,14 +20,16 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 class NullChecksToSafeCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            binaryExpressionVisitor { expression ->
-                if (isNullChecksToSafeCallFixAvailable(expression)) {
-                    holder.registerProblem(expression,
-                                           "Null-checks replaceable with safe-calls",
-                                           ProblemHighlightType.WEAK_WARNING,
-                                           NullChecksToSafeCallCheckFix())
-                }
+        binaryExpressionVisitor { expression ->
+            if (isNullChecksToSafeCallFixAvailable(expression)) {
+                holder.registerProblem(
+                    expression,
+                    "Null-checks replaceable with safe-calls",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    NullChecksToSafeCallCheckFix()
+                )
             }
+        }
 
     private class NullChecksToSafeCallCheckFix : LocalQuickFix {
         override fun getName() = "Replace chained null-checks with safe-calls"

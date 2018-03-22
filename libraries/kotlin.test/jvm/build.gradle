@@ -4,7 +4,10 @@ description = 'Kotlin Test'
 apply plugin: 'kotlin-platform-jvm'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
+
+project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
@@ -12,7 +15,6 @@ dependencies {
     testCompile project(":kotlin-test:kotlin-test-junit")
     testCompile('junit:junit:4.12')
 }
-
 
 archivesBaseName = 'kotlin-test'
 

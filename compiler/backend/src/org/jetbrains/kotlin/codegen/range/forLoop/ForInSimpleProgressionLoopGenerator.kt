@@ -24,56 +24,55 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
 class ForInSimpleProgressionLoopGenerator(
-        codegen: ExpressionCodegen,
-        forExpression: KtForExpression,
-        private val startValue: StackValue,
-        private val isStartInclusive: Boolean,
-        private val endValue: StackValue,
-        private val isEndInclusive: Boolean,
-        private val inverseBoundsEvaluationOrder: Boolean,
-        step: Int
+    codegen: ExpressionCodegen,
+    forExpression: KtForExpression,
+    private val startValue: StackValue,
+    private val isStartInclusive: Boolean,
+    private val endValue: StackValue,
+    private val isEndInclusive: Boolean,
+    private val inverseBoundsEvaluationOrder: Boolean,
+    step: Int
 ) : AbstractForInRangeLoopGenerator(codegen, forExpression, step) {
 
     constructor(
-            codegen: ExpressionCodegen,
-            forExpression: KtForExpression,
-            boundedValue: SimpleBoundedValue,
-            inverseBoundsEvaluationOrder: Boolean,
-            step: Int
+        codegen: ExpressionCodegen,
+        forExpression: KtForExpression,
+        boundedValue: SimpleBoundedValue,
+        inverseBoundsEvaluationOrder: Boolean,
+        step: Int
     ) : this(
-            codegen, forExpression,
-            startValue = if (step == 1) boundedValue.lowBound else boundedValue.highBound,
-            isStartInclusive = if (step == 1) boundedValue.isLowInclusive else boundedValue.isHighInclusive,
-            endValue = if (step == 1) boundedValue.highBound else boundedValue.lowBound,
-            isEndInclusive = if (step == 1) boundedValue.isHighInclusive else boundedValue.isLowInclusive,
-            inverseBoundsEvaluationOrder = inverseBoundsEvaluationOrder,
-            step = step
+        codegen, forExpression,
+        startValue = if (step == 1) boundedValue.lowBound else boundedValue.highBound,
+        isStartInclusive = if (step == 1) boundedValue.isLowInclusive else boundedValue.isHighInclusive,
+        endValue = if (step == 1) boundedValue.highBound else boundedValue.lowBound,
+        isEndInclusive = if (step == 1) boundedValue.isHighInclusive else boundedValue.isLowInclusive,
+        inverseBoundsEvaluationOrder = inverseBoundsEvaluationOrder,
+        step = step
     )
 
     companion object {
         fun fromBoundedValueWithStep1(
-                codegen: ExpressionCodegen,
-                forExpression: KtForExpression,
-                boundedValue: SimpleBoundedValue,
-                inverseBoundsEvaluationOrder: Boolean = false
+            codegen: ExpressionCodegen,
+            forExpression: KtForExpression,
+            boundedValue: SimpleBoundedValue,
+            inverseBoundsEvaluationOrder: Boolean = false
         ) =
-                ForInSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, inverseBoundsEvaluationOrder, 1)
+            ForInSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, inverseBoundsEvaluationOrder, 1)
 
         fun fromBoundedValueWithStepMinus1(
-                codegen: ExpressionCodegen,
-                forExpression: KtForExpression,
-                boundedValue: SimpleBoundedValue,
-                inverseBoundsEvaluationOrder: Boolean = false
+            codegen: ExpressionCodegen,
+            forExpression: KtForExpression,
+            boundedValue: SimpleBoundedValue,
+            inverseBoundsEvaluationOrder: Boolean = false
         ) =
-                ForInSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, inverseBoundsEvaluationOrder, -1)
+            ForInSimpleProgressionLoopGenerator(codegen, forExpression, boundedValue, inverseBoundsEvaluationOrder, -1)
     }
 
     override fun storeRangeStartAndEnd() {
         if (inverseBoundsEvaluationOrder) {
             StackValue.local(endVar, asmElementType).store(endValue, v)
             loopParameter().store(startValue, v)
-        }
-        else {
+        } else {
             loopParameter().store(startValue, v)
             StackValue.local(endVar, asmElementType).store(endValue, v)
         }
@@ -98,16 +97,13 @@ class ForInSimpleProgressionLoopGenerator(
                 v.lcmp()
                 if (step > 0) {
                     v.ifge(loopExit)
-                }
-                else {
+                } else {
                     v.ifle(loopExit)
                 }
-            }
-            else {
+            } else {
                 if (step > 0) {
                     v.ificmpge(loopExit)
-                }
-                else {
+                } else {
                     v.ificmple(loopExit)
                 }
             }
@@ -119,8 +115,7 @@ class ForInSimpleProgressionLoopGenerator(
         // Otherwise, just increment the loop variable.
         if (isEndInclusive) {
             super.checkPostConditionAndIncrement(loopExit)
-        }
-        else {
+        } else {
             incrementLoopVariable()
         }
     }

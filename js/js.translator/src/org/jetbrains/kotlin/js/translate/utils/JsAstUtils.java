@@ -169,12 +169,20 @@ public final class JsAstUtils {
     public static JsExpression newLong(long value) {
         JsExpression result;
         if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
-            int low = (int) value;
-            int high = (int) (value >> 32);
-            List<JsExpression> args = new SmartList<>();
-            args.add(new JsIntLiteral(low));
-            args.add(new JsIntLiteral(high));
-            result = new JsNew(Namer.kotlinLong(), args);
+            if (value == Long.MAX_VALUE) {
+                return new JsNameRef(Namer.LONG_MAX_VALUE, Namer.kotlinLong());
+            }
+            else if (value == Long.MIN_VALUE) {
+                return new JsNameRef(Namer.LONG_MIN_VALUE, Namer.kotlinLong());
+            }
+            else {
+                int low = (int) value;
+                int high = (int) (value >> 32);
+                List<JsExpression> args = new SmartList<>();
+                args.add(new JsIntLiteral(low));
+                args.add(new JsIntLiteral(high));
+                result = new JsNew(Namer.kotlinLong(), args);
+            }
         }
         else {
             if (value == 0) {

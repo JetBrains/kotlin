@@ -20,16 +20,15 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
 
 class FakeCallableDescriptorForTypeAliasObject(override val typeAliasDescriptor: TypeAliasDescriptor) :
-        FakeCallableDescriptorForObject(typeAliasDescriptor.classDescriptor!!),
-        DescriptorDerivedFromTypeAlias
-{
+    FakeCallableDescriptorForObject(typeAliasDescriptor.classDescriptor!!),
+    DescriptorDerivedFromTypeAlias {
     override fun getReferencedDescriptor() =
-            typeAliasDescriptor
+        typeAliasDescriptor
 
     override fun equals(other: Any?): Boolean =
-            other is FakeCallableDescriptorForTypeAliasObject &&
-            typeAliasDescriptor == other.typeAliasDescriptor
+        other is FakeCallableDescriptorForTypeAliasObject &&
+                typeAliasDescriptor == other.typeAliasDescriptor
 
     override fun hashCode(): Int =
-            typeAliasDescriptor.hashCode()
+        typeAliasDescriptor.hashCode()
 }

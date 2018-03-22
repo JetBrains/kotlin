@@ -39,7 +39,7 @@ public abstract class Enum<E : Enum<E>>(name: String, ordinal: Int): Comparable<
 
     /**
      * Throws an exception since enum constants cannot be cloned.
-     * This method prevents enum classes from inheriting from [Cloneable].
+     * This method prevents enum classes from inheriting from `Cloneable`.
      */
     protected final fun clone(): Any
 

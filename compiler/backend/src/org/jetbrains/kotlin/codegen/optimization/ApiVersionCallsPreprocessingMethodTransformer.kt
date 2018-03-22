@@ -46,10 +46,10 @@ class ApiVersionCallsPreprocessingMethodTransformer(private val targetApiVersion
             val atLeastVersion = MavenComparableVersion("$epic.$major.$minor")
 
             val replacementInsn =
-                    if (targetApiVersion.version >= atLeastVersion)
-                        InsnNode(Opcodes.ICONST_1)
-                    else
-                        InsnNode(Opcodes.ICONST_0)
+                if (targetApiVersion.version >= atLeastVersion)
+                    InsnNode(Opcodes.ICONST_1)
+                else
+                    InsnNode(Opcodes.ICONST_0)
 
             methodNode.instructions.run {
                 remove(prev1)
@@ -65,29 +65,29 @@ class ApiVersionCallsPreprocessingMethodTransformer(private val targetApiVersion
     }
 
     private fun AbstractInsnNode.isApiVersionIsAtLeastCall(): Boolean =
-            isMethodInsnWith(Opcodes.INVOKESTATIC) {
-                owner.startsWith("kotlin/internal") &&
-                name == "apiVersionIsAtLeast" &&
-                desc == "(III)Z"
-            }
+        isMethodInsnWith(Opcodes.INVOKESTATIC) {
+            owner.startsWith("kotlin/internal") &&
+                    name == "apiVersionIsAtLeast" &&
+                    desc == "(III)Z"
+        }
 
     private fun AbstractInsnNode.getIntConstValue(): Int? =
-            when (this) {
-                is InsnNode ->
-                    if (opcode in Opcodes.ICONST_M1..Opcodes.ICONST_5)
-                        opcode - Opcodes.ICONST_0
-                    else
-                        null
+        when (this) {
+            is InsnNode ->
+                if (opcode in Opcodes.ICONST_M1..Opcodes.ICONST_5)
+                    opcode - Opcodes.ICONST_0
+                else
+                    null
 
-                is IntInsnNode ->
-                    when (opcode) {
-                        Opcodes.BIPUSH -> operand
-                        Opcodes.SIPUSH -> operand
-                        else -> null
-                    }
+            is IntInsnNode ->
+                when (opcode) {
+                    Opcodes.BIPUSH -> operand
+                    Opcodes.SIPUSH -> operand
+                    else -> null
+                }
 
-                is LdcInsnNode -> cst as? Int
+            is LdcInsnNode -> cst as? Int
 
-                else -> null
-            }
+            else -> null
+        }
 }

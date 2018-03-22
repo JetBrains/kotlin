@@ -6,8 +6,12 @@ suspend fun suspendHere(ctx: CoroutineContext) = suspendCoroutineOrReturn<String
     if (x.context == ctx) x.resume("OK") else x.resume("FAIL")
 }
 
-suspend fun mustBeTailCall(): String {
-    return suspendHere(coroutineContext)
+suspend fun mustBeTailCallOld(): String {
+    return suspendHere(kotlin.coroutines.experimental.intrinsics.coroutineContext)
+}
+
+suspend fun mustBeTailCallNew(): String {
+    return suspendHere(kotlin.coroutines.experimental.coroutineContext)
 }
 
 suspend fun retrieveCoroutineContext(): CoroutineContext =

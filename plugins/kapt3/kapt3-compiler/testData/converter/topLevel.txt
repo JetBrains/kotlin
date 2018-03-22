@@ -1,6 +1,3 @@
-/**
- * @KaptMetadata
- */
 package test.another;
 
 import java.lang.System;
@@ -14,9 +11,6 @@ public abstract @interface Anno {
 
 ////////////////////
 
-/**
- * @KaptMetadata
- */
 package test.another;
 
 import java.lang.System;

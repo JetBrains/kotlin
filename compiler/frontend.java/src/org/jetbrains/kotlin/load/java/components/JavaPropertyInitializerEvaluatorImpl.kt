@@ -20,21 +20,19 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
     override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>? {
         val evaluated = field.initializerValue ?: return null
 
-        val factory = ConstantValueFactory(descriptor.builtIns)
         return when (evaluated) {
         //Note: evaluated expression may be of class that does not match field type in some cases
         // tested for Int, left other checks just in case
             is Byte, is Short, is Int, is Long -> {
-                factory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type)
+                ConstantValueFactory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type)
             }
             else -> {
-                factory.createConstantValue(evaluated)
+                ConstantValueFactory.createConstantValue(evaluated)
             }
         }
     }

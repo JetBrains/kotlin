@@ -66,10 +66,10 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
                 val settingName = line.substring(0, index).trim()
                 val settingValue = line.substring(index + 1).trim()
                 val (field, settings) = try {
-                    kotlinStyleSettings::class.java.getDeclaredField(settingName) to kotlinStyleSettings
+                    kotlinStyleSettings::class.java.getField(settingName) to kotlinStyleSettings
                 }
                 catch (e: NoSuchFieldException) {
-                    commonStyleSettings::class.java.getDeclaredField(settingName) to commonStyleSettings
+                    commonStyleSettings::class.java.getField(settingName) to commonStyleSettings
                 }
                 when (field.type.name) {
                     "boolean" -> field.setBoolean(settings, settingValue.toBoolean())

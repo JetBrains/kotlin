@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -59,7 +59,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
 
         val name = element.getReferencedName()
 
-        val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
+        val (context, moduleDescriptor) = element.analyzeAndGetResult()
 
         val fullCallExpr = getFullCallExpression(element) ?: return Collections.emptyList()
 
@@ -116,7 +116,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
     override fun extractFixData(element: KtSimpleNameExpression, diagnostic: Diagnostic): ClassInfo? {
         val name = element.getReferencedName()
 
-        val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
+        val (context, moduleDescriptor) = element.analyzeAndGetResult()
 
         val fullCallExpr = getFullCallExpression(element) ?: return null
 

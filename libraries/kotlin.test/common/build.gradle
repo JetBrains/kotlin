@@ -2,6 +2,7 @@ description = 'Kotlin Test Common'
 
 apply plugin: 'kotlin-platform-common'
 
+configureDist(project)
 configurePublishing(project)
 
 
@@ -18,6 +19,8 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.kotlin
 }
+
+classes.dependsOn.remove("compileJava")
 
 artifacts {
     archives sourcesJar

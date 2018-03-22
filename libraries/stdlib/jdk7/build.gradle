@@ -3,6 +3,7 @@ description = 'Kotlin Standard Library JDK 7 extension'
 apply plugin: 'kotlin'
 
 configureJvm6Project(project)
+configureDist(project)
 configurePublishing(project)
 ext.javaHome = JDK_17
 

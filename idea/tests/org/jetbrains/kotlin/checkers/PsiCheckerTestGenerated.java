@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -957,6 +957,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("Typos.kt")
         public void testTypos() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/Typos.kt");
+            doTestWithInfos(fileName);
+        }
+
+        @TestMetadata("TyposInOverrideParams.kt")
+        public void testTyposInOverrideParams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/TyposInOverrideParams.kt");
             doTestWithInfos(fileName);
         }
 

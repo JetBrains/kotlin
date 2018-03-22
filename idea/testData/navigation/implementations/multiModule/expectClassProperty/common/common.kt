@@ -17,4 +17,5 @@ class SimpleChild : SimpleParent() {
 }
 
 // REF: [common] (in test.ExpectedChildChild).bar
+// REF: [jvm] (in test.ExpectedChild).bar
 // REF: [jvm] (in test.ExpectedChildChildJvm).bar

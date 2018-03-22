@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrTryImpl(startOffset: Int, endOffset: Int, type: KotlinType) :
-        IrExpressionBase(startOffset, endOffset, type), IrTry {
+    IrExpressionBase(startOffset, endOffset, type), IrTry {
     constructor(
-            startOffset: Int, endOffset: Int, type: KotlinType,
-            tryResult: IrExpression, catches: List<IrCatch>, finallyExpression: IrExpression?
+        startOffset: Int, endOffset: Int, type: KotlinType,
+        tryResult: IrExpression, catches: List<IrCatch>, finallyExpression: IrExpression?
     ) : this(startOffset, endOffset, type) {
         this.tryResult = tryResult
         this.catches.addAll(catches)
@@ -63,9 +63,7 @@ class IrTryImpl(startOffset: Int, endOffset: Int, type: KotlinType) :
     }
 }
 
-class IrCatchImpl(startOffset: Int, endOffset: Int)
-    : IrCatch, IrElementBase(startOffset, endOffset)
-{
+class IrCatchImpl(startOffset: Int, endOffset: Int) : IrCatch, IrElementBase(startOffset, endOffset) {
     constructor(startOffset: Int, endOffset: Int, catchParameter: IrVariable)
             : this(startOffset, endOffset) {
         this.catchParameter = catchParameter
