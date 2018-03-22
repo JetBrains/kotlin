@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -26,8 +25,9 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
 
         val firProvider = session.service<FirProvider>()
 
-        return if (firProvider.getFirClassifierByFqName(unambiguousFqName) != null) {
-            processor(unambiguousFqName.toSymbol())
+        val symbol = firProvider.getSymbolByFqName(unambiguousFqName)
+        return if (symbol != null) {
+            processor(symbol)
         } else {
             true
         }

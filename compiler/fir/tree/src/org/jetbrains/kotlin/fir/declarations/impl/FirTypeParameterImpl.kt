@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.types.Variance
 class FirTypeParameterImpl(
     session: FirSession,
     psi: PsiElement?,
+    override val symbol: FirTypeParameterSymbol,
     name: Name,
     override val variance: Variance,
-    override val isReified: Boolean,
-    override val symbol: FirTypeParameterSymbol
+    override val isReified: Boolean
 ) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirTypeParameter {
     init {
         symbol.bind(this)

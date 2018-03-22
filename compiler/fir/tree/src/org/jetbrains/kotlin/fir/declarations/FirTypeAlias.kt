@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirTypeAlias : FirMemberDeclaration {
+interface FirTypeAlias : FirMemberDeclaration, FirSymbolOwner<FirTypeAlias> {
     val expandedType: FirType
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

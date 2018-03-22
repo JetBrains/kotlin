@@ -13,15 +13,18 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirEnumEntryImpl(
     session: FirSession,
     psi: PsiElement?,
+    symbol: FirClassSymbol,
     name: Name
 ) : FirClassImpl(
     session,
     psi,
+    symbol,
     name,
     visibility = Visibilities.UNKNOWN,
     modality = Modality.FINAL,

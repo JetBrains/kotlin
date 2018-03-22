@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.BaseTransformedType
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 // May be all containers should be properties and not base classes
 // About descriptors: introduce something like FirDescriptor which is FirUnresolved at the beginning and FirSymbol(descriptor) at the end
 @BaseTransformedType
-interface FirClass : FirDeclarationContainer, FirMemberDeclaration {
+interface FirClass : FirDeclarationContainer, FirMemberDeclaration, FirSymbolOwner<FirClass> {
     // including delegated types
     val superTypes: List<FirType>
 

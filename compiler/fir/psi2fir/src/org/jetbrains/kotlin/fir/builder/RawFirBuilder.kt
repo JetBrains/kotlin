@@ -17,11 +17,15 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBody
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
@@ -212,8 +216,11 @@ class RawFirBuilder(val session: FirSession) {
             return firConstructor
         }
 
+        lateinit var packageFqName: FqName
+
         override fun visitKtFile(file: KtFile, data: Unit): FirElement {
-            val firFile = FirFileImpl(session, file, file.name, file.packageFqName)
+            packageFqName = file.packageFqName
+            val firFile = FirFileImpl(session, file, file.name, packageFqName)
             for (annotationEntry in file.annotationEntries) {
                 firFile.annotations += annotationEntry.convert<FirAnnotationCall>()
             }
@@ -233,63 +240,85 @@ class RawFirBuilder(val session: FirSession) {
         }
 
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit): FirElement {
-            val firEnumEntry = FirEnumEntryImpl(
-                session,
-                enumEntry,
-                enumEntry.nameAsSafeName
-            )
-            enumEntry.extractAnnotationsTo(firEnumEntry)
-            enumEntry.extractSuperTypeListEntriesTo(firEnumEntry)
-            for (declaration in enumEntry.declarations) {
-                firEnumEntry.declarations += declaration.convert<FirDeclaration>()
+            return withChildClassName(enumEntry.nameAsSafeName) {
+                val firEnumEntry = FirEnumEntryImpl(
+                    session,
+                    enumEntry,
+                    FirClassSymbol(currentClassId),
+                    enumEntry.nameAsSafeName
+                )
+                enumEntry.extractAnnotationsTo(firEnumEntry)
+                enumEntry.extractSuperTypeListEntriesTo(firEnumEntry)
+                for (declaration in enumEntry.declarations) {
+                    firEnumEntry.declarations += declaration.convert<FirDeclaration>()
+                }
+                firEnumEntry
             }
-            return firEnumEntry
         }
 
+        inline fun <T> withChildClassName(name: Name, l: () -> T): T {
+            className = className.child(name)
+            val t = l()
+            className = className.parent()
+            return t
+        }
+
+        val currentClassId get() = ClassId(packageFqName, className, false)
+
+        var className: FqName = FqName.ROOT
+
         override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Unit): FirElement {
-            val classKind = when (classOrObject) {
-                is KtObjectDeclaration -> ClassKind.OBJECT
-                is KtClass -> when {
-                    classOrObject.isInterface() -> ClassKind.INTERFACE
-                    classOrObject.isEnum() -> ClassKind.ENUM_CLASS
-                    classOrObject.isAnnotation() -> ClassKind.ANNOTATION_CLASS
-                    else -> ClassKind.CLASS
+            return withChildClassName(classOrObject.nameAsSafeName) {
+
+                val classKind = when (classOrObject) {
+                    is KtObjectDeclaration -> ClassKind.OBJECT
+                    is KtClass -> when {
+                        classOrObject.isInterface() -> ClassKind.INTERFACE
+                        classOrObject.isEnum() -> ClassKind.ENUM_CLASS
+                        classOrObject.isAnnotation() -> ClassKind.ANNOTATION_CLASS
+                        else -> ClassKind.CLASS
+                    }
+                    else -> throw AssertionError("Unexpected class or object: ${classOrObject.text}")
                 }
-                else -> throw AssertionError("Unexpected class or object: ${classOrObject.text}")
+                val firClass = FirClassImpl(
+                    session,
+                    classOrObject,
+                    FirClassSymbol(currentClassId),
+                    classOrObject.nameAsSafeName,
+                    classOrObject.visibility,
+                    classOrObject.modality,
+                    classOrObject.platformStatus,
+                    classKind,
+                    isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD),
+                    isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true,
+                    isData = (classOrObject as? KtClass)?.isData() == true
+                )
+                classOrObject.extractAnnotationsTo(firClass)
+                classOrObject.extractTypeParametersTo(firClass)
+                classOrObject.extractSuperTypeListEntriesTo(firClass)
+                for (declaration in classOrObject.declarations) {
+                    firClass.declarations += declaration.convert<FirDeclaration>()
+                }
+
+                firClass
             }
-            val firClass = FirClassImpl(
-                session,
-                classOrObject,
-                classOrObject.nameAsSafeName,
-                classOrObject.visibility,
-                classOrObject.modality,
-                classOrObject.platformStatus,
-                classKind,
-                isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD),
-                isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true,
-                isData = (classOrObject as? KtClass)?.isData() == true
-            )
-            classOrObject.extractAnnotationsTo(firClass)
-            classOrObject.extractTypeParametersTo(firClass)
-            classOrObject.extractSuperTypeListEntriesTo(firClass)
-            for (declaration in classOrObject.declarations) {
-                firClass.declarations += declaration.convert<FirDeclaration>()
-            }
-            return firClass
         }
 
         override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Unit): FirElement {
-            val firTypeAlias = FirTypeAliasImpl(
-                session,
-                typeAlias,
-                typeAlias.nameAsSafeName,
-                typeAlias.visibility,
-                typeAlias.platformStatus,
-                typeAlias.getTypeReference().toFirOrErrorType()
-            )
-            typeAlias.extractAnnotationsTo(firTypeAlias)
-            typeAlias.extractTypeParametersTo(firTypeAlias)
-            return firTypeAlias
+            return withChildClassName(typeAlias.nameAsSafeName) {
+                val firTypeAlias = FirTypeAliasImpl(
+                    session,
+                    typeAlias,
+                    FirTypeAliasSymbol(currentClassId),
+                    typeAlias.nameAsSafeName,
+                    typeAlias.visibility,
+                    typeAlias.platformStatus,
+                    typeAlias.getTypeReference().toFirOrErrorType()
+                )
+                typeAlias.extractAnnotationsTo(firTypeAlias)
+                typeAlias.extractTypeParametersTo(firTypeAlias)
+                firTypeAlias
+            }
         }
 
         override fun visitNamedFunction(function: KtNamedFunction, data: Unit): FirElement {
@@ -449,10 +478,10 @@ class RawFirBuilder(val session: FirSession) {
             val firTypeParameter = FirTypeParameterImpl(
                 session,
                 parameter,
+                FirTypeParameterSymbol(),
                 parameter.nameAsSafeName,
                 parameter.variance,
-                parameter.hasModifier(KtTokens.REIFIED_KEYWORD),
-                FirTypeParameterSymbol()
+                parameter.hasModifier(KtTokens.REIFIED_KEYWORD)
             )
             parameter.extractAnnotationsTo(firTypeParameter)
             val extendsBound = parameter.extendsBound

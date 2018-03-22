@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedTypeAliasImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedTypeParameterImpl
 import org.jetbrains.kotlin.fir.descriptors.ConeClassifierDescriptor
 import org.jetbrains.kotlin.fir.descriptors.ConeTypeParameterDescriptor
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer

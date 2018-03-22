@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.toSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirExplicitImportingScope(imports: List<FirImport>) : FirScope {
@@ -26,8 +26,11 @@ class FirExplicitImportingScope(imports: List<FirImport>) : FirScope {
         processor: (ConeSymbol) -> Boolean
     ): Boolean {
         val imports = simpleImports[name] ?: return true
+        if (imports.isEmpty()) return true
+        val provider = FirProvider.getInstance(imports.first().session)
         for (import in imports) {
-            if (!processor(import.resolvedFqName.toSymbol())) {
+            val symbol = provider.getSymbolByFqName(import.resolvedFqName) ?: continue
+            if (!processor(symbol)) {
                 return false
             }
         }

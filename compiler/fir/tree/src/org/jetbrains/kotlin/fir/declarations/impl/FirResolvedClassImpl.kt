@@ -17,6 +17,7 @@ class FirResolvedClassImpl(val delegate: FirClass, override val descriptor: FirB
     FirResolvedClass, FirClass by delegate {
 
     init {
+        symbol.bind(this)
         descriptor.bind(this)
     }
 

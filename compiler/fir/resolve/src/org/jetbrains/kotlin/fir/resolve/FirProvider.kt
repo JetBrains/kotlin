@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 interface FirProvider {
-    fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration? // FirSymbol?
+    fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration?
+
+    fun getSymbolByFqName(fqName: ClassId): ConeSymbol?
 
     fun getFirClassifierContainerFile(fqName: ClassId): FirFile
 

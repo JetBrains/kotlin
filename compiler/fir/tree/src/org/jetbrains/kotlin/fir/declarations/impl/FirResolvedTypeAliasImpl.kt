@@ -19,6 +19,7 @@ class FirResolvedTypeAliasImpl(val delegate: FirTypeAlias, override val descript
         get() = delegate.modality ?: Modality.FINAL
 
     init {
+        symbol.bind(this)
         descriptor.bind(this)
     }
 

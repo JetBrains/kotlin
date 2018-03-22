@@ -6,19 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.toSymbol
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
+import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.Variance
 
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
 
@@ -30,9 +24,9 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
             parts.drop(1).fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
             false
         )
-        firProvider.getFirClassifierByFqName(fqName) ?: return null
+        val classifier = firProvider.getFirClassifierByFqName(fqName) ?: return null
 
-        return ConeClassLikeSymbol(fqName)
+        return (classifier as? FirSymbolOwner<*>)?.symbol
     }
 
     override fun resolveSymbol(parts: List<FirQualifierPart>): ConeSymbol? {
@@ -48,15 +42,12 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
 
                 val fqName = ClassId(firstPart.toFqName(), lastPart.toFqName(), false)
                 val foundClassifier = firProvider.getFirClassifierByFqName(fqName)
-
                 if (foundClassifier != null) {
-                    return ConeClassLikeSymbol(fqName)
+                    return (foundClassifier as? FirSymbolOwner<*>)?.symbol
                 }
             }
-            return null
-        } else {
-            return null
         }
+        return null
     }
 
     private fun List<FirQualifierPart>.toFqNameUnsafe() = toFqName().toUnsafe()

@@ -17,6 +17,7 @@ class FirResolvedEnumEntryImpl(
 ) : FirResolvedEnumEntry, FirEnumEntry by delegate {
 
     init {
+        symbol.bind(this)
         descriptor.bind(this)
     }
 

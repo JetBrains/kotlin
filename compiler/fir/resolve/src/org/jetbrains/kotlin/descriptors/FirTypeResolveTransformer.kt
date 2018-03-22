@@ -42,7 +42,7 @@ class FirTypeResolveTransformer(val superTypesOnly: Boolean = false) : FirTransf
                 // from high priority to low priority
                 FirExplicitImportingScope(file.imports),
                 FirSelfImportingScope(file.packageFqName, file.session),
-                FirStarImportingScope(file.imports)
+                FirStarImportingScope(file.imports, file.session)
             )
         )
         packageFqName = file.packageFqName

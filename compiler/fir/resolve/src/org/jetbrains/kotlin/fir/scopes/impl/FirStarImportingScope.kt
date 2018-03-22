@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
+import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.toSymbol
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class FirStarImportingScope(imports: List<FirImport>) : FirScope {
+class FirStarImportingScope(imports: List<FirImport>, val session: FirSession) : FirScope {
 
     private val starImports = imports.filterIsInstance<FirResolvedImport>().filter { it.isAllUnder }
 
@@ -23,13 +25,15 @@ class FirStarImportingScope(imports: List<FirImport>) : FirScope {
         position: FirPosition,
         processor: (ConeSymbol) -> Boolean
     ): Boolean {
+        val provider = FirProvider.getInstance(session)
         for (import in starImports) {
             val relativeClassName = import.relativeClassName
-            val symbol = if (relativeClassName == null) {
+            val classId = if (relativeClassName == null) {
                 ClassId(import.packageFqName, name)
             } else {
                 ClassId(import.packageFqName, relativeClassName.child(name), false)
-            }.toSymbol()
+            }
+            val symbol = provider.getSymbolByFqName(classId) ?: continue
             if (!processor(symbol)) {
                 return false
             }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -23,6 +24,10 @@ class FirProviderImpl(val session: FirSession) : FirProvider {
             is ConeClassLikeSymbol -> getFirClassifierByFqName(symbol.classId)
             else -> error("!")
         }
+    }
+
+    override fun getSymbolByFqName(fqName: ClassId): ConeSymbol? {
+        return (getFirClassifierByFqName(fqName) as? FirSymbolOwner<*>)?.symbol
     }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {

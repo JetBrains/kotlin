@@ -5,12 +5,21 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.ClassId
 
 interface ConeSymbol
 
 interface ConeTypeParameterSymbol : ConeSymbol
 
-class ConeClassLikeSymbol(val classId: ClassId) : ConeSymbol
+interface ConeClassLikeSymbol : ConeSymbol {
+    val classId: ClassId
+}
 
-fun ClassId.toSymbol() = ConeClassLikeSymbol(this)
+interface ConeTypeAliasSymbol : ConeClassLikeSymbol {
+    val expansionType: ConeClassLikeType
+}
+
+interface ConeClassSymbol : ConeClassLikeSymbol {
+    val superTypes: List<ConeClassLikeType>
+}
