@@ -31,7 +31,7 @@ class FirImportResolveTransformer : FirTransformer<Nothing?>() {
         val firProvider = FirSymbolProvider.getInstance(import.session)
 
         if (!fqName.isRoot) {
-            val lastPart = mutableListOf<String>()
+            val lastPart = StringBuilder()
             var firstPart = fqName
 
             if (import.isAllUnder && firProvider.getPackage(firstPart) != null) {
@@ -39,10 +39,13 @@ class FirImportResolveTransformer : FirTransformer<Nothing?>() {
             }
 
             while (!firstPart.isRoot) {
-                lastPart.add(0, firstPart.shortName().asString())
+                if (lastPart.isNotEmpty())
+                    lastPart.insert(0, '.')
+                lastPart.insert(0, firstPart.shortName().asString())
+
                 firstPart = firstPart.parent()
 
-                val resolvedFqName = ClassId(firstPart, FqName.fromSegments(lastPart), false)
+                val resolvedFqName = ClassId(firstPart, FqName(lastPart.toString()), false)
                 val foundSymbol = firProvider.getSymbolByFqName(resolvedFqName)
 
                 if (foundSymbol != null) {
