@@ -458,10 +458,10 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitResolvedType(resolvedType: FirResolvedType) {
         resolvedType.annotations.renderAnnotations()
-        print("R/")
+        print("R|")
         val coneType = resolvedType.type
         print(coneType.asString())
-        print("/")
+        print("|")
         visitTypeWithNullability(resolvedType)
     }
 

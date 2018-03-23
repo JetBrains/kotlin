@@ -1,11 +1,11 @@
 FILE: lists.kt
-    public? abstract class MyStringList() : R/kotlin/collections/List<kotlin/String>/ {
+    public? abstract class MyStringList() : R|kotlin/collections/List<kotlin/String>| {
     }
-    public? abstract class MyMutableStringList() : R/kotlin/collections/MutableList<kotlin/String>/ {
+    public? abstract class MyMutableStringList() : R|kotlin/collections/MutableList<kotlin/String>| {
     }
-    public? final? function convert R/kotlin/collections/List<kotlin/String>/.(): R/MyStringList/ {
+    public? final? function convert R|kotlin/collections/List<kotlin/String>|.(): R|MyStringList| {
         STUB
     }
-    public? final? function ret(l: R/kotlin/collections/MutableList<kotlin/String>/): R/MyMutableStringList/ {
+    public? final? function ret(l: R|kotlin/collections/MutableList<kotlin/String>|): R|MyMutableStringList| {
         STUB
     }
