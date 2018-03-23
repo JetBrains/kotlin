@@ -74,7 +74,7 @@ internal class ClassLlvmDeclarations(
         val singletonDeclarations: SingletonLlvmDeclarations?,
         val objCDeclarations: KotlinObjCClassLlvmDeclarations?)
 
-internal class SingletonLlvmDeclarations(val instanceFieldRef: LLVMValueRef)
+internal class SingletonLlvmDeclarations(val instanceFieldRef: LLVMValueRef, val instanceShadowFieldRef: LLVMValueRef?)
 
 internal class KotlinObjCClassLlvmDeclarations(
         val classPointerGlobal: StaticData.Global,
@@ -319,7 +319,20 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
         LLVMSetInitializer(instanceFieldRef, kNullObjHeaderPtr)
 
-        return SingletonLlvmDeclarations(instanceFieldRef)
+        val instanceShadowFieldRef =
+                if (threadLocal) null
+                else {
+                    val shadowSymbolName = if (isExported) {
+                        descriptor.objectInstanceShadowFieldSymbolName
+                    } else {
+                        "kshadowobjref:" + qualifyInternalName(descriptor)
+                    }
+                    addGlobal(shadowSymbolName, getLLVMType(descriptor.defaultType), isExported = isExported, threadLocal = true)
+                }
+
+        instanceShadowFieldRef?.let { LLVMSetInitializer(it, kNullObjHeaderPtr) }
+
+        return SingletonLlvmDeclarations(instanceFieldRef, instanceShadowFieldRef)
     }
 
     private fun createKotlinObjCClassDeclarations(descriptor: ClassDescriptor): KotlinObjCClassLlvmDeclarations {

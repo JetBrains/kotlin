@@ -1104,12 +1104,14 @@ OBJ_GETTER(InitInstance,
 }
 
 OBJ_GETTER(InitSharedInstance,
-    ObjHeader** location, const TypeInfo* type_info, void (*ctor)(ObjHeader*)) {
+    ObjHeader** location, ObjHeader** localLocation, const TypeInfo* type_info, void (*ctor)(ObjHeader*)) {
 #if KONAN_NO_THREADS
   return InitInstance(location, type_info, ctor);
 #else
+  ObjHeader* value = *localLocation;
+  if (value != nullptr) RETURN_OBJ(value);
+
   ObjHeader* initializing = reinterpret_cast<ObjHeader*>(1);
-  ObjHeader* value;
 
   // Spin lock.
   while ((value = __sync_val_compare_and_swap(location, nullptr, initializing)) == initializing);
@@ -1120,19 +1122,22 @@ OBJ_GETTER(InitSharedInstance,
 
   ObjHeader* object = AllocInstance(type_info, OBJ_RESULT);
   MEMORY_LOG("Calling UpdateRef from InitInstance\n")
-  UpdateRef(location, object);
-  __sync_synchronize();
+  UpdateRef(localLocation, object);
 #if KONAN_NO_EXCEPTIONS
   ctor(object);
   // TODO: uncomment as soon as cycles are correctly handled during freezing.
   //if (!object->container()->frozen())
     //ThrowFreezingException();
+  UpdateRef(location, object);
+  __sync_synchronize();
   return object;
 #else
   try {
     ctor(object);
     //if (!object->container()->frozen())
       //ThrowFreezingException();
+    UpdateRef(location, object);
+    __sync_synchronize();
     return object;
   } catch (...) {
     UpdateRef(OBJ_RESULT, nullptr);

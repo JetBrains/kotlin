@@ -63,6 +63,24 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         return llvmGlobal
     }
 
+    fun getObjectInstanceShadowStorage(descriptor: ClassDescriptor): LLVMValueRef {
+        assert (!descriptor.isUnit())
+        assert (descriptor.symbol.objectIsShared)
+        val llvmGlobal = if (!isExternal(descriptor)) {
+            context.llvmDeclarations.forSingleton(descriptor).instanceShadowFieldRef!!
+        } else {
+            val llvmType = getLLVMType(descriptor.defaultType)
+            importGlobal(
+                    descriptor.objectInstanceShadowFieldSymbolName,
+                    llvmType,
+                    origin = descriptor.llvmSymbolOrigin,
+                    threadLocal = true
+            )
+        }
+        context.llvm.objects += llvmGlobal
+        return llvmGlobal
+    }
+
     fun typeInfoForAllocation(constructedClass: ClassDescriptor): LLVMValueRef {
         val descriptorForTypeInfo = if (constructedClass.isObjCClass()) {
             context.ir.symbols.objCPointerHolder.owner
@@ -575,28 +593,41 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             return codegen.theUnitInstanceRef.llvm
         }
 
+        val args = mutableListOf<LLVMValueRef>()
         val objectPtr = codegen.getObjectInstanceStorage(descriptor)
+        args += objectPtr
         val bbCurrent = currentBlock
-        val bbInit    = basicBlock("label_init", locationInfo)
+        val bbFirstCheck    = basicBlock(if (shared) "label_check_shadow" else "label_init", locationInfo)
         val bbExit    = basicBlock("label_continue", locationInfo)
         val objectVal = loadSlot(objectPtr, false)
-        val condition = icmpUGt(ptrToInt(objectVal, codegen.intPtrType), codegen.immOneIntPtrType)
-        condBr(condition, bbExit, bbInit)
+        val objectInitialized = icmpUGt(ptrToInt(objectVal, codegen.intPtrType), codegen.immOneIntPtrType)
+        condBr(objectInitialized, bbExit, bbFirstCheck)
 
-        positionAtEnd(bbInit)
-        val typeInfo = codegen.typeInfoForAllocation(descriptor)
+        positionAtEnd(bbExit)
+        val valuePhi = phi(codegen.getLLVMType(descriptor.defaultType))
+
+        positionAtEnd(bbFirstCheck)
+        if (shared) {
+            val shadowObjectPtr = codegen.getObjectInstanceShadowStorage(descriptor)
+            args += shadowObjectPtr
+            val shadowObjectVal = loadSlot(shadowObjectPtr, false)
+            val shadowNotNull = icmpNe(bitcast(int8TypePtr, shadowObjectVal), kNullInt8Ptr)
+            val bbInit = basicBlock("label_init", locationInfo)
+            condBr(shadowNotNull, bbExit, bbInit)
+            addPhiIncoming(valuePhi, bbFirstCheck to shadowObjectVal)
+            positionAtEnd(bbInit)
+        }
+
         val defaultConstructor = descriptor.constructors.first { it.valueParameters.size == 0 }
-        val ctor = codegen.llvmFunction(defaultConstructor)
-        val args = listOf(objectPtr, typeInfo, ctor)
+        args += codegen.typeInfoForAllocation(descriptor)
+        args += codegen.llvmFunction(defaultConstructor)
         val initFunction = if (shared) context.llvm.initSharedInstanceFunction else context.llvm.initInstanceFunction
         val newValue = call(initFunction, args, Lifetime.GLOBAL, exceptionHandler)
         val bbInitResult = currentBlock
         br(bbExit)
 
         positionAtEnd(bbExit)
-        val valuePhi = phi(codegen.getLLVMType(descriptor.defaultType))
-        addPhiIncoming(valuePhi,
-                bbCurrent to objectVal, bbInitResult to newValue)
+        addPhiIncoming(valuePhi, bbCurrent to objectVal, bbInitResult to newValue)
 
         return valuePhi
     }

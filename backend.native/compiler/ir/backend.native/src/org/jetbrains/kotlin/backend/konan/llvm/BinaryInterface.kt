@@ -281,6 +281,16 @@ internal val ClassDescriptor.objectInstanceFieldSymbolName: String
         return "kobjref:$fqNameSafe"
     }
 
+internal val ClassDescriptor.objectInstanceShadowFieldSymbolName: String
+    get() {
+        assert (this.isExported())
+        assert (this.kind.isSingleton)
+        assert (!this.isUnit())
+        assert (this.symbol.objectIsShared)
+
+        return "kshadowobjref:$fqNameSafe"
+    }
+
 internal val ClassDescriptor.typeInfoHasVtableAttached: Boolean
     get() = !this.isAbstract() && !this.isExternalObjCClass()
 
