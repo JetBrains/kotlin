@@ -373,7 +373,15 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
         include 'gradle.properties'
         include 'androidNativeActivity/gradle.properties'
         into "$baseName/samples"
-        filter { it.startsWith("konan.home=") ? "konan.home=../.." : it }
+        filter {
+            if (it.startsWith("konan.home=")) {
+                return "konan.home=../.."
+            }
+            if (it.startsWith("konan.plugin.version=")) {
+                return "konan.plugin.version=$konanVersion"
+            }
+            return it
+        }
     }
 
     destinationDir = file('.')
