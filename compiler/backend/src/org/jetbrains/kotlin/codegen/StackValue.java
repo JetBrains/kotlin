@@ -2061,7 +2061,7 @@ public abstract class StackValue {
             @NotNull CallableDescriptor descriptor
     ) {
         throw new RuntimeException(
-                "Augment assignment and increment are not supported for local delegated properties ans inline properties: " +
+                "Augment assignment and increment are not supported for local delegated properties and inline properties: " +
                 descriptor);
     }
 }
