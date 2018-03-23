@@ -120,24 +120,33 @@ class KotlinCallCompleter(
         expectedType: UnwrappedType?,
         resolutionCallbacks: KotlinResolutionCallbacks
     ): ConstraintSystemCompletionMode {
-        val unsubstitutedReturnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return ConstraintSystemCompletionMode.PARTIAL
-        val withSmartCastInfo = resolutionCallbacks.createReceiverWithSmartCastInfo(resolvedCall)
+        if (expectedType != null && TypeUtils.noExpectedType(expectedType)) return ConstraintSystemCompletionMode.FULL
 
-        val actualType = withSmartCastInfo?.stableType ?: unsubstitutedReturnType
+        val returnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return ConstraintSystemCompletionMode.PARTIAL
+        val substitutedType: UnwrappedType
+        if (expectedType != null) {
+            val returnTypeWithSmartCastInfo = computeReturnTypeWithSmartCastInfo(returnType, resolutionCallbacks)
+            substitutedType = resolvedCall.substitutor.substituteKeepAnnotations(returnTypeWithSmartCastInfo)
 
-        val returnType = resolvedCall.substitutor.substituteKeepAnnotations(actualType)
-        if (expectedType != null && !TypeUtils.noExpectedType(expectedType) && !resolutionCallbacks.isCompileTimeConstant(
-                resolvedCall,
-                expectedType
-            )) {
-            csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
-        }
-
-        return if (expectedType != null || csBuilder.isProperType(returnType)) {
-            ConstraintSystemCompletionMode.FULL
+            if (!resolutionCallbacks.isCompileTimeConstant(resolvedCall, expectedType)) {
+                csBuilder.addSubtypeConstraint(substitutedType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
+            }
         } else {
-            ConstraintSystemCompletionMode.PARTIAL
+            substitutedType = resolvedCall.substitutor.substituteKeepAnnotations(returnType)
         }
+
+        return if (expectedType != null || csBuilder.isProperType(substitutedType))
+            ConstraintSystemCompletionMode.FULL
+        else
+            ConstraintSystemCompletionMode.PARTIAL
+    }
+
+    private fun KotlinResolutionCandidate.computeReturnTypeWithSmartCastInfo(
+        returnType: UnwrappedType,
+        resolutionCallbacks: KotlinResolutionCallbacks
+    ): UnwrappedType {
+        if (resolvedCall.atom.callKind != KotlinCallKind.VARIABLE) return returnType
+        return resolutionCallbacks.createReceiverWithSmartCastInfo(resolvedCall)?.stableType ?: returnType
     }
 
     private fun KotlinResolutionCandidate?.asCallResolutionResult(
