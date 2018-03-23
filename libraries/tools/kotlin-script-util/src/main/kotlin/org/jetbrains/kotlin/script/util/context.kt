@@ -65,16 +65,51 @@ internal fun List<File>.takeIfContainsAll(vararg keyNames: String): List<File>? 
             keyNames.all { key -> classpath.any { it.matchMaybeVersionedFile(key) } }
         }
 
+internal fun List<File>.filterIfContainsAll(vararg keyNames: String): List<File>? {
+    val res = hashMapOf<String, File>()
+    for (jar in this) {
+        for (prefix in keyNames) {
+            if (jar.matchMaybeVersionedFile(prefix)) {
+                res[prefix] = jar
+                break
+            }
+        }
+    }
+    return if (keyNames.all { res.containsKey(it) }) res.values.toList()
+    else null
+}
+
 internal fun List<File>.takeIfContainsAny(vararg keyNames: String): List<File>? =
         takeIf { classpath ->
             keyNames.any { key -> classpath.any { it.matchMaybeVersionedFile(key) } }
         }
 
-fun scriptCompilationClasspathFromContext(vararg keyNames: String, classLoader: ClassLoader = Thread.currentThread().contextClassLoader): List<File> =
-        System.getProperty(KOTLIN_SCRIPT_CLASSPATH_PROPERTY)?.split(File.pathSeparator)?.map(::File)
-        ?: classpathFromClassloader(classLoader)?.takeIfContainsAll(*keyNames)
-        ?: classpathFromClasspathProperty()?.takeIfContainsAll(*keyNames)
-        ?: KotlinJars.kotlinScriptStandardJars
+fun scriptCompilationClasspathFromContextOrNull(
+    vararg keyNames: String,
+    classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
+    wholeClasspath: Boolean = false
+): List<File>? {
+    fun List<File>.takeAndFilter() = if (wholeClasspath) takeIfContainsAll(*keyNames) else filterIfContainsAll(*keyNames)
+    return System.getProperty(KOTLIN_SCRIPT_CLASSPATH_PROPERTY)?.split(File.pathSeparator)?.map(::File)
+            ?: classpathFromClassloader(classLoader)?.takeAndFilter()
+            ?: classpathFromClasspathProperty()?.takeAndFilter()
+}
+
+fun scriptCompilationClasspathFromContextOrStlib(
+    vararg keyNames: String,
+    classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
+    wholeClasspath: Boolean = false
+): List<File> =
+    scriptCompilationClasspathFromContextOrNull(*keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath)
+            ?: KotlinJars.kotlinScriptStandardJars
+
+fun scriptCompilationClasspathFromContext(
+    vararg keyNames: String,
+    classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
+    wholeClasspath: Boolean = false
+): List<File> =
+    scriptCompilationClasspathFromContextOrNull(*keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath)
+            ?: throw Exception("Unable to get script compilation classpath from context, please specify explicit classpath via \"$KOTLIN_SCRIPT_CLASSPATH_PROPERTY\" property")
 
 object KotlinJars {
 
@@ -101,19 +136,29 @@ object KotlinJars {
         classpath!!
     }
 
-    private fun getLib(propertyName: String, jarName: String, markerClass: KClass<*>): File? =
+    fun getLib(propertyName: String, jarName: String, markerClass: KClass<*>): File? =
             System.getProperty(propertyName)?.let(::File)?.takeIf(File::exists)
             ?: explicitCompilerClasspath?.firstOrNull { it.matchMaybeVersionedFile(jarName) }?.takeIf(File::exists)
             ?: getResourcePathForClass(markerClass.java).takeIf(File::exists)
 
-    val stdlib: File? by lazy {
+    val stdlibOrNull: File? by lazy {
         System.getProperty(KOTLIN_STDLIB_JAR_PROPERTY)?.let(::File)?.takeIf(File::exists)
-        ?: getLib(KOTLIN_RUNTIME_JAR_PROPERTY, KOTLIN_JAVA_STDLIB_JAR, JvmStatic::class)
+                ?: getLib(KOTLIN_RUNTIME_JAR_PROPERTY, KOTLIN_JAVA_STDLIB_JAR, JvmStatic::class)
     }
 
-    val scriptRuntime: File? by lazy {
+    val stdlib: File by lazy {
+        stdlibOrNull
+                ?: throw Exception("Unable to find kotlin stdlib, please specify it explicitly via \"$KOTLIN_STDLIB_JAR_PROPERTY\" property")
+    }
+
+    val scriptRuntimeOrNull: File? by lazy {
         getLib(KOTLIN_SCRIPT_RUNTIME_JAR_PROPERTY, KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, ScriptTemplateWithArgs::class)
     }
 
-    val kotlinScriptStandardJars get() = listOf(stdlib, scriptRuntime).filterNotNull()
+    val scriptRuntime: File by lazy {
+        scriptRuntimeOrNull
+                ?: throw Exception("Unable to find kotlin script runtime, please specify it explicitly via \"$KOTLIN_SCRIPT_RUNTIME_JAR_PROPERTY\" property")
+    }
+
+    val kotlinScriptStandardJars get() = listOf(stdlibOrNull, scriptRuntimeOrNull).filterNotNull()
 }

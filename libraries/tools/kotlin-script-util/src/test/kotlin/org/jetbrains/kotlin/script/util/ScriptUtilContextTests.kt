@@ -24,7 +24,7 @@ class ScriptUtilContextTests {
     @Test
     fun testExplicitScriptClasspath() {
         withSysProp(KOTLIN_SCRIPT_CLASSPATH_PROPERTY, "a:b:c") {
-            val classpath = scriptCompilationClasspathFromContext()
+            val classpath = scriptCompilationClasspathFromContextOrStlib(wholeClasspath = true)
             Assert.assertEquals("a:b:c", classpath.joinToString(":"))
         }
     }
