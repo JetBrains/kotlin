@@ -156,8 +156,10 @@ include ":kotlin-build-common",
         ":kotlin-scripting-compiler",
         ":kotlin-scripting-idea",
         ":kotlin-scripting-gradle",
-        ":examples:scripting-jvm-simple-script",
-        ":examples:scripting-jvm-maven-deps",
+        ":examples:scripting-jvm-simple-script:script",
+        ":examples:scripting-jvm-simple-script:host",
+        ":examples:scripting-jvm-maven-deps:script",
+        ":examples:scripting-jvm-maven-deps:host",
         ":pill:generate-all-tests",
         ":include:kotlin-compiler",
 
@@ -258,8 +260,10 @@ project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting
 project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-cli" as File
 project(':kotlin-scripting-idea').projectDir = "$rootDir/plugins/scripting/scripting-idea" as File
 project(':kotlin-scripting-gradle').projectDir = "$rootDir/plugins/scripting/scripting-gradle" as File
-project(':examples:scripting-jvm-simple-script').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script" as File
-project(':examples:scripting-jvm-maven-deps').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps" as File
+project(':examples:scripting-jvm-simple-script:script').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script/script" as File
+project(':examples:scripting-jvm-simple-script:host').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script/host" as File
+project(':examples:scripting-jvm-maven-deps:script').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/script" as File
+project(':examples:scripting-jvm-maven-deps:host').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/host" as File
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File
 
 // plugin markers:

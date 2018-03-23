@@ -12,6 +12,7 @@ dependencies {
     compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-jvm"))
+    compile(project(":kotlin-script-util"))
     compileOnly(project(":compiler:cli"))
     compileOnly(intellijCoreDep())
 }
