@@ -35,8 +35,10 @@ class FirMemberFunctionImpl(
     receiverType: FirType?,
     returnType: FirType,
     override val body: FirBody?
-) : FirAbstractCallableMember(session, psi, name, visibility, modality, platformStatus, isOverride, receiverType, returnType),
-    FirNamedFunction {
+) : FirAbstractCallableMember(
+    session, psi, name, visibility, modality,
+    platformStatus, isOverride, receiverType, returnType
+), FirNamedFunction {
     override val valueParameters = mutableListOf<FirValueParameter>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {

@@ -1,12 +1,12 @@
 FILE: simpleClass.kt
-    public? final? interface SomeInterface() {
+    public? abstract interface SomeInterface() {
         public? final? function foo(x: Int, y: String): String
 
         public? final? property bar(val): Boolean
             public? get(): Boolean
 
     }
-    public? final? class SomeClass() : SomeInterface {
+    public? final class SomeClass() : SomeInterface {
         private final? property baz(val): <implicit> = STUB
             public? get(): <implicit>
 

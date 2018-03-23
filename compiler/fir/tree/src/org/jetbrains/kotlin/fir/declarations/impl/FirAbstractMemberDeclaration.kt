@@ -19,7 +19,7 @@ abstract class FirAbstractMemberDeclaration(
     psi: PsiElement?,
     name: Name,
     final override val visibility: Visibility,
-    final override val modality: Modality?,
+    override val modality: Modality?,
     override val platformStatus: FirMemberPlatformStatus
 ) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirMemberDeclaration {
     final override val typeParameters = mutableListOf<FirTypeParameter>()

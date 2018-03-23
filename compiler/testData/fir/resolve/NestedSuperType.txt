@@ -1,14 +1,14 @@
 FILE: NestedSuperType.kt
-    (resolved) public? abstract class My() {
-        (resolved) public? abstract class NestedOne() : R/p/My/ {
-            (resolved) public? abstract class NestedTwo() : R/p/My.NestedOne/ {
+    public? abstract class My() {
+        public? abstract class NestedOne() : R/p/My/ {
+            public? abstract class NestedTwo() : R/p/My.NestedOne/ {
             }
 
         }
 
     }
-    (resolved) public? final class Your() : R/p/My/ {
-        (resolved) public? final class NestedThree() : R/p/My.NestedOne/ {
+    public? final class Your() : R/p/My/ {
+        public? final class NestedThree() : R/p/My.NestedOne/ {
         }
 
     }

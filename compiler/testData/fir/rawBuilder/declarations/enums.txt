@@ -1,5 +1,5 @@
 FILE: enums.kt
-    public? final? enum class Order() {
+    public? final enum class Order() {
         public? final enum entry FIRST() {
         }
 
@@ -10,7 +10,7 @@ FILE: enums.kt
         }
 
     }
-    public? final? enum class Planet() {
+    public? final enum class Planet() {
         public? constructor(m: Double, r: Double)
 
         public? final enum entry MERCURY() : Planet {
@@ -36,7 +36,7 @@ FILE: enums.kt
 
         public? abstract function sayHello(): <implicit>
 
-        public? final? object Companion(companion) {
+        public? final object Companion(companion) {
             public? final? const property G(val): <implicit> = STUB
                 public? get(): <implicit>
 

@@ -66,28 +66,12 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformClass(enumEntry, data)
     }
 
-    open fun transformResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry, data: D): CompositeTransformResult<FirDeclaration> {
-        return transformEnumEntry(resolvedEnumEntry, data)
-    }
-
-    open fun transformResolvedClass(resolvedClass: FirResolvedClass, data: D): CompositeTransformResult<FirDeclaration> {
-        return transformClass(resolvedClass, data)
-    }
-
     open fun transformTypeAlias(typeAlias: FirTypeAlias, data: D): CompositeTransformResult<FirDeclaration> {
         return transformMemberDeclaration(typeAlias, data)
     }
 
-    open fun transformResolvedTypeAlias(resolvedTypeAlias: FirResolvedTypeAlias, data: D): CompositeTransformResult<FirDeclaration> {
-        return transformTypeAlias(resolvedTypeAlias, data)
-    }
-
     open fun transformTypeParameter(typeParameter: FirTypeParameter, data: D): CompositeTransformResult<FirDeclaration> {
         return transformNamedDeclaration(typeParameter, data)
-    }
-
-    open fun transformResolvedTypeParameter(resolvedTypeParameter: FirResolvedTypeParameter, data: D): CompositeTransformResult<FirDeclaration> {
-        return transformTypeParameter(resolvedTypeParameter, data)
     }
 
     open fun transformProperty(property: FirProperty, data: D): CompositeTransformResult<FirDeclaration> {
@@ -218,10 +202,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(element, data)
     }
 
-    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirElement> {
-        return transformEnumEntry(enumEntry, data)
-    }
-
     final override fun visitExpression(expression: FirExpression, data: D): CompositeTransformResult<FirElement> {
         return transformExpression(expression, data)
     }
@@ -254,14 +234,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformType(type, data)
     }
 
-    final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): CompositeTransformResult<FirElement> {
-        return transformTypeAlias(typeAlias, data)
-    }
-
-    final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): CompositeTransformResult<FirElement> {
-        return transformTypeParameter(typeParameter, data)
-    }
-
     final override fun visitTypeProjection(typeProjection: FirTypeProjection, data: D): CompositeTransformResult<FirElement> {
         return transformTypeProjection(typeProjection, data)
     }
@@ -278,8 +250,8 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformDelegatedConstructorCall(delegatedConstructorCall, data)
     }
 
-    final override fun visitResolvedClass(resolvedClass: FirResolvedClass, data: D): CompositeTransformResult<FirElement> {
-        return transformResolvedClass(resolvedClass, data)
+    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): CompositeTransformResult<FirElement> {
+        return transformEnumEntry(enumEntry, data)
     }
 
     final override fun visitCallableMember(callableMember: FirCallableMember, data: D): CompositeTransformResult<FirElement> {
@@ -310,10 +282,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformAnonymousInitializer(anonymousInitializer, data)
     }
 
-    final override fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry, data: D): CompositeTransformResult<FirElement> {
-        return transformResolvedEnumEntry(resolvedEnumEntry, data)
-    }
-
     final override fun visitBody(body: FirBody, data: D): CompositeTransformResult<FirElement> {
         return transformBody(body, data)
     }
@@ -338,6 +306,14 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformResolvedImport(resolvedImport, data)
     }
 
+    final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): CompositeTransformResult<FirElement> {
+        return transformTypeAlias(typeAlias, data)
+    }
+
+    final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): CompositeTransformResult<FirElement> {
+        return transformTypeParameter(typeParameter, data)
+    }
+
     final override fun visitFile(file: FirFile, data: D): CompositeTransformResult<FirElement> {
         return transformFile(file, data)
     }
@@ -352,14 +328,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitImplicitType(implicitType: FirImplicitType, data: D): CompositeTransformResult<FirElement> {
         return transformImplicitType(implicitType, data)
-    }
-
-    final override fun visitResolvedTypeAlias(resolvedTypeAlias: FirResolvedTypeAlias, data: D): CompositeTransformResult<FirElement> {
-        return transformResolvedTypeAlias(resolvedTypeAlias, data)
-    }
-
-    final override fun visitResolvedTypeParameter(resolvedTypeParameter: FirResolvedTypeParameter, data: D): CompositeTransformResult<FirElement> {
-        return transformResolvedTypeParameter(resolvedTypeParameter, data)
     }
 
     final override fun visitStarProjection(starProjection: FirStarProjection, data: D): CompositeTransformResult<FirElement> {

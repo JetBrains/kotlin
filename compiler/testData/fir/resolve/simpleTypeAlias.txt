@@ -1,6 +1,6 @@
 FILE: simpleTypeAlias.kt
-    (resolved) public? abstract interface B() {
+    public? abstract interface B() {
     }
-    (resolved) public? final typealias C = R/B/
-    (resolved) public? final class D() : R/C = B/ {
+    public? final typealias C = R/B/
+    public? final class D() : R/C = B/ {
     }

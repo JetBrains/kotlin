@@ -66,28 +66,12 @@ abstract class FirVisitor<out R, in D> {
         return visitClass(enumEntry, data)
     }
 
-    open fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry, data: D): R {
-        return visitEnumEntry(resolvedEnumEntry, data)
-    }
-
-    open fun visitResolvedClass(resolvedClass: FirResolvedClass, data: D): R {
-        return visitClass(resolvedClass, data)
-    }
-
     open fun visitTypeAlias(typeAlias: FirTypeAlias, data: D): R {
         return visitMemberDeclaration(typeAlias, data)
     }
 
-    open fun visitResolvedTypeAlias(resolvedTypeAlias: FirResolvedTypeAlias, data: D): R {
-        return visitTypeAlias(resolvedTypeAlias, data)
-    }
-
     open fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): R {
         return visitNamedDeclaration(typeParameter, data)
-    }
-
-    open fun visitResolvedTypeParameter(resolvedTypeParameter: FirResolvedTypeParameter, data: D): R {
-        return visitTypeParameter(resolvedTypeParameter, data)
     }
 
     open fun visitProperty(property: FirProperty, data: D): R {

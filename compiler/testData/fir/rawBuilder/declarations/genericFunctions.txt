@@ -1,5 +1,5 @@
 FILE: genericFunctions.kt
-    public? final? interface Any() {
+    public? abstract interface Any() {
     }
     <reified T : Any> public? final? inline function safeAsAny.(): T? {
         STUB

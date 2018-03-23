@@ -1,10 +1,10 @@
 FILE: complexTypes.kt
-    <T, out S> public? final? class C() {
-        <R, in P> public? final? class D(inner) {
+    <T, out S> public? final class C() {
+        <R, in P> public? final class D(inner) {
         }
 
     }
-    public? final? interface Test() {
+    public? abstract interface Test() {
         public? final? property x(val): a.b.C<out CharSequence, *>.D<in List<*>, *>
             public? get(): a.b.C<out CharSequence, *>.D<in List<*>, *>
 

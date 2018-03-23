@@ -1,11 +1,11 @@
 FILE: enums2.kt
-    public? final? interface Some() {
+    public? abstract interface Some() {
     }
-    public? final? object O1() : Some {
+    public? final object O1() : Some {
     }
-    public? final? object O2() : Some {
+    public? final object O2() : Some {
     }
-    public? final? enum class SomeEnum() {
+    public? final enum class SomeEnum() {
         public? constructor(x: Some)
 
         public? final enum entry FIRST() : SomeEnum {

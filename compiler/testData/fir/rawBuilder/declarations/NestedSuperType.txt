@@ -7,8 +7,8 @@ FILE: NestedSuperType.kt
         }
 
     }
-    public? final? class Your() : My {
-        public? final? class NestedThree() : NestedOne {
+    public? final class Your() : My {
+        public? final class NestedThree() : NestedOne {
         }
 
     }

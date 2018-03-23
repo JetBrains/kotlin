@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors
+package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -12,8 +12,7 @@ class FirTotalResolveTransformer {
 
     private val transformers: List<FirTransformer<Nothing?>> = listOf(
         FirImportResolveTransformer(),
-        FirTypeResolveTransformer(),
-        FirClassifierResolveTransformer()
+        FirTypeResolveTransformer()
     )
 
     fun processFile(firFile: FirFile) {

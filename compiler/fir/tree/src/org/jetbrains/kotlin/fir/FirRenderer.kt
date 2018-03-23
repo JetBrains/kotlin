@@ -182,18 +182,8 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         )
     }
 
-    override fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry) {
-        print("(resolved) ")
-        visitEnumEntry(resolvedEnumEntry)
-    }
-
     override fun visitEnumEntry(enumEntry: FirEnumEntry) {
         visitClass(enumEntry)
-    }
-
-    override fun visitResolvedClass(resolvedClass: FirResolvedClass) {
-        print("(resolved) ")
-        visitClass(resolvedClass)
     }
 
     override fun visitClass(klass: FirClass) {
@@ -298,22 +288,12 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         println("}")
     }
 
-    override fun visitResolvedTypeAlias(resolvedTypeAlias: FirResolvedTypeAlias) {
-        print("(resolved) ")
-        visitTypeAlias(resolvedTypeAlias)
-    }
-
     override fun visitTypeAlias(typeAlias: FirTypeAlias) {
         typeAlias.annotations.renderAnnotations()
         visitMemberDeclaration(typeAlias)
         print(" = ")
         typeAlias.expandedType.accept(this)
         println()
-    }
-
-    override fun visitResolvedTypeParameter(resolvedTypeParameter: FirResolvedTypeParameter) {
-        print("(resolved) ")
-        visitTypeParameter(resolvedTypeParameter)
     }
 
     override fun visitTypeParameter(typeParameter: FirTypeParameter) {

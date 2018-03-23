@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.types.TypeProjectionBase
 import java.util.*
 
 class FirUserTypeImpl(

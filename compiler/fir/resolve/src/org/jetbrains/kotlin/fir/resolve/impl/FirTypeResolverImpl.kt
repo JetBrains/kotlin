@@ -5,11 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.impl
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirPosition
@@ -39,7 +34,7 @@ class FirTypeResolverImpl : FirTypeResolver {
         }
     }
 
-    private fun ConeSymbol.toConeKotlinType(parts: List<FirQualifierPart>, session: FirSession): ConeKotlinType? {
+    private fun ConeSymbol.toConeKotlinType(parts: List<FirQualifierPart>): ConeKotlinType? {
 
         return when (this) {
             is ConeTypeParameterSymbol -> {
@@ -94,7 +89,7 @@ class FirTypeResolverImpl : FirTypeResolver {
 
     override fun resolveUserType(type: FirUserType, symbol: ConeSymbol?, scope: FirScope): ConeKotlinType {
         symbol ?: return ConeKotlinErrorType("Symbol not found")
-        return symbol.toConeKotlinType(type.qualifier, type.session) ?: ConeKotlinErrorType("Failed to resolve qualified type")
+        return symbol.toConeKotlinType(type.qualifier) ?: ConeKotlinErrorType("Failed to resolve qualified type")
     }
 
     override fun resolveType(

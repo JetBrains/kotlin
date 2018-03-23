@@ -1,7 +1,7 @@
 FILE: lists.kt
-    (resolved) public? abstract class MyStringList() : R/kotlin/collections/List<kotlin/String>/ {
+    public? abstract class MyStringList() : R/kotlin/collections/List<kotlin/String>/ {
     }
-    (resolved) public? abstract class MyMutableStringList() : R/kotlin/collections/MutableList<kotlin/String>/ {
+    public? abstract class MyMutableStringList() : R/kotlin/collections/MutableList<kotlin/String>/ {
     }
     public? final? function convertR/kotlin/collections/List<kotlin/String>/.(): R/MyStringList/ {
         STUB

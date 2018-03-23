@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirType
@@ -37,6 +36,9 @@ open class FirClassImpl(
     init {
         symbol.bind(this)
     }
+
+    override val modality: Modality
+        get() = super.modality ?: if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
 
     override val superTypes = mutableListOf<FirType>()
 

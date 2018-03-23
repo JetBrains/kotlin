@@ -66,28 +66,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitClass(enumEntry, null)
     }
 
-    open fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry) {
-        visitEnumEntry(resolvedEnumEntry, null)
-    }
-
-    open fun visitResolvedClass(resolvedClass: FirResolvedClass) {
-        visitClass(resolvedClass, null)
-    }
-
     open fun visitTypeAlias(typeAlias: FirTypeAlias) {
         visitMemberDeclaration(typeAlias, null)
     }
 
-    open fun visitResolvedTypeAlias(resolvedTypeAlias: FirResolvedTypeAlias) {
-        visitTypeAlias(resolvedTypeAlias, null)
-    }
-
     open fun visitTypeParameter(typeParameter: FirTypeParameter) {
         visitNamedDeclaration(typeParameter, null)
-    }
-
-    open fun visitResolvedTypeParameter(resolvedTypeParameter: FirResolvedTypeParameter) {
-        visitTypeParameter(resolvedTypeParameter, null)
     }
 
     open fun visitProperty(property: FirProperty) {
@@ -218,10 +202,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(element)
     }
 
-    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
-        visitEnumEntry(enumEntry)
-    }
-
     final override fun visitExpression(expression: FirExpression, data: Nothing?) {
         visitExpression(expression)
     }
@@ -254,14 +234,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitType(type)
     }
 
-    final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
-        visitTypeAlias(typeAlias)
-    }
-
-    final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: Nothing?) {
-        visitTypeParameter(typeParameter)
-    }
-
     final override fun visitTypeProjection(typeProjection: FirTypeProjection, data: Nothing?) {
         visitTypeProjection(typeProjection)
     }
@@ -278,8 +250,8 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitDelegatedConstructorCall(delegatedConstructorCall)
     }
 
-    final override fun visitResolvedClass(resolvedClass: FirResolvedClass, data: Nothing?) {
-        visitResolvedClass(resolvedClass)
+    final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
+        visitEnumEntry(enumEntry)
     }
 
     final override fun visitCallableMember(callableMember: FirCallableMember, data: Nothing?) {
@@ -310,10 +282,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitAnonymousInitializer(anonymousInitializer)
     }
 
-    final override fun visitResolvedEnumEntry(resolvedEnumEntry: FirResolvedEnumEntry, data: Nothing?) {
-        visitResolvedEnumEntry(resolvedEnumEntry)
-    }
-
     final override fun visitBody(body: FirBody, data: Nothing?) {
         visitBody(body)
     }
@@ -338,6 +306,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitResolvedImport(resolvedImport)
     }
 
+    final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
+        visitTypeAlias(typeAlias)
+    }
+
+    final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: Nothing?) {
+        visitTypeParameter(typeParameter)
+    }
+
     final override fun visitFile(file: FirFile, data: Nothing?) {
         visitFile(file)
     }
@@ -352,14 +328,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitImplicitType(implicitType: FirImplicitType, data: Nothing?) {
         visitImplicitType(implicitType)
-    }
-
-    final override fun visitResolvedTypeAlias(resolvedTypeAlias: FirResolvedTypeAlias, data: Nothing?) {
-        visitResolvedTypeAlias(resolvedTypeAlias)
-    }
-
-    final override fun visitResolvedTypeParameter(resolvedTypeParameter: FirResolvedTypeParameter, data: Nothing?) {
-        visitResolvedTypeParameter(resolvedTypeParameter)
     }
 
     final override fun visitStarProjection(starProjection: FirStarProjection, data: Nothing?) {

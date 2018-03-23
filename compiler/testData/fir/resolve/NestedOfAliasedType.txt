@@ -1,12 +1,12 @@
 FILE: NestedOfAliasedType.kt
-    (resolved) public? abstract class A() {
-        (resolved) public? abstract class Nested() {
+    public? abstract class A() {
+        public? abstract class Nested() {
         }
 
     }
-    (resolved) public? final typealias TA = R/A/
-    (resolved) public? final class B() : R/TA = A/ {
-        (resolved) public? final class NestedInB() : R/A.Nested/ {
+    public? final typealias TA = R/A/
+    public? final class B() : R/TA = A/ {
+        public? final class NestedInB() : R/A.Nested/ {
         }
 
     }
