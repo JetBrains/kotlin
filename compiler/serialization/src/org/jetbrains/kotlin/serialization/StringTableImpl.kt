@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.QualifiedNameTable.QualifiedName
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import java.io.OutputStream
 
 open class StringTableImpl : DescriptorAwareStringTable {
     private class FqNameProto(val fqName: QualifiedName.Builder) {
@@ -89,11 +88,5 @@ open class StringTableImpl : DescriptorAwareStringTable {
         }
 
         return Pair(strings.build(), qualifiedNames.build())
-    }
-
-    override fun serializeTo(output: OutputStream) {
-        val (strings, qualifiedNames) = buildProto()
-        strings.writeDelimitedTo(output)
-        qualifiedNames.writeDelimitedTo(output)
     }
 }

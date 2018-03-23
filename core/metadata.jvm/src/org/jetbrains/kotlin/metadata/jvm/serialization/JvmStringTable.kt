@@ -94,7 +94,7 @@ open class JvmStringTable(nameResolver: JvmNameResolver? = null) : StringTable {
         return index
     }
 
-    override fun serializeTo(output: OutputStream) {
+    fun serializeTo(output: OutputStream) {
         with(JvmProtoBuf.StringTableTypes.newBuilder()) {
             addAllRecord(records.map { it.build() })
             addAllLocalName(localNames)

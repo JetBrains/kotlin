@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
-import org.jetbrains.kotlin.metadata.serialization.StringTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
-import java.io.ByteArrayOutputStream
 import java.util.*
 
 class DescriptorSerializer private constructor(
@@ -757,14 +754,6 @@ class DescriptorSerializer private constructor(
                 serializer.typeParameters.intern(typeParameter)
             }
             return serializer
-        }
-
-        @JvmStatic
-        fun serialize(message: MessageLite, stringTable: StringTable): ByteArray {
-            return ByteArrayOutputStream().apply {
-                stringTable.serializeTo(this)
-                message.writeTo(this)
-            }.toByteArray()
         }
 
         private fun variance(variance: Variance): ProtoBuf.TypeParameter.Variance = when (variance) {
