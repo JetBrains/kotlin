@@ -2358,6 +2358,36 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ecplicitType.kt")
+        public void testEcplicitType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ecplicitType2.kt")
+        public void testEcplicitType2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ecplicitType3.kt")
+        public void testEcplicitType3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ecplicitType4.kt")
+        public void testEcplicitType4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ecplicitType5.kt")
+        public void testEcplicitType5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType5.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/enum.kt");
