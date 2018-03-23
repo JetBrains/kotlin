@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.addJvmSdkRoots
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.script.util.KotlinJars
 import java.io.File
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
@@ -99,13 +100,39 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
                 put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
+                var isModularJava = false
                 scriptCompilerConfiguration.getOrNull(JvmScriptCompileConfigurationParams.javaHomeDir)?.let {
                     put(JVMConfigurationKeys.JDK_HOME, it)
+                    isModularJava = CoreJrtFileSystem.isModularJdk(it)
                 }
 
+                var explicitStdlib = false
                 scriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationParams.dependencies)?.let {
-                    addJvmClasspathRoots(it.flatMap { (it as JvmDependency).classpath })
+                    addJvmClasspathRoots(
+                        it.flatMap {
+                            (it as JvmDependency).classpath.also {
+                                // TODO: use some constants for jar names, consider stricter checking (maybeVersionedJar)
+                                if (!explicitStdlib) {
+                                    explicitStdlib = it.any { it.name.startsWith("kotlin-stdlib") }
+                                }
+                            }
+                        }
+                    )
                 }
+                fun addRoot(moduleName: String, file: File) {
+                    if (isModularJava) {
+                        add(JVMConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                        add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, moduleName)
+                    } else {
+                        add(JVMConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
+                    }
+                }
+                // TODO: implement logic similar to compiler's  -no-stdlib (and -no-reflect?)
+                if (!explicitStdlib) {
+                    addRoot("kotlin.stdlib", KotlinJars.stdlib)
+//                    addRoot("kotlin.script.runtime", KotlinJars.scriptRuntime)
+                }
+
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script") // TODO" take meaningful and valid name from somewhere
                 languageVersionSettings = LanguageVersionSettingsImpl(
                     LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.skipMetadataVersionCheck to true)
