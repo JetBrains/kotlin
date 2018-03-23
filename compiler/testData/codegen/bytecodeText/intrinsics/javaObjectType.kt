@@ -16,46 +16,51 @@ fun getJavaObjectType2():Class<*> {
     return Integer::class.javaObjectType
 }
 
-inline fun <reified T : Any> getJavaObjectType3():Class<*> {
+fun getJavaObjectType3():Class<*> {
+    // LDC Ljava/lang/VOID;.class
+    return Void::class.javaObjectType
+}
+
+fun getJavaObjectType4():Class<*> {
+    // LDC Ljava/lang/BOOLEAN;.class
+    return Boolean::class.javaObjectType
+}
+
+fun getJavaObjectType5():Class<*>? {
+    // LDC LA;.class
+    return A::class.javaObjectType
+}
+
+inline fun <reified T : Any> getJavaObjectType6(): Class<*> {
     // INVOKESTATIC kotlin/jvm/internal/Intrinsics.reifiedOperationMarker
     // LDC Ljava/lang/Object;.class
     return T::class.javaObjectType
 }
 
-fun getJavaObjectType4():Class<*> {
+fun getJavaObjectType7():Class<*> {
     // INVOKEVIRTUAL java/lang/Object.getClass
     return A()::class.javaObjectType
 }
 
-fun getJavaObjectType5():Class<*> {
-    val i = Integer(10)
-    // INVOKEVIRTUAL java/lang/Object.getClass
-    return i::class.javaObjectType
+fun getJavaObjectType8():Class<*> {
+    val i: Int? = 1
+    // LDC Ljava/lang/Integer;.class
+    return i!!::class.javaObjectType
 }
 
-fun getJavaObjectType6():Class<*> {
-    val i = 10
+fun getJavaObjectType9():Class<*> {
+    val i: Int = 1
     // LDC Ljava/lang/Integer;.class
     return i::class.javaObjectType
 }
 
-fun getJavaObjectType7():Class<*> {
+fun getJavaObjectType10():Class<*> {
     // GETSTATIC kotlin/Unit.INSTANCE
     // INVOKEVIRTUAL java/lang/Object.getClass
     return m()::class.javaObjectType
 }
 
-fun getJavaObjectType8():Class<*> {
-    // LDC Ljava/lang/VOID;.class
-    return Void::class.javaObjectType
-}
-
-fun getJavaObjectType9():Class<*> {
-    // LDC Ljava/lang/Boolean;.class
-    return Boolean::class.javaObjectType
-}
-
-// 3 LDC Ljava/lang/Integer;.class
+// 4 LDC Ljava/lang/Integer;.class
 // 1 LDC Ljava/lang/Object;.class
 // 1 LDC Ljava/lang/Void;.class
 // 1 LDC Ljava/lang/Boolean;.class

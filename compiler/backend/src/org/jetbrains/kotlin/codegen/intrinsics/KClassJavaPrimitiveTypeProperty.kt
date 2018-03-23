@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
@@ -27,39 +28,17 @@ class KClassJavaPrimitiveTypeProperty : IntrinsicPropertyGetter() {
             // TODO: add new operation kind to ReifiedTypeInliner.OperationKind to generate a null value or a field access to TYPE
             return null
         }
+        if (lhs is DoubleColonLHS.Expression && !lhs.isObjectQualifier) {
+            val receiverType = codegen.bindingContext.getType(receiverExpression) ?: return null
+            if (!KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(receiverType)) return null
+        }
         val lhsType = codegen.asmType(lhs.type)
         return StackValue.operation(returnType) { iv ->
             if (lhs is DoubleColonLHS.Expression && !lhs.isObjectQualifier) {
                 val receiverStackValue = codegen.gen(receiverExpression)
-                val receiverType = receiverStackValue.type
-                receiverStackValue.put(receiverType, iv)
-                when {
-                    receiverType == Type.VOID_TYPE -> {
-                        iv.aconst(null)
-                    }
-                    AsmUtil.isPrimitive(receiverType) -> {
-                        AsmUtil.pop(iv, receiverType)
-                        iv.getstatic(AsmUtil.boxType(receiverType).internalName, "TYPE", "Ljava/lang/Class;")
-                    }
-                    else -> {
-                        if (AsmUtil.unboxPrimitiveTypeOrNull(receiverType) != null) {
-                            AsmUtil.pop(iv, receiverType)
-                            iv.getstatic(receiverType.internalName, "TYPE", "Ljava/lang/Class;")
-                        } else {
-                            if (receiverType == AsmTypes.OBJECT_TYPE || receiverType == AsmTypes.NUMBER_TYPE) {
-                                iv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
-                                AsmUtil.wrapJavaClassIntoKClass(iv)
-                                iv.invokestatic(
-                                    "kotlin/jvm/JvmClassMappingKt", "getJavaPrimitiveType",
-                                    "(Lkotlin/reflect/KClass;)Ljava/lang/Class;", false
-                                )
-                            } else {
-                                AsmUtil.pop(iv, receiverType)
-                                iv.aconst(null)
-                            }
-                        }
-                    }
-                }
+                receiverStackValue.put(lhsType, iv)
+                AsmUtil.pop(iv, lhsType)
+                iv.getstatic(AsmUtil.boxType(lhsType).internalName, "TYPE", "Ljava/lang/Class;")
             } else if (AsmUtil.isPrimitive(lhsType)
                 || AsmUtil.unboxPrimitiveTypeOrNull(lhsType) != null
                 || AsmTypes.VOID_WRAPPER_TYPE == lhsType

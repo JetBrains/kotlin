@@ -35,7 +35,8 @@ class KClassJavaObjectTypeProperty : IntrinsicPropertyGetter() {
                         StackValue.unit().put(AsmTypes.UNIT_TYPE, iv)
                         iv.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)
                     }
-                    AsmUtil.isPrimitive(extensionReceiverType) -> {
+                    AsmUtil.isPrimitive(extensionReceiverType) ||
+                            AsmUtil.unboxPrimitiveTypeOrNull(extensionReceiverType) != null -> {
                         AsmUtil.pop(iv, extensionReceiverType)
                         iv.aconst(AsmUtil.boxType(extensionReceiverType))
                     }
