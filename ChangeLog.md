@@ -2,13 +2,22 @@
 
 ## 1.2.31
 
+### Compiler
+
+- Support nullability annotations in `androidx` package
+
 ### IDE. Inspections and Intentions
 
 - [`KT-22804`](https://youtrack.jetbrains.com/issue/KT-22804) "Remove redundant backticks" inspection reports all names and quick fix fails for non-applicable names
 
 ### Tools. Gradle
 
-- [`KT-23192`](https://youtrack.jetbrains.com/issue/KT-23192) Issue with android experimental extensions and canary gradle plugin 3.2.0-alpha05
+- [`KT-23192`](https://youtrack.jetbrains.com/issue/KT-23192) Issue with experimental mode in Android Extensions and Android Gradle plugin 3.2.0-alpha05
+
+### Bugfixes
+
+- [`KT-22205`](https://youtrack.jetbrains.com/issue/KT-22205) Hitting breakpoints in Kotlin sometimes doesn't work
+- Fix compatibility with LivePlugin
 
 ## 1.2.30
 
