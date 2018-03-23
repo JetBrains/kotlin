@@ -6277,6 +6277,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("resultTypeOfLambdaForConventionMethods.kt")
+                public void testResultTypeOfLambdaForConventionMethods() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/resultTypeOfLambdaForConventionMethods.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("typeOfLazyDelegatedPropertyWithObject.kt")
                 public void testTypeOfLazyDelegatedPropertyWithObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/typeOfLazyDelegatedPropertyWithObject.kt");
