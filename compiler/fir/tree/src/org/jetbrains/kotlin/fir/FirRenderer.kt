@@ -441,6 +441,18 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             is ConeTypeParameterType -> {
                 symbol.asString()
             }
+            is ConeFunctionType -> {
+                buildString {
+                    receiverType?.let {
+                        append(it.asString())
+                        append(".")
+                    }
+                    append("(")
+                    parameterTypes.joinTo(this) { it.asString() }
+                    append(") -> ")
+                    append(returnType.asString())
+                }
+            }
         }
     }
 

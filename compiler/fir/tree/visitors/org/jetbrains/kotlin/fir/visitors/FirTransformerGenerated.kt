@@ -166,6 +166,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformTypeWithNullability(resolvedType, data)
     }
 
+    open fun transformResolvedFunctionType(resolvedFunctionType: FirResolvedFunctionType, data: D): CompositeTransformResult<FirType> {
+        return transformResolvedType(resolvedFunctionType, data)
+    }
+
     open fun transformUserType(userType: FirUserType, data: D): CompositeTransformResult<FirType> {
         return transformTypeWithNullability(userType, data)
     }
@@ -224,6 +228,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitPackageFragment(packageFragment: FirPackageFragment, data: D): CompositeTransformResult<FirElement> {
         return transformPackageFragment(packageFragment, data)
+    }
+
+    final override fun visitResolvedType(resolvedType: FirResolvedType, data: D): CompositeTransformResult<FirElement> {
+        return transformResolvedType(resolvedType, data)
     }
 
     final override fun visitStatement(statement: FirStatement, data: D): CompositeTransformResult<FirElement> {
@@ -318,6 +326,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformFile(file, data)
     }
 
+    final override fun visitResolvedFunctionType(resolvedFunctionType: FirResolvedFunctionType, data: D): CompositeTransformResult<FirElement> {
+        return transformResolvedFunctionType(resolvedFunctionType, data)
+    }
+
     final override fun visitDelegatedType(delegatedType: FirDelegatedType, data: D): CompositeTransformResult<FirElement> {
         return transformDelegatedType(delegatedType, data)
     }
@@ -344,10 +356,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitFunctionType(functionType: FirFunctionType, data: D): CompositeTransformResult<FirElement> {
         return transformFunctionType(functionType, data)
-    }
-
-    final override fun visitResolvedType(resolvedType: FirResolvedType, data: D): CompositeTransformResult<FirElement> {
-        return transformResolvedType(resolvedType, data)
     }
 
     final override fun visitUserType(userType: FirUserType, data: D): CompositeTransformResult<FirElement> {

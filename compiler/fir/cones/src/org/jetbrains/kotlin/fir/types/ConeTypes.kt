@@ -62,3 +62,10 @@ abstract class ConeAbbreviatedType : ConeClassLikeType() {
 abstract class ConeTypeParameterType : ConeSymbolBasedType() {
     abstract override val symbol: ConeTypeParameterSymbol
 }
+
+
+abstract class ConeFunctionType : ConeKotlinType() {
+    abstract val receiverType: ConeKotlinType?
+    abstract val parameterTypes: List<ConeKotlinType>
+    abstract val returnType: ConeKotlinType
+}
