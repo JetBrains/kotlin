@@ -53,6 +53,8 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
 
     // Tunable targets
     class ZEPHYR(val subName: String, val genericName: String = "zephyr") : KonanTarget("${genericName}_$subName", Family.ZEPHYR, Architecture.ARM32)
+
+    override fun toString() = name
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
