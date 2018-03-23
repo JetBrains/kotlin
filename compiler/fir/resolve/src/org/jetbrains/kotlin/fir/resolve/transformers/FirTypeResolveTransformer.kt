@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 
 open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+        @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E).compose()
     }
 
@@ -110,6 +111,10 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
         val typeResolver = FirTypeResolver.getInstance(type.session)
         type.transformChildren(this, null)
         return transformType(type, typeResolver.resolveType(type, scope, position = FirPosition.OTHER))
+    }
+
+    override fun transformFunctionType(functionType: FirFunctionType, data: Nothing?): CompositeTransformResult<FirType> {
+        return (functionType.transformChildren(this, data) as FirType).compose()
     }
 
     private fun transformType(type: FirType, resolvedType: ConeKotlinType): CompositeTransformResult<FirType> {
