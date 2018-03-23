@@ -1,6 +1,3 @@
-import kotlin.*
-import kotlin.collections.*
-
 abstract class MyStringList : List<String>
 abstract class MyMutableStringList : MutableList<String>
 

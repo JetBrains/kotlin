@@ -38,7 +38,8 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
                 // from high priority to low priority
                 FirExplicitImportingScope(file.imports),
                 FirSelfImportingScope(file.packageFqName, file.session),
-                FirStarImportingScope(file.imports, file.session)
+                FirExplicitStarImportingScope(file.imports, file.session),
+                FirDefaultStarImportingScope(file.session)
             )
         )
         packageFqName = file.packageFqName

@@ -1,5 +1,3 @@
-import kotlin.*
-
 interface SomeInterface {
     fun foo(x: Int, y: String): String
 
