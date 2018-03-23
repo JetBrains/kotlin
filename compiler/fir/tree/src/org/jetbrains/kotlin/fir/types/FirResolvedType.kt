@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirResolvedType : FirTypeWithNullability {
@@ -12,6 +13,11 @@ interface FirResolvedType : FirTypeWithNullability {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedType(this, data)
+}
+
+interface FirResolvedFunctionType : @VisitedSupertype FirResolvedType, FirFunctionType {
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitResolvedFunctionType(this, data)
 }
 
 inline fun <reified T : ConeKotlinType> FirType.coneTypeUnsafe() = (this as FirResolvedType).type as T

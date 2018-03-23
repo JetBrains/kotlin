@@ -105,7 +105,14 @@ class FirTypeResolverImpl : FirTypeResolver {
             is FirErrorType -> {
                 ConeKotlinErrorType(type.reason)
             }
-            is FirFunctionType, is FirDynamicType, is FirImplicitType, is FirDelegatedType -> {
+            is FirFunctionType -> {
+                ConeFunctionTypeImpl(
+                    (type.receiverType as FirResolvedType?)?.type,
+                    type.valueParameters.map { it.returnType.coneTypeUnsafe<ConeKotlinType>() },
+                    type.returnType.coneTypeUnsafe()
+                )
+            }
+            is FirDynamicType, is FirImplicitType, is FirDelegatedType -> {
                 ConeKotlinErrorType("Not supported: ${type::class.simpleName}")
             }
             else -> error("!")

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedFunctionTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -114,7 +116,18 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
     }
 
     override fun transformFunctionType(functionType: FirFunctionType, data: Nothing?): CompositeTransformResult<FirType> {
-        return (functionType.transformChildren(this, data) as FirType).compose()
+        val typeResolver = FirTypeResolver.getInstance(functionType.session)
+        functionType.transformChildren(this, data)
+        return FirResolvedFunctionTypeImpl(
+            functionType.psi,
+            functionType.session,
+            functionType.isNullable,
+            functionType.annotations as MutableList<FirAnnotationCall>,
+            functionType.receiverType,
+            functionType.valueParameters as MutableList<FirValueParameter>,
+            functionType.returnType,
+            typeResolver.resolveType(functionType, scope, FirPosition.OTHER)
+        ).compose()
     }
 
     private fun transformType(type: FirType, resolvedType: ConeKotlinType): CompositeTransformResult<FirType> {

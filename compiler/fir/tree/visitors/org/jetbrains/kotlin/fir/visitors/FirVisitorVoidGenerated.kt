@@ -166,6 +166,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitTypeWithNullability(resolvedType, null)
     }
 
+    open fun visitResolvedFunctionType(resolvedFunctionType: FirResolvedFunctionType) {
+        visitResolvedType(resolvedFunctionType, null)
+    }
+
     open fun visitUserType(userType: FirUserType) {
         visitTypeWithNullability(userType, null)
     }
@@ -224,6 +228,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitPackageFragment(packageFragment: FirPackageFragment, data: Nothing?) {
         visitPackageFragment(packageFragment)
+    }
+
+    final override fun visitResolvedType(resolvedType: FirResolvedType, data: Nothing?) {
+        visitResolvedType(resolvedType)
     }
 
     final override fun visitStatement(statement: FirStatement, data: Nothing?) {
@@ -318,6 +326,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitFile(file)
     }
 
+    final override fun visitResolvedFunctionType(resolvedFunctionType: FirResolvedFunctionType, data: Nothing?) {
+        visitResolvedFunctionType(resolvedFunctionType)
+    }
+
     final override fun visitDelegatedType(delegatedType: FirDelegatedType, data: Nothing?) {
         visitDelegatedType(delegatedType)
     }
@@ -344,10 +356,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitFunctionType(functionType: FirFunctionType, data: Nothing?) {
         visitFunctionType(functionType)
-    }
-
-    final override fun visitResolvedType(resolvedType: FirResolvedType, data: Nothing?) {
-        visitResolvedType(resolvedType)
     }
 
     final override fun visitUserType(userType: FirUserType, data: Nothing?) {

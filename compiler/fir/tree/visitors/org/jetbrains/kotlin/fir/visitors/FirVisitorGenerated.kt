@@ -166,6 +166,10 @@ abstract class FirVisitor<out R, in D> {
         return visitTypeWithNullability(resolvedType, data)
     }
 
+    open fun visitResolvedFunctionType(resolvedFunctionType: FirResolvedFunctionType, data: D): R {
+        return visitResolvedType(resolvedFunctionType, data)
+    }
+
     open fun visitUserType(userType: FirUserType, data: D): R {
         return visitTypeWithNullability(userType, data)
     }
