@@ -2261,6 +2261,11 @@ task inline_lambdaAsAny(type: RunKonanTest) {
     source = "codegen/inline/lambdaAsAny.kt"
 }
 
+task inline_getClass(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/inline/getClass.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }

@@ -597,7 +597,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
         override fun visitGetClass(expression: IrGetClass): IrGetClass {
             val type = substituteType(expression.type)!!
-            if (type == expression.type) return expression
             return IrGetClassImpl(
                 startOffset = expression.startOffset,
                 endOffset   = expression.endOffset,
