@@ -31,8 +31,6 @@ open class KonanCompilerDownloadTask : DefaultTask() {
 
     internal companion object {
         internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
-
-        internal val KONAN_PARENT_DIR = "${System.getProperty("user.home")}/.konan"
     }
 
     /**
@@ -61,9 +59,10 @@ open class KonanCompilerDownloadTask : DefaultTask() {
                     append(project.simpleOsName)
                 }
                 val konanCompiler = project.konanCompilerName()
-                logger.info("Downloading Kotlin/Native compiler from $downloadUrlDirectory/$konanCompiler into $KONAN_PARENT_DIR")
+                val parentDir = DependencyProcessor.localKonanDir
+                logger.info("Downloading Kotlin/Native compiler from $downloadUrlDirectory/$konanCompiler into $parentDir")
                 DependencyProcessor(
-                        File(KONAN_PARENT_DIR),
+                        parentDir,
                         downloadUrlDirectory,
                         mapOf(konanCompiler to listOf(DependencySource.Remote.Public))
                 ).run()

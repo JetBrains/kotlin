@@ -26,7 +26,7 @@ class Distribution(
         private val konanHomeOverride: String? = null,
         private val runtimeFileOverride: String? = null) {
 
-    val localKonanDir = "${File.userHome}/.konan"
+    val localKonanDir = DependencyProcessor.localKonanDir
 
     private fun findKonanHome(): String {
         if (konanHomeOverride != null) return konanHomeOverride
@@ -52,7 +52,7 @@ class Distribution(
         propertyFilesFromConfigDir(konanSubdir, genericName)
 
     private fun userPropertyFiles(genericName: String) =
-        propertyFilesFromConfigDir(localKonanDir, genericName)
+        propertyFilesFromConfigDir(localKonanDir.absolutePath, genericName)
 
     fun additionalPropertyFiles(genericName: String) =
             preconfiguredPropertyFiles(genericName) + userPropertyFiles(genericName)

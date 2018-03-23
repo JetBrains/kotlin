@@ -45,9 +45,6 @@ private val Properties.downloadingAttemptIntervalMs : Long
     get() = getProperty("downloadingAttemptPauseMs")?.toLong()
             ?: DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS
 
-private val Properties.homeDependencyCache : String
-    get() = getProperty("homeDependencyCache") ?: DependencyProcessor.DEFAULT_HOME_DEPENDENCY_CACHE
-
 private fun Properties.findCandidates(dependencies: List<String>): Map<String, List<DependencySource>> {
     val dependencyProfiles = this.propertyList("dependencyProfiles")
     return dependencies.map { dependency ->
@@ -73,7 +70,6 @@ private val KonanPropertiesLoader.dependenciesUrl : String            get() = pr
 private val KonanPropertiesLoader.airplaneMode : Boolean              get() = properties.airplaneMode
 private val KonanPropertiesLoader.downloadingAttempts : Int           get() = properties.downloadingAttempts
 private val KonanPropertiesLoader.downloadingAttemptIntervalMs : Long get() = properties.downloadingAttemptIntervalMs
-private val KonanPropertiesLoader.homeDependencyCache : String        get() = properties.homeDependencyCache
 
 sealed class DependencySource {
     data class Local(val path: File) : DependencySource()
@@ -91,7 +87,7 @@ sealed class DependencySource {
 class DependencyProcessor(dependenciesRoot: File,
                           val dependenciesUrl: String,
                           dependencyToCandidates: Map<String, List<DependencySource>>,
-                          homeDependencyCache: String = DEFAULT_HOME_DEPENDENCY_CACHE,
+                          homeDependencyCache: File = defaultDependencyCacheDir,
                           val airplaneMode: Boolean = false,
                           maxAttempts: Int = DependencyDownloader.DEFAULT_MAX_ATTEMPTS,
                           attemptIntervalMs: Long = DependencyDownloader.DEFAULT_ATTEMPT_INTERVAL_MS,
@@ -99,9 +95,7 @@ class DependencyProcessor(dependenciesRoot: File,
                           val keepUnstable: Boolean = true) {
 
     val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
-    val cacheDirectory = System.getProperty("user.home")?.let {
-        Paths.get(it).resolve(homeDependencyCache).toFile().apply { mkdirs() }
-    } ?: dependenciesRoot
+    val cacheDirectory = homeDependencyCache.apply { mkdirs() }
 
     val lockFile = File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
 
@@ -212,11 +206,16 @@ class DependencyProcessor(dependenciesRoot: File,
     companion object {
         private val lock = ReentrantLock()
 
-        const val DEFAULT_HOME_DEPENDENCY_CACHE = ".konan/cache"
+        val localKonanDir: File by lazy {
+            File(System.getenv("KONAN_DATA_DIR") ?: (System.getProperty("user.home") + File.separator + ".konan"))
+        }
 
         @JvmStatic
-        val defaultDependenciesRoot
-            get() = Paths.get(System.getProperty("user.home")).resolve(".konan/dependencies").toFile()
+        val defaultDependenciesRoot: File
+            get() = localKonanDir.resolve("dependencies")
+
+        val defaultDependencyCacheDir: File
+            get() = localKonanDir.resolve("cache")
     }
 
     private val resolvedDependencies = dependencyToCandidates.map { (dependency, candidates) ->

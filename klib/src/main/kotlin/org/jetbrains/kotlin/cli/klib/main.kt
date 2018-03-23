@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.metadata.KonanLinkData
 import java.lang.System.out
 import kotlin.system.exitProcess
@@ -84,8 +85,7 @@ fun error(text: String) {
     exitProcess(1)
 }
 
-// TODO: Get rid of the hardcoded path.
-val defaultRepository = File(File.userHome, ".konan/klib")
+val defaultRepository = File(DependencyProcessor.localKonanDir.resolve("klib").absolutePath)
 
 open class ModuleDeserializer(val library: ByteArray) {
     protected val moduleHeader: KonanLinkData.LinkDataLibrary

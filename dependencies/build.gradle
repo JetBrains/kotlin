@@ -171,5 +171,7 @@ task update(type: Copy) {
 }
 
 task rmDotKonan(type: Delete) {
-    delete "${System.getProperty("user.home")}/.konan"
+    def dir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
+    delete dir
 }
+

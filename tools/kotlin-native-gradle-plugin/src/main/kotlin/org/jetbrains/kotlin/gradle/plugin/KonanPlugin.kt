@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
+import org.jetbrains.kotlin.konan.util.*
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -129,7 +130,7 @@ internal fun Project.konanCompilerName(): String =
         "kotlin-native-${project.simpleOsName}-${this.konanVersion}"
 
 internal fun Project.konanCompilerDownloadDir(): String =
-        KonanCompilerDownloadTask.KONAN_PARENT_DIR + "/" + project.konanCompilerName()
+        DependencyProcessor.localKonanDir.resolve(project.konanCompilerName()).absolutePath
 
 // region Useful extensions and functions ---------------------------------------
 

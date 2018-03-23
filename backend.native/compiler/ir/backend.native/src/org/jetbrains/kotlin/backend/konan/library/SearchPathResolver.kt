@@ -37,7 +37,7 @@ fun defaultResolver(repositories: List<String>, target: KonanTarget, distributio
                 repositories,
                 target,
                 distribution.klib,
-                distribution.localKonanDir
+                distribution.localKonanDir.absolutePath
         )
 
 fun SearchPathResolver.resolveImmediateLibraries(libraryNames: List<String>,
