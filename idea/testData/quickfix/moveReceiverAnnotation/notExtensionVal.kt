@@ -3,6 +3,7 @@
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Specify type explicitly
+// ACTION: Add annotation target
 
 annotation class Ann
 
