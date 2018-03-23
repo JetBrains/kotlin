@@ -3,6 +3,8 @@ plugins {
     kotlin("jvm")
 }
 
+apply { plugin("jps-compatible") }
+
 dependencies {
     compile(project(":compiler:util"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
