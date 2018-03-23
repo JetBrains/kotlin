@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirUserType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import java.util.*
 
 class FirUserTypeImpl(
     session: FirSession,
     psi: PsiElement?,
     isNullable: Boolean
 ) : FirAbstractAnnotatedType(session, psi, isNullable), FirUserType {
-    override val qualifier = LinkedList<FirQualifierPart>()
+    override val qualifier = mutableListOf<FirQualifierPart>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         for (part in qualifier) {
