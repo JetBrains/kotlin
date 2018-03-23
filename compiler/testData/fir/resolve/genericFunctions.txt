@@ -1,10 +1,10 @@
 FILE: genericFunctions.kt
     public? abstract interface Any() {
     }
-    <reified T : Any> public? final? inline function safeAs R/Any/.(): R/T/ {
+    <reified T : Any> public? final? inline function safeAs R|Any|.(): R|T| {
         STUB
     }
     public? abstract class Summator() {
-        <T> public? abstract function plus(first: R/T/, second: R/T/): R/T/
+        <T> public? abstract function plus(first: R|T|, second: R|T|): R|T|
 
     }

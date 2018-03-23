@@ -1,8 +1,8 @@
 FILE: typeAliasWithGeneric.kt
     public? open class A() {
     }
-    <S, T : R/A/> public? abstract interface B() {
+    <S, T : R|A|> public? abstract interface B() {
     }
-    public? final class D() : R/C<A> = B<T, A>/ {
+    public? final class D() : R|C<A> = B<T, A>| {
     }
-    <T> public? final typealias C = R/B<T, A>/
+    <T> public? final typealias C = R|B<T, A>|
