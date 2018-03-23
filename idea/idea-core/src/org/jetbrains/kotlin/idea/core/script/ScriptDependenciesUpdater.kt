@@ -208,7 +208,7 @@ class ScriptDependenciesUpdater(
             }
             ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
             val resultingDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
-            if (saveNewDependencies(resultingDependencies, file)) {
+            if (saveNewDependencies(resultingDependencies, file, result.reports.any { it.severity == ScriptReport.Severity.FATAL })) {
                 notifyRootsChanged()
             }
         }
@@ -217,16 +217,22 @@ class ScriptDependenciesUpdater(
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
         val result = contentLoader.loadContentsAndResolveDependencies(scriptDef, file)
-        if (result.reports.any { it.severity == ScriptReport.Severity.FATAL }) return false
-
         val newDeps = result.dependencies?.adjustByDefinition(scriptDef) ?: ScriptDependencies.Empty
-        return saveNewDependencies(newDeps, file)
+        return saveNewDependencies(newDeps, file, result.reports.any { it.severity == ScriptReport.Severity.FATAL })
     }
 
-    private fun saveNewDependencies(new: ScriptDependencies, file: VirtualFile): Boolean {
+    private fun saveNewDependencies(
+        new: ScriptDependencies,
+        file: VirtualFile,
+        hasFatalErrors: Boolean
+    ): Boolean {
         val rootsChanged = cache.hasNotCachedRoots(new)
         if (cache.save(file, new)) {
-            file.scriptDependencies = new
+            if (hasFatalErrors) {
+                file.scriptDependencies = null
+            } else {
+                file.scriptDependencies = new
+            }
         }
         return rootsChanged
     }
