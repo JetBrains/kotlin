@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors.WRONG_ANNOTATION_TARGET
+import org.jetbrains.kotlin.diagnostics.Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.psi.*
@@ -55,7 +57,9 @@ class AddAnnotationTargetFix(annotationEntry: KtAnnotationEntry) : KotlinQuickFi
         }
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtAnnotationEntry>? {
-            if (diagnostic.factory != Errors.WRONG_ANNOTATION_TARGET) return null
+            if (diagnostic.factory != WRONG_ANNOTATION_TARGET && diagnostic.factory != WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET) {
+                return null
+            }
 
             val entry = diagnostic.psiElement as? KtAnnotationEntry ?: return null
             val annotationClass = entry.toAnnotationClass() ?: return null
