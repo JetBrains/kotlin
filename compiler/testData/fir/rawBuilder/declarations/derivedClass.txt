@@ -4,7 +4,7 @@ FILE: derivedClass.kt
 
     }
     <T : Any> public? final class Derived() : Base<T> {
-        public? constructor(x: T)STUB
+        public? constructor(x: T): super(STUB)
 
     }
     <T : Any> public? final? function create(x: T): Derived<T> {

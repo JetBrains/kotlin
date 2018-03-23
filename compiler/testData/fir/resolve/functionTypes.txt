@@ -7,3 +7,11 @@ FILE: functionTypes.kt
     <T> public? final? function simpleWith(t: R|T|, f: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
         STUB
     }
+    <T, R> public? abstract interface KMutableProperty1() : R|KProperty1<T, R>|, R|KMutableProperty<R>| {
+    }
+    <T, out R> public? abstract interface KProperty1() : R|KProperty<R>|, R|(T) -> R| {
+    }
+    <out R> public? abstract interface KProperty() {
+    }
+    <R> public? abstract interface KMutableProperty() {
+    }

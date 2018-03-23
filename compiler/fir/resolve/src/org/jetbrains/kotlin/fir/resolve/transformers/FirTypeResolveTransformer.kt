@@ -144,6 +144,10 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
         return resolvedType.compose()
     }
 
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        return valueParameter.also { it.transformChildren(this, data) }.compose()
+    }
+
 
     override fun transformTypeProjectionWithVariance(
         typeProjectionWithVariance: FirTypeProjectionWithVariance,
@@ -203,7 +207,7 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
 
             if (symbol != null) walkSymbols(symbol)
 
-            if (type !is FirUserType) return myTransformer.transformType(type, data)
+            if (type !is FirUserType) return type.transform(myTransformer, data)
 
 
             type.transformChildren(myTransformer, null)
