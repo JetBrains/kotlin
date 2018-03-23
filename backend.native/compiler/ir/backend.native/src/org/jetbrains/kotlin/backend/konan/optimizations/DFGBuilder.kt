@@ -139,7 +139,12 @@ private class ExpressionValuesExtractor(val context: Context,
 
             is IrContainerExpression -> {
                 if (expression.statements.isNotEmpty())
-                    forEachValue(expression.statements.last() as IrExpression, block)
+                    forEachValue(
+                            expression = (expression.statements.last() as? IrExpression)
+                                    ?: IrGetObjectValueImpl(expression.startOffset, expression.endOffset,
+                                            context.builtIns.unitType, context.ir.symbols.unit),
+                            block      = block
+                    )
             }
 
             is IrWhen -> expression.branches.forEach { forEachValue(it.result, block) }

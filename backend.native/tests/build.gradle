@@ -2266,6 +2266,11 @@ task inline_getClass(type: RunKonanTest) {
     source = "codegen/inline/getClass.kt"
 }
 
+task inline_statementAsLastExprInBlock(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/inline/statementAsLastExprInBlock.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }
