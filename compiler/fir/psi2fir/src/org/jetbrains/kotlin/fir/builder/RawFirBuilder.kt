@@ -430,11 +430,14 @@ class RawFirBuilder(val session: FirSession) {
                             for (typeArgument in qualifier!!.typeArguments) {
                                 firQualifier.typeArguments += typeArgument.convert<FirTypeProjection>()
                             }
-                            userType.qualifier.add(0, firQualifier)
+                            userType.qualifier.add(firQualifier)
 
                             qualifier = qualifier.qualifier
                             referenceExpression = qualifier?.referenceExpression
                         } while (referenceExpression != null)
+
+                        userType.qualifier.reverse()
+
                         userType
                     } else {
                         FirErrorTypeImpl(session, typeReference, "Incomplete user type")
