@@ -6,8 +6,6 @@ plugins {
     id("jps-compatible")
 }
 
-containsEmbeddedComponents()
-
 dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(intellijDep())

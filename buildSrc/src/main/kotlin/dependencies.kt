@@ -107,10 +107,6 @@ object EmbeddedComponents {
     val CONFIGURATION_NAME = "embeddedComponents"
 }
 
-fun Project.containsEmbeddedComponents() {
-    configurations.create(EmbeddedComponents.CONFIGURATION_NAME)
-}
-
 fun AbstractCopyTask.fromEmbeddedComponents() {
     val embeddedComponents = project.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
     if (this is ShadowJar) {

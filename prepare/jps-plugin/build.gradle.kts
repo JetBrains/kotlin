@@ -4,6 +4,7 @@ description = "Kotlin JPS plugin"
 
 plugins {
     `java-base`
+    id("jps-compatible-base")
 }
 
 val projectsToShadow = listOf(
@@ -19,9 +20,6 @@ val projectsToShadow = listOf(
         ":compiler:util",
         ":core:util.runtime",
         ":plugins:android-extensions-jps")
-
-
-containsEmbeddedComponents()
 
 dependencies {
     projectsToShadow.forEach {

@@ -8,8 +8,6 @@ plugins {
 
 val robolectricClasspath by configurations.creating
 
-containsEmbeddedComponents()
-
 dependencies {
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
 

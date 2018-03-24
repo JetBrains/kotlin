@@ -11,8 +11,6 @@ jvmTarget = "1.6"
 
 val nativePlatformVariants: List<String> by rootProject.extra
 
-containsEmbeddedComponents()
-
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))

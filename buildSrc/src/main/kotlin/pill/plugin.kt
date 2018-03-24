@@ -10,6 +10,12 @@ import shadow.org.jdom2.output.Format
 import shadow.org.jdom2.output.XMLOutputter
 import java.io.File
 
+class JpsCompatibleBasePlugin : Plugin<Project> {
+    override fun apply(project: Project) {
+        project.configurations.create(EmbeddedComponents.CONFIGURATION_NAME)
+    }
+}
+
 class JpsCompatiblePlugin : Plugin<Project> {
     companion object {
         private const val JPS_LIBRARY_PATH = "jpsLibraryPath"
@@ -64,6 +70,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
+        project.plugins.apply(JpsCompatibleBasePlugin::class.java)
         // 'jpsTest' does not require the 'tests-jar' artifact
         project.configurations.create("jpsTest")
 
