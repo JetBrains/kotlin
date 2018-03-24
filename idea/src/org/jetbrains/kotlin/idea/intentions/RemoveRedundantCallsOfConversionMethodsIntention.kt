@@ -26,24 +26,30 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isFlexible
 
 class RemoveRedundantCallsOfConversionMethodsInspection : IntentionBasedInspection<KtQualifiedExpression>(
-        RemoveRedundantCallsOfConversionMethodsIntention::class
+    RemoveRedundantCallsOfConversionMethodsIntention::class
 ) {
     override fun problemHighlightType(element: KtQualifiedExpression) = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeIntention<KtQualifiedExpression>(KtQualifiedExpression::class.java, "Remove redundant calls of the conversion method") {
+class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeIntention<KtQualifiedExpression>(
+    KtQualifiedExpression::class.java,
+    "Remove redundant calls of the conversion method"
+) {
 
-    private val targetClassMap = mapOf("toString()" to String::class.qualifiedName,
-                                       "toDouble()" to Double::class.qualifiedName,
-                                       "toFloat()" to Float::class.qualifiedName,
-                                       "toLong()" to Long::class.qualifiedName,
-                                       "toInt()" to Int::class.qualifiedName,
-                                       "toChar()" to Char::class.qualifiedName,
-                                       "toShort()" to Short::class.qualifiedName,
-                                       "toByte()" to Byte::class.qualifiedName)
+    private val targetClassMap = mapOf(
+        "toString()" to String::class.qualifiedName,
+        "toDouble()" to Double::class.qualifiedName,
+        "toFloat()" to Float::class.qualifiedName,
+        "toLong()" to Long::class.qualifiedName,
+        "toInt()" to Int::class.qualifiedName,
+        "toChar()" to Char::class.qualifiedName,
+        "toShort()" to Short::class.qualifiedName,
+        "toByte()" to Byte::class.qualifiedName
+    )
 
 
     override fun applyTo(element: KtQualifiedExpression, editor: Editor?) {
@@ -54,10 +60,9 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
         val selectorExpression = element.selectorExpression ?: return null
         val selectorExpressionText = selectorExpression.text
         val qualifiedName = targetClassMap[selectorExpressionText] ?: return null
-        return if(element.receiverExpression.isApplicableReceiverExpression(qualifiedName)) {
+        return if (element.receiverExpression.isApplicableReceiverExpression(qualifiedName)) {
             selectorExpression.textRange
-        }
-        else {
+        } else {
             null
         }
     }
@@ -67,10 +72,16 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
             is KtStringTemplateExpression -> String::class.qualifiedName
             is KtConstantExpression -> getType(analyze())?.getJetTypeFqName(false)
             else -> {
-                resolveToCall()?.candidateDescriptor?.returnType?.let {
-                    if (it.isFlexible()) null
-                    else if (it.isMarkedNullable && parent !is KtSafeQualifiedExpression) null
-                    else it.getJetTypeFqName(false)
+                val resolvedCall = resolveToCall()
+                if ((resolvedCall?.call?.callElement as? KtBinaryExpression)?.operationToken in OperatorConventions.COMPARISON_OPERATIONS) {
+                    // Special case here because compareTo returns Int
+                    Boolean::class.qualifiedName
+                } else {
+                    resolvedCall?.candidateDescriptor?.returnType?.let {
+                        if (it.isFlexible()) null
+                        else if (it.isMarkedNullable && parent !is KtSafeQualifiedExpression) null
+                        else it.getJetTypeFqName(false)
+                    }
                 }
             }
         } == qualifiedName
