@@ -4,9 +4,8 @@ description = "Kotlin compiler client embeddable"
 
 plugins {
     maven
+    kotlin("jvm")
 }
-
-apply { plugin("kotlin") }
 
 val jarContents by configurations.creating
 val testRuntimeCompilerJar by configurations.creating

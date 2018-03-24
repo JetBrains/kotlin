@@ -1,7 +1,9 @@
 
 description = "Kotlin Android Lint"
 
-apply { plugin("java-base") }
+plugins {
+    `java-base`
+}
 
 val projectsToShadow = listOf(
         ":plugins:lint",

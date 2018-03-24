@@ -1,7 +1,9 @@
 
 description = "Sample Kotlin JSR 223 scripting jar with daemon (out-of-process) compilation and local (in-process) evaluation"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 val compilerClasspath by configurations.creating
 

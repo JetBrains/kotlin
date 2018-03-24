@@ -3,15 +3,14 @@ import com.moowork.gradle.node.npm.NpmExecRunner
 import com.moowork.gradle.node.npm.NpmTask
 
 plugins {
+    kotlin("jvm")
+    id("jps-compatible")
     id("com.moowork.node").version("1.2.0")
 }
 
 node {
     download = true
 }
-
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
 
 val antLauncherJar by configurations.creating
 

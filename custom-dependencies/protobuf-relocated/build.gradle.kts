@@ -1,7 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.io.File
 
-apply { plugin("base") }
+plugins {
+    base
+}
 
 val baseProtobuf by configurations.creating
 val baseProtobufSources by configurations.creating

@@ -45,6 +45,7 @@ buildscript {
 plugins {
     `build-scan`
     idea
+    id("jps-compatible")
 }
 
 buildScan {
@@ -253,8 +254,6 @@ apply {
         from("libraries/prepareSonatypeStaging.gradle")
     }
 }
-
-apply { plugin("jps-compatible") }
 
 fun Project.allprojectsRecursive(body: Project.() -> Unit) {
     this.body()

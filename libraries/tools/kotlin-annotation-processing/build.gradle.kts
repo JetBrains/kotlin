@@ -4,7 +4,9 @@ import org.gradle.jvm.tasks.Jar
 
 description = "Annotation Processor wrapper for Kotlin"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 val packedJars by configurations.creating
 

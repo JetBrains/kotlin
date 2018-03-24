@@ -1,8 +1,8 @@
 
-apply {
-    plugin("kotlin")
-    plugin("java")
-    plugin("jps-compatible")
+plugins {
+    java
+    kotlin("jvm")
+    id("jps-compatible")
 }
 
 dependencies {

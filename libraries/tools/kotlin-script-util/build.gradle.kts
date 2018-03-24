@@ -1,8 +1,10 @@
 
 description = "Kotlin scripting support utilities"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(project(":kotlin-stdlib"))

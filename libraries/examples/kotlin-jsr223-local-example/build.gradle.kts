@@ -1,7 +1,9 @@
 
 description = "Sample Kotlin JSR 223 scripting jar with local (in-process) compilation and evaluation"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 dependencies {
     compile(projectDist(":kotlin-stdlib"))

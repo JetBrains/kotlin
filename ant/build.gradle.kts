@@ -1,7 +1,9 @@
 
 description = "Kotlin Ant Tools"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 dependencies {
     compile(commonDep("org.apache.ant", "ant"))

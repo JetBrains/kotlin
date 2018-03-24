@@ -2,7 +2,9 @@ import java.util.Properties
 
 description = "Kotlin IDE Lazy Resolver"
 
-apply { plugin("java") }
+plugins {
+    java
+}
 
 val versions by configurations.creating
 val versionFilePath = "$rootDir/dependencies/dependencies.properties"
