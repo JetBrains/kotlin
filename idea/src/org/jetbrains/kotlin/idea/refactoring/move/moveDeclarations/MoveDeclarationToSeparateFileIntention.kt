@@ -24,6 +24,10 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
@@ -35,15 +39,23 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class MoveDeclarationToSeparateFileIntention :
-        SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Move declaration to separate file"),
-        LowPriorityAction {
+    SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Move declaration to separate file"),
+    LowPriorityAction {
     override fun applicabilityRange(element: KtClassOrObject): TextRange? {
         if (element.name == null) return null
         if (element.parent !is KtFile) return null
         if (element.hasModifier(KtTokens.PRIVATE_KEYWORD)) return null
         if (element.containingKtFile.declarations.size == 1) return null
+
+        if (element.resolveToDescriptorIfAny()?.sealedSubclasses?.isNotEmpty() == true) return null
+        if (element.superTypeListEntries.any {
+                val superType = it.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, it.typeReference]
+                (superType?.constructor?.declarationDescriptor as? ClassDescriptor)?.modality == Modality.SEALED
+            }) return null
 
         val keyword = when (element) {
             is KtClass -> element.getClassOrInterfaceKeyword()
@@ -76,15 +88,17 @@ class MoveDeclarationToSeparateFileIntention :
 
             // If automatic move is not possible, fall back to full-fledged Move Declarations refactoring
             ApplicationManager.getApplication().invokeLater {
-                MoveKotlinTopLevelDeclarationsDialog(project,
-                                                     setOf(element),
-                                                     packageName.asString(),
-                                                     directory,
-                                                     targetFile as? KtFile,
-                                                     true,
-                                                     true,
-                                                     true,
-                                                     null).show()
+                MoveKotlinTopLevelDeclarationsDialog(
+                    project,
+                    setOf(element),
+                    packageName.asString(),
+                    directory,
+                    targetFile as? KtFile,
+                    true,
+                    true,
+                    true,
+                    null
+                ).show()
             }
             return
         }
@@ -92,18 +106,18 @@ class MoveDeclarationToSeparateFileIntention :
             createKotlinFile(targetFileName, directory, packageName.asString())
         }
         val descriptor = MoveDeclarationsDescriptor(
-                project = project,
-                elementsToMove = listOf(element),
-                moveTarget = moveTarget,
-                delegate = MoveDeclarationsDelegate.TopLevel,
-                searchInCommentsAndStrings = false,
-                searchInNonCode = false,
-                moveCallback = MoveCallback {
-                    val newFile = directory.findFile(targetFileName) as KtFile
-                    val newDeclaration = newFile.declarations.first()
-                    NavigationUtil.activateFileWithPsiElement(newFile)
-                    FileEditorManager.getInstance(project).selectedTextEditor?.moveCaret(newDeclaration.startOffset + originalOffset)
-                }
+            project = project,
+            elementsToMove = listOf(element),
+            moveTarget = moveTarget,
+            delegate = MoveDeclarationsDelegate.TopLevel,
+            searchInCommentsAndStrings = false,
+            searchInNonCode = false,
+            moveCallback = MoveCallback {
+                val newFile = directory.findFile(targetFileName) as KtFile
+                val newDeclaration = newFile.declarations.first()
+                NavigationUtil.activateFileWithPsiElement(newFile)
+                FileEditorManager.getInstance(project).selectedTextEditor?.moveCaret(newDeclaration.startOffset + originalOffset)
+            }
         )
 
         MoveKotlinDeclarationsProcessor(descriptor).run()
