@@ -1703,6 +1703,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/ifToAssignment/lambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambda2.kt")
+            public void testLambda2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/ifToAssignment/lambda2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("multipleAssignments.kt")
             public void testMultipleAssignments() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/ifToAssignment/multipleAssignments.kt");
@@ -1877,6 +1889,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/tryToAssignment/lambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("withUnmatchedAssignments.kt")
             public void testWithUnmatchedAssignments() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/tryToAssignment/withUnmatchedAssignments.kt");
@@ -1970,6 +1988,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("insideLoop.kt")
             public void testInsideLoop() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/insideLoop.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/lambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambda2.kt")
+            public void testLambda2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/liftOut/whenToAssignment/lambda2.kt");
                 doTest(fileName);
             }
 
