@@ -162,12 +162,18 @@ object BranchedFoldingUtils {
     fun foldToAssignment(expression: KtExpression) {
         var lhs: KtExpression? = null
         var op: String? = null
+        val psiFactory = KtPsiFactory(expression)
         fun KtBinaryExpression.replaceWithRHS() {
             if (lhs == null || op == null) {
                 lhs = left!!.copy() as KtExpression
                 op = operationReference.text
             }
-            replace(right!!)
+            val rhs = right!!
+            if (rhs is KtLambdaExpression && this.parent !is KtBlockExpression) {
+                replace(psiFactory.createExpressionByPattern("{ $0 }", rhs))
+            } else {
+                replace(rhs)
+            }
         }
         fun lift(e: KtExpression?) {
             when (e) {
@@ -183,7 +189,7 @@ object BranchedFoldingUtils {
             }
         }
         lift(expression)
-        expression.replace(KtPsiFactory(expression).createExpressionByPattern("$0 $1 $2", lhs!!, op!!, expression))
+        expression.replace(psiFactory.createExpressionByPattern("$0 $1 $2", lhs!!, op!!, expression))
     }
 
     fun foldToReturn(expression: KtExpression) {
