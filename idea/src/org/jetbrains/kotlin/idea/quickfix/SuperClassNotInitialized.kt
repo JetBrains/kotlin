@@ -22,9 +22,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -49,7 +47,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
-    private val DISPLAY_MAX_PARAMS = 5
+    private const val DISPLAY_MAX_PARAMS = 5
 
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val delegator = diagnostic.psiElement as KtSuperTypeEntry
@@ -61,12 +59,21 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
         val superClass = (type.constructor.declarationDescriptor as? ClassDescriptor) ?: return emptyList()
         val classDescriptor = classOrObjectDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return emptyList()
-        val constructors = superClass.constructors.filter { it.isVisible(classDescriptor) }
+        val containingPackage = superClass.containingDeclaration as? PackageFragmentDescriptor
+        val inSameFile = containingPackage == classDescriptor.containingDeclaration
+        val constructors = superClass.constructors.filter {
+            it.isVisible(classDescriptor) || (superClass.modality == Modality.SEALED && inSameFile)
+        }
         if (constructors.isEmpty()) return emptyList() // no accessible constructor
 
         val fixes = ArrayList<IntentionAction>()
 
-        fixes.add(AddParenthesisFix(delegator, putCaretIntoParenthesis = constructors.singleOrNull()?.valueParameters?.isNotEmpty() ?: true))
+        fixes.add(
+            AddParenthesisFix(
+                delegator,
+                putCaretIntoParenthesis = constructors.singleOrNull()?.valueParameters?.isNotEmpty() ?: true
+            )
+        )
 
         if (classOrObjectDeclaration is KtClass) {
             val superType = classDescriptor.typeConstructor.supertypes.firstOrNull { it.constructor.declarationDescriptor == superClass }
@@ -74,8 +81,8 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                 val substitutor = TypeConstructorSubstitution.create(superClass.typeConstructor, superType.arguments).buildSubstitutor()
 
                 val substitutedConstructors = constructors
-                        .filter { it.valueParameters.isNotEmpty() }
-                        .mapNotNull { it.substitute(substitutor) }
+                    .filter { it.valueParameters.isNotEmpty() }
+                    .mapNotNull { it.substitute(substitutor) }
 
                 if (substitutedConstructors.isNotEmpty()) {
                     val parameterTypes: List<List<KotlinType>> = substitutedConstructors.map {
@@ -87,9 +94,8 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     val maxParams = parameterTypes.map { it.size }.max()!!
                     val maxParamsToDisplay = if (maxParams <= DISPLAY_MAX_PARAMS) {
                         maxParams
-                    }
-                    else {
-                        (DISPLAY_MAX_PARAMS..maxParams-1).firstOrNull(::canRenderOnlyFirstParameters) ?: maxParams
+                    } else {
+                        (DISPLAY_MAX_PARAMS until maxParams).firstOrNull(::canRenderOnlyFirstParameters) ?: maxParams
                     }
 
                     for ((constructor, types) in substitutedConstructors.zip(parameterTypes)) {
@@ -106,8 +112,8 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
     }
 
     private class AddParenthesisFix(
-            element: KtSuperTypeEntry,
-            val putCaretIntoParenthesis: Boolean
+        element: KtSuperTypeEntry,
+        val putCaretIntoParenthesis: Boolean
     ) : KotlinQuickFixAction<KtSuperTypeEntry>(element), HighPriorityAction {
 
         override fun getFamilyName() = "Change to constructor invocation" //TODO?
@@ -131,21 +137,21 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
     }
 
     private class AddParametersFix(
-            element: KtSuperTypeEntry,
-            classDeclaration: KtClass,
-            parametersToAdd: Collection<KtParameter>,
-            private val argumentText: String,
-            private val text: String
+        element: KtSuperTypeEntry,
+        classDeclaration: KtClass,
+        parametersToAdd: Collection<KtParameter>,
+        private val argumentText: String,
+        private val text: String
     ) : KotlinQuickFixAction<KtSuperTypeEntry>(element) {
         private val classDeclarationPointer = classDeclaration.createSmartPointer()
         private val parametersToAddPointers = parametersToAdd.map { it.createSmartPointer() }
 
         companion object {
             fun create(
-                    element: KtSuperTypeEntry,
-                    classDeclaration: KtClass,
-                    superConstructor: ConstructorDescriptor,
-                    text: String
+                element: KtSuperTypeEntry,
+                classDeclaration: KtClass,
+                superConstructor: ConstructorDescriptor,
+                text: String
             ): AddParametersFix? {
                 val superParameters = superConstructor.valueParameters
                 assert(superParameters.isNotEmpty())
@@ -159,7 +165,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     val nameRendered = parameter.name.render()
                     val varargElementType = parameter.varargElementType
 
-                    if (argumentText.length > 0) {
+                    if (argumentText.isNotEmpty()) {
                         argumentText.append(", ")
                     }
                     argumentText.append(if (varargElementType != null) "*$nameRendered" else nameRendered)
@@ -168,7 +174,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     val existingParameter = oldParameters.firstOrNull { it.name == nameString }
                     if (existingParameter != null) {
                         val type = (existingParameter.resolveToParameterDescriptorIfAny() as? VariableDescriptor)?.type
-                                   ?: return null
+                                ?: return null
                         if (type.isSubtypeOf(parameter.type)) continue // use existing parameter
                     }
 

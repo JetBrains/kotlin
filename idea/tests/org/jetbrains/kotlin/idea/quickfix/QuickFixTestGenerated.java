@@ -10319,6 +10319,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addParenthesisForInvalidSealedClass.kt")
+        public void testAddParenthesisForInvalidSealedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesisForInvalidSealedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addParenthesisForInvalidSealedClass2.kt")
+        public void testAddParenthesisForInvalidSealedClass2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesisForInvalidSealedClass2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("addParenthesisForLocalClass.kt")
         public void testAddParenthesisForLocalClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesisForLocalClass.kt");
@@ -10328,6 +10340,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("addParenthesisForObjectExpression.kt")
         public void testAddParenthesisForObjectExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesisForObjectExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addParenthesisForSealedClass.kt")
+        public void testAddParenthesisForSealedClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesisForSealedClass.kt");
             doTest(fileName);
         }
 
