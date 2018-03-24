@@ -15399,6 +15399,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nullableComplex2.kt")
+        public void testNullableComplex2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/nullableComplex2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("reduceableBinary.kt")
         public void testReduceableBinary() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/simplifyBooleanWithConstants/reduceableBinary.kt");

@@ -35,14 +35,15 @@ import org.jetbrains.kotlin.types.isFlexible
 
 class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention::class)
 
-class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Simplify boolean expression") {
+class SimplifyBooleanWithConstantsIntention :
+    SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Simplify boolean expression") {
 
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         val topBinary = PsiTreeUtil.getTopmostParentOfType(element, KtBinaryExpression::class.java) ?: element
         return areThereExpressionsToBeSimplified(topBinary)
     }
 
-    private fun areThereExpressionsToBeSimplified(element: KtExpression?) : Boolean {
+    private fun areThereExpressionsToBeSimplified(element: KtExpression?): Boolean {
         if (element == null) return false
         when (element) {
             is KtParenthesizedExpression -> return areThereExpressionsToBeSimplified(element.expression)
@@ -70,14 +71,14 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
         val fqName = callExpression.getCallableDescriptor()?.fqNameOrNull()
         val valueArguments = callExpression.valueArguments
         val isRedundant = fqName?.asString() == "kotlin.assert" &&
-                          valueArguments.singleOrNull()?.getArgumentExpression().isTrueConstant()
+                valueArguments.singleOrNull()?.getArgumentExpression().isTrueConstant()
         if (isRedundant) callExpression.delete()
     }
 
     private fun toSimplifiedExpression(expression: KtExpression): KtExpression {
         val psiFactory = KtPsiFactory(expression)
 
-        when  {
+        when {
             expression.canBeReducedToTrue() -> {
                 return psiFactory.createExpression("true")
             }
@@ -93,8 +94,7 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
                     return if (simplified is KtBinaryExpression) {
                         // wrap in new parentheses to keep the user's original format
                         psiFactory.createExpressionByPattern("($0)", simplified)
-                    }
-                    else {
+                    } else {
                         // if we now have a simpleName, constant, or parenthesized we don't need parentheses
                         simplified
                     }
@@ -102,6 +102,7 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
             }
 
             expression is KtBinaryExpression -> {
+                if (!areThereExpressionsToBeSimplified(expression)) return expression.copied()
                 val left = expression.left
                 val right = expression.right
                 val op = expression.operationToken
@@ -129,7 +130,11 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
         return expression.copied()
     }
 
-    private fun toSimplifiedBooleanBinaryExpressionWithConstantOperand(constantOperand: Boolean, otherOperand: KtExpression, operation: IElementType): KtExpression {
+    private fun toSimplifiedBooleanBinaryExpressionWithConstantOperand(
+        constantOperand: Boolean,
+        otherOperand: KtExpression,
+        operation: IElementType
+    ): KtExpression {
         val factory = KtPsiFactory(otherOperand)
         when (operation) {
             OROR -> {
