@@ -3951,6 +3951,24 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("putLambdaHasLabeledReturn.kt")
+        public void testPutLambdaHasLabeledReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replacePutWithAssignment/putLambdaHasLabeledReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("putLambdaHasLabeledReturn2.kt")
+        public void testPutLambdaHasLabeledReturn2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replacePutWithAssignment/putLambdaHasLabeledReturn2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("putLambdaHasLabeledReturn3.kt")
+        public void testPutLambdaHasLabeledReturn3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replacePutWithAssignment/putLambdaHasLabeledReturn3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("putOnParameter.kt")
         public void testPutOnParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replacePutWithAssignment/putOnParameter.kt");
