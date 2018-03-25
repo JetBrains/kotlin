@@ -84,6 +84,12 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/folding/checkCollapse"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("collectionFactoryFunctions.kt")
+        public void testCollectionFactoryFunctions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/collectionFactoryFunctions.kt");
+            doSettingsFoldingTest(fileName);
+        }
+
         @TestMetadata("customRegions.kt")
         public void testCustomRegions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/folding/checkCollapse/customRegions.kt");
