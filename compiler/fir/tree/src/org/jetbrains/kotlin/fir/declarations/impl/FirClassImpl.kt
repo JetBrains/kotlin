@@ -46,6 +46,7 @@ open class FirClassImpl(
 
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirClass {
+        annotations.transformInplace(transformer, data)
         typeParameters.transformInplace(transformer, data)
         superTypes.transformInplace(transformer, data)
         declarations.transformInplace(transformer, data)

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
@@ -353,14 +354,32 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitCall(call: FirCall) {
-        visitExpression(call)
+        print("(")
+        call.arguments.renderSeparated()
+        print(")")
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+        print("@")
+        annotationCall.useSiteTarget?.let {
+            print(it.name)
+            print(":")
+        }
+        annotationCall.annotationType.accept(this)
         visitCall(annotationCall)
+        if (annotationCall.useSiteTarget == AnnotationUseSiteTarget.FILE) {
+            println()
+        } else {
+            print(" ")
+        }
     }
 
     override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) {
+        if (delegatedConstructorCall.isSuper) {
+            print(": super")
+        } else if (delegatedConstructorCall.isThis) {
+            print(": this")
+        }
         visitCall(delegatedConstructorCall)
     }
 

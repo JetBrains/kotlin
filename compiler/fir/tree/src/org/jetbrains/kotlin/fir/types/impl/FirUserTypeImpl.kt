@@ -26,6 +26,6 @@ class FirUserTypeImpl(
             (part.typeArguments as MutableList<FirTypeProjection>).transformInplace(transformer, data)
         }
 
-        return this
+        return super<FirAbstractAnnotatedType>.transformChildren(transformer, data)
     }
 }

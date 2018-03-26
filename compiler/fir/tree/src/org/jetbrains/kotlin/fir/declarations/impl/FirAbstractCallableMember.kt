@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMember
 import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
+import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -30,6 +31,7 @@ abstract class FirAbstractCallableMember(
 ) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, platformStatus), FirCallableMember {
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        annotations.transformInplace(transformer, data)
         receiverType = receiverType?.transformSingle(transformer, data)
         returnType = returnType.transformSingle(transformer, data)
 
