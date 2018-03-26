@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.expressions.typeArgumentsCount
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -31,15 +33,30 @@ class IrFunctionReferenceImpl(
     type: KotlinType,
     override val symbol: IrFunctionSymbol,
     override val descriptor: FunctionDescriptor,
-    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    typeArgumentsCount: Int,
     origin: IrStatementOrigin? = null
-) : IrFunctionReference,
+) :
     IrCallWithIndexedArgumentsBase(
-        startOffset, endOffset, type,
+        startOffset,
+        endOffset,
+        type,
+        typeArgumentsCount,
         symbol.descriptor.valueParameters.size,
-        typeArguments,
         origin
-    ) {
+    ),
+    IrFunctionReference {
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType,
+        symbol: IrFunctionSymbol,
+        descriptor: FunctionDescriptor,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
+        origin: IrStatementOrigin? = null
+    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArguments.typeArgumentsCount, origin) {
+        copyTypeArgumentsFrom(typeArguments)
+    }
 
     @Deprecated("Creates unbound symbol")
     constructor(
@@ -47,9 +64,23 @@ class IrFunctionReferenceImpl(
         endOffset: Int,
         type: KotlinType,
         descriptor: FunctionDescriptor,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor, typeArguments, origin)
+    ) : this(startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor, typeArgumentsCount, origin)
+
+    @Deprecated("Creates unbound symbol")
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType,
+        descriptor: FunctionDescriptor,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
+        origin: IrStatementOrigin? = null
+    ) : this(
+        startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor, typeArguments.typeArgumentsCount, origin
+    ) {
+        copyTypeArgumentsFrom(typeArguments)
+    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)

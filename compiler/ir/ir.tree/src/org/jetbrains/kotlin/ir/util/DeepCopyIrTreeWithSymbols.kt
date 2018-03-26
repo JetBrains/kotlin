@@ -315,7 +315,10 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
         )
 
     override fun visitCall(expression: IrCall): IrCall =
-        shallowCopyCall(expression).transformValueArguments(expression)
+        shallowCopyCall(expression).apply {
+            copyTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+        }
 
     private fun shallowCopyCall(expression: IrCall) =
         when (expression) {
@@ -332,10 +335,12 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
                     expression.type,
                     newCallee,
                     expression.descriptor, // TODO substitute referenced descriptor
-                    remapTypeArguments(expression, newCallee.descriptor),
+                    expression.typeArgumentsCount,
                     mapStatementOrigin(expression.origin),
                     symbolRemapper.getReferencedClassOrNull(expression.superQualifierSymbol)
-                )
+                ).apply {
+                    copyTypeArgumentsFrom(expression)
+                }
             }
         }
 
@@ -345,13 +350,12 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             extensionReceiver = original.extensionReceiver?.transform()
         }
 
-    private fun <T : IrMemberAccessExpression> T.transformValueArguments(original: T): T =
-        apply {
-            transformReceiverArguments(original)
-            mapValueParameters { valueParameter ->
-                original.getValueArgument(valueParameter)?.transform()
-            }
+    private fun <T : IrMemberAccessExpression> T.transformValueArguments(original: T) {
+        transformReceiverArguments(original)
+        mapValueParameters { valueParameter ->
+            original.getValueArgument(valueParameter)?.transform()
         }
+    }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrDelegatingConstructorCall {
         val newConstructor = symbolRemapper.getReferencedConstructor(expression.symbol)
@@ -359,8 +363,11 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             expression.startOffset, expression.endOffset,
             newConstructor,
             expression.descriptor,
-            remapTypeArguments(expression, newConstructor.descriptor)
-        ).transformValueArguments(expression)
+            expression.typeArgumentsCount
+        ).apply {
+            copyTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+        }
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrEnumConstructorCall {
@@ -368,8 +375,11 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
         return IrEnumConstructorCallImpl(
             expression.startOffset, expression.endOffset,
             newConstructor,
-            remapTypeArguments(expression, newConstructor.descriptor)
-        ).transformValueArguments(expression)
+            expression.typeArgumentsCount
+        ).apply {
+            copyTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+        }
     }
 
     override fun visitGetClass(expression: IrGetClass): IrGetClass =
@@ -385,21 +395,27 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             expression.type,
             symbolRemapper.getReferencedFunction(expression.symbol),
             expression.descriptor, // TODO substitute referenced descriptor
-            expression.getTypeArgumentsMap(),
+            expression.typeArgumentsCount,
             mapStatementOrigin(expression.origin)
-        ).transformValueArguments(expression)
+        ).apply {
+            copyTypeArgumentsFrom(expression)
+            transformValueArguments(expression)
+        }
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
         IrPropertyReferenceImpl(
             expression.startOffset, expression.endOffset,
             expression.type,
             expression.descriptor,
+            expression.typeArgumentsCount,
             expression.field?.let { symbolRemapper.getReferencedField(it) },
             expression.getter?.let { symbolRemapper.getReferencedFunction(it) },
             expression.setter?.let { symbolRemapper.getReferencedFunction(it) },
-            expression.getTypeArgumentsMap(),
             mapStatementOrigin(expression.origin)
-        ).transformReceiverArguments(expression)
+        ).apply {
+            copyTypeArgumentsFrom(expression)
+            transformReceiverArguments(expression)
+        }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrLocalDelegatedPropertyReference =
         IrLocalDelegatedPropertyReferenceImpl(

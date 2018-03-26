@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.expressions.typeArgumentsCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -30,24 +32,51 @@ class IrDelegatingConstructorCallImpl(
     endOffset: Int,
     override val symbol: IrConstructorSymbol,
     override val descriptor: ClassConstructorDescriptor,
-    typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
-) : IrDelegatingConstructorCall,
+    typeArgumentsCount: Int
+) :
     IrCallWithIndexedArgumentsBase(
-        startOffset, endOffset,
+        startOffset,
+        endOffset,
         symbol.descriptor.builtIns.unitType,
-        symbol.descriptor.valueParameters.size,
-        typeArguments
-    ) {
+        typeArgumentsCount = typeArgumentsCount,
+        valueArgumentsCount = symbol.descriptor.valueParameters.size
+    ),
+    IrDelegatingConstructorCall {
+
+    @Deprecated("Use constructor with typeArgumentsCount and fill type arguments explicitly or with copyTypeArgumentsFrom")
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        symbol: IrConstructorSymbol,
+        descriptor: ClassConstructorDescriptor,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
+    ) : this(startOffset, endOffset, symbol, descriptor, typeArguments.typeArgumentsCount) {
+        copyTypeArgumentsFrom(typeArguments)
+    }
+
     @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,
         endOffset: Int,
-        constructorDescriptor: ClassConstructorDescriptor,
+        descriptor: ClassConstructorDescriptor,
+        typeArgumentsCount: Int
+    ) : this(
+        startOffset, endOffset,
+        IrConstructorSymbolImpl(descriptor.original),
+        descriptor,
+        typeArgumentsCount
+    )
+
+    @Deprecated("Creates unbound symbol")
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        descriptor: ClassConstructorDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
     ) : this(
         startOffset, endOffset,
-        IrConstructorSymbolImpl(constructorDescriptor.original),
-        constructorDescriptor,
+        IrConstructorSymbolImpl(descriptor.original),
+        descriptor,
         typeArguments
     )
 

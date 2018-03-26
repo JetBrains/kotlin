@@ -19,27 +19,46 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.expressions.typeArgumentsCount
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError
 
 abstract class IrCallWithIndexedArgumentsBase(
-    startOffset: Int, endOffset: Int, type: KotlinType,
+    startOffset: Int,
+    endOffset: Int,
+    type: KotlinType,
+    typeArgumentsCount: Int,
     valueArgumentsCount: Int,
-    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-    override val origin: IrStatementOrigin? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArguments, valueArgumentsCount) {
+    origin: IrStatementOrigin? = null
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, valueArgumentsCount, origin) {
 
-    private val argumentsByParameterIndex =
-        arrayOfNulls<IrExpression>(valueArgumentsCount)
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: KotlinType,
+        valueArgumentsCount: Int,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        origin: IrStatementOrigin? = null
+    ) : this(startOffset, endOffset, type, typeArguments.typeArgumentsCount, valueArgumentsCount, origin) {
+        copyTypeArgumentsFrom(typeArguments)
+    }
 
-    override fun getValueArgument(index: Int): IrExpression? =
-        argumentsByParameterIndex[index]
+    private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+
+    override fun getValueArgument(index: Int): IrExpression? {
+        if (index >= argumentsByParameterIndex.size) {
+            throw AssertionError("$this: No such argument slot: $index in ${render()}")
+        }
+        return argumentsByParameterIndex[index]
+    }
 
     override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         if (index >= argumentsByParameterIndex.size) {
-            throw AssertionError("$this: No such argument slot: $index")
+            throw AssertionError("$this: No such argument slot: $index in ${render()}")
         }
         argumentsByParameterIndex[index] = valueArgument
     }

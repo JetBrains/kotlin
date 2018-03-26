@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallWithShallowCopy
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -44,6 +43,12 @@ abstract class IrPrimitiveCallBase(
     override val superQualifier: ClassDescriptor? get() = null
     override val superQualifierSymbol: IrClassSymbol? get() = null
 
+    override val typeArgumentsCount: Int = 0
+
+    override fun getTypeArgument(index: Int): KotlinType? = null
+
+    override fun putTypeArgument(index: Int, type: KotlinType?) {}
+
     override var dispatchReceiver: IrExpression?
         get() = null
         set(value) {
@@ -57,9 +62,6 @@ abstract class IrPrimitiveCallBase(
             if (value != null)
                 throw UnsupportedOperationException("Operator call expression can't have a receiver")
         }
-
-    override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType? =
-        null // IR primitives have no type parameters
 
     override fun removeValueArgument(index: Int) {
         throw AssertionError("Operator call expression can't have a default argument")

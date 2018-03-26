@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.expressions.typeArgumentsCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -29,14 +31,34 @@ class IrEnumConstructorCallImpl(
     startOffset: Int,
     endOffset: Int,
     override val symbol: IrConstructorSymbol,
-    typeArguments: Map<TypeParameterDescriptor, KotlinType>?
-) : IrEnumConstructorCall,
+    typeArgumentsCount: Int
+) :
     IrCallWithIndexedArgumentsBase(
-        startOffset, endOffset,
+        startOffset,
+        endOffset,
         symbol.descriptor.builtIns.unitType,
-        symbol.descriptor.valueParameters.size,
-        typeArguments
-    ) {
+        typeArgumentsCount = typeArgumentsCount,
+        valueArgumentsCount = symbol.descriptor.valueParameters.size
+    ),
+    IrEnumConstructorCall {
+
+    @Deprecated("Use constructor with typeArgumentsCount and fill type arguments explicitly or with copyTypeArgumentsFrom")
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        symbol: IrConstructorSymbol,
+        typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
+    ) : this(startOffset, endOffset, symbol, typeArguments.typeArgumentsCount) {
+        copyTypeArgumentsFrom(typeArguments)
+    }
+
+    @Deprecated("Creates unbound symbols")
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        descriptor: ClassConstructorDescriptor,
+        typeArgumentsCount: Int
+    ) : this(startOffset, endOffset, IrConstructorSymbolImpl(descriptor), typeArgumentsCount)
 
     @Deprecated("Creates unbound symbols")
     constructor(

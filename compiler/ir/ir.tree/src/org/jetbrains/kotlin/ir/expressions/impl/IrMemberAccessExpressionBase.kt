@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
@@ -27,14 +27,23 @@ abstract class IrMemberAccessExpressionBase(
     startOffset: Int,
     endOffset: Int,
     type: KotlinType,
-    val typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-    override val valueArgumentsCount: Int
-) : IrExpressionBase(startOffset, endOffset, type), IrMemberAccessExpression {
+    final override val typeArgumentsCount: Int,
+    final override val valueArgumentsCount: Int,
+    final override val origin: IrStatementOrigin? = null
+) : IrExpressionBase(startOffset, endOffset, type),
+    IrMemberAccessExpression {
+
     override var dispatchReceiver: IrExpression? = null
     override var extensionReceiver: IrExpression? = null
 
-    override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType? =
-        typeArguments?.get(typeParameterDescriptor)
+    private val typeArgumentsByIndex = arrayOfNulls<KotlinType>(typeArgumentsCount)
+
+    override fun getTypeArgument(index: Int): KotlinType? =
+        typeArgumentsByIndex[index]
+
+    override fun putTypeArgument(index: Int, type: KotlinType?) {
+        typeArgumentsByIndex[index] = type
+    }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
