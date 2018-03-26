@@ -79,7 +79,7 @@ fun box(): String {
     val adnq: Any? = dn
 
     // see https://bugs.openjdk.java.net/browse/JDK-8141407
-    val nanBug = js("dn == dn")
+    val nanBug = dnq == dnq
 
     assertFalse(dn == dn, "Double: NaN == NaN")
     assertTrue(dn == adn, "Double: NaN != (Any)NaN")
