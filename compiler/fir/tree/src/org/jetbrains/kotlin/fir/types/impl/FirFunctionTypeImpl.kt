@@ -29,6 +29,6 @@ class FirFunctionTypeImpl(
         returnType = returnType.transformSingle(transformer, data)
         valueParameters.transformInplace(transformer, data)
 
-        return this
+        return super<FirAbstractAnnotatedType>.transformChildren(transformer, data)
     }
 }

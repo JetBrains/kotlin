@@ -1,0 +1,24 @@
+FILE: Annotations.kt
+    @FILE:R|annotations/Simple|()
+    @R|annotations/WithInt|(STUB) public? abstract class First() {
+        @R|annotations/Simple|() public? abstract function foo(@WithString(STUB) arg: @R|annotations/Simple|() R|kotlin/Double|): R|error: Not supported: FirImplicitTypeImpl|
+
+        @R|annotations/Complex|(STUB, STUB) public? abstract property v(val): R|kotlin/String|
+            public? get(): R|kotlin/String|
+
+    }
+    @R|annotations/WithString|(STUB) public? final class Second() : @R|annotations/WithInt|(STUB) R|test/First| {
+        public? constructor(y: R|kotlin/Char|): super()
+
+        public? open? override function foo(arg: R|kotlin/Double|): R|error: Not supported: FirImplicitTypeImpl| {
+        }
+
+        public? open? override property v(val): R|kotlin/String|
+            @R|annotations/Simple|() public? get(): R|error: Not supported: FirImplicitTypeImpl| {
+                STUB
+            }
+
+        @R|annotations/WithString|(STUB) public? constructor(): this(STUB)
+
+    }
+    @R|annotations/WithInt|(STUB) @R|annotations/WithInt|(STUB) public? final typealias Third = @R|annotations/Simple|() R|test/Second|
