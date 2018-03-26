@@ -5,12 +5,27 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.ir.symbols.*
 
 val IrFunctionSymbol.parameterCount get() = descriptor.valueParameters.size
 
+val IrFunctionSymbol.kind get() = descriptor.kind
+
+val IrFunctionSymbol.modality get() = descriptor.modality
+
 val IrConstructorSymbol.isPrimary get() = descriptor.isPrimary
 
-val IrValueSymbol.name get() = descriptor.name
+val IrConstructorSymbol.constructedClassName get() = descriptor.constructedClass.name
+
+val IrConstructorSymbol.constructedClass get() = descriptor.constructedClass
+
+val IrValueSymbol.isSpecial get() = descriptor.name.isSpecial
+
+val IrSymbol.name get() = descriptor.name
+
+val IrClassSymbol.kind get() = descriptor.kind
+
+val IrClassSymbol.modality get() = descriptor.modality
+
+val IrClassSymbol.isAny get() = KotlinBuiltIns.isAny(descriptor)

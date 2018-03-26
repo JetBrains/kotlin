@@ -5,37 +5,28 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.isPrimary
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.js.backend.ast.*
 
-class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, Nothing?> {
-    override fun visitProperty(declaration: IrProperty, data: Nothing?): JsStatement {
-        return jsVar(declaration.name, declaration.backingField?.initializer?.expression)
+class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
+    override fun visitProperty(declaration: IrProperty, context: JsGenerationContext): JsStatement {
+        return jsVar(declaration.name, declaration.backingField?.initializer?.expression, context)
     }
 
-    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): JsStatement {
-        return JsExpressionStatement(transformIrFunctionToJsFunction(declaration))
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
+        return declaration.accept(IrFunctionToJsTransformer(), context).makeStmt()
     }
 
-    private fun transformIrFunctionToJsFunction(declaration: IrSimpleFunction): JsFunction {
-        val funName = declaration.name.asString()
-        val body = declaration.body?.accept(IrElementToJsStatementTransformer(), null) as? JsBlock ?: JsBlock()
-        val function = JsFunction(JsFunctionScope(dummyScope, "scope for $funName"), body, "function $funName")
-
-        function.name = declaration.name.toJsName()
-
-        fun JsFunction.addParameter(parameterName: String) {
-            val parameter = function.scope.declareName(parameterName)
-            parameters.add(JsParameter(parameter))
-        }
-
-        declaration.extensionReceiverParameter?.let { function.addParameter("\$receiver") }
-        declaration.valueParameters.forEach {
-            function.addParameter(it.name.asString())
-        }
-
-        return function
+    override fun visitConstructor(declaration: IrConstructor, context: JsGenerationContext): JsStatement {
+        return declaration.accept(IrFunctionToJsTransformer(), context).makeStmt()
     }
 
+    override fun visitClass(declaration: IrClass, context: JsGenerationContext): JsStatement {
+        return JsClassGenerator(declaration, context).generate()
+    }
 }

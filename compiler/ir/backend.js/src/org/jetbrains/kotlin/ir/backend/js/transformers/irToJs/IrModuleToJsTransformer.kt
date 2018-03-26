@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 
 class IrModuleToJsTransformer : BaseIrElementToJsNodeTransformer<JsNode, Nothing?> {
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): JsNode {
         val program = JsProgram()
+        val rootContext = JsGenerationContext(JsRootScope(program))
 
         declaration.files.forEach {
-            program.globalBlock.statements.add(it.accept(IrFileToJsTransformer(), null))
+            program.globalBlock.statements.add(it.accept(IrFileToJsTransformer(), rootContext))
         }
 
         return program

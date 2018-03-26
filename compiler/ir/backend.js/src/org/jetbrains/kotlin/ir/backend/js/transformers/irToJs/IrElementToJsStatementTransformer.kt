@@ -5,59 +5,74 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
-class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, Nothing?> {
-    override fun visitBlockBody(body: IrBlockBody, data: Nothing?): JsStatement {
-        return JsBlock(body.statements.map { it.accept(this, data) })
+class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
+    override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
+        return JsBlock(body.statements.map { it.accept(this, context) })
     }
 
-    override fun visitBlock(expression: IrBlock, data: Nothing?): JsBlock {
-        return JsBlock(expression.statements.map { it.accept(this, data) })
+    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsBlock {
+        return JsBlock(expression.statements.map { it.accept(this, context) })
     }
 
-    override fun visitComposite(expression: IrComposite, data: Nothing?): JsStatement {
+    override fun visitComposite(expression: IrComposite, context: JsGenerationContext): JsStatement {
         // TODO introduce JsCompositeBlock?
-        return JsBlock(expression.statements.map { it.accept(this, data) })
+        return JsBlock(expression.statements.map { it.accept(this, context) })
     }
 
-    override fun visitExpression(expression: IrExpression, data: Nothing?): JsStatement {
-        return JsExpressionStatement(expression.accept(IrElementToJsExpressionTransformer(), data))
+    override fun visitExpression(expression: IrExpression, context: JsGenerationContext): JsStatement {
+        return JsExpressionStatement(expression.accept(IrElementToJsExpressionTransformer(), context))
     }
 
-    override fun visitBreak(jump: IrBreak, data: Nothing?): JsStatement {
+    override fun visitBreak(jump: IrBreak, context: JsGenerationContext): JsStatement {
         return JsBreak(jump.label?.let(::JsNameRef))
     }
 
-    override fun visitContinue(jump: IrContinue, data: Nothing?): JsStatement {
+    override fun visitContinue(jump: IrContinue, context: JsGenerationContext): JsStatement {
         return JsContinue(jump.label?.let(::JsNameRef))
     }
 
-    override fun visitReturn(expression: IrReturn, data: Nothing?): JsStatement {
-        return JsReturn(expression.value.accept(IrElementToJsExpressionTransformer(), data))
+    override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
+        return JsReturn(expression.value.accept(IrElementToJsExpressionTransformer(), context))
     }
 
-    override fun visitThrow(expression: IrThrow, data: Nothing?): JsStatement {
-        return JsThrow(expression.value.accept(IrElementToJsExpressionTransformer(), data))
+    override fun visitThrow(expression: IrThrow, context: JsGenerationContext): JsStatement {
+        return JsThrow(expression.value.accept(IrElementToJsExpressionTransformer(), context))
     }
 
-    override fun visitVariable(declaration: IrVariable, data: Nothing?): JsStatement {
-        return jsVar(declaration.name, declaration.initializer)
+    override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {
+        return jsVar(declaration.name, declaration.initializer, context)
     }
 
-    override fun visitWhen(expression: IrWhen, data: Nothing?): JsStatement {
-        return expression.toJsNode(this, data, ::JsIf) ?: JsEmpty
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {
+        if (KotlinBuiltIns.isAny(expression.symbol.constructedClass)) {
+            return JsEmpty
+        }
+        return expression.accept(IrElementToJsExpressionTransformer(), context).makeStmt()
     }
 
-    override fun visitWhileLoop(loop: IrWhileLoop, data: Nothing?): JsStatement {
+    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {
+
+        // TODO: implement
+        return JsEmpty
+    }
+
+    override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsStatement {
+        return expression.toJsNode(this, context, ::JsIf) ?: JsEmpty
+    }
+
+    override fun visitWhileLoop(loop: IrWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
-        return JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), data), loop.body?.accept(this, data))
+        return JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
     }
 
-    override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: Nothing?): JsStatement {
+    override fun visitDoWhileLoop(loop: IrDoWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
-        return JsDoWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), data), loop.body?.accept(this, data))
+        return JsDoWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context), loop.body?.accept(this, context))
     }
 }
