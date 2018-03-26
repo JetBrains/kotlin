@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinNames
-import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithExpectedDefault
 import org.jetbrains.kotlin.resolve.checkers.KotlinVersionStringAnnotationValueChecker
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionReq
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.metadata.serialization.*
+import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithAnyExpectedDefault
 import java.io.ByteArrayOutputStream
 import java.util.*
 
@@ -448,7 +448,7 @@ class KonanDescriptorSerializer private constructor(
     private fun valueParameter(descriptor: ValueParameterDescriptor): ProtoBuf.ValueParameter.Builder {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
-        val declaresDefaultValue = descriptor.declaresDefaultValue() || descriptor.isActualParameterWithExpectedDefault
+        val declaresDefaultValue = descriptor.declaresDefaultValue() || descriptor.isActualParameterWithAnyExpectedDefault
 
         val flags = Flags.getValueParameterFlags(
             hasAnnotations(descriptor), declaresDefaultValue, descriptor.isCrossinline, descriptor.isNoinline

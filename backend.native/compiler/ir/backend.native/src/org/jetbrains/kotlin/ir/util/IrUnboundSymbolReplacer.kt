@@ -283,7 +283,7 @@ private class IrUnboundSymbolReplacer(
                 return super.visitEnumConstructorCall(expression)
 
         return with(expression) {
-            IrEnumConstructorCallImpl(startOffset, endOffset, symbol).also {
+            IrEnumConstructorCallImpl(startOffset, endOffset, symbol, null).also {
                 it.copyArgumentsFrom(this)
             }
         }

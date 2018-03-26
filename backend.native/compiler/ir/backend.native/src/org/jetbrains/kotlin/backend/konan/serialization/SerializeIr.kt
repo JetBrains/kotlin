@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 
-import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.deserializedPropertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.descriptors.isDeserializableCallable
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
+import org.jetbrains.kotlin.backend.konan.lower.DeepCopyIrTreeWithDescriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.metadata.KonanIr.IrConst.ValueCase.*
 import org.jetbrains.kotlin.metadata.KonanIr.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.metadata.KonanIr.IrVarargElement.VarargElementCase.*
 import org.jetbrains.kotlin.metadata.KonanLinkData
+import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassConstructorDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
@@ -890,7 +891,7 @@ internal class IrDeserializer(val context: Context,
 
     fun deserializeEnumConstructorCall(proto: KonanIr.IrEnumConstructorCall, start: Int, end: Int): IrEnumConstructorCall {
         val descriptor = deserializeDescriptor(proto.descriptor) as ClassConstructorDescriptor
-        val call = IrEnumConstructorCallImpl(start, end, IrConstructorSymbolImpl(descriptor))
+        val call = IrEnumConstructorCallImpl(start, end, IrConstructorSymbolImpl(descriptor), null)
         deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
     }
@@ -1323,7 +1324,7 @@ internal class IrDeserializer(val context: Context,
             (key,value) ->
         key to value}
 
-        return DeepCopyIrTreeWithDescriptors(rootFunction, context).copy(
+        return DeepCopyIrTreeWithDescriptors(rootFunction, rootFunction.parents.first(), context).copy(
             irElement       = declaration,
             typeSubstitutor = TypeSubstitutor.create(substitutionContext)
         ) as IrFunction
