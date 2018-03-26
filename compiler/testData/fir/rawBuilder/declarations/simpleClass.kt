@@ -17,3 +17,5 @@ class SomeClass : SomeInterface {
 
     lateinit var fau: Double
 }
+
+inline class InlineClass

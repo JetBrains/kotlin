@@ -30,7 +30,8 @@ open class FirClassImpl(
     final override val classKind: ClassKind,
     final override val isInner: Boolean,
     final override val isCompanion: Boolean,
-    final override val isData: Boolean
+    final override val isData: Boolean,
+    override val isInline: Boolean
 ) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, platformStatus), FirClass {
 
     init {

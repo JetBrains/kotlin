@@ -27,6 +27,8 @@ interface FirClass : FirDeclarationContainer, FirMemberDeclaration, FirSymbolOwn
 
     val isData: Boolean
 
+    val isInline: Boolean
+
     override val symbol: FirClassSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

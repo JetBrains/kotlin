@@ -143,7 +143,20 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         if (memberDeclaration is FirCallableMember && memberDeclaration.isOverride) {
             print("override ")
         }
-        if (memberDeclaration is FirNamedFunction) {
+        if (memberDeclaration is FirClass) {
+            if (memberDeclaration.isInner) {
+                print("inner ")
+            }
+            if (memberDeclaration.isCompanion) {
+                print("companion ")
+            }
+            if (memberDeclaration.isData) {
+                print("data ")
+            }
+            if (memberDeclaration.isInline) {
+                print("inline ")
+            }
+        } else if (memberDeclaration is FirNamedFunction) {
             if (memberDeclaration.isOperator) {
                 print("operator ")
             }
@@ -194,12 +207,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitClass(klass: FirClass) {
         visitMemberDeclaration(klass)
-        val attributes = listOfNotNull(
-            "inner".takeIf { klass.isInner },
-            "companion".takeIf { klass.isCompanion },
-            "data".takeIf { klass.isData }
-        )
-        print(attributes.joinToString(prefix = "(", postfix = ")"))
         if (klass.superTypes.isNotEmpty()) {
             print(" : ")
             klass.superTypes.renderSeparated()
