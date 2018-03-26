@@ -1,9 +1,9 @@
 FILE: derivedClass.kt
-    <T> public? open class Base() {
+    <T> public? open class Base {
         public? constructor(x: T)
 
     }
-    <T : Any> public? final class Derived() : Base<T> {
+    <T : Any> public? final class Derived : Base<T> {
         public? constructor(x: T): super(STUB)
 
     }

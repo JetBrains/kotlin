@@ -1,8 +1,8 @@
 FILE: typeParameterVsNested.kt
-    public? abstract interface Some() {
+    public? abstract interface Some {
     }
-    <T : R|test/Some|> public? abstract class My() {
-        public? final class T(inner) {
+    <T : R|test/Some|> public? abstract class My {
+        public? final inner class T {
         }
 
         public? abstract property x(val): R|T|
@@ -16,7 +16,7 @@ FILE: typeParameterVsNested.kt
         public? abstract property z(val): R|test/My.T|
             public? get(): R|test/My.T|
 
-        public? final class Some() : R|test/My.T| {
+        public? final class Some : R|test/My.T| {
         }
 
     }

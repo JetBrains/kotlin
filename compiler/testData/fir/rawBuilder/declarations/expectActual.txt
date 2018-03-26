@@ -1,10 +1,10 @@
 FILE: expectActual.kt
-    public? final expect class MyClass() {
+    public? final expect class MyClass {
     }
     public? final? expect function foo(): String
     public? final? expect property x(val): Int
         public? get(): Int
-    public? final actual class MyClass() {
+    public? final actual class MyClass {
     }
     public? final? actual function foo(): <implicit> {
         STUB

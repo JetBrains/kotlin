@@ -1,6 +1,6 @@
 FILE: simpleTypeAlias.kt
-    public? abstract interface B() {
+    public? abstract interface B {
     }
     public? final typealias C = R|B|
-    public? final class D() : R|C = B| {
+    public? final class D : R|C = B| {
     }

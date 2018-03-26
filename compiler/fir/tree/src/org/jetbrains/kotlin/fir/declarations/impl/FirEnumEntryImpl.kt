@@ -32,7 +32,8 @@ class FirEnumEntryImpl(
     classKind = ClassKind.ENUM_ENTRY,
     isInner = false,
     isCompanion = false,
-    isData = false
+    isData = false,
+    isInline = false
 ), FirEnumEntry {
     override val arguments = mutableListOf<FirExpression>()
 }

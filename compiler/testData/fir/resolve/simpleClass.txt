@@ -1,12 +1,12 @@
 FILE: simpleClass.kt
-    public? abstract interface SomeInterface() {
+    public? abstract interface SomeInterface {
         public? final? function foo(x: R|kotlin/Int|, y: R|kotlin/String|): R|kotlin/String|
 
         public? final? property bar(val): R|kotlin/Boolean|
             public? get(): R|kotlin/Boolean|
 
     }
-    public? final class SomeClass() : R|SomeInterface| {
+    public? final class SomeClass : R|SomeInterface| {
         private final? property baz(val): R|error: Not supported: FirImplicitTypeImpl| = STUB
             public? get(): R|error: Not supported: FirImplicitTypeImpl|
 

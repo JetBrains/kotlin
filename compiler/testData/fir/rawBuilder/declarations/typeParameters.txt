@@ -1,5 +1,5 @@
 FILE: typeParameters.kt
-    <out T : Any> public? abstract interface List() {
+    <out T : Any> public? abstract interface List {
         public? final? operator function get(index: Int): T
 
         public? final? infix function concat(other: List<T>): List<T>
@@ -7,9 +7,9 @@ FILE: typeParameters.kt
     }
     public? final typealias StringList = List<out String>
     public? final typealias AnyList = List<*>
-    <out T : Any> public? abstract class AbstractList() : List<T> {
+    <out T : Any> public? abstract class AbstractList : List<T> {
     }
-    public? final class SomeList() : AbstractList<Int> {
+    public? final class SomeList : AbstractList<Int> {
         public? open? override function get(index: Int): Int {
             STUB
         }

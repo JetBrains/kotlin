@@ -291,7 +291,8 @@ class RawFirBuilder(val session: FirSession) {
                     classKind,
                     isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD),
                     isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true,
-                    isData = (classOrObject as? KtClass)?.isData() == true
+                    isData = (classOrObject as? KtClass)?.isData() == true,
+                    isInline = classOrObject.hasModifier(KtTokens.INLINE_KEYWORD)
                 )
                 classOrObject.extractAnnotationsTo(firClass)
                 classOrObject.extractTypeParametersTo(firClass)
