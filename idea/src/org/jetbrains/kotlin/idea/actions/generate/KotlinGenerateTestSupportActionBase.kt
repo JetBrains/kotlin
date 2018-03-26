@@ -74,7 +74,7 @@ abstract class KotlinGenerateTestSupportActionBase(
             val list = JBList<TestFramework>(*frameworks.toTypedArray())
             list.cellRenderer = TestFrameworkListCellRenderer()
 
-            PopupChooserBuilder(list)
+            PopupChooserBuilder<TestFramework>(list)
                     .setFilteringEnabled { (it as TestFramework).name }
                     .setTitle("Choose Framework")
                     .setItemChoosenCallback { consumer(list.selectedValue as TestFramework) }

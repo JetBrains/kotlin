@@ -261,7 +261,7 @@ fun <T, E : PsiElement> getPsiElementPopup(
         }
     }
 
-    return with(PopupChooserBuilder(list)) {
+    return with(PopupChooserBuilder<E>(list)) {
         title?.let { setTitle(it) }
         renderer.installSpeedSearch(this, true)
         setItemChoosenCallback {
