@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.script
 
+import com.intellij.codeInsight.highlighting.HighlightUsagesHandler
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
@@ -51,6 +52,10 @@ import kotlin.script.dependencies.Environment
 abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfigurationTest() {
     fun doTest(path: String) {
         configureScriptFile(path)
+
+        // Highlight references at caret
+        HighlightUsagesHandler.invoke(project, editor, myFile)
+
         checkHighlighting(
             editor,
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_WARNINGS"),
