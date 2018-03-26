@@ -1,9 +1,9 @@
 val c = 3
 
-val g = listOf("a", "b", "c")
+val g = listOf(1, 2, 3)
 
 val time = <error>measureNanoTime</error> {
-    println("text")
+    println()
 }
 
 // DEPENDENCIES: classpath:runtime-classes
