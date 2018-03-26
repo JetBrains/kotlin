@@ -395,6 +395,7 @@ class RawFirBuilder(val session: FirSession) {
                 property.platformStatus,
                 property.hasModifier(KtTokens.OVERRIDE_KEYWORD),
                 property.hasModifier(KtTokens.CONST_KEYWORD),
+                property.hasModifier(KtTokens.LATEINIT_KEYWORD),
                 property.receiverTypeReference.convertSafe(),
                 propertyType,
                 property.isVar,

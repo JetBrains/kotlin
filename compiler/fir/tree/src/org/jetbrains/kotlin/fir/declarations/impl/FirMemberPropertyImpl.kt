@@ -28,6 +28,7 @@ class FirMemberPropertyImpl(
     platformStatus: FirMemberPlatformStatus,
     isOverride: Boolean,
     override val isConst: Boolean,
+    override val isLateInit: Boolean,
     receiverType: FirType?,
     returnType: FirType,
     override val isVar: Boolean,
