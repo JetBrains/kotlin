@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
@@ -92,8 +93,8 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
         return result
     }
 
-    override val libraryMatcher: (Library) -> Boolean =
-        { library -> JavaRuntimeDetectionUtil.getRuntimeJar(library.getFiles(OrderRootType.CLASSES).asList()) != null }
+    override val libraryMatcher: (Library, Project) -> Boolean =
+        { library, _ -> JavaRuntimeDetectionUtil.getRuntimeJar(library.getFiles(OrderRootType.CLASSES).asList()) != null }
 
     override fun configureKotlinSettings(modules: List<Module>) {
         val project = modules.firstOrNull()?.project ?: return
@@ -140,7 +141,7 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
     private fun hasBrokenJsRuntime(module: Module): Boolean {
         for (orderEntry in ModuleRootManager.getInstance(module).orderEntries) {
             val library = (orderEntry as? LibraryOrderEntry)?.library as? LibraryEx ?: continue
-            if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library, ignoreKind = true)) return true
+            if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library, module.project, ignoreKind = true)) return true
         }
         return false
     }
