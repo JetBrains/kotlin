@@ -23,9 +23,9 @@ import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.*
 
 abstract class BasicScriptingHost<ScriptBase : Any>(
-    val configurator: ScriptConfigurator,
+    val configurator: ScriptCompilationConfigurator,
     val compiler: ScriptCompiler,
-    val runner: ScriptRunner<ScriptBase>
+    val evaluator: ScriptEvaluator<ScriptBase>
 ) {
     open fun <T> runInCoroutineContext(block: suspend CoroutineScope.() -> T): T = runBlocking { block() }
 
@@ -36,7 +36,7 @@ abstract class BasicScriptingHost<ScriptBase : Any>(
                 is ResultWithDiagnostics.Failure -> compiled
                 is ResultWithDiagnostics.Success -> {
                     val compiledScript = compiled.value!! as CompiledScript<ScriptBase>
-                    runner.run(compiledScript, environment)
+                    evaluator.eval(compiledScript, environment)
                 }
             }
         }

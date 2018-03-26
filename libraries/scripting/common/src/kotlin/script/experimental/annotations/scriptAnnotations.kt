@@ -8,20 +8,37 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("unused")
+
 package kotlin.script.experimental.annotations
 
 import kotlin.reflect.KClass
-import kotlin.script.experimental.api.ScriptConfigurator
-import kotlin.script.experimental.api.ScriptRunner
-import kotlin.script.experimental.api.ScriptSelector
-import kotlin.script.experimental.basic.DefaultScriptSelector
-import kotlin.script.experimental.basic.DummyRunner
-import kotlin.script.experimental.basic.PassThroughConfigurator
+import kotlin.script.experimental.api.ScriptCompilationConfigurator
+import kotlin.script.experimental.api.ScriptDefinition
+import kotlin.script.experimental.api.ScriptEvaluator
+import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class KotlinScript(
-    val selector: KClass<out ScriptSelector> = DefaultScriptSelector::class,
-    val configurator: KClass<out ScriptConfigurator> = PassThroughConfigurator::class,
-    val runner: KClass<out ScriptRunner<*>> = DummyRunner::class
+    val definition: KClass<out ScriptDefinition> = ScriptDefinitionFromAnnotatedBaseClass::class
 )
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class KotlinScriptFileExtension(
+    val extension: String
+)
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class KotlinScriptCompilationConfigurator(
+    val compilationConfigurator: KClass<out ScriptCompilationConfigurator>
+)
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class KotlinScriptEvaluator(
+    val evaluator: KClass<out ScriptEvaluator<*>>
+)
+

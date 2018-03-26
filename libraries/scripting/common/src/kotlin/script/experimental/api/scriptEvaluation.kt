@@ -27,9 +27,11 @@ typealias ScriptEvaluationEnvironment = HeterogeneousMap
 data class EvaluationResult(val returnValue: Any?, val environment: ScriptEvaluationEnvironment)
 
 // NOTE: name inconsistency: run vs evaluate
-interface ScriptRunner<in ScriptBase : Any> {
+interface ScriptEvaluator<in ScriptBase : Any> {
 
-    suspend fun run(
+    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
+
+    suspend fun eval(
         compiledScript: CompiledScript<ScriptBase>,
         scriptEvaluationEnvironment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult>

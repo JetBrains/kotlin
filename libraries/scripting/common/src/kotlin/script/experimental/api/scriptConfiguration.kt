@@ -7,14 +7,19 @@
 
 package kotlin.script.experimental.api
 
+
 typealias ScriptCompileConfiguration = HeterogeneousMap
 
 typealias ProcessedScriptData = HeterogeneousMap
 
-interface ScriptConfigurator {
 
-    // with null scriptSource should return a generic configuration for the script type
-    suspend fun baseConfiguration(scriptSource: ScriptSource?) : ResultWithDiagnostics<ScriptCompileConfiguration>
+interface ScriptCompilationConfigurator {
+
+    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
+
+    val defaultConfiguration: ScriptCompileConfiguration
+
+    suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration>
 
     suspend fun refineConfiguration(
         configuration: ScriptCompileConfiguration,

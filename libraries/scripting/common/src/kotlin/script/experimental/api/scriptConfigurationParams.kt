@@ -10,6 +10,9 @@ package kotlin.script.experimental.api
 import kotlin.reflect.KClass
 
 object ScriptCompileConfigurationParams {
+
+    val baseClass by typedKey<KClass<*>>()
+
     val scriptSourceFragments by typedKey<ScriptSourceFragments>()
 
     val scriptSignature by typedKey<ScriptSignature>()

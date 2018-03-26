@@ -7,12 +7,15 @@
 
 package kotlin.script.experimental.api
 
-import kotlin.reflect.KClass
 
 interface ScriptDefinition {
-    val baseClass: KClass<*>
-    val selector: ScriptSelector
-    val configurator: ScriptConfigurator
-    val runner: ScriptRunner<*>?
+
+    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
+
+    val properties: ScriptDefinitionPropertiesBag
+
+    val compilationConfigurator: ScriptCompilationConfigurator
+
+    val evaluator: ScriptEvaluator<*>?
 }
 

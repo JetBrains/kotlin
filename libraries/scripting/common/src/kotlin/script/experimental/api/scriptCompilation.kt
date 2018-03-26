@@ -9,7 +9,7 @@ interface ScriptCompiler {
 
     suspend fun compile(
         configuration: ScriptCompileConfiguration,
-        configurator: ScriptConfigurator? = null
+        configurator: ScriptCompilationConfigurator? = null
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 

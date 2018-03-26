@@ -31,6 +31,7 @@ class HeterogeneousMap(private val data: Map<TypedKey<*>, Any?> = hashMapOf()) {
 
 fun HeterogeneousMap.cloneWith(vararg pairs: Pair<TypedKey<*>, Any?>) = HeterogeneousMap(this, *pairs)
 
+fun HeterogeneousMap.cloneWith(pairs: Iterable<Pair<TypedKey<*>, Any?>>) = HeterogeneousMap(this, pairs)
 
 open class HeterogeneousMapBuilder {
     val pairs: MutableList<Pair<TypedKey<*>, Any?>> = arrayListOf()

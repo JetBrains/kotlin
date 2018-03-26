@@ -5,34 +5,17 @@
 
 package kotlin.script.experimental.basic
 
-import kotlin.reflect.KClass
-import kotlin.reflect.full.findAnnotation
 import kotlin.script.experimental.api.*
 
 
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class KotlinScriptFileExtension(val extension: String)
+class PassThroughCompilationConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
 
-open class DefaultScriptSelector(val baseClass: KClass<Any>? = null) : ScriptSelector {
+    override val defaultConfiguration = ScriptCompileConfiguration(
+        ScriptCompileConfigurationParams.baseClass to environment[ScriptingEnvironmentParams.baseClass]
+    )
 
-    override val name: String = "Kotlin script"
-
-    override val fileExtension: String = baseClass?.findAnnotation<KotlinScriptFileExtension>()?.extension ?: "kts"
-
-    override fun makeScriptName(scriptFileName: String?): String = scriptFileName?.removeSuffix(".$fileExtension") ?: "Kotlin script"
-
-    override fun isKnownScript(script: ScriptSource): Boolean =
-        script.location?.file?.endsWith(fileExtension) ?: true
-}
-
-class PassThroughConfigurator(val baseClass: KClass<Any>? = null) : ScriptConfigurator {
-
-    override suspend fun baseConfiguration(scriptSource: ScriptSource?): ResultWithDiagnostics<ScriptCompileConfiguration> =
-        (when (scriptSource) {
-            null -> ScriptCompileConfiguration()
-            else -> ScriptCompileConfiguration(scriptSource.toConfigEntry())
-        }).asSuccess()
+    override suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration> =
+        defaultConfiguration.asSuccess()
 
     override suspend fun refineConfiguration(
         configuration: ScriptCompileConfiguration,
@@ -41,8 +24,8 @@ class PassThroughConfigurator(val baseClass: KClass<Any>? = null) : ScriptConfig
         configuration.asSuccess()
 }
 
-class DummyRunner<ScriptBase : Any>(val baseClass: KClass<ScriptBase>? = null) : ScriptRunner<ScriptBase> {
-    override suspend fun run(
+class DummyEvaluator<ScriptBase : Any>(val environment: ScriptingEnvironment) : ScriptEvaluator<ScriptBase> {
+    override suspend fun eval(
         compiledScript: CompiledScript<ScriptBase>,
         scriptEvaluationEnvironment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult> =
