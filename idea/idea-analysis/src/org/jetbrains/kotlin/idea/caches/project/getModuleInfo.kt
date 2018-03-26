@@ -261,13 +261,13 @@ private inline fun <T> collectInfosByVirtualFile(
     val scriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
     if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsClasspathScope()) {
         if (treatAsLibrarySource) {
-            onOccurrence(ScriptDependenciesSourceModuleInfo(project))
+            onOccurrence(ScriptDependenciesSourceInfo.ForProject(project))
         } else {
-            onOccurrence(ScriptDependenciesModuleInfo(project, null))
+            onOccurrence(ScriptDependenciesInfo.ForProject(project))
         }
     }
     if (!isBinary && virtualFile in scriptConfigurationManager.getAllLibrarySourcesScope()) {
-        onOccurrence(ScriptDependenciesSourceModuleInfo(project))
+        onOccurrence(ScriptDependenciesSourceInfo.ForProject(project))
     }
 
     return onOccurrence(null)
