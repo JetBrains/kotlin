@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
@@ -64,7 +65,9 @@ open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {
             LibraryJarDescriptor.JS_STDLIB_SRC_JAR
         )
 
-    override val libraryMatcher: (Library) -> Boolean = { library -> JsLibraryStdDetectionUtil.hasJsStdlibJar(library) }
+    override val libraryMatcher: (Library, Project) -> Boolean = { library, project ->
+        JsLibraryStdDetectionUtil.hasJsStdlibJar(library, project)
+    }
 
     override val libraryType: LibraryType<DummyLibraryProperties>?
         get() = JSLibraryType.getInstance()
@@ -82,7 +85,7 @@ open class KotlinJsModuleConfigurator : KotlinWithLibraryConfigurator() {
         for (orderEntry in ModuleRootManager.getInstance(module).orderEntries) {
             val library = (orderEntry as? LibraryOrderEntry)?.library as? LibraryEx ?: continue
             allLibraries.add(library)
-            if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library, ignoreKind = true) && library.kind == null) {
+            if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library, module.project, ignoreKind = true) && library.kind == null) {
                 brokenStdlib = library
             }
         }

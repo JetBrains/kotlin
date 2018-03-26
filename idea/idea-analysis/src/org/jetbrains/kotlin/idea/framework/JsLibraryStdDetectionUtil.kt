@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
@@ -33,16 +34,16 @@ import java.util.jar.Attributes
 object JsLibraryStdDetectionUtil {
     private val IS_JS_LIBRARY_STD_LIB = Key.create<Boolean>("IS_JS_LIBRARY_STD_LIB")
 
-    fun hasJsStdlibJar(library: Library, ignoreKind: Boolean = false): Boolean {
+    fun hasJsStdlibJar(library: Library, project: Project, ignoreKind: Boolean = false): Boolean {
         if (library !is LibraryEx || library.isDisposed) return false
-        if (!ignoreKind && library.kind !is JSLibraryKind) return false
+        if (!ignoreKind && library.effectiveKind(project) !is JSLibraryKind) return false
 
         val classes = Arrays.asList(*library.getFiles(OrderRootType.CLASSES))
         return getJsStdLibJar(classes) != null
     }
 
-    fun getJsLibraryStdVersion(library: Library): String? {
-        if ((library as LibraryEx).kind !is JSLibraryKind) return null
+    fun getJsLibraryStdVersion(library: Library, project: Project): String? {
+        if ((library as LibraryEx).effectiveKind(project) !is JSLibraryKind) return null
         val jar = getJsStdLibJar(library.getFiles(OrderRootType.CLASSES).toList()) ?: return null
 
         return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION)

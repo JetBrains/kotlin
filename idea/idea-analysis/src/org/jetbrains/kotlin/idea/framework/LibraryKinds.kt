@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.framework
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties
@@ -31,19 +32,21 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.util.jar.Attributes
 import java.util.regex.Pattern
 
-object JSLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.js") {
+interface KotlinLibraryKind
+
+object JSLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.js"), KotlinLibraryKind {
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
-object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.common") {
+object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.common"), KotlinLibraryKind {
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
-fun getLibraryPlatform(library: Library): TargetPlatform {
+fun getLibraryPlatform(project: Project, library: Library): TargetPlatform {
     library as? LibraryEx ?: return JvmPlatform
     if (library.isDisposed) return JvmPlatform
 
-    return when (library.kind) {
+    return when (library.effectiveKind(project)) {
         JSLibraryKind -> JsPlatform
         CommonLibraryKind -> TargetPlatform.Common
         else -> JvmPlatform
