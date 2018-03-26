@@ -15,5 +15,5 @@ class SomeClass : SomeInterface {
         get() = true
         set(value) {}
 
-    var fau: Double
+    lateinit var fau: Double
 }

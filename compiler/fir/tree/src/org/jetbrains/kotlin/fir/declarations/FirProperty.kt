@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 interface FirProperty : @VisitedSupertype FirDeclaration, FirCallableMember, FirVariable {
     val isConst: Boolean
 
+    val isLateInit: Boolean
+
     // Should it be nullable or have some default?
     val getter: FirPropertyAccessor
 
