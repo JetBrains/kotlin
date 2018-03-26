@@ -53,6 +53,8 @@ messages/**)
 -dontwarn com.intellij.util.io.TarUtil
 -dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
 -dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
+-dontwarn org.apache.batik.anim.dom.**
+-dontwarn com.intellij.util.SVGLoader*
 
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
