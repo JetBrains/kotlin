@@ -21,7 +21,7 @@ import kotlin.script.experimental.jvm.mapToLegacyScriptReportPosition
 import kotlin.script.experimental.jvm.mapToLegacyScriptReportSeverity
 
 class BridgeDependenciesResolver(
-    val scriptConfigurator: ScriptConfigurator?,
+    val scriptConfigurator: ScriptCompilationConfigurator?,
     val baseScriptCompilerConfiguration: ScriptCompileConfiguration = scriptConfigurator.defaultConfiguration,
     val onClasspathUpdated: (List<File>) -> Unit = {}
 ) : AsyncDependenciesResolver {

@@ -25,12 +25,14 @@ inline fun myJvmConfig(
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
     val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
-    val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(MyScript::class)
+    val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(
+        ScriptingEnvironment(ScriptingEnvironmentParams.baseClass to MyScript::class)
+    )
 
     val host = JvmBasicScriptingHost(
-        scriptDefinition.configurator,
+        scriptDefinition.compilationConfigurator,
         scriptCompiler,
-        scriptDefinition.runner
+        scriptDefinition.evaluator
     )
 
     return host.eval(myJvmConfig { add(scriptFile.toScriptSource().toConfigEntry()) }, ScriptEvaluationEnvironment())

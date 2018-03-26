@@ -14,7 +14,7 @@ open class JvmScriptCompiler(
     val cache: CompiledJvmScriptsCache
 ) : ScriptCompiler {
 
-    override suspend fun compile(configuration: ScriptCompileConfiguration, configurator: ScriptConfigurator?): ResultWithDiagnostics<CompiledScript<*>> {
+    override suspend fun compile(configuration: ScriptCompileConfiguration, configurator: ScriptCompilationConfigurator?): ResultWithDiagnostics<CompiledScript<*>> {
         val refinedConfiguration = configurator?.refineConfiguration(configuration)?.let {
             when (it) {
                 is ResultWithDiagnostics.Failure -> return it
@@ -42,7 +42,7 @@ interface CompiledJvmScriptsCache {
 interface KJVMCompilerProxy {
     fun compile(
         scriptCompilerConfiguration: ScriptCompileConfiguration,
-        configurator: ScriptConfigurator?
+        configurator: ScriptCompilationConfigurator?
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 

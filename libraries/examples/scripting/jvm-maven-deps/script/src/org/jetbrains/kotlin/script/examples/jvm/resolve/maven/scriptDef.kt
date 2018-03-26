@@ -10,20 +10,18 @@ import org.jetbrains.kotlin.script.util.FilesAndMavenResolver
 import org.jetbrains.kotlin.script.util.Repository
 import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import java.io.File
-import kotlin.reflect.KClass
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
+import kotlin.script.experimental.annotations.KotlinScriptCompilationConfigurator
+import kotlin.script.experimental.annotations.KotlinScriptEvaluator
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.basic.DefaultScriptSelector
 import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.runners.BasicJvmScriptRunner
+import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
 
-@KotlinScript(
-    DefaultScriptSelector::class,
-    MyConfigurator::class,
-    BasicJvmScriptRunner::class
-)
+@KotlinScript
+@KotlinScriptCompilationConfigurator(MyConfigurator::class)
+@KotlinScriptEvaluator(BasicJvmScriptEvaluator::class)
 abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
@@ -44,12 +42,16 @@ inline fun myJvmConfig(
     body()
 }
 
-class MyConfigurator(val baseClass: KClass<Any>? = null) : ScriptConfigurator {
+class MyConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
 
     private val resolver = FilesAndMavenResolver()
 
-    override suspend fun baseConfiguration(scriptSource: ScriptSource?): ResultWithDiagnostics<ScriptCompileConfiguration> =
-        myJvmConfig { add(scriptSource.toConfigEntry()) }.asSuccess()
+    override val defaultConfiguration = myJvmConfig {
+        add(ScriptCompileConfigurationParams.baseClass to environment[ScriptingEnvironmentParams.baseClass])
+    }
+
+    override suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration> =
+        myJvmConfig(defaultConfiguration) { add(scriptSource.toConfigEntry()) }.asSuccess()
 
     override suspend fun refineConfiguration(
         configuration: ScriptCompileConfiguration,

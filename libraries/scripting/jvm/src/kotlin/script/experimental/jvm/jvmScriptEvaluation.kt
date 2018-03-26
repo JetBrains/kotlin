@@ -11,10 +11,10 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.BasicScriptingHost
 
 open class JvmBasicScriptingHost<ScriptBase : Any>(
-    configurationExtractor: ScriptConfigurator,
+    configurationExtractor: ScriptCompilationConfigurator,
     compiler: JvmScriptCompiler,
-    runner: ScriptRunner<ScriptBase>
-) : BasicScriptingHost<ScriptBase>(configurationExtractor, compiler, runner)
+    evaluator: ScriptEvaluator<ScriptBase>
+) : BasicScriptingHost<ScriptBase>(configurationExtractor, compiler, evaluator)
 
 class JvmScriptEvaluationEnvironmentParams : ScriptEvaluationEnvironmentParams() {
     companion object {

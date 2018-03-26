@@ -70,7 +70,7 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
 
     override fun compile(
         scriptCompilerConfiguration: ScriptCompileConfiguration,
-        configurator: ScriptConfigurator?
+        configurator: ScriptCompilationConfigurator?
     ): ResultWithDiagnostics<CompiledScript<*>> {
         val messageCollector = ScriptDiagnosticsMessageCollector()
 
@@ -238,7 +238,7 @@ class ScriptDiagnosticsMessageCollector : MessageCollector {
 
 internal class BridgeScriptDefinition(
     scriptCompilerConfiguration: ScriptCompileConfiguration,
-    scriptConfigurator: ScriptConfigurator?,
+    scriptConfigurator: ScriptCompilationConfigurator?,
     updateClasspath: (List<File>) -> Unit
 ) : KotlinScriptDefinition(scriptCompilerConfiguration[ScriptCompileConfigurationParams.scriptSignature].scriptBase as KClass<out Any>) {
     override val acceptedAnnotations =

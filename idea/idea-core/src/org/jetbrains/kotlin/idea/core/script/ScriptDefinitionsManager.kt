@@ -40,6 +40,8 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
+import kotlin.script.experimental.api.ScriptingEnvironment
+import kotlin.script.experimental.api.ScriptingEnvironmentParams
 import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
@@ -162,7 +164,9 @@ fun loadDefinitionsFromTemplates(
                     )
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
-                    KotlinScriptDefinitionAdapterFromNewAPI(ScriptDefinitionFromAnnotatedBaseClass(template))
+                    KotlinScriptDefinitionAdapterFromNewAPI(
+                        ScriptDefinitionFromAnnotatedBaseClass(ScriptingEnvironment(ScriptingEnvironmentParams.baseClass to template))
+                    )
                 }
                 else -> {
                     LOG.error("[kts] cannot find a valid script definition annotation on the class $template")

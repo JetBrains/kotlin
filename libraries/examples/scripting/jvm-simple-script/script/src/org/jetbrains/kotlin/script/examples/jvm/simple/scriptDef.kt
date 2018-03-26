@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.script.examples.jvm.simple
 
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.basic.DefaultScriptSelector
-import kotlin.script.experimental.basic.PassThroughConfigurator
-import kotlin.script.experimental.jvm.runners.BasicJvmScriptRunner
+import kotlin.script.experimental.annotations.KotlinScriptEvaluator
+import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
 
-@KotlinScript(DefaultScriptSelector::class, PassThroughConfigurator::class, BasicJvmScriptRunner::class)
+@KotlinScript
+@KotlinScriptEvaluator(BasicJvmScriptEvaluator::class)
 abstract class MyScript {
 //    abstract fun body(vararg args: String): Int
 }

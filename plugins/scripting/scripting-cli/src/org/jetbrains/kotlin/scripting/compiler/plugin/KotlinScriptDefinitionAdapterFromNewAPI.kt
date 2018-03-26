@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.fileTypes.LanguageFileType
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -16,13 +15,14 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.ScriptCompileConfigurationParams
 import kotlin.script.experimental.api.ScriptDefinition
-import kotlin.script.experimental.api.resultOrNull
+import kotlin.script.experimental.api.ScriptDefinitionProperties
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 
-class KotlinScriptDefinitionAdapterFromNewAPI(val scriptDefinition: ScriptDefinition) : KotlinScriptDefinition(scriptDefinition.baseClass) {
+class KotlinScriptDefinitionAdapterFromNewAPI(val scriptDefinition: ScriptDefinition) :
+    KotlinScriptDefinition(scriptDefinition.compilationConfigurator.defaultConfiguration[ScriptCompileConfigurationParams.baseClass]) {
 
-    override val name: String get() = scriptDefinition.selector.name
+    override val name: String get() = scriptDefinition.properties[ScriptDefinitionProperties.name]
 
     // TODO: consider creating separate type (subtype? for kotlin scripts)
     override val fileType: LanguageFileType = KotlinFileType.INSTANCE
@@ -30,29 +30,28 @@ class KotlinScriptDefinitionAdapterFromNewAPI(val scriptDefinition: ScriptDefini
     override val annotationsForSamWithReceivers: List<String>
         get() = emptyList()
 
+    private val scriptFileExtensionWithDot =
+        "." + (scriptDefinition.properties.getOrNull(ScriptDefinitionProperties.fileExtension) ?: "kts")
+
     override fun isScript(fileName: String): Boolean =
-        fileName.endsWith("." + scriptDefinition.selector.fileExtension)
+        fileName.endsWith(scriptFileExtensionWithDot)
 
     override fun getScriptName(script: KtScript): Name {
         val fileBasedName = NameUtils.getScriptNameForFile(script.containingKtFile.name)
-        return Name.identifier(scriptDefinition.selector.makeScriptName(fileBasedName.identifier))
+        return Name.identifier(fileBasedName.identifier.removeSuffix(scriptFileExtensionWithDot))
     }
 
     override val dependencyResolver: DependenciesResolver by lazy {
-        BridgeDependenciesResolver(scriptDefinition.configurator)
+        BridgeDependenciesResolver(scriptDefinition.compilationConfigurator)
     }
 
     override val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
-        runBlocking {
-            scriptDefinition.configurator.baseConfiguration(null)
-        }.resultOrNull()?.getOrNull(ScriptCompileConfigurationParams.updateConfigurationOnAnnotations)?.toList()
-        ?: emptyList()
+        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationParams.updateConfigurationOnAnnotations)?.toList()
+                ?: emptyList()
     }
 
     override val implicitReceivers: List<KType> by lazy {
-        runBlocking {
-            scriptDefinition.configurator.baseConfiguration(null)
-        }.resultOrNull()?.getOrNull(ScriptCompileConfigurationParams.scriptSignature)?.providedDeclarations?.implicitReceivers
+        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationParams.scriptSignature)?.providedDeclarations?.implicitReceivers
                 ?: emptyList()
     }
 }

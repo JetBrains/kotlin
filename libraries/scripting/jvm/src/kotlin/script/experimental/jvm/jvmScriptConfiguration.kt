@@ -19,5 +19,5 @@ inline fun jvmConfigWithJavaHome(
         body()
     }
 
-val ScriptConfigurator?.defaultConfiguration: ScriptCompileConfiguration
-    get() = this?.let { runBlocking { baseConfiguration(null) } }?.resultOrNull() ?: ScriptCompileConfiguration()
+val ScriptCompilationConfigurator?.defaultConfiguration: ScriptCompileConfiguration
+    get() = this?.let { runBlocking { defaultConfiguration } } ?: ScriptCompileConfiguration()

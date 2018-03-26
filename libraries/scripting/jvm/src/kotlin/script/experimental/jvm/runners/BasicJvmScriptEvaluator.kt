@@ -5,12 +5,11 @@
 
 package kotlin.script.experimental.jvm.runners
 
-import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 
-open class BasicJvmScriptRunner<ScriptBase : Any>(val baseClass: KClass<ScriptBase>? = null) : ScriptRunner<ScriptBase> {
+open class BasicJvmScriptEvaluator<ScriptBase : Any>(val environment: ScriptingEnvironment) : ScriptEvaluator<ScriptBase> {
 
-    override suspend fun run(
+    override suspend fun eval(
         compiledScript: CompiledScript<ScriptBase>,
         scriptEvaluationEnvironment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult> =
