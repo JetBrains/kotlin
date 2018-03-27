@@ -2565,6 +2565,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("methodArgument.kt")
+        public void testMethodArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/methodArgument.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notCompanion.kt")
         public void testNotCompanion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/notCompanion.kt");
