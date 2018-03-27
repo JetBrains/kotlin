@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.buildExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -55,6 +52,8 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
 
     override fun isApplicable(element: KtDotQualifiedExpression): Boolean {
         val callExpression = element.callExpression ?: return false
+        val calleeName = (callExpression.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
+        if (calleeName !in operatorNames) return false
         val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return false
         if (!resolvedCall.isReallySuccess()) return false
