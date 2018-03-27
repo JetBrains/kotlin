@@ -17,6 +17,8 @@ Cleaning output files:
   out/production/module2/b/BKt.class
 End of files
 Building module2
+Marked as dirty by Kotlin:
+  module2/src/useClassB.kt
 Cleaning output files:
   out/production/module2/usage/UseClassBKt.class
   out/production/module2/usage/UseFunBKt.class
