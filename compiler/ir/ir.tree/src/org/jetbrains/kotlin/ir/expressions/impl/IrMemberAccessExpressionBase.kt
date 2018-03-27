@@ -38,10 +38,17 @@ abstract class IrMemberAccessExpressionBase(
 
     private val typeArgumentsByIndex = arrayOfNulls<KotlinType>(typeArgumentsCount)
 
-    override fun getTypeArgument(index: Int): KotlinType? =
-        typeArgumentsByIndex[index]
+    override fun getTypeArgument(index: Int): KotlinType? {
+        if (index >= typeArgumentsCount) {
+            throw AssertionError("$this: No such type argument slot: $index")
+        }
+        return typeArgumentsByIndex[index]
+    }
 
     override fun putTypeArgument(index: Int, type: KotlinType?) {
+        if (index >= typeArgumentsCount) {
+            throw AssertionError("$this: No such type argument slot: $index")
+        }
         typeArgumentsByIndex[index] = type
     }
 

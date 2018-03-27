@@ -45,9 +45,12 @@ abstract class IrPrimitiveCallBase(
 
     override val typeArgumentsCount: Int = 0
 
-    override fun getTypeArgument(index: Int): KotlinType? = null
+    override fun getTypeArgument(index: Int): KotlinType? =
+        throw AssertionError("Primitive $descriptor has no type arguments")
 
-    override fun putTypeArgument(index: Int, type: KotlinType?) {}
+    override fun putTypeArgument(index: Int, type: KotlinType?) {
+        throw AssertionError("Primitive $descriptor has no type arguments")
+    }
 
     override var dispatchReceiver: IrExpression?
         get() = null

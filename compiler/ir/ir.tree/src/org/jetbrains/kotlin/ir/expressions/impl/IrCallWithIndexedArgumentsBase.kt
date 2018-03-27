@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
-import java.lang.AssertionError
 
 abstract class IrCallWithIndexedArgumentsBase(
     startOffset: Int,
@@ -36,15 +35,15 @@ abstract class IrCallWithIndexedArgumentsBase(
     private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
 
     override fun getValueArgument(index: Int): IrExpression? {
-        if (index >= argumentsByParameterIndex.size) {
-            throw AssertionError("$this: No such argument slot: $index in ${render()}")
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
         }
         return argumentsByParameterIndex[index]
     }
 
     override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
-        if (index >= argumentsByParameterIndex.size) {
-            throw AssertionError("$this: No such argument slot: $index in ${render()}")
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
         }
         argumentsByParameterIndex[index] = valueArgument
     }
