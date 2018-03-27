@@ -642,6 +642,18 @@ fun main(args: Array<String>) {
             model("multiModuleQuickFix", recursive = false, extension = null)
         }
 
+        testClass<AbstractKotlinGotoImplementationMultiModuleTest> {
+            model("navigation/implementations/multiModule", recursive = false, extension = null)
+        }
+
+        testClass<AbstractKotlinGotoRelatedSymbolMultiModuleTest> {
+            model("navigation/relatedSymbols/multiModule", recursive = false, extension = null)
+        }
+
+        testClass<AbstractKotlinGotoSuperMultiModuleTest> {
+            model("navigation/gotoSuper/multiModule", recursive = false, extension = null)
+        }
+
         testClass<AbstractExtractionTest> {
             model("refactoring/introduceVariable", pattern = KT_OR_KTS, testMethod = "doIntroduceVariableTest")
             model("refactoring/extractFunction", pattern = KT_OR_KTS, testMethod = "doExtractFunctionTest")
