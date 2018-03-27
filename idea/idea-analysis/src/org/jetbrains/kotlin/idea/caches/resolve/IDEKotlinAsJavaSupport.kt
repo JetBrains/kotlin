@@ -173,7 +173,9 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
     override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         if (fqName.isRoot) return emptyList()
 
-        return findPackageParts(fqName, scope) + findPlatformWrapper(fqName, scope)
+        val packageParts = findPackageParts(fqName, scope)
+        val platformWrapper = findPlatformWrapper(fqName, scope)
+        return if (platformWrapper != null) packageParts + platformWrapper else packageParts
     }
 
     private fun findPackageParts(fqName: FqName, scope: GlobalSearchScope): List<KtLightClassForDecompiledDeclaration> {
@@ -193,12 +195,12 @@ class IDEKotlinAsJavaSupport(private val project: Project): KotlinAsJavaSupport(
         }
     }
 
-    private fun findPlatformWrapper(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+    private fun findPlatformWrapper(fqName: FqName, scope: GlobalSearchScope): PsiClass? {
         return platformMutabilityWrapper(fqName) {
             JavaPsiFacade.getInstance(
                 project
             ).findClass(it, scope)
-        }?.let { listOf(it) }.orEmpty()
+        }
     }
 
     fun createLightClassForFileFacade(
