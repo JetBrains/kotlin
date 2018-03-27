@@ -2,9 +2,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 description = "Kotlin Scripting Compiler Plugin for Gradle"
 
-apply { plugin("kotlin") }
-
 plugins {
+    kotlin("jvm")
     id("com.gradle.plugin-publish")
     `java-gradle-plugin`
 }

@@ -1,8 +1,8 @@
 
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 
-apply {
-    plugin("kotlin")
+plugins {
+    kotlin("jvm")
 }
 
 jvmTarget = "1.6"

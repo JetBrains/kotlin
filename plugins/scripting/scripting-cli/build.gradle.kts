@@ -1,7 +1,9 @@
 
 description = "Kotlin Scripting Compiler Plugin"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 dependencies {
     compileOnly(project(":compiler:frontend"))

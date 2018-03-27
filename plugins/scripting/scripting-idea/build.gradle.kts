@@ -1,7 +1,9 @@
 
 description = "Kotlin Scripting IDEA Plugin"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 dependencies {
     compile(project(":kotlin-scripting-compiler"))
