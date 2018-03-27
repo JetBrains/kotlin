@@ -20,12 +20,14 @@ import java.io.Serializable
 
 abstract class CommonToolArguments : Freezable(), Serializable {
     companion object {
-        @JvmStatic private val serialVersionUID = 0L
+        @JvmStatic
+        private val serialVersionUID = 0L
     }
 
     var freeArgs: List<String> by FreezableVar(emptyList())
 
-    @Transient var errors: ArgumentParseErrors = ArgumentParseErrors()
+    @Transient
+    var errors: ArgumentParseErrors = ArgumentParseErrors()
 
     @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options")
     var help: Boolean by FreezableVar(false)
