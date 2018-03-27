@@ -53,11 +53,11 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
             val konanTarget = project.hostManager.targetByName(targetName)
 
             if (!project.hostManager.isEnabled(konanTarget)) {
-                project.logger.warn("The target is not enabled on the current host: $targetName")
+                project.logger.info("The target is not enabled on the current host: $targetName")
                 continue
             }
             if (!targetIsSupported(konanTarget)) {
-                project.logger.warn("The target ${targetName} is not supported by the artifact $name")
+                project.logger.info("The target ${targetName} is not supported by the artifact $name")
                 continue
             }
             if (this[konanTarget] == null) super.add(createTask(konanTarget))
@@ -174,7 +174,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
         val target = project.hostManager.targetByName(targetString)
 
         if (!project.hostManager.isEnabled(target)) {
-            project.logger.warn("Target '$targetString' of artifact '$name' is not supported on the current host")
+            project.logger.info("Target '$targetString' of artifact '$name' is not supported on the current host")
             return
         }
 
