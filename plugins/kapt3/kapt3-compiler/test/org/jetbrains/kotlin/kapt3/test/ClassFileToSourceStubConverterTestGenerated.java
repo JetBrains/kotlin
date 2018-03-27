@@ -67,6 +67,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("cyrillicClassName.kt")
+    public void testCyrillicClassName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/cyrillicClassName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/dataClass.kt");

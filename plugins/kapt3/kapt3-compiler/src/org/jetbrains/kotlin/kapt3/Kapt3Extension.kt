@@ -23,6 +23,7 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.Pretty
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
+import com.sun.tools.javac.util.Convert
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import java.io.File
+import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
 import java.net.URLClassLoader
@@ -367,9 +369,13 @@ internal fun JCTree.prettyPrint(context: Context): String {
     return StringWriter().apply { PrettyWithWorkarounds(context, this, false).printStat(this@prettyPrint) }.toString()
 }
 
-private class PrettyWithWorkarounds(private val context: Context, out: Writer?, sourceOutput: Boolean) : Pretty(out, sourceOutput) {
+private class PrettyWithWorkarounds(private val context: Context, val out: Writer, sourceOutput: Boolean) : Pretty(out, sourceOutput) {
     companion object {
-        private val ENUM = Flags.ENUM.toLong()
+        private const val ENUM = Flags.ENUM.toLong()
+    }
+
+    override fun print(s: Any) {
+        out.write(s.toString())
     }
 
     override fun visitVarDef(tree: JCTree.JCVariableDecl) {
