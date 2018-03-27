@@ -11,7 +11,5 @@ object ScriptingEnvironmentProperties {
 
     // required by definitions that extract data from script base class annotations
     val baseClass by typedKey<KClass<*>>()
-
-    open class Builder(parentBuilder: PropertyBagBuilder? = null) : PropertyBagBuilder(parentBuilder)
 }
 

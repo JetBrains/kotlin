@@ -30,11 +30,5 @@ object ScriptCompileConfigurationParams {
     val updateConfigurationOnAnnotations by typedKey<Iterable<KClass<out Annotation>>>()
 
     val updateConfigurationOnSections by typedKey<Iterable<String>>()
-
-    open class Builder(parentBuilder: PropertyBagBuilder? = null) : PropertyBagBuilder(parentBuilder) {
-        inline fun <reified T> signature(providedDeclarations: ProvidedDeclarations = ProvidedDeclarations.Empty) {
-            add(scriptSignature to ScriptSignature(T::class, providedDeclarations))
-        }
-    }
 }
 

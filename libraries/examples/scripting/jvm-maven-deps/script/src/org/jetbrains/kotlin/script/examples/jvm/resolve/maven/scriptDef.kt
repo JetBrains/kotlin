@@ -18,6 +18,7 @@ import kotlin.script.experimental.annotations.KotlinScriptEvaluator
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
+import kotlin.script.experimental.misc.*
 
 @KotlinScript
 @KotlinScriptCompilationConfigurator(MyConfigurator::class)
@@ -26,32 +27,30 @@ abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
-inline fun myJvmConfig(
-    from: ChainedPropertyBag = ChainedPropertyBag(),
-    crossinline body: JvmScriptCompileConfigurationParams.Builder.() -> Unit = {}
-) = jvmConfigWithJavaHome(from) {
-    signature<MyScriptWithMavenDeps>()
-    ScriptCompileConfigurationParams.importedPackages(listOf(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!))
-    dependencies(
-        scriptCompilationClasspathFromContext(
-            "script", // script library jar name
-            "kotlin-script-util" // DependsOn annotation is taken from script-util
-        )
+val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationParams) {
+    listOf(
+        scriptSignature to ScriptSignature(MyScriptWithMavenDeps::class, ProvidedDeclarations()),
+        importedPackages(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
+        dependencies(
+            JvmDependency(
+                scriptCompilationClasspathFromContext(
+                    "script", // script library jar name
+                    "kotlin-script-util" // DependsOn annotation is taken from script-util
+                )
+            )
+        ),
+        updateConfigurationOnAnnotations(DependsOn::class, Repository::class)
     )
-    ScriptCompileConfigurationParams.updateConfigurationOnAnnotations(listOf(DependsOn::class, Repository::class))
-    body()
 }
 
 class MyConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationConfigurator {
 
     private val resolver = FilesAndMavenResolver()
 
-    override val defaultConfiguration = myJvmConfig {
-        add(ScriptCompileConfigurationParams.baseClass to environment[ScriptingEnvironmentProperties.baseClass])
-    }
+    override val defaultConfiguration = ChainedPropertyBag(environment, myJvmConfigParams)
 
     override suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration> =
-        myJvmConfig(defaultConfiguration) { add(scriptSource.toConfigEntry()) }.asSuccess()
+        defaultConfiguration.asSuccess()
 
     override suspend fun refineConfiguration(
         configuration: ScriptCompileConfiguration,
@@ -76,7 +75,7 @@ class MyConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationCon
             val newDependency = JvmDependency(resolvedClasspath)
             val updatedDeps =
                 configuration.getOrNull(ScriptCompileConfigurationParams.dependencies)?.plus(newDependency) ?: listOf(newDependency)
-            configuration.cloneWith(ScriptCompileConfigurationParams.dependencies to updatedDeps).asSuccess(diagnostics)
+            ChainedPropertyBag(configuration, ScriptCompileConfigurationParams.dependencies(updatedDeps)).asSuccess(diagnostics)
         } catch (e: Throwable) {
             ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())
         }

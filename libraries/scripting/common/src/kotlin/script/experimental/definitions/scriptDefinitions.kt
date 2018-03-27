@@ -35,7 +35,7 @@ open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ChainedProper
         if (properties.getOrNull(ScriptDefinitionProperties.name) == null) {
             toAdd += ScriptDefinitionProperties.name to baseClass.simpleName!!
         }
-        properties.cloneWith(toAdd)
+        ChainedPropertyBag(properties, toAdd)
     }
 
     override val compilationConfigurator =

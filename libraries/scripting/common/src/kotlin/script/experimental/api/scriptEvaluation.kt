@@ -7,20 +7,15 @@
 
 package kotlin.script.experimental.api
 
-open class ScriptEvaluationEnvironmentParams : PropertyBagBuilder() {
-    companion object {
-        val implicitReceivers by typedKey<List<Any>>()
+object ScriptEvaluationEnvironmentParams {
+    val implicitReceivers by typedKey<List<Any>>()
 
-        val contextVariables by typedKey<Map<String, Any?>>() // external variables
+    val contextVariables by typedKey<Map<String, Any?>>() // external variables
 
-        val constructorArgs by typedKey<List<Any?>>()
+    val constructorArgs by typedKey<List<Any?>>()
 
-        val runArgs by typedKey<List<Any?>>()
-    }
+    val runArgs by typedKey<List<Any?>>()
 }
-
-inline fun scriptEvaluationEnvironment(from: ChainedPropertyBag = ChainedPropertyBag(), body: ScriptEvaluationEnvironmentParams.() -> Unit) =
-    ScriptEvaluationEnvironmentParams().build(from, body)
 
 typealias ScriptEvaluationEnvironment = ChainedPropertyBag
 

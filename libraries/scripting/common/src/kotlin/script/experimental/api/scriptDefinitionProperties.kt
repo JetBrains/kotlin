@@ -7,12 +7,10 @@
 
 package kotlin.script.experimental.api
 
-object ScriptDefinitionProperties : PropertiesBase<ScriptDefinitionProperties>() {
+object ScriptDefinitionProperties {
 
     val name by typedKey<String>()
 
     val fileExtension by typedKey<String>()
-
-    open class Builder(parentBuilder: PropertyBagBuilder? = null) : PropertyBagBuilder(parentBuilder)
 }
 

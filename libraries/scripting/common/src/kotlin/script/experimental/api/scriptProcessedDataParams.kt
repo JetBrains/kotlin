@@ -5,13 +5,8 @@
 
 package kotlin.script.experimental.api
 
-class ProcessedScriptDataParams : PropertyBagBuilder() {
-    companion object {
-        val annotations by typedKey<Iterable<Annotation>>()
+object ProcessedScriptDataParams {
+    val annotations by typedKey<Iterable<Annotation>>()
 
-        val fragments by typedKey<Iterable<ScriptSourceNamedFragment>>()
-    }
+    val fragments by typedKey<Iterable<ScriptSourceNamedFragment>>()
 }
-
-inline fun processedScriptData(from: ChainedPropertyBag = ChainedPropertyBag(), body: ProcessedScriptDataParams.() -> Unit) =
-    ProcessedScriptDataParams().build(from, body)

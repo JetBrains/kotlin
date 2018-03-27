@@ -38,7 +38,8 @@ class BridgeDependenciesResolver(
             val processedScriptData =
                 ProcessedScriptData(ProcessedScriptDataParams.annotations to scriptContents.annotations)
 
-            val scriptCompilerConfiguration = baseScriptCompilerConfiguration.cloneWith(
+            val scriptCompilerConfiguration = ChainedPropertyBag(
+                baseScriptCompilerConfiguration,
                 ScriptCompileConfigurationParams.scriptSourceFragments to scriptContents.toScriptSourceFragments()
             )
 

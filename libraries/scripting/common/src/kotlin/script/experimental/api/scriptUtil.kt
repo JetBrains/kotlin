@@ -6,7 +6,6 @@
 package kotlin.script.experimental.api
 
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.primaryConstructor
 
 data class TypedKey<T>(val name: String)
 
@@ -16,41 +15,23 @@ class TypedKeyDelegate<T> {
 
 fun <T> typedKey() = TypedKeyDelegate<T>()
 
-class ChainedPropertyBag(private val parent: ChainedPropertyBag? = null, private val data: Map<TypedKey<*>, Any?> = hashMapOf()) {
-    constructor(data: Map<TypedKey<*>, Any?>) : this(null, data)
-    constructor(parent: ChainedPropertyBag?, pairs: Iterable<Pair<TypedKey<*>, Any?>>) : this(
-        parent,
-        HashMap<TypedKey<*>, Any?>().also {
-            it.putAll(pairs)
-        })
+class ChainedPropertyBag(private val parent: ChainedPropertyBag? = null, pairs: Iterable<Pair<TypedKey<*>, Any?>>) {
+    constructor(parent: ChainedPropertyBag, vararg pairs: Pair<TypedKey<*>, Any?>) : this(parent, pairs.asIterable())
+    constructor(vararg pairs: Pair<TypedKey<*>, Any?>) : this(null, pairs.asIterable())
 
-    constructor(parent: ChainedPropertyBag?, vararg pairs: Pair<TypedKey<*>, Any?>) : this(parent, hashMapOf(*pairs))
+    private val data = HashMap<TypedKey<*>, Any?>().also { it.putAll(pairs) }
 
-    operator fun <T> get(key: TypedKey<T>): T =
+    inline operator fun <reified T> get(key: TypedKey<T>): T = getUnchecked(key) as T
+
+    fun <T> getUnchecked(key: TypedKey<T>): Any? =
         when {
-            data.containsKey(key) -> data[key] as T
-            parent != null -> parent[key]
+            data.containsKey(key) -> data[key]
+            parent != null -> parent.getUnchecked(key)
             else -> throw IllegalArgumentException("Unknown key $key")
         }
 
-    fun <T> getOrNull(key: TypedKey<T>): T? = data[key] as T? ?: parent?.getOrNull(key)
+    inline fun <reified T> getOrNull(key: TypedKey<T>): T? = getOrNullUnchecked(key)?.let { it as T }
+
+    fun <T> getOrNullUnchecked(key: TypedKey<T>): Any? = data[key] ?: parent?.getOrNullUnchecked(key)
 }
 
-open class PropertyBagBuilder(private val parentBuilder: PropertyBagBuilder? = null) {
-    val pairs: MutableList<Pair<TypedKey<*>, Any?>> = arrayListOf()
-
-    open operator fun <T> TypedKey<T>.invoke(v: T) {
-        pairs.add(this to v)
-    }
-
-    fun add(pair: Pair<TypedKey<*>, Any?>) {
-        pairs.add(pair)
-    }
-
-    fun getAllPairs() = if (parentBuilder == null) pairs else parentBuilder.pairs + pairs
-}
-
-inline fun <T : PropertyBagBuilder> T.build(parent: ChainedPropertyBag? = null, body: T.() -> Unit): ChainedPropertyBag {
-    body()
-    return ChainedPropertyBag(parent, getAllPairs())
-}

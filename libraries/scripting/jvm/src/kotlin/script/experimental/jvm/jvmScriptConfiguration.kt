@@ -8,16 +8,10 @@ package kotlin.script.experimental.jvm
 import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.*
 import java.io.File
-import kotlin.script.experimental.jvm.JvmScriptCompileConfigurationParams.javaHomeDir
 
-inline fun jvmConfigWithJavaHome(
-    from: ChainedPropertyBag = ChainedPropertyBag(),
-    crossinline body: JvmScriptCompileConfigurationParams.Builder.() -> Unit = {}
-) =
-    jvmScriptConfiguration(from) {
-        javaHomeDir(File(System.getProperty("java.home")))
-        body()
-    }
+val jvmJavaHomeParams = with(JvmScriptCompileConfigurationParams) {
+    listOf(javaHomeDir to File(System.getProperty("java.home")))
+}
 
 val ScriptCompilationConfigurator?.defaultConfiguration: ScriptCompileConfiguration
     get() = this?.let { runBlocking { defaultConfiguration } } ?: ScriptCompileConfiguration()

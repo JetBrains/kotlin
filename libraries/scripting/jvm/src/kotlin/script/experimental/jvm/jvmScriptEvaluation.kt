@@ -7,7 +7,9 @@
 
 package kotlin.script.experimental.jvm
 
-import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.ScriptCompilationConfigurator
+import kotlin.script.experimental.api.ScriptEvaluator
+import kotlin.script.experimental.api.typedKey
 import kotlin.script.experimental.host.BasicScriptingHost
 
 open class JvmBasicScriptingHost<ScriptBase : Any>(
@@ -16,11 +18,6 @@ open class JvmBasicScriptingHost<ScriptBase : Any>(
     evaluator: ScriptEvaluator<ScriptBase>
 ) : BasicScriptingHost<ScriptBase>(configurationExtractor, compiler, evaluator)
 
-class JvmScriptEvaluationEnvironmentParams : ScriptEvaluationEnvironmentParams() {
-    companion object {
-        val baseClassLoader by typedKey<ClassLoader?>()
-    }
+object JvmScriptEvaluationEnvironmentParams {
+    val baseClassLoader by typedKey<ClassLoader?>()
 }
-
-inline fun jvmScriptEvaluationEnvironment(from: ChainedPropertyBag = ChainedPropertyBag(), body: JvmScriptEvaluationEnvironmentParams.() -> Unit) =
-    JvmScriptEvaluationEnvironmentParams().build(from, body)

@@ -87,7 +87,8 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
                 val updatedDeps = updatedScriptCompileConfiguration.getOrNull(ScriptCompileConfigurationParams.dependencies)?.plus(
                     JvmDependency(classpath)
                 ) ?: listOf(JvmDependency(classpath))
-                updatedScriptCompileConfiguration = updatedScriptCompileConfiguration.cloneWith(
+                updatedScriptCompileConfiguration = ChainedPropertyBag(
+                    updatedScriptCompileConfiguration,
                     ScriptCompileConfigurationParams.dependencies to updatedDeps
                 )
             }
