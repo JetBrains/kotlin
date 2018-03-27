@@ -24,19 +24,19 @@ import kotlin.reflect.full.memberProperties
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class Argument(
-        val value: String,
-        val shortName: String = "",
-        val deprecatedName: String = "",
-        val delimiter: String = ",",
-        val valueDescription: String = "",
-        val description: String
+    val value: String,
+    val shortName: String = "",
+    val deprecatedName: String = "",
+    val delimiter: String = ",",
+    val valueDescription: String = "",
+    val description: String
 )
 
 val Argument.isAdvanced: Boolean
     get() = value.startsWith(ADVANCED_ARGUMENT_PREFIX) && value.length > ADVANCED_ARGUMENT_PREFIX.length
 
-private val ADVANCED_ARGUMENT_PREFIX = "-X"
-private val FREE_ARGS_DELIMITER = "--"
+private const val ADVANCED_ARGUMENT_PREFIX = "-X"
+private const val FREE_ARGS_DELIMITER = "--"
 
 data class ArgumentParseErrors(
     val unknownArgs: MutableList<String> = SmartList<String>(),
@@ -90,7 +90,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
                 return true
             }
 
-            if (deprecatedName != null && arg.startsWith(deprecatedName + "=")) {
+            if (deprecatedName != null && arg.startsWith("$deprecatedName=")) {
                 errors.deprecatedArguments[deprecatedName] = argument.value
                 return true
             }
@@ -145,8 +145,9 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
         }
 
         if ((argumentField.property.returnType.classifier as? KClass<*>)?.java?.isArray == false
-            && !visitedArgs.add(argument.value) && value is String && property.get(result) != value) {
-            errors.duplicateArguments.put(argument.value, value)
+            && !visitedArgs.add(argument.value) && value is String && property.get(result) != value
+        ) {
+            errors.duplicateArguments[argument.value] = value
         }
 
         updateField(property, result, value, argument.delimiter)
