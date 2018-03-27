@@ -42,7 +42,7 @@ object CreateFunctionFromCallableReferenceActionFactory : CreateCallableMemberFr
     override fun extractFixData(element: KtCallableReferenceExpression, diagnostic: Diagnostic): List<CallableInfo> {
         val name = element.callableReference.getReferencedName()
         val resolutionFacade = element.getResolutionFacade()
-        val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
+        val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL_WITH_CFA)
         return element
                 .guessTypes(context, resolutionFacade.moduleDescriptor)
                 .ifEmpty { element.guessTypes(context, resolutionFacade.moduleDescriptor, allowErrorTypes = true) } // approximate with Any

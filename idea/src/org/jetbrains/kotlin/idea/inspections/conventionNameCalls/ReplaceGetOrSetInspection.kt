@@ -55,7 +55,7 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
 
     override fun isApplicable(element: KtDotQualifiedExpression): Boolean {
         val callExpression = element.callExpression ?: return false
-        val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return false
         if (!resolvedCall.isReallySuccess()) return false
 

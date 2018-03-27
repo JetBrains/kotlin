@@ -61,7 +61,7 @@ class SurroundWithNullCheckFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.psiElement
             val expressionParent = element.getParentOfType<KtExpression>(strict = element is KtOperationReferenceExpression) ?: return null
-            val context = expressionParent.analyze(BodyResolveMode.PARTIAL)
+            val context = expressionParent.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
 
             val parent = element.parent
             val nullableExpression =

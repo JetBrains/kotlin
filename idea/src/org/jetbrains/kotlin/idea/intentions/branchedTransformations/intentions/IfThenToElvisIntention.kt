@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
         IfThenToElvisIntention::class,
-        { it -> it.isUsedAsExpression(it.analyze(BodyResolveMode.PARTIAL)) }
+        { it -> it.isUsedAsExpression(it.analyze(BodyResolveMode.PARTIAL_WITH_CFA)) }
 ) {
     override fun inspectionTarget(element: KtIfExpression) = element.ifKeyword
 
