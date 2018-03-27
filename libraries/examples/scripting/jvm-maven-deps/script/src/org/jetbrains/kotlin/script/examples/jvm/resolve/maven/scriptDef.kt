@@ -27,7 +27,7 @@ abstract class MyScriptWithMavenDeps {
 }
 
 inline fun myJvmConfig(
-    from: HeterogeneousMap = HeterogeneousMap(),
+    from: ChainedPropertyBag = ChainedPropertyBag(),
     crossinline body: JvmScriptCompileConfigurationParams.Builder.() -> Unit = {}
 ) = jvmConfigWithJavaHome(from) {
     signature<MyScriptWithMavenDeps>()
@@ -42,12 +42,12 @@ inline fun myJvmConfig(
     body()
 }
 
-class MyConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
+class MyConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationConfigurator {
 
     private val resolver = FilesAndMavenResolver()
 
     override val defaultConfiguration = myJvmConfig {
-        add(ScriptCompileConfigurationParams.baseClass to environment[ScriptingEnvironmentParams.baseClass])
+        add(ScriptCompileConfigurationParams.baseClass to environment[ScriptingEnvironmentProperties.baseClass])
     }
 
     override suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration> =

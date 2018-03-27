@@ -7,22 +7,12 @@
 
 package kotlin.script.experimental.api
 
-
-typealias ScriptDefinitionPropertiesBag = HeterogeneousMap
-
-
-object ScriptDefinitionProperties {
+object ScriptDefinitionProperties : PropertiesBase<ScriptDefinitionProperties>() {
 
     val name by typedKey<String>()
 
     val fileExtension by typedKey<String>()
 
-    val makeTitle by typedKey<(String) -> String>()
-
-    open class Builder : HeterogeneousMapBuilder() {
-        inline fun <reified T> makeTitle(noinline fn: (String) -> String) {
-            add(makeTitle to fn)
-        }
-    }
+    open class Builder(parentBuilder: PropertyBagBuilder? = null) : PropertyBagBuilder(parentBuilder)
 }
 

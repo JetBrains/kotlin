@@ -10,9 +10,9 @@ package kotlin.script.experimental.api
 
 interface ScriptDefinition {
 
-    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
+    // constructor(environment: ChainedPropertyBag) // the constructor is expected from implementations
 
-    val properties: ScriptDefinitionPropertiesBag
+    val properties: ChainedPropertyBag
 
     val compilationConfigurator: ScriptCompilationConfigurator
 

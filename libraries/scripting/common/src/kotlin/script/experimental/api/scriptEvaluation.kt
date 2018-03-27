@@ -7,7 +7,7 @@
 
 package kotlin.script.experimental.api
 
-open class ScriptEvaluationEnvironmentParams : HeterogeneousMapBuilder() {
+open class ScriptEvaluationEnvironmentParams : PropertyBagBuilder() {
     companion object {
         val implicitReceivers by typedKey<List<Any>>()
 
@@ -19,17 +19,17 @@ open class ScriptEvaluationEnvironmentParams : HeterogeneousMapBuilder() {
     }
 }
 
-inline fun scriptEvaluationEnvironment(from: HeterogeneousMap = HeterogeneousMap(), body: ScriptEvaluationEnvironmentParams.() -> Unit) =
+inline fun scriptEvaluationEnvironment(from: ChainedPropertyBag = ChainedPropertyBag(), body: ScriptEvaluationEnvironmentParams.() -> Unit) =
     ScriptEvaluationEnvironmentParams().build(from, body)
 
-typealias ScriptEvaluationEnvironment = HeterogeneousMap
+typealias ScriptEvaluationEnvironment = ChainedPropertyBag
 
 data class EvaluationResult(val returnValue: Any?, val environment: ScriptEvaluationEnvironment)
 
 // NOTE: name inconsistency: run vs evaluate
 interface ScriptEvaluator<in ScriptBase : Any> {
 
-    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
+    // constructor(environment: ChainedPropertyBag) // the constructor is expected from implementations
 
     suspend fun eval(
         compiledScript: CompiledScript<ScriptBase>,

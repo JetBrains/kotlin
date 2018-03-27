@@ -18,9 +18,9 @@ import kotlin.script.experimental.basic.PassThroughCompilationConfigurator
 
 private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 
-open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ScriptingEnvironment) : ScriptDefinition {
+open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ChainedPropertyBag) : ScriptDefinition {
 
-    private val baseClass: KClass<*> = environment.getOrNull(ScriptingEnvironmentParams.baseClass)
+    private val baseClass: KClass<*> = environment.getOrNull(ScriptingEnvironmentProperties.baseClass)
             ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting baseClass parameter in the scripting environment")
 
     private val mainAnnotation = baseClass.findAnnotation<KotlinScript>()
@@ -29,7 +29,7 @@ open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ScriptingEnvi
     private val explicitDefinition: ScriptDefinition? =
         mainAnnotation.definition.takeIf { it != this::class }?.let { it.instantiateScriptHandler() }
 
-    override val properties = (explicitDefinition?.properties ?: ScriptDefinitionPropertiesBag()).also { properties ->
+    override val properties = (explicitDefinition?.properties ?: ChainedPropertyBag()).also { properties ->
         val toAdd = arrayListOf<Pair<TypedKey<*>, Any>>()
         baseClass.findAnnotation<KotlinScriptFileExtension>()?.let { toAdd += ScriptDefinitionProperties.fileExtension to it }
         if (properties.getOrNull(ScriptDefinitionProperties.name) == null) {

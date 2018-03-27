@@ -11,7 +11,7 @@ import java.io.File
 import kotlin.script.experimental.jvm.JvmScriptCompileConfigurationParams.javaHomeDir
 
 inline fun jvmConfigWithJavaHome(
-    from: HeterogeneousMap = HeterogeneousMap(),
+    from: ChainedPropertyBag = ChainedPropertyBag(),
     crossinline body: JvmScriptCompileConfigurationParams.Builder.() -> Unit = {}
 ) =
     jvmScriptConfiguration(from) {

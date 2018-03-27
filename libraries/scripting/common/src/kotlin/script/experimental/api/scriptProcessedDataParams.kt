@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.api
 
-class ProcessedScriptDataParams : HeterogeneousMapBuilder() {
+class ProcessedScriptDataParams : PropertyBagBuilder() {
     companion object {
         val annotations by typedKey<Iterable<Annotation>>()
 
@@ -13,5 +13,5 @@ class ProcessedScriptDataParams : HeterogeneousMapBuilder() {
     }
 }
 
-inline fun processedScriptData(from: HeterogeneousMap = HeterogeneousMap(), body: ProcessedScriptDataParams.() -> Unit) =
+inline fun processedScriptData(from: ChainedPropertyBag = ChainedPropertyBag(), body: ProcessedScriptDataParams.() -> Unit) =
     ProcessedScriptDataParams().build(from, body)

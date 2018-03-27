@@ -8,14 +8,14 @@
 package kotlin.script.experimental.api
 
 
-typealias ScriptCompileConfiguration = HeterogeneousMap
+typealias ScriptCompileConfiguration = ChainedPropertyBag
 
-typealias ProcessedScriptData = HeterogeneousMap
+typealias ProcessedScriptData = ChainedPropertyBag
 
 
 interface ScriptCompilationConfigurator {
 
-    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
+    // constructor(environment: ChainedPropertyBag) // the constructor is expected from implementations
 
     val defaultConfiguration: ScriptCompileConfiguration
 

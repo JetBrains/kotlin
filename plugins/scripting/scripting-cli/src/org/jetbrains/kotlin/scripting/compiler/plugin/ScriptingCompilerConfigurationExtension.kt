@@ -20,8 +20,8 @@ import java.io.File
 import java.io.IOException
 import java.net.URLClassLoader
 import java.util.jar.JarFile
-import kotlin.script.experimental.api.ScriptingEnvironment
-import kotlin.script.experimental.api.ScriptingEnvironmentParams
+import kotlin.script.experimental.api.ChainedPropertyBag
+import kotlin.script.experimental.api.ScriptingEnvironmentProperties
 import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 
 class ScriptingCompilerConfigurationExtension(val project: MockProject) : CompilerConfigurationExtension {
@@ -127,7 +127,7 @@ fun configureScriptDefinitions(
                 val def =
                     if (cls.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null) {
                         KotlinScriptDefinitionAdapterFromNewAPI(
-                            ScriptDefinitionFromAnnotatedBaseClass(ScriptingEnvironment(ScriptingEnvironmentParams.baseClass to cls.kotlin))
+                            ScriptDefinitionFromAnnotatedBaseClass(ChainedPropertyBag(ScriptingEnvironmentProperties.baseClass to cls.kotlin))
                         )
                     } else {
                         KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, scriptResolverEnv)

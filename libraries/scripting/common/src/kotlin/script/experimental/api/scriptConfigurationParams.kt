@@ -31,21 +31,10 @@ object ScriptCompileConfigurationParams {
 
     val updateConfigurationOnSections by typedKey<Iterable<String>>()
 
-    open class Builder : HeterogeneousMapBuilder() {
+    open class Builder(parentBuilder: PropertyBagBuilder? = null) : PropertyBagBuilder(parentBuilder) {
         inline fun <reified T> signature(providedDeclarations: ProvidedDeclarations = ProvidedDeclarations.Empty) {
             add(scriptSignature to ScriptSignature(T::class, providedDeclarations))
         }
     }
 }
-
-// DSL
-inline fun scriptConfiguration(from: HeterogeneousMap = HeterogeneousMap(), body: ScriptCompileConfigurationParams.Builder.() -> Unit) =
-    ScriptCompileConfigurationParams.Builder().build(from, body)
-
-
-fun ScriptSource.toScriptCompileConfiguration(vararg pairs: Pair<TypedKey<*>, Any?>) =
-    ScriptCompileConfiguration(ScriptCompileConfigurationParams.scriptSourceFragments to ScriptSourceFragments(this, null), *pairs)
-
-fun ScriptSource?.toConfigEntry(): Pair<TypedKey<*>, Any?> =
-    ScriptCompileConfigurationParams.scriptSourceFragments to this?.let { ScriptSourceFragments(this, null) }
 

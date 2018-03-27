@@ -15,7 +15,7 @@ import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
 
 inline fun myJvmConfig(
-    from: HeterogeneousMap = HeterogeneousMap(),
+    from: ChainedPropertyBag = ChainedPropertyBag(),
     crossinline body: JvmScriptCompileConfigurationParams.Builder.() -> Unit = {}
 ) = jvmConfigWithJavaHome(from) {
     signature<MyScript>()
@@ -26,7 +26,7 @@ inline fun myJvmConfig(
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
     val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
     val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(
-        ScriptingEnvironment(ScriptingEnvironmentParams.baseClass to MyScript::class)
+        ChainedPropertyBag(ScriptingEnvironmentProperties.baseClass to MyScript::class)
     )
 
     val host = JvmBasicScriptingHost(

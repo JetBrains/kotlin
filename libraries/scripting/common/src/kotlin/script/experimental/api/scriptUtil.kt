@@ -6,8 +6,7 @@
 package kotlin.script.experimental.api
 
 import kotlin.reflect.KProperty
-
-// copy placed into package org.jetbrains.kotlin.utils.addToStdlib as well
+import kotlin.reflect.full.primaryConstructor
 
 data class TypedKey<T>(val name: String)
 
@@ -17,23 +16,27 @@ class TypedKeyDelegate<T> {
 
 fun <T> typedKey() = TypedKeyDelegate<T>()
 
-class HeterogeneousMap(private val data: Map<TypedKey<*>, Any?> = hashMapOf()) {
-    constructor(vararg pairs: Pair<TypedKey<*>, Any?>) : this(hashMapOf(*pairs))
-    constructor(from: HeterogeneousMap, vararg pairs: Pair<TypedKey<*>, Any?>) : this(HashMap(from.data).apply { putAll(pairs) })
-    constructor(from: HeterogeneousMap, pairs: Iterable<Pair<TypedKey<*>, Any?>>) : this(HashMap(from.data).apply { putAll(pairs) })
+class ChainedPropertyBag(private val parent: ChainedPropertyBag? = null, private val data: Map<TypedKey<*>, Any?> = hashMapOf()) {
+    constructor(data: Map<TypedKey<*>, Any?>) : this(null, data)
+    constructor(parent: ChainedPropertyBag?, pairs: Iterable<Pair<TypedKey<*>, Any?>>) : this(
+        parent,
+        HashMap<TypedKey<*>, Any?>().also {
+            it.putAll(pairs)
+        })
+
+    constructor(parent: ChainedPropertyBag?, vararg pairs: Pair<TypedKey<*>, Any?>) : this(parent, hashMapOf(*pairs))
 
     operator fun <T> get(key: TypedKey<T>): T =
-        if (data.containsKey(key)) data[key] as T
-        else throw IllegalArgumentException("Unknown key $key")
+        when {
+            data.containsKey(key) -> data[key] as T
+            parent != null -> parent[key]
+            else -> throw IllegalArgumentException("Unknown key $key")
+        }
 
-    fun <T> getOrNull(key: TypedKey<T>): T? = data[key] as T?
+    fun <T> getOrNull(key: TypedKey<T>): T? = data[key] as T? ?: parent?.getOrNull(key)
 }
 
-fun HeterogeneousMap.cloneWith(vararg pairs: Pair<TypedKey<*>, Any?>) = HeterogeneousMap(this, *pairs)
-
-fun HeterogeneousMap.cloneWith(pairs: Iterable<Pair<TypedKey<*>, Any?>>) = HeterogeneousMap(this, pairs)
-
-open class HeterogeneousMapBuilder {
+open class PropertyBagBuilder(private val parentBuilder: PropertyBagBuilder? = null) {
     val pairs: MutableList<Pair<TypedKey<*>, Any?>> = arrayListOf()
 
     open operator fun <T> TypedKey<T>.invoke(v: T) {
@@ -43,9 +46,11 @@ open class HeterogeneousMapBuilder {
     fun add(pair: Pair<TypedKey<*>, Any?>) {
         pairs.add(pair)
     }
+
+    fun getAllPairs() = if (parentBuilder == null) pairs else parentBuilder.pairs + pairs
 }
 
-inline fun <T : HeterogeneousMapBuilder> T.build(from: HeterogeneousMap = HeterogeneousMap(), body: T.() -> Unit): HeterogeneousMap {
+inline fun <T : PropertyBagBuilder> T.build(parent: ChainedPropertyBag? = null, body: T.() -> Unit): ChainedPropertyBag {
     body()
-    return HeterogeneousMap(from, pairs)
+    return ChainedPropertyBag(parent, getAllPairs())
 }

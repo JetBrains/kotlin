@@ -17,7 +17,7 @@ object JvmScriptCompileConfigurationParams {
     }
 }
 
-inline fun jvmScriptConfiguration(from: HeterogeneousMap = HeterogeneousMap(), body: JvmScriptCompileConfigurationParams.Builder.() -> Unit) =
+inline fun jvmScriptConfiguration(from: ChainedPropertyBag = ChainedPropertyBag(), body: JvmScriptCompileConfigurationParams.Builder.() -> Unit) =
     JvmScriptCompileConfigurationParams.Builder().build(from, body)
 
 class JvmDependency(val classpath: Iterable<File>) : ScriptDependency

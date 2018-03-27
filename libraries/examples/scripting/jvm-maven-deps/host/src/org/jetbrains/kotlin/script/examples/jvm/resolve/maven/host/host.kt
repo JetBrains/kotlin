@@ -19,7 +19,7 @@ import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
     val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
     val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(
-        ScriptingEnvironment(ScriptingEnvironmentParams.baseClass to MyScriptWithMavenDeps::class)
+        ChainedPropertyBag(ScriptingEnvironmentProperties.baseClass to MyScriptWithMavenDeps::class)
     )
 
     val host = JvmBasicScriptingHost(

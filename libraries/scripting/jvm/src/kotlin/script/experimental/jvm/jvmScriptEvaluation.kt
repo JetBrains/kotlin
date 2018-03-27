@@ -22,5 +22,5 @@ class JvmScriptEvaluationEnvironmentParams : ScriptEvaluationEnvironmentParams()
     }
 }
 
-inline fun jvmScriptEvaluationEnvironment(from: HeterogeneousMap = HeterogeneousMap(), body: JvmScriptEvaluationEnvironmentParams.() -> Unit) =
+inline fun jvmScriptEvaluationEnvironment(from: ChainedPropertyBag = ChainedPropertyBag(), body: JvmScriptEvaluationEnvironmentParams.() -> Unit) =
     JvmScriptEvaluationEnvironmentParams().build(from, body)

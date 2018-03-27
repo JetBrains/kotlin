@@ -7,13 +7,11 @@ package kotlin.script.experimental.api
 
 import kotlin.reflect.KClass
 
-typealias ScriptingEnvironment = HeterogeneousMap
-
-object ScriptingEnvironmentParams {
+object ScriptingEnvironmentProperties {
 
     // required by definitions that extract data from script base class annotations
     val baseClass by typedKey<KClass<*>>()
 
-    open class Builder : HeterogeneousMapBuilder()
+    open class Builder(parentBuilder: PropertyBagBuilder? = null) : PropertyBagBuilder(parentBuilder)
 }
 
