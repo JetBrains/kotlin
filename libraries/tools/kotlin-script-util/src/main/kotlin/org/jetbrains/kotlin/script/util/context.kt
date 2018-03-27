@@ -58,6 +58,9 @@ fun File.matchMaybeVersionedFile(baseName: String) =
         name == baseName.removeSuffix(".jar") || // for classes dirs
         Regex(Regex.escape(baseName.removeSuffix(".jar")) + "(-\\d.*)?\\.jar").matches(name)
 
+fun File.hasParentNamed(baseName: String): Boolean =
+    nameWithoutExtension == baseName || parentFile?.hasParentNamed(baseName) ?: false
+
 private const val KOTLIN_COMPILER_EMBEDDABLE_JAR = "$KOTLIN_COMPILER_NAME-embeddable.jar"
 
 internal fun List<File>.takeIfContainsAll(vararg keyNames: String): List<File>? =
@@ -67,10 +70,12 @@ internal fun List<File>.takeIfContainsAll(vararg keyNames: String): List<File>? 
 
 internal fun List<File>.filterIfContainsAll(vararg keyNames: String): List<File>? {
     val res = hashMapOf<String, File>()
-    for (jar in this) {
+    for (cpentry in this) {
         for (prefix in keyNames) {
-            if (jar.matchMaybeVersionedFile(prefix)) {
-                res[prefix] = jar
+            if (cpentry.matchMaybeVersionedFile(prefix) ||
+                (cpentry.isDirectory && cpentry.hasParentNamed(prefix))
+            ) {
+                res[prefix] = cpentry
                 break
             }
         }
