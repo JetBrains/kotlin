@@ -24,10 +24,9 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 import java.io.PrintStream
 import java.lang.ref.SoftReference
-import java.util.ArrayList
-import java.util.Arrays
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.utils.SmartList
 
 object CompilerRunnerUtil {
     private var ourClassLoaderRef = SoftReference<ClassLoader>(null)
@@ -90,21 +89,7 @@ object CompilerRunnerUtil {
         arguments: Array<String>,
         environment: JpsCompilerEnvironment,
         out: PrintStream
-    ): Any? {
-        val libPath = getLibPath(environment.kotlinPaths, environment.messageCollector) ?: return null
-
-        val paths = ArrayList<File>()
-        paths.add(File(libPath, "kotlin-compiler.jar"))
-
-        if (Arrays.asList(*arguments).contains("-Xuse-javac")) {
-            val toolsJar = jdkToolsJar
-            if (toolsJar != null) {
-                paths.add(toolsJar)
-            }
-        }
-
-        val classLoader = getOrCreateClassLoader(environment, paths)
-
+    ): Any? = withCompilerClassloader(environment) { classLoader ->
         val kompiler = Class.forName(compilerClassName, true, classLoader)
         val exec = kompiler.getMethod(
             "execAndOutputXml",
@@ -112,7 +97,30 @@ object CompilerRunnerUtil {
             Class.forName("org.jetbrains.kotlin.config.Services", true, classLoader),
             Array<String>::class.java
         )
+        exec.invoke(kompiler.newInstance(), out, environment.services, arguments)
+    }
 
-        return exec.invoke(kompiler.newInstance(), out, environment.services, arguments)
+    fun invokeClassesFqNames(
+        files: Set<File>,
+        environment: JpsCompilerEnvironment
+    ): Set<String> = withCompilerClassloader(environment) { classLoader ->
+        val klass = Class.forName("org.jetbrains.kotlin.parsing.util.ParseFileUtilsKt", true, classLoader)
+        val method = klass.getMethod("classesFqNames", Set::class.java)
+        @Suppress("UNCHECKED_CAST")
+        method.invoke(klass, files) as? Set<String>
+    } ?: emptySet()
+
+    private fun <T> withCompilerClassloader(
+        environment: JpsCompilerEnvironment,
+        fn: (ClassLoader) -> T
+    ): T? {
+        val paths = SmartList<File>()
+
+        val libPath = getLibPath(environment.kotlinPaths, environment.messageCollector) ?: return null
+        paths.add(File(libPath, "kotlin-compiler.jar"))
+        jdkToolsJar?.let { paths.add(it) }
+
+        val classLoader = getOrCreateClassLoader(environment, paths)
+        return fn(classLoader)
     }
 }

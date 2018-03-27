@@ -141,7 +141,11 @@ class IncrementalJvmCompilerRunner(
             else
                 null
 
-    override fun calculateSourcesToCompile(caches: IncrementalJvmCachesManager, changedFiles: ChangedFiles.Known, args: K2JVMCompilerArguments): CompilationMode {
+    override fun calculateSourcesToCompile(
+        caches: IncrementalJvmCachesManager,
+        changedFiles: ChangedFiles.Known,
+        args: K2JVMCompilerArguments
+    ): CompilationMode {
         val dirtyFiles = getDirtyFiles(changedFiles)
 
         fun markDirtyBy(lookupSymbols: Collection<LookupSymbol>) {
@@ -214,10 +218,13 @@ class IncrementalJvmCompilerRunner(
         }
 
         val androidLayoutChanges = processLookupSymbolsForAndroidLayouts(changedFiles)
+        val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
 
         markDirtyBy(androidLayoutChanges)
         markDirtyBy(classpathChanges.lookupSymbols)
         markDirtyBy(classpathChanges.fqNames)
+        markDirtyBy(removedClassesChanges.dirtyLookupSymbols)
+        markDirtyBy(removedClassesChanges.dirtyClassesFqNames)
 
         return CompilationMode.Incremental(dirtyFiles)
     }

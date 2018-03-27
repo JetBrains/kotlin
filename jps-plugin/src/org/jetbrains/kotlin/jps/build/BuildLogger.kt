@@ -25,6 +25,8 @@ import java.io.File
 interface BuildLogger {
     fun actionsOnCacheVersionChanged(actions: List<CacheVersion.Action>)
     fun buildStarted(context: CompileContext, chunk: ModuleChunk)
+    fun afterBuildStarted(context: CompileContext, chunk: ModuleChunk)
     fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode)
-    fun markedAsDirty(files: Iterable<File>)
+    fun markedAsDirtyBeforeRound(files: Iterable<File>)
+    fun markedAsDirtyAfterRound(files: Iterable<File>)
 }
