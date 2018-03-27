@@ -13,8 +13,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.referenceExpressionVisitor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
@@ -24,7 +26,7 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             val descriptor = (expression.mainReference.resolve() as? KtObjectDeclaration)?.descriptor ?: return
             if (!DescriptorUtils.isCompanionObject(descriptor)) return
 
-            val parent = expression.getStrictParentOfType<KtDotQualifiedExpression>() ?: return
+            val parent = expression.parent as? KtDotQualifiedExpression ?: return
             if (expression == parent.receiverExpression && expression.text == descriptor.containingDeclaration?.name?.asString()) return
             if (expression == parent.selectorExpression && parent.parent !is KtDotQualifiedExpression) return
 
@@ -45,7 +47,7 @@ private class RemoveRedundantCompanionReferenceFix : LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val expression = descriptor.psiElement as? KtReferenceExpression ?: return
-        val parent = expression.getStrictParentOfType<KtDotQualifiedExpression>() ?: return
+        val parent = expression.parent as? KtDotQualifiedExpression ?: return
         val selector = parent.selectorExpression ?: return
         val receiver = parent.receiverExpression
         if (expression == receiver) parent.replace(selector) else parent.replace(receiver)
