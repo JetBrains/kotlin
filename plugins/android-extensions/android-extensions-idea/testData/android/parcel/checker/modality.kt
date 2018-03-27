@@ -24,7 +24,7 @@ class Outer {
 
 fun foo() {
     @Parcelize
-    <error descr="[PLUGIN_ERROR] 'Parcelable' should be a class">object</error> : Parcelable {}
+    <error descr="[PLUGIN_ERROR] 'Parcelable' can't be a local class">object</error> : Parcelable {}
 
     @Parcelize
     class <error descr="[PLUGIN_ERROR] 'Parcelable' can't be a local class"><error descr="[PLUGIN_ERROR] No 'Parcelable' supertype">Local</error></error> {}

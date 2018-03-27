@@ -230,6 +230,12 @@ interface ParcelSerializer {
                         Method("writeRawFileDescriptor"),
                         Method("readRawFileDescriptor")))
 
+                // Write at least a nullability byte.
+                // We don't want parcel to be empty in case if all constructor parameters are objects
+                type.isNamedObject() -> NullAwareParcelSerializerWrapper(ObjectParcelSerializer(asmType, type, typeMapper))
+
+                type.isEnum() -> wrapToNullAwareIfNeeded(type, EnumParcelSerializer(asmType))
+
                 type.isParcelable() -> {
                     val clazz = type.constructor.declarationDescriptor as? ClassDescriptor
                     if (clazz != null && clazz.modality == Modality.FINAL && clazz.source is PsiSourceElement) {
@@ -256,12 +262,6 @@ interface ParcelSerializer {
                         GenericParcelableParcelSerializer(asmType, context.containerClassType)
                     }
                 }
-
-                // Write at least a nullability byte.
-                // We don't want parcel to be empty in case if all constructor parameters are objects
-                type.isNamedObject() -> NullAwareParcelSerializerWrapper(ObjectParcelSerializer(asmType, type, typeMapper))
-
-                type.isEnum() -> wrapToNullAwareIfNeeded(type, EnumParcelSerializer(asmType))
 
                 type.isSerializable() -> NullCompliantObjectParcelSerializer(asmType,
                         Method("writeSerializable", "(Ljava/io/Serializable;)V"),

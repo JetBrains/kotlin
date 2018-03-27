@@ -109,14 +109,13 @@ class ParcelableDeclarationChecker : DeclarationChecker {
     ) {
         if (!descriptor.isParcelize) return
 
-        if (declaration !is KtClass || (declaration.isAnnotation() || declaration.isInterface())) {
-            val reportElement = (declaration as? KtClassOrObject)?.nameIdentifier ?: declaration
-            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
+        if (declaration !is KtClassOrObject) {
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(declaration), DefaultErrorMessagesAndroid)
             return
         }
 
-        if (declaration.isEnum()) {
-            val reportElement = (declaration as? KtClass)?.nameIdentifier ?: declaration
+        if (declaration is KtClass && (declaration.isAnnotation() || declaration.isInterface())) {
+            val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
             return
         }
@@ -133,7 +132,7 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(sealedOrAbstract), DefaultErrorMessagesAndroid)
         }
 
-        if (declaration.isInner()) {
+        if (declaration is KtClass && declaration.isInner()) {
             val reportElement = declaration.modifierList?.getModifier(KtTokens.INNER_KEYWORD) ?: declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_CANT_BE_INNER_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
         }
