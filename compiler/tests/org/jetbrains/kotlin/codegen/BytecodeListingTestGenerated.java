@@ -157,30 +157,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
-    @TestMetadata("tailCallIntrinsics.kt")
-    public void testTailCallIntrinsics() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tailCallIntrinsics.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("tailSuspendUnitFun.kt")
-    public void testTailSuspendUnitFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tailSuspendUnitFun.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("tryCatchTailCall.kt")
-    public void testTryCatchTailCall() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tryCatchTailCall.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("unreachable.kt")
-    public void testUnreachable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/unreachable.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("compiler/testData/codegen/bytecodeListing/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -355,6 +331,45 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/partiallySpecializedClass.kt");
                 doTest(fileName);
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/tailcall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Tailcall extends AbstractBytecodeListingTest {
+        public void testAllFilesPresentInTailcall() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/tailcall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("tailCallIntrinsics.kt")
+        public void testTailCallIntrinsics() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tailcall/tailCallIntrinsics.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tailSuspendUnitFun.kt")
+        public void testTailSuspendUnitFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tailcall/tailSuspendUnitFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("tryCatchTailCall.kt")
+        public void testTryCatchTailCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tailcall/tryCatchTailCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unreachable.kt")
+        public void testUnreachable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tailcall/unreachable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenUnit.kt")
+        public void testWhenUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/tailcall/whenUnit.kt");
+            doTest(fileName);
         }
     }
 }

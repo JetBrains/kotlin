@@ -1,22 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.coroutines
 
-import org.jetbrains.kotlin.codegen.inline.isReturnsUnitMarker
+import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
 import org.jetbrains.kotlin.codegen.optimization.common.ControlFlowGraph
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
@@ -34,37 +23,60 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
  * Replace POP with ARETURN iff
  * 1) It is immediately followed by { GETSTATIC Unit.INSTANCE, ARETURN } sequences
  * 2) It is poping Unit
+ *
+ * Replace CHECKCAST Unit whit ARETURN iff
+ * It is successed by ARETURN and it casts Unit
  */
 object ReturnUnitMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         val unitMarks = findReturnsUnitMarks(methodNode)
         if (unitMarks.isEmpty()) return
 
-        val units = findReturnUnitSequences(methodNode)
-        if (units.isEmpty()) {
-            cleanUpReturnsUnitMarkers(methodNode, unitMarks)
-            return
-        }
+        replaceCheckcastUnitWithAreturn(methodNode, internalClassName)
+        replacePopWithAreturn(methodNode, internalClassName)
 
-        val pops = methodNode.instructions.asSequence().filter { it.opcode == Opcodes.POP }.toList()
-        val popSuccessors = findSuccessors(methodNode, pops)
-        val sourceInsns = findSourceInstructions(internalClassName, methodNode, pops, ignoreCopy = true)
-        val safePops = filterOutUnsafes(popSuccessors, units, sourceInsns)
-
-        // Replace POP with ARETURN for tail call optimization
-        safePops.forEach { methodNode.instructions.set(it, InsnNode(Opcodes.ARETURN)) }
         cleanUpReturnsUnitMarkers(methodNode, unitMarks)
     }
 
-    // Return list of POPs, which can be safely replaced by ARETURNs
+    private fun replacePopWithAreturn(
+        methodNode: MethodNode,
+        internalClassName: String
+    ) {
+        val units = findReturnUnitSequences(methodNode)
+        if (units.isEmpty()) return
+
+        replaceSafeInsnsWithUnit(methodNode, internalClassName, units) { it.opcode == Opcodes.POP }
+    }
+
+    private fun replaceCheckcastUnitWithAreturn(methodNode: MethodNode, internalClassName: String) {
+        val areturns = methodNode.instructions.asSequence().filter { it.opcode == Opcodes.ARETURN }.toList()
+
+        replaceSafeInsnsWithUnit(methodNode, internalClassName, areturns) { it.opcode == Opcodes.CHECKCAST }
+    }
+
+    // Find all instructions, which can be safely replaced with ARETURN and replace them with ARETURN for tail-call optimization
+    private fun replaceSafeInsnsWithUnit(
+        methodNode: MethodNode,
+        internalClassName: String,
+        safeSuccessors: Collection<AbstractInsnNode>,
+        predicate: (AbstractInsnNode) -> Boolean
+    ) {
+        val insns = methodNode.instructions.asSequence().filter(predicate).toList()
+        val successors = findSuccessors(methodNode, insns)
+        val sourceInsns = findSourceInstructions(internalClassName, methodNode, insns, ignoreCopy = true)
+        val safeInsns = filterOutUnsafes(successors, safeSuccessors, sourceInsns)
+        safeInsns.forEach { methodNode.instructions.set(it, InsnNode(Opcodes.ARETURN)) }
+    }
+
+    // Return list of instructions, which can be safely replaced by ARETURNs
     private fun filterOutUnsafes(
-        popSuccessors: Map<AbstractInsnNode, Collection<AbstractInsnNode>>,
-        units: Collection<AbstractInsnNode>,
-        sourceInsns: Map<AbstractInsnNode, Collection<AbstractInsnNode>>
+        successors: Map<AbstractInsnNode, Collection<AbstractInsnNode>>,
+        safeSuccessors: Collection<AbstractInsnNode>,
+        sources: Map<AbstractInsnNode, Collection<AbstractInsnNode>>
     ): Collection<AbstractInsnNode> {
-        return popSuccessors.filter { (pop, successors) ->
-            successors.all { it in units } &&
-                    sourceInsns[pop].sure { "Sources of $pop cannot be null" }.all(::isSuspendingCallReturningUnit)
+        return successors.filter { (insn, successors) ->
+            successors.all { it in safeSuccessors } &&
+                    sources[insn].sure { "Sources of $insn cannot be null" }.all(::isSuspendingCallReturningUnit)
         }.keys
     }
 
@@ -72,7 +84,7 @@ object ReturnUnitMethodTransformer : MethodTransformer() {
     // Return map {insn => list of found instructions}
     private fun findSuccessors(
         methodNode: MethodNode,
-        insns: List<AbstractInsnNode>
+        insns: Collection<AbstractInsnNode>
     ): Map<AbstractInsnNode, Collection<AbstractInsnNode>> {
         val cfg = ControlFlowGraph.build(methodNode)
 
