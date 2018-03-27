@@ -83,7 +83,17 @@ private inline fun String.isFirstChar(f: (Char) -> Boolean) = isNotEmpty() && f(
 inline fun <reified T : Task> Project.getOrCreateTask(taskName: String, body: T.() -> Unit): T =
         (tasks.findByName(taskName)?.let { it as T } ?: task<T>(taskName)).apply { body() }
 
-private fun Test.useAndroidConfiguration(systemPropertyName: String, configName: String) {
+object TaskUtils {
+    fun useAndroidSdk(task: Task) {
+        task.useAndroidConfiguration(systemPropertyName = "android.sdk", configName = "androidSdk")
+    }
+
+    fun useAndroidJar(task: Task) {
+        task.useAndroidConfiguration(systemPropertyName = "android.jar", configName = "androidJar")
+    }
+}
+
+private fun Task.useAndroidConfiguration(systemPropertyName: String, configName: String) {
     val configuration = with(project) {
         configurations.getOrCreate(configName)
             .also {
@@ -95,15 +105,18 @@ private fun Test.useAndroidConfiguration(systemPropertyName: String, configName:
     }
 
     dependsOn(configuration)
-    doFirst {
-        systemProperty(systemPropertyName, configuration.singleFile.canonicalPath)
+
+    if (this is Test) {
+        doFirst {
+            systemProperty(systemPropertyName, configuration.singleFile.canonicalPath)
+        }
     }
 }
 
-fun Test.useAndroidSdk() {
-    useAndroidConfiguration(systemPropertyName = "android.sdk", configName = "androidSdk")
+fun Task.useAndroidSdk() {
+    TaskUtils.useAndroidSdk(this)
 }
 
-fun Test.useAndroidJar() {
-    useAndroidConfiguration(systemPropertyName = "android.jar", configName = "androidJar")
+fun Task.useAndroidJar() {
+    TaskUtils.useAndroidJar(this)
 }
