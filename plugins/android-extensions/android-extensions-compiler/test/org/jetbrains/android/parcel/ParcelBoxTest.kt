@@ -54,6 +54,7 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testCustomSerializerWriteWith() = doTest("customSerializerWriteWith")
     fun testCustomSerializerBoxing() = doTest("customSerializerBoxing")
     fun testKt20717() = doTest("kt20717")
+    fun testEnumObject() = doTest("enumObject")
 }
 
 class ParcelBoxTestWithSerializableLikeExtension : AbstractParcelBoxTest() {
