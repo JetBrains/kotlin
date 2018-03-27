@@ -24,23 +24,23 @@ import org.jetbrains.kotlin.config.deserializeFacetSettings
 import org.jetbrains.kotlin.config.serializeFacetSettings
 
 object JpsKotlinFacetConfigurationSerializer : JpsFacetConfigurationSerializer<JpsKotlinFacetModuleExtension>(
-        JpsKotlinFacetModuleExtension.KIND,
-        JpsKotlinFacetModuleExtension.FACET_TYPE_ID,
-        JpsKotlinFacetModuleExtension.FACET_NAME
+    JpsKotlinFacetModuleExtension.KIND,
+    JpsKotlinFacetModuleExtension.FACET_TYPE_ID,
+    JpsKotlinFacetModuleExtension.FACET_NAME
 ) {
     override fun loadExtension(
-            facetConfigurationElement: Element,
-            name: String,
-            parent: JpsElement?,
-            module: JpsModule
+        facetConfigurationElement: Element,
+        name: String,
+        parent: JpsElement?,
+        module: JpsModule
     ): JpsKotlinFacetModuleExtension {
         return JpsKotlinFacetModuleExtension(deserializeFacetSettings(facetConfigurationElement))
     }
 
     override fun saveExtension(
-            extension: JpsKotlinFacetModuleExtension?,
-            facetConfigurationTag: Element,
-            module: JpsModule
+        extension: JpsKotlinFacetModuleExtension?,
+        facetConfigurationTag: Element,
+        module: JpsModule
     ) {
         (extension as JpsKotlinFacetModuleExtension).settings.serializeFacetSettings(facetConfigurationTag)
     }

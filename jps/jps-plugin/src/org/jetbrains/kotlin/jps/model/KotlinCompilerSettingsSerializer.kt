@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SEC
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 
 internal class KotlinCompilerSettingsSerializer : BaseJpsCompilerSettingsSerializer<CompilerSettings>(
-        KOTLIN_COMPILER_SETTINGS_SECTION, ::CompilerSettings
+    KOTLIN_COMPILER_SETTINGS_SECTION, ::CompilerSettings
 ) {
     override fun onLoad(project: JpsProject, settings: CompilerSettings) {
         JpsKotlinCompilerSettings.setCompilerSettings(project, settings)

@@ -25,30 +25,36 @@ import org.jetbrains.kotlin.load.java.NULLABLE_ANNOTATIONS
 import java.util.*
 
 internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
-    private val annotations = (NULLABLE_ANNOTATIONS + JAVAX_NONNULL_ANNOTATION + NOT_NULL_ANNOTATIONS).mapTo(HashSet()) { it.internalNameWithoutInnerClasses }.toTypedArray()
+    private val annotations =
+        (NULLABLE_ANNOTATIONS + JAVAX_NONNULL_ANNOTATION + NOT_NULL_ANNOTATIONS).mapTo(HashSet()) { it.internalNameWithoutInnerClasses }
+            .toTypedArray()
 
     override fun methodAnnotationsChanged(
-            context: DependencyContext,
-            method: MethodRepr,
-            annotationsDiff: Difference.Specifier<ClassType, Difference>,
-            paramAnnotationsDiff: Difference.Specifier<ParamAnnotation, Difference>
+        context: DependencyContext,
+        method: MethodRepr,
+        annotationsDiff: Difference.Specifier<ClassType, Difference>,
+        paramAnnotationsDiff: Difference.Specifier<ParamAnnotation, Difference>
     ): Set<Recompile> {
         val changedAnnotations = annotationsDiff.addedOrRemoved() +
-                                 paramAnnotationsDiff.addedOrRemoved().map { it.type }
+                paramAnnotationsDiff.addedOrRemoved().map { it.type }
 
         return handleNullAnnotationsChanges(context, method, changedAnnotations)
     }
 
 
     override fun fieldAnnotationsChanged(
-            context: NamingContext,
-            field: FieldRepr,
-            annotationsDiff: Difference.Specifier<ClassType, Difference>
+        context: NamingContext,
+        field: FieldRepr,
+        annotationsDiff: Difference.Specifier<ClassType, Difference>
     ): Set<Recompile> {
         return handleNullAnnotationsChanges(context, field, annotationsDiff.addedOrRemoved())
     }
 
-    private fun handleNullAnnotationsChanges(context: NamingContext, protoMember: ProtoMember, annotations: Sequence<TypeRepr.ClassType>): Set<Recompile> {
+    private fun handleNullAnnotationsChanges(
+        context: NamingContext,
+        protoMember: ProtoMember,
+        annotations: Sequence<TypeRepr.ClassType>
+    ): Set<Recompile> {
         val nullabilityAnnotations = TIntHashSet(this.annotations.toIntArray { context.get(it) })
         val changedNullAnnotation = annotations.firstOrNull { nullabilityAnnotations.contains(it.className) }
 
@@ -66,8 +72,8 @@ internal class NullabilityAnnotationsTracker : AnnotationsChangeTracker() {
     }
 
     private fun <T> Difference.Specifier<T, Difference>.addedOrRemoved(): Sequence<T> =
-            added().asSequence() + removed().asSequence()
+        added().asSequence() + removed().asSequence()
 
-    private inline fun <T> Array<T>.toIntArray(fn: (T)->Int): IntArray =
-            IntArray(size) { i -> fn(get(i)) }
+    private inline fun <T> Array<T>.toIntArray(fn: (T) -> Int): IntArray =
+        IntArray(size) { i -> fn(get(i)) }
 }
