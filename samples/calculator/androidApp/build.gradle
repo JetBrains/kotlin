@@ -1,9 +1,10 @@
 buildscript {
-    ext.kotlin_version = '1.2.21'
+    ext.kotlin_version = '1.2.31'
 
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
 
     dependencies {

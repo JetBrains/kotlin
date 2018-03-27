@@ -4,6 +4,10 @@ konan.targets = ['iphone', 'iphone_sim']
 
 konanArtifacts {
     framework('KotlinArithmeticParser') {
-        srcDir 'parser/src/main/kotlin'
+        enableMultiplatform true
     }
+}
+
+dependencies {
+    expectedBy project(':calculator:parser')
 }

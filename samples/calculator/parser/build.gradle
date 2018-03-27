@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.21'
+    ext.kotlin_version = '1.2.31'
 
     repositories {
         mavenCentral()
@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-apply plugin: 'kotlin'
+apply plugin: 'kotlin-platform-common'
 
 group = 'org.jetbrains.kotlin.konan.samples'
 
@@ -19,5 +19,5 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
 }

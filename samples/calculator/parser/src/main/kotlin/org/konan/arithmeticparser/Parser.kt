@@ -272,7 +272,7 @@ internal class Tokenizer(private val expression: String) {
         }
     }
 
-    private fun Char.isNumberChar(): Boolean = this.isDigit() || this == '.'
+    private fun Char.isNumberChar(): Boolean = this in '0'..'9' || this == '.'
 
     fun tryReadBinaryOperator(): BinaryOperator? = BinaryOperator.values().firstOrNull { tryRead(it.sign) }
 
