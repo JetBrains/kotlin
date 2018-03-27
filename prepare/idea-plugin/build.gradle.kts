@@ -68,7 +68,7 @@ dependencies {
     sideJars(commonDep("javax.inject"))
     sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
-    sideJars(commonDep("org.jetbrains", "markdown"))
+    sideJars(commonDep("org.jetbrains", "markdown")) { isTransitive = false }
 }
 
 val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
@@ -82,6 +82,7 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
 }
 
 ideaPlugin {
+    duplicatesStrategy = DuplicatesStrategy.FAIL // Investigation is required if we have multiple jars with same name
     dependsOn(":dist")
     from(jar)
     from(sideJars)
