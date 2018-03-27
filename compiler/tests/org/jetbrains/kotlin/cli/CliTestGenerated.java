@@ -226,6 +226,48 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/inlineCycle.args");
         }
 
+        @TestMetadata("internalArgDisableLanguageFeature.args")
+        public void testInternalArgDisableLanguageFeature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgDisableLanguageFeature.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("internalArgEmptyFeatureName.args")
+        public void testInternalArgEmptyFeatureName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgEmptyFeatureName.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("internalArgEnableLanguageFeature.args")
+        public void testInternalArgEnableLanguageFeature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgEnableLanguageFeature.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("internalArgMissingModificator.args")
+        public void testInternalArgMissingModificator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgMissingModificator.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("internalArgUnrecognizedFeature.args")
+        public void testInternalArgUnrecognizedFeature() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgUnrecognizedFeature.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("internalArgWrongPrefix.args")
+        public void testInternalArgWrongPrefix() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgWrongPrefix.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("internalArgumentOverrideExtraArgument.args")
+        public void testInternalArgumentOverrideExtraArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/internalArgumentOverrideExtraArgument.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("javaSrcWrongPackage.args")
         public void testJavaSrcWrongPackage() throws Exception {
             runTest("compiler/testData/cli/jvm/javaSrcWrongPackage.args");
