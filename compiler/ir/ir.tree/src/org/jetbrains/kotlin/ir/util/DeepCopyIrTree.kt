@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import java.util.*
 
 inline fun <reified T : IrElement> T.deepCopyOld(): T =
     transform(DeepCopyIrTree(), null).patchDeclarationParents() as T
@@ -153,11 +152,6 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                 copyTypeParameter(originalTypeParameter, myTypeParameters[originalTypeParameter.descriptor.index])
             }
         }
-
-    @Deprecated("Replace with remapTypeArguments")
-    protected fun IrMemberAccessExpression.transformTypeArguments(newCallee: CallableDescriptor) {
-        // Do nothing: assume that type parameters of the newCallee directly correspond to the original type parameters
-    }
 
     private fun FunctionDescriptor.getTypeParametersToTransform() =
         when {
