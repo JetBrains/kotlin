@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parsing.util.classesFqNames
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
 import java.util.*
@@ -278,6 +279,30 @@ abstract class IncrementalCompilerRunner<
         }
 
         return exitCode
+    }
+
+    protected fun getRemovedClassesChanges(
+        caches: IncrementalCachesManager<*>,
+        changedFiles: ChangedFiles.Known
+    ): DirtyData {
+        val removedClasses = HashSet<String>()
+        val dirtyFiles = changedFiles.modified.filterTo(HashSet()) { it.isKotlinFile() }
+        val removedFiles = changedFiles.removed.filterTo(HashSet()) { it.isKotlinFile() }
+
+        val existingClasses = classesFqNames(dirtyFiles)
+        val previousClasses = caches.platformCache
+            .classesFqNamesBySources(dirtyFiles + removedFiles)
+            .map { it.asString() }
+
+        for (fqName in previousClasses) {
+            if (fqName !in existingClasses) {
+                removedClasses.add(fqName)
+            }
+        }
+
+        val changesCollector = ChangesCollector()
+        removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
+        return changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
     }
 
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false

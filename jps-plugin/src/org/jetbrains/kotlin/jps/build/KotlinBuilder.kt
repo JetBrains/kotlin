@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
@@ -25,10 +26,14 @@ import gnu.trove.THashSet
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.DirtyFilesHolder
+import org.jetbrains.jps.builders.FileProcessor
+import org.jetbrains.jps.builders.impl.DirtyFilesHolderBase
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
+import org.jetbrains.jps.incremental.Utils.*
+import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
@@ -60,10 +65,12 @@ import org.jetbrains.kotlin.jps.testOutputFilePath
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.io.IOException
@@ -120,7 +127,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (chunk.isDummy(context)) return
 
-        context.testingContext?.buildLogger?.buildStarted(context, chunk)
+        val buildLogger = context.testingContext?.buildLogger
+        buildLogger?.buildStarted(context, chunk)
 
         if (JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)) return
 
@@ -151,7 +159,52 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             // todo: report to Intellij when IDEA-187115 is implemented
             LOG.info(e)
             markAllKotlinForRebuild(context, fsOperations, "Lookup storage is corrupted")
+            return
         }
+
+        markAdditionalFilesForInitialRound(chunk, context, fsOperations)
+        buildLogger?.afterBuildStarted(context, chunk)
+    }
+
+    private fun markAdditionalFilesForInitialRound(
+        chunk: ModuleChunk,
+        context: CompileContext,
+        fsOperations: FSOperationsHelper
+    ) {
+        val dirtyFilesHolder = object : DirtyFilesHolderBase<JavaSourceRootDescriptor, ModuleBuildTarget>(context) {
+            override fun processDirtyFiles(processor: FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>) {
+                FSOperations.processFilesToRecompile(context, chunk, processor)
+            }
+        }
+        val chunkDirtyFiles = KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder)
+        val chunkRemovedFiles = chunk.targets.keysToMap { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it) }
+
+        val incrementalCaches = getIncrementalCaches(chunk, context)
+        val messageCollector = MessageCollectorAdapter(context)
+        val environment = createCompileEnvironment(incrementalCaches, LookupTracker.DO_NOTHING, context, messageCollector)
+        if (environment == null) return
+
+        val removedClasses = HashSet<String>()
+        for (target in chunk.targets) {
+            val cache = incrementalCaches[target]!!
+            val dirtyFiles = chunkDirtyFiles[target]
+            val removedFiles = chunkRemovedFiles[target] ?: emptyList()
+
+            val existingClasses = CompilerRunnerUtil.invokeClassesFqNames(dirtyFiles.toHashSet(), environment)
+            val previousClasses = cache.classesBySources(dirtyFiles + removedFiles)
+            for (jvmClassName in previousClasses) {
+                val fqName = jvmClassName.fqNameForClassNameWithoutDollars.asString()
+                if (fqName !in existingClasses) {
+                    removedClasses.add(fqName)
+                }
+            }
+        }
+
+        val changesCollector = ChangesCollector()
+        removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
+        val affectedByRemovedClasses = changesCollector.getDirtyFiles(incrementalCaches.values, context.projectDescriptor.dataManager)
+
+        fsOperations.markFilesBeforeInitialRound(affectedByRemovedClasses)
     }
 
     private fun checkCachesVersions(
@@ -873,14 +926,22 @@ private fun ChangesCollector.processChangesUsingLookups(
 
     reporter.report { "Start processing changes" }
 
-    val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(allCaches, reporter)
-    val dirtyFilesFromLookups = dataManager.withLookupStorage {
-        mapLookupSymbolsToFiles(it, dirtyLookupSymbols, reporter)
-    }
-    val dirtyFiles = dirtyFilesFromLookups + mapClassesFqNamesToFiles(allCaches, dirtyClassFqNames, reporter)
+    val dirtyFiles = getDirtyFiles(allCaches, dataManager)
     fsOperations.markInChunkOrDependents(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
 
     reporter.report { "End of processing changes" }
+}
+
+private fun ChangesCollector.getDirtyFiles(
+    caches: Iterable<IncrementalCacheCommon<*>>,
+    dataManager: BuildDataManager
+): Set<File> {
+    val reporter = JpsICReporter()
+    val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(caches, reporter)
+    val dirtyFilesFromLookups = dataManager.withLookupStorage {
+        mapLookupSymbolsToFiles(it, dirtyLookupSymbols, reporter)
+    }
+    return dirtyFilesFromLookups + mapClassesFqNamesToFiles(caches, dirtyClassFqNames, reporter)
 }
 
 private fun getLookupTracker(project: JpsProject): LookupTracker {
