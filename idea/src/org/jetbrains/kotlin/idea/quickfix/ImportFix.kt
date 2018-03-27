@@ -127,9 +127,9 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
 
     override fun startInWriteAction() = true
 
-    private fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(project).modificationCount
+    fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(project).modificationCount
 
-    protected open fun createAction(project: Project, editor: Editor, element: KtExpression): KotlinAddImportAction {
+    open fun createAction(project: Project, editor: Editor, element: KtExpression): KotlinAddImportAction {
         return createSingleImportAction(project, editor, element, suggestions)
     }
 

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.daemon.ReferenceImporter
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
 import com.intellij.codeInsight.daemon.impl.DaemonListeners
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -45,7 +47,29 @@ class KotlinReferenceImporter : ReferenceImporter {
 
         val nameExpression = file.findElementAt(offset)?.parent as? KtSimpleNameExpression ?: return false
 
+        val importFix: ImportFixBase<out KtExpression>? = findImportFixAt(editor, file, offset)
+        if (importFix != null && !importFix.isOutdated()) {
+            val addImportAction = importFix.createAction(file.project, editor, nameExpression)
+            if (addImportAction.isUnambiguous()) {
+                addImportAction.execute()
+            }
+            return true
+        }
+
         return nameExpression.autoImport(editor, file)
+    }
+
+    private fun findImportFixAt(
+        editor: Editor,
+        file: KtFile,
+        offset: Int
+    ): ImportFixBase<out KtExpression>? {
+        var importFix: ImportFixBase<out KtExpression>? = null
+        DaemonCodeAnalyzerEx.processHighlights(editor.document, file.project, null, offset, offset) { info ->
+            importFix = info.quickFixActionRanges.map { it.first.action }.filterIsInstance<ImportFixBase<*>>().firstOrNull()
+            importFix == null
+        }
+        return importFix
     }
 
     companion object {
