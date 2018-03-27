@@ -70,24 +70,25 @@ object JpsJsModuleUtils {
 
     @JvmStatic
     fun getOutputMetaFile(module: JpsModule, isTests: Boolean): File {
-        val moduleBuildTarget = ModuleBuildTarget(module, if (isTests) JavaModuleBuildTargetType.TEST else JavaModuleBuildTargetType.PRODUCTION)
+        val moduleBuildTarget =
+            ModuleBuildTarget(module, if (isTests) JavaModuleBuildTargetType.TEST else JavaModuleBuildTargetType.PRODUCTION)
         val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
         return getOutputMetaFile(outputDir, module.name, isTests)
     }
 
     @JvmStatic
-    fun getOutputFile(outputDir: File, moduleName: String, isTests: Boolean)
-            = File(outputDir, moduleName + suffix(isTests) + KotlinJavascriptMetadataUtils.JS_EXT)
+    fun getOutputFile(outputDir: File, moduleName: String, isTests: Boolean) =
+        File(outputDir, moduleName + suffix(isTests) + KotlinJavascriptMetadataUtils.JS_EXT)
 
     @JvmStatic
-    fun getOutputMetaFile(outputDir: File, moduleName: String, isTests: Boolean)
-            = File(outputDir, moduleName + suffix(isTests) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX)
+    fun getOutputMetaFile(outputDir: File, moduleName: String, isTests: Boolean) =
+        File(outputDir, moduleName + suffix(isTests) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX)
 
     private fun suffix(isTests: Boolean) = if (isTests) "_test" else ""
 }
 
 val JpsModule.hasProductionSourceRoot
-    get() = sourceRoots.any { it.rootType == JavaSourceRootType.SOURCE}
+    get() = sourceRoots.any { it.rootType == JavaSourceRootType.SOURCE }
 
 val JpsModule.hasTestSourceRoot
-    get() = sourceRoots.any { it.rootType == JavaSourceRootType.TEST_SOURCE}
+    get() = sourceRoots.any { it.rootType == JavaSourceRootType.TEST_SOURCE }

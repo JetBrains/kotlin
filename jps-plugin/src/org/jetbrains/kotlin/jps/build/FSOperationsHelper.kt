@@ -30,9 +30,9 @@ import java.io.File
 import java.util.HashMap
 
 class FSOperationsHelper(
-        private val compileContext: CompileContext,
-        private val chunk: ModuleChunk,
-        private val log: Logger
+    private val compileContext: CompileContext,
+    private val chunk: ModuleChunk,
+    private val log: Logger
 ) {
     private val moduleBasedFilter = ModulesBasedFileFilter(compileContext, chunk)
 
@@ -53,8 +53,7 @@ class FSOperationsHelper(
 
         if (recursively) {
             FSOperations.markDirtyRecursively(compileContext, CompilationRound.NEXT, chunk, ::shouldMark)
-        }
-        else {
+        } else {
             FSOperations.markDirty(compileContext, CompilationRound.NEXT, chunk, ::shouldMark)
         }
     }
@@ -67,7 +66,7 @@ class FSOperationsHelper(
         markFilesImpl(files) { it !in excludeFiles && it.exists() && moduleBasedFilter.accept(it) }
     }
 
-    private inline fun markFilesImpl(files: Iterable<File>, shouldMark: (File)->Boolean) {
+    private inline fun markFilesImpl(files: Iterable<File>, shouldMark: (File) -> Boolean) {
         val filesToMark = files.filterTo(HashSet(), shouldMark)
 
         if (filesToMark.isEmpty()) return
@@ -83,9 +82,9 @@ class FSOperationsHelper(
 
     // Based on `JavaBuilderUtil#ModulesBasedFileFilter` from Intellij
     private class ModulesBasedFileFilter(
-            private val context: CompileContext,
-            chunk: ModuleChunk
-    ): Mappings.DependentFilesFilter {
+        private val context: CompileContext,
+        chunk: ModuleChunk
+    ) : Mappings.DependentFilesFilter {
         private val chunkTargets = chunk.targets
         private val buildRootIndex = context.projectDescriptor.buildRootIndex
         private val buildTargetIndex = context.projectDescriptor.buildTargetIndex

@@ -37,7 +37,9 @@ import java.util.concurrent.ConcurrentHashMap;
 class JpsUtils {
     private static final Map<ModuleBuildTarget, Boolean> IS_KOTLIN_JS_MODULE_CACHE = new ConcurrentHashMap<ModuleBuildTarget, Boolean>();
     private static final Map<String, Boolean> IS_KOTLIN_JS_STDLIB_JAR_CACHE = new ConcurrentHashMap<String, Boolean>();
-    private JpsUtils() {}
+
+    private JpsUtils() {
+    }
 
     @NotNull
     static JpsJavaDependenciesEnumerator getAllDependencies(@NotNull ModuleBuildTarget target) {
@@ -66,8 +68,12 @@ class JpsUtils {
 
                 Boolean cachedValue = IS_KOTLIN_JS_STDLIB_JAR_CACHE.get(url);
                 if (cachedValue != null) {
-                    if (cachedValue.booleanValue()) return true;
-                    else continue;
+                    if (cachedValue.booleanValue()) {
+                        return true;
+                    }
+                    else {
+                        continue;
+                    }
                 }
 
                 boolean isKotlinJavascriptStdLibrary = LibraryUtils.isKotlinJavascriptStdLibrary(JpsPathUtil.urlToFile(url));
