@@ -69,6 +69,7 @@ class KJVMCompiledScript<out ScriptBase : Any>(
 class KJVMCompilerImpl : KJVMCompilerProxy {
 
     override fun compile(
+        script: ScriptSource,
         scriptCompilerConfiguration: ScriptCompileConfiguration,
         configurator: ScriptCompilationConfigurator?
     ): ResultWithDiagnostics<CompiledScript<*>> {
@@ -147,7 +148,7 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
             val analyzerWithCompilerReport = AnalyzerWithCompilerReport(messageCollector, environment.configuration.languageVersionSettings)
 
             val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
-            val scriptText = scriptCompilerConfiguration[ScriptCompileConfigurationParams.scriptSourceFragments].getMergedScriptText()
+            val scriptText = getMergedScriptText(script, scriptCompilerConfiguration)
             val scriptFileName = "script" // TODO: extract from file/url if available
             val virtualFile = LightVirtualFile(
                 "$scriptFileName${KotlinParserDefinition.STD_SCRIPT_EXT}",

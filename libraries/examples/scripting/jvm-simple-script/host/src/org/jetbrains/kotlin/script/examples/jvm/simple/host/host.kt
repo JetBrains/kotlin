@@ -35,7 +35,7 @@ fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
         scriptDefinition.evaluator
     )
 
-    return host.eval(myJvmConfig { add(scriptFile.toScriptSource().toConfigEntry()) }, ScriptEvaluationEnvironment())
+    return host.eval(scriptFile.toScriptSource(), myJvmConfig(), ScriptEvaluationEnvironment())
 }
 
 fun main(vararg args: String) {

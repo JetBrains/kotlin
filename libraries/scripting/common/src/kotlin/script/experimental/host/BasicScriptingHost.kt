@@ -29,9 +29,13 @@ abstract class BasicScriptingHost<ScriptBase : Any>(
 ) {
     open fun <T> runInCoroutineContext(block: suspend CoroutineScope.() -> T): T = runBlocking { block() }
 
-    open fun eval(configuration: ScriptCompileConfiguration, environment: ScriptEvaluationEnvironment): ResultWithDiagnostics<EvaluationResult> =
+    open fun eval(
+        script: ScriptSource,
+        configuration: ScriptCompileConfiguration,
+        environment: ScriptEvaluationEnvironment
+    ): ResultWithDiagnostics<EvaluationResult> =
         runInCoroutineContext {
-            val compiled = compiler.compile(configuration, configurator)
+            val compiled = compiler.compile(script, configuration, configurator)
             when (compiled) {
                 is ResultWithDiagnostics.Failure -> compiled
                 is ResultWithDiagnostics.Success -> {

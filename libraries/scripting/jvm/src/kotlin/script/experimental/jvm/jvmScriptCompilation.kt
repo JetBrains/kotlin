@@ -14,7 +14,11 @@ open class JvmScriptCompiler(
     val cache: CompiledJvmScriptsCache
 ) : ScriptCompiler {
 
-    override suspend fun compile(configuration: ScriptCompileConfiguration, configurator: ScriptCompilationConfigurator?): ResultWithDiagnostics<CompiledScript<*>> {
+    override suspend fun compile(
+        script: ScriptSource,
+        configuration: ScriptCompileConfiguration,
+        configurator: ScriptCompilationConfigurator?
+    ): ResultWithDiagnostics<CompiledScript<*>> {
         val refinedConfiguration = configurator?.refineConfiguration(configuration)?.let {
             when (it) {
                 is ResultWithDiagnostics.Failure -> return it
@@ -22,11 +26,11 @@ open class JvmScriptCompiler(
                         ?: return ResultWithDiagnostics.Failure("Null script compile configuration received".asErrorDiagnostics())
             }
         } ?: configuration
-        val cached = cache[refinedConfiguration[ScriptCompileConfigurationParams.scriptSourceFragments]]
+        val cached = cache.get(script, refinedConfiguration)
 
         if (cached != null) return cached.asSuccess()
 
-        return compilerProxy.compile(refinedConfiguration, configurator).also {
+        return compilerProxy.compile(script, refinedConfiguration, configurator).also {
             if (it is ResultWithDiagnostics.Success) {
                 cache.store(it.value as CompiledScript<*>)
             }
@@ -35,19 +39,20 @@ open class JvmScriptCompiler(
 }
 
 interface CompiledJvmScriptsCache {
-    operator fun get(script: ScriptSourceFragments): CompiledScript<*>?
+    fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>?
     fun store(compiledScript: CompiledScript<*>)
 }
 
 interface KJVMCompilerProxy {
     fun compile(
+        script: ScriptSource,
         scriptCompilerConfiguration: ScriptCompileConfiguration,
         configurator: ScriptCompilationConfigurator?
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 
 class DummyCompiledJvmScriptCache : CompiledJvmScriptsCache {
-    override operator fun get(script: ScriptSourceFragments): CompiledScript<*>? = null
+    override fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>? = null
     override fun store(compiledScript: CompiledScript<*>) {}
 }
 

@@ -5,11 +5,9 @@
 
 package kotlin.script.experimental.host
 
-import kotlin.script.experimental.api.ScriptSource
-import kotlin.script.experimental.api.ScriptSourceFragments
-import kotlin.script.experimental.api.ScriptSourceNamedFragment
 import java.io.File
 import java.net.URL
+import kotlin.script.experimental.api.*
 
 fun ScriptSourceFragments.isWholeFile(): Boolean = fragments?.isEmpty() ?: true
 
@@ -20,14 +18,15 @@ fun ScriptSource.getScriptText(): String = when {
     else -> throw RuntimeException("unable to get text from null script")
 }
 
-fun ScriptSourceFragments.getMergedScriptText(): String {
-    val originalScriptText = originalSource.getScriptText()
-    return if (isWholeFile()) {
+fun getMergedScriptText(script: ScriptSource, configuration: ScriptCompileConfiguration): String {
+    val originalScriptText = script.getScriptText()
+    val sourceFragments = configuration.getOrNull(ScriptCompileConfigurationParams.scriptSourceFragments)
+    return if (sourceFragments == null || sourceFragments.isWholeFile()) {
         originalScriptText
     } else {
         val sb = StringBuilder(originalScriptText.length)
         var prevFragment: ScriptSourceNamedFragment? = null
-        for (fragment in fragments!!) {
+        for (fragment in sourceFragments!!.fragments!!) {
             val fragmentStartPos = fragment.range.start.absolutePos
             val fragmentEndPos = fragment.range.end.absolutePos
             if (fragmentStartPos == null || fragmentEndPos == null)

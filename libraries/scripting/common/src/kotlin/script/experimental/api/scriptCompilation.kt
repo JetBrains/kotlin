@@ -8,6 +8,7 @@ package kotlin.script.experimental.api
 interface ScriptCompiler {
 
     suspend fun compile(
+        script: ScriptSource,
         configuration: ScriptCompileConfiguration,
         configurator: ScriptCompilationConfigurator? = null
     ): ResultWithDiagnostics<CompiledScript<*>>
