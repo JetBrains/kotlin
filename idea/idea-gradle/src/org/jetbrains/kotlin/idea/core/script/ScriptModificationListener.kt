@@ -73,7 +73,7 @@ class ScriptModificationListener(private val project: Project) {
                 val doc = event.document
                 val file = FileDocumentManager.getInstance().getFile(doc) ?: return
 
-                if (isGradleScript(file)) {
+                if (isGradleScript(file) && event.newFragment.isNotBlank()) {
                     synchronized(changedDocuments) {
                         changedDocuments.add(doc)
                     }
