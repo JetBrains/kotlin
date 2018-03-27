@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.test;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import org.junit.internal.MethodSorter;
@@ -29,25 +30,27 @@ import org.junit.runner.notification.RunNotifier;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
- * This runner runs class with all inners test classes, but monitors situation when
- * inner classes are already processed.
+ * This runner executes own tests and bypass Gradle filtering for inner classes execution.
+ * Together with the hack in `tasks.kt - fun Project.projectTest()` that adds inner class files to processing,
+ * this allows running tests in inner classes when parent class pattern is used.
+ *
+ * This class also suppress "No tests found in class" warning when inner test classes are present.
+ *
+ * Previous implementation that was building test suite with test cases for inner classes automatically, produced unstable test names
+ * on TeamCity. Names were different when inner test is executed as top class or part of the other parent class.
  */
 public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortable {
-    private static final Set<Class> processedClasses = new HashSet<>();
-
-    private JUnit38ClassRunner delegateRunner;
-    private final Class<?> klass;
-    private boolean isFakeTest = false;
+    private final JUnit38ClassRunner delegateRunner;
 
     private static class FakeEmptyClassTest implements Test, Filterable {
-        private final String klassName;
+        private final String className;
 
         FakeEmptyClassTest(Class<?> klass) {
-            this.klassName = klass.getName();
+            this.className = klass.getName();
         }
 
         @Override
@@ -63,7 +66,7 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
 
         @Override
         public String toString() {
-            return "Empty class with inners for " + klassName;
+            return "Empty class with inners for " + className;
         }
 
         @Override
@@ -73,44 +76,26 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
     }
 
     public JUnit3RunnerWithInners(Class<?> klass) {
-        this.klass = klass;
-    }
+        super();
 
-    @Override
-    public void run(RunNotifier notifier) {
-        initialize();
-        delegateRunner.run(notifier);
-    }
+        String className = klass.getName();
 
-    @Override
-    public Description getDescription() {
-        initialize();
-        return isFakeTest ? Description.EMPTY : delegateRunner.getDescription();
-    }
+        Test test = new TestSuite(klass.asSubclass(TestCase.class));
+        if (!hasOwnTestMethods(klass)) {
+            for (Class<?> declaredClass : klass.getDeclaredClasses()) {
+                if (TestCase.class.isAssignableFrom(declaredClass)) {
+                    test = new FakeEmptyClassTest(klass);
+                    break;
+                }
+            }
+        }
 
-    @Override
-    public void filter(Filter filter) throws NoTestsRemainException {
-        initialize();
-        delegateRunner.filter(filter);
-    }
-
-    @Override
-    public void sort(Sorter sorter) {
-        initialize();
-        delegateRunner.sort(sorter);
-    }
-
-    private void initialize() {
-        if (delegateRunner != null) return;
-        Test collectedTests = getCollectedTests();
-
-        delegateRunner = new JUnit38ClassRunner(collectedTests) {
+        delegateRunner = new JUnit38ClassRunner(test) {
             @Override public void filter(Filter filter) throws NoTestsRemainException {
-                String classDescription = collectedTests.toString();
                 String classPatternString = getGradleClassPattern(filter);
 
                 if (classPatternString != null) {
-                    if (Pattern.compile(classPatternString + "\\$.*").matcher(classDescription).matches()) {
+                    if (Pattern.compile(classPatternString + "\\$.*").matcher(className).matches()) {
                         return;
                     }
                 }
@@ -120,64 +105,29 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
         };
     }
 
-    private Test getCollectedTests() {
-        if (processedClasses.contains(klass)) {
-            isFakeTest = true;
-            return new FakeEmptyClassTest(klass);
-        }
-
-        Set<Class> classes = collectDeclaredClasses(klass, true);
-        Set<Class> unprocessedClasses = unprocessedClasses(classes);
-        processedClasses.addAll(unprocessedClasses);
-
-        return createTreeTestSuite(klass, unprocessedClasses);
+    @Override
+    public void run(RunNotifier notifier) {
+        delegateRunner.run(notifier);
     }
 
-    private static Test createTreeTestSuite(Class root, Set<Class> classes) {
-        Map<Class, TestSuite> classSuites = new HashMap<>();
-
-        for (Class aClass : classes) {
-            classSuites.put(aClass, hasTestMethods(aClass) ? new TestSuite(aClass) : new TestSuite(aClass.getCanonicalName()));
-        }
-
-        for (Class aClass : classes) {
-            if (aClass.getEnclosingClass() != null && classes.contains(aClass.getEnclosingClass())) {
-                classSuites.get(aClass.getEnclosingClass()).addTest(classSuites.get(aClass));
-            }
-        }
-
-        return classSuites.get(root);
+    @Override
+    public Description getDescription() {
+        return delegateRunner.getDescription();
     }
 
-    private static Set<Class> unprocessedClasses(Collection<Class> classes) {
-        Set<Class> result = new LinkedHashSet<>();
-        for (Class aClass : classes) {
-            if (!processedClasses.contains(aClass)) {
-                result.add(aClass);
-            }
-        }
-
-        return result;
+    @Override
+    public void filter(Filter filter) throws NoTestsRemainException {
+        delegateRunner.filter(filter);
     }
 
-    private static Set<Class> collectDeclaredClasses(Class klass, boolean withItself) {
-        Set<Class> result = new HashSet<>();
-        if (withItself) {
-            result.add(klass);
-        }
-
-        for (Class aClass : klass.getDeclaredClasses()) {
-            result.addAll(collectDeclaredClasses(aClass, true));
-        }
-
-        return result;
+    @Override
+    public void sort(Sorter sorter) {
+        delegateRunner.sort(sorter);
     }
 
-    private static boolean hasTestMethods(Class klass) {
-        for (Class currentClass = klass; Test.class.isAssignableFrom(currentClass); currentClass = currentClass.getSuperclass()) {
-            for (Method each : MethodSorter.getDeclaredMethods(currentClass)) {
-                if (isTestMethod(each)) return true;
-            }
+    private static boolean hasOwnTestMethods(Class klass) {
+        for (Method each : MethodSorter.getDeclaredMethods(klass)) {
+            if (isTestMethod(each)) return true;
         }
 
         return false;
@@ -229,7 +179,8 @@ public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortab
             }
 
             return patternStr;
-        } catch (ReflectiveOperationException e) {
+        }
+        catch (ReflectiveOperationException e) {
             throw new IllegalStateException(e);
         }
     }
