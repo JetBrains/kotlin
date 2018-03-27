@@ -1,0 +1,22 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class République {
+
+    public République() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Привет {
+
+    public Привет() {
+        super();
+    }
+}
