@@ -49,4 +49,6 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-Werror", description = "Report an error if there are any warnings")
     var allWarningsAsErrors: Boolean by FreezableVar(false)
+
+    var internalArguments: List<String> by FreezableVar(emptyList())
 }

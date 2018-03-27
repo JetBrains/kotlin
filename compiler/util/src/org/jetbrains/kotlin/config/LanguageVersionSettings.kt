@@ -14,6 +14,7 @@ enum class LanguageFeature(
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val hintUrl: String? = null,
     val defaultState: State = State.ENABLED,
+    val forcesPreReleaseBinaries: Boolean = false,
     val enabledInProgressiveMode: Boolean = false
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
@@ -65,14 +66,14 @@ enum class LanguageFeature(
     ProperVisibilityForCompanionObjectInstanceField(KOTLIN_1_3, enabledInProgressiveMode = true),
     ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3, enabledInProgressiveMode = true),
     NestedClassesInAnnotations(KOTLIN_1_3),
-    JvmStaticInInterface(KOTLIN_1_3),
+    JvmStaticInInterface(KOTLIN_1_3, forcesPreReleaseBinaries = true),
     ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3, enabledInProgressiveMode = true),
     ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3, enabledInProgressiveMode = true),
-    ReleaseCoroutines(KOTLIN_1_3),
+    ReleaseCoroutines(KOTLIN_1_3, forcesPreReleaseBinaries = true),
     ReadDeserializedContracts(KOTLIN_1_3),
     UseReturnsEffect(KOTLIN_1_3),
     UseCallsInPlaceEffect(KOTLIN_1_3),
-    AllowContractsForCustomFunctions(KOTLIN_1_3),
+    AllowContractsForCustomFunctions(KOTLIN_1_3, forcesPreReleaseBinaries = true),
     ProhibitLocalAnnotations(KOTLIN_1_3, enabledInProgressiveMode = true),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
@@ -90,7 +91,7 @@ enum class LanguageFeature(
 
     NewInference(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
 
-    InlineClasses(sinceVersion = null, defaultState = State.DISABLED),
+    InlineClasses(sinceVersion = null, defaultState = State.DISABLED, forcesPreReleaseBinaries = true),
 
     ;
 
@@ -147,7 +148,12 @@ interface LanguageVersionSettings {
     fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State
 
     fun supportsFeature(feature: LanguageFeature): Boolean =
-        getFeatureSupport(feature).let { it == LanguageFeature.State.ENABLED || it == LanguageFeature.State.ENABLED_WITH_WARNING }
+        getFeatureSupport(feature).let {
+            it == LanguageFeature.State.ENABLED ||
+            it == LanguageFeature.State.ENABLED_WITH_WARNING
+        }
+
+    fun isPreRelease(): Boolean
 
     fun <T> getFlag(flag: AnalysisFlag<T>): T
 
@@ -192,17 +198,24 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
         }
     }
 
+    override fun isPreRelease(): Boolean = languageVersion.isPreRelease() ||
+            specificFeatures.any { (feature, state) ->
+                state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()
+            }
+
     companion object {
         @JvmField
         val DEFAULT = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
     }
 }
 
-fun LanguageVersionSettings.isPreRelease(): Boolean =
-    languageVersion.isPreRelease()
-
 fun LanguageVersion.isPreRelease(): Boolean {
     if (!isStable) return true
 
     return KotlinCompilerVersion.isPreRelease() && this == LanguageVersion.LATEST_STABLE
+}
+
+fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(): Boolean {
+    val isFeatureNotReleasedYet = sinceVersion?.isStable != true
+    return isFeatureNotReleasedYet && forcesPreReleaseBinaries
 }

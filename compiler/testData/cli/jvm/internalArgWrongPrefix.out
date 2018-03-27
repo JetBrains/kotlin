@@ -1,0 +1,5 @@
+warning: flag is not supported by this version of the compiler: -XX:+InlineClasses
+compiler/testData/cli/jvm/inlineClass.kt:1:1: error: the feature "inline classes" is experimental and should be enabled explicitly
+inline class Foo(val x: Int)
+^
+COMPILATION_ERROR
