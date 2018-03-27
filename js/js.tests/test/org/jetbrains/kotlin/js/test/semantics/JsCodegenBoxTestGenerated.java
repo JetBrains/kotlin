@@ -7644,10 +7644,91 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("tailrec.kt")
-            public void testTailrec() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec.kt");
-                doTest(fileName);
+            @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Tailrec extends AbstractJsCodegenBoxTest {
+                @TestMetadata("infixCall.kt")
+                public void ignoreInfixCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("infixRecursiveCall.kt")
+                public void ignoreInfixRecursiveCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixRecursiveCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("realIteratorFoldl.kt")
+                public void ignoreRealIteratorFoldl() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realIteratorFoldl.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("realStringRepeat.kt")
+                public void ignoreRealStringRepeat() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringRepeat.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("returnInParentheses.kt")
+                public void ignoreReturnInParentheses() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/returnInParentheses.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("sum.kt")
+                public void ignoreSum() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/sum.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("tailCallInBlockInParentheses.kt")
+                public void ignoreTailCallInBlockInParentheses() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInBlockInParentheses.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("tailCallInParentheses.kt")
+                public void ignoreTailCallInParentheses() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInParentheses.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whenWithIs.kt")
+                public void ignoreWhenWithIs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/whenWithIs.kt");
+                    doTest(fileName);
+                }
+
+                public void testAllFilesPresentInTailrec() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+                }
+
+                @TestMetadata("controlFlowIf.kt")
+                public void testControlFlowIf() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowIf.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("controlFlowWhen.kt")
+                public void testControlFlowWhen() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowWhen.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extention.kt")
+                public void testExtention() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/extention.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("realStringEscape.kt")
+                public void testRealStringEscape() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringEscape.kt");
+                    doTest(fileName);
+                }
             }
         }
 

@@ -2416,7 +2416,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     ) {
         boolean isSafeCallOrOnStack = receiver instanceof StackValue.SafeCall || receiver instanceof StackValue.OnStack;
 
-        if (isSuspendCall && !isSafeCallOrOnStack) {
+        if (isSuspendCall && !isSafeCallOrOnStack && !tailRecursionCodegen.isTailRecursion(resolvedCall)) {
             // Inline markers are used to spill the stack before coroutine suspension
             addInlineMarker(v, true);
         }
