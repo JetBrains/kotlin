@@ -90,7 +90,7 @@ class IrGetterCallImpl(
         superQualifierSymbol: IrClassSymbol? = null
     ) : this(
         startOffset, endOffset, symbol, descriptor,
-        typeArguments.typeArgumentsCount,
+        descriptor.typeArgumentsCount,
         dispatchReceiver, extensionReceiver, origin, superQualifierSymbol
     ) {
         copyTypeArgumentsFrom(typeArguments)
@@ -164,7 +164,7 @@ class IrSetterCallImpl(
         argument: IrExpression,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, symbol, descriptor, typeArguments.typeArgumentsCount, origin, superQualifierSymbol) {
+    ) : this(startOffset, endOffset, symbol, descriptor, descriptor.typeArgumentsCount, origin, superQualifierSymbol) {
         copyTypeArgumentsFrom(typeArguments)
         this.dispatchReceiver = dispatchReceiver
         this.extensionReceiver = extensionReceiver

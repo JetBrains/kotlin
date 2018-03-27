@@ -16,11 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
-import org.jetbrains.kotlin.ir.expressions.typeArgumentsCount
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -35,17 +32,6 @@ abstract class IrCallWithIndexedArgumentsBase(
     valueArgumentsCount: Int,
     origin: IrStatementOrigin? = null
 ) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, valueArgumentsCount, origin) {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        valueArgumentsCount: Int,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, typeArguments.typeArgumentsCount, valueArgumentsCount, origin) {
-        copyTypeArgumentsFrom(typeArguments)
-    }
 
     private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
 

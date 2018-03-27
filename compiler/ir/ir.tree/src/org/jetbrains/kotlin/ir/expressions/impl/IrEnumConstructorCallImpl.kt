@@ -48,7 +48,7 @@ class IrEnumConstructorCallImpl(
         endOffset: Int,
         symbol: IrConstructorSymbol,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
-    ) : this(startOffset, endOffset, symbol, typeArguments.typeArgumentsCount) {
+    ) : this(startOffset, endOffset, symbol, symbol.descriptor.typeArgumentsCount) {
         copyTypeArgumentsFrom(typeArguments)
     }
 

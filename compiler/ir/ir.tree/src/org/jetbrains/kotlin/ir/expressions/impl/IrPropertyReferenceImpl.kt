@@ -50,7 +50,7 @@ class IrPropertyReferenceImpl(
         setter: IrFunctionSymbol?,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, descriptor, typeArguments.typeArgumentsCount, field, getter, setter, origin) {
+    ) : this(startOffset, endOffset, type, descriptor, descriptor.typeArgumentsCount, field, getter, setter, origin) {
         copyTypeArgumentsFrom(typeArguments)
     }
 

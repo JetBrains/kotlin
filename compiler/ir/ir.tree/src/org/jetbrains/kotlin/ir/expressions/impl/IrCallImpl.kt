@@ -57,7 +57,7 @@ class IrCallImpl(
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArguments.typeArgumentsCount, origin, superQualifierSymbol) {
+    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeArgumentsCount, origin, superQualifierSymbol) {
         copyTypeArgumentsFrom(typeArguments)
     }
 
@@ -66,15 +66,15 @@ class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        calleeDescriptor: FunctionDescriptor,
+        descriptor: FunctionDescriptor,
         typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null,
         superQualifierDescriptor: ClassDescriptor? = null
     ) : this(
         startOffset, endOffset,
         type,
-        createFunctionSymbol(calleeDescriptor),
-        calleeDescriptor,
+        createFunctionSymbol(descriptor),
+        descriptor,
         typeArgumentsCount,
         origin,
         createClassSymbolOrNull(superQualifierDescriptor)
@@ -85,16 +85,17 @@ class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        calleeDescriptor: FunctionDescriptor,
+        descriptor: FunctionDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
         origin: IrStatementOrigin? = null,
         superQualifierDescriptor: ClassDescriptor? = null
     ) : this(
         startOffset, endOffset,
         type,
-        createFunctionSymbol(calleeDescriptor),
-        calleeDescriptor,
-        typeArguments.typeArgumentsCount, origin,
+        createFunctionSymbol(descriptor),
+        descriptor,
+        descriptor.typeArgumentsCount,
+        origin,
         createClassSymbolOrNull(superQualifierDescriptor)
     ) {
         copyTypeArgumentsFrom(typeArguments)
@@ -104,16 +105,17 @@ class IrCallImpl(
     constructor(
         startOffset: Int,
         endOffset: Int,
-        calleeDescriptor: FunctionDescriptor,
+        descriptor: FunctionDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
         origin: IrStatementOrigin? = null,
         superQualifierDescriptor: ClassDescriptor? = null
     ) : this(
         startOffset, endOffset,
-        calleeDescriptor.returnType!!,
-        createFunctionSymbol(calleeDescriptor),
-        calleeDescriptor,
-        typeArguments.typeArgumentsCount, origin,
+        descriptor.returnType!!,
+        createFunctionSymbol(descriptor),
+        descriptor,
+        descriptor.typeArgumentsCount,
+        origin,
         createClassSymbolOrNull(superQualifierDescriptor)
     ) {
         copyTypeArgumentsFrom(typeArguments)
@@ -132,7 +134,7 @@ class IrCallImpl(
         descriptor.returnType!!,
         symbol,
         descriptor,
-        typeArguments.typeArgumentsCount,
+        descriptor.typeArgumentsCount,
         origin,
         superQualifierSymbol
     ) {

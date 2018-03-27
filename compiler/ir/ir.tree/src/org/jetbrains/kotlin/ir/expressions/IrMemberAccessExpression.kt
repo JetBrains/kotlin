@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -65,8 +62,12 @@ fun IrMemberAccessExpression.copyTypeArgumentsFrom(source: Map<TypeParameterDesc
     }
 }
 
-val Map<TypeParameterDescriptor, KotlinType>?.typeArgumentsCount: Int
-    get() = this?.size ?: 0
+val CallableDescriptor.typeArgumentsCount: Int
+    get() =
+        when (this) {
+            is PropertyAccessorDescriptor -> correspondingProperty.typeParameters.size
+            else -> typeParameters.size
+        }
 
 fun IrMemberAccessExpression.getTypeArgumentOrDefault(typeParameterDescriptor: TypeParameterDescriptor) =
     getTypeArgument(typeParameterDescriptor) ?: typeParameterDescriptor.defaultType

@@ -54,7 +54,7 @@ class IrFunctionReferenceImpl(
         descriptor: FunctionDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
         origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArguments.typeArgumentsCount, origin) {
+    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeArgumentsCount, origin) {
         copyTypeArgumentsFrom(typeArguments)
     }
 
@@ -77,7 +77,7 @@ class IrFunctionReferenceImpl(
         typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null,
         origin: IrStatementOrigin? = null
     ) : this(
-        startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor, typeArguments.typeArgumentsCount, origin
+        startOffset, endOffset, type, createFunctionSymbol(descriptor.original), descriptor, descriptor.typeArgumentsCount, origin
     ) {
         copyTypeArgumentsFrom(typeArguments)
     }
