@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 class C {
     private val v = 1
 

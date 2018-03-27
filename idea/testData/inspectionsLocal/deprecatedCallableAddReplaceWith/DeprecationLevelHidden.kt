@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 
 <caret>@Deprecated("Use the other version", level=DeprecationLevel.HIDDEN)
 fun foo(a: Int) { foo(a) }

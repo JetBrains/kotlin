@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 <caret>@Deprecated("")
 fun foo() {
     bar() ?: return

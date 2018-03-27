@@ -1261,6 +1261,159 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DeprecatedCallableAddReplaceWith extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInDeprecatedCallableAddReplaceWith() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("AlreadyWithReplaceWith.kt")
+        public void testAlreadyWithReplaceWith() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/AlreadyWithReplaceWith.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("CommentInBody.kt")
+        public void testCommentInBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/CommentInBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DeclarationInside.kt")
+        public void testDeclarationInside() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/DeclarationInside.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("DeprecationLevelHidden.kt")
+        public void testDeprecationLevelHidden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/DeprecationLevelHidden.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("destructuringWithLambdaInScript.kts")
+        public void testDestructuringWithLambdaInScript() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/destructuringWithLambdaInScript.kts");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExceptionInPropertyDestructuringEntry.kt")
+        public void testExceptionInPropertyDestructuringEntry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/ExceptionInPropertyDestructuringEntry.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExpressionBody.kt")
+        public void testExpressionBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/ExpressionBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("If.kt")
+        public void testIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/If.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Imports.kt")
+        public void testImports() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/Imports.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("justLambdaInScript.kts")
+        public void testJustLambdaInScript() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/justLambdaInScript.kts");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoCompanionObjectImport.kt")
+        public void testNoCompanionObjectImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/NoCompanionObjectImport.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoDefaultImport.kt")
+        public void testNoDefaultImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/NoDefaultImport.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoReturn.kt")
+        public void testNoReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/NoReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotAvailableOnDocComment.kt")
+        public void testNotAvailableOnDocComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/NotAvailableOnDocComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("PrivateSymbolUsed.kt")
+        public void testPrivateSymbolUsed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/PrivateSymbolUsed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("QualifiedCall.kt")
+        public void testQualifiedCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/QualifiedCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Return.kt")
+        public void testReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/Return.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ReturnInside.kt")
+        public void testReturnInside() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/ReturnInside.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/Simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StringLiteral.kt")
+        public void testStringLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/StringLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StringTemplate.kt")
+        public void testStringTemplate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/StringTemplate.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TwoStatements.kt")
+        public void testTwoStatements() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/TwoStatements.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValProperty.kt")
+        public void testValProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/ValProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ValPropertyWithReturn.kt")
+        public void testValPropertyWithReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/ValPropertyWithReturn.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/doubleNegation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
