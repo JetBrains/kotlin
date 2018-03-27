@@ -13451,9 +13451,21 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("compoundAssignmentToObjectFromCall.kt")
+        public void testCompoundAssignmentToObjectFromCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/compoundAssignmentToObjectFromCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compoundAssignmentToPropertyImportedFromObject.kt")
         public void testCompoundAssignmentToPropertyImportedFromObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/compoundAssignmentToPropertyImportedFromObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compoundAssignmentToPropertyWithQualifier.kt")
+        public void testCompoundAssignmentToPropertyWithQualifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/compoundAssignmentToPropertyWithQualifier.kt");
             doTest(fileName);
         }
 
