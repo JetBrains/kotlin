@@ -42,8 +42,7 @@ public class KotlinSourceFileCollector {
     // For incremental compilation
     @NotNull
     public static MultiMap<ModuleBuildTarget, File> getDirtySourceFiles(DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder)
-            throws IOException
-    {
+            throws IOException {
         final MultiMap<ModuleBuildTarget, File> result = new MultiMap<ModuleBuildTarget, File>();
 
         dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
@@ -84,15 +83,17 @@ public class KotlinSourceFileCollector {
 
     @NotNull
     public static List<File> getAllKotlinSourceFiles(@NotNull ModuleBuildTarget target) {
-        final List<File> moduleExcludes = ContainerUtil.map(target.getModule().getExcludeRootsList().getUrls(), new Function<String, File>() {
-            @Override
-            public File fun(String url) {
-                return JpsPathUtil.urlToFile(url);
-            }
-        });
+        final List<File> moduleExcludes =
+                ContainerUtil.map(target.getModule().getExcludeRootsList().getUrls(), new Function<String, File>() {
+                    @Override
+                    public File fun(String url) {
+                        return JpsPathUtil.urlToFile(url);
+                    }
+                });
 
         final JpsCompilerExcludes compilerExcludes =
-                JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(target.getModule().getProject()).getCompilerExcludes();
+                JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(target.getModule().getProject())
+                        .getCompilerExcludes();
 
         final List<File> result = ContainerUtil.newArrayList();
         for (JpsModuleSourceRoot sourceRoot : getRelevantSourceRoots(target)) {
@@ -135,5 +136,6 @@ public class KotlinSourceFileCollector {
         return FileUtilRt.extensionEquals(file.getName(), "kt");
     }
 
-    private KotlinSourceFileCollector() {}
+    private KotlinSourceFileCollector() {
+    }
 }

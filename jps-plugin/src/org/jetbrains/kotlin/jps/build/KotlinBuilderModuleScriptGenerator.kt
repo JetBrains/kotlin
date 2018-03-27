@@ -51,21 +51,21 @@ object KotlinBuilderModuleScriptGenerator {
     // TODO switch to directly using when "since-build" will be >= 144.3357.4
     internal val getRelatedProductionModule: (JpsModule) -> JpsModule? = run {
         val klass =
-                try {
-                    Class.forName("org.jetbrains.jps.model.module.JpsTestModuleProperties")
-                } catch (e: ClassNotFoundException) {
-                    return@run alwaysNull()
-                }
+            try {
+                Class.forName("org.jetbrains.jps.model.module.JpsTestModuleProperties")
+            } catch (e: ClassNotFoundException) {
+                return@run alwaysNull()
+            }
 
 
         val getTestModulePropertiesMethod: Method
         val getProductionModuleMethod: Method
 
         try {
-            getTestModulePropertiesMethod = JpsJavaExtensionService::class.java.getDeclaredMethod("getTestModuleProperties", JpsModule::class.java)
+            getTestModulePropertiesMethod =
+                    JpsJavaExtensionService::class.java.getDeclaredMethod("getTestModuleProperties", JpsModule::class.java)
             getProductionModuleMethod = klass.getDeclaredMethod("getProductionModule")
-        }
-        catch (e: NoSuchMethodException) {
+        } catch (e: NoSuchMethodException) {
             return@run alwaysNull()
         }
 
@@ -77,10 +77,10 @@ object KotlinBuilderModuleScriptGenerator {
     }
 
     fun generateModuleDescription(
-            context: CompileContext,
-            chunk: ModuleChunk,
-            sourceFiles: MultiMap<ModuleBuildTarget, File>, // ignored for non-incremental compilation
-            hasRemovedFiles: Boolean
+        context: CompileContext,
+        chunk: ModuleChunk,
+        sourceFiles: MultiMap<ModuleBuildTarget, File>, // ignored for non-incremental compilation
+        hasRemovedFiles: Boolean
     ): File? {
         val builder = KotlinModuleXmlBuilder()
 
@@ -97,10 +97,11 @@ object KotlinBuilderModuleScriptGenerator {
             val friendDirs = getAdditionalOutputDirsWhereInternalsAreVisible(target)
 
             val moduleSources = ArrayList(
-                    if (IncrementalCompilation.isEnabled())
-                        sourceFiles.get(target)
-                    else
-                        KotlinSourceFileCollector.getAllKotlinSourceFiles(target))
+                if (IncrementalCompilation.isEnabled())
+                    sourceFiles.get(target)
+                else
+                    KotlinSourceFileCollector.getAllKotlinSourceFiles(target)
+            )
 
             if (moduleSources.size > 0 || hasRemovedFiles) {
                 noSources = false
@@ -114,17 +115,18 @@ object KotlinBuilderModuleScriptGenerator {
             assert(targetType is JavaModuleBuildTargetType)
             val targetId = TargetId(target)
             builder.addModule(
-                    targetId.name,
-                    outputDir.absolutePath,
-                    moduleSources,
-                    findSourceRoots(context, target),
-                    findClassPathRoots(target),
-                    findModularJdkRoot(target),
-                    targetId.type,
-                    (targetType as JavaModuleBuildTargetType).isTests,
-                    // this excludes the output directories from the class path, to be removed for true incremental compilation
-                    outputDirs,
-                    friendDirs)
+                targetId.name,
+                outputDir.absolutePath,
+                moduleSources,
+                findSourceRoots(context, target),
+                findClassPathRoots(target),
+                findModularJdkRoot(target),
+                targetId.type,
+                (targetType as JavaModuleBuildTargetType).isTests,
+                // this excludes the output directories from the class path, to be removed for true incremental compilation
+                outputDirs,
+                friendDirs
+            )
         }
 
         if (noSources) return null
@@ -144,14 +146,12 @@ object KotlinBuilderModuleScriptGenerator {
         val dir = System.getProperty("kotlin.jps.dir.for.module.files")?.let { File(it) }?.takeIf { it.isDirectory }
         return try {
             File.createTempFile("kjps", readableSuffix + ".script.xml", dir)
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             // sometimes files cannot be created, because file name is too long (Windows, Mac OS)
             // see https://bugs.openjdk.java.net/browse/JDK-8148023
             try {
                 File.createTempFile("kjps", ".script.xml", dir)
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 val message = buildString {
                     append("Could not create module file when building chunk $chunk")
                     if (dir != null) {
@@ -203,8 +203,8 @@ object KotlinBuilderModuleScriptGenerator {
         // List of paths to JRE modules in the following format:
         // jrt:///Library/Java/JavaVirtualMachines/jdk-9.jdk/Contents/Home!/java.base
         val urls = JpsJavaExtensionService.dependencies(target.module)
-                .satisfying { dependency -> dependency is JpsSdkDependency }
-                .classes().urls
+            .satisfying { dependency -> dependency is JpsSdkDependency }
+            .classes().urls
 
         val url = urls.firstOrNull { it.startsWith(StandardFileSystems.JRT_PROTOCOL_PREFIX) } ?: return null
 

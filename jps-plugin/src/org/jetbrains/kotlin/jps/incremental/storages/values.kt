@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.jps.incremental.storages
 import com.intellij.openapi.util.io.FileUtil
 
 class PathFunctionPair(
-        val path: String,
-        val function: String
-): Comparable<PathFunctionPair> {
+    val path: String,
+    val function: String
+) : Comparable<PathFunctionPair> {
     override fun compareTo(other: PathFunctionPair): Int {
         val pathComp = FileUtil.comparePaths(path, other.path)
 
@@ -31,12 +31,12 @@ class PathFunctionPair(
     }
 
     override fun equals(other: Any?): Boolean =
-            when (other) {
-                is PathFunctionPair ->
-                    FileUtil.pathsEqual(path, other.path) && function == other.function
-                else ->
-                    false
-            }
+        when (other) {
+            is PathFunctionPair ->
+                FileUtil.pathsEqual(path, other.path) && function == other.function
+            else ->
+                false
+        }
 
     override fun hashCode(): Int = 31 * FileUtil.pathHashCode(path) + function.hashCode()
 }
