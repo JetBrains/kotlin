@@ -85,7 +85,7 @@ open class InliningContext(
 
     fun subInlineWithClassRegeneration(
             generator: NameGenerator,
-            newTypeMappings: MutableMap<String, String>,
+            newTypeMappings: MutableMap<String, String?>,
             callSiteInfo: InlineCallSiteInfo
     ): InliningContext = RegeneratedClassContext(
             this, expressionMap, state, generator, TypeRemapper.createFrom(typeRemapper, newTypeMappings),

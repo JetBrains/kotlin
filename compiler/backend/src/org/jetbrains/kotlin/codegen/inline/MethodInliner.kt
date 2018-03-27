@@ -53,7 +53,7 @@ class MethodInliner(
     //keeps order
     private val transformations = ArrayList<TransformationInfo>()
     //current state
-    private val currentTypeMapping = HashMap<String, String>()
+    private val currentTypeMapping = HashMap<String, String?>()
     private val result = InlineResult.create()
     private var lambdasFinallyBlocks: Int = 0
 
