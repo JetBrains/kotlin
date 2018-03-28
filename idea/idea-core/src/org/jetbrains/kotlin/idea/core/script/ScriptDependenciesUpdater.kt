@@ -96,7 +96,7 @@ class ScriptDependenciesUpdater(
     }
 
     fun reloadModifiedScripts() {
-        for (it in modifiedScripts) {
+        for (it in modifiedScripts.filter { cache[it] != null }) {
             performUpdate(it)
         }
         modifiedScripts.clear()
