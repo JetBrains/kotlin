@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeCompiledLightClassTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeLightClassTest
+import org.jetbrains.kotlin.idea.caches.resolve.AbstractMultiModuleLineMarkerTest
 import org.jetbrains.kotlin.idea.codeInsight.*
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateHashCodeAndEqualsActionTest
@@ -547,6 +548,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractLineMarkersTest> {
             model("codeInsight/lineMarker")
+        }
+
+        testClass<AbstractMultiModuleLineMarkerTest> {
+            model("multiModuleLineMarker", extension = null, recursive = false)
         }
 
         testClass<AbstractShortenRefsTest> {

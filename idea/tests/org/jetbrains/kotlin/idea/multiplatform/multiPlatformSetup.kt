@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.multiplatform
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.StdModuleTypes
+import com.intellij.openapi.roots.CompilerModuleExtension
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.testFramework.PlatformTestCase
 import junit.framework.TestCase
@@ -61,8 +63,22 @@ private fun AbstractMultiModuleTest.createModuleWithRoots(
     val module = createModule(moduleId.ideaModuleName())
     for ((_, isTestRoot, moduleRoot) in infos) {
         addRoot(module, moduleRoot, isTestRoot)
+
+        if (moduleId.platform is TargetPlatformKind.JavaScript && isTestRoot) {
+            setupJsTestOutput(module)
+        }
     }
     return module
+}
+
+// test line markers for JS do not work without additional setup
+private fun setupJsTestOutput(module: Module) {
+    ModuleRootModificationUtil.updateModel(module) {
+        with(it.getModuleExtension(CompilerModuleExtension::class.java)!!) {
+            inheritCompilerOutputPath(false)
+            setCompilerOutputPathForTests("js_out")
+        }
+    }
 }
 
 private fun AbstractMultiModuleTest.createModule(name: String): Module {
