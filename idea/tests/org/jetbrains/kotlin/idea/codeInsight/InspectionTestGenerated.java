@@ -276,6 +276,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("publicApiImplicitType/inspectionData/inspections.test")
+        public void testPublicApiImplicitType_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/publicApiImplicitType/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("recursivePropertyAccessor/inspectionData/inspections.test")
         public void testRecursivePropertyAccessor_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/recursivePropertyAccessor/inspectionData/inspections.test");
