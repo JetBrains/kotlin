@@ -343,6 +343,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("repeatableAnnotations.kt")
+    public void testRepeatableAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/repeatableAnnotations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("severalPackageParts.kt")
     public void testSeveralPackageParts() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/severalPackageParts.kt");
