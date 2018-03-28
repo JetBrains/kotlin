@@ -30,7 +30,7 @@ abstract class MyScriptWithMavenDeps {
 val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
     listOf(
         baseClass<MyScriptWithMavenDeps>(),
-        importedPackages(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
+        defaultImports(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
         dependencies(
             JvmDependency(
                 scriptCompilationClasspathFromContext(

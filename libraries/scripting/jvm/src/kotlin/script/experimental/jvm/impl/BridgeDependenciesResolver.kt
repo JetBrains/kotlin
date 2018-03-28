@@ -66,7 +66,7 @@ class BridgeDependenciesResolver(
             DependenciesResolver.ResolveResult.Success(
                 ScriptDependencies(
                     classpath = newClasspath, // TODO: maybe it should return only increment from the initial config
-                    imports = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.importedPackages)?.toList()
+                    imports = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.defaultImports)?.toList()
                             ?: emptyList()
                 ),
                 diagnostics

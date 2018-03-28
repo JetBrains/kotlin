@@ -23,13 +23,17 @@ object ScriptCompileConfigurationProperties {
 
     val contextVariables by typedKey<Map<String, KType>>() // external variables
 
-    val importedPackages by typedKey<List<String>>()
+    val defaultImports by typedKey<List<String>>()
 
     val restrictions by typedKey<List<ResolvingRestrictionRule>>()
 
     val importedScripts by typedKey<List<ScriptSource>>()
 
     val dependencies by typedKey<List<ScriptDependency>>()
+
+    val generatedClassAnnotations by typedKey<List<KClass<out Annotation>>>()
+
+    val generatedMethodAnnotations by typedKey<List<KClass<out Annotation>>>()
 
     val compilerOptions by typedKey<List<String>>() // Q: CommonCompilerOptions instead?
 
