@@ -14,115 +14,105 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.compilerRunner;
+package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.preloading.ClassPreloadingUtils;
-import org.jetbrains.kotlin.preloading.Preloader;
-import org.jetbrains.kotlin.utils.KotlinPaths;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
+import org.jetbrains.kotlin.preloading.Preloader
+import org.jetbrains.kotlin.utils.KotlinPaths
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.ref.SoftReference;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.File
+import java.io.PrintStream
+import java.lang.ref.SoftReference
+import java.util.ArrayList
+import java.util.Arrays
 
-import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 
-public class CompilerRunnerUtil {
+object CompilerRunnerUtil {
+    private var ourClassLoaderRef = SoftReference<ClassLoader>(null)
 
-    private static SoftReference<ClassLoader> ourClassLoaderRef = new SoftReference<>(null);
+    internal val jdkToolsJar: File?
+        get() {
+            val javaHomePath = System.getProperty("java.home")
+            if (javaHomePath == null || javaHomePath.isEmpty()) {
+                return null
+            }
+            val javaHome = File(javaHomePath)
+            var toolsJar = File(javaHome, "lib/tools.jar")
+            if (toolsJar.exists()) {
+                return toolsJar.canonicalFile
+            }
 
-    @NotNull
-    private static synchronized ClassLoader getOrCreateClassLoader(
-            @NotNull JpsCompilerEnvironment environment,
-            @NotNull List<File> paths
-    ) throws IOException {
-        ClassLoader classLoader = ourClassLoaderRef.get();
+            // We might be inside jre.
+            if (javaHome.name == "jre") {
+                toolsJar = File(javaHome.parent, "lib/tools.jar")
+                if (toolsJar.exists()) {
+                    return toolsJar.canonicalFile
+                }
+            }
+
+            return null
+        }
+
+    @Synchronized
+    private fun getOrCreateClassLoader(
+        environment: JpsCompilerEnvironment,
+        paths: List<File>
+    ): ClassLoader {
+        var classLoader = ourClassLoaderRef.get()
         if (classLoader == null) {
             classLoader = ClassPreloadingUtils.preloadClasses(
-                    paths,
-                    Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE,
-                    CompilerRunnerUtil.class.getClassLoader(),
-                    environment.getClassesToLoadByParent()
-            );
-            ourClassLoaderRef = new SoftReference<>(classLoader);
+                paths,
+                Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE,
+                CompilerRunnerUtil::class.java.classLoader,
+                environment.classesToLoadByParent
+            )
+            ourClassLoaderRef = SoftReference(classLoader)
         }
-        return classLoader;
+        return classLoader!!
     }
 
-    @Nullable
-    public static File getLibPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
-        File libs = paths.getLibPath();
-        if (libs.exists() && !libs.isFile()) return libs;
+    fun getLibPath(paths: KotlinPaths, messageCollector: MessageCollector): File? {
+        val libs = paths.libPath
+        if (libs.exists() && !libs.isFile) return libs
 
         messageCollector.report(
-                ERROR,
-                "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed",
-                null
-        );
+            ERROR,
+            "Broken compiler at '" + libs.absolutePath + "'. Make sure plugin is properly installed", null
+        )
 
-        return null;
+        return null
     }
 
-    @Nullable
-    public static Object invokeExecMethod(
-            @NotNull String compilerClassName,
-            @NotNull String[] arguments,
-            @NotNull JpsCompilerEnvironment environment,
-            @NotNull PrintStream out
-    ) throws Exception {
-        File libPath = getLibPath(environment.getKotlinPaths(), environment.getMessageCollector());
-        if (libPath == null) return null;
+    fun invokeExecMethod(
+        compilerClassName: String,
+        arguments: Array<String>,
+        environment: JpsCompilerEnvironment,
+        out: PrintStream
+    ): Any? {
+        val libPath = getLibPath(environment.kotlinPaths, environment.messageCollector) ?: return null
 
-        List<File> paths = new ArrayList<>();
-        paths.add(new File(libPath, "kotlin-compiler.jar"));
+        val paths = ArrayList<File>()
+        paths.add(File(libPath, "kotlin-compiler.jar"))
 
-        if (Arrays.asList(arguments).contains("-Xuse-javac")) {
-            File toolsJar = getJdkToolsJar();
+        if (Arrays.asList(*arguments).contains("-Xuse-javac")) {
+            val toolsJar = jdkToolsJar
             if (toolsJar != null) {
-                paths.add(toolsJar);
+                paths.add(toolsJar)
             }
         }
 
-        ClassLoader classLoader = getOrCreateClassLoader(environment, paths);
+        val classLoader = getOrCreateClassLoader(environment, paths)
 
-        Class<?> kompiler = Class.forName(compilerClassName, true, classLoader);
-        Method exec = kompiler.getMethod(
-                "execAndOutputXml",
-                PrintStream.class,
-                Class.forName("org.jetbrains.kotlin.config.Services", true, classLoader),
-                String[].class
-        );
+        val kompiler = Class.forName(compilerClassName, true, classLoader)
+        val exec = kompiler.getMethod(
+            "execAndOutputXml",
+            PrintStream::class.java,
+            Class.forName("org.jetbrains.kotlin.config.Services", true, classLoader),
+            Array<String>::class.java
+        )
 
-        return exec.invoke(kompiler.newInstance(), out, environment.getServices(), arguments);
-    }
-
-    @Nullable
-    static File getJdkToolsJar() throws IOException {
-        String javaHomePath = System.getProperty("java.home");
-        if (javaHomePath == null || javaHomePath.isEmpty()) {
-            return null;
-        }
-        File javaHome = new File(javaHomePath);
-        File toolsJar = new File(javaHome, "lib/tools.jar");
-        if (toolsJar.exists()) {
-            return toolsJar.getCanonicalFile();
-        }
-
-        // We might be inside jre.
-        if (javaHome.getName().equals("jre")) {
-            toolsJar = new File(javaHome.getParent(), "lib/tools.jar");
-            if (toolsJar.exists()) {
-                return toolsJar.getCanonicalFile();
-            }
-        }
-
-        return null;
+        return exec.invoke(kompiler.newInstance(), out, environment.services, arguments)
     }
 }
