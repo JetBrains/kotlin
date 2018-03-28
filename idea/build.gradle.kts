@@ -121,9 +121,6 @@ sourceSets {
 projectTest {
     dependsOn(":dist")
     workingDir = rootDir
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }
 
 testsJar {}

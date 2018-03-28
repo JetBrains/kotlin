@@ -71,9 +71,6 @@ sourceSets {
 projectTest {
     workingDir = rootDir
     useAndroidSdk()
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }
 
 testsJar {}

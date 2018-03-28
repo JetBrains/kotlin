@@ -67,9 +67,6 @@ projectTest {
     workingDir = rootDir
     useAndroidSdk()
     useAndroidJar()
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }
 
 runtimeJar()

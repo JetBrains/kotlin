@@ -108,7 +108,6 @@ projectTest {
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }
 

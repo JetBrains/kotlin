@@ -70,6 +70,7 @@ fun Project.projectTest(taskName: String = "test", body: Test.() -> Unit = {}): 
     jvmArgs("-ea", "-XX:+HeapDumpOnOutOfMemoryError", "-Xmx1100m", "-XX:+UseCodeCacheFlushing", "-XX:ReservedCodeCacheSize=128m", "-Djna.nosys=true")
     maxHeapSize = "1100m"
     systemProperty("idea.is.unit.test", "true")
+    systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
     environment("PROJECT_CLASSES_DIRS", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.asPath)
     environment("PROJECT_BUILD_DIR", buildDir)
