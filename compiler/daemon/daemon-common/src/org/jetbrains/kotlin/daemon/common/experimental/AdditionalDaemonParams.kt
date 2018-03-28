@@ -22,5 +22,5 @@ val RESULTS_SERVER_PORTS_RANGE_END: Int = 17000
 
 val COMPILER_DAEMON_CLASS_FQN_EXPERIMENTAL: String = "org.jetbrains.kotlin.daemon.experimental.KotlinCompileDaemon"
 
-val FIRST_HANDSHAKE_BYTE_TOKEN = byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)
+val FIRST_HANDSHAKE_BYTE_TOKEN = byteArrayOf(1, 2, 3, 4)
 val AUTH_TIMEOUT_IN_MILLISECONDS = 1000L

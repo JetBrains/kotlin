@@ -7,8 +7,11 @@ import kotlinx.coroutines.experimental.delay
 import org.jetbrains.kotlin.daemon.common.experimental.AUTH_TIMEOUT_IN_MILLISECONDS
 import org.jetbrains.kotlin.daemon.common.experimental.FIRST_HANDSHAKE_BYTE_TOKEN
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.experimental.log
+import sun.net.ConnectionResetException
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.logging.Logger
 
 /*
@@ -42,11 +45,12 @@ interface Server<out T : ServerBase> : ServerBase {
 
     suspend fun attachClient(client: Socket): Deferred<State> = async {
         val (input, output) = client.openIO(log)
-        try {
-            tryAcquireHandshakeMessage(input, log)
-            sendHandshakeMessage(output)
-        } catch (e: Throwable) {
-            log.info("NO TOKEN")
+        if (!trySendHandshakeMessage(output) || !tryAcquireHandshakeMessage(input, log)) {
+            log.info("failed to establish connection with client (handshake failed)")
+            return@async Server.State.CLOSED
+        }
+        if (!securityCheck(input)) {
+            log.info("failed to check securitay")
             return@async Server.State.CLOSED
         }
         var finalState = Server.State.WORKING
@@ -100,21 +104,55 @@ interface Server<out T : ServerBase> : ServerBase {
         }
     }
 
+    fun securityCheck(clientInputChannel: ByteReadChannelWrapper): Boolean = true
 }
 
-@Throws(Exception::class)
-suspend fun tryAcquireHandshakeMessage(input: ByteReadChannelWrapper, log: Logger): Boolean {
-    val bytesAsync = async { input.readBytes(FIRST_HANDSHAKE_BYTE_TOKEN.size) }
-    delay(AUTH_TIMEOUT_IN_MILLISECONDS, TimeUnit.MILLISECONDS)
-    val bytes = bytesAsync.getCompleted()
-    log.info("bytes : ${bytes.toList()}")
-    if (bytes.zip(FIRST_HANDSHAKE_BYTE_TOKEN).any { it.first != it.second }) {
-        log.info("BAD TOKEN")
+@Throws(TimeoutException::class)
+suspend fun <T> runWithTimeout(
+    timeout: Long = AUTH_TIMEOUT_IN_MILLISECONDS,
+    unit: TimeUnit = TimeUnit.MILLISECONDS,
+    block: suspend () -> T
+): T {
+    val asyncRes = async { block() }
+    delay(timeout, unit)
+    return try {
+        asyncRes.getCompleted()
+    } catch (e: IllegalStateException) {
+        throw TimeoutException("failed to get coroutine's value after given timeout")
+    }
+}
+
+@Throws(ConnectionResetException::class)
+suspend fun tryAcquireHandshakeMessage(input: ByteReadChannelWrapper, log: Logger) : Boolean {
+    log.info("tryAcquireHandshakeMessage")
+    val bytes: ByteArray = try {
+        runWithTimeout {
+            input.readBytes(FIRST_HANDSHAKE_BYTE_TOKEN.size)
+        }
+    } catch (e: TimeoutException) {
+        log.info("no token received")
         return false
     }
+    log.info("bytes : ${bytes.toList()}")
+    if (bytes.zip(FIRST_HANDSHAKE_BYTE_TOKEN).any { it.first != it.second }) {
+        log.info("invalid token received")
+        return false
+    }
+    log.info("tryAcquireHandshakeMessage - SUCCESS")
     return true
 }
 
-suspend fun sendHandshakeMessage(output: ByteWriteChannelWrapper) {
-    output.printBytes(FIRST_HANDSHAKE_BYTE_TOKEN)
+@Throws(ConnectionResetException::class)
+suspend fun trySendHandshakeMessage(output: ByteWriteChannelWrapper) : Boolean {
+    log.info("trySendHandshakeMessage")
+    try {
+        runWithTimeout {
+            output.printBytes(FIRST_HANDSHAKE_BYTE_TOKEN)
+        }
+    } catch (e: TimeoutException) {
+        log.info("trySendHandshakeMessage - FAIL")
+        return false
+    }
+    log.info("trySendHandshakeMessage - SUCCESS")
+    return true
 }
