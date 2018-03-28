@@ -68,17 +68,16 @@ object KotlinToJVMBytecodeCompiler {
             val source = File(sourceFile)
             if (!source.isAbsolute) {
                 File(buildFile.absoluteFile.parentFile, sourceFile).absolutePath
-            }
-            else {
+            } else {
                 source.absolutePath
             }
         }
     }
 
     private fun writeOutput(
-            configuration: CompilerConfiguration,
-            outputFiles: OutputFileCollection,
-            mainClass: FqName?
+        configuration: CompilerConfiguration,
+        outputFiles: OutputFileCollection,
+        mainClass: FqName?
     ) {
         val reportOutputFiles = configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
         val jarPath = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
@@ -139,7 +138,7 @@ object KotlinToJVMBytecodeCompiler {
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             val ktFiles = CompileEnvironmentUtil.getKtFiles(
-                    environment.project, getAbsolutePaths(buildFile, module), projectConfiguration
+                environment.project, getAbsolutePaths(buildFile, module), projectConfiguration
             ) { path -> throw IllegalStateException("Should have been checked before: $path") }
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 
@@ -162,18 +161,19 @@ object KotlinToJVMBytecodeCompiler {
                     return JavacWrapper.getInstance(environment.project).use {
                         it.compile(File(singleModule.getOutputDirectory()))
                     }
-                }
-                else {
+                } else {
                     projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).let {
-                        it.report(WARNING, "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). -Xuse-javac option couldn't be used to compile java files")
+                        it.report(
+                            WARNING,
+                            "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). -Xuse-javac option couldn't be used to compile java files"
+                        )
                     }
                     JavacWrapper.getInstance(environment.project).close()
                 }
             }
 
             return true
-        }
-        finally {
+        } finally {
             outputs.values.forEach(GenerationState::destroy)
         }
     }
@@ -193,16 +193,16 @@ object KotlinToJVMBytecodeCompiler {
             module.getJavaSourceRoots().any { (path, packagePrefix) ->
                 val file = File(path)
                 packagePrefix == null &&
-                (file.name == PsiJavaModule.MODULE_INFO_FILE ||
-                 (file.isDirectory && file.listFiles().any { it.name == PsiJavaModule.MODULE_INFO_FILE }))
+                        (file.name == PsiJavaModule.MODULE_INFO_FILE ||
+                                (file.isDirectory && file.listFiles().any { it.name == PsiJavaModule.MODULE_INFO_FILE }))
             }
         }
 
         for (module in chunk) {
             for (classpathRoot in module.getClasspathRoots()) {
                 configuration.add(
-                        JVMConfigurationKeys.CONTENT_ROOTS,
-                        if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else JvmClasspathRoot(File(classpathRoot))
+                    JVMConfigurationKeys.CONTENT_ROOTS,
+                    if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else JvmClasspathRoot(File(classpathRoot))
                 )
             }
         }
@@ -223,13 +223,13 @@ object KotlinToJVMBytecodeCompiler {
     private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {
         val mainFunctionDetector = MainFunctionDetector(generationState.bindingContext)
         return files.asSequence()
-                .map { file ->
-                    if (mainFunctionDetector.hasMain(file.declarations))
-                        JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
-                    else
-                        null
-                }
-                .singleOrNull { it != null }
+            .map { file ->
+                if (mainFunctionDetector.hasMain(file.declarations))
+                    JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
+                else
+                    null
+            }
+            .singleOrNull { it != null }
     }
 
     fun compileBunchOfSources(environment: KotlinCoreEnvironment): Boolean {
@@ -249,8 +249,7 @@ object KotlinToJVMBytecodeCompiler {
         try {
             writeOutput(environment.configuration, generationState.factory, mainClass)
             return true
-        }
-        finally {
+        } finally {
             generationState.destroy()
         }
     }
@@ -261,15 +260,13 @@ object KotlinToJVMBytecodeCompiler {
         try {
             try {
                 tryConstructClassFromStringArgs(scriptClass, scriptArgs)
-                ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
-            }
-            finally {
+                        ?: throw RuntimeException("unable to find appropriate constructor for class ${scriptClass.name} accepting arguments $scriptArgs\n")
+            } finally {
                 // NB: these lines are required (see KT-9546) but aren't covered by tests
                 System.out.flush()
                 System.err.flush()
             }
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             reportExceptionFromScript(e)
             return ExitCode.SCRIPT_EXECUTION_ERROR
         }
@@ -278,9 +275,9 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     private fun repeatAnalysisIfNeeded(
-            result: AnalysisResult?,
-            environment: KotlinCoreEnvironment,
-            targetDescription: String?
+        result: AnalysisResult?,
+        environment: KotlinCoreEnvironment,
+        targetDescription: String?
     ): AnalysisResult? {
         if (result is AnalysisResult.RetryWithAdditionalJavaRoots) {
             val configuration = environment.configuration
@@ -340,8 +337,7 @@ object KotlinToJVMBytecodeCompiler {
 
             val script = environment.getSourceFiles()[0].script ?: error("Script must be parsed")
             return classLoader.loadClass(script.fqName.asString())
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             throw RuntimeException("Failed to evaluate script: " + e, e)
         }
     }
@@ -388,7 +384,7 @@ object KotlinToJVMBytecodeCompiler {
         val speed = sourceLinesOfCode.toFloat() * 1000 / time
 
         val message = "ANALYZE: ${sourceFiles.size} files ($sourceLinesOfCode lines) ${targetDescription ?: ""}" +
-                      "in $time ms - ${"%.3f".format(speed)} loc/s"
+                "in $time ms - ${"%.3f".format(speed)} loc/s"
 
         K2JVMCompiler.reportPerf(environment.configuration, message)
 
@@ -401,8 +397,8 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     class DirectoriesScope(
-            project: Project,
-            private val directories: Set<VirtualFile>
+        project: Project,
+        private val directories: Set<VirtualFile>
     ) : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
         private val fileSystems = directories.mapTo(hashSetOf(), VirtualFile::getFileSystem)
 
@@ -420,32 +416,32 @@ object KotlinToJVMBytecodeCompiler {
     }
 
     private fun GenerationState.Builder.withModule(module: Module?) =
-            apply {
-                targetId(module?.let { TargetId(it) })
-                moduleName(module?.getModuleName())
-                outDirectory(module?.let { File(it.getOutputDirectory()) })
-            }
+        apply {
+            targetId(module?.let { TargetId(it) })
+            moduleName(module?.getModuleName())
+            outDirectory(module?.let { File(it.getOutputDirectory()) })
+        }
 
     private fun generate(
-            environment: KotlinCoreEnvironment,
-            configuration: CompilerConfiguration,
-            result: AnalysisResult,
-            sourceFiles: List<KtFile>,
-            module: Module?
+        environment: KotlinCoreEnvironment,
+        configuration: CompilerConfiguration,
+        result: AnalysisResult,
+        sourceFiles: List<KtFile>,
+        module: Module?
     ): GenerationState {
         val isKapt2Enabled = environment.project.getUserData(IS_KAPT2_ENABLED_KEY) ?: false
         val generationState = GenerationState.Builder(
-                environment.project,
-                ClassBuilderFactories.binaries(isKapt2Enabled),
-                result.moduleDescriptor,
-                result.bindingContext,
-                sourceFiles,
-                configuration
+            environment.project,
+            ClassBuilderFactories.binaries(isKapt2Enabled),
+            result.moduleDescriptor,
+            result.bindingContext,
+            sourceFiles,
+            configuration
         )
-                .codegenFactory(if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory)
-                .withModule(module)
-                .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
-                .build()
+            .codegenFactory(if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory)
+            .withModule(module)
+            .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
+            .build()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -465,15 +461,15 @@ object KotlinToJVMBytecodeCompiler {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         AnalyzerWithCompilerReport.reportDiagnostics(
-                FilteredJvmDiagnostics(
-                        generationState.collectedExtraJvmDiagnostics,
-                        result.bindingContext.diagnostics
-                ),
-                environment.messageCollector
+            FilteredJvmDiagnostics(
+                generationState.collectedExtraJvmDiagnostics,
+                result.bindingContext.diagnostics
+            ),
+            environment.messageCollector
         )
 
         AnalyzerWithCompilerReport.reportBytecodeVersionErrors(
-                generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
+            generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
         )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
