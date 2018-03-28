@@ -217,6 +217,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
                 addOrReplaceOptionValue("ideaSdk.androidPlugin.path", platformDirProjectRelative + "/plugins/android/lib")
                 addOrReplaceOptionValue("robolectric.classpath", robolectricClasspath)
+                addOrReplaceOptionValue("use.pill", "true")
 
                 addOrReplaceOptionValue("android.sdk", "\$PROJECT_DIR\$/" + androidSdkPath.toRelativeString(projectDir))
                 addOrReplaceOptionValue("android.jar", "\$PROJECT_DIR\$/" + androidJarPath.toRelativeString(projectDir))
