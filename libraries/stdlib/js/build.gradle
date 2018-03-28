@@ -50,6 +50,7 @@ sourceSets {
     }
 
     experimental {
+        if(!System.properties.'idea.active')
         kotlin {
             srcDir experimentalSrcDir
         }
