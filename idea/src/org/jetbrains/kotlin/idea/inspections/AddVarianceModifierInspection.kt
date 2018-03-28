@@ -50,6 +50,7 @@ class AddVarianceModifierInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return classOrObjectVisitor { klass ->
+            if (klass.typeParameters.isEmpty()) return@classOrObjectVisitor
             val context = klass.analyzeWithContent()
             for (typeParameter in klass.typeParameters) {
                 if (typeParameter.variance != Variance.INVARIANT) continue
