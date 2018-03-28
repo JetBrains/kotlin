@@ -16,9 +16,6 @@ class CompilerServicesFacadeBaseRMIWrapper(val clientSide: CompilerServicesFacad
         clientSide.report(category, severity, message, attachment)
     }
 
-    init {
-        clientSide.connectToServer()
-    }
 }
 
 fun CompilerServicesFacadeBaseClientSide.toRMI() =

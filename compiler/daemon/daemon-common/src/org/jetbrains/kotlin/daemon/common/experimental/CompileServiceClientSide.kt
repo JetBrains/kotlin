@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.CompileService.CallResult
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultAuthorizableClient
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import java.io.File
 import java.util.logging.Logger
@@ -30,13 +30,17 @@ class CompileServiceClientSideImpl(
     val serverHost: String,
     val serverFile: File
 ) : CompileServiceClientSide,
-    Client by DefaultClient(serverPort, serverHost, { serverOutputChannel ->
-        runBlocking {
-            println("in authoriseOnServer(serverFile=$serverFile)")
-            val signature = serverFile.inputStream().use(::readTokenKeyPairAndSign)
-            sendSignature(serverOutputChannel, signature)
+    Client by object : DefaultAuthorizableClient(serverPort, serverHost) {
+
+        override fun authorizeOnServer(serverOutputChannel: ByteWriteChannelWrapper) {
+            runBlocking {
+                println("in authoriseOnServer(serverFile=$serverFile)")
+                val signature = serverFile.inputStream().use(::readTokenKeyPairAndSign)
+                sendSignature(serverOutputChannel, signature)
+            }
         }
-    }) {
+
+    } {
 
     val log = Logger.getLogger("CompileServiceClientSideImpl")
 

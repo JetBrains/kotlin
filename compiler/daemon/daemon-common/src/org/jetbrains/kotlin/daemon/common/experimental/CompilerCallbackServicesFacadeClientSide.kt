@@ -20,7 +20,7 @@ import java.net.InetSocketAddress
 interface CompilerCallbackServicesFacadeClientSide : CompilerCallbackServicesFacadeAsync, Client, CompilerServicesFacadeBaseClientSide
 
 @Suppress("UNCHECKED_CAST")
-class CompilerCallbackServicesFacadeClientSideImpl(val serverPort: Int) : CompilerCallbackServicesFacadeClientSide, Client by DefaultClient(serverPort) {
+class CompilerCallbackServicesFacadeClientSideImpl(serverPort: Int) : CompilerCallbackServicesFacadeClientSide, Client by DefaultClient(serverPort) {
 
     override suspend fun hasIncrementalCaches(): Boolean {
         sendMessage(CompilerCallbackServicesFacadeServerSide.HasIncrementalCachesMessage()).await()
