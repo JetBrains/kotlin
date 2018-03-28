@@ -52,6 +52,6 @@ fun JsIrBackendContext.lower(file: IrFile) {
     LateinitLowering(this, true).lower(file)
     LocalFunctionsLowering(this).lower(file)
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
-    InitializersLowering(this, object : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER"){}).runOnFilePostfix(file)
+    InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER).runOnFilePostfix(file)
     PropertiesLowering().lower(file)
 }
