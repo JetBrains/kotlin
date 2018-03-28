@@ -58,7 +58,7 @@ suspend fun walkDaemonsAsync(
                     "found daemon on socketPort $port ($relativeAge ms old), trying to connect"
                 )
                 log.info("found daemon on socketPort $port ($relativeAge ms old), trying to connect")
-                val daemon = tryConnectToDaemonAsync(port, report, useRMI, useSockets)
+                val daemon = tryConnectToDaemonAsync(port, report, file, useRMI, useSockets)
                 log.info("daemon = $daemon (port= $port)")
                 // cleaning orphaned file; note: daemon should shut itself down if it detects that the runServer file is deleted
                 if (daemon == null) {
@@ -121,12 +121,17 @@ private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCateg
     return null
 }
 
-private inline fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? {
+private inline fun tryConnectToDaemonBySockets(
+    port: Int,
+    file: File,
+    report: (DaemonReportCategory, String) -> Unit
+): CompileServiceClientSide? {
     try {
         log.info("tryConnectToDaemonBySockets(port = $port)")
         val daemon = CompileServiceClientSideImpl(
             port,
-            LoopbackNetworkInterface.loopbackInetAddressName
+            LoopbackNetworkInterface.loopbackInetAddressName,
+            file
         )
         log.info("daemon($port) = $daemon")
         log.info("daemon($port) connecting to server...")
@@ -142,10 +147,11 @@ private inline fun tryConnectToDaemonBySockets(port: Int, report: (DaemonReportC
 private fun tryConnectToDaemonAsync(
     port: Int,
     report: (DaemonReportCategory, String) -> Unit,
+    file: File,
     useRMI: Boolean = true,
     useSockets: Boolean = true
 ): CompileServiceClientSide? =
-    useSockets.takeIf { it }?.let { tryConnectToDaemonBySockets(port, report) }
+    useSockets.takeIf { it }?.let { tryConnectToDaemonBySockets(port, file, report) }
             ?: (useRMI.takeIf { it }?.let { tryConnectToDaemonByRMI(port, report) })
 
 private const val validFlagFileKeywordChars = "abcdefghijklmnopqrstuvwxyz0123456789-_"

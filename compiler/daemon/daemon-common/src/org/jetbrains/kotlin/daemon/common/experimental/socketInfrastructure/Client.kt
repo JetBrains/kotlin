@@ -2,8 +2,8 @@ package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.FIRST_HANDSHAKE_BYTE_TOKEN
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
+import sun.net.ConnectionResetException
 import java.beans.Transient
 import java.io.Serializable
 import java.util.logging.Logger
@@ -15,13 +15,13 @@ interface Client : Serializable, AutoCloseable {
     fun sendMessage(msg: Any): Deferred<Unit>
     fun <T> readMessage(): Deferred<T>
 
-    fun f() {}
 }
 
 @Suppress("UNCHECKED_CAST")
 class DefaultClient(
     val serverPort: Int,
-    val serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName
+    val serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName,
+    val authorizeOnServer: (ByteWriteChannelWrapper) -> Unit = {}
 ) : Client {
 
     val log: Logger
@@ -38,7 +38,6 @@ class DefaultClient(
     private var socket: Socket? = null
         @Transient get
         @Transient set
-
     override fun close() {
         socket?.close()
     }
@@ -47,6 +46,7 @@ class DefaultClient(
 
     override fun <T> readMessage() = async { input.nextObject() as T }
 
+    @Throws(Exception::class)
     override fun connectToServer() {
         runBlocking(Unconfined) {
             log.info("connectToServer (port = $serverPort | host = $serverHost)")
@@ -64,8 +64,10 @@ class DefaultClient(
                 log.info("OK serv.openIO() |port=$serverPort|")
                 input = it.input
                 output = it.output
-                sendHandshakeMessage(output)
-                tryAcquireHandshakeMessage(input, log)
+                if (!tryAcquireHandshakeMessage(input, log) || !trySendHandshakeMessage(output)) {
+                    throw ConnectionResetException("failed to establish connection with server (handshake failed)")
+                }
+                authorizeOnServer(output)
             }
         }
     }

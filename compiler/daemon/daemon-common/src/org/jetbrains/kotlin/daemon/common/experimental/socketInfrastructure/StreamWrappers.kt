@@ -37,7 +37,7 @@ class ByteReadChannelWrapper(private val readChannel: ByteReadChannel, private v
             log.info("object : ${if (it is CompileService.CallResult<*> && it.isGood) it.get() else it}")
         }
 
-    private suspend fun getLength(): Int {
+    suspend fun getLength(): Int {
         log.info("length : ")
         val packet = readBytes(4)
         log.info("length : ${packet.toList()}")
@@ -78,7 +78,7 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel, privat
     }
 
 
-    private suspend fun printLength(length: Int) = printBytes(
+    suspend fun printLength(length: Int) = printBytes(
         ByteBuffer
             .allocate(4)
             .putInt(length)

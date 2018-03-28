@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -19,16 +20,24 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Serv
 import java.io.File
 import java.util.logging.Logger
 
-interface CompileServiceClientSide: CompileServiceAsync, Client {
+interface CompileServiceClientSide : CompileServiceAsync, Client {
     val serverPort: Int
 }
 
 
 class CompileServiceClientSideImpl(
     override val serverPort: Int,
-    val serverHost: String
-) : CompileServiceClientSide, Client by DefaultClient(serverPort, serverHost) {
-    
+    val serverHost: String,
+    val serverFile: File
+) : CompileServiceClientSide,
+    Client by DefaultClient(serverPort, serverHost, { serverOutputChannel ->
+        runBlocking {
+            println("in authoriseOnServer(serverFile=$serverFile)")
+            val signature = serverFile.inputStream().use(::readTokenKeyPairAndSign)
+            sendSignature(serverOutputChannel, signature)
+        }
+    }) {
+
     val log = Logger.getLogger("CompileServiceClientSideImpl")
 
     override suspend fun compile(
@@ -182,7 +191,7 @@ class CompileServiceClientSideImpl(
         ).await()
         return readMessage<CallResult<ReplCompileResult>>().await()
     }
-    
+
     // Query messages:
 
     class CheckCompilerIdMessage(val expectedCompilerId: CompilerId) : Server.Message<CompileServiceServerSide> {
