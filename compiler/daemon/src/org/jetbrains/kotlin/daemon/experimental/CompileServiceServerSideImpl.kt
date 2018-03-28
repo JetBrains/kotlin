@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteReadChannelWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.runWithTimeout
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdaterAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteArtifactChangesProviderAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteChangesRegistryAsync
@@ -51,6 +52,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.rmi.RemoteException
+import java.security.PrivateKey
+import java.security.PublicKey
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -62,9 +65,6 @@ import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.schedule
 import kotlin.concurrent.write
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.runWithTimeout
-import java.security.PrivateKey
-import java.security.PublicKey
 
 fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
 
@@ -105,7 +105,7 @@ class CompileServiceServerSideImpl(
         runBlocking {
             try {
                 val verified = runWithTimeout {
-                    getSignatureAndVerify(clientInputChannel, token, publicKey)
+                    getSignatureAndVerify(clientInputChannel, securityData.token, securityData.publicKey)
                 }
                 verified
             } catch (e: TimeoutException) {
@@ -280,8 +280,7 @@ class CompileServiceServerSideImpl(
     private val rwlock = ReentrantReadWriteLock()
 
     private var runFile: File
-    private var token: ByteArray
-    private var publicKey: PublicKey
+    private var securityData: SecurityData
 
     init {
         val runFileDir = File(daemonOptions.runFilesPathOrDefault)
@@ -301,13 +300,9 @@ class CompileServiceServerSideImpl(
             throw IllegalStateException("Unable to create runServer file '${runFile.absolutePath}'", e)
         }
         var privateKey: PrivateKey?
-        generateKeysAndToken().let {
-            privateKey = it.privateKey
-            publicKey = it.publicKey
-            token = it.token
-        }
+        securityData = generateKeysAndToken()
         runFile.outputStream().use {
-            sendTokenKeyPair(it, token, privateKey!!)
+            sendTokenKeyPair(it, securityData.token, securityData.privateKey!!)
         }
         runFile.deleteOnExit()
         log.info("last_init_end")
