@@ -108,4 +108,47 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
     public void testUnderscoreNames() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");
     }
+
+    @TestMetadata("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DestructuringInSuspendLambda extends AbstractCheckLocalVariablesTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDestructuringInSuspendLambda() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/dataClass.kt");
+        }
+
+        @TestMetadata("extensionComponents.kt")
+        public void testExtensionComponents() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/extensionComponents.kt");
+        }
+
+        @TestMetadata("generic.kt")
+        public void testGeneric() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/generic.kt");
+        }
+
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/inline.kt");
+        }
+
+        @TestMetadata("otherParameters.kt")
+        public void testOtherParameters() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/otherParameters.kt");
+        }
+
+        @TestMetadata("underscoreNames.kt")
+        public void testUnderscoreNames() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/underscoreNames.kt");
+        }
+    }
 }
