@@ -9,8 +9,8 @@ package kotlin.script.experimental.jvm
 
 import kotlin.script.experimental.api.ScriptCompilationConfigurator
 import kotlin.script.experimental.api.ScriptEvaluator
-import kotlin.script.experimental.api.typedKey
 import kotlin.script.experimental.host.BasicScriptingHost
+import kotlin.script.experimental.util.typedKey
 
 open class JvmBasicScriptingHost<ScriptBase : Any>(
     configurationExtractor: ScriptCompilationConfigurator,

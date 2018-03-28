@@ -8,7 +8,7 @@ package kotlin.script.experimental.basic
 import kotlin.script.experimental.api.*
 
 
-class PassThroughCompilationConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationConfigurator {
+class PassThroughCompilationConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
 
     override val defaultConfiguration = ScriptCompileConfiguration(environment)
 
@@ -23,7 +23,7 @@ class PassThroughCompilationConfigurator(val environment: ChainedPropertyBag) : 
         configuration.asSuccess()
 }
 
-class DummyEvaluator<ScriptBase : Any>(val environment: ChainedPropertyBag) : ScriptEvaluator<ScriptBase> {
+class DummyEvaluator<ScriptBase : Any>(val environment: ScriptingEnvironment) : ScriptEvaluator<ScriptBase> {
     override suspend fun eval(
         compiledScript: CompiledScript<ScriptBase>,
         scriptEvaluationEnvironment: ScriptEvaluationEnvironment

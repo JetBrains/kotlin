@@ -15,10 +15,11 @@ import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.basic.DummyEvaluator
 import kotlin.script.experimental.basic.PassThroughCompilationConfigurator
+import kotlin.script.experimental.util.TypedKey
 
 private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 
-open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ChainedPropertyBag) : ScriptDefinition {
+open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ScriptingEnvironment) : ScriptDefinition {
 
     private val baseClass: KClass<*> = environment.getOrNull(ScriptingEnvironmentProperties.baseClass)
             ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting baseClass parameter in the scripting environment")
@@ -29,13 +30,13 @@ open class ScriptDefinitionFromAnnotatedBaseClass(val environment: ChainedProper
     private val explicitDefinition: ScriptDefinition? =
         mainAnnotation.definition.takeIf { it != this::class }?.let { it.instantiateScriptHandler() }
 
-    override val properties = (explicitDefinition?.properties ?: ChainedPropertyBag()).also { properties ->
+    override val properties = (explicitDefinition?.properties ?: ScriptingEnvironment()).also { properties ->
         val toAdd = arrayListOf<Pair<TypedKey<*>, Any>>()
         baseClass.findAnnotation<KotlinScriptFileExtension>()?.let { toAdd += ScriptDefinitionProperties.fileExtension to it }
         if (properties.getOrNull(ScriptDefinitionProperties.name) == null) {
             toAdd += ScriptDefinitionProperties.name to baseClass.simpleName!!
         }
-        ChainedPropertyBag(properties, toAdd)
+        ScriptingEnvironment(properties, toAdd)
     }
 
     override val compilationConfigurator =

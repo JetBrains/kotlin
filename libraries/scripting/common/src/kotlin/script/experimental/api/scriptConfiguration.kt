@@ -7,6 +7,8 @@
 
 package kotlin.script.experimental.api
 
+import kotlin.script.experimental.util.ChainedPropertyBag
+
 
 typealias ScriptCompileConfiguration = ChainedPropertyBag
 
@@ -15,7 +17,7 @@ typealias ProcessedScriptData = ChainedPropertyBag
 
 interface ScriptCompilationConfigurator {
 
-    // constructor(environment: ChainedPropertyBag) // the constructor is expected from implementations
+    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
 
     val defaultConfiguration: ScriptCompileConfiguration
 

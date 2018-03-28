@@ -40,7 +40,7 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
-import kotlin.script.experimental.api.ChainedPropertyBag
+import kotlin.script.experimental.api.ScriptingEnvironment
 import kotlin.script.experimental.api.ScriptingEnvironmentProperties
 import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.dependencies.DependenciesResolver
@@ -165,7 +165,7 @@ fun loadDefinitionsFromTemplates(
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
                     KotlinScriptDefinitionAdapterFromNewAPI(
-                        ScriptDefinitionFromAnnotatedBaseClass(ChainedPropertyBag(ScriptingEnvironmentProperties.baseClass to template))
+                        ScriptDefinitionFromAnnotatedBaseClass(ScriptingEnvironment(ScriptingEnvironmentProperties.baseClass to template))
                     )
                 }
                 else -> {

@@ -43,11 +43,11 @@ val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationPrope
     )
 }
 
-class MyConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationConfigurator {
+class MyConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
 
     private val resolver = FilesAndMavenResolver()
 
-    override val defaultConfiguration = ChainedPropertyBag(environment, myJvmConfigParams)
+    override val defaultConfiguration = ScriptCompileConfiguration(environment, myJvmConfigParams)
 
     override suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration> =
         defaultConfiguration.asSuccess()
@@ -57,7 +57,7 @@ class MyConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationCon
         configuration: ScriptCompileConfiguration,
         processedScriptData: ProcessedScriptData
     ): ResultWithDiagnostics<ScriptCompileConfiguration> {
-        val annotations = processedScriptData.getOrNull(ProcessedScriptDataProperties.foundAnnotations)?.toList()?.takeIf { it.isNotEmpty() }
+        val annotations = processedScriptData.getOrNull(ProcessedScriptDataProperties.foundAnnotations)?.takeIf { it.isNotEmpty() }
                 ?: return configuration.asSuccess()
         val scriptContents = object : ScriptContents {
             override val annotations: Iterable<Annotation> = annotations
@@ -76,7 +76,7 @@ class MyConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationCon
             val newDependency = JvmDependency(resolvedClasspath)
             val updatedDeps =
                 configuration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.plus(newDependency) ?: listOf(newDependency)
-            ChainedPropertyBag(configuration, ScriptCompileConfigurationProperties.dependencies(updatedDeps)).asSuccess(diagnostics)
+            ScriptCompileConfiguration(configuration, ScriptCompileConfigurationProperties.dependencies(updatedDeps)).asSuccess(diagnostics)
         } catch (e: Throwable) {
             ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())
         }

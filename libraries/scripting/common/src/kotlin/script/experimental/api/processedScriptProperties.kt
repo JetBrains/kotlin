@@ -7,6 +7,8 @@
 
 package kotlin.script.experimental.api
 
+import kotlin.script.experimental.util.typedKey
+
 object ProcessedScriptDataProperties {
     val foundAnnotations by typedKey<List<Annotation>>()
 

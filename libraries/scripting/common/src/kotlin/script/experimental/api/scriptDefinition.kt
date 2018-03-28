@@ -7,15 +7,25 @@
 
 package kotlin.script.experimental.api
 
+import kotlin.script.experimental.util.ChainedPropertyBag
+import kotlin.script.experimental.util.typedKey
+
+typealias ScriptDefinitionPropertiesBag = ChainedPropertyBag
 
 interface ScriptDefinition {
 
-    // constructor(environment: ChainedPropertyBag) // the constructor is expected from implementations
+    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
 
-    val properties: ChainedPropertyBag
+    val properties: ScriptDefinitionPropertiesBag
 
     val compilationConfigurator: ScriptCompilationConfigurator
 
     val evaluator: ScriptEvaluator<*>?
 }
 
+object ScriptDefinitionProperties {
+
+    val name by typedKey<String>() // Name of the script type, by default "Kotlin script"
+
+    val fileExtension by typedKey<String>() // default: "kts"
+}

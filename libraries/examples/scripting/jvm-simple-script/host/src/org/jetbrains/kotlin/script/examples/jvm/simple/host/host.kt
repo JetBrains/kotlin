@@ -25,7 +25,7 @@ val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationPrope
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
     val scriptCompiler = JvmScriptCompiler(KJVMCompilerImpl(), DummyCompiledJvmScriptCache())
     val scriptDefinition = ScriptDefinitionFromAnnotatedBaseClass(
-        ChainedPropertyBag(ScriptingEnvironmentProperties.baseClass to MyScript::class)
+        ScriptingEnvironment(ScriptingEnvironmentProperties.baseClass to MyScript::class)
     )
 
     val host = JvmBasicScriptingHost(
@@ -34,7 +34,7 @@ fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
         scriptDefinition.evaluator
     )
 
-    return host.eval(scriptFile.toScriptSource(), ChainedPropertyBag(null, myJvmConfigParams), ScriptEvaluationEnvironment())
+    return host.eval(scriptFile.toScriptSource(), ScriptCompileConfiguration(myJvmConfigParams), ScriptEvaluationEnvironment())
 }
 
 fun main(vararg args: String) {

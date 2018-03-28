@@ -9,6 +9,7 @@ package kotlin.script.experimental.api
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
+import kotlin.script.experimental.util.typedKey
 
 object ScriptCompileConfigurationProperties {
 

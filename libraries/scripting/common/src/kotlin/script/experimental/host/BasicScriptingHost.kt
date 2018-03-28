@@ -31,11 +31,11 @@ abstract class BasicScriptingHost<ScriptBase : Any>(
 
     open fun eval(
         script: ScriptSource,
-        configuration: ScriptCompileConfiguration,
+        compileConfiguration: ScriptCompileConfiguration,
         environment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult> =
         runInCoroutineContext {
-            val compiled = compiler.compile(script, configuration, configurator)
+            val compiled = compiler.compile(script, compileConfiguration, configurator)
             when (compiled) {
                 is ResultWithDiagnostics.Failure -> compiled
                 is ResultWithDiagnostics.Success -> {

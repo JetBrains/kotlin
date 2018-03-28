@@ -7,6 +7,9 @@
 
 package kotlin.script.experimental.api
 
+import kotlin.script.experimental.util.ChainedPropertyBag
+import kotlin.script.experimental.util.typedKey
+
 object ScriptEvaluationEnvironmentParams {
     val implicitReceivers by typedKey<List<Any>>()
 
@@ -24,7 +27,7 @@ data class EvaluationResult(val returnValue: Any?, val environment: ScriptEvalua
 // NOTE: name inconsistency: run vs evaluate
 interface ScriptEvaluator<in ScriptBase : Any> {
 
-    // constructor(environment: ChainedPropertyBag) // the constructor is expected from implementations
+    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
 
     suspend fun eval(
         compiledScript: CompiledScript<ScriptBase>,

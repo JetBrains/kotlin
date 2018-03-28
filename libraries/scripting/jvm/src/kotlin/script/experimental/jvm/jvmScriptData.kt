@@ -3,11 +3,13 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("unused")
+
 package kotlin.script.experimental.jvm
 
 import java.io.File
 import kotlin.script.experimental.api.ScriptDependency
-import kotlin.script.experimental.api.typedKey
+import kotlin.script.experimental.util.typedKey
 
 object JvmScriptCompileConfigurationProperties {
     val javaHomeDir by typedKey<File>()

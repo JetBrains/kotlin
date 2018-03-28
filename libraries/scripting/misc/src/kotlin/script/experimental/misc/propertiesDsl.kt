@@ -6,7 +6,7 @@
 package kotlin.script.experimental.misc
 
 import kotlin.reflect.KClass
-import kotlin.script.experimental.api.TypedKey
+import kotlin.script.experimental.util.TypedKey
 
 
 inline operator fun <reified T> TypedKey<T>.invoke(v: T): Pair<TypedKey<T>, T> = this to v
@@ -14,9 +14,6 @@ inline operator fun <reified T> TypedKey<T>.invoke(v: T): Pair<TypedKey<T>, T> =
 inline operator fun <reified K> TypedKey<KClass<*>>.invoke(): Pair<TypedKey<KClass<*>>, KClass<*>> = this to K::class
 
 inline operator fun <reified E> TypedKey<List<E>>.invoke(vararg vs: E): Pair<TypedKey<List<E>>, List<E>> = this to vs.toList()
-
-@JvmName("invokeIterable")
-inline operator fun <reified E> TypedKey<Iterable<E>>.invoke(vararg vs: E): Pair<TypedKey<Iterable<E>>, Iterable<E>> = this to vs.toList()
 
 inline operator fun <reified K, reified V> TypedKey<Map<K, V>>.invoke(vararg vs: Pair<K, V>): Pair<TypedKey<Map<K, V>>, Map<K, V>> =
     this to hashMapOf(*vs)

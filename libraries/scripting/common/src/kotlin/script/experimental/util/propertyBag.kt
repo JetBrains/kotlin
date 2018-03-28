@@ -1,9 +1,11 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.script.experimental.api
+@file:Suppress("unused")
+
+package kotlin.script.experimental.util
 
 import kotlin.reflect.KProperty
 
@@ -16,6 +18,7 @@ class TypedKeyDelegate<T> {
 fun <T> typedKey() = TypedKeyDelegate<T>()
 
 class ChainedPropertyBag(private val parent: ChainedPropertyBag? = null, pairs: Iterable<Pair<TypedKey<*>, Any?>>) {
+    constructor(pairs: Iterable<Pair<TypedKey<*>, Any?>>) : this(null, pairs)
     constructor(parent: ChainedPropertyBag, vararg pairs: Pair<TypedKey<*>, Any?>) : this(parent, pairs.asIterable())
     constructor(vararg pairs: Pair<TypedKey<*>, Any?>) : this(null, pairs.asIterable())
 
