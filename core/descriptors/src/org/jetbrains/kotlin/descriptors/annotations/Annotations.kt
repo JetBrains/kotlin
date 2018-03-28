@@ -30,8 +30,6 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
     fun hasAnnotation(fqName: FqName): Boolean = findAnnotation(fqName) != null
 
-    fun findExternalAnnotation(fqName: FqName): AnnotationDescriptor? = null
-
     fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>
 
     // Returns both targeted and annotations without target. Annotation order is preserved.
@@ -81,10 +79,6 @@ class FilteredAnnotations(
             if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
             else null
 
-    override fun findExternalAnnotation(fqName: FqName) =
-            if (fqNameFilter(fqName)) delegate.findExternalAnnotation(fqName)
-            else null
-
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
         return delegate.getUseSiteTargetedAnnotations().filter { shouldBeReturned(it.annotation) }
     }
@@ -113,8 +107,6 @@ class CompositeAnnotations(
     override fun hasAnnotation(fqName: FqName) = delegates.asSequence().any { it.hasAnnotation(fqName) }
 
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findAnnotation(fqName) }.firstOrNull()
-
-    override fun findExternalAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findExternalAnnotation(fqName) }.firstOrNull()
 
     override fun getUseSiteTargetedAnnotations() = delegates.flatMap { it.getUseSiteTargetedAnnotations() }
 

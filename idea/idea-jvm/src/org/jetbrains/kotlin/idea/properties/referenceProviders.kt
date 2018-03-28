@@ -58,7 +58,7 @@ private fun AnnotationDescriptor.getBundleName(): String? {
 }
 
 private fun DeclarationDescriptor.getBundleNameByAnnotation(): String? {
-    return (annotations.findAnnotation(PROPERTY_KEY) ?: annotations.findExternalAnnotation(PROPERTY_KEY))?.getBundleName()
+    return annotations.findAnnotation(PROPERTY_KEY)?.getBundleName()
 }
 
 private fun KtExpression.getBundleNameByContext(): String? {

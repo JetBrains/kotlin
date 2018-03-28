@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -83,10 +81,6 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
                                                                  ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )
 }
-
-private fun KotlinType.hasAnnotationMaybeExternal(fqName: FqName) = with (annotations) {
-    findAnnotation(fqName) ?: findExternalAnnotation(fqName)
-} != null
 
 fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boolean, allowIntersections: Boolean = false): Boolean {
     if (constructor is IntersectionTypeConstructor) {
