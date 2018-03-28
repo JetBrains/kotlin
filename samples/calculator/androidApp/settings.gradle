@@ -1,1 +1,2 @@
-// includeBuild '../parser'
+include ':parser'
+project(':parser').projectDir = file('../parser')
