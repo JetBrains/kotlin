@@ -877,6 +877,10 @@ fun main(args: Array<String>) {
         testClass<AbstractCompletionIncrementalResolveTest> {
             model("incrementalResolve")
         }
+
+        testClass<AbstractMultiPlatformCompletionTest> {
+            model("multiPlatform", recursive = false, extension = null)
+        }
     }
 
     //TODO: move these tests into idea-completion module
