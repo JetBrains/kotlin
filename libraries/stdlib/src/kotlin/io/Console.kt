@@ -179,7 +179,6 @@ internal fun readLine(inputStream: InputStream, decoder: CharsetDecoder): String
         val length = position()
         val first = get(0)
         val second = get(1)
-        flip()
         when (length) {
             2 -> {
                 if (!(first == '\r' && second == '\n')) stringBuilder.append(first)
@@ -199,7 +198,7 @@ private fun CharsetDecoder.tryDecode(byteBuffer: ByteBuffer, charBuffer: CharBuf
         if (isError) throwException()
     }
     return (charBuffer.position() > positionBefore).also { isDecoded ->
-        byteBuffer.apply { if (isDecoded) clear() else flipBack() }
+        if (isDecoded) byteBuffer.clear() else byteBuffer.flipBack()
     }
 }
 
@@ -207,7 +206,7 @@ private fun CharBuffer.containsLineSeparator(): Boolean {
     return get(1) == '\n' || get(0) == '\n'
 }
 
-private fun Buffer.flipBack(): Buffer = apply {
+private fun Buffer.flipBack() {
     position(limit())
     limit(capacity())
 }
