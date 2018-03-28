@@ -22,37 +22,22 @@ interface ScriptSource {
 
 data class ScriptSourceNamedFragment(val name: String?, val range: ScriptSource.Range)
 
-open class ScriptSourceFragments(
-    val originalSource: ScriptSource,
-    val fragments: List<ScriptSourceNamedFragment>?)
-
-open class ProvidedDeclarations(
-    val implicitReceivers: List<KType> = emptyList(), // previous scripts, etc.
-    val contextVariables: Map<String, KType> = emptyMap() // external variables
-    // Q: do we need context constants and/or types here, e.g.
-    // val contextConstants: Map<String, Any?> // or with KType as well
-    // val contextTypes: List<KType> // additional (to the classpath) types provided by the environment
-    // alternatively:
-    // val contextDeclarations: List<Tuple<DeclarationKind, String?, KType, Any?> // kind, name, type, value
-    // OR: it should be a HeterogeneousMap too
-) {
-    object Empty : ProvidedDeclarations()
+enum class ScriptBodyTarget {
+    Constructor,
+    SingleAbstractMethod
 }
 
-open class ScriptSignature(
-    val scriptBase: KClass<*>,
-    val providedDeclarations: ProvidedDeclarations
-)
-
-open class ResolvingRestrictions {
-    data class Rule(
-        val allow: Boolean,
-        val pattern: String // FQN wildcard
-    )
-
-    val rules: Iterable<Rule> = arrayListOf()
+data class ResolvingRestrictionRule(
+    val action: Action,
+    val pattern: String // FQN wildcard
+) {
+    enum class Action {
+        Allow,
+        Deny
+    }
 }
 
 interface ScriptDependency {
     // Q: anything generic here?
 }
+

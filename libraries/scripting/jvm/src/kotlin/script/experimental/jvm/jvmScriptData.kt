@@ -9,9 +9,11 @@ import java.io.File
 import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.api.typedKey
 
-object JvmScriptCompileConfigurationParams {
+object JvmScriptCompileConfigurationProperties {
     val javaHomeDir by typedKey<File>()
 }
 
-class JvmDependency(val classpath: Iterable<File>) : ScriptDependency
+class JvmDependency(val classpath: List<File>) : ScriptDependency {
+    constructor(vararg classpathEntries: File) : this(classpathEntries.asList())
+}
 

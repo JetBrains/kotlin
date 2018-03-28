@@ -10,14 +10,13 @@ import kotlin.script.experimental.api.*
 
 class PassThroughCompilationConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationConfigurator {
 
-    override val defaultConfiguration = ScriptCompileConfiguration(
-        ScriptCompileConfigurationParams.baseClass to environment[ScriptingEnvironmentProperties.baseClass]
-    )
+    override val defaultConfiguration = ScriptCompileConfiguration(environment)
 
     override suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration> =
         defaultConfiguration.asSuccess()
 
     override suspend fun refineConfiguration(
+        script: ScriptSource,
         configuration: ScriptCompileConfiguration,
         processedScriptData: ProcessedScriptData
     ): ResultWithDiagnostics<ScriptCompileConfiguration> =

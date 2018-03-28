@@ -13,14 +13,15 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
-import kotlin.script.experimental.api.ScriptCompileConfigurationParams
+import kotlin.script.experimental.api.ScriptCompileConfigurationProperties
 import kotlin.script.experimental.api.ScriptDefinition
 import kotlin.script.experimental.api.ScriptDefinitionProperties
+import kotlin.script.experimental.api.ScriptingEnvironmentProperties
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 
 class KotlinScriptDefinitionAdapterFromNewAPI(val scriptDefinition: ScriptDefinition) :
-    KotlinScriptDefinition(scriptDefinition.compilationConfigurator.defaultConfiguration[ScriptCompileConfigurationParams.baseClass]) {
+    KotlinScriptDefinition(scriptDefinition.compilationConfigurator.defaultConfiguration[ScriptingEnvironmentProperties.baseClass]) {
 
     override val name: String get() = scriptDefinition.properties[ScriptDefinitionProperties.name]
 
@@ -46,12 +47,12 @@ class KotlinScriptDefinitionAdapterFromNewAPI(val scriptDefinition: ScriptDefini
     }
 
     override val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
-        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationParams.updateConfigurationOnAnnotations)?.toList()
+        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.updateConfigurationOnAnnotations)?.toList()
                 ?: emptyList()
     }
 
     override val implicitReceivers: List<KType> by lazy {
-        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationParams.scriptSignature)?.providedDeclarations?.implicitReceivers
+        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.scriptImplicitReceivers)
                 ?: emptyList()
     }
 }

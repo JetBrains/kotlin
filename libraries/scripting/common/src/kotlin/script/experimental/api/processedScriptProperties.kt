@@ -3,10 +3,13 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("unused")
+
 package kotlin.script.experimental.api
 
-object ProcessedScriptDataParams {
-    val annotations by typedKey<Iterable<Annotation>>()
+object ProcessedScriptDataProperties {
+    val foundAnnotations by typedKey<List<Annotation>>()
 
-    val fragments by typedKey<Iterable<ScriptSourceNamedFragment>>()
+    val foundFragments by typedKey<List<ScriptSourceNamedFragment>>()
 }
+

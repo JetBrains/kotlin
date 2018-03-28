@@ -9,8 +9,6 @@ import java.io.File
 import java.net.URL
 import kotlin.script.experimental.api.*
 
-fun ScriptSourceFragments.isWholeFile(): Boolean = fragments?.isEmpty() ?: true
-
 fun ScriptSource.getScriptText(): String = when {
     text != null -> text!!
     location != null ->
@@ -20,13 +18,13 @@ fun ScriptSource.getScriptText(): String = when {
 
 fun getMergedScriptText(script: ScriptSource, configuration: ScriptCompileConfiguration): String {
     val originalScriptText = script.getScriptText()
-    val sourceFragments = configuration.getOrNull(ScriptCompileConfigurationParams.scriptSourceFragments)
-    return if (sourceFragments == null || sourceFragments.isWholeFile()) {
+    val sourceFragments = configuration.getOrNull(ScriptCompileConfigurationProperties.sourceFragments)
+    return if (sourceFragments == null || sourceFragments.isEmpty()) {
         originalScriptText
     } else {
         val sb = StringBuilder(originalScriptText.length)
         var prevFragment: ScriptSourceNamedFragment? = null
-        for (fragment in sourceFragments!!.fragments!!) {
+        for (fragment in sourceFragments) {
             val fragmentStartPos = fragment.range.start.absolutePos
             val fragmentEndPos = fragment.range.end.absolutePos
             if (fragmentStartPos == null || fragmentEndPos == null)

@@ -15,9 +15,9 @@ import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvmhost.impl.KJVMCompilerImpl
 import kotlin.script.experimental.misc.*
 
-val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationParams) {
+val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
     listOf(
-        scriptSignature to ScriptSignature(MyScript::class, ProvidedDeclarations()),
+        baseClass<MyScript>(),
         dependencies(JvmDependency(scriptCompilationClasspathFromContext("script" /* script library jar name */)))
     )
 }

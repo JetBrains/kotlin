@@ -9,8 +9,8 @@ package kotlin.script.experimental.api
 
 object ScriptDefinitionProperties {
 
-    val name by typedKey<String>()
+    val name by typedKey<String>() // Name of the script type, by default "Kotlin script"
 
-    val fileExtension by typedKey<String>()
+    val fileExtension by typedKey<String>() // default: "kts"
 }
 

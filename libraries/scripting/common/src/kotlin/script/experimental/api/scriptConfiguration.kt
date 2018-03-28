@@ -22,6 +22,7 @@ interface ScriptCompilationConfigurator {
     suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration>
 
     suspend fun refineConfiguration(
+        scriptSource: ScriptSource,
         configuration: ScriptCompileConfiguration,
         processedScriptData: ProcessedScriptData = ProcessedScriptData()
     ): ResultWithDiagnostics<ScriptCompileConfiguration>

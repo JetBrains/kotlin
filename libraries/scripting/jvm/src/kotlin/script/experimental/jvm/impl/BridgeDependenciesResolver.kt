@@ -36,15 +36,14 @@ class BridgeDependenciesResolver(
 
             val diagnostics = arrayListOf<ScriptReport>()
             val processedScriptData =
-                ProcessedScriptData(ProcessedScriptDataParams.annotations to scriptContents.annotations)
-
-            val scriptCompilerConfiguration = ChainedPropertyBag(
-                baseScriptCompilerConfiguration,
-                ScriptCompileConfigurationParams.scriptSourceFragments to scriptContents.toScriptSourceFragments()
-            )
+                ProcessedScriptData(ProcessedScriptDataProperties.foundAnnotations to scriptContents.annotations)
 
             val refinedConfiguration = scriptConfigurator?.let {
-                val res = scriptConfigurator.refineConfiguration(scriptCompilerConfiguration, processedScriptData)
+                val res = scriptConfigurator.refineConfiguration(
+                    scriptContents.toScriptSource(),
+                    baseScriptCompilerConfiguration,
+                    processedScriptData
+                )
                 when (res) {
                     is ResultWithDiagnostics.Failure ->
                         return@resolveAsync DependenciesResolver.ResolveResult.Failure(res.reports.mapScriptReportsToDiagnostics())
@@ -53,12 +52,12 @@ class BridgeDependenciesResolver(
                         res.value
                     }
                 }
-            } ?: scriptCompilerConfiguration
+            } ?: baseScriptCompilerConfiguration
 
-            val newClasspath = refinedConfiguration.getOrNull(ScriptCompileConfigurationParams.dependencies)
+            val newClasspath = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
                 ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
-            if (refinedConfiguration != scriptCompilerConfiguration) {
-                val oldClasspath = scriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationParams.dependencies)
+            if (refinedConfiguration != baseScriptCompilerConfiguration) {
+                val oldClasspath = baseScriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)
                     ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
                 if (newClasspath != oldClasspath) {
                     onClasspathUpdated(newClasspath)
@@ -67,16 +66,14 @@ class BridgeDependenciesResolver(
             DependenciesResolver.ResolveResult.Success(
                 ScriptDependencies(
                     classpath = newClasspath, // TODO: maybe it should return only increment from the initial config
-                    imports = refinedConfiguration.getOrNull(ScriptCompileConfigurationParams.importedPackages)?.toList()
+                    imports = refinedConfiguration.getOrNull(ScriptCompileConfigurationProperties.importedPackages)?.toList()
                             ?: emptyList()
                 ),
                 diagnostics
             )
         } catch (e: Throwable) {
             DependenciesResolver.ResolveResult.Failure(
-                ScriptReport(
-                    e.message ?: "unknown error $e"
-                )
+                ScriptReport(e.message ?: "unknown error $e")
             )
         }
     }
@@ -85,13 +82,9 @@ class BridgeDependenciesResolver(
 internal fun List<ScriptDiagnostic>.mapScriptReportsToDiagnostics() =
     map { ScriptReport(it.message, mapToLegacyScriptReportSeverity(it.severity), mapToLegacyScriptReportPosition(it.location)) }
 
-internal fun ScriptContents.toScriptSourceFragments(): ScriptSourceFragments =
-    ScriptSourceFragments(
-        when {
-            text != null -> text!!.toString().toScriptSource()
-            file != null -> file!!.toScriptSource()
-            else -> throw IllegalArgumentException("Unable to convert script contents $this into script source")
-        },
-        null
-    )
+internal fun ScriptContents.toScriptSource(): ScriptSource = when {
+    text != null -> text!!.toString().toScriptSource()
+    file != null -> file!!.toScriptSource()
+    else -> throw IllegalArgumentException("Unable to convert script contents $this into script source")
+}
 

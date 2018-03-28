@@ -27,9 +27,9 @@ abstract class MyScriptWithMavenDeps {
 //    abstract fun body(vararg args: String): Int
 }
 
-val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationParams) {
+val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
     listOf(
-        scriptSignature to ScriptSignature(MyScriptWithMavenDeps::class, ProvidedDeclarations()),
+        baseClass<MyScriptWithMavenDeps>(),
         importedPackages(DependsOn::class.qualifiedName!!, Repository::class.qualifiedName!!),
         dependencies(
             JvmDependency(
@@ -53,10 +53,11 @@ class MyConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationCon
         defaultConfiguration.asSuccess()
 
     override suspend fun refineConfiguration(
+        scriptSource: ScriptSource,
         configuration: ScriptCompileConfiguration,
         processedScriptData: ProcessedScriptData
     ): ResultWithDiagnostics<ScriptCompileConfiguration> {
-        val annotations = processedScriptData.getOrNull(ProcessedScriptDataParams.annotations)?.toList()?.takeIf { it.isNotEmpty() }
+        val annotations = processedScriptData.getOrNull(ProcessedScriptDataProperties.foundAnnotations)?.toList()?.takeIf { it.isNotEmpty() }
                 ?: return configuration.asSuccess()
         val scriptContents = object : ScriptContents {
             override val annotations: Iterable<Annotation> = annotations
@@ -74,8 +75,8 @@ class MyConfigurator(val environment: ChainedPropertyBag) : ScriptCompilationCon
                     ?: return configuration.asSuccess(diagnostics)
             val newDependency = JvmDependency(resolvedClasspath)
             val updatedDeps =
-                configuration.getOrNull(ScriptCompileConfigurationParams.dependencies)?.plus(newDependency) ?: listOf(newDependency)
-            ChainedPropertyBag(configuration, ScriptCompileConfigurationParams.dependencies(updatedDeps)).asSuccess(diagnostics)
+                configuration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.plus(newDependency) ?: listOf(newDependency)
+            ChainedPropertyBag(configuration, ScriptCompileConfigurationProperties.dependencies(updatedDeps)).asSuccess(diagnostics)
         } catch (e: Throwable) {
             ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())
         }

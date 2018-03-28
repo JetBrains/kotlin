@@ -9,7 +9,7 @@ import kotlinx.coroutines.experimental.runBlocking
 import kotlin.script.experimental.api.*
 import java.io.File
 
-val jvmJavaHomeParams = with(JvmScriptCompileConfigurationParams) {
+val jvmJavaHomeParams = with(JvmScriptCompileConfigurationProperties) {
     listOf(javaHomeDir to File(System.getProperty("java.home")))
 }
 

@@ -18,6 +18,6 @@ open class JvmBasicScriptingHost<ScriptBase : Any>(
     evaluator: ScriptEvaluator<ScriptBase>
 ) : BasicScriptingHost<ScriptBase>(configurationExtractor, compiler, evaluator)
 
-object JvmScriptEvaluationEnvironmentParams {
+object JvmScriptEvaluationEnvironmentProperties {
     val baseClassLoader by typedKey<ClassLoader?>()
 }

@@ -19,11 +19,10 @@ open class JvmScriptCompiler(
         configuration: ScriptCompileConfiguration,
         configurator: ScriptCompilationConfigurator?
     ): ResultWithDiagnostics<CompiledScript<*>> {
-        val refinedConfiguration = configurator?.refineConfiguration(configuration)?.let {
+        val refinedConfiguration = configurator?.refineConfiguration(script, configuration)?.let {
             when (it) {
                 is ResultWithDiagnostics.Failure -> return it
                 is ResultWithDiagnostics.Success -> it.value
-                        ?: return ResultWithDiagnostics.Failure("Null script compile configuration received".asErrorDiagnostics())
             }
         } ?: configuration
         val cached = cache.get(script, refinedConfiguration)
@@ -32,7 +31,7 @@ open class JvmScriptCompiler(
 
         return compilerProxy.compile(script, refinedConfiguration, configurator).also {
             if (it is ResultWithDiagnostics.Success) {
-                cache.store(it.value as CompiledScript<*>)
+                cache.store(it.value, refinedConfiguration)
             }
         }
     }
@@ -40,7 +39,7 @@ open class JvmScriptCompiler(
 
 interface CompiledJvmScriptsCache {
     fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>?
-    fun store(compiledScript: CompiledScript<*>)
+    fun store(compiledScript: CompiledScript<*>, configuration: ScriptCompileConfiguration)
 }
 
 interface KJVMCompilerProxy {
@@ -53,6 +52,6 @@ interface KJVMCompilerProxy {
 
 class DummyCompiledJvmScriptCache : CompiledJvmScriptsCache {
     override fun get(script: ScriptSource, configuration: ScriptCompileConfiguration): CompiledScript<*>? = null
-    override fun store(compiledScript: CompiledScript<*>) {}
+    override fun store(compiledScript: CompiledScript<*>, configuration: ScriptCompileConfiguration) {}
 }
 

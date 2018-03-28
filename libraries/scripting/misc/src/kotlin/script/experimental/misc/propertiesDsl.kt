@@ -18,6 +18,9 @@ inline operator fun <reified E> TypedKey<List<E>>.invoke(vararg vs: E): Pair<Typ
 @JvmName("invokeIterable")
 inline operator fun <reified E> TypedKey<Iterable<E>>.invoke(vararg vs: E): Pair<TypedKey<Iterable<E>>, Iterable<E>> = this to vs.toList()
 
+inline operator fun <reified K, reified V> TypedKey<Map<K, V>>.invoke(vararg vs: Pair<K, V>): Pair<TypedKey<Map<K, V>>, Map<K, V>> =
+    this to hashMapOf(*vs)
+
 // TODO: make tests from examples below
 /*
 val x = with(kotlin.script.experimental.api.ScriptingEnvironmentProperties) {
