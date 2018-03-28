@@ -82,50 +82,32 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
                 return ExitCode.COMPILATION_ERROR;
             }
 
-            ExitCode exitCode = OK;
-
-            int repeatCount = 1;
-            String repeat = arguments.getRepeat();
-            if (repeat != null) {
-                try {
-                    repeatCount = Integer.parseInt(repeat);
-                }
-                catch (NumberFormatException ignored) {
-                }
-            }
-
             CompilationCanceledStatus canceledStatus = services.get(CompilationCanceledStatus.class);
             ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus);
 
-            for (int i = 0; i < repeatCount; i++) {
-                if (i > 0) {
-                    K2JVMCompiler.Companion.resetInitStartTime();
-                }
-                Disposable rootDisposable = Disposer.newDisposable();
-                try {
-                    setIdeaIoUseFallback();
-                    ExitCode code = doExecute(arguments, configuration, rootDisposable, paths);
-                    exitCode = groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
-                }
-                catch (CompilationCanceledException e) {
+            Disposable rootDisposable = Disposer.newDisposable();
+            try {
+                setIdeaIoUseFallback();
+                ExitCode code = doExecute(arguments, configuration, rootDisposable, paths);
+                return groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
+            }
+            catch (CompilationCanceledException e) {
+                messageCollector.report(INFO, "Compilation was canceled", null);
+                return ExitCode.OK;
+            }
+            catch (RuntimeException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof CompilationCanceledException) {
                     messageCollector.report(INFO, "Compilation was canceled", null);
                     return ExitCode.OK;
                 }
-                catch (RuntimeException e) {
-                    Throwable cause = e.getCause();
-                    if (cause instanceof CompilationCanceledException) {
-                        messageCollector.report(INFO, "Compilation was canceled", null);
-                        return ExitCode.OK;
-                    }
-                    else {
-                        throw e;
-                    }
-                }
-                finally {
-                    Disposer.dispose(rootDisposable);
+                else {
+                    throw e;
                 }
             }
-            return exitCode;
+            finally {
+                Disposer.dispose(rootDisposable);
+            }
         }
         catch (AnalysisResult.CompilationErrorException e) {
             return COMPILATION_ERROR;

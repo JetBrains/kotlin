@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
@@ -44,8 +43,6 @@ abstract class CLITool<A : CommonToolArguments> {
             messageRenderer: MessageRenderer,
             args: Array<out String>
     ): ExitCode {
-        K2JVMCompiler.resetInitStartTime()
-
         val arguments = createArguments()
         parseCommandLineArguments(args.asList(), arguments)
         val collector = PrintingMessageCollector(errStream, messageRenderer, arguments.verbose)

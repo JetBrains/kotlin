@@ -59,7 +59,6 @@ where advanced options include:
   -Xplugin=<path>            Load plugins from the given classpath
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata
-  -Xrepeat=<count>           Repeat compilation (for performance analysis)
   -Xreport-output-files      Report source to output files mapping
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
   -Xuse-experimental=<fq.name> Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name

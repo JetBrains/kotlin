@@ -345,15 +345,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     companion object {
         private var initStartNanos = System.nanoTime()
-        // allows to track GC time for each run when repeated compilation is used
-        private val elapsedGCTime = hashMapOf<String, Long>()
-        private var elapsedJITTime = 0L
-
-        fun resetInitStartTime() {
-            if (initStartNanos == 0L) {
-                initStartNanos = System.nanoTime()
-            }
-        }
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -368,19 +359,13 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         fun reportGCTime(configuration: CompilerConfiguration) {
             ManagementFactory.getGarbageCollectorMXBeans().forEach {
-                val currentTime = it.collectionTime
-                val elapsedTime = elapsedGCTime.getOrElse(it.name) { 0 }
-                val time = currentTime - elapsedTime
-                reportPerf(configuration, "GC time for ${it.name} is $time ms")
-                elapsedGCTime[it.name] = currentTime
+                reportPerf(configuration, "GC time for ${it.name} is ${it.collectionTime} ms")
             }
         }
 
         fun reportCompilationTime(configuration: CompilerConfiguration) {
             val bean = ManagementFactory.getCompilationMXBean() ?: return
-            val currentTime = bean.totalCompilationTime
-            reportPerf(configuration, "JIT time is ${currentTime - elapsedJITTime} ms")
-            elapsedJITTime = currentTime
+            reportPerf(configuration, "JIT time is ${bean.totalCompilationTime} ms")
         }
 
         private fun putAdvancedOptions(configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments) {

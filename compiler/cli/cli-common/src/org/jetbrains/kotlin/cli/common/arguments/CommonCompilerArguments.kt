@@ -71,14 +71,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xno-inline", description = "Disable method inlining")
     var noInline: Boolean by FreezableVar(false)
 
-    // TODO Remove in 1.0
-    @Argument(
-            value = "-Xrepeat",
-            valueDescription = "<count>",
-            description = "Repeat compilation (for performance analysis)"
-    )
-    var repeat: String? by FreezableVar(null)
-
     @Argument(
             value = "-Xskip-metadata-version-check",
             description = "Load classes with bad metadata version anyway (incl. pre-release classes)"
