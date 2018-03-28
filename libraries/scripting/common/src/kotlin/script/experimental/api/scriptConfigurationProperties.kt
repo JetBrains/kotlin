@@ -33,8 +33,10 @@ object ScriptCompileConfigurationProperties {
 
     val compilerOptions by typedKey<List<String>>() // Q: CommonCompilerOptions instead?
 
-    val updateConfigurationOnAnnotations by typedKey<List<KClass<out Annotation>>>()
+    val refineBeforeParsing by typedKey<Boolean>() // default: false
 
-    val updateConfigurationOnSections by typedKey<List<String>>()
+    val refineConfigurationOnAnnotations by typedKey<List<KClass<out Annotation>>>()
+
+    val refineConfigurationOnSections by typedKey<List<String>>()
 }
 

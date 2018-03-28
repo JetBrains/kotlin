@@ -39,7 +39,7 @@ val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationPrope
                 )
             )
         ),
-        updateConfigurationOnAnnotations(DependsOn::class, Repository::class)
+        refineConfigurationOnAnnotations(DependsOn::class, Repository::class)
     )
 }
 
@@ -48,9 +48,6 @@ class MyConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationC
     private val resolver = FilesAndMavenResolver()
 
     override val defaultConfiguration = ScriptCompileConfiguration(environment, myJvmConfigParams)
-
-    override suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration> =
-        defaultConfiguration.asSuccess()
 
     override suspend fun refineConfiguration(
         scriptSource: ScriptSource,

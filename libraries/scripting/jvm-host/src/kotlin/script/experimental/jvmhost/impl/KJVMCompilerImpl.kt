@@ -73,8 +73,8 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
 
     override fun compile(
         script: ScriptSource,
-        scriptCompilerConfiguration: ScriptCompileConfiguration,
-        configurator: ScriptCompilationConfigurator?
+        configurator: ScriptCompilationConfigurator?,
+        additionalConfiguration: ScriptCompileConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>> {
         val messageCollector = ScriptDiagnosticsMessageCollector()
 
@@ -83,7 +83,7 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
 
         try {
             var environment: KotlinCoreEnvironment? = null
-            var updatedScriptCompileConfiguration = scriptCompilerConfiguration
+            var updatedScriptCompileConfiguration = additionalConfiguration
 
             fun updateClasspath(classpath: List<File>) {
                 environment!!.updateClasspath(classpath.map(::JvmClasspathRoot))
@@ -100,19 +100,19 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
             val kotlinCompilerConfiguration = org.jetbrains.kotlin.config.CompilerConfiguration().apply {
                 add(
                     JVMConfigurationKeys.SCRIPT_DEFINITIONS,
-                    BridgeScriptDefinition(scriptCompilerConfiguration, configurator, ::updateClasspath)
+                    BridgeScriptDefinition(additionalConfiguration, configurator, ::updateClasspath)
                 )
                 put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 var isModularJava = false
-                scriptCompilerConfiguration.getOrNull(JvmScriptCompileConfigurationProperties.javaHomeDir)?.let {
+                additionalConfiguration.getOrNull(JvmScriptCompileConfigurationProperties.javaHomeDir)?.let {
                     put(JVMConfigurationKeys.JDK_HOME, it)
                     isModularJava = CoreJrtFileSystem.isModularJdk(it)
                 }
 
                 var explicitStdlib = false
-                scriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.let {
+                additionalConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.let {
                     addJvmClasspathRoots(
                         it.flatMap {
                             (it as JvmDependency).classpath.also {
@@ -152,7 +152,7 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
             val analyzerWithCompilerReport = AnalyzerWithCompilerReport(messageCollector, environment.configuration.languageVersionSettings)
 
             val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
-            val scriptText = getMergedScriptText(script, scriptCompilerConfiguration)
+            val scriptText = getMergedScriptText(script, additionalConfiguration)
             val scriptFileName = "script" // TODO: extract from file/url if available
             val virtualFile = LightVirtualFile(
                 "$scriptFileName${KotlinParserDefinition.STD_SCRIPT_EXT}",
@@ -247,7 +247,8 @@ internal class BridgeScriptDefinition(
     updateClasspath: (List<File>) -> Unit
 ) : KotlinScriptDefinition(scriptCompilerConfiguration[ScriptingEnvironmentProperties.baseClass] as KClass<out Any>) {
     override val acceptedAnnotations =
-        scriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.updateConfigurationOnAnnotations)?.toList() ?: emptyList()
+        scriptCompilerConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)?.toList()
+                ?: emptyList()
 
     override val dependencyResolver: DependenciesResolver =
         BridgeDependenciesResolver(scriptConfigurator, scriptCompilerConfiguration, updateClasspath)

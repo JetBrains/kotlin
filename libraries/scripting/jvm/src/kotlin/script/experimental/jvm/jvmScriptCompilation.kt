@@ -16,20 +16,31 @@ open class JvmScriptCompiler(
 
     override suspend fun compile(
         script: ScriptSource,
-        configuration: ScriptCompileConfiguration,
-        configurator: ScriptCompilationConfigurator?
+        configurator: ScriptCompilationConfigurator?,
+        additionalConfiguration: ScriptCompileConfiguration?
     ): ResultWithDiagnostics<CompiledScript<*>> {
-        val refinedConfiguration = configurator?.refineConfiguration(script, configuration)?.let {
-            when (it) {
-                is ResultWithDiagnostics.Failure -> return it
-                is ResultWithDiagnostics.Success -> it.value
+        val baseConfiguration = additionalConfiguration?.cloneWithNewParent(configurator?.defaultConfiguration)
+                ?: configurator?.defaultConfiguration
+                ?: ScriptCompileConfiguration()
+        val refinedConfiguration =
+            if (baseConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineBeforeParsing) == true) {
+                if (configurator == null) {
+                    return ResultWithDiagnostics.Failure("Non-null configurator expected".asErrorDiagnostics())
+                }
+                configurator.refineConfiguration(script, baseConfiguration).let {
+                    when (it) {
+                        is ResultWithDiagnostics.Failure -> return it
+                        is ResultWithDiagnostics.Success -> it.value
+                    }
+                }
+            } else {
+                baseConfiguration
             }
-        } ?: configuration
         val cached = cache.get(script, refinedConfiguration)
 
         if (cached != null) return cached.asSuccess()
 
-        return compilerProxy.compile(script, refinedConfiguration, configurator).also {
+        return compilerProxy.compile(script, configurator, refinedConfiguration).also {
             if (it is ResultWithDiagnostics.Success) {
                 cache.store(it.value, refinedConfiguration)
             }
@@ -45,8 +56,8 @@ interface CompiledJvmScriptsCache {
 interface KJVMCompilerProxy {
     fun compile(
         script: ScriptSource,
-        scriptCompilerConfiguration: ScriptCompileConfiguration,
-        configurator: ScriptCompilationConfigurator?
+        configurator: ScriptCompilationConfigurator?,
+        additionalConfiguration: ScriptCompileConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 

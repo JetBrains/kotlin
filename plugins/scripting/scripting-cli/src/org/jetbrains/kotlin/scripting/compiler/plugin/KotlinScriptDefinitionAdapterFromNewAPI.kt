@@ -47,7 +47,7 @@ class KotlinScriptDefinitionAdapterFromNewAPI(val scriptDefinition: ScriptDefini
     }
 
     override val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
-        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.updateConfigurationOnAnnotations)?.toList()
+        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.refineConfigurationOnAnnotations)?.toList()
                 ?: emptyList()
     }
 

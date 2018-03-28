@@ -12,9 +12,6 @@ class PassThroughCompilationConfigurator(val environment: ScriptingEnvironment) 
 
     override val defaultConfiguration = ScriptCompileConfiguration(environment)
 
-    override suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration> =
-        defaultConfiguration.asSuccess()
-
     override suspend fun refineConfiguration(
         script: ScriptSource,
         configuration: ScriptCompileConfiguration,

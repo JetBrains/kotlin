@@ -17,12 +17,19 @@ class TypedKeyDelegate<T> {
 
 fun <T> typedKey() = TypedKeyDelegate<T>()
 
-class ChainedPropertyBag(private val parent: ChainedPropertyBag? = null, pairs: Iterable<Pair<TypedKey<*>, Any?>>) {
+class ChainedPropertyBag private constructor(private val parent: ChainedPropertyBag?, private val data: Map<TypedKey<*>, Any?>) {
+    constructor(parent: ChainedPropertyBag? = null, pairs: Iterable<Pair<TypedKey<*>, Any?>>) :
+            this(parent, HashMap<TypedKey<*>, Any?>().also { it.putAll(pairs) })
+
     constructor(pairs: Iterable<Pair<TypedKey<*>, Any?>>) : this(null, pairs)
     constructor(parent: ChainedPropertyBag, vararg pairs: Pair<TypedKey<*>, Any?>) : this(parent, pairs.asIterable())
     constructor(vararg pairs: Pair<TypedKey<*>, Any?>) : this(null, pairs.asIterable())
 
-    private val data = HashMap<TypedKey<*>, Any?>().also { it.putAll(pairs) }
+    fun cloneWithNewParent(newParent: ChainedPropertyBag?): ChainedPropertyBag = when {
+        newParent == null -> this
+        parent == null -> ChainedPropertyBag(newParent, data)
+        else -> ChainedPropertyBag(parent.cloneWithNewParent(newParent), data)
+    }
 
     inline operator fun <reified T> get(key: TypedKey<T>): T = getUnchecked(key) as T
 

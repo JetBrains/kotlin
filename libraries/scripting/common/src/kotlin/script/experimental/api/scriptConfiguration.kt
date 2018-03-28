@@ -21,8 +21,6 @@ interface ScriptCompilationConfigurator {
 
     val defaultConfiguration: ScriptCompileConfiguration
 
-    suspend fun baseConfiguration(scriptSource: ScriptSource): ResultWithDiagnostics<ScriptCompileConfiguration>
-
     suspend fun refineConfiguration(
         scriptSource: ScriptSource,
         configuration: ScriptCompileConfiguration,
