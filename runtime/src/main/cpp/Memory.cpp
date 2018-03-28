@@ -1099,7 +1099,7 @@ OBJ_GETTER(InitInstance,
 OBJ_GETTER(InitSharedInstance,
     ObjHeader** location, ObjHeader** localLocation, const TypeInfo* type_info, void (*ctor)(ObjHeader*)) {
 #if KONAN_NO_THREADS
-  return InitInstance(location, type_info, ctor);
+  RETURN_RESULT_OF(InitInstance, location, type_info, ctor);
 #else
   ObjHeader* value = *localLocation;
   if (value != nullptr) RETURN_OBJ(value);
