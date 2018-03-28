@@ -9,15 +9,14 @@ import com.intellij.codeInsight.navigation.GotoTargetHandler
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.codeInsight.GotoSuperActionHandler
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.test.extractMarkerOffset
+import org.jetbrains.kotlin.idea.test.findFileWithCaret
 import java.io.File
 
 abstract class AbstractKotlinNavigationMultiModuleTest : AbstractMultiModuleTest() {
@@ -25,7 +24,7 @@ abstract class AbstractKotlinNavigationMultiModuleTest : AbstractMultiModuleTest
 
     protected fun doTest(testDataDir: String) {
         setupMppProjectFromDirStructure(File(testDataDir))
-        val file = findFileWithCaret()
+        val file = project.findFileWithCaret()
         val doc = PsiDocumentManager.getInstance(myProject).getDocument(file)!!
         val offset = doc.extractMarkerOffset(project, "<caret>")
         val editor = EditorFactory.getInstance().createEditor(doc, myProject)
@@ -37,9 +36,6 @@ abstract class AbstractKotlinNavigationMultiModuleTest : AbstractMultiModuleTest
             EditorFactory.getInstance().releaseEditor(editor)
         }
     }
-
-    private fun findFileWithCaret() =
-        project.allKotlinFiles().single { "<caret>" in VfsUtilCore.loadText(it.virtualFile) }
 }
 
 

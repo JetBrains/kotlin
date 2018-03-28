@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
@@ -201,3 +202,6 @@ fun Project.allKotlinFiles(): List<KtFile> {
         .map { PsiManager.getInstance(this).findFile(it) }
         .filterIsInstance<KtFile>()
 }
+
+fun Project.findFileWithCaret() =
+    allKotlinFiles().single { "<caret>" in VfsUtilCore.loadText(it.virtualFile) }
