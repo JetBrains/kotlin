@@ -1548,6 +1548,11 @@ task boxing15(type: RunKonanTest) {
     source = "codegen/boxing/boxing15.kt"
 }
 
+task boxCache0(type: RunKonanTest) {
+    goldValue = "2\n256\n256\n256\n256\n256\n"
+    source = "codegen/boxing/box_cache0.kt"
+}
+
 task interface0(type: RunKonanTest) {
     goldValue = "PASSED\n"
     source = "runtime/basic/interface0.kt"
