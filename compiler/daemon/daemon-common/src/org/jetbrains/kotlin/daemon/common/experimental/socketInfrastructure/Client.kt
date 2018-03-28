@@ -1,7 +1,10 @@
 package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.Socket
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
 import sun.net.ConnectionResetException
 import java.beans.Transient
@@ -18,10 +21,9 @@ interface Client : Serializable, AutoCloseable {
 }
 
 @Suppress("UNCHECKED_CAST")
-class DefaultClient(
+abstract class DefaultAuthorizableClient(
     val serverPort: Int,
-    val serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName,
-    val authorizeOnServer: (ByteWriteChannelWrapper) -> Unit = {}
+    val serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName
 ) : Client {
 
     val log: Logger
@@ -38,6 +40,9 @@ class DefaultClient(
     private var socket: Socket? = null
         @Transient get
         @Transient set
+
+    abstract fun authorizeOnServer(serverOutputChannel: ByteWriteChannelWrapper)
+
     override fun close() {
         socket?.close()
     }
@@ -72,6 +77,13 @@ class DefaultClient(
         }
     }
 
+}
+
+class DefaultClient(
+    serverPort: Int,
+    serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName
+) : DefaultAuthorizableClient(serverPort, serverHost) {
+    override fun authorizeOnServer(output: ByteWriteChannelWrapper) {}
 }
 
 class DefaultClientRMIWrapper : Client {
