@@ -42,6 +42,7 @@ dependencies {
 
     compileOnly(project(":kotlin-daemon-client"))
 
+
     compileOnly(intellijDep())
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     compileOnly(intellijPluginDep("IntelliLang"))
@@ -102,22 +103,59 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDirs("idea-completion/src",
-                     "idea-live-templates/src",
-                     "idea-repl/src")
+        java.srcDirs(
+            "idea-completion/src",
+            "idea-live-templates/src",
+            "idea-repl/src"
+        )
         resources.srcDirs("idea-repl/src").apply { include("META-INF/**") }
     }
     "test" {
         projectDefault()
         java.srcDirs(
-                     "idea-completion/tests",
-                     "idea-live-templates/tests")
+            "idea-completion/tests",
+            "idea-live-templates/tests"
+        )
+    }
+
+}
+
+val performanceTestCompile by configurations.creating {
+    extendsFrom(configurations["testCompile"])
+}
+
+val performanceTestRuntime by configurations.creating {
+    extendsFrom(configurations["testRuntime"])
+}
+
+val performanceTest by run {
+    val sourceSets = the<JavaPluginConvention>().sourceSets
+    sourceSets.creating {
+        compileClasspath += sourceSets["test"].output
+        compileClasspath += sourceSets["main"].output
+        runtimeClasspath += sourceSets["test"].output
+        runtimeClasspath += sourceSets["main"].output
+        java.srcDirs("performanceTests")
     }
 }
 
 projectTest {
     dependsOn(":dist")
+    dependsOn("performanceTest")
     workingDir = rootDir
+}
+
+
+projectTest(taskName = "performanceTest") {
+    dependsOn(":dist")
+    dependsOn(performanceTest.output)
+    testClassesDirs = performanceTest.output.classesDirs
+    classpath = performanceTest.runtimeClasspath
+    workingDir = rootDir
+
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+    }
 }
 
 testsJar {}
