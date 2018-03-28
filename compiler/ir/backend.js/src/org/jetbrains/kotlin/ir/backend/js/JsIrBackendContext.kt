@@ -38,12 +38,12 @@ class JsIrBackendContext(
     override val ir: Ir<CommonBackendContext> = object : Ir<CommonBackendContext>(this, irModuleFragment) {
         override val symbols: Symbols<CommonBackendContext> = object : Symbols<CommonBackendContext>(this@JsIrBackendContext, symbolTable) {
 
-            override fun <T> eager(initializer: () -> T): Lazy<T> {
-                return object : Lazy<T> {
-                    override val value: T
-                        get() = TODO("not implemented")
-
-                    override fun isInitialized(): Boolean = true
+            override fun calc(initializer: () -> IrClassSymbol): IrClassSymbol {
+                return object : IrClassSymbol {
+                    override val owner: IrClass get() = TODO("not implemented")
+                    override val isBound: Boolean get() = TODO("not implemented")
+                    override fun bind(owner: IrClass) = TODO("not implemented")
+                    override val descriptor: ClassDescriptor get() = TODO("not implemented")
                 }
             }
 
