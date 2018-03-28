@@ -26,6 +26,7 @@
 #include "MemoryPrivate.hpp"
 #include "Natives.h"
 #include "Porting.h"
+#include "Atomic.h"
 
 // If garbage collection algorithm for cyclic garbage to be used.
 // We are using the Bacon's algorithm for GC, see
@@ -55,14 +56,6 @@ constexpr container_size_t kObjectAlignment = 8;
 #else
 #define MEMORY_LOG(...)
 #endif
-
-inline int atomicAdd(int* where, int what) {
-#ifndef KONAN_NO_THREADS
-  return __sync_add_and_fetch(where, what);
-#else
-  return *where += what;
-#endif
-}
 
 #if USE_GC
 // Collection threshold default (collect after having so many elements in the

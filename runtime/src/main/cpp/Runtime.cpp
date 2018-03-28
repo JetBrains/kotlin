@@ -19,6 +19,7 @@
 #include "Memory.h"
 #include "Porting.h"
 #include "Runtime.h"
+#include "Atomic.h"
 
 struct RuntimeState {
   MemoryState* memoryState;
@@ -35,6 +36,12 @@ namespace {
 InitNode* initHeadNode = nullptr;
 InitNode* initTailNode = nullptr;
 
+enum {
+  INIT_GLOBALS = 0,
+  DEINIT_THREAD_LOCAL_GLOBALS = 1,
+  DEINIT_GLOBALS = 2
+};
+
 void InitOrDeinitGlobalVariables(int initialize) {
   InitNode *currNode = initHeadNode;
   while (currNode != nullptr) {
@@ -45,23 +52,27 @@ void InitOrDeinitGlobalVariables(int initialize) {
 
 THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = nullptr;
 
+int aliveRuntimesCount = 0;
+
 RuntimeState* initRuntime() {
   SetKonanTerminateHandler();
   RuntimeState* result = konanConstructInstance<RuntimeState>();
   if (!result) return nullptr;
   result->memoryState = InitMemory();
   // Keep global variables in state as well.
-  InitOrDeinitGlobalVariables(true);
+  InitOrDeinitGlobalVariables(INIT_GLOBALS);
   konan::consoleInit();
+  atomicAdd(&aliveRuntimesCount, 1);
   return result;
 }
 
 void deinitRuntime(RuntimeState* state) {
-  if (state != nullptr) {
-    InitOrDeinitGlobalVariables(false);
-    DeinitMemory(state->memoryState);
-    konanDestructInstance(state);
-  }
+  bool lastRuntime = atomicAdd(&aliveRuntimesCount, -1) == 0;
+  InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS);
+  if (lastRuntime)
+    InitOrDeinitGlobalVariables(DEINIT_GLOBALS);
+  DeinitMemory(state->memoryState);
+  konanDestructInstance(state);
 }
 }  // namespace
 

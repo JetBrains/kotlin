@@ -358,15 +358,28 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     val kNodeInitType = LLVMGetTypeByName(context.llvmModule, "struct.InitNode")!!
     //-------------------------------------------------------------------------//
 
+    val INIT_GLOBALS = 0
+    val DEINIT_THREAD_LOCAL_GLOBALS = 1
+    val DEINIT_GLOBALS = 2
+
     private fun createInitBody(): LLVMValueRef {
         val initFunction = LLVMAddFunction(context.llvmModule, "", kInitFuncType)!!
         generateFunction(codegen, initFunction) {
             using(FunctionScope(initFunction, "init_body", it)) {
                 val bbInit = basicBlock("init", null)
-                val bbDeinit = basicBlock("deinit", null)
-                condBr(functionGenerationContext.icmpEq(LLVMGetParam(initFunction, 0)!!, kImmZero), bbDeinit, bbInit)
+                val bbLocalDeinit = basicBlock("local_deinit", null)
+                val bbGlobalDeinit = basicBlock("global_deinit", null)
+                val bbDefault = basicBlock("default", null) {
+                    unreachable()
+                }
 
-                appendingTo(bbDeinit) {
+                switch(LLVMGetParam(initFunction, 0)!!,
+                        listOf(Int32(INIT_GLOBALS).llvm                to bbInit,
+                               Int32(DEINIT_THREAD_LOCAL_GLOBALS).llvm to bbLocalDeinit,
+                               Int32(DEINIT_GLOBALS).llvm              to bbGlobalDeinit),
+                        bbDefault)
+
+                appendingTo(bbLocalDeinit) {
                     context.llvm.fileInitializers.forEach {
                         val descriptor = it
                         if (descriptor.type.isValueType())
@@ -375,6 +388,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         storeAny(codegen.kNullObjHeaderPtr, address)
                     }
                     context.llvm.objects.forEach { storeAny(codegen.kNullObjHeaderPtr, it) }
+                    ret(null)
+                }
+
+                appendingTo(bbGlobalDeinit) {
+                    context.llvm.sharedObjects.forEach { storeAny(codegen.kNullObjHeaderPtr, it) }
                     ret(null)
                 }
 
@@ -424,11 +442,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         // TODO: collect those two in one place.
         context.llvm.fileInitializers.clear()
         context.llvm.objects.clear()
+        context.llvm.sharedObjects.clear()
 
         using(FileScope(declaration)) {
             declaration.acceptChildrenVoid(this)
 
-            if (context.llvm.fileInitializers.isEmpty() && context.llvm.objects.isEmpty())
+            if (context.llvm.fileInitializers.isEmpty() && context.llvm.objects.isEmpty() && context.llvm.sharedObjects.isEmpty())
                 return
 
             // Create global initialization records.
