@@ -43,11 +43,7 @@ fun makeDiamond(): Node2 {
 }
 
 @Test fun runTest() {
-    try {
-        makeCycle(10).freeze()
-    } catch (e: FreezingException) {
-        println("OK, cannot freeze cyclic")
-    }
+    makeCycle(10).freeze()
 
     // Must be able to freeze diamond shaped graph.
     val diamond = makeDiamond().freeze()

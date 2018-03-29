@@ -623,9 +623,14 @@ task freeze0(type: RunKonanTest) {
 
 task freeze1(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No exceptions on WASM.
-    goldValue = "OK, cannot freeze cyclic\n"+
-                "OK, cannot mutate frozen\n"
+    goldValue = "OK, cannot mutate frozen\n"
     source = "runtime/workers/freeze1.kt"
+}
+
+task freeze_stress(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No exceptions on WASM.
+    goldValue = "OK\n"
+    source = "runtime/workers/freeze_stress.kt"
 }
 
 task superFunCall(type: RunKonanTest) {
