@@ -26423,6 +26423,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
+        @TestMetadata("noAssertionsWhenNullableTypeParameterReplacedWithIntersectionType.kt")
+        public void testNoAssertionsWhenNullableTypeParameterReplacedWithIntersectionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/noAssertionsWhenNullableTypeParameterReplacedWithIntersectionType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noCapturingForTypesWithTypeVariables.kt")
         public void testNoCapturingForTypesWithTypeVariables() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/noCapturingForTypesWithTypeVariables.kt");

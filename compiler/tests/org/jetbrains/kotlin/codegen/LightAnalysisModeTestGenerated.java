@@ -19432,6 +19432,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("noAssertionsWhenNullableTypeParameterReplacedWithIntersectionType.kt")
+        public void testNoAssertionsWhenNullableTypeParameterReplacedWithIntersectionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/noAssertionsWhenNullableTypeParameterReplacedWithIntersectionType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noCapturingForTypesWithTypeVariables.kt")
         public void testNoCapturingForTypesWithTypeVariables() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/noCapturingForTypesWithTypeVariables.kt");
