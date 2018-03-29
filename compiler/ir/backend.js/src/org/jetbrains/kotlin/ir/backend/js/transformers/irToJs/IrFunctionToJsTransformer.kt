@@ -15,12 +15,13 @@ import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
 open class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, JsGenerationContext> {
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsFunction {
-        return translateFunction(declaration, declaration.name, context)
+        val funcName = context.getNameForSymbol(declaration.symbol)
+        return translateFunction(declaration, funcName, context)
     }
 
     override fun visitConstructor(declaration: IrConstructor, context: JsGenerationContext): JsFunction {
         assert(declaration.symbol.isPrimary)
-        return translateFunction(declaration, declaration.symbol.constructedClassName, context)
+        return translateFunction(declaration, declaration.symbol.constructedClassName.toJsName(), context)
     }
 
 
