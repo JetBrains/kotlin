@@ -15740,12 +15740,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/unitType.kt");
             doTest(fileName);
         }
-
-        @TestMetadata("unknownType.kt")
-        public void testUnknownType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/unknownType.kt");
-            doTest(fileName);
-        }
     }
 
     @TestMetadata("idea/testData/intentions/specifyTypeExplicitlyInDestructuringAssignment")
