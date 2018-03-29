@@ -657,15 +657,14 @@ private class ObjCBlockPointerType(
         val returnType: ObjCReferenceType, val parameterTypes: List<ObjCReferenceType>
 ) : ObjCNonNullReferenceType() {
 
-    override fun render(attrsAndName: String) = buildString {
-        append(returnType.render())
-        append(" (^")
+    override fun render(attrsAndName: String) = returnType.render(buildString {
+        append("(^")
         append(attrsAndName)
         append(")(")
         if (parameterTypes.isEmpty()) append("void")
         parameterTypes.joinTo(this) { it.render() }
         append(')')
-    }
+    })
 }
 
 private class ObjCPrimitiveType(val cName: String) : ObjCType() {
