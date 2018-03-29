@@ -160,6 +160,16 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var dumpPerf: String? by FreezableVar(null)
 
+    @Argument(
+        value = "-Xprogressive",
+        description = "Enable compiler progressive mode.\n" +
+                "In this mode, deprecations and bug fixes for unstable code take effect immediately,\n" +
+                "instead of going through graceful migration cycle.\n" +
+                "Code, written in progressive mode is backward compatible; however, code written in\n" +
+                "non-progressive mode may cause compilation errors in progressive mode."
+    )
+    var progressiveMode by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -207,6 +217,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             if (properIeee754Comparisons) {
                 put(LanguageFeature.ProperIeee754Comparisons, LanguageFeature.State.ENABLED)
             }
+
+            if (progressiveMode) {
+                LanguageFeature.values().filter { it.enabledInProgressiveMode }.forEach {
+                    // Don't overwrite other settings: users may want to turn off some particular
+                    // breaking change manually instead of turning off whole progressive mode
+                    if (!contains(it)) put(it, LanguageFeature.State.ENABLED)
+                }
+            }
         }
 
     fun configureLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
@@ -229,6 +247,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
                 "Language version ${languageVersion.versionString} is experimental, there are no backwards compatibility guarantees for new language and library features"
+            )
+        }
+
+        if (progressiveMode && languageVersion < LanguageVersion.LATEST_STABLE) {
+            collector.report(
+                CompilerMessageSeverity.STRONG_WARNING,
+                "'-Xprogressive' meaningful only for latest language version (${LanguageVersion.LATEST_STABLE}), while this build uses $languageVersion\n" +
+                        "Behaviour of compiler in such mode is undefined; please, consider moving to the latest stable version or turning off progressive mode."
             )
         }
 

@@ -13,7 +13,8 @@ enum class LanguageFeature(
     val sinceVersion: LanguageVersion?,
     val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
     val hintUrl: String? = null,
-    val defaultState: State = State.ENABLED
+    val defaultState: State = State.ENABLED,
+    val enabledInProgressiveMode: Boolean = false
 ) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
     TypeAliases(KOTLIN_1_1),
@@ -56,23 +57,23 @@ enum class LanguageFeature(
     DefaultMethodsCallFromJava6TargetError(KOTLIN_1_2),
 
     BooleanElvisBoundSmartCasts(KOTLIN_1_3),
-    RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3),
-    NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3),
-    ProhibitDataClassesOverridingCopy(KOTLIN_1_3),
-    RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes(KOTLIN_1_3),
-    ProhibitInnerClassesOfGenericClassExtendingThrowable(KOTLIN_1_3),
-    ProperVisibilityForCompanionObjectInstanceField(KOTLIN_1_3),
-    ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3),
+    RestrictionOfValReassignmentViaBackingField(KOTLIN_1_3, enabledInProgressiveMode = true),
+    NestedClassesInEnumEntryShouldBeInner(KOTLIN_1_3, enabledInProgressiveMode = true),
+    ProhibitDataClassesOverridingCopy(KOTLIN_1_3, enabledInProgressiveMode = true),
+    RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes(KOTLIN_1_3, enabledInProgressiveMode = true),
+    ProhibitInnerClassesOfGenericClassExtendingThrowable(KOTLIN_1_3, enabledInProgressiveMode = true),
+    ProperVisibilityForCompanionObjectInstanceField(KOTLIN_1_3, enabledInProgressiveMode = true),
+    ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3, enabledInProgressiveMode = true),
     NestedClassesInAnnotations(KOTLIN_1_3),
     JvmStaticInInterface(KOTLIN_1_3),
-    ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3),
-    ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3),
+    ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion(KOTLIN_1_3, enabledInProgressiveMode = true),
+    ProhibitNonConstValuesAsVarargsInAnnotations(KOTLIN_1_3, enabledInProgressiveMode = true),
     ReleaseCoroutines(KOTLIN_1_3),
     ReadDeserializedContracts(KOTLIN_1_3),
     UseReturnsEffect(KOTLIN_1_3),
     UseCallsInPlaceEffect(KOTLIN_1_3),
     AllowContractsForCustomFunctions(KOTLIN_1_3),
-    ProhibitLocalAnnotations(KOTLIN_1_3),
+    ProhibitLocalAnnotations(KOTLIN_1_3, enabledInProgressiveMode = true),
 
     StrictJavaNullabilityAssertions(sinceVersion = null, defaultState = State.DISABLED),
     ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED),

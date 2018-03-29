@@ -391,6 +391,18 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/pluginSimple.args");
         }
 
+        @TestMetadata("progressiveModeOff.args")
+        public void testProgressiveModeOff() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/progressiveModeOff.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("progressiveModeOn.args")
+        public void testProgressiveModeOn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/progressiveModeOn.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("returnAsWhenKey.args")
         public void testReturnAsWhenKey() throws Exception {
             runTest("compiler/testData/cli/jvm/returnAsWhenKey.args");
