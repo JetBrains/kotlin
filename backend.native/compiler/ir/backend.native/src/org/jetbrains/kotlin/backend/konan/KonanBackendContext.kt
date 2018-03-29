@@ -63,8 +63,8 @@ abstract internal class KonanBackendContext(val config: KonanConfig) : CommonBac
         val sourceRangeInfo = containingFile.fileEntry.getSourceRangeInfo(this.startOffset, this.endOffset)
         return CompilerMessageLocation.create(
                 path = sourceRangeInfo.filePath,
-                line = sourceRangeInfo.startLineNumber,
-                column = sourceRangeInfo.startColumnNumber,
+                line = sourceRangeInfo.startLineNumber + 1,
+                column = sourceRangeInfo.startColumnNumber + 1,
                 lineContent = null // TODO: retrieve the line content.
         )
     }
