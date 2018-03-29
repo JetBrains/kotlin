@@ -10,9 +10,9 @@ import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBase
 import java.io.Serializable
 
-class CompilerServicesFacadeBaseRMIWrapper(val clientSide: CompilerServicesFacadeBaseClientSide) : CompilerServicesFacadeBase {
+class CompilerServicesFacadeBaseRMIWrapper(val clientSide: CompilerServicesFacadeBaseClientSide) : CompilerServicesFacadeBase, Serializable {
 
-    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking(Unconfined) {
+    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking {
         clientSide.report(category, severity, message, attachment)
     }
 

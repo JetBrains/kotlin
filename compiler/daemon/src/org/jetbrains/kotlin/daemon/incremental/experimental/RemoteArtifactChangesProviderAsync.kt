@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
 import java.io.File
 
 class RemoteArtifactChangesProviderAsync(private val servicesFacade: IncrementalCompilerServicesFacadeAsync) : ArtifactChangesProvider {
-    override fun getChanges(artifact: File, sinceTS: Long): Iterable<DirtyData>? = runBlocking(Unconfined) {
+    override fun getChanges(artifact: File, sinceTS: Long): Iterable<DirtyData>? = runBlocking {
         servicesFacade.getChanges(artifact, sinceTS)?.map { it.toDirtyData() }
     }
 }

@@ -16,7 +16,8 @@ interface CompilationResultsAsync {
 }
 
 interface CompilationResultsServerSide : CompilationResultsAsync, Server<CompilationResultsServerSide> {
-    val clientSide : CompilationResultsClientSide
+    val clientSide: CompilationResultsClientSide
+
     class AddMessage(
         val compilationResultCategory: Int,
         val value: Serializable
@@ -49,9 +50,9 @@ class CompilationResultsAsyncWrapper(val rmiImpl: CompilationResults) : Compilat
 
 }
 
-class CompilationResultsRMIWrapper(val clientSide: CompilationResultsClientSide) : CompilationResults {
+class CompilationResultsRMIWrapper(val clientSide: CompilationResultsClientSide) : CompilationResults, Serializable {
 
-    override fun add(compilationResultCategory: Int, value: Serializable) = runBlocking(Unconfined) {
+    override fun add(compilationResultCategory: Int, value: Serializable) = runBlocking {
         clientSide.add(compilationResultCategory, value)
     }
 

@@ -2,14 +2,17 @@ package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
 import sun.net.ConnectionResetException
 import java.beans.Transient
+import java.io.IOException
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.util.logging.Logger
+
 
 interface Client : Serializable, AutoCloseable {
     @Throws(Exception::class)
@@ -53,7 +56,7 @@ abstract class DefaultAuthorizableClient(
 
     @Throws(Exception::class)
     override fun connectToServer() {
-        runBlocking(Unconfined) {
+        runBlocking {
             log.info("connectToServer (port = $serverPort | host = $serverHost)")
             try {
                 socket = LoopbackNetworkInterface.clientLoopbackSocketFactoryKtor.createSocket(
@@ -69,12 +72,23 @@ abstract class DefaultAuthorizableClient(
                 log.info("OK serv.openIO() |port=$serverPort|")
                 input = it.input
                 output = it.output
-                if (!tryAcquireHandshakeMessage(input, log) || !trySendHandshakeMessage(output)) {
+                if (!trySendHandshakeMessage(output) || !tryAcquireHandshakeMessage(input, log)) {
                     throw ConnectionResetException("failed to establish connection with server (handshake failed)")
                 }
                 authorizeOnServer(output)
             }
         }
+    }
+
+    @Throws(ClassNotFoundException::class, IOException::class)
+    private fun readObject(aInputStream: ObjectInputStream) {
+        aInputStream.defaultReadObject()
+        connectToServer()
+    }
+
+    @Throws(IOException::class)
+    private fun writeObject(aOutputStream: ObjectOutputStream) {
+        aOutputStream.defaultWriteObject()
     }
 
 }

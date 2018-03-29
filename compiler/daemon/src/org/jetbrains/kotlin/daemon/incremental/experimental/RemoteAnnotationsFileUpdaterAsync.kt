@@ -18,11 +18,11 @@ import java.io.File
 
 internal class RemoteAnnotationsFileUpdaterAsync(private val servicesFacade: IncrementalCompilerServicesFacadeAsync) : AnnotationFileUpdater {
 
-    override fun updateAnnotations(outdatedClasses: Iterable<JvmClassName>) = runBlocking(Unconfined) {
+    override fun updateAnnotations(outdatedClasses: Iterable<JvmClassName>) = runBlocking {
         servicesFacade.updateAnnotations(outdatedClasses.map { it.internalName })
     }
 
-    override fun revert() = runBlocking(Unconfined) {
+    override fun revert() = runBlocking {
         servicesFacade.revert()
     }
 }

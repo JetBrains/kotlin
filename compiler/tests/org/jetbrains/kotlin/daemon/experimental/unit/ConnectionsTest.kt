@@ -27,22 +27,22 @@ import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
 
-private val logFile = createTempFile("/Users/jetbrains/Documents/kotlin/my_fork/kotlin", ".txt").also {
-    println("log file path : ${it.loggerCompatiblePath}")
-}
-
-private val cfg = "handlers = java.util.logging.FileHandler\n" +
-        "java.util.logging.FileHandler.level     = ALL\n" +
-        "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
-        "java.util.logging.FileHandler.encoding  = UTF-8\n" +
-        "java.util.logging.FileHandler.limit     = 0\n" + // if file is provided - disabled, else - 1Mb
-        "java.util.logging.FileHandler.count     = 1\n" +
-        "java.util.logging.FileHandler.append    = true\n" +
-        "java.util.logging.FileHandler.pattern   = ${logFile.loggerCompatiblePath}\n" +
-        "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
-
 
 class ConnectionsTest : KotlinIntegrationTestBase() {
+
+    private val logFile = createTempFile("/Users/jetbrains/Documents/kotlin/my_fork/kotlin", ".txt").also {
+        println("log file path : ${it.loggerCompatiblePath}")
+    }
+
+    private val cfg = "handlers = java.util.logging.FileHandler\n" +
+            "java.util.logging.FileHandler.level     = ALL\n" +
+            "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+            "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+            "java.util.logging.FileHandler.limit     = 0\n" + // if file is provided - disabled, else - 1Mb
+            "java.util.logging.FileHandler.count     = 1\n" +
+            "java.util.logging.FileHandler.append    = true\n" +
+            "java.util.logging.FileHandler.pattern   = ${logFile.loggerCompatiblePath}\n" +
+            "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
 
     init {
         LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
@@ -99,7 +99,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
     }
 
 
-    private fun getNewDaemonsOrAsyncWrappers() = runBlocking(Unconfined) {
+    private fun getNewDaemonsOrAsyncWrappers() = runBlocking {
         walkDaemonsAsync(
             File(daemonOptions.runFilesPathOrDefault),
             compilerId,
@@ -111,7 +111,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         ).toList()
     }
 
-    private fun getOldDaemonsOrRMIWrappers() = runBlocking(Unconfined) {
+    private fun getOldDaemonsOrRMIWrappers() = runBlocking {
         walkDaemons(
             File(daemonOptions.runFilesPathOrDefault),
             compilerId,
@@ -177,7 +177,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         assert(daemons.isNotEmpty())
         val daemon = daemons[0].daemon
         log.info("chosen : $daemon")
-        val info = runBlocking(Unconfined) { daemon.getDaemonInfo() }
+        val info = runBlocking { daemon.getDaemonInfo() }
         log.info("info : $info")
         assert(info.isGood)
         println("test passed")
@@ -191,7 +191,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         assert(daemons.isNotEmpty())
         val daemon = daemons.maxWith(comparator)!!.daemon
         log.info("chosen : $daemon")
-        val info = runBlocking(Unconfined) { daemon.getDaemonInfo() }
+        val info = runBlocking { daemon.getDaemonInfo() }
         log.info("info : $info")
         assert(info.isGood)
         println("test passed")
@@ -204,7 +204,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         assert(daemons.isNotEmpty())
         val daemon = daemons[0].daemon
         log.info("chosen : $daemon")
-        val info = runBlocking(Unconfined) { daemon.getDaemonInfo() }
+        val info = runBlocking { daemon.getDaemonInfo() }
         log.info("info : $info")
         assert(info.isGood)
         println("test passed")
@@ -217,7 +217,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         assert(daemons.isNotEmpty())
         val daemon = daemons.maxWith(comparator)!!.daemon
         log.info("chosen : $daemon")
-        val info = runBlocking(Unconfined) { daemon.getDaemonInfo() }
+        val info = runBlocking { daemon.getDaemonInfo() }
         log.info("info : $info")
         assert(info.isGood)
         println("test passed")

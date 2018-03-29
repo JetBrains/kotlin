@@ -45,7 +45,7 @@ interface Server<out T : ServerBase> : ServerBase {
 
     suspend fun attachClient(client: Socket): Deferred<State> = async {
         val (input, output) = client.openIO(log)
-        if (!trySendHandshakeMessage(output) || !tryAcquireHandshakeMessage(input, log)) {
+        if (!tryAcquireHandshakeMessage(input, log) || !trySendHandshakeMessage(output)) {
             log.info("failed to establish connection with client (handshake failed)")
             return@async Server.State.CLOSED
         }

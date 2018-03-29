@@ -24,12 +24,12 @@ class RemoteLookupTrackerClient(
     eventManager: EventManager,
     val profiler: Profiler = DummyProfiler()
 ) : LookupTracker {
-    private val isDoNothing = profiler.withMeasure(this) { runBlocking(Unconfined) { facade.lookupTracker_isDoNothing() } }
+    private val isDoNothing = profiler.withMeasure(this) { runBlocking { facade.lookupTracker_isDoNothing() } }
 
     private val lookups = hashSetOf<LookupInfo>()
     private val interner = StringInterner()
 
-    override val requiresPosition: Boolean = profiler.withMeasure(this) { runBlocking(Unconfined) { facade.lookupTracker_requiresPosition() } }
+    override val requiresPosition: Boolean = profiler.withMeasure(this) { runBlocking { facade.lookupTracker_requiresPosition() } }
 
     override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
         if (isDoNothing) return
@@ -49,7 +49,7 @@ class RemoteLookupTrackerClient(
         if (isDoNothing || lookups.isEmpty()) return
 
         profiler.withMeasure(this) {
-            runBlocking(Unconfined) { facade.lookupTracker_record(lookups) }
+            runBlocking { facade.lookupTracker_record(lookups) }
         }
 
         lookups.clear()

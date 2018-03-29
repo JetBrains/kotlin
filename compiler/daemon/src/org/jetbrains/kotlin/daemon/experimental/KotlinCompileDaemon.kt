@@ -104,7 +104,7 @@ object KotlinCompileDaemon {
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
 
-        runBlocking(Unconfined) {
+        runBlocking {
 
             var serverRun: Deferred<Unit>? = null
 
