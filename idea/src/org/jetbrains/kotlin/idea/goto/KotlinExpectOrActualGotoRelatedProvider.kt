@@ -35,7 +35,7 @@ class KotlinExpectOrActualGotoRelatedProvider : GotoRelatedProvider() {
         val declaration = psiElement.getParentOfTypeAndBranch<KtNamedDeclaration> { nameIdentifier } ?: return emptyList()
         val targets = when {
             declaration.isExpectDeclaration() -> declaration.actualsForExpected()
-            declaration.isActualDeclaration() -> listOfNotNull(declaration.expectedDeclarationIfAny())
+            declaration.isEffectivelyActual() -> listOfNotNull(declaration.expectedDeclarationIfAny())
             else -> emptyList()
         }
         return targets.map(::ActualOrExpectGotoRelatedItem)

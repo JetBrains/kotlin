@@ -123,7 +123,7 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
             if (element.isExpectDeclaration()) {
                 collectActualMarkers(element, result)
             }
-            else if (element.isActualDeclaration()) {
+            else if (element.isEffectivelyActual()) {
                 collectExpectedMarkers(element, result)
             }
         }

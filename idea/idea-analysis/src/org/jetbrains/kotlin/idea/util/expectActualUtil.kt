@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
@@ -114,8 +115,14 @@ private fun KtClassOrObject.isExpected(): Boolean {
     return this.hasExpectModifier() || this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
 }
 
-fun KtDeclaration.isActualDeclaration(): Boolean {
+fun KtDeclaration.hasMatchingExpected() = (toDescriptor() as? MemberDescriptor)?.expectedDescriptor() != null
+
+fun KtDeclaration.isEffectivelyActual(): Boolean {
     if (hasActualModifier()) return true
 
-    return (toDescriptor() as? MemberDescriptor)?.isActual == true
+    val descriptor = toDescriptor() as? MemberDescriptor ?: return false
+    return descriptor.isActual || descriptor.isEnumEntryInActual()
 }
+
+private fun MemberDescriptor.isEnumEntryInActual() =
+    (DescriptorUtils.isEnumEntry(this) && (containingDeclaration as? MemberDescriptor)?.isActual == true)

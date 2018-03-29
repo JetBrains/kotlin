@@ -21,8 +21,20 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineMarkerTest {
+    @TestMetadata("actualEnumEntries")
+    public void testActualEnumEntries() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/actualEnumEntries/");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInMultiModuleLineMarker() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleLineMarker"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+    }
+
+    @TestMetadata("expectEnumEntries")
+    public void testExpectEnumEntries() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleLineMarker/expectEnumEntries/");
+        doTest(fileName);
     }
 
     @TestMetadata("fromActualAnnotation")
