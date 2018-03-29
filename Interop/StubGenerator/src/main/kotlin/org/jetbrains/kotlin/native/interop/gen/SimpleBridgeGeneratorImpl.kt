@@ -107,7 +107,7 @@ class SimpleBridgeGeneratorImpl(
                 "JNIEXPORT $cReturnType JNICALL $functionName ($joinedCParameters)"
             }
             KotlinPlatform.NATIVE -> {
-                val functionName = pkgName.replace('.', '_') + "_$kotlinFunctionName"
+                val functionName = pkgName.replace(INVALID_CLANG_IDENTIFIER_REGEX, "_") + "_$kotlinFunctionName"
                 kotlinLines.add("@SymbolName(${functionName.quoteAsKotlinLiteral()})")
                 "$cReturnType $functionName ($joinedCParameters)"
             }
@@ -167,7 +167,7 @@ class SimpleBridgeGeneratorImpl(
         val joinedCParameters = cFunctionParameters.joinToString { (name, type) -> "$type $name" }
         val cReturnType = returnType.nativeType
 
-        val symbolName = pkgName.replace('.', '_') + "_$kotlinFunctionName"
+        val symbolName = pkgName.replace(INVALID_CLANG_IDENTIFIER_REGEX, "_") + "_$kotlinFunctionName"
         kotlinLines.add("@konan.internal.ExportForCppRuntime(${symbolName.quoteAsKotlinLiteral()})")
         val cFunctionHeader = "$cReturnType $symbolName($joinedCParameters)"
 
@@ -236,5 +236,9 @@ class SimpleBridgeGeneratorImpl(
             override fun isSupported(nativeBacked: NativeBacked): Boolean =
                     nativeBacked !in excludedClients
         }
+    }
+
+    companion object {
+        private val INVALID_CLANG_IDENTIFIER_REGEX = "[^a-zA-Z1-9_]".toRegex()
     }
 }

@@ -891,7 +891,14 @@ class StubGenerator(
 
         out("@file:Suppress(${suppress.joinToString { it.quoteAsKotlinLiteral() }})")
         if (pkgName != "") {
-            out("package $pkgName")
+            val packageName = pkgName.split(".").joinToString("."){
+                if(it.matches(VALID_PACKAGE_NAME_REGEX)){
+                    it
+                }else{
+                    "`$it`"
+                }
+            }
+            out("package $packageName")
             out("")
         }
         if (platform == KotlinPlatform.NATIVE) {
@@ -1012,4 +1019,8 @@ class StubGenerator(
 
     val mappingBridgeGenerator: MappingBridgeGenerator =
             MappingBridgeGeneratorImpl(declarationMapper, simpleBridgeGenerator)
+
+    companion object {
+        private val VALID_PACKAGE_NAME_REGEX = "[a-zA-Z1-9_.]".toRegex()
+    }
 }
