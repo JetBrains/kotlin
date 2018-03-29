@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.lang.jvm.JvmClass
 import com.intellij.lang.jvm.JvmElement
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.lang.jvm.actions.*
@@ -399,6 +400,9 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |}
         """.trim().trimMargin(), true)
     }
+
+    private fun createPropertyActions(atCaret: JvmClass, property: MemberRequest.Property): List<IntentionAction> =
+        com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddPropertyActions(atCaret, property) }
 
     fun testAddStringValProperty() {
         myFixture.configureByText("foo.kt", """
