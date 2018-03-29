@@ -436,7 +436,7 @@ class CompileServiceServerSideImpl(
                         val k2jvmArgs = k2PlatformArgs as K2JVMCompilerArguments
                         withIC {
                             doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                                runBlocking(Unconfined) {
+                                runBlocking {
                                     execIncrementalCompiler(
                                         k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResults!!,
                                         messageCollector, daemonReporter
@@ -615,7 +615,7 @@ class CompileServiceServerSideImpl(
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
                 withValidReplState(replStateId) { state ->
-                    runBlocking(Unconfined) {
+                    runBlocking {
                         check(state, codeLine)
                     }
                 }
@@ -700,7 +700,7 @@ class CompileServiceServerSideImpl(
                     gracefulShutdown(false)
                 }
                 anyDead -> {
-                    runBlocking(Unconfined) {
+                    runBlocking {
                         clearJarCache()
                     }
                 }
@@ -725,7 +725,7 @@ class CompileServiceServerSideImpl(
         ifAliveUnit {
 
             log.info("initiate elections")
-            runBlocking(Unconfined) {
+            runBlocking {
                 val aliveWithOpts = walkDaemonsAsync(
                     File(daemonOptions.runFilesPathOrDefault),
                     compilerId,
@@ -747,7 +747,7 @@ class CompileServiceServerSideImpl(
                             runFile
                         ) < 0
                     ) {
-                        runBlocking(Unconfined) {
+                        runBlocking {
                             // all others are smaller that me, take overs' clients and shut them down
                             log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                             aliveWithOpts.map { (daemon, runFile, _) ->
@@ -788,7 +788,7 @@ class CompileServiceServerSideImpl(
                             runFile
                         ) > 0
                     ) {
-                        runBlocking(Unconfined) {
+                        runBlocking {
                             // there is at least one bigger, handover my clients to it and shutdown
                             log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                             getClients().takeIf { it.isGood }?.let {
@@ -897,7 +897,7 @@ class CompileServiceServerSideImpl(
         facade: CompilerCallbackServicesFacadeClientSide,
         eventManager: EventManager,
         rpcProfiler: Profiler
-    ): Services = runBlocking(Unconfined) {
+    ): Services = runBlocking {
         val builder = Services.Builder()
         if (facade.hasIncrementalCaches()) {
             builder.register(

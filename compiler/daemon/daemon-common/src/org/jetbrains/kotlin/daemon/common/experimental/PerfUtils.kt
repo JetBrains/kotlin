@@ -10,5 +10,5 @@ import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.Profiler
 
 fun<R> Profiler.withMeasureBlocking(obj: Any?, body: suspend () -> R): R = this.withMeasure(obj, {
-    runBlocking(Unconfined) { body() }
+    runBlocking { body() }
 })

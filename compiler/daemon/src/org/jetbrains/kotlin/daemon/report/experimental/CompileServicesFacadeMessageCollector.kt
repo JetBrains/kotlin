@@ -28,7 +28,7 @@ internal class CompileServicesFacadeMessageCollector(
         hasErrors = false
     }
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) = runBlocking(Unconfined) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) = runBlocking {
         log.info("Message: " + MessageRenderer.WITHOUT_PATHS.render(severity, message, location))
         when (severity) {
             CompilerMessageSeverity.OUTPUT -> {

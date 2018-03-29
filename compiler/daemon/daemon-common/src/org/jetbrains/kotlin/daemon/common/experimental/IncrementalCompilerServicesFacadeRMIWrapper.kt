@@ -13,33 +13,33 @@ import java.io.File
 import java.io.Serializable
 
 class IncrementalCompilerServicesFacadeRMIWrapper(val clientSide: IncrementalCompilerServicesFacadeClientSide) :
-    IncrementalCompilerServicesFacade {
+    IncrementalCompilerServicesFacade, Serializable {
 
-    override fun hasAnnotationsFileUpdater() = runBlocking(Unconfined) {
+    override fun hasAnnotationsFileUpdater() = runBlocking {
         clientSide.hasAnnotationsFileUpdater()
     }
 
-    override fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) = runBlocking(Unconfined) {
+    override fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) = runBlocking {
         clientSide.updateAnnotations(outdatedClassesJvmNames)
     }
 
-    override fun revert() = runBlocking(Unconfined) {
+    override fun revert() = runBlocking {
         clientSide.revert()
     }
 
-    override fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) = runBlocking(Unconfined) {
+    override fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) = runBlocking {
         clientSide.registerChanges(timestamp, dirtyData)
     }
 
-    override fun unknownChanges(timestamp: Long) = runBlocking(Unconfined) {
+    override fun unknownChanges(timestamp: Long) = runBlocking {
         clientSide.unknownChanges(timestamp)
     }
 
-    override fun getChanges(artifact: File, sinceTS: Long) = runBlocking(Unconfined) {
+    override fun getChanges(artifact: File, sinceTS: Long) = runBlocking {
         clientSide.getChanges(artifact, sinceTS)
     }
 
-    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking(Unconfined) {
+    override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking {
         clientSide.report(category, severity, message, attachment)
     }
 

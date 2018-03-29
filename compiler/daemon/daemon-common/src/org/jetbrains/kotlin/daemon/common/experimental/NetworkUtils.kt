@@ -107,7 +107,7 @@ object LoopbackNetworkInterface {
 
     class ClientLoopbackSocketFactoryKtor : AbstractClientLoopbackSocketFactory<io.ktor.network.sockets.Socket>() {
         override fun socketCreate(host: String, port: Int): io.ktor.network.sockets.Socket =
-            runBlocking(Unconfined) { aSocket().tcp().connect(InetSocketAddress(host, port)) }
+            runBlocking { aSocket().tcp().connect(InetSocketAddress(host, port)) }
     }
 
 }

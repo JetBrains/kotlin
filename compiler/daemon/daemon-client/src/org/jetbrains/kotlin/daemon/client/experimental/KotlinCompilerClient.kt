@@ -104,7 +104,7 @@ object KotlinCompilerClient {
 
         log.info("connectAndLease")
 
-        fun CompileServiceClientSide.leaseImpl(): CompileServiceSession? = runBlocking(Unconfined) {
+        fun CompileServiceClientSide.leaseImpl(): CompileServiceSession? = runBlocking {
             // the newJVMOptions could be checked here for additional parameters, if needed
             registerClient(clientAliveFlagFile.absolutePath)
             reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
@@ -119,7 +119,7 @@ object KotlinCompilerClient {
         }
 
         ensureServerHostnameIsSetUp()
-        val (service, newJVMOptions) = runBlocking(Unconfined) {
+        val (service, newJVMOptions) = runBlocking {
             tryFindSuitableDaemonOrNewOpts(
                 File(daemonOptions.runFilesPath),
                 compilerId,
@@ -161,10 +161,10 @@ object KotlinCompilerClient {
 
 
     fun leaseCompileSession(compilerService: CompileServiceClientSide, aliveFlagPath: String?): Int =
-        runBlocking(Unconfined) { compilerService.leaseCompileSession(aliveFlagPath) }.get()
+        runBlocking { compilerService.leaseCompileSession(aliveFlagPath) }.get()
 
     fun releaseCompileSession(compilerService: CompileServiceClientSide, sessionId: Int): Unit {
-        runBlocking(Unconfined) { compilerService.releaseCompileSession(sessionId) }
+        runBlocking { compilerService.releaseCompileSession(sessionId) }
     }
 
     fun compile(
@@ -179,7 +179,7 @@ object KotlinCompilerClient {
         port: Int = findCallbackServerSocket(),
         profiler: Profiler = DummyProfiler()
     ): Int = profiler.withMeasure(this) {
-        runBlocking(Unconfined) {
+        runBlocking {
             val services = BasicCompilerServicesWithResultsFacadeServerServerSide(messageCollector, outputsCollector, port)
             log.info("[BasicCompilerServicesWithResultsFacadeServerServerSide] services.runServer()")
             val serverRun = services.runServer()
@@ -277,25 +277,25 @@ object KotlinCompilerClient {
         } else when {
             clientOptions.stop -> {
                 log.info("Shutdown the daemon")
-                runBlocking(Unconfined) { daemon.shutdown() }
+                runBlocking { daemon.shutdown() }
                 log.info("Daemon shut down successfully")
             }
             filteredArgs.none() -> {
                 // so far used only in tests
                 log.info(
-                    "Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${runBlocking(Unconfined) {
+                    "Warning: empty arguments list, only daemon check is performed: checkCompilerId() returns ${runBlocking {
                         daemon.checkCompilerId(
                             compilerId
                         )
                     }}"
                 )
             }
-            else -> runBlocking(Unconfined) {
+            else -> runBlocking {
                 log.info("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
                 val servicesFacade = CompilerCallbackServicesFacadeServerSide()
                 val serverRun = servicesFacade.runServer()
                 try {
-                    val memBefore = runBlocking(Unconfined) { daemon.getUsedMemory().get() } / 1024
+                    val memBefore = runBlocking { daemon.getUsedMemory().get() } / 1024
                     val startTime = System.nanoTime()
 
                     val compResults = object : CompilationResultsServerSide {

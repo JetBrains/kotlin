@@ -114,8 +114,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
         assertNotNull("failed to connect daemon", daemon)
 
-        log.info("runBlocking(Unconfined) { ")
-        runBlocking(Unconfined) {
+        log.info("runBlocking { ")
+        runBlocking {
             log.info("register client...")
             daemon?.registerClient(clientAliveFile.absolutePath)
             log.info("   client registered")
@@ -195,7 +195,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     private fun terminate(daemonOptions: DaemonOptions) {
         log.info("in finally")
-        runBlocking(Unconfined) {
+        runBlocking {
             log.info("in runBlocking")
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
         }
@@ -251,6 +251,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             } finally {
                 terminate(daemonOptions)
             }
+            println("test passed")
         }
     }
 

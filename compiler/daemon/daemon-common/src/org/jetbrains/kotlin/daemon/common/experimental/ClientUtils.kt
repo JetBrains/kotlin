@@ -40,7 +40,7 @@ suspend fun walkDaemonsAsync(
     report: (DaemonReportCategory, String) -> Unit = { _, _ -> },
     useRMI: Boolean = true,
     useSockets: Boolean = true
-): List<DaemonWithMetadataAsync> = runBlocking(Unconfined) {
+): List<DaemonWithMetadataAsync> = runBlocking {
     // : Sequence<DaemonWithMetadataAsync>
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
     val portExtractor = org.jetbrains.kotlin.daemon.common.makePortFromRunFilenameExtractor(classPathDigest)
@@ -87,10 +87,10 @@ suspend fun walkDaemonsAsync(
                             DaemonWithMetadataAsync(it, file, it.getDaemonJVMOptions().get())
                         }
                         .also {
-                            log.info("DaemonWithMetadataAsync == $it)")
+                            log.info("($port)DaemonWithMetadataAsync == $it)")
                         }
                 } catch (e: Exception) {
-                    log.info(e.message)
+                    log.info("($port)<error_in_client_utils> : " + e.message)
                     report(
                         org.jetbrains.kotlin.daemon.common.DaemonReportCategory.INFO,
                         "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}"

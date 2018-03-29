@@ -38,7 +38,7 @@ private class DaemonMessageReporterAsyncAsyncImpl(
     private val servicesFacade: CompilerServicesFacadeBaseAsync,
     private val mySeverity: ReportSeverity
 ) : DaemonMessageReporterAsync {
-    override fun report(severity: ReportSeverity, message: String) = runBlocking(Unconfined) {
+    override fun report(severity: ReportSeverity, message: String) = runBlocking {
         if (severity.code <= mySeverity.code) {
             servicesFacade.report(ReportCategory.DAEMON_MESSAGE.code, severity.code, message, attachment = null)
         }

@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 
 internal class RemoteChangesRegistryAsync(private val servicesFacade: IncrementalCompilerServicesFacadeAsync) : ChangesRegistry {
-    override fun unknownChanges(timestamp: Long) = runBlocking(Unconfined) {
+    override fun unknownChanges(timestamp: Long) = runBlocking {
         servicesFacade.unknownChanges(timestamp)
     }
 
-    override fun registerChanges(timestamp: Long, dirtyData: DirtyData) = runBlocking(Unconfined) {
+    override fun registerChanges(timestamp: Long, dirtyData: DirtyData) = runBlocking {
         servicesFacade.registerChanges(timestamp, dirtyData.toSimpleDirtyData())
     }
 }
