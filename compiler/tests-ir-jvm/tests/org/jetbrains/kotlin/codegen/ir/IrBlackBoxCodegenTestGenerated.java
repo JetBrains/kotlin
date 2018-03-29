@@ -14086,6 +14086,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/package/privateTopLevelPropAndVarInInner.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("referenceWithTheSameNameAsPackage.kt")
+        public void testReferenceWithTheSameNameAsPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/package/referenceWithTheSameNameAsPackage.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/platformTypes")
