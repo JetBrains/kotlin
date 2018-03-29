@@ -29,16 +29,13 @@ import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -356,7 +353,10 @@ object KotlinToJVMBytecodeCompiler {
         val sourceFiles = environment.getSourceFiles()
         val collector = environment.messageCollector
 
-        val analysisStart = PerformanceCounter.currentTime()
+        // Can be null for Scripts/REPL
+        val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+        performanceManager?.notifyAnalysisStarted()
+
         val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector, environment.configuration.languageVersionSettings)
         analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
             val project = environment.project
@@ -377,16 +377,7 @@ object KotlinToJVMBytecodeCompiler {
             )
         }
 
-        val analysisNanos = PerformanceCounter.currentTime() - analysisStart
-
-        val sourceLinesOfCode = environment.countLinesOfCode(sourceFiles)
-        val time = TimeUnit.NANOSECONDS.toMillis(analysisNanos)
-        val speed = sourceLinesOfCode.toFloat() * 1000 / time
-
-        val message = "ANALYZE: ${sourceFiles.size} files ($sourceLinesOfCode lines) ${targetDescription ?: ""}" +
-                "in $time ms - ${"%.3f".format(speed)} loc/s"
-
-        K2JVMCompiler.reportPerf(environment.configuration, message)
+        performanceManager?.notifyAnalysisFinished(sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription)
 
         val analysisResult = analyzerWithCompilerReport.analysisResult
 
@@ -445,19 +436,17 @@ object KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        val generationStart = PerformanceCounter.currentTime()
+        val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+        performanceManager?.notifyGenerationStarted()
 
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
-        val generationNanos = PerformanceCounter.currentTime() - generationStart
-        val desc = if (module != null) "target " + module.getModuleName() + "-" + module.getModuleType() + " " else ""
-        val numberOfSourceFiles = sourceFiles.size
-        val numberOfLines = environment.countLinesOfCode(sourceFiles)
-        val time = TimeUnit.NANOSECONDS.toMillis(generationNanos)
-        val speed = numberOfLines.toFloat() * 1000 / time
-        val message = "GENERATE: $numberOfSourceFiles files ($numberOfLines lines) ${desc}in $time ms - ${"%.3f".format(speed)} loc/s"
+        performanceManager?.notifyGenerationFinished(
+            sourceFiles.size,
+            environment.countLinesOfCode(sourceFiles),
+            additionalDescription = if (module != null) "target " + module.getModuleName() + "-" + module.getModuleType() + " " else ""
+        )
 
-        K2JVMCompiler.reportPerf(environment.configuration, message)
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         AnalyzerWithCompilerReport.reportDiagnostics(

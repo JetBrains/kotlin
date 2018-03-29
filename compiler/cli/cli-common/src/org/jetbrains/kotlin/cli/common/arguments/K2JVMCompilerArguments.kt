@@ -124,9 +124,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
 
-    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
-    var reportPerf: Boolean by FreezableVar(false)
-
     @Argument(
         value = "-Xbuild-file",
         deprecatedName = "-module",

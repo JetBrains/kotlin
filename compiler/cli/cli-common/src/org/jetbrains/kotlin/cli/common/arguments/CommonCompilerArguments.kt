@@ -150,6 +150,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var properIeee754Comparisons by FreezableVar(false)
 
+    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
+    var reportPerf: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)

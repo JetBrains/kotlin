@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.common;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,23 +27,23 @@ import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
-import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.List;
-import java.util.Map;
 
-import static org.jetbrains.kotlin.cli.common.ExitCode.*;
+import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
+import static org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR;
 import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
@@ -69,11 +68,16 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     @NotNull
     @Override
     public ExitCode execImpl(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
+        CommonCompilerPerformanceManager performanceManager = getPerformanceManager();
+        if (arguments.getReportPerf()) {
+            performanceManager.enableCollectingPerformanceStatistics();
+        }
+
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector, arguments.getAllWarningsAsErrors());
 
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, groupingCollector);
-
+        configuration.put(CLIConfigurationKeys.PERF_MANAGER, performanceManager);
         try {
             setupCommonArgumentsAndServices(configuration, arguments, services);
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
@@ -89,6 +93,14 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             try {
                 setIdeaIoUseFallback();
                 ExitCode code = doExecute(arguments, configuration, rootDisposable, paths);
+
+                performanceManager.notifyCompilationFinished();
+                if (arguments.getReportPerf()) {
+                    performanceManager.getMeasurementResults().forEach(
+                            it -> configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(INFO, "PERF: " + it.render(), null)
+                    );
+                }
+
                 return groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
             }
             catch (CompilationCanceledException e) {
@@ -212,4 +224,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             @NotNull Disposable rootDisposable,
             @Nullable KotlinPaths paths
     );
+
+    @NotNull
+    protected abstract CommonCompilerPerformanceManager getPerformanceManager();
 }
