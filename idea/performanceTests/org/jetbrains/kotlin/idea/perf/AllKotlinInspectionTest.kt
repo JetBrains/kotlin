@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
-import com.intellij.codeInspection.*
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.LocalInspectionToolSession
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ex.InspectionToolRegistrar
 import com.intellij.codeInspection.ex.Tools
 import com.intellij.ide.impl.ProjectUtil
@@ -26,7 +29,7 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
 
     companion object {
         private val rootProjectFile = File(".").absoluteFile
-
+        private val statsFile = File("build/stats.csv").absoluteFile
     }
 
     private val tmp by lazy { createTempDirectory() }
@@ -74,12 +77,10 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
         profileTools.forEach {
             val tool = it.tool.tool as? LocalInspectionTool ?: return@forEach
             if (it.tool.language != null && it.tool.language!! !in setOf("kotlin", "UAST")) return@forEach
-            println("##teamcity[testStarted name='${it.tool.id}' captureStandardOutput='true']")
             val result = measureNanoTime {
                 tool.analyze(psiFile)
             }
             results[it.tool.id] = result
-            println("##teamcity[testFinished name='${it.tool.id}' duration='${(result * 1e-6).toLong()}']")
         }
 
         return results
@@ -93,6 +94,9 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
     }
 
     fun LocalInspectionTool.analyze(file: PsiFile) {
+
+        file.containingDirectory
+
         if (file.textRange == null) return
 
         val holder = ProblemsHolder(InspectionManager.getInstance(file.project), file, false)
@@ -102,22 +106,66 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
     }
 
 
+    inline fun tcSuite(name: String, l: () -> Unit) {
+        println("##teamcity[testSuiteStarted name='$name']")
+        l()
+        println("##teamcity[testSuiteFinished name='$name']")
+    }
+
+    inline fun tcTest(name: String, l: () -> Long) {
+        println("##teamcity[testStarted name='$name' captureStandardOutput='true']")
+        val result = l()
+        println("##teamcity[testFinished name='$name' duration='$result']")
+    }
+
     fun testWholeProjectPerformance() {
 
         val totals = mutableMapOf<String, Long>()
 
-        tmp.walkTopDown().filter {
-            it.extension == "kt" && "testData" !in it.path && "resources" !in it.path
-        }.forEach {
-            println("##teamcity[testSuiteStarted name='${it.relativeTo(tmp)}']")
-            doTest(it).forEach { (k, v) -> totals.merge(k, v) { a, b -> a + b } }
-            println("##teamcity[testSuiteFinished name='${it.relativeTo(tmp)}']")
+        val statsOutput = statsFile.bufferedWriter()
+
+        statsOutput.appendln("File, InspectionID, Time")
+
+        fun appendInspectionResult(file: String, id: String, nanoTime: Long) {
+            totals.merge(id, nanoTime) { a, b -> a + b }
+
+            statsOutput.appendln(buildString {
+                append(file)
+                append(", ")
+                append(id)
+                append(", ")
+                append((nanoTime * 1e-6).toLong())
+            })
         }
 
-        totals.forEach { (k, v) ->
-            println("##teamcity[testStarted name='total_$k' captureStandardOutput='true']")
-            println("##teamcity[testFinished name='total_$k' duration='${(v * 1e-6).toLong()}']")
+        tcSuite("SumPerFile") {
+            tmp.walkTopDown().filter {
+                it.extension == "kt" && "testdata" !in it.path.toLowerCase() && "resources" !in it.path
+            }.forEach {
+                val filePath = it.relativeTo(tmp).path.replace(File.separatorChar, '/')
+                tcTest(filePath) {
+                    val resultPerInspection = doTest(it)
+                    resultPerInspection.forEach { (k, v) ->
+                        appendInspectionResult(filePath, k, v)
+                    }
+                    val result = (resultPerInspection.values.sum() * 1e-6).toLong()
+                    result
+                }
+            }
         }
+
+        statsOutput.flush()
+        statsOutput.close()
+
+
+        tcSuite("Total") {
+            totals.forEach { (k, v) ->
+                tcTest(k) {
+                    (v * 1e-6).toLong()
+                }
+            }
+        }
+
     }
 
 }
