@@ -369,7 +369,7 @@ private class LibrarySourceScope(project: Project, private val library: Library)
 }
 
 //TODO: (module refactoring) android sdk has modified scope
-private class SdkScope(project: Project, private val sdk: Sdk) :
+private class SdkScope(project: Project, val sdk: Sdk) :
     LibraryScopeBase(project, sdk.rootProvider.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
 
     override fun equals(other: Any?) = other is SdkScope && sdk == other.sdk

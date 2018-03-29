@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import java.io.File
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
@@ -61,8 +62,9 @@ fun findJdk(dependencies: ScriptDependencies?, project: Project): Sdk? {
         null
     }
 
-    return allJdks.find { javaHome != null && it.homePath == javaHome } ?: ProjectRootManager.getInstance(project).projectSdk
-    ?: allJdks.firstOrNull()
+    return allJdks.find { javaHome != null && File(it.homePath).canonicalPath == javaHome }
+            ?: ProjectRootManager.getInstance(project).projectSdk
+            ?: allJdks.firstOrNull()
 }
 
 sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, BinaryModuleInfo {

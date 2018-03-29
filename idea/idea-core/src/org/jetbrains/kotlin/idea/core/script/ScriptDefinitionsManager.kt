@@ -24,6 +24,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.ex.PathUtilEx
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.caches.project.SdkInfo
+import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
@@ -223,7 +228,9 @@ class BundledKotlinScriptDependenciesResolver(private val project: Project) : De
             scriptContents: ScriptContents,
             environment: Environment
     ): DependenciesResolver.ResolveResult {
-        val javaHome = getScriptSDK(project)
+        val virtualFile = scriptContents.file?.let { VfsUtil.findFileByIoFile(it, true) }
+
+        val javaHome = getScriptSDK(project, virtualFile)
         val dependencies = ScriptDependencies(
                 javaHome = javaHome?.let(::File),
                 classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
@@ -237,8 +244,18 @@ class BundledKotlinScriptDependenciesResolver(private val project: Project) : De
         return dependencies.asSuccess()
     }
 
-    private fun getScriptSDK(project: Project): String? {
-        val jdk = ProjectJdkTable.getInstance().allJdks.firstOrNull { sdk -> sdk.sdkType is JavaSdk } ?: PathUtilEx.getAnyJdk(project)
+    private fun getScriptSDK(project: Project, virtualFile: VirtualFile?): String? {
+        if (virtualFile != null) {
+            val dependentModuleSourceInfo = getScriptRelatedModuleInfo(project, virtualFile)
+            val sdk = dependentModuleSourceInfo?.dependencies()?.filterIsInstance<SdkInfo>()?.singleOrNull()?.sdk
+            if (sdk != null) {
+                return sdk.homePath
+            }
+        }
+
+        val jdk = ProjectRootManager.getInstance(project).projectSdk
+                ?: ProjectJdkTable.getInstance().allJdks.firstOrNull { sdk -> sdk.sdkType is JavaSdk }
+                ?: PathUtilEx.getAnyJdk(project)
         return jdk?.homePath
     }
 }
