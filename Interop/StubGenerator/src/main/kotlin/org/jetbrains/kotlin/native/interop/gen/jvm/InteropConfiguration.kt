@@ -27,5 +27,6 @@ class InteropConfiguration(
         val excludedFunctions: Set<String>,
         val strictEnums: Set<String>,
         val nonStrictEnums: Set<String>,
-        val noStringConversion: Set<String>
+        val noStringConversion: Set<String>,
+        val exportForwardDeclarations: List<String>
 )

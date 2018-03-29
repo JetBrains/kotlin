@@ -95,6 +95,10 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
         val depends by lazy {
             properties.getSpaceSeparated("depends")
         }
+
+        val exportForwardDeclarations by lazy {
+            properties.getSpaceSeparated("exportForwardDeclarations")
+        }
     }
 }
 

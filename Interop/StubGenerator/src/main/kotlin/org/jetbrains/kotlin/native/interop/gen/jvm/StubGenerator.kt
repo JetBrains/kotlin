@@ -995,11 +995,15 @@ class StubGenerator(
     }
 
     fun addManifestProperties(properties: Properties) {
-        properties["exportForwardDeclarations"] = nativeIndex.structs
+        val exportForwardDeclarations = configuration.exportForwardDeclarations.toMutableList()
+
+        nativeIndex.structs
                 .filter { it.def == null }
-                .joinToString(" ") {
+                .mapTo(exportForwardDeclarations) {
                     "$cnamesStructsPackageName.${it.kotlinName}"
                 }
+
+        properties["exportForwardDeclarations"] = exportForwardDeclarations.joinToString(" ")
 
         // TODO: consider exporting Objective-C class and protocol forward refs.
     }
