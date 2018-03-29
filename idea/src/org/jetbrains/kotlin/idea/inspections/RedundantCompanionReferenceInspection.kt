@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return referenceExpressionVisitor(fun(expression) {
+            val parent = expression.parent as? KtDotQualifiedExpression ?: return
+            if (expression == parent.selectorExpression && parent.parent !is KtDotQualifiedExpression) return
 
             val descriptor = (expression.mainReference.resolve() as? KtObjectDeclaration)?.descriptor ?: return
             if (!DescriptorUtils.isCompanionObject(descriptor)) return
 
-            val parent = expression.parent as? KtDotQualifiedExpression ?: return
             if (expression == parent.receiverExpression && expression.text == descriptor.containingDeclaration?.name?.asString()) return
-            if (expression == parent.selectorExpression && parent.parent !is KtDotQualifiedExpression) return
 
             holder.registerProblem(
                 expression,
