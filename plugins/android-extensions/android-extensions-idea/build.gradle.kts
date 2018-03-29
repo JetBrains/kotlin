@@ -23,7 +23,8 @@ dependencies {
             "android-common",
             "android-base-common",
             "sdk-common-26.0.0",
-            "sdk-tools"
+            "sdk-tools",
+            "builder-model-3.0.0"
         )
     }
     compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }

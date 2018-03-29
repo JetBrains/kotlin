@@ -32,7 +32,8 @@ dependencies {
             "sdk-tools",
             "layoutlib-api",
             "lint-api-26.0.0",
-            "lint-checks-26.0.0"
+            "lint-checks-26.0.0",
+            "builder-model-3.0.0"
         )
     }
 
