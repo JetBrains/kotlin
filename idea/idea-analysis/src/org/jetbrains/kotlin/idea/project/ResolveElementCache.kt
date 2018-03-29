@@ -77,7 +77,7 @@ class ResolveElementCache(
         CachedValuesManager.getManager(project).createCachedValue(
             CachedValueProvider<MutableMap<KtElement, ResolveElementCache.CachedFullResolve>> {
                 CachedValueProvider.Result.create(
-                    ContainerUtil.createConcurrentSoftValueMap<KtElement, CachedFullResolve>(),
+                    ContainerUtil.createConcurrentWeakKeySoftValueMap<KtElement, CachedFullResolve>(),
                     PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
                     resolveSession.exceptionTracker
                 )
@@ -103,7 +103,7 @@ class ResolveElementCache(
         CachedValuesManager.getManager(project).createCachedValue(
             CachedValueProvider<MutableMap<KtExpression, ResolveElementCache.CachedPartialResolve>> {
                 CachedValueProvider.Result.create(
-                    ContainerUtil.createConcurrentSoftValueMap<KtExpression, CachedPartialResolve>(),
+                    ContainerUtil.createConcurrentWeakKeySoftValueMap<KtExpression, CachedPartialResolve>(),
                     PsiModificationTracker.MODIFICATION_COUNT,
                     resolveSession.exceptionTracker
                 )
