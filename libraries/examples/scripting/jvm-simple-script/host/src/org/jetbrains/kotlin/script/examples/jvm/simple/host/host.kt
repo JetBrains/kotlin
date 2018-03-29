@@ -18,7 +18,7 @@ import kotlin.script.experimental.misc.*
 val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationProperties) {
     listOf(
         baseClass<MyScript>(),
-        dependencies(JvmDependency(scriptCompilationClasspathFromContext("script" /* script library jar name */)))
+        dependencies(JvmDependency(scriptCompilationClasspathFromContext("scripting-jvm-simple-script" /* script library jar name */)))
     )
 }
 

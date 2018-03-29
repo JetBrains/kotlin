@@ -34,7 +34,7 @@ val myJvmConfigParams = jvmJavaHomeParams + with(ScriptCompileConfigurationPrope
         dependencies(
             JvmDependency(
                 scriptCompilationClasspathFromContext(
-                    "script", // script library jar name
+                    "scripting-jvm-maven-deps", // script library jar name
                     "kotlin-script-util" // DependsOn annotation is taken from script-util
                 )
             )
