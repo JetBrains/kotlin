@@ -28,6 +28,7 @@ const val API_VERSION_DIRECTIVE = "API_VERSION"
 
 const val EXPERIMENTAL_DIRECTIVE = "EXPERIMENTAL"
 const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
+const val ENABLE_JVM_DEFAULT = "ENABLE_JVM_DEFAULT"
 
 data class CompilerTestLanguageVersionSettings(
         private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
@@ -57,6 +58,7 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
     val languageFeaturesString = directiveMap[LANGUAGE_DIRECTIVE]
     val experimental = directiveMap[EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.experimental to it }
     val useExperimental = directiveMap[USE_EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.useExperimental to it }
+    val enableJvmDefault = AnalysisFlag.enableJvmDefault to directiveMap.containsKey(ENABLE_JVM_DEFAULT)
 
     if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null) return null
 
@@ -69,7 +71,7 @@ fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVer
 
     return CompilerTestLanguageVersionSettings(
         languageFeatures, apiVersion, languageVersion,
-        mapOf(*listOfNotNull(experimental, useExperimental).toTypedArray())
+        mapOf(*listOfNotNull(experimental, useExperimental, enableJvmDefault).toTypedArray())
     )
 }
 

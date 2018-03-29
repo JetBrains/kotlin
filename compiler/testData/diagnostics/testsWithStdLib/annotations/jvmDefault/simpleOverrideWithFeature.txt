@@ -1,6 +1,6 @@
 package
 
-@kotlin.jvm.JvmDefaultFeature public interface A {
+public interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @kotlin.jvm.JvmDefault public open fun test(): kotlin.Unit

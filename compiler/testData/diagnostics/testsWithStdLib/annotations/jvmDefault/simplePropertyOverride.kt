@@ -1,6 +1,7 @@
 // !DIAGNOSTICS: -EXPERIMENTAL_API_USAGE
 // !API_VERSION: 1.3
 // !JVM_TARGET: 1.8
+// !ENABLE_JVM_DEFAULT
 interface A {
     @JvmDefault
     val test: String
