@@ -117,6 +117,9 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> JVM_DEFAULT_NOT_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JVM_DEFAULT_IN_JVM6_TARGET = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_REQUIRED_FOR_OVERRIDE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_IN_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_THROUGH_INHERITANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtDeclaration> USAGE_OF_JVM_THROUGH_SUPER_CALL = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     enum NullabilityInformationSource {
         KOTLIN {

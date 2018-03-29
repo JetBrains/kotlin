@@ -482,6 +482,18 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 doTest(fileName);
             }
 
+            @TestMetadata("jvmDefaultInInheritance.kt")
+            public void testJvmDefaultInInheritance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultInInheritance.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noJvmDefaultFlag.kt")
+            public void testNoJvmDefaultFlag() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/noJvmDefaultFlag.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("notInterface.kt")
             public void testNotInterface() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/notInterface.kt");
@@ -497,12 +509,6 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("simpleOverride.kt")
             public void testSimpleOverride() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/simpleOverride.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("simpleOverrideWithFeature.kt")
-            public void testSimpleOverrideWithFeature() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/simpleOverrideWithFeature.kt");
                 doTest(fileName);
             }
 
