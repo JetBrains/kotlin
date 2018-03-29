@@ -37,16 +37,6 @@ fun <T> T.freeze(): T {
     return this
 }
 
-// TODO: Remove.
-fun <T> T.freezeAllowCycles(): T {
-    try {
-        freezeInternal(this)
-    } catch (t: FreezingException) {
-        return this
-    }
-    return this
-}
-
 val Any?.isFrozen
     get() = isFrozenInternal(this)
 

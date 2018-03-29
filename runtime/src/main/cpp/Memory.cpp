@@ -255,6 +255,7 @@ struct MemoryState {
   size_t gcThreshold;
   // If collection is in progress.
   bool gcInProgress;
+  int finalizerQueueSuspendCount;
 
 #if GC_ERGONOMICS
   uint64_t lastGcTimestamp;
@@ -365,6 +366,10 @@ inline bool isFreeable(const ContainerHeader* header) {
 
 inline bool isArena(const ContainerHeader* header) {
   return header->stack();
+}
+
+inline bool isAggregatingFrozenContainer(const ContainerHeader* header) {
+  return header->frozen() && header->objectCount() > 1;
 }
 
 inline container_size_t alignUp(container_size_t size, int alignment) {
@@ -505,7 +510,8 @@ inline void processFinalizerQueue(MemoryState* state) {
 #if TRACE_MEMORY
     state->containers->erase(container);
 #endif
-    runDeallocationHooks(container);
+    if (!isAggregatingFrozenContainer(container))
+      runDeallocationHooks(container);
 
     CONTAINER_DESTROY_EVENT(state, container)
     konanFreeMemory(container);
@@ -527,7 +533,7 @@ inline void scheduleDestroyContainer(
 #if USE_GC
   state->finalizerQueue->push_front(container);
   // We cannot clean finalizer queue while in GC.
-  if (!state->gcInProgress && state->finalizerQueue->size() > 256) {
+  if (!state->gcInProgress && state->finalizerQueueSuspendCount == 0 && state->finalizerQueue->size() > 256) {
     processFinalizerQueue(state);
   }
 #else
@@ -849,11 +855,51 @@ ContainerHeader* AllocContainer(size_t size) {
   return result;
 }
 
+ContainerHeader* AllocAggregatingFrozenContainer(KStdVector<ContainerHeader*>& containers) {
+  auto componentSize = containers.size();
+  auto superContainer = AllocContainer(sizeof(ContainerHeader) + sizeof(void*) * componentSize);
+  auto place = reinterpret_cast<ContainerHeader**>(superContainer + 1);
+  for (auto* container : containers) {
+    *place++ = container;
+    // Set link to the new container.
+    auto obj = reinterpret_cast<ObjHeader*>(container + 1);
+    obj->container_ = superContainer;
+    MEMORY_LOG("Set fictitious frozen container for %p: %p\n", obj, superContainer);
+  }
+  superContainer->setObjectCount(componentSize);
+  superContainer->freeze();
+  return superContainer;
+}
+
+void FreeAggregatingFrozenContainer(ContainerHeader* container) {
+  auto state = memoryState;
+  RuntimeAssert(isAggregatingFrozenContainer(container), "expected fictitious frozen container");
+  MEMORY_LOG("%p is fictitious frozen container\n", container);
+  RuntimeAssert(!container->buffered(), "frozen objects must not participate in GC")
+  // Forbid finalizerQueue handling.
+  ++state->finalizerQueueSuspendCount;
+  // Special container for frozen objects.
+  ContainerHeader** subContainer = reinterpret_cast<ContainerHeader**>(container + 1);
+  MEMORY_LOG("Total subcontainers = %d\n", container->objectCount());
+  for (int i = 0; i < container->objectCount(); ++i) {
+    MEMORY_LOG("Freeing subcontainer %p\n", *subContainer);
+    FreeContainer(*subContainer++);
+  }
+  --state->finalizerQueueSuspendCount;
+  scheduleDestroyContainer(state, container, false);
+  MEMORY_LOG("Freeing subcontainers done\n");
+}
+
 void FreeContainer(ContainerHeader* header) {
   RuntimeAssert(!header->permanent(), "this kind of container shalln't be freed");
   auto state = memoryState;
 
   CONTAINER_FREE_EVENT(state, header)
+
+  if (isAggregatingFrozenContainer(header)) {
+    FreeAggregatingFrozenContainer(header);
+    return;
+  }
 
   // Now let's clean all object's fields in this container.
   traverseContainerObjectFields(header, [](ObjHeader** location) {
@@ -1024,9 +1070,9 @@ MemoryState* InitMemory() {
                 ==
                 offsetof(ObjHeader,   typeInfoOrMeta_),
                 "Layout mismatch");
-  RuntimeAssert(offsetof(ArrayHeader, containerOffsetNegative_)
+  RuntimeAssert(offsetof(ArrayHeader, container_)
                 ==
-                offsetof(ObjHeader  , containerOffsetNegative_),
+                offsetof(ObjHeader  , container_),
                 "Layout mismatch");
   RuntimeAssert(offsetof(TypeInfo, typeInfo_)
                 ==
@@ -1150,17 +1196,16 @@ OBJ_GETTER(InitSharedInstance,
   UpdateRef(localLocation, object);
 #if KONAN_NO_EXCEPTIONS
   ctor(object);
-  // TODO: uncomment as soon as cycles are correctly handled during freezing.
-  //if (!object->container()->frozen())
-    //ThrowFreezingException();
+  if (!object->container()->frozen())
+    ThrowFreezingException();
   UpdateRef(location, object);
   __sync_synchronize();
   return object;
 #else
   try {
     ctor(object);
-    //if (!object->container()->frozen())
-      //ThrowFreezingException();
+    if (!object->container()->frozen())
+      ThrowFreezingException();
     UpdateRef(location, object);
     __sync_synchronize();
     return object;
@@ -1449,27 +1494,39 @@ bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
   *  - not 'marked' and not 'seen' as WHITE marker (object is unprocessed)
   * When we see GREY during DFS, it means we see cycle.
   */
-void depthFirstTraversal(ContainerHeader* container, bool* hasCycles) {
+void depthFirstTraversal(ContainerHeader* container, bool* hasCycles, KStdVector<ContainerHeader*>& order) {
   // Mark GRAY.
   container->setSeen();
-  traverseContainerObjectFields(container, [&hasCycles](ObjHeader** location) {
-        ObjHeader* obj = *location;
-        if (obj != nullptr) {
-          ContainerHeader* objContainer = obj->container();
-          if (!objContainer->permanentOrFrozen()) {
-            // Marked GREY, there's cycle.
-            if (objContainer->seen()) *hasCycles = true;
 
-            // Go deeper if WHITE.
-            if (!objContainer->seen() && !objContainer->marked()) {
-              depthFirstTraversal(objContainer, hasCycles);
-            }
-          }
+  traverseContainerReferredObjects(container, [hasCycles, &order](ObjHeader* obj) {
+      ContainerHeader* objContainer = obj->container();
+      if (!objContainer->permanentOrFrozen()) {
+        // Marked GREY, there's cycle.
+        if (objContainer->seen()) *hasCycles = true;
+
+        // Go deeper if WHITE.
+        if (!objContainer->seen() && !objContainer->marked()) {
+          depthFirstTraversal(objContainer, hasCycles, order);
         }
-    });
+      }
+  });
   // Mark BLACK.
   container->resetSeen();
   container->mark();
+  order.push_back(container);
+}
+
+void traverseStronglyConnectedComponent(ContainerHeader* container,
+                                        KStdUnorderedMap<ContainerHeader*, KStdVector<ContainerHeader*>> const& reversedEdges,
+                                        KStdVector<ContainerHeader*>& component) {
+  component.push_back(container);
+  container->mark();
+  auto it = reversedEdges.find(container);
+  RuntimeAssert(it != reversedEdges.end(), "unknown node during condensation building");
+  for (auto* nextContainer : it->second) {
+    if (!nextContainer->marked())
+      traverseStronglyConnectedComponent(nextContainer, reversedEdges, component);
+  }
 }
 
 /**
@@ -1503,47 +1560,91 @@ void FreezeSubgraph(ObjHeader* root) {
 
   // Do DFS cycle detection.
   bool hasCycles = false;
-  depthFirstTraversal(rootContainer, &hasCycles);
+  KStdVector<ContainerHeader*> order;
+  depthFirstTraversal(rootContainer, &hasCycles, order);
 
+  KStdUnorderedMap<ContainerHeader*, KStdVector<ContainerHeader*>> reversedEdges;
   // Now unmark all marked objects, and freeze them, if no cycles detected.
-  KStdDeque<ContainerHeader*> stack;
-  stack.push_back(rootContainer);
-  while (!stack.empty()) {
-    ContainerHeader* current = stack.front();
-    stack.pop_front();
+  KStdDeque<ContainerHeader*> queue;
+  queue.push_back(rootContainer);
+  while (!queue.empty()) {
+    ContainerHeader* current = queue.front();
+    queue.pop_front();
     current->unMark();
-    current->resetSeen();
 
-    if (!hasCycles) {
+    if (hasCycles) {
+      reversedEdges.emplace(current, KStdVector<ContainerHeader*>(0));
+    } else {
       current->resetBuffered();
       current->setColor(CONTAINER_TAG_GC_BLACK);
       // Note, that once object is frozen, it could be concurrently accessed, so
       // color and similar attributes shall not be used.
       current->freeze();
     }
-    traverseContainerObjectFields(current, [&hasCycles, &stack](ObjHeader** location) {
-        ObjHeader* obj = *location;
-        if (obj != nullptr) {
-          ContainerHeader* objContainer = obj->container();
-          if (!objContainer->permanentOrFrozen() && objContainer->marked())
-            stack.push_back(objContainer);
+    traverseContainerReferredObjects(current, [hasCycles, current, &queue, &reversedEdges](ObjHeader* obj) {
+        ContainerHeader* objContainer = obj->container();
+        if (!objContainer->permanentOrFrozen()) {
+          if (objContainer->marked())
+            queue.push_back(objContainer);
+          if (hasCycles)
+            reversedEdges.emplace(objContainer, KStdVector<ContainerHeader*>(0)).first->second.push_back(current);
         }
     });
+  }
+
+  if (hasCycles) {
+    KStdVector<KStdVector<ContainerHeader*>> components;
+    MEMORY_LOG("Condensation:\n");
+    // Enumerate in topological order.
+    for (auto it = order.rbegin(); it != order.rend(); ++it) {
+      auto* container = *it;
+      if (container->marked()) continue;
+      KStdVector<ContainerHeader*> component;
+      traverseStronglyConnectedComponent(container, reversedEdges, component);
+      MEMORY_LOG("SCC:\n");
+#if TRACE_MEMORY
+      for (auto c : component)
+        konan::consolePrintf("    %p\n", c);
+#endif
+      components.push_back(std::move(component));
+    }
+    // Enumerate strongly connected components in reversed topological order.
+    for (auto it = components.rbegin(); it != components.rend(); ++it) {
+      auto& component = *it;
+      int internalRefsCount = 0;
+      int totalCount = 0;
+      for (auto* container : component) {
+        totalCount += container->refCount();
+        traverseContainerReferredObjects(container, [&internalRefsCount](ObjHeader* obj) {
+            if (!obj->container()->permanentOrFrozen())
+              ++internalRefsCount;
+        });
+      }
+      auto superContainer = component.size() == 1
+                              ? component[0]
+                              : AllocAggregatingFrozenContainer(component); // Create fictitious container for the whole component.
+      // Don't count internal references.
+      superContainer->setRefCount(totalCount - internalRefsCount);
+
+      // Freeze component.
+      for (auto* container : component) {
+        container->resetBuffered();
+        container->setColor(CONTAINER_TAG_GC_BLACK);
+        // Note, that once object is frozen, it could be concurrently accessed, so
+        // color and similar attributes shall not be used.
+        container->freeze();
+      }
+    }
   }
 
   // Now remove frozen objects from the toFree list.
   // TODO: optimize it by keeping ignored (i.e. freshly frozen) objects in the set,
   // and use it when analyzing toFree during collection.
   auto state = memoryState;
-  for (auto it = state->toFree->begin(); it != state->toFree->end(); ++it) {
-      auto container = *it;
-      if (container->frozen()) {
-        *it = markAsRemoved(container);
-      }
+  for (auto& container : *(state->toFree)) {
+      if (!isMarkedAsRemoved(container) && container->frozen())
+        container = markAsRemoved(container);
   }
-
-  // For now, just throw an exception here.
-  if (hasCycles) ThrowFreezingException();
 }
 
 // This function is called from field mutators to check if object's header is frozen.

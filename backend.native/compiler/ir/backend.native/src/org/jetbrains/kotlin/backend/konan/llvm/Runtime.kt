@@ -42,6 +42,7 @@ class Runtime(bitcodeFile: String) {
     val objHeaderType = getStructType("ObjHeader")
     val objHeaderPtrType = pointerType(objHeaderType)
     val arrayHeaderType = getStructType("ArrayHeader")
+    val containerHeaderType = getStructType("ContainerHeader")
 
     val frameOverlayType = getStructType("FrameOverlay")
 

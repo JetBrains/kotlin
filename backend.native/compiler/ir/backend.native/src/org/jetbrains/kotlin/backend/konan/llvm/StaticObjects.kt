@@ -32,14 +32,14 @@ import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.replace
 
 private fun StaticData.objHeader(typeInfo: ConstPointer): Struct {
-    val containerOffsetNegative = 0 // Static object mark.
-    return Struct(runtime.objHeaderType, typeInfo, Int32(containerOffsetNegative))
+    val container = NullPointer(runtime.containerHeaderType) // Static object mark.
+    return Struct(runtime.objHeaderType, typeInfo, container)
 }
 
 private fun StaticData.arrayHeader(typeInfo: ConstPointer, length: Int): Struct {
     assert (length >= 0)
-    val containerOffsetNegative = 0 // Static object mark.
-    return Struct(runtime.arrayHeaderType, typeInfo, Int32(containerOffsetNegative), Int32(length))
+    val container = NullPointer(runtime.containerHeaderType) // Static object mark.
+    return Struct(runtime.arrayHeaderType, typeInfo, container, Int32(length))
 }
 
 internal fun StaticData.createKotlinStringLiteral(value: String): ConstPointer {

@@ -57,7 +57,6 @@ typedef enum {
   CONTAINER_TAG_GC_SEEN = 1 << 4
 } ContainerTag;
 
-typedef uint32_t container_offset_t;
 typedef uint32_t container_size_t;
 
 // Header of all container objects. Contains reference counter.
@@ -90,6 +89,10 @@ struct ContainerHeader {
 
   inline unsigned refCount() const {
     return refCount_ >> CONTAINER_TAG_SHIFT;
+  }
+
+  inline void setRefCount(unsigned refCount) {
+    refCount_ = tag() | (refCount << CONTAINER_TAG_SHIFT);
   }
 
   template <bool Atomic>
@@ -182,7 +185,7 @@ struct MetaObjHeader;
 // Header of every object.
 struct ObjHeader {
   TypeInfo* typeInfoOrMeta_;
-  container_offset_t containerOffsetNegative_;
+  ContainerHeader* container_;
 
   const TypeInfo* type_info() const {
     return typeInfoOrMeta_->typeInfo_;
@@ -200,12 +203,7 @@ struct ObjHeader {
   static ContainerHeader theStaticObjectsContainer;
 
   ContainerHeader* container() const {
-    if (containerOffsetNegative_ == 0) {
-      return &theStaticObjectsContainer;
-    } else {
-      return reinterpret_cast<ContainerHeader*>(
-          reinterpret_cast<uintptr_t>(this) - containerOffsetNegative_);
-    }
+    return container_ == nullptr ? &theStaticObjectsContainer : container_;
   }
 
   // Unsafe cast to ArrayHeader. Use carefully!
@@ -223,15 +221,14 @@ struct ObjHeader {
 // Header of value type array objects. Keep layout in sync with that of object header.
 struct ArrayHeader {
   TypeInfo* typeInfoOrMeta_;
-  container_offset_t containerOffsetNegative_;
+  ContainerHeader* container_;
 
   const TypeInfo* type_info() const {
     return typeInfoOrMeta_->typeInfo_;
   }
 
   ContainerHeader* container() const {
-    return reinterpret_cast<ContainerHeader*>(
-        reinterpret_cast<uintptr_t>(this) - containerOffsetNegative_);
+    return container_;
   }
 
   ObjHeader* obj() { return reinterpret_cast<ObjHeader*>(this); }
@@ -259,10 +256,8 @@ class Container {
   ContainerHeader* header_;
 
   void SetHeader(ObjHeader* obj, const TypeInfo* type_info) {
-    obj->containerOffsetNegative_ =
-        reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(header_);
+    obj->container_ = header_;
     obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(type_info);
-    RuntimeAssert(obj->container() == header_, "Placement must match");
   }
 };
 
@@ -338,10 +333,8 @@ class ArenaContainer {
   bool allocContainer(container_size_t minSize);
 
   void setHeader(ObjHeader* obj, const TypeInfo* typeInfo) {
-    obj->containerOffsetNegative_ =
-        reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(currentChunk_->asHeader());
+    obj->container_ = currentChunk_->asHeader();
     obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
-    RuntimeAssert(obj->container() == currentChunk_->asHeader(), "Placement must match");
   }
 
   ContainerChunk* currentChunk_;
