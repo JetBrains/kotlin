@@ -1,4 +1,4 @@
-depends = CoreFoundation osx posix
+depends = CoreFoundation darwin posix
 language = Objective-C
 package = platform.CFNetwork
 headers = CFNetwork/CFNetwork.h

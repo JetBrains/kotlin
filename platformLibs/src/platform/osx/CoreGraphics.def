@@ -1,4 +1,4 @@
-depends = CoreFoundation IOKit libkern osx posix
+depends = CoreFoundation IOKit darwin libkern posix
 language = Objective-C
 package = platform.CoreGraphics
 headers = CoreGraphics/CoreGraphics.h

@@ -1,4 +1,4 @@
-depends = CoreFoundation osx posix
+depends = CoreFoundation darwin posix
 language = Objective-C
 package = platform.Security
 headers = Security/Security.h Security/SecureTransport.h

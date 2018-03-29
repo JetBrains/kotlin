@@ -1,35 +1,33 @@
-depends = posix
+depends = darwin posix
 language = Objective-C
 package = platform.osx
-headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityInternal.h \
-    AvailabilityMacros.h Block.h ConditionalMacros.h MacTypes.h NSSystemDirectories.h \
-    TargetConditionals.h __cxxabi_config.h _locale.h _types.h _wctype.h \
-    aio.h aliasdb.h asl.h bitstring.h bootparams.h bootstrap.h bzlib.h \
-    cache.h cache_callbacks.h checkint.h com_err.h compression.h copyfile.h \
-    cpio.h crt_externs.h ctype.h cxxabi.h db.h \
-    disktab.h dns.h dns_sd.h dns_util.h dtrace.h \
-    emmintrin.h eti.h execinfo.h expat.h \
-    expat_external.h fmtmsg.h form.h fsproperties.h fstab.h get_compat.h \
-    gethostuuid.h glob.h gssapi.h histedit.h ifaddrs.h inttypes.h iso646.h \
-    krb5.h langinfo.h launch.h lber.h lber_types.h ldif.h libc.h libcharset.h \
-    libgen.h libproc.h libunwind.h localcharset.h \
-    membership.h mmintrin.h monetary.h monitor.h mpool.h \
-    nameser.h nc_tparm.h ncurses.h ncurses_dll.h ndbm.h nl_types.h \
-    nlist.h notify.h notify_keys.h ntsid.h \
-    panel.h pcap-bpf.h pcap-namedb.h pcap.h printerdb.h printf.h \
-    profile.h ranlib.h readpassphrase.h removefile.h rune.h \
-    runetype.h sandbox.h stab.h standards.h strhash.h \
-    stringlist.h struct.h sysdir.h sysexits.h tar.h term.h \
-    term_entry.h termcap.h tic.h timeconv.h ttyent.h tzfile.h \
-    unctrl.h unwind.h utmpx.h vis.h vproc.h wordexp.h xattr_flags.h \
+headers = NSSystemDirectories.h \
+    aliasdb.h bootparams.h bootstrap.h \
+    com_err.h \
+    crt_externs.h \
+    disktab.h dtrace.h \
+    emmintrin.h eti.h expat.h \
+    expat_external.h form.h fsproperties.h get_compat.h \
+    gssapi.h histedit.h \
+    krb5.h launch.h lber.h lber_types.h ldif.h libc.h libcharset.h \
+    libproc.h localcharset.h \
+    mmintrin.h monitor.h \
+    nc_tparm.h ncurses.h ncurses_dll.h \
+    nlist.h \
+    panel.h pcap-bpf.h pcap-namedb.h pcap.h printerdb.h \
+    profile.h ranlib.h rune.h \
+    stab.h strhash.h \
+    struct.h term.h \
+    term_entry.h termcap.h tic.h timeconv.h tzfile.h \
+    unctrl.h vproc.h \
     xmmintrin.h \
-    atm/atm_types.h bank/bank_types.h bsm/libbsm.h corpses/task_corpse.h \
+    atm/atm_types.h corpses/task_corpse.h \
     hfs/hfs_format.h hfs/hfs_mount.h hfs/hfs_unistr.h \
-    os/activity.h os/availability.h os/base.h os/lock.h \
-    os/object.h os/overflow.h os/trace.h \
-     sys/kauth.h
+    sys/kauth.h
 
 headerFilter = **
+
+exportForwardDeclarations = objcnames.classes.NSObject objcnames.protocols.NSObjectProtocol
 
 compilerOpts = -D_XOPEN_SOURCE
 excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN vm_map_64 vm_mapped_pages_info vm_region_recurse vm_region xpc_debugger_api_misuse_info \
@@ -47,7 +45,6 @@ excludedFunctions = KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN vm_map_64 vm_mapped
 		    nlist os_trace_info_with_payload safe_gets task_wire trace
 
 linkerOpts = -late -lbsm -lbz2 -lcompression -ledit -lexpat -lform -lkrb5 -llber -lldap -lncurses -lpanel -lpcap -ldtrace
-depends = posix
 ---
 
 // menu.h is excluded so far due to interop issues.
