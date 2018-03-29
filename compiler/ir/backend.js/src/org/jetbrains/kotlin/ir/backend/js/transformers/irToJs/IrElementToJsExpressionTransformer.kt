@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.isSpecial
+import org.jetbrains.kotlin.ir.backend.js.utils.name
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -77,7 +78,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
         val fromPrimary = context.currentFunction is IrConstructor
         val thisRef = if (fromPrimary) JsThisRef() else JsNameRef("\$this")
-        val arguments = translateCallArguments(expression, expression.symbol.parameterCount, context)
+        val arguments = translateCallArguments(expression, context)
         return JsInvocation(callFuncRef, listOf(thisRef) + arguments)
     }
 
@@ -104,7 +105,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val extensionReceiver = expression.extensionReceiver?.accept(this, context)
 
 
-        val arguments = translateCallArguments(expression, expression.symbol.parameterCount, context)
+        val arguments = translateCallArguments(expression, context)
 
         return if (symbol is IrConstructorSymbol) {
             JsNew(JsNameRef((symbol.owner.parent as IrClass).name.asString()), arguments)
