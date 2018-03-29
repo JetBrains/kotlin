@@ -153,6 +153,10 @@ projectTest(taskName = "performanceTest") {
     classpath = performanceTest.runtimeClasspath
     workingDir = rootDir
 
+    jvmArgs.removeAll { it.startsWith("-Xmx") }
+
+    maxHeapSize = "3g"
+
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
