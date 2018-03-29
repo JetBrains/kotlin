@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 
-interface JsLoweredDeclarationOrigin : IrDeclarationOrigin {
+object JsLoweredDeclarationOrigin : IrDeclarationOrigin {
     object CLASS_STATIC_INITIALIZER : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER")
 }
