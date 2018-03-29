@@ -446,8 +446,9 @@ object ModifierCheckerCore {
                 }
             }
         }
-        val actualTargets = AnnotationChecker.getDeclarationSiteActualTargetList(listOwner, descriptor as? ClassDescriptor, trace)
         val list = listOwner.modifierList ?: return
+        if (list.stub != null) return
+        val actualTargets = AnnotationChecker.getDeclarationSiteActualTargetList(listOwner, descriptor as? ClassDescriptor, trace)
         checkModifierList(list, trace, descriptor?.containingDeclaration, actualTargets, languageVersionSettings)
     }
 }
