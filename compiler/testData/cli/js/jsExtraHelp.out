@@ -16,6 +16,11 @@ where advanced options include:
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
   -Xplugin=<path>            Load plugins from the given classpath
+  -Xprogressive              Enable compiler progressive mode.
+                             In this mode, deprecations and bug fixes for unstable code take effect immediately,
+                             instead of going through graceful migration cycle.
+                             Code, written in progressive mode is backward compatible; however, code written in
+                             non-progressive mode may cause compilation errors in progressive mode.
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata
   -Xreport-output-files      Report source to output files mapping
