@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
@@ -35,6 +37,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -211,6 +214,45 @@ fun IrModuleFragment.referenceAllTypeExternalClassifiers(symbolTable: SymbolTabl
         override fun visitExpression(expression: IrExpression) {
             super.visitExpression(expression)
             expression.type.referenceAllClassifiers()
+        }
+
+        override fun visitDeclaration(declaration: IrDeclaration) {
+            super.visitDeclaration(declaration)
+            declaration.annotations.getAllAnnotations().forEach {
+                handleClassReferences(it.annotation)
+            }
+        }
+
+        private fun handleClassReferences(annotation: AnnotationDescriptor) {
+            annotation.allValueArguments.values.forEach {
+                it.accept(object : AnnotationArgumentVisitor<Unit, Nothing?> {
+
+                    override fun visitKClassValue(p0: KClassValue?, p1: Nothing?) {
+                        p0?.value?.referenceAllClassifiers()
+                    }
+
+                    override fun visitArrayValue(p0: ArrayValue?, p1: Nothing?) {
+                        p0?.value?.forEach { it.accept(this, null) }
+                    }
+
+                    override fun visitAnnotationValue(p0: AnnotationValue?, p1: Nothing?) {
+                        p0?.let { handleClassReferences(p0.value) }
+                    }
+
+                    override fun visitBooleanValue(p0: BooleanValue?, p1: Nothing?) {}
+                    override fun visitShortValue(p0: ShortValue?, p1: Nothing?) {}
+                    override fun visitByteValue(p0: ByteValue?, p1: Nothing?) {}
+                    override fun visitNullValue(p0: NullValue?, p1: Nothing?) {}
+                    override fun visitDoubleValue(p0: DoubleValue?, p1: Nothing?) {}
+                    override fun visitLongValue(p0: LongValue, p1: Nothing?) {}
+                    override fun visitCharValue(p0: CharValue?, p1: Nothing?) {}
+                    override fun visitIntValue(p0: IntValue?, p1: Nothing?) {}
+                    override fun visitErrorValue(p0: ErrorValue?, p1: Nothing?) {}
+                    override fun visitFloatValue(p0: FloatValue?, p1: Nothing?) {}
+                    override fun visitEnumValue(p0: EnumValue?, p1: Nothing?) {}
+                    override fun visitStringValue(p0: StringValue?, p1: Nothing?) {}
+                }, null)
+            }
         }
 
         override fun visitFunction(declaration: IrFunction) {
