@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-buildscript {
-    ext {
-        gradleProperties = new Properties()
-        gradleProperties.load(new FileInputStream("$projectDir/../../gradle.properties"))
-        buildKotlinVersion = gradleProperties."buildKotlinVersion"
-    }
+package org.jetbrains.kotlin.konan
 
-    apply from: '../../gradle/kotlinGradlePlugin.gradle'
-}
+/**
+ *  https://en.wikipedia.org/wiki/Software_versioning
+ *  scheme major.minor[.build[.revision]].
+*/
 
-apply plugin: 'kotlin'
-
-// We reuse the source code from the Project in buildSrc.
-sourceSets.main.kotlin.srcDirs = ["$projectDir/../../shared/src/main/kotlin"]
-
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
-}
-
-rootProject.dependencies {
-    runtime project(path)
+enum class MetaVersion {
+  DEV,
+  EAP,
+  ALPHA,
+  BETA,
+  RC
 }
