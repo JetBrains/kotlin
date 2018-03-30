@@ -39,6 +39,12 @@ import javax.swing.Icon
 class KotlinIconProvider : IconProvider(), DumbAware {
     override fun getIcon(psiElement: PsiElement, flags: Int): Icon? {
         if (psiElement is KtFile) {
+            if (psiElement.isScript()) {
+                return when {
+                    psiElement.name.endsWith(".gradle.kts") -> KotlinIcons.GRADLE_SCRIPT
+                    else -> KotlinIcons.SCRIPT
+                }
+            }
             val mainClass = getSingleClass(psiElement)
             return if (mainClass != null) getIcon(mainClass, flags) else KotlinIcons.FILE
         }

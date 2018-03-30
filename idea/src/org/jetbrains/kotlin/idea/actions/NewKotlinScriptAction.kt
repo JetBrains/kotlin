@@ -13,13 +13,13 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.psi.KtFile
 
 class NewKotlinScriptAction : CreateFileFromTemplateAction(
     "Kotlin Script",
     "Creates new Kotlin script",
-    KotlinFileType.INSTANCE.icon
+    KotlinIcons.SCRIPT
 ), DumbAware {
 
     override fun postProcess(createdElement: PsiFile, templateName: String?, customProperties: Map<String, String>?) {
@@ -34,7 +34,7 @@ class NewKotlinScriptAction : CreateFileFromTemplateAction(
 
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
         builder.setTitle("New Kotlin Script")
-            .addKind("Kotlin Script", KotlinFileType.INSTANCE.icon, "Kotlin Script")
+            .addKind("Kotlin Script", KotlinIcons.SCRIPT, "Kotlin Script")
     }
 
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
