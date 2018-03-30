@@ -78,7 +78,11 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
             val tool = it.tool.tool as? LocalInspectionTool ?: return@forEach
             if (it.tool.language != null && it.tool.language!! !in setOf("kotlin", "UAST")) return@forEach
             val result = measureNanoTime {
-                tool.analyze(psiFile)
+                try {
+                    tool.analyze(psiFile)
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                }
             }
             results[it.tool.id] = result
         }
