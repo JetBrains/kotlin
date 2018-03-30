@@ -13,7 +13,7 @@ data class ScriptDiagnostic(
     val location: ScriptSource.Location? = null,
     val exception: Throwable? = null
 ) {
-    enum class Severity { ERROR, WARNING, INFO, DEBUG }
+    enum class Severity { FATAL, ERROR, WARNING, INFO, DEBUG }
 }
 
 sealed class ResultWithDiagnostics<out R> {

@@ -21,6 +21,7 @@ fun mapLegacyDiagnosticSeverity(severity: ScriptDependenciesResolver.ReportSever
 }
 
 fun mapToLegacyScriptReportSeverity(severity: ScriptDiagnostic.Severity): ScriptReport.Severity = when (severity) {
+    ScriptDiagnostic.Severity.FATAL -> ScriptReport.Severity.FATAL
     ScriptDiagnostic.Severity.ERROR -> ScriptReport.Severity.ERROR
     ScriptDiagnostic.Severity.WARNING -> ScriptReport.Severity.WARNING
     ScriptDiagnostic.Severity.INFO -> ScriptReport.Severity.INFO
