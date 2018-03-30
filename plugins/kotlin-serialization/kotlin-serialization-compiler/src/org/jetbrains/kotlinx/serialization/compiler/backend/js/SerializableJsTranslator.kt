@@ -35,25 +35,32 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryProper
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isInternalSerializable
 
-class SerializableJsTranslator(val declaration: KtPureClassOrObject,
-                               val translator: DeclarationBodyVisitor,
-                               val context: TranslationContext) : SerializableCodegen(declaration, context.bindingContext()) {
+class SerializableJsTranslator(
+    val declaration: KtPureClassOrObject,
+    val translator: DeclarationBodyVisitor,
+    val context: TranslationContext
+) : SerializableCodegen(declaration, context.bindingContext()) {
 
-    val initMap: Map<PropertyDescriptor, KtExpression?> = declaration.run {
+    private val initMap: Map<PropertyDescriptor, KtExpression?> = declaration.run {
         (bodyPropertiesDescriptorsMap(context.bindingContext()).mapValues { it.value.delegateExpressionOrInitializer } +
-         primaryPropertiesDescriptorsMap(context.bindingContext()).mapValues { it.value.defaultValue })
+                primaryPropertiesDescriptorsMap(context.bindingContext()).mapValues { it.value.defaultValue })
     }
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) {
 
         val missingExceptionClassRef = serializableDescriptor.getClassFromSerializationPackage("MissingFieldException")
-                .let { context.translateQualifiedReference(it) }
+            .let { context.translateQualifiedReference(it) }
 
         val f = context.buildFunction(constructorDescriptor) { jsFun, context ->
             val thiz = jsFun.scope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME).makeRef()
             val context = context.innerContextWithAliased(serializableDescriptor.thisAsReceiverParameter, thiz)
 
-            +JsVars(JsVars.JsVar(thiz.name, Namer.createObjectWithPrototypeFrom(context.getInnerNameForDescriptor(serializableDescriptor).makeRef())))
+            +JsVars(
+                JsVars.JsVar(
+                    thiz.name,
+                    Namer.createObjectWithPrototypeFrom(context.getInnerNameForDescriptor(serializableDescriptor).makeRef())
+                )
+            )
             val seenVar = jsFun.parameters[0].name.makeRef()
             for ((index, prop) in properties.serializableProperties.withIndex()) {
                 val paramRef = jsFun.parameters[index + 1].name.makeRef()
@@ -64,8 +71,7 @@ class SerializableJsTranslator(val declaration: KtPureClassOrObject,
                     val initializer = initMap.getValue(prop.descriptor) ?: throw IllegalArgumentException("optional without an initializer")
                     val initExpr = Translation.translateAsExpression(initializer, context)
                     TranslationUtils.assignmentToBackingField(context, prop.descriptor, initExpr).makeStmt()
-                }
-                else {
+                } else {
                     JsThrow(JsNew(missingExceptionClassRef, listOf(JsStringLiteral(prop.name))))
                 }
                 // (seen & 1 << i == 0) -- not seen
@@ -75,14 +81,14 @@ class SerializableJsTranslator(val declaration: KtPureClassOrObject,
 
             //transient initializers and init blocks
             val serialDescs = properties.serializableProperties.map { it.descriptor }
-            (initMap - serialDescs).forEach { (desc, expr)  ->
-                val e = requireNotNull(expr) {"transient without an initializer"}
+            (initMap - serialDescs).forEach { (desc, expr) ->
+                val e = requireNotNull(expr) { "transient without an initializer" }
                 val initExpr = Translation.translateAsExpression(e, context)
                 +TranslationUtils.assignmentToBackingField(context, desc, initExpr).makeStmt()
             }
 
             declaration.anonymousInitializers()
-                    .forEach { Translation.translateAsExpression(it, context, this.block) }
+                .forEach { Translation.translateAsExpression(it, context, this.block) }
 
             +JsReturn(thiz)
         }
@@ -96,7 +102,12 @@ class SerializableJsTranslator(val declaration: KtPureClassOrObject,
     }
 
     companion object {
-        fun translate(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
+        fun translate(
+            declaration: KtPureClassOrObject,
+            descriptor: ClassDescriptor,
+            translator: DeclarationBodyVisitor,
+            context: TranslationContext
+        ) {
             if (descriptor.isInternalSerializable)
                 SerializableJsTranslator(declaration, translator, context).generate()
         }
