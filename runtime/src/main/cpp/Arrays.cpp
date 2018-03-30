@@ -42,7 +42,7 @@ static inline void copyImpl(KConstRef thiz, KInt fromIndex,
 namespace {
 
 const ArrayHeader anEmptyArray = {
-  theArrayTypeInfo, /* permanent object */ 0, /* element count */ 0
+  const_cast<TypeInfo*>(theArrayTypeInfo), /* permanent object */ 0, /* element count */ 0
 };
 
 }  // namespace

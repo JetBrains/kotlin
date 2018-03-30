@@ -27,7 +27,6 @@ internal val LLVMValueRef.type: LLVMTypeRef
  * Represents the value which can be emitted as bitcode const value
  */
 internal interface ConstValue {
-
     val llvm: LLVMValueRef
 }
 
@@ -54,9 +53,8 @@ private class ConstGetElementPtr(val pointer: ConstPointer, val index: Int) : Co
 
 internal fun ConstPointer.bitcast(toType: LLVMTypeRef) = constPointer(LLVMConstBitCast(this.llvm, toType)!!)
 
-internal class ConstArray(val elemType: LLVMTypeRef?, val elements: List<ConstValue>) : ConstValue {
-
-    override val llvm = LLVMConstArray(elemType, elements.map { it.llvm }.toCValues(), elements.size)!!
+internal class ConstArray(elementType: LLVMTypeRef?, val elements: List<ConstValue>) : ConstValue {
+    override val llvm = LLVMConstArray(elementType, elements.map { it.llvm }.toCValues(), elements.size)!!
 }
 
 internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue?>) : ConstValue {
@@ -108,7 +106,7 @@ internal class Zero(val type: LLVMTypeRef) : ConstValue {
     override val llvm = LLVMConstNull(type)!!
 }
 
-internal class NullPointer(val pointeeType: LLVMTypeRef): ConstPointer {
+internal class NullPointer(pointeeType: LLVMTypeRef): ConstPointer {
     override val llvm = LLVMConstNull(pointerType(pointeeType))!!
 }
 
@@ -149,7 +147,6 @@ internal val kInt8Ptr      = pointerType(int8Type)
 internal val kInt8PtrPtr   = pointerType(kInt8Ptr)
 internal val kNullInt8Ptr  = LLVMConstNull(kInt8Ptr)!!
 internal val kImmInt32One  = Int32(1).llvm
-internal val kImmInt64One  = Int64(1).llvm
 internal val ContextUtils.kNullObjHeaderPtr: LLVMValueRef
     get() = LLVMConstNull(this.kObjHeaderPtr)!!
 internal val ContextUtils.kNullObjHeaderPtrPtr: LLVMValueRef

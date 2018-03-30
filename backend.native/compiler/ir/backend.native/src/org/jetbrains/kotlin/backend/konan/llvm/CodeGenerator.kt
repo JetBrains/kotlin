@@ -616,7 +616,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val typeInfoPtr: LLVMValueRef = if (owner.isObjCClass()) {
             call(context.llvm.getObjCKotlinTypeInfo, listOf(receiver))
         } else {
-            val typeInfoPtrPtr = LLVMBuildStructGEP(builder, receiver, 0 /* type_info */, "")!!
+            val typeInfoOrMetaPtr = structGep(receiver, 0  /* typeInfoOrMeta_ */)
+            val typeInfoOrMeta = load(typeInfoOrMetaPtr)
+            val typeInfoPtrPtr = structGep(typeInfoOrMeta, 0 /* typeInfo */)
             load(typeInfoPtrPtr)
         }
 
@@ -655,10 +657,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         val objectPtr = codegen.getObjectInstanceStorage(descriptor, shared)
         val bbCurrent = currentBlock
-        val bbInit    = basicBlock("label_init", locationInfo)
-        val bbExit    = basicBlock("label_continue", locationInfo)
+        val bbInit= basicBlock("label_init", locationInfo)
+        val bbExit= basicBlock("label_continue", locationInfo)
         val objectVal = loadSlot(objectPtr, false)
-        val objectInitialized = icmpUGt(ptrToInt(objectVal, codegen.intPtrType), codegen.immOneIntPtrType)
+        val objectInitialized= icmpUGt(ptrToInt(objectVal, codegen.intPtrType), codegen.immOneIntPtrType)
         condBr(objectInitialized, bbExit, bbInit)
 
         positionAtEnd(bbInit)

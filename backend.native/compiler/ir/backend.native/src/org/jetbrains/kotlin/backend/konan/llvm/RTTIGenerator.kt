@@ -35,21 +35,27 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     inner class MethodTableRecord(val nameSignature: LocalHash, val methodEntryPoint: ConstPointer?) :
             Struct(runtime.methodTableRecordType, nameSignature, methodEntryPoint)
 
-    private inner class TypeInfo(val name: ConstValue, val size: Int,
-                                 val superType: ConstValue,
-                                 val objOffsets: ConstValue,
-                                 val objOffsetsCount: Int,
-                                 val interfaces: ConstValue,
-                                 val interfacesCount: Int,
-                                 val methods: ConstValue,
-                                 val methodsCount: Int,
-                                 val fields: ConstValue,
-                                 val fieldsCount: Int,
-                                 val packageName: String?,
-                                 val relativeName: String?,
-                                 val writableTypeInfo: ConstPointer?) :
+    private inner class TypeInfo(
+            selfPtr: ConstPointer,
+            name: ConstValue,
+            size: Int,
+            superType: ConstValue,
+            objOffsets: ConstValue,
+            objOffsetsCount: Int,
+            interfaces: ConstValue,
+            interfacesCount: Int,
+            methods: ConstValue,
+            methodsCount: Int,
+            fields: ConstValue,
+            fieldsCount: Int,
+            packageName: String?,
+            relativeName: String?,
+            writableTypeInfo: ConstPointer?) :
+
             Struct(
                     runtime.typeInfoType,
+
+                    selfPtr,
 
                     name,
                     Int32(size),
@@ -162,8 +168,11 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 runtime.methodTableRecordType, methods)
 
         val reflectionInfo = getReflectionInfo(classDesc)
-
-        val typeInfo = TypeInfo(name, size,
+        val typeInfoGlobal = llvmDeclarations.typeInfoGlobal
+        val typeInfo = TypeInfo(
+                classDesc.typeInfoPtr,
+                name,
+                size,
                 superType,
                 objOffsetsPtr, objOffsets.size,
                 interfacesPtr, interfaces.size,
@@ -173,8 +182,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 reflectionInfo.relativeName,
                 llvmDeclarations.writableTypeInfoGlobal?.pointer
         )
-
-        val typeInfoGlobal = llvmDeclarations.typeInfoGlobal
 
         val typeInfoGlobalValue = if (!classDesc.typeInfoHasVtableAttached) {
             typeInfo
@@ -265,8 +272,12 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     .also { it.setZeroInitializer() }
                     .pointer
         }
-
-        val typeInfo = TypeInfo(
+        val vtable = vtable(superClass)
+        val typeInfoWithVtableType = structType(runtime.typeInfoType, vtable.llvmType)
+        val typeInfoWithVtableGlobal = staticData.createGlobal(typeInfoWithVtableType, "", isExported = false)
+        val result = typeInfoWithVtableGlobal.pointer.getElementPtr(0)
+        val typeInfoWithVtable = Struct(TypeInfo(
+                selfPtr = result,
                 name = name,
                 size = size,
                 superType = superClass.typeInfoPtr,
@@ -277,12 +288,12 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 packageName = reflectionInfo.packageName,
                 relativeName = reflectionInfo.relativeName,
                 writableTypeInfo = writableTypeInfo
-        )
+              ), vtable)
 
-        val vtable = vtable(superClass)
+        typeInfoWithVtableGlobal.setInitializer(typeInfoWithVtable)
+        typeInfoWithVtableGlobal.setConstant(true)
 
-        return staticData.placeGlobal("", Struct(typeInfo, vtable))
-                .pointer.getElementPtr(0)
+        return result
     }
 
     private val OverriddenFunctionDescriptor.implementation get() = getImplementation(context)

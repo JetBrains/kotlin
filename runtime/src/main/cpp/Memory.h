@@ -177,35 +177,34 @@ struct ContainerHeader {
 };
 
 struct ArrayHeader;
+struct MetaObjHeader;
 
 // Header of every object.
 struct ObjHeader {
-  const TypeInfo* type_info_;
-  container_offset_t container_offset_negative_;
+  TypeInfo* typeInfoOrMeta_;
+  container_offset_t containerOffsetNegative_;
 
   const TypeInfo* type_info() const {
-    // TODO: for moving collectors use meta-objects approach:
-    //  - store tag in lower bit TypeInfo, which marks if meta-object is in place
-    //  - when reading type_info_ check if it is unaligned
-    //  - if it is, pointer points to the MetaObject
-    //  - otherwise this is direct pointer to TypeInfo
-    // Meta-object allows storing additional data associated with some objects,
-    // such as stable hash code.
-    return type_info_;
+    return typeInfoOrMeta_->typeInfo_;
   }
 
-  void set_type_info(const TypeInfo* type_info) {
-    type_info_ = type_info;
+  bool has_meta_object() const {
+    return typeInfoOrMeta_ != typeInfoOrMeta_->typeInfo_;
+  }
+
+  MetaObjHeader* meta_object() {
+     return has_meta_object() ?
+        reinterpret_cast<MetaObjHeader*>(typeInfoOrMeta_) : createMetaObject(&typeInfoOrMeta_);
   }
 
   static ContainerHeader theStaticObjectsContainer;
 
   ContainerHeader* container() const {
-    if (container_offset_negative_ == 0) {
+    if (containerOffsetNegative_ == 0) {
       return &theStaticObjectsContainer;
     } else {
       return reinterpret_cast<ContainerHeader*>(
-          reinterpret_cast<uintptr_t>(this) - container_offset_negative_);
+          reinterpret_cast<uintptr_t>(this) - containerOffsetNegative_);
     }
   }
 
@@ -216,31 +215,23 @@ struct ObjHeader {
   inline bool permanent() const {
     return container()->permanent();
   }
+
+  static MetaObjHeader* createMetaObject(TypeInfo** location);
+  static void destroyMetaObject(TypeInfo** location);
 };
 
 // Header of value type array objects. Keep layout in sync with that of object header.
 struct ArrayHeader {
-  const TypeInfo* type_info_;
-  container_offset_t container_offset_negative_;
+  TypeInfo* typeInfoOrMeta_;
+  container_offset_t containerOffsetNegative_;
 
   const TypeInfo* type_info() const {
-    // TODO: for moving collectors use meta-objects approach:
-    //  - store tag in lower bit TypeInfo, which marks if meta-object is in place
-    //  - when reading type_info_ check if it is unaligned
-    //  - if it is, pointer points to the MetaObject
-    //  - otherwise this is direct pointer to TypeInfo
-    // Meta-object allows storing additional data associated with some objects,
-    // such as stable hash code.
-    return type_info_;
-  }
-
-  void set_type_info(const TypeInfo* type_info) {
-    type_info_ = type_info;
+    return typeInfoOrMeta_->typeInfo_;
   }
 
   ContainerHeader* container() const {
     return reinterpret_cast<ContainerHeader*>(
-        reinterpret_cast<uintptr_t>(this) - container_offset_negative_);
+        reinterpret_cast<uintptr_t>(this) - containerOffsetNegative_);
   }
 
   ObjHeader* obj() { return reinterpret_cast<ObjHeader*>(this); }
@@ -248,6 +239,12 @@ struct ArrayHeader {
 
   // Elements count. Element size is stored in instanceSize_ field of TypeInfo, negated.
   uint32_t count_;
+};
+
+// Header for the meta-object.
+struct MetaObjHeader {
+  // Pointer to the type info. Must be first, to match ArrayHeader and ObjHeader layout.
+  const TypeInfo* typeInfo_;
 };
 
 inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
@@ -261,10 +258,10 @@ class Container {
   // Data where everything is being stored.
   ContainerHeader* header_;
 
-  void SetMeta(ObjHeader* obj, const TypeInfo* type_info) {
-    obj->container_offset_negative_ =
+  void SetHeader(ObjHeader* obj, const TypeInfo* type_info) {
+    obj->containerOffsetNegative_ =
         reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(header_);
-    obj->set_type_info(type_info);
+    obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(type_info);
     RuntimeAssert(obj->container() == header_, "Placement must match");
   }
 };
@@ -340,10 +337,10 @@ class ArenaContainer {
 
   bool allocContainer(container_size_t minSize);
 
-  void setMeta(ObjHeader* obj, const TypeInfo* typeInfo) {
-    obj->container_offset_negative_ =
+  void setHeader(ObjHeader* obj, const TypeInfo* typeInfo) {
+    obj->containerOffsetNegative_ =
         reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(currentChunk_->asHeader());
-    obj->set_type_info(typeInfo);
+    obj->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
     RuntimeAssert(obj->container() == currentChunk_->asHeader(), "Placement must match");
   }
 
