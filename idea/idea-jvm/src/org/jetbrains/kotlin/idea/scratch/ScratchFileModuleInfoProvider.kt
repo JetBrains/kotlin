@@ -24,10 +24,10 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_EXT
@@ -71,7 +71,7 @@ class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent
                 psiFile.virtualFile.scriptRelatedModuleName = module.name
 
                 // Drop caches for old module
-                ProjectRootManager.getInstance(myProject).incModificationCount()
+                ScriptDependenciesModificationTracker.getInstance(myProject).incModificationCount()
                 // Force re-highlighting
                 DaemonCodeAnalyzer.getInstance(myProject).restart(psiFile)
             }
