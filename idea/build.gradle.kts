@@ -42,7 +42,7 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) {
-        includeJars("annotations", "openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "velocity", "bootstrap", "gson", "log4j", "asm-all",
+        includeJars("annotations", "openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "bootstrap", "gson", "log4j", "asm-all",
                     "swingx-core", "forms_rt", "util", "jdom", "trove4j", "guava", rootProject = rootProject)
     }
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
@@ -85,7 +85,7 @@ dependencies {
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
-    testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl", "java-api", "java-impl", "groovy-all", "velocity", "gson", "idea_rt", "util", "log4j", rootProject = rootProject) }
+    testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl", "java-api", "java-impl", "groovy-all", "gson", "idea_rt", "util", "log4j", "commons-lang-2.4", rootProject = rootProject) }
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-api", "gradle-tooling-extension-impl", "gradle-wrapper", rootProject = rootProject) }
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
