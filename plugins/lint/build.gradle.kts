@@ -18,7 +18,7 @@ dependencies {
     compileOnly(intellijPluginDep("android")) {
         includeJars(
             "android", "android-common", "sdklib", "sdk-common-26.0.0", "sdk-tools",
-            "repository", "lombok-ast", "layoutlib-api", "kxml2", rootProject = rootProject)
+            "lombok-ast", "layoutlib-api", "kxml2", rootProject = rootProject)
     }
 }
 
