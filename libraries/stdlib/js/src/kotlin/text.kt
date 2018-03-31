@@ -24,7 +24,7 @@ public actual interface Appendable {
 }
 
 public actual class StringBuilder(content: String) : Appendable, CharSequence {
-    actual constructor(@Suppress("UNUSED_PARAMETER") capacity: Int) : this() {}
+    actual constructor(capacity: Int) : this() {}
 
     actual constructor(content: CharSequence) : this(content.toString()) {}
 

@@ -82,7 +82,6 @@ object ArrayOps : TemplateGroupBase() {
 
         on(Platform.JS) {
             annotation("""@library("arrayEquals")""")
-            annotation("""@Suppress("UNUSED_PARAMETER")""")
             body { "definedExternally" }
         }
     }
@@ -108,7 +107,6 @@ object ArrayOps : TemplateGroupBase() {
         }
         on(Platform.JS) {
             annotation("""@library("arrayDeepEquals")""")
-            annotation("""@Suppress("UNUSED_PARAMETER")""")
             body { "definedExternally" }
         }
     }

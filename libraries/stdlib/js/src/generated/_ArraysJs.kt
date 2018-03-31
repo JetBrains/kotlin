@@ -101,7 +101,6 @@ public actual fun CharArray.asList(): List<Char> {
  */
 @SinceKotlin("1.1")
 @library("arrayDeepEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
     definedExternally
 }
@@ -139,7 +138,6 @@ public actual fun <T> Array<out T>.contentDeepToString(): String {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
     definedExternally
 }
@@ -150,7 +148,6 @@ public actual infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boo
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
     definedExternally
 }
@@ -161,7 +158,6 @@ public actual infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
     definedExternally
 }
@@ -172,7 +168,6 @@ public actual infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun IntArray.contentEquals(other: IntArray): Boolean {
     definedExternally
 }
@@ -183,7 +178,6 @@ public actual infix fun IntArray.contentEquals(other: IntArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun LongArray.contentEquals(other: LongArray): Boolean {
     definedExternally
 }
@@ -194,7 +188,6 @@ public actual infix fun LongArray.contentEquals(other: LongArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
     definedExternally
 }
@@ -205,7 +198,6 @@ public actual infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
     definedExternally
 }
@@ -216,7 +208,6 @@ public actual infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
     definedExternally
 }
@@ -227,7 +218,6 @@ public actual infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
  */
 @SinceKotlin("1.1")
 @library("arrayEquals")
-@Suppress("UNUSED_PARAMETER")
 public actual infix fun CharArray.contentEquals(other: CharArray): Boolean {
     definedExternally
 }

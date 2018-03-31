@@ -23,4 +23,4 @@ public typealias Synchronized = kotlin.jvm.Synchronized
 public typealias Volatile = kotlin.jvm.Volatile
 
 @kotlin.internal.InlineOnly
-public actual inline fun <R> synchronized(@Suppress("UNUSED_PARAMETER") lock: Any, block: () -> R): R = block()
+public actual inline fun <R> synchronized(lock: Any, block: () -> R): R = block()

@@ -34,7 +34,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
      * Creates an empty [ArrayList].
      * @param initialCapacity initial capacity (ignored)
      */
-    public actual constructor(@Suppress("UNUSED_PARAMETER") initialCapacity: Int) : this(emptyArray()) {}
+    public actual constructor(initialCapacity: Int) : this(emptyArray()) {}
     /**
      * Creates an [ArrayList] filled from the [elements] collection.
      */
@@ -43,7 +43,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     /** Does nothing in this ArrayList implementation. */
     public actual fun trimToSize() {}
     /** Does nothing in this ArrayList implementation. */
-    public actual fun ensureCapacity(@Suppress("UNUSED_PARAMETER") minCapacity: Int) {}
+    public actual fun ensureCapacity(minCapacity: Int) {}
 
     actual override val size: Int get() = array.size
     actual override fun get(index: Int): E = array[rangeCheck(index)] as E
