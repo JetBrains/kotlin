@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.tree.JKElement
-import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformerVoid
+import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 
-abstract class TransformerBasedConversion : BaseConversion(), JKTransformerVoid {
+abstract class TransformerBasedConversion : BaseConversion(), JKVisitorVoid {
     protected var somethingChanged = false
 
     override fun runConversion(treeRoot: JKElement): Boolean {

@@ -17,56 +17,51 @@
 package org.jetbrains.kotlin.j2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
-class JKKtPropertyImpl(override var modifierList: JKModifierList,
-                       override var type: JKType,
-                       override var name: JKNameIdentifier,
-                       override var initializer: JKExpression? = null,
-                       override var getter: JKBlock? = null,
-                       override var setter: JKBlock? = null) : JKElementBase(), JKKtProperty {
+class JKKtPropertyImpl(
+    override var modifierList: JKModifierList,
+    override var type: JKType,
+    override var name: JKNameIdentifier,
+    override var initializer: JKExpression,
+    override var getter: JKBlock,
+    override var setter: JKBlock
+) : JKElementBase(), JKKtProperty {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtProperty(this, data)
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         modifierList.accept(visitor, data)
         type.accept(visitor, data)
         name.accept(visitor, data)
-        initializer?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
-        modifierList = modifierList.transform(transformer, data)
-        type = type.transform(transformer, data)
-        name = name.transform(transformer, data)
-        initializer = initializer?.transform(transformer, data)
-        getter = getter?.transform(transformer, data)
-        setter = setter?.transform(transformer, data)
+        initializer.accept(visitor, data)
+        getter.accept(visitor, data)
+        setter.accept(visitor, data)
     }
 
     override val valid: Boolean
         get() = true
 }
 
-class JKKtFunctionImpl(override var returnType: JKType,
-                       override var name: JKNameIdentifier,
-                       override var valueArguments: List<JKValueArgument>,
-                       override var block: JKBlock?,
-                       override var modifierList: JKModifierList) : JKElementBase(), JKKtFunction {
+class JKKtFunctionImpl(
+    override var returnType: JKType,
+    override var name: JKNameIdentifier,
+    override var valueArguments: List<JKValueArgument>,
+    override var block: JKBlock,
+    override var modifierList: JKModifierList
+) : JKElementBase(), JKKtFunction {
     override val valid: Boolean
         get() = true
 }
 
-sealed class JKKtQualificationIdentifierImpl : JKKtQualificationIdentifier, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtQualificationIdentifier(this, data)
+sealed class JKKtQualifierImpl : JKQualifier, JKElementBase() {
 
-    object DOT : JKKtQualificationIdentifierImpl()
-    object SAFE : JKKtQualificationIdentifierImpl()
+    object DOT : JKKtQualifierImpl()
+    object SAFE : JKKtQualifierImpl()
 }
 
-class JKKtCallExpressionImpl(override val identifier: JKMethodReference,
-                                     override val arguments: JKExpressionList) : JKKtMethodCallExpression, JKElementBase() {
+class JKKtCallExpressionImpl(
+    override val identifier: JKMethodReference,
+    override val arguments: JKExpressionList
+) : JKKtMethodCallExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtMethodCallExpression(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
@@ -83,13 +78,12 @@ class JKKtFieldAccessExpressionImpl(override val identifier: JKFieldReference) :
     }
 }
 
-class JKKtLiteralExpressionImpl(override val literal: String, override val type: JKLiteralExpression.LiteralType) : JKKtLiteralExpression, JKElementBase() {
+class JKKtLiteralExpressionImpl(override val literal: String, override val type: JKLiteralExpression.LiteralType) : JKKtLiteralExpression,
+    JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
 }
 
-sealed class JKKtOperatorIdentifierImpl : JKKtOperatorIdentifier, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtOperatorIdentifier(this, data)
-
-    object PLUS : JKKtOperatorIdentifierImpl()
-    object MINUS : JKKtOperatorIdentifierImpl()
+sealed class JKKtOperatorImpl : JKOperator, JKElementBase() {
+    object PLUS : JKKtOperatorImpl()
+    object MINUS : JKKtOperatorImpl()
 }

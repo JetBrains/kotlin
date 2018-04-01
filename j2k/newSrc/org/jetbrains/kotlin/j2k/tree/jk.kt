@@ -17,96 +17,65 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.j2k.tree.impl.JKReferenceType
-import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 
 interface JKElement {
+    var parent: JKElement?
+
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
-    fun <R : JKElement, D> transform(transformer: JKTransformer<D>, data: D): R
 
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
-    fun <D> transformChildren(transformer: JKTransformer<D>, data: D)
 }
+
+interface JKDeclaration : JKElement, JKReferenceTarget
 
 interface JKClass : JKDeclaration, JKModifierListOwner {
     val name: JKNameIdentifier
-    val declarations: MutableList<JKDeclaration>
-    val classKind: ClassKind
+    var declarations: List<JKDeclaration>
+    var classKind: ClassKind
 
     enum class ClassKind {
         ABSTRACT, ANNOTATION, CLASS, ENUM, INTERFACE
     }
 }
 
-interface JKStatement : JKElement
-
-interface JKExpression : JKStatement
-
-interface JKBinaryExpression : JKExpression {
-    val left: JKExpression
-    val right: JKExpression?
-    val operator: JKOperatorIdentifier
+interface JKMethod : JKDeclaration, JKModifierListOwner {
+    val name: JKNameIdentifier
+    var valueArguments: List<JKValueArgument>
+    val returnType: JKType
 }
 
-interface JKUnaryExpression : JKExpression {
-    val expression: JKExpression?
-    val operator: JKOperatorIdentifier
+interface JKField : JKDeclaration, JKModifierListOwner {
+    val type: JKType
+    val name: JKNameIdentifier
 }
 
-interface JKPrefixExpression : JKUnaryExpression
+interface JKModifier : JKElement
 
-interface JKPostfixExpression : JKUnaryExpression {
-    override val expression: JKExpression
+interface JKModifierList : JKElement {
+    var modifiers: List<JKModifier>
 }
 
-interface JKQualifiedExpression : JKExpression {
-    val receiver: JKExpression
-    val operator: JKQualificationIdentifier
-    val selector: JKStatement
-}
+interface JKAccessModifier : JKModifier
 
-interface JKMethodCallExpression : JKExpression {
-    val identifier: JKMethodReference
-    val arguments: JKExpressionList
-}
-
-interface JKFieldAccessExpression : JKExpression {
-    val identifier: JKReference
-}
-
-interface JKArrayAccessExpression : JKExpression {
-    val expression: JKExpression
-    val indexExpression: JKExpression?
-}
-
-interface JKParenthesizedExpression : JKExpression {
-    val expression: JKExpression?
-}
-
-interface JKTypeCastExpression : JKExpression {
-    val expression: JKExpression?
-    val type: JKType?
-}
-
-interface JKExpressionList : JKElement {
-    val expressions: Array<JKExpression>
-}
+interface JKModalityModifier : JKModifier
 
 interface JKReference : JKElement {
     val target: JKReferenceTarget
     val referenceType: JKReferenceType
+
+    enum class JKReferenceType {
+        U2U, U2M, M2U
+    }
 }
 
 interface JKMethodReference : JKReference {
-    val containerClass: JKClass
     override val target: JKMethod
 }
 
 interface JKFieldReference : JKReference {
-    val containerClass: JKClass
-    override val target: JKJavaField
+    override val target: JKField
 }
 
 interface JKClassReference : JKReference {
@@ -121,22 +90,72 @@ interface JKClassType : JKType {
     val parameters: List<JKType>
 }
 
-interface JKOperatorIdentifier : JKIdentifier
-
-interface JKQualificationIdentifier : JKIdentifier
+interface JKStatement : JKElement
 
 interface JKLoop : JKStatement
 
-interface JKDeclaration : JKElement, JKReferenceTarget
-
 interface JKBlock : JKElement {
-    val statements: List<JKStatement>
+    var statements: List<JKStatement>
 }
 
 interface JKIdentifier : JKElement
 
 interface JKNameIdentifier : JKIdentifier {
     val name: String
+}
+
+interface JKExpression : JKElement
+
+interface JKExpressionStatement : JKStatement {
+    val expression: JKExpression
+}
+
+interface JKBinaryExpression : JKExpression {
+    var left: JKExpression
+    var right: JKExpression
+    var operator: JKOperator
+}
+
+interface JKUnaryExpression : JKExpression {
+    var expression: JKExpression
+    var operator: JKOperator
+}
+
+interface JKPrefixExpression : JKUnaryExpression
+
+interface JKPostfixExpression : JKUnaryExpression
+
+interface JKQualifiedExpression : JKExpression {
+    val receiver: JKExpression
+    val operator: JKQualifier
+    val selector: JKExpression
+}
+
+interface JKMethodCallExpression : JKExpression {
+    val identifier: JKMethodReference
+    val arguments: JKExpressionList
+}
+
+interface JKFieldAccessExpression : JKExpression {
+    val identifier: JKFieldReference
+}
+
+interface JKArrayAccessExpression : JKExpression {
+    val expression: JKExpression
+    val indexExpression: JKExpression
+}
+
+interface JKParenthesizedExpression : JKExpression {
+    val expression: JKExpression
+}
+
+interface JKTypeCastExpression : JKExpression {
+    val expression: JKExpression
+    val type: JKType
+}
+
+interface JKExpressionList : JKElement {
+    var expressions: List<JKExpression>
 }
 
 interface JKLiteralExpression : JKExpression {
@@ -148,32 +167,11 @@ interface JKLiteralExpression : JKExpression {
     }
 }
 
-interface JKModifierList : JKElement {
-    val modifiers: List<JKModifier>
-}
-
-interface JKModifier : JKElement
-
-interface JKAccessModifier : JKModifier
-
 interface JKValueArgument : JKElement {
-    val type: JKType
+    var type: JKType
     val name: String
 }
 
 interface JKStringLiteralExpression : JKLiteralExpression {
     val text: String
-}
-
-interface JKModalityModifier : JKModifier
-
-interface JKMethod : JKDeclaration {
-    var modifierList: JKModifierList
-    var name: JKNameIdentifier
-    var valueArguments: List<JKValueArgument>
-    var block: JKBlock?
-}
-
-interface JKExpressionStatement : JKStatement {
-    val expression: JKExpression
 }

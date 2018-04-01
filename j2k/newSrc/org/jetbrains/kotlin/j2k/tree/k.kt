@@ -16,7 +16,15 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKKtFun : JKDeclaration
+interface JKKtProperty : JKField {
+    val initializer: JKExpression
+    val getter: JKBlock
+    val setter: JKBlock
+}
+
+interface JKKtFunction : JKMethod {
+    val block: JKBlock
+}
 
 interface JKKtConstructor : JKDeclaration
 
@@ -26,20 +34,6 @@ interface JKKtAssignmentStatement : JKStatement
 
 interface JKKtCall : JKMethodCallExpression
 
-interface JKKtProperty : JKDeclaration, JKModifierListOwner {
-    val type: JKType
-    val name: JKNameIdentifier
-    val initializer: JKExpression?
-    val getter: JKBlock?
-    val setter: JKBlock?
-}
-
-interface JKKtFunction : JKDeclaration, JKModifierListOwner {
-    val returnType: JKType
-    val name: JKNameIdentifier
-    val valueArguments: List<JKValueArgument>
-    val block: JKBlock?
-}
 interface JKKtModifier : JKModifier {
     val type: KtModifierType
 
@@ -49,12 +43,8 @@ interface JKKtModifier : JKModifier {
     }
 }
 
-interface JKKtQualificationIdentifier : JKQualificationIdentifier
-
 interface JKKtMethodCallExpression : JKMethodCallExpression
 
 interface JKKtFieldAccessExpression : JKFieldAccessExpression
 
 interface JKKtLiteralExpression : JKLiteralExpression
-
-interface JKKtOperatorIdentifier : JKOperatorIdentifier

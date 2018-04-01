@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKJavaField : JKDeclaration, JKModifierListOwner {
-    val type: JKType
-    val name: JKNameIdentifier
-    val initializer: JKExpression?
+interface JKJavaField : JKField {
+    val initializer: JKExpression
 }
 
-interface JKJavaMethod : JKMethod
+interface JKJavaMethod : JKMethod {
+    val block: JKBlock
+}
 
 interface JKJavaForLoop : JKLoop
 
@@ -36,10 +36,6 @@ interface JKJavaArrayType : JKType {
     val type: JKType
 }
 
-interface JKJavaOperatorIdentifier : JKOperatorIdentifier
-
-interface JKJavaQualificationIdentifier : JKQualificationIdentifier
-
 interface JKJavaMethodCallExpression : JKMethodCallExpression
 
 interface JKJavaFieldAccessExpression : JKFieldAccessExpression
@@ -48,12 +44,6 @@ interface JKJavaNewExpression : JKExpression {
     val identifier: JKClassReference
     val arguments: JKExpressionList
 }
-
-interface JKJavaMethodReference : JKMethodReference
-
-interface JKJavaFieldReference : JKFieldReference
-
-interface JKJavaClassReference : JKClassReference
 
 interface JKJavaAccessModifier : JKAccessModifier {
     val type: AccessModifierType
