@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 import java.util.*
@@ -144,7 +144,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
             superConstructor: ConstructorDescriptor?
     ): KtSecondaryConstructor? {
         fun equalTypes(types1: Collection<KotlinType>, types2: Collection<KotlinType>): Boolean {
-            return types1.size == types2.size && (types1.zip(types2)).all { KotlinTypeChecker.DEFAULT.equalTypes(it.first, it.second) }
+            return types1.size == types2.size && (types1.zip(types2)).all { it.first.isEquivalentTo(it.second) }
         }
 
         val constructorParamTypes = propertiesToInitialize.map { it.type } +

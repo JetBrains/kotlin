@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -149,7 +149,7 @@ class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
         val typesInBoundsSet =
             bounds.filter { it.isProper && it.constrainingType.constructor.isDenotable }.map { it.constrainingType }.toSet()
         // Flexible types are equal to inflexible
-        if (typesInBoundsSet.any { KotlinTypeChecker.DEFAULT.equalTypes(it, possibleAnswer) }) return true
+        if (typesInBoundsSet.any { it.isEquivalentTo(possibleAnswer) }) return true
 
         // For non-denotable number types only, no valid types are mentioned, so common supertype is valid
         val numberLowerBounds = filterBounds(bounds, LOWER_BOUND).filter { it.constructor is IntegerValueTypeConstructor }
@@ -176,7 +176,7 @@ class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
                     return false
                 }
 
-                EXACT_BOUND -> if (!KotlinTypeChecker.DEFAULT.equalTypes(bound.constrainingType, possibleAnswer)) {
+                EXACT_BOUND -> if (!bound.constrainingType.isEquivalentTo(possibleAnswer)) {
                     return false
                 }
             }

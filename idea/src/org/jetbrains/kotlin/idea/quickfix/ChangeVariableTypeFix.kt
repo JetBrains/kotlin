@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
@@ -143,11 +143,11 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
                         if (!propertyType.isSubtypeOf(overriddenPropertyType)) {
                             overriddenMismatchingProperties.add(overriddenProperty)
                         }
-                        else if (overriddenProperty.isVar && !KotlinTypeChecker.DEFAULT.equalTypes(overriddenPropertyType, propertyType)) {
+                        else if (overriddenProperty.isVar && !overriddenPropertyType.isEquivalentTo(propertyType)) {
                             canChangeOverriddenPropertyType = false
                         }
                         if (overriddenProperty.isVar && lowerBoundOfOverriddenPropertiesTypes != null &&
-                            !KotlinTypeChecker.DEFAULT.equalTypes(lowerBoundOfOverriddenPropertiesTypes, overriddenPropertyType)) {
+                            !lowerBoundOfOverriddenPropertiesTypes.isEquivalentTo(overriddenPropertyType)) {
                             lowerBoundOfOverriddenPropertiesTypes = null
                         }
                     }

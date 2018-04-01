@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 
 class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<KtTypeArgumentList>(RemoveExplicitTypeArgumentsIntention::class) {
     override fun problemHighlightType(element: KtTypeArgumentList): ProblemHighlightType =
@@ -85,7 +85,7 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
 
             fun equalTypes(type1: KotlinType, type2: KotlinType): Boolean {
                 return if (approximateFlexible) {
-                    KotlinTypeChecker.DEFAULT.equalTypes(type1, type2)
+                    type1.isEquivalentTo(type2)
                 }
                 else {
                     type1 == type2

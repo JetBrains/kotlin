@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
@@ -921,7 +920,7 @@ class DeclarationsChecker(
             while (iterator.hasNext()) {
                 val type = iterator.next()
                 for (otherType in conflictingTypes) {
-                    val subtypeOf = KotlinTypeChecker.DEFAULT.equalTypes(type, otherType)
+                    val subtypeOf = type.isEquivalentTo(otherType)
                     if (type !== otherType && subtypeOf) {
                         iterator.remove()
                         break

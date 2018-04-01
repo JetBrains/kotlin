@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionsOnDeclarationBodyChecke
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
@@ -657,7 +657,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
             ValueParameterDescriptor adaptedParameter = descriptor.getValueParameters().get(valueParameter.getIndex());
-            if (KotlinTypeChecker.DEFAULT.equalTypes(adaptedParameter.getType(), valueParameter.getType())) continue;
+            if (TypeUtils.equalTypes(adaptedParameter.getType(), valueParameter.getType())) continue;
 
             SamType samType = SamType.createByValueParameter(valueParameter);
             if (samType == null) continue;

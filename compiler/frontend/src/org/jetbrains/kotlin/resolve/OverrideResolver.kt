@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractFakeOver
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import java.util.*
@@ -844,7 +844,7 @@ class OverrideResolver(
             val substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.type, Variance.OUT_VARIANCE)!!
 
             return if (superDescriptor.isVar) {
-                KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.type, substitutedSuperReturnType)
+                subDescriptor.type.isEquivalentTo(substitutedSuperReturnType)
             } else {
                 subDescriptor.type.isSubtypeOf(substitutedSuperReturnType)
             }

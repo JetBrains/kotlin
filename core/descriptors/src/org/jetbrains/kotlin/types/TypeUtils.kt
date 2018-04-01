@@ -85,6 +85,7 @@ fun KotlinType?.isArrayOfNothing(): Boolean {
     return typeArg != null && KotlinBuiltIns.isNothingOrNullableNothing(typeArg)
 }
 
+fun KotlinType.isEquivalentTo(other: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.equalTypes(this, other)
 
 fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 

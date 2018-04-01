@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 
 object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
     // Prohibits covariant type argument conversions `List<String> -> (MutableList<Any>..List<Any>)` when expected type's lower bound is invariant.
@@ -79,7 +79,7 @@ object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
             if (lowerParameters[index].variance == Variance.INVARIANT
                 && upperParameters[index].variance == Variance.OUT_VARIANCE
                 && lowerArgument.projectionKind != Variance.OUT_VARIANCE
-                && !KotlinTypeChecker.DEFAULT.equalTypes(correspondingSubType.arguments[index].type, lowerArgument.type)
+                && !correspondingSubType.arguments[index].type.isEquivalentTo(lowerArgument.type)
             ) {
                 c.trace.report(ErrorsJvm.JAVA_TYPE_MISMATCH.on(expression, expressionTypeWithSmartCast, expectedType))
             }

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -292,7 +292,7 @@ class SignatureEnhancement(
             // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
             // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
             // Note that `this` is flexible here, so it's equal to it's bounds
-            val onlyHeadTypeConstructor = isCovariant && fromOverridden.any { !KotlinTypeChecker.DEFAULT.equalTypes(it, fromOverride) }
+            val onlyHeadTypeConstructor = isCovariant && fromOverridden.any { !it.isEquivalentTo(fromOverride) }
 
             val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
             val computedResult = Array(treeSize) { index ->

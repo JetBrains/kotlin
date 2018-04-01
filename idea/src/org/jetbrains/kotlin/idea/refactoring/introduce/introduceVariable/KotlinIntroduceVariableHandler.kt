@@ -67,7 +67,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
@@ -496,7 +496,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                                  ?: physicalExpression.computeTypeInfoInContext(scope, physicalExpression, bindingTrace, dataFlowInfo).type
         val noTypeInference = expressionType != null
                               && typeNoExpectedType != null
-                              && !KotlinTypeChecker.DEFAULT.equalTypes(expressionType, typeNoExpectedType)
+                              && !expressionType.isEquivalentTo(typeNoExpectedType)
 
         if (expressionType == null && bindingContext.get(BindingContext.QUALIFIER, physicalExpression) != null) {
             return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.package.expression"))

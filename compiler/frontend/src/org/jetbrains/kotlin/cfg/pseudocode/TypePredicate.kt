@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 interface TypePredicate : (KotlinType) -> Boolean {
@@ -29,7 +30,7 @@ interface TypePredicate : (KotlinType) -> Boolean {
 }
 
 data class SingleType(val targetType: KotlinType) : TypePredicate {
-    override fun invoke(typeToCheck: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.equalTypes(typeToCheck, targetType)
+    override fun invoke(typeToCheck: KotlinType): Boolean = typeToCheck.isEquivalentTo(targetType)
     override fun toString(): String = targetType.render()
 }
 

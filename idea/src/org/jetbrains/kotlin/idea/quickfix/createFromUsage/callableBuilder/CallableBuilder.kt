@@ -74,8 +74,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.lang.AssertionError
 import java.lang.IllegalArgumentException
@@ -180,7 +180,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             // We have to use semantic equality here
             data class EqWrapper(val _type: KotlinType) {
                 override fun equals(other: Any?) = this === other
-                                                   || other is EqWrapper && KotlinTypeChecker.DEFAULT.equalTypes(_type, other._type)
+                                                   || other is EqWrapper && _type.isEquivalentTo(other._type)
                 override fun hashCode() = 0 // no good way to compute hashCode() that would agree with our equals()
             }
 

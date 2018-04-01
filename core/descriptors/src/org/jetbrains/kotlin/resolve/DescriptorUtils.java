@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
 
@@ -460,9 +459,9 @@ public class DescriptorUtils {
 
         KotlinBuiltIns builtIns = getBuiltIns(variable);
         return KotlinBuiltIns.isPrimitiveType(type) ||
-               KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getStringType(), type) ||
-               KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getNumber().getDefaultType(), type) ||
-               KotlinTypeChecker.DEFAULT.equalTypes(builtIns.getAnyType(), type);
+               TypeUtils.equalTypes(builtIns.getStringType(), type) ||
+               TypeUtils.equalTypes(builtIns.getNumber().getDefaultType(), type) ||
+               TypeUtils.equalTypes(builtIns.getAnyType(), type);
     }
 
     public static boolean classCanHaveAbstractFakeOverride(@NotNull ClassDescriptor classDescriptor) {

@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
@@ -159,7 +159,7 @@ fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExp
     val bindingContext = initializerOrBodyExpression.analyze()
     val scope = initializerOrBodyExpression.getResolutionScope(bindingContext, initializerOrBodyExpression.getResolutionFacade())
     val expressionType = initializerOrBodyExpression.computeTypeInContext(scope) ?: return false
-    if (KotlinTypeChecker.DEFAULT.equalTypes(expressionType, declaredType)) return true
+    if (expressionType.isEquivalentTo(declaredType)) return true
     return canChangeTypeToSubtype && expressionType.isSubtypeOf(declaredType)
 }
 

@@ -41,14 +41,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isEquivalentTo
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
 
 internal operator fun KotlinType.contains(inner: KotlinType): Boolean {
-    return KotlinTypeChecker.DEFAULT.equalTypes(this, inner) || arguments.any { inner in it.type }
+    return this.isEquivalentTo(inner) || arguments.any { inner in it.type }
 }
 
 internal operator fun KotlinType.contains(descriptor: ClassifierDescriptor): Boolean {
@@ -300,7 +300,7 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
     val currentType = makeNotNullable()
 
     return if (when (variance) {
-        Variance.INVARIANT      -> KotlinTypeChecker.DEFAULT.equalTypes(currentType, substitution.forType)
+        Variance.INVARIANT      -> currentType.isEquivalentTo(substitution.forType)
         Variance.IN_VARIANCE    -> currentType.isSubtypeOf(substitution.forType)
         Variance.OUT_VARIANCE   -> substitution.forType.isSubtypeOf(currentType)
     }) {
