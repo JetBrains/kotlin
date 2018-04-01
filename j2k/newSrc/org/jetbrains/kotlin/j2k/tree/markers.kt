@@ -16,6 +16,10 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+interface JKOperator
+
+interface JKQualifier
+
 interface JKModifierListOwner {
     var modifierList: JKModifierList
 }

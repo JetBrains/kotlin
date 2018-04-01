@@ -16,36 +16,50 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.tree.JKDeclaration
+import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKElement
 import org.jetbrains.kotlin.j2k.tree.JKJavaField
 import org.jetbrains.kotlin.j2k.tree.JKJavaMethod
+import org.jetbrains.kotlin.j2k.tree.impl.JKBlockImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtPropertyImpl
 
 class JavaFieldToKotlinPropertyConversion : TransformerBasedConversion() {
+    override fun visitElement(element: JKElement) {
+        element.acceptChildren(this, null)
+    }
 
-    override fun visitElement(element: JKElement): JKElement = element.also { it.transformChildren(this, null) }
-
-    override fun visitJavaField(javaField: JKJavaField): JKDeclaration {
+    override fun visitClass(klass: JKClass) {
         somethingChanged = true
-
-        return JKKtPropertyImpl(javaField.modifierList, javaField.type, javaField.name, javaField.initializer)
+        klass.declarations = klass.declarations.map {
+            if (it is JKJavaField) JKKtPropertyImpl(
+                it.modifierList,
+                it.type,
+                it.name,
+                it.initializer,
+                JKBlockImpl(),
+                JKBlockImpl()
+            ) else it
+        }
     }
 }
 
 class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
-    override fun visitElement(element: JKElement): JKElement = element.also { it.transformChildren(this, null) }
+    override fun visitElement(element: JKElement) {
+        element.acceptChildren(this, null)
+    }
 
-    override fun visitJavaMethod(javaMethod: JKJavaMethod): JKDeclaration {
+    override fun visitClass(klass: JKClass) {
         somethingChanged = true
-        return JKKtFunctionImpl(
-            JKJavaPrimitiveTypeImpl.BOOLEAN,
-            javaMethod.name,
-            javaMethod.valueArguments,
-            javaMethod.block,
-            javaMethod.modifierList
-        )
+        klass.declarations = klass.declarations.map {
+            if (it is JKJavaMethod) JKKtFunctionImpl(
+                JKJavaPrimitiveTypeImpl.BOOLEAN,
+                it.name,
+                it.valueArguments,
+                it.block,
+                it.modifierList
+            ) else it
+        }
     }
 }

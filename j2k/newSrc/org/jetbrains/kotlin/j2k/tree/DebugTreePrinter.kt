@@ -75,12 +75,12 @@ private class DebugTreePrinter : JKVisitorVoid {
 
     override fun visitMethodReference(methodReference: JKMethodReference) {
         printer.println(methodReference.classNameWithoutJK())
-        printer.println(methodReference.containerClass.name.name, "@", methodReference.target.name.name)
+        printer.println(methodReference.target.parent.let { (it as? JKClass)?.name?.name ?: "null" }, "@", methodReference.target.name.name)
     }
 
     override fun visitFieldReference(fieldReference: JKFieldReference) {
         printer.println(fieldReference.classNameWithoutJK())
-        printer.println(fieldReference.containerClass.name.name, "@", fieldReference.target.name.name)
+        printer.println(fieldReference.target.parent.let { (it as? JKClass)?.name?.name ?: "null" }, "@", fieldReference.target.name.name)
     }
 
     override fun visitClassReference(classReference: JKClassReference) {
@@ -91,8 +91,8 @@ private class DebugTreePrinter : JKVisitorVoid {
     override fun visitType(type: JKType) {
         printer.println(type.classNameWithoutJK(), " \"")
         printer.indented {
-            if(type is JKClassType)
-            printer.println(type.classReference.target.name.name)
+            if (type is JKClassType)
+                printer.println(type.classReference.target.name.name)
         }
         printer.println("\"")
     }

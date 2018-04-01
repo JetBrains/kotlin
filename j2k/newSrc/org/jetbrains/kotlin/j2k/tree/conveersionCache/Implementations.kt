@@ -20,43 +20,29 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKElementBase
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKModifierListImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKReferenceType
-import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
 
-class JKMultiverseField(override var name: JKNameIdentifier) : JKMultiverseDeclaration, JKJavaField {
-    override var initializer: JKExpression? = null
+class JKMultiverseField(override var name: JKNameIdentifier) : JKField, JKElementBase() {
     override var modifierList: JKModifierList = JKModifierListImpl()
     override var type: JKType = JKJavaPrimitiveTypeImpl.BOOLEAN //TODO
     override val valid: Boolean
         get() = true
 }
 
-class JKMultiverseProperty : JKMultiverseDeclaration {
-    override val valid: Boolean
-        get() = true
-}
-
-class JKMultiverseMethod(override var name: JKNameIdentifier) : JKMultiverseDeclaration, JKMethod {
+class JKMultiverseMethod(override var name: JKNameIdentifier) : JKMethod, JKElementBase() {
+    override val returnType: JKType
+        get() = TODO("not implemented")
     override var modifierList: JKModifierList = JKModifierListImpl()
-    override var block: JKBlock? = null
     override var valueArguments: List<JKValueArgument> = listOf()
     override val valid: Boolean
         get() = true
 }
 
-class JKMultiverseClass(override var name: JKNameIdentifier, override var declarations: List<JKDeclaration>,
-                        override var classKind: JKClass.ClassKind, override var modifierList: JKModifierList) : JKClass, JKMultiverseDeclaration {
+class JKMultiverseClass(
+    override var name: JKNameIdentifier, override var declarations: List<JKDeclaration>,
+    override var classKind: JKClass.ClassKind, override var modifierList: JKModifierList
+) : JKClass, JKElementBase() {
+    override var parent: JKElement? = null
     override val valid: Boolean
         get() = true
-}
-
-class JKMultiverseClassReferenceImpl(override val target: JKClass) : JKJavaClassReference, JKElementBase() {
-    override val referenceType: JKReferenceType = JKReferenceType.M2U
-
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaClassReference(this, data)
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-
-    }
 }

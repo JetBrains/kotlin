@@ -101,29 +101,31 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
         }
 
         fun PsiBinaryExpression.toJK(): JKExpression {
-            return JKBinaryExpressionImpl(lOperand.toJK(), rOperand?.toJK(), operationSign.toJK())
+            return JKBinaryExpressionImpl(lOperand.toJK(), rOperand?.toJK() ?: TODO(), operationSign.toJK())
         }
 
         fun PsiLiteralExpression.toJK(): JKLiteralExpression {
             if (this !is PsiLiteralExpressionImpl) {
                 throw RuntimeException("Not supported")
             }
-            return JKJavaLiteralExpressionImpl(innerText!!, when (this.literalElementType) {
-                JavaTokenType.STRING_LITERAL -> JKLiteralExpression.LiteralType.STRING
-                JavaTokenType.TRUE_KEYWORD, JavaTokenType.FALSE_KEYWORD -> JKLiteralExpression.LiteralType.BOOLEAN
-                JavaTokenType.NULL_KEYWORD -> JKLiteralExpression.LiteralType.NULL
-                else -> throw RuntimeException("Not supported")
-            })
+            return JKJavaLiteralExpressionImpl(
+                innerText!!, when (this.literalElementType) {
+                    JavaTokenType.STRING_LITERAL -> JKLiteralExpression.LiteralType.STRING
+                    JavaTokenType.TRUE_KEYWORD, JavaTokenType.FALSE_KEYWORD -> JKLiteralExpression.LiteralType.BOOLEAN
+                    JavaTokenType.NULL_KEYWORD -> JKLiteralExpression.LiteralType.NULL
+                    else -> throw RuntimeException("Not supported")
+                }
+            )
         }
 
-        fun PsiJavaToken.toJK(): JKOperatorIdentifier = when (tokenType) {
-            JavaTokenType.PLUS -> JKJavaOperatorIdentifierImpl.PLUS
-            JavaTokenType.MINUS -> JKJavaOperatorIdentifierImpl.MINUS
+        fun PsiJavaToken.toJK(): JKOperator = when (tokenType) {
+            JavaTokenType.PLUS -> JKJavaOperatorImpl.PLUS
+            JavaTokenType.MINUS -> JKJavaOperatorImpl.MINUS
             else -> throw RuntimeException("Not supported")
         }
 
         fun PsiPrefixExpression.toJK(): JKExpression {
-            return JKPrefixExpressionImpl(operand?.toJK(), operationSign.toJK())
+            return JKPrefixExpressionImpl(operand?.toJK() ?: TODO(), operationSign.toJK())
         }
 
         fun PsiPostfixExpression.toJK(): JKExpression {
@@ -136,21 +138,19 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
             val identifier = method.resolve().convertReference()
             val call = JKJavaMethodCallExpressionImpl(identifier as JKMethodReference, argumentList.toJK())
             return if (method.findChildByRole(ChildRole.DOT) != null) {
-                JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualificationIdentifierImpl.DOT, call)
-            }
-            else {
+                JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, call)
+            } else {
                 call
             }
         }
 
         fun PsiReferenceExpression.toJK(): JKExpression {
             val impl = this as PsiReferenceExpressionImpl
-            val identifier = impl.resolve().convertReference()
+            val identifier = impl.resolve().convertReference() as JKFieldReference
             val access = JKJavaFieldAccessExpressionImpl(identifier)
             return if (impl.findChildByRole(ChildRole.DOT) != null) {
-                JKQualifiedExpressionImpl((impl.qualifier as PsiExpression).toJK(), JKJavaQualificationIdentifierImpl.DOT, access)
-            }
-            else {
+                JKQualifiedExpressionImpl((impl.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, access)
+            } else {
                 access
             }
         }
@@ -161,8 +161,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
                 val arrayInitializer = arrayInitializer
                 if (arrayInitializer != null) {
                     return JKJavaNewArrayImpl(arrayInitializer.initializers.map { toJK() })
-                }
-                else {
+                } else {
                     val dimensions = mutableListOf<PsiLiteralExpression?>()
                     var child = firstChild
                     while (child != null) {
@@ -170,8 +169,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
                             child = child.nextSibling
                             if (child.node.elementType == JavaTokenType.RBRACKET) {
                                 dimensions.add(null)
-                            }
-                            else {
+                            } else {
                                 dimensions.add(child as PsiLiteralExpression?)
                             }
                         }
@@ -184,19 +182,19 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
         }
 
         fun PsiArrayAccessExpression.toJK(): JKExpression {
-            return JKArrayAccessExpressionImpl(arrayExpression.toJK(), indexExpression?.toJK())
+            return JKArrayAccessExpressionImpl(arrayExpression.toJK(), indexExpression?.toJK() ?: TODO())
         }
 
         fun PsiTypeCastExpression.toJK(): JKExpression {
-            return JKTypeCastExpressionImpl(operand?.toJK(), castType?.type?.toJK())
+            return JKTypeCastExpressionImpl(operand?.toJK() ?: TODO(), castType?.type?.toJK() ?: TODO())
         }
 
         fun PsiParenthesizedExpression.toJK(): JKExpression {
-            return JKParenthesizedExpressionImpl(expression?.toJK())
+            return JKParenthesizedExpressionImpl(expression?.toJK() ?: TODO())
         }
 
         fun PsiExpressionList?.toJK(): JKExpressionList {
-            return JKExpressionListImpl(this?.expressions?.map { it.toJK() }?.toTypedArray() ?: emptyArray())
+            return JKExpressionListImpl(this?.expressions?.map { it.toJK() } ?: emptyList())
         }
 
         fun PsiElement?.convertReference(): JKReference = when (this) {
@@ -206,18 +204,27 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
             else -> throw Exception("Invalid PSI")
         }
 
-        fun PsiMethod.convertMethodReference(): JKJavaMethodReference {
+        fun PsiMethod.convertMethodReference(): JKMethodReference {
             val clazz = this@JavaToJKTreeBuilder.resolveClassReference(containingClass ?: TODO())
-            return JKMethodReferenceImpl(clazz, this@JavaToJKTreeBuilder.resolveMethodReference(clazz, this))
+            return JKMethodReferenceImpl(
+                this@JavaToJKTreeBuilder.resolveMethodReference(clazz, this),
+                if (clazz is JKMultiverseClass) JKReference.JKReferenceType.U2M else JKReference.JKReferenceType.U2U
+            )
         }
 
-        fun PsiField.convertFieldReference(): JKJavaFieldReference {
+        fun PsiField.convertFieldReference(): JKFieldReference {
             val clazz = this@JavaToJKTreeBuilder.resolveClassReference(containingClass ?: TODO())
-            return JKFieldReferenceImpl(clazz, this@JavaToJKTreeBuilder.resolveFieldReference(clazz, this))
+            return JKFieldReferenceImpl(
+                this@JavaToJKTreeBuilder.resolveFieldReference(clazz, this),
+                if (clazz is JKMultiverseClass) JKReference.JKReferenceType.U2M else JKReference.JKReferenceType.U2U
+            )
         }
 
-        fun PsiClass.convertClassReference(): JKJavaClassReference {
-            return JKClassReferenceImpl(this@JavaToJKTreeBuilder.resolveClassReference(this))
+        fun PsiClass.convertClassReference(): JKClassReference {
+            val clazz = this@JavaToJKTreeBuilder.resolveClassReference(this)
+            return JKClassReferenceImpl(
+                clazz, if (clazz is JKMultiverseClass) JKReference.JKReferenceType.U2M else JKReference.JKReferenceType.U2U
+            )
         }
 
         fun PsiType.toJK(): JKType {
@@ -245,18 +252,21 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
                 else -> JKClass.ClassKind.CLASS
             }
             return JKClassImpl(with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), classKind).apply {
-                declarations = children.mapNotNull { ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKDeclaration }
+                declarations =
+                        children.mapNotNull { ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKDeclaration }
             }
         }
 
         fun PsiField.toJK(): JKJavaField {
             return JKJavaFieldImpl(with(modifierMapper) { modifierList.toJK() }, with(expressionTreeMapper) { type.toJK() },
-                                   JKNameIdentifierImpl(this.name!!), with(expressionTreeMapper) { initializer?.toJK() })
+                                   JKNameIdentifierImpl(this.name), with(expressionTreeMapper) { initializer?.toJK() } ?: TODO())
         }
 
         fun PsiMethod.toJK(): JKJavaMethod {
-            return JKJavaMethodImpl(with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name),
-                                    parameterList.parameters.map { it -> it.toJK() }, body?.toJK())
+            return JKJavaMethodImpl(
+                with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name),
+                parameterList.parameters.map { it -> it.toJK() }, body?.toJK() ?: TODO()
+            )
         }
 
         fun PsiMember.toJK(): JKDeclaration? = when (this) {
@@ -282,17 +292,10 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
     }
 
     private inner class ModifierMapper {
-        fun PsiModifierList?.toJK(): JKModifierList {
-
-            val modifierList = JKModifierListImpl()
-            if (this == null) return modifierList
-
-            modifierList.modifiers = PsiModifier.MODIFIERS
-                    .filter { hasExplicitModifier(it) }
-                    .map { modifierToJK(it) }
-
-            return modifierList
-        }
+        fun PsiModifierList?.toJK(): JKModifierList = JKModifierListImpl(
+            if (this == null) emptyList()
+            else PsiModifier.MODIFIERS.filter { hasExplicitModifier(it) }.map { modifierToJK(it) }.toMutableList()
+        )
 
         fun modifierToJK(name: String): JKModifier = when (name) {
             PsiModifier.PUBLIC -> JKJavaAccessModifierImpl(JKJavaAccessModifier.AccessModifierType.PUBLIC)

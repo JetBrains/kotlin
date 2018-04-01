@@ -15,26 +15,3 @@
  */
 
 package org.jetbrains.kotlin.j2k.tree.conveersionCache
-
-import org.jetbrains.kotlin.j2k.tree.JKDeclaration
-import org.jetbrains.kotlin.j2k.tree.JKElement
-import org.jetbrains.kotlin.j2k.tree.visitors.JKTransformer
-import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
-
-interface JKMultiverseDeclaration : JKDeclaration{
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun <R : JKElement, D> transform(transformer: JKTransformer<D>, data: D): R {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun <D> transformChildren(transformer: JKTransformer<D>, data: D) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}

@@ -20,6 +20,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.j2k.tree.JKClass
+import org.jetbrains.kotlin.j2k.tree.JKField
 import org.jetbrains.kotlin.j2k.tree.JKJavaField
 import org.jetbrains.kotlin.j2k.tree.JKMethod
 import org.jetbrains.kotlin.j2k.tree.impl.JKNameIdentifierImpl
@@ -31,11 +32,11 @@ interface ReferenceTargetProvider {
     fun putMultiverseClass(clazz: JKMultiverseClass)
     fun resolveMethodReference(clazz: JKClass, method: PsiMethod): JKMethod {
         return clazz.declarations.asSequence().filter { it is JKMethod && it.name.name == method.name }.firstOrNull() as JKMethod?
-               ?: JKMultiverseMethod(JKNameIdentifierImpl(method.name)).also { clazz.declarations += it }
+                ?: JKMultiverseMethod(JKNameIdentifierImpl(method.name)).also { clazz.declarations += it }
     }
 
-    fun resolveFieldReference(clazz: JKClass, field: PsiField): JKJavaField {
-        return clazz.declarations.asSequence().filter { it is JKJavaField && it.name.name == field.name }.firstOrNull() as JKJavaField?
-               ?: JKMultiverseField(JKNameIdentifierImpl(field.name!!)).also { clazz.declarations += it }
+    fun resolveFieldReference(clazz: JKClass, field: PsiField): JKField {
+        return clazz.declarations.asSequence().filter { it is JKJavaField && it.name.name == field.name }.firstOrNull() as JKField?
+                ?: JKMultiverseField(JKNameIdentifierImpl(field.name)).also { clazz.declarations += it }
     }
 }
