@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 // very initial state of component
 // todo: handle all diagnostic inside DiagnosticReporterByTrackingStrategy
@@ -43,7 +43,7 @@ class AdditionalDiagnosticReporter(private val languageVersionSettings: Language
         expectedResultType: UnwrappedType
     ): SmartCastDiagnostic? {
         if (argument !is ExpressionKotlinCallArgument) return null
-        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(argument.receiver.receiverValue.type, expectedResultType)) {
+        if (!argument.receiver.receiverValue.type.isSubtypeOf(expectedResultType)) {
             return SmartCastDiagnostic(argument, expectedResultType.unwrap(), candidate.atom)
         }
         return null

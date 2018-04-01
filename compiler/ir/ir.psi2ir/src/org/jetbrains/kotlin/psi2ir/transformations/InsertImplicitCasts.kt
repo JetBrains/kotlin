@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.upperIfFlexible
 import java.util.*
@@ -218,13 +218,13 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
                 implicitCast(nonNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
             }
 
-            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType) ->
+            valueType.makeNotNullable().isSubtypeOf(expectedType) ->
                 this
 
             KotlinBuiltIns.isInt(valueType) && notNullableExpectedType.isBuiltInIntegerType() ->
                 implicitCast(notNullableExpectedType, IrTypeOperator.IMPLICIT_INTEGER_COERCION)
 
-            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType) ->
+            valueType.isSubtypeOf(expectedType) ->
                 this
 
             else -> {
@@ -251,7 +251,7 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
     private fun IrExpression.coerceToUnit(): IrExpression {
         val valueType = this.type
 
-        return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, builtIns.unitType))
+        return if (valueType.isSubtypeOf(builtIns.unitType))
             this
         else
             IrTypeOperatorCallImpl(

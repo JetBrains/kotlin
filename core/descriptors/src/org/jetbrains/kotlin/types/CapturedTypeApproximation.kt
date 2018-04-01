@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
 data class ApproximationBounds<out T>(
@@ -39,7 +39,7 @@ private class TypeArgument(
         val outProjection: KotlinType
 ) {
     val isConsistent: Boolean
-        get() = KotlinTypeChecker.DEFAULT.isSubtypeOf(inProjection, outProjection)
+        get() = inProjection.isSubtypeOf(outProjection)
 }
 
 private fun TypeArgument.toTypeProjection(): TypeProjection {

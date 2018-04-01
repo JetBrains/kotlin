@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 interface TypePredicate : (KotlinType) -> Boolean {
     override fun invoke(typeToCheck: KotlinType): Boolean
@@ -33,7 +34,7 @@ data class SingleType(val targetType: KotlinType) : TypePredicate {
 }
 
 data class AllSubtypes(val upperBound: KotlinType) : TypePredicate {
-    override fun invoke(typeToCheck: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(typeToCheck, upperBound)
+    override fun invoke(typeToCheck: KotlinType): Boolean = typeToCheck.isSubtypeOf(upperBound)
 
     override fun toString(): String = "{<: ${upperBound.render()}}"
 }

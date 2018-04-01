@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import java.util.*
@@ -300,8 +301,8 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
 
     return if (when (variance) {
         Variance.INVARIANT      -> KotlinTypeChecker.DEFAULT.equalTypes(currentType, substitution.forType)
-        Variance.IN_VARIANCE    -> KotlinTypeChecker.DEFAULT.isSubtypeOf(currentType, substitution.forType)
-        Variance.OUT_VARIANCE   -> KotlinTypeChecker.DEFAULT.isSubtypeOf(substitution.forType, currentType)
+        Variance.IN_VARIANCE    -> currentType.isSubtypeOf(substitution.forType)
+        Variance.OUT_VARIANCE   -> substitution.forType.isSubtypeOf(currentType)
     }) {
         TypeUtils.makeNullableAsSpecified(substitution.byType, nullable)
     }

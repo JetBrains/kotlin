@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -272,7 +272,7 @@ fun createResolutionCandidatesForConstructors(
         val substitutedOuterClassType = knownSubstitutor?.substitute(outerClassType, Variance.INVARIANT) ?: outerClassType
 
         val receiver = lexicalScope.getImplicitReceiversHierarchy().firstOrNull {
-            KotlinTypeChecker.DEFAULT.isSubtypeOf(it.type, substitutedOuterClassType)
+            it.type.isSubtypeOf(substitutedOuterClassType)
         } ?: return emptyList()
 
         receiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER

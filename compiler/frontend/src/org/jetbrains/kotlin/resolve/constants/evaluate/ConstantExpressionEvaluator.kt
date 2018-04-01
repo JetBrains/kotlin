@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isError
@@ -244,9 +243,9 @@ class ConstantExpressionEvaluator(
 
             // this type check should not used as it can introduce subtle bugs when type checking rules against expected type are changing
             if (!languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonConstValuesAsVarargsInAnnotations) &&
-                !KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, deprecatedExpectedType)
+                !expressionType.isSubtypeOf(deprecatedExpectedType)
             ) {
-                if (KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, expectedType)) {
+                if (expressionType.isSubtypeOf(expectedType)) {
                     checkCompileTimeConstant(argumentExpression, expressionType, trace, useDeprecationWarning = true)
                 }
 

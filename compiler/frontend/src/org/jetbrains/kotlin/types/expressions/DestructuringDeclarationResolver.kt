@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 class DestructuringDeclarationResolver(
     private val fakeCallResolver: FakeCallResolver,
@@ -109,7 +109,7 @@ class DestructuringDeclarationResolver(
 
         val functionReturnType = results.resultingDescriptor.returnType
         if (functionReturnType != null && !TypeUtils.noExpectedType(expectedType)
-            && !KotlinTypeChecker.DEFAULT.isSubtypeOf(functionReturnType, expectedType)) {
+            && !functionReturnType.isSubtypeOf(expectedType)) {
             context.trace.report(
                 Errors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.on(
                     initializer ?: entry, componentName, functionReturnType, expectedType

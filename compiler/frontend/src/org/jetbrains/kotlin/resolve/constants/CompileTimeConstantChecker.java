@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.Set;
 
@@ -102,7 +102,7 @@ public class CompileTimeConstantChecker {
 
         if (!noExpectedTypeOrError(expectedType)) {
             KotlinType valueType = value.getType(module);
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
+            if (!TypeUtilsKt.isSubtypeOf(valueType, expectedType)) {
                 return reportConstantExpectedTypeMismatch(expression, "integer", expectedType, null);
             }
         }
@@ -119,7 +119,7 @@ public class CompileTimeConstantChecker {
         }
         if (!noExpectedTypeOrError(expectedType)) {
             KotlinType valueType = value.getType(module);
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
+            if (!TypeUtilsKt.isSubtypeOf(valueType, expectedType)) {
                 return reportConstantExpectedTypeMismatch(expression, "floating-point", expectedType, null);
             }
         }
@@ -131,7 +131,7 @@ public class CompileTimeConstantChecker {
             @NotNull KtConstantExpression expression
     ) {
         if (!noExpectedTypeOrError(expectedType)
-            && !KotlinTypeChecker.DEFAULT.isSubtypeOf(builtIns.getBooleanType(), expectedType)) {
+            && !TypeUtilsKt.isSubtypeOf(builtIns.getBooleanType(), expectedType)) {
             return reportConstantExpectedTypeMismatch(expression, "boolean", expectedType, builtIns.getBooleanType());
         }
         return false;
@@ -139,7 +139,7 @@ public class CompileTimeConstantChecker {
 
     private boolean checkCharValue(ConstantValue<?> constant, KotlinType expectedType, KtConstantExpression expression) {
         if (!noExpectedTypeOrError(expectedType)
-            && !KotlinTypeChecker.DEFAULT.isSubtypeOf(builtIns.getCharType(), expectedType)) {
+            && !TypeUtilsKt.isSubtypeOf(builtIns.getCharType(), expectedType)) {
             return reportConstantExpectedTypeMismatch(expression, "character", expectedType, builtIns.getCharType());
         }
 

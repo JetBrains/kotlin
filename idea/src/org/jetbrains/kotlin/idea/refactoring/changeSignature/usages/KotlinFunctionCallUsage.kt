@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
@@ -158,7 +158,7 @@ class KotlinFunctionCallUsage(
             is ClassDescriptor -> adjustedDescriptor.defaultType
             else -> null
         }
-        if (originalType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(receiverValue.type, originalType)) return null
+        if (originalType == null || !receiverValue.type.isSubtypeOf(originalType)) return null
 
         return getReceiverExpression(receiverValue, psiFactory)
     }

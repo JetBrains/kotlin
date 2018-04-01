@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 public class QuickFixUtil {
     private QuickFixUtil() {
@@ -79,10 +79,10 @@ public class QuickFixUtil {
             if (overriddenReturnType == null) {
                 return null;
             }
-            if (matchingReturnType == null || KotlinTypeChecker.DEFAULT.isSubtypeOf(overriddenReturnType, matchingReturnType)) {
+            if (matchingReturnType == null || TypeUtilsKt.isSubtypeOf(overriddenReturnType, matchingReturnType)) {
                 matchingReturnType = overriddenReturnType;
             }
-            else if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(matchingReturnType, overriddenReturnType)) {
+            else if (!TypeUtilsKt.isSubtypeOf(matchingReturnType, overriddenReturnType)) {
                 return null;
             }
         }

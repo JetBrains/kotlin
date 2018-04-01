@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.types.CommonSupertypes;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -478,7 +478,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     resolveLocalVariableDescriptor(context.scope, loopParameter, context.trace);
             KotlinType actualParameterType = variableDescriptor.getType();
             if (expectedParameterType != null &&
-                    !KotlinTypeChecker.DEFAULT.isSubtypeOf(expectedParameterType, actualParameterType)) {
+                    !TypeUtilsKt.isSubtypeOf(expectedParameterType, actualParameterType)) {
                 context.trace.report(TYPE_MISMATCH_IN_FOR_LOOP.on(typeReference, expectedParameterType, actualParameterType));
             }
         }

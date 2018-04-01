@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 
 fun resolveUnqualifiedSuperFromExpressionContext(
@@ -142,7 +142,7 @@ private inline fun resolveSupertypesByMembers(
 
     typesWithConcreteMembers.removeAll { typeWithConcreteMember ->
         typesWithNonConcreteMembers.any { typeWithNonConcreteMember ->
-            KotlinTypeChecker.DEFAULT.isSubtypeOf(typeWithNonConcreteMember, typeWithConcreteMember)
+            typeWithNonConcreteMember.isSubtypeOf(typeWithConcreteMember)
         }
     }
 

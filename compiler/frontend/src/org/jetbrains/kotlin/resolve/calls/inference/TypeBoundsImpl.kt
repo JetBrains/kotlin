@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -167,11 +168,11 @@ class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
 
         for (bound in bounds) {
             when (bound.kind) {
-                LOWER_BOUND -> if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(bound.constrainingType, possibleAnswer)) {
+                LOWER_BOUND -> if (!bound.constrainingType.isSubtypeOf(possibleAnswer)) {
                     return false
                 }
 
-                UPPER_BOUND -> if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(possibleAnswer, bound.constrainingType)) {
+                UPPER_BOUND -> if (!possibleAnswer.isSubtypeOf(bound.constrainingType)) {
                     return false
                 }
 

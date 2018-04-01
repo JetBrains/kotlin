@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 abstract class ChangeFunctionSignatureFix(
         element: PsiElement,
@@ -100,7 +100,7 @@ abstract class ChangeFunctionSignatureFix(
                     val hasTypeMismatches = argumentToParameter.any {
                         val (argument, parameter) = it
                         val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
-                        argumentType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
+                        argumentType == null || !argumentType.isSubtypeOf(parameter.type)
                     }
                     return AddFunctionParametersFix(originalElement, functionDescriptor, hasTypeMismatches)
                 }

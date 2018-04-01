@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.org.objectweb.asm.Type
 
 fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpression): RangeValue {
@@ -81,10 +81,10 @@ fun isLocalVarReference(rangeExpression: KtExpression, bindingContext: BindingCo
 }
 
 private fun isSubtypeOfString(type: KotlinType, builtIns: KotlinBuiltIns) =
-    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.stringType)
+    type.isSubtypeOf(builtIns.stringType)
 
 private fun isSubtypeOfCharSequence(type: KotlinType, builtIns: KotlinBuiltIns) =
-    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
+    type.isSubtypeOf(builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
 
 private fun getResolvedCallForRangeExpression(
     bindingContext: BindingContext,

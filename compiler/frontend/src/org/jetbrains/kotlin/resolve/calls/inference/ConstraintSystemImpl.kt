@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isInternalAnnotationForResolv
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
@@ -167,7 +168,7 @@ internal class ConstraintSystemImpl(
             } ?: return false
             val resultSuperType = superType.substitute() ?: return false
             when (kind) {
-                SUB_TYPE -> KotlinTypeChecker.DEFAULT.isSubtypeOf(resultSubType, resultSuperType)
+                SUB_TYPE -> resultSubType.isSubtypeOf(resultSuperType)
                 EQUAL -> KotlinTypeChecker.DEFAULT.equalTypes(resultSubType, resultSuperType)
             }
         }

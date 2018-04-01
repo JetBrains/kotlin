@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
 open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinType) : KotlinQuickFixAction<KtVariableDeclaration>(element) {
@@ -139,7 +140,7 @@ open class ChangeVariableTypeFix(element: KtVariableDeclaration, type: KotlinTyp
                 for (overriddenProperty in descriptor.overriddenDescriptors) {
                     val overriddenPropertyType = overriddenProperty.returnType
                     if (overriddenPropertyType != null) {
-                        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(propertyType, overriddenPropertyType)) {
+                        if (!propertyType.isSubtypeOf(overriddenPropertyType)) {
                             overriddenMismatchingProperties.add(overriddenProperty)
                         }
                         else if (overriddenProperty.isVar && !KotlinTypeChecker.DEFAULT.equalTypes(overriddenPropertyType, propertyType)) {

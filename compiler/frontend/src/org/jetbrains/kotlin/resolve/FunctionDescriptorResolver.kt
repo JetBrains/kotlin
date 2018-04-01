@@ -58,11 +58,11 @@ import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
@@ -395,7 +395,7 @@ class FunctionDescriptorResolver(
             if (typeReference != null) {
                 type = typeResolver.resolveType(parameterScope, typeReference, trace, true)
                 if (expectedType != null) {
-                    if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(expectedType, type)) {
+                    if (!expectedType.isSubtypeOf(type)) {
                         trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(valueParameter, expectedType))
                     }
                 }

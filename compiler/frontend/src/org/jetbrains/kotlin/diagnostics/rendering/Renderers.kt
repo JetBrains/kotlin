@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.getValidi
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -258,13 +258,13 @@ object Renderers {
                 parameterTypes.add(valueParameterDescriptor.type)
                 if (valueParameterDescriptor.index >= inferenceErrorData.valueArgumentsTypes.size) continue
                 val actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.index)
-                if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, valueParameterDescriptor.type)) {
+                if (!actualType.isSubtypeOf(valueParameterDescriptor.type)) {
                     errorPositions.add(VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index))
                 }
             }
 
             if (receiverType != null && inferenceErrorData.receiverArgumentType != null
-                && !KotlinTypeChecker.DEFAULT.isSubtypeOf(inferenceErrorData.receiverArgumentType, receiverType)) {
+                && !inferenceErrorData.receiverArgumentType.isSubtypeOf(receiverType)) {
                 errorPositions.add(RECEIVER_POSITION.position())
             }
 
@@ -384,7 +384,7 @@ object Renderers {
             val upperBoundWithSubstitutedInferredTypes =
                 systemWithoutWeakConstraints.resultingSubstitutor.substitute(upperBound, Variance.INVARIANT)
             if (upperBoundWithSubstitutedInferredTypes != null
-                && !KotlinTypeChecker.DEFAULT.isSubtypeOf(inferredValueForTypeParameter, upperBoundWithSubstitutedInferredTypes)) {
+                && !inferredValueForTypeParameter.isSubtypeOf(upperBoundWithSubstitutedInferredTypes)) {
                 violatedUpperBound = upperBoundWithSubstitutedInferredTypes
                 break
             }

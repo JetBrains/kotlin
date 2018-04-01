@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
@@ -337,7 +337,7 @@ fun FunctionDescriptor.isEnumValueOfMethod(): Boolean {
     val nullableString = builtIns.stringType.makeNullable()
     return DescriptorUtils.ENUM_VALUE_OF == name
            && methodTypeParameters.size == 1
-           && KotlinTypeChecker.DEFAULT.isSubtypeOf(methodTypeParameters[0].type, nullableString)
+           && methodTypeParameters[0].type.isSubtypeOf(nullableString)
 }
 
 val DeclarationDescriptor.isExtensionProperty: Boolean

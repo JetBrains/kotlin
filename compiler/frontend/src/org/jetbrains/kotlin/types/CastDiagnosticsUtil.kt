@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 object CastDiagnosticsUtil {
@@ -241,7 +242,7 @@ object CastDiagnosticsUtil {
     }
 
     private fun isUpcast(candidateType: KotlinType, targetType: KotlinType): Boolean {
-        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(candidateType, targetType)) return false
+        if (!candidateType.isSubtypeOf(targetType)) return false
 
         if (candidateType.isFunctionType && targetType.isFunctionType) {
             return candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType

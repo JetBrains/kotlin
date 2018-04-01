@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
@@ -213,7 +213,7 @@ abstract class ChangeCallableReturnTypeFix(
             val overriddenMismatchingFunctions = LinkedList<FunctionDescriptor>()
             for (overriddenFunction in descriptor.overriddenDescriptors) {
                 val overriddenFunctionType = overriddenFunction.returnType ?: continue
-                if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, overriddenFunctionType)) {
+                if (!functionType.isSubtypeOf(overriddenFunctionType)) {
                     overriddenMismatchingFunctions.add(overriddenFunction)
                 }
             }

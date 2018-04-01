@@ -48,9 +48,9 @@ import org.jetbrains.kotlin.types.FunctionPlaceholders;
 import org.jetbrains.kotlin.types.FunctionPlaceholdersKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.*;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -103,9 +103,9 @@ public class ArgumentTypeResolver {
     ) {
         if (FunctionPlaceholdersKt.isFunctionPlaceholder(actualType)) {
             KotlinType functionType = ConstraintSystemBuilderImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
-            return KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
+            return TypeUtilsKt.isSubtypeOf(functionType, expectedType);
         }
-        return KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
+        return TypeUtilsKt.isSubtypeOf(actualType, expectedType);
     }
 
     public void checkTypesWithNoCallee(

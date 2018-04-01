@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.captureFromExpression
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 interface SpecificityComparisonCallbacks {
     fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
@@ -141,7 +141,7 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
         }
 
         if (typeParameters.isEmpty() || !TypeUtils.dependsOnTypeParameters(generalType, typeParameters)) {
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(specificType, generalType)) {
+            if (!specificType.isSubtypeOf(generalType)) {
                 if (!callbacks.isNonSubtypeNotLessSpecific(specificType, generalType)) {
                     return false
                 }

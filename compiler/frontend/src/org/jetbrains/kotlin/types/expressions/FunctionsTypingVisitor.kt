@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.TypeUtils.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -327,7 +327,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             }
 
             val expressionType = trace.getType(expression) ?: continue
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, actualReturnType)) {
+            if (!expressionType.isSubtypeOf(actualReturnType)) {
                 trace.report(Errors.TYPE_MISMATCH.on(expression, expressionType, actualReturnType))
             }
         }

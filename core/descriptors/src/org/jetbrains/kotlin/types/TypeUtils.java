@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 
@@ -457,7 +458,7 @@ public class TypeUtils {
             return getDefaultPrimitiveNumberType(numberValueTypeConstructor);
         }
         for (KotlinType primitiveNumberType : numberValueTypeConstructor.getSupertypes()) {
-            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(primitiveNumberType, expectedType)) {
+            if (TypeUtilsKt.isSubtypeOf(primitiveNumberType, expectedType)) {
                 return primitiveNumberType;
             }
         }

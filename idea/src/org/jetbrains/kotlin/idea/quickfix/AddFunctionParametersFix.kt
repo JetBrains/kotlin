@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
 class AddFunctionParametersFix(
@@ -104,7 +104,7 @@ class AddFunctionParametersFix(
                             }
                             val parameterType = parameters[i].type
 
-                            if (argumentType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
+                            if (argumentType != null && !argumentType.isSubtypeOf(parameterType)) {
                                 it.parameters[i].currentTypeInfo = KotlinTypeInfo(false, argumentType)
                                 typesToShorten.add(argumentType)
                             }

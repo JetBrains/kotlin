@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Res
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import java.util.*
 
@@ -815,7 +816,7 @@ class OverrideResolver(
 
             val substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE)!!
 
-            return KotlinTypeChecker.DEFAULT.isSubtypeOf(subReturnType, substitutedSuperReturnType)
+            return subReturnType.isSubtypeOf(substitutedSuperReturnType)
         }
 
         private fun prepareTypeSubstitutor(
@@ -845,7 +846,7 @@ class OverrideResolver(
             return if (superDescriptor.isVar) {
                 KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.type, substitutedSuperReturnType)
             } else {
-                KotlinTypeChecker.DEFAULT.isSubtypeOf(subDescriptor.type, substitutedSuperReturnType)
+                subDescriptor.type.isSubtypeOf(substitutedSuperReturnType)
             }
         }
 

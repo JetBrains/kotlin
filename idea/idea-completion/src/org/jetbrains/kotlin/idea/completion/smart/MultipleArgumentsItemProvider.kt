@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
 class MultipleArgumentsItemProvider(
@@ -109,7 +109,7 @@ class MultipleArgumentsItemProvider(
         //TODO: there can be more than one property with such name in scope and we should be able to select one (but we need API for this)
         val variable = scope.findVariable(name, NoLookupLocation.FROM_IDE) { !it.isExtension }
                 ?: scope.getVariableFromImplicitReceivers(name) ?: return null
-        return if (smartCastCalculator.types(variable).any { KotlinTypeChecker.DEFAULT.isSubtypeOf(it, parameter.type) })
+        return if (smartCastCalculator.types(variable).any { it.isSubtypeOf(parameter.type) })
             variable
         else
             null

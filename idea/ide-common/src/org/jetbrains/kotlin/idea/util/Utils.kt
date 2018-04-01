@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
     val literalParent = (this.parent as KtLambdaExpression).parent
@@ -70,8 +70,8 @@ fun SmartCastManager.getSmartCastVariantsWithLessSpecificExcluded(
 }
 
 private fun chooseMoreSpecific(type1: KotlinType, type2: KotlinType): KotlinType? {
-    val type1IsSubtype = KotlinTypeChecker.DEFAULT.isSubtypeOf(type1, type2)
-    val type2IsSubtype = KotlinTypeChecker.DEFAULT.isSubtypeOf(type2, type1)
+    val type1IsSubtype = type1.isSubtypeOf(type2)
+    val type2IsSubtype = type2.isSubtypeOf(type1)
 
     when {
         type1IsSubtype && !type2IsSubtype -> return type1

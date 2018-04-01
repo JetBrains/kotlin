@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -106,7 +106,7 @@ public class ConstraintsUtil {
             KotlinType substitutedUpperBound = constraintSystem.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT);
 
             assert substitutedUpperBound != null : "We wanted to substitute projections as a result for " + typeParameter;
-            if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(type, substitutedUpperBound)) {
+            if (!TypeUtilsKt.isSubtypeOf(type, substitutedUpperBound)) {
                 return false;
             }
         }

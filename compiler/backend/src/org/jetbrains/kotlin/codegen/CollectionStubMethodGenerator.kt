@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequenc
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.CollectionStub
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_SYNTHETIC
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -290,7 +290,7 @@ class CollectionStubMethodGenerator(
         if (types.size == 1) return types.first()
         // Find the first type in the list such that it's a subtype of every other type in that list
         return types.first { type ->
-            types.all { other -> KotlinTypeChecker.DEFAULT.isSubtypeOf(type, other) }
+            types.all { other -> type.isSubtypeOf(other) }
         }
     }
 
