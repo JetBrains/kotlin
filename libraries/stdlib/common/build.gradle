@@ -34,16 +34,13 @@ compileKotlinCommon {
 //    compilerJarFile = compilerJarWithBootstrapRuntime
 }
 
-/*
-// TODO: currently unsupported
 compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
-                "-module-name", "${project.name}".toString()
+                "-module-name", project.name
         ]
     }
 }
-*/
 
 
 kotlin.experimental.coroutines 'enable'
