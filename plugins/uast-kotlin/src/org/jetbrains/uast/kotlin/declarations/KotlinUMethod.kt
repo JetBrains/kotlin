@@ -90,7 +90,18 @@ open class KotlinUMethod(
             else -> null
         } ?: return@lz null
 
-        getLanguagePlugin().convertElement(bodyExpression, this) as? UExpression
+        when (bodyExpression) {
+            !is KtBlockExpression -> {
+                KotlinUBlockExpression.KotlinLazyUBlockExpression(this, { block ->
+                    val implicitReturn = KotlinUImplicitReturnExpression(block)
+                    val uBody = getLanguagePlugin().convertElement(bodyExpression, implicitReturn) as? UExpression
+                            ?: return@KotlinLazyUBlockExpression emptyList()
+                    listOf(implicitReturn.apply { returnExpression = uBody })
+                })
+
+            }
+            else -> getLanguagePlugin().convertElement(bodyExpression, this) as? UExpression
+        }
     }
 
     override val isOverride: Boolean
