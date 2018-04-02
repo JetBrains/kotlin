@@ -192,7 +192,7 @@ sealed class TypeInfo {
     }
 
     class ObjCPointerInfo(val kotlinType: KotlinType, val type: ObjCPointer) : TypeInfo() {
-        override fun argToBridged(expr: String) = "$expr.rawPtr"
+        override fun argToBridged(expr: String) = "$expr.rawPtr()"
 
         override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope, nativeBacked: NativeBacked) =
                 "interpretObjCPointerOrNull<${kotlinType.render(scope)}>($expr)" +

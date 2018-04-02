@@ -440,6 +440,15 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         null
     }
 
+    val objCExportEnabled = if (context.config.produce.isNativeBinary) {
+        // Note: this defines the global declared in runtime (if any).
+        staticData.placeGlobal("objCExportEnabled", Int8(0), isExported = true).also {
+            it.setConstant(true)
+        }
+    } else {
+        null
+    }
+
     val tlsMode by lazy {
         when (target) {
             KonanTarget.WASM32, 

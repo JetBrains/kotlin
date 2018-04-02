@@ -112,13 +112,13 @@ class ObjCMethodStub(stubGenerator: StubGenerator,
 
         if (method.nsConsumesSelf) {
             // TODO: do this later due to possible exceptions
-            bodyGenerator.out("objc_retain($kniReceiverParameter.rawPtr)")
+            bodyGenerator.out("objc_retain($kniReceiverParameter.rawPtr())")
         }
 
         kotlinObjCBridgeParameters.add(kniReceiverParameter to KotlinTypes.objCObject.type)
         nativeBridgeArguments.add(
                 TypedKotlinValue(voidPtr,
-                        "getReceiverOrSuper($kniReceiverParameter.rawPtr, $kniSuperClassParameter)"))
+                        "getReceiverOrSuper($kniReceiverParameter.rawPtr(), $kniSuperClassParameter)"))
 
         val kotlinParameterNames = method.getKotlinParameterNames()
 

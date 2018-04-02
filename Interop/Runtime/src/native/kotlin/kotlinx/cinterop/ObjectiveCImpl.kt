@@ -23,9 +23,12 @@ interface ObjCClass : ObjCObject
 typealias ObjCObjectMeta = ObjCClass
 
 abstract class ObjCObjectBase protected constructor() : ObjCObject {
-    final override fun equals(other: Any?): Boolean = this.uncheckedCast<ObjCPointerHolder>().equals(other)
-    final override fun hashCode(): Int = ObjCHashCode(this.rawPtr)
-    final override fun toString(): String = ObjCToString(this.rawPtr)
+    final override fun equals(other: Any?): Boolean {
+        val thisAny: Any = this
+        return thisAny.equals(other) // Call it virtually because ObjCObjectBase is a fake type.
+    }
+    final override fun hashCode(): Int = ObjCHashCode(this.rawPtr())
+    final override fun toString(): String = ObjCToString(this.rawPtr())
 }
 
 abstract class ObjCObjectBaseMeta protected constructor() : ObjCObjectBase(), ObjCObjectMeta {}
@@ -43,7 +46,11 @@ class ObjCPointerHolder(inline val rawPtr: NativePtr) {
     }
 
     final override fun equals(other: Any?): Boolean =
-            (other is ObjCPointerHolder) && ObjCEquals(this.rawPtr, other.rawPtr)
+            if (other is ObjCPointerHolder) {
+                ObjCEquals(this.rawPtr, other.rawPtr)
+            } else {
+                other == this
+            }
 
     final override fun hashCode(): Int = ObjCHashCode(this.rawPtr)
     final override fun toString(): String = ObjCToString(this.rawPtr)
@@ -61,7 +68,7 @@ private fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
     if (superInitCallResult == null)
         throw RuntimeException("Super initialization failed")
 
-    if (superInitCallResult.rawPtr != this.rawPtr)
+    if (superInitCallResult.rawPtr() != this.rawPtr())
         throw UnsupportedOperationException("Super initializer has replaced object")
 }
 
@@ -79,18 +86,14 @@ inline fun <T : ObjCObject> interpretObjCPointer(rawPtr: NativePtr): T = if (raw
     throw NullPointerException()
 }
 
-inline val ObjCObject.rawPtr: NativePtr get() = (this.uncheckedCast<ObjCPointerHolder>()).rawPtr
-inline val ObjCObject?.rawPtr: NativePtr get() = if (this != null) {
-    (this.uncheckedCast<ObjCPointerHolder>()).rawPtr
-} else {
-    nativeNullPtr
-}
+@SymbolName("Kotlin_Interop_refToObjC")
+external fun ObjCObject?.rawPtr(): NativePtr
 
 @SymbolName("Kotlin_Interop_createKotlinObjectHolder")
 external fun createKotlinObjectHolder(any: Any?): NativePtr
 
 inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: ObjCObject?): T {
-    return unwrapKotlinObjectHolderImpl(holder!!.rawPtr) as T
+    return unwrapKotlinObjectHolderImpl(holder!!.rawPtr()) as T
 }
 
 @PublishedApi

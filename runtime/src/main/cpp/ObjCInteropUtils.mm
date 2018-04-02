@@ -78,7 +78,8 @@ OBJ_GETTER(Kotlin_Interop_ObjCToString, id <NSObject> ptr) {
 }
 
 KInt Kotlin_Interop_ObjCHashCode(id <NSObject> ptr) {
-  return (KInt) ptr.hash;
+  KLong hash = ptr.hash;
+  return (KInt)(hash ^ (hash >> 32));
 }
 
 KBoolean Kotlin_Interop_ObjCEquals(id <NSObject> ptr, id otherPtr) {

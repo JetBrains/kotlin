@@ -49,6 +49,8 @@ internal fun ObjCExportMapper.getClassIfCategory(descriptor: CallableMemberDescr
 
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return null
 
+    if (extensionReceiverType.isObjCObjectType()) return null
+
     val erasedClass = extensionReceiverType.getErasedTypeClass()
     return if (this.isRepresentedAsObjCInterface(erasedClass)) {
         erasedClass

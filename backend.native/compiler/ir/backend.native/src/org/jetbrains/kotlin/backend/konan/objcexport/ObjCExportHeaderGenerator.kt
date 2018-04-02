@@ -92,8 +92,11 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
     private val kotlinAnyName = namer.kotlinAnyName
 
     private val stubs = mutableListOf<Stub>()
-    private val classToName = mutableMapOf<ClassDescriptor, String>()
-    private val interfaceToName = mutableMapOf<ClassDescriptor, String>()
+    private val classOrInterfaceToName = mutableMapOf<ClassDescriptor, String>()
+
+    internal val classForwardDeclarations = mutableSetOf<String>()
+    internal val protocolForwardDeclarations = mutableSetOf<String>()
+
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
     val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
@@ -154,17 +157,11 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
         }
     }
 
-    fun translateClassName(descriptor: ClassDescriptor): String {
-        val descriptorToName = if (descriptor.isInterface) interfaceToName else classToName
+    fun translateClassName(descriptor: ClassDescriptor): String = classOrInterfaceToName.getOrPut(descriptor) {
+        assert(mapper.shouldBeExposed(descriptor))
+        val forwardDeclarations = if (descriptor.isInterface) protocolForwardDeclarations else classForwardDeclarations
 
-        return descriptorToName.getOrPut(descriptor) {
-            if (!mapper.shouldBeExposed(descriptor)) {
-                context.reportCompilationError("Can't produce ${descriptor.fqNameSafe.asString()} to framework API")
-                throw KonanCompilationException()
-            }
-
-            namer.getClassOrProtocolName(descriptor)
-        }
+        namer.getClassOrProtocolName(descriptor).also { forwardDeclarations += it }
     }
 
     private fun translateInterface(descriptor: ClassDescriptor) {
@@ -555,13 +552,13 @@ internal class ObjCExportHeaderGenerator(val context: Context) {
         add("#import <Foundation/Foundation.h>")
         add("")
 
-        if (classToName.isNotEmpty()) {
-            add("@class ${classToName.values.joinToString()};")
+        if (classForwardDeclarations.isNotEmpty()) {
+            add("@class ${classForwardDeclarations.joinToString()};")
             add("")
         }
 
-        if (interfaceToName.isNotEmpty()) {
-            add("@protocol ${interfaceToName.values.joinToString()};")
+        if (protocolForwardDeclarations.isNotEmpty()) {
+            add("@protocol ${protocolForwardDeclarations.joinToString()};")
             add("")
         }
 
@@ -790,6 +787,10 @@ private fun ObjCExportHeaderGenerator.mapReferenceTypeIgnoringNullability(
         return ObjCIdType
     }
 
+    if (classDescriptor.defaultType.isObjCObjectType()) {
+        return mapObjCObjectReferenceTypeIgnoringNullability(classDescriptor)
+    }
+
     scheduleClassToBeGenerated(classDescriptor)
 
     return if (classDescriptor.isInterface) {
@@ -797,6 +798,32 @@ private fun ObjCExportHeaderGenerator.mapReferenceTypeIgnoringNullability(
     } else {
         ObjCClassType(translateClassName(classDescriptor))
     }
+}
+
+private tailrec fun ObjCExportHeaderGenerator.mapObjCObjectReferenceTypeIgnoringNullability(
+        descriptor: ClassDescriptor
+): ObjCNonNullReferenceType {
+    // TODO: more precise types can be used.
+
+    if (descriptor.isObjCMetaClass()) return ObjCIdType
+
+    if (descriptor.isExternalObjCClass()) {
+        return if (descriptor.isInterface) {
+            val name = descriptor.name.asString().removeSuffix("Protocol")
+            protocolForwardDeclarations += name
+            ObjCProtocolType(name)
+        } else {
+            val name = descriptor.name.asString()
+            classForwardDeclarations += name
+            ObjCClassType(name)
+        }
+    }
+
+    if (descriptor.isKotlinObjCClass()) {
+        return mapObjCObjectReferenceTypeIgnoringNullability(descriptor.getSuperClassOrAny())
+    }
+
+    return ObjCIdType
 }
 
 private fun ObjCExportHeaderGenerator.scheduleClassToBeGenerated(classDescriptor: ClassDescriptor) {
