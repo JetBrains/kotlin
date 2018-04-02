@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.idea.refactoring.isConstructorDeclaredProperty
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
+import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -94,6 +95,9 @@ class MemberVisibilityCanBePrivateInspection : AbstractKotlinInspection() {
                                                                with (entryPointsManager) {
                                                                    additionalAnnotations + ADDITIONAL_ANNOTATIONS
                                                                })) return false
+
+        // properties can be referred by component1/component2, which is too expensive to search, don't analyze them
+        if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return false
 
         val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
         val useScope = declaration.useScope
