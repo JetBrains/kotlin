@@ -14,128 +14,81 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build;
+package org.jetbrains.kotlin.jps.build
 
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.util.Function;
-import com.intellij.util.Processor;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.builders.DirtyFilesHolder;
-import org.jetbrains.jps.builders.FileProcessor;
-import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
-import org.jetbrains.jps.incremental.ModuleBuildTarget;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
-import org.jetbrains.jps.model.java.JpsJavaExtensionService;
-import org.jetbrains.jps.model.java.compiler.JpsCompilerExcludes;
-import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
-import org.jetbrains.jps.util.JpsPathUtil;
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.util.Processor
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.jps.builders.DirtyFilesHolder
+import org.jetbrains.jps.builders.FileProcessor
+import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
+import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.model.java.JavaSourceRootProperties
+import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.jps.model.module.JpsModuleSourceRoot
+import org.jetbrains.jps.util.JpsPathUtil
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import java.io.File
 
-public class KotlinSourceFileCollector {
+object KotlinSourceFileCollector {
     // For incremental compilation
-    @NotNull
-    public static MultiMap<ModuleBuildTarget, File> getDirtySourceFiles(DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder)
-            throws IOException {
-        final MultiMap<ModuleBuildTarget, File> result = new MultiMap<ModuleBuildTarget, File>();
+    fun getDirtySourceFiles(dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>): MultiMap<ModuleBuildTarget, File> {
+        val result = MultiMap<ModuleBuildTarget, File>()
 
-        dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
-            @Override
-            public boolean apply(ModuleBuildTarget target, File file, JavaSourceRootDescriptor root) throws IOException {
-                //TODO this is a workaround for bug in JPS: the latter erroneously calls process with invalid parameters
-                if (!root.getTarget().equals(target)) {
-                    return true;
-                }
-
-                if (isKotlinSourceFile(file)) {
-                    result.putValue(target, file);
-                }
-                return true;
+        dirtyFilesHolder.processDirtyFiles(FileProcessor { target, file, root ->
+            //TODO this is a workaround for bug in JPS: the latter erroneously calls process with invalid parameters
+            if (root.getTarget() != target) {
+                return@FileProcessor true
             }
-        });
-        return result;
+
+            if (isKotlinSourceFile(file)) {
+                result.putValue(target, file)
+            }
+            true
+        })
+        return result
     }
 
-    @NotNull
-    public static List<File> getRemovedKotlinFiles(
-            @NotNull DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
-            @NotNull ModuleBuildTarget target
-    ) throws IOException {
-        return ContainerUtil.map(ContainerUtil.filter(dirtyFilesHolder.getRemovedFiles(target), new Condition<String>() {
-                                     @Override
-                                     public boolean value(String s) {
-                                         return FileUtilRt.extensionEquals(s, "kt");
-                                     }
-                                 }),
-                                 new Function<String, File>() {
-                                     @Override
-                                     public File fun(String s) {
-                                         return new File(s);
-                                     }
-                                 });
+    fun getRemovedKotlinFiles(
+        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
+        target: ModuleBuildTarget
+    ): List<File> {
+        return ContainerUtil.map(ContainerUtil.filter(dirtyFilesHolder.getRemovedFiles(target)) { s -> FileUtilRt.extensionEquals(s, "kt") }
+        ) { s -> File(s) }
     }
 
-    @NotNull
-    public static List<File> getAllKotlinSourceFiles(@NotNull ModuleBuildTarget target) {
-        final List<File> moduleExcludes =
-                ContainerUtil.map(target.getModule().getExcludeRootsList().getUrls(), new Function<String, File>() {
-                    @Override
-                    public File fun(String url) {
-                        return JpsPathUtil.urlToFile(url);
-                    }
-                });
+    fun getAllKotlinSourceFiles(target: ModuleBuildTarget): List<File> {
+        val moduleExcludes = ContainerUtil.map(target.module.excludeRootsList.urls) { url -> JpsPathUtil.urlToFile(url) }
 
-        final JpsCompilerExcludes compilerExcludes =
-                JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(target.getModule().getProject())
-                        .getCompilerExcludes();
+        val compilerExcludes = JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(target.module.project)
+            .compilerExcludes
 
-        final List<File> result = ContainerUtil.newArrayList();
-        for (JpsModuleSourceRoot sourceRoot : getRelevantSourceRoots(target)) {
+        val result = ContainerUtil.newArrayList<File>()
+        for (sourceRoot in getRelevantSourceRoots(target)) {
             FileUtil.processFilesRecursively(
-                    sourceRoot.getFile(),
-                    new Processor<File>() {
-                        @Override
-                        public boolean process(File file) {
-                            if (compilerExcludes.isExcluded(file)) return true;
+                sourceRoot.file,
+                Processor { file ->
+                    if (compilerExcludes.isExcluded(file)) return@Processor true
 
-                            if (file.isFile() && isKotlinSourceFile(file)) {
-                                result.add(file);
-                            }
-                            return true;
-                        }
-                    },
-                    new Processor<File>() {
-                        @Override
-                        public boolean process(final File dir) {
-                            return ContainerUtil.find(moduleExcludes, new Condition<File>() {
-                                @Override
-                                public boolean value(File exclude) {
-                                    return FileUtil.filesEqual(exclude, dir);
-                                }
-                            }) == null;
-                        }
-                    });
+                    if (file.isFile && isKotlinSourceFile(file)) {
+                        result.add(file)
+                    }
+                    true
+                },
+                Processor { dir -> ContainerUtil.find(moduleExcludes) { exclude -> FileUtil.filesEqual(exclude, dir) } == null })
         }
-        return result;
+        return result
     }
 
-    public static Iterable<JpsModuleSourceRoot> getRelevantSourceRoots(ModuleBuildTarget target) {
-        JavaSourceRootType sourceRootType = target.isTests() ? JavaSourceRootType.TEST_SOURCE : JavaSourceRootType.SOURCE;
-
-        //noinspection unchecked
-        return (Iterable) target.getModule().getSourceRoots(sourceRootType);
+    fun getRelevantSourceRoots(target: ModuleBuildTarget): Iterable<JpsModuleSourceRoot> {
+        val sourceRootType = if (target.isTests) JavaSourceRootType.TEST_SOURCE else JavaSourceRootType.SOURCE
+        return target.module.getSourceRoots<JavaSourceRootProperties>(sourceRootType)
     }
 
-    static boolean isKotlinSourceFile(File file) {
-        return FileUtilRt.extensionEquals(file.getName(), "kt");
-    }
-
-    private KotlinSourceFileCollector() {
+    internal fun isKotlinSourceFile(file: File): Boolean {
+        return FileUtilRt.extensionEquals(file.name, "kt")
     }
 }
