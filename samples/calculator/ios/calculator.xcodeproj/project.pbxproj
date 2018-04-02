@@ -107,7 +107,7 @@
 				7FF94AE52058485300590D0D /* main */,
 			);
 			name = src;
-			path = parser/src;
+			path = ../common/src;
 			sourceTree = SOURCE_ROOT;
 		};
 		7FF94AE52058485300590D0D /* main */ = {
@@ -251,7 +251,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$KONAN_TASK\" -Pkonan.useEnvironmentVariables=true";
+			shellScript = "\"$SRCROOT/../../gradlew\" -p \"$SRCROOT\" \"$KONAN_TASK\" -Pkonan.useEnvironmentVariables=true";
 		};
 /* End PBXShellScriptBuildPhase section */
 

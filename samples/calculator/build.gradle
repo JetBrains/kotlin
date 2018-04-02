@@ -1,13 +1,5 @@
-apply plugin: 'konan'
-
-konan.targets = ['iphone', 'iphone_sim']
-
-konanArtifacts {
-    framework('KotlinArithmeticParser') {
-        enableMultiplatform true
+task build {
+    subprojects.each {
+        dependsOn("${it.path}:build")
     }
-}
-
-dependencies {
-    expectedBy project(':calculator:parser')
 }
