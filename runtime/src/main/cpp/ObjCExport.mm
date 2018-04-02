@@ -570,6 +570,7 @@ static const TypeInfo* createTypeInfo(
   const KStdVector<MethodTableRecord>& methodTable
 ) {
   TypeInfo* result = (TypeInfo*)konanAllocMemory(sizeof(TypeInfo) + vtable.size() * sizeof(void*));
+  result->typeInfo_ = result;
 
   MakeGlobalHash(nullptr, 0, &result->name_);
   result->instanceSize_ = superType->instanceSize_;
