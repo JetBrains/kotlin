@@ -9413,6 +9413,111 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/lambdaToAnonymousFunction")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LambdaToAnonymousFunction extends AbstractIntentionTest {
+        public void testAllFilesPresentInLambdaToAnonymousFunction() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/lambdaToAnonymousFunction"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("argument.kt")
+        public void testArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/argument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("destructuringParameter.kt")
+        public void testDestructuringParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/destructuringParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("explicitParameterName.kt")
+        public void testExplicitParameterName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/explicitParameterName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extention1.kt")
+        public void testExtention1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/extention1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extention2.kt")
+        public void testExtention2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/extention2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasComment.kt")
+        public void testHasComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/hasComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasReturn1.kt")
+        public void testHasReturn1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/hasReturn1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasReturn2.kt")
+        public void testHasReturn2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/hasReturn2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasReturn3.kt")
+        public void testHasReturn3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/hasReturn3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasSomeStatements.kt")
+        public void testHasSomeStatements() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/hasSomeStatements.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitParameterName.kt")
+        public void testImplicitParameterName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/implicitParameterName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("namedArgument.kt")
+        public void testNamedArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/namedArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noParameter.kt")
+        public void testNoParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/noParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("returnUnit.kt")
+        public void testReturnUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/returnUnit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("underscoreParameter.kt")
+        public void testUnderscoreParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/underscoreParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("variable.kt")
+        public void testVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/lambdaToAnonymousFunction/variable.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/loopToCallChain")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
