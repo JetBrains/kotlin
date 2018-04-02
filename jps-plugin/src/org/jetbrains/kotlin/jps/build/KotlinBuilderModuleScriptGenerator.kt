@@ -39,42 +39,13 @@ import org.jetbrains.kotlin.jps.testOutputFilePath
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.alwaysNull
 import java.io.File
 import java.io.IOException
-import java.lang.reflect.Method
 import java.util.*
 
 object KotlinBuilderModuleScriptGenerator {
-
-    // TODO used reflection to be compatible with IDEA from both 143 and 144 branches,
-    // TODO switch to directly using when "since-build" will be >= 144.3357.4
-    internal val getRelatedProductionModule: (JpsModule) -> JpsModule? = run {
-        val klass =
-            try {
-                Class.forName("org.jetbrains.jps.model.module.JpsTestModuleProperties")
-            } catch (e: ClassNotFoundException) {
-                return@run alwaysNull()
-            }
-
-
-        val getTestModulePropertiesMethod: Method
-        val getProductionModuleMethod: Method
-
-        try {
-            getTestModulePropertiesMethod =
-                    JpsJavaExtensionService::class.java.getDeclaredMethod("getTestModuleProperties", JpsModule::class.java)
-            getProductionModuleMethod = klass.getDeclaredMethod("getProductionModule")
-        } catch (e: NoSuchMethodException) {
-            return@run alwaysNull()
-        }
-
-        return@run { module ->
-            getTestModulePropertiesMethod(JpsJavaExtensionService.getInstance(), module)?.let {
-                getProductionModuleMethod(it) as JpsModule?
-            }
-        }
-    }
+    fun getRelatedProductionModule(module: JpsModule): JpsModule? =
+        JpsJavaExtensionService.getInstance().getTestModuleProperties(module)?.productionModule
 
     fun generateModuleDescription(
         context: CompileContext,
