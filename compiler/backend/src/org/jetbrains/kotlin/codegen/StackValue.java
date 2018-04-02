@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
@@ -704,6 +705,18 @@ public abstract class StackValue {
                 return codegen.generateReceiverValue(receiverValue, false);
             }
             else if (isLocalFunCall(callableMethod) && !isExtension) {
+                if (descriptor instanceof SimpleFunctionDescriptor) {
+                    SimpleFunctionDescriptor initial =
+                            CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction((SimpleFunctionDescriptor) descriptor);
+                    if (initial != null && initial.isSuspend()) {
+                        StackValue value = codegen.findLocalOrCapturedValue(initial.getOriginal());
+                        assert value != null : "Local suspend fun should be found in locals or in captured params: " +
+                                               descriptor +
+                                               " initial local suspend fun: " +
+                                               initial;
+                        return value;
+                    }
+                }
                 StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
                 assert value != null : "Local fun should be found in locals or in captured params: " + descriptor;
                 return value;

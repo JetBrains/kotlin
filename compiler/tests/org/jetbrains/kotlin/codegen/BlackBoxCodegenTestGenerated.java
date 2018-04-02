@@ -6557,6 +6557,99 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LocalFunctions extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInLocalFunctions() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/anonymous")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Anonymous extends AbstractBlackBoxCodegenTest {
+                @TestMetadata("simple.kt")
+                public void ignoreSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt");
+                    doTest(fileName);
+                }
+
+                public void testAllFilesPresentInAnonymous() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/anonymous"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Named extends AbstractBlackBoxCodegenTest {
+                public void testAllFilesPresentInNamed() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/named"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("capturedParameters.kt")
+                public void testCapturedParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedParameters.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("capturedVariables.kt")
+                public void testCapturedVariables() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedVariables.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extension.kt")
+                public void testExtension() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/extension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("infix.kt")
+                public void testInfix() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/infix.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("insideLambda.kt")
+                public void testInsideLambda() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/insideLambda.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nestedLocals.kt")
+                public void testNestedLocals() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/nestedLocals.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/simple.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleSuspensionPoint.kt")
+                public void testSimpleSuspensionPoint() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/simpleSuspensionPoint.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("stateMachine.kt")
+                public void testStateMachine() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/stateMachine.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("withArguments.kt")
+                public void testWithArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/withArguments.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/coroutines/multiModule")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

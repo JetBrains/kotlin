@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.topLevelClassAsmType
 import org.jetbrains.kotlin.codegen.topLevelClassInternalName
+import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -182,7 +184,7 @@ fun ResolvedCall<*>.isSuspendNoInlineCall(codegen: ExpressionCodegen): Boolean {
         ?.let { it.isCrossinline || (!it.isNoinline && codegen.context.functionDescriptor.isInline) } == true
 
     val functionDescriptor = resultingDescriptor as? FunctionDescriptor ?: return false
-    if (!functionDescriptor.isSuspend) return false
+    if (!functionDescriptor.unwrapInitialDescriptorForSuspendFunction().isSuspend) return false
     if (functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() || functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm()) return true
     return !(functionDescriptor.isInline || isInlineLambda)
 }
@@ -196,7 +198,11 @@ fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {
 // and return type Any?
 // This function returns a function descriptor reflecting how the suspend function looks from point of view of JVM
 @JvmOverloads
-fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, bindingContext: BindingContext? = null): D {
+fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(
+    function: D,
+    bindingContext: BindingContext? = null,
+    dropSuspend: Boolean = false
+): D {
     assert(function.isSuspend) {
         "Suspended function is expected, but $function was found"
     }
@@ -220,6 +226,9 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, bind
         setPreserveSourceElement()
         setReturnType(function.builtIns.nullableAnyType)
         setValueParameters(it.valueParameters + continuationParameter)
+        if (dropSuspend) {
+            setDropSuspend()
+        }
         putUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION, it)
     }
 }
@@ -433,3 +442,9 @@ fun InstructionAdapter.invokeDoResumeWithUnit(thisName: String) {
 
 fun Method.getImplForOpenMethod(ownerInternalName: String) =
     Method("$name\$suspendImpl", returnType, arrayOf(Type.getObjectType(ownerInternalName)) + argumentTypes)
+
+fun FunctionDescriptor.isSuspendLambdaOrLocalFunction() = this.isSuspend && when (this) {
+    is AnonymousFunctionDescriptor -> this.isSuspendLambda
+    is SimpleFunctionDescriptor -> this.visibility == Visibilities.LOCAL
+    else -> false
+}

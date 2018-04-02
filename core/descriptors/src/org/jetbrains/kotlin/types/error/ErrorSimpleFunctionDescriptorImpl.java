@@ -170,6 +170,12 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
             @NotNull
             @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setDropSuspend() {
+                return this;
+            }
+
+            @NotNull
+            @Override
             public CopyBuilder<SimpleFunctionDescriptor> setHiddenToOvercomeSignatureClash() {
                 return this;
             }

@@ -170,7 +170,8 @@ public class KotlinTypeMapper {
     @NotNull
     private Type mapOwner(@NotNull DeclarationDescriptor descriptor, boolean publicFacade) {
         if (isLocalFunction(descriptor)) {
-            return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
+            return asmTypeForAnonymousClass(bindingContext,
+                                            CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction((FunctionDescriptor) descriptor));
         }
 
         if (descriptor instanceof ConstructorDescriptor) {
