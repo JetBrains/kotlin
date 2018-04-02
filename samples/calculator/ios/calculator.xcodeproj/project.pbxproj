@@ -251,7 +251,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/../../gradlew\" -p \"$SRCROOT\" \"$KONAN_TASK\" -Pkonan.useEnvironmentVariables=true";
+			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$KONAN_TASK\" --no-daemon -Pkonan.useEnvironmentVariables=true";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1,9 +1,5 @@
 // NOTE: If a new sample uses only platform libs,
 // please add it into the 'buildSamplesWithPlatfromLibs' task in build.gradle.
-include ':calculator'
-include ':calculator:common'
-include ':calculator:jvm'
-include ':calculator:ios'
 include ':csvparser'
 include ':gitchurn'
 include ':globalState'
@@ -15,11 +11,10 @@ include ':socket'
 include ':tetris'
 include ':tensorflow'
 include ':torch'
-// Android samples require Android SDK.
+// Android native activity build requires Android SDK.
 // So temporary switching off for now, as it breaks the build
 // of other samples if SDK is not present.
 // include ':androidNativeActivity'
-// include ':calculator:android'
 include ':objc'
 include ':uikit'
 include ':win32'

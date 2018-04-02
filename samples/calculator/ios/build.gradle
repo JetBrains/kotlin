@@ -20,6 +20,6 @@ konanArtifacts {
 }
 
 dependencies {
-    expectedBy project(':calculator:common')
+    expectedBy project(':common')
 }
 

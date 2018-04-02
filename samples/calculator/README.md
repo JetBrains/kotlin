@@ -15,7 +15,8 @@ The common module may be used in an Android application.
 
 To build and run the Android sample do the following:
 
-1.  Open [android](android/) in Android Studio 3.1
+1.  Open the project in Android Studio 3.1
+2.  Create a new Android App configuration. Choose module `android`.
 3.  Now build and run the configuration created.
 
 ## iOS
@@ -42,12 +43,12 @@ the Xcode project.
 The common module can also be used in JVM application built by Kotlin/JVM compiler with Gradle.
 To build and run it, go to [jvm](jvm/) directory and use
 ```
-../../gradlew run
+../gradlew run
 ```
 
 To build the distribution:
 ```
-../../gradlew distZip
+../gradlew distZip
 ```
 (the result will be available as
 `jvm/build/distributions/KotlinCalculator.zip`)
