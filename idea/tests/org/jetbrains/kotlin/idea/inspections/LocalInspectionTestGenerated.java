@@ -2553,6 +2553,18 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("companionDoubleNested.kt")
+        public void testCompanionDoubleNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/companionDoubleNested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionNested.kt")
+        public void testCompanionNested() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/companionNested.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("directCompanion.kt")
         public void testDirectCompanion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/directCompanion.kt");
@@ -2565,9 +2577,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("import.kt")
+        public void testImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/import.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("methodArgument.kt")
         public void testMethodArgument() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/methodArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("named.kt")
+        public void testNamed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/named.kt");
             doTest(fileName);
         }
 
