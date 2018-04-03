@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
+import kotlin.collections.ArrayList
 
 class IrFileImpl(
     override val fileEntry: SourceManager.FileEntry,
@@ -61,6 +63,8 @@ class IrFileImpl(
     override val fileAnnotations: MutableList<AnnotationDescriptor> = SmartList()
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
+
+    override val annotations: MutableList<IrExpression> = ArrayList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)
