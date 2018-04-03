@@ -44,10 +44,10 @@ fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValue
     valueParameters.getOrElse(parameter.index) {
         throw AssertionError("No IrValueParameter for $parameter")
     }.also { found ->
-            assert(found.descriptor == parameter) {
-                "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
-            }
+        assert(found.descriptor == parameter) {
+            "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
         }
+    }
 
 fun IrFunction.getDefault(parameter: ValueParameterDescriptor): IrExpressionBody? =
     getIrValueParameter(parameter).defaultValue
