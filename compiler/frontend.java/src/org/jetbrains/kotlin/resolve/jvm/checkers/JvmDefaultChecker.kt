@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
@@ -19,11 +22,6 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
-
-    companion object {
-        val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
-    }
-
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val enableJvmDefault = context.languageVersionSettings.getFlag(AnalysisFlag.enableJvmDefault)

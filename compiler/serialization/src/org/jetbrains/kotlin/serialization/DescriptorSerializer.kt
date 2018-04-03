@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinNames
+import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithAnyExpectedDefault
 import org.jetbrains.kotlin.resolve.checkers.KotlinVersionStringAnnotationValueChecker
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -238,6 +239,8 @@ class DescriptorSerializer private constructor(
         }
         else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
+        } else if (descriptor.hasJvmDefaultAnnotation()) {
+            builder.versionRequirement = writeVersionRequirement(1, 2, 40)
         }
 
         extension.serializeProperty(descriptor, builder)
@@ -306,9 +309,10 @@ class DescriptorSerializer private constructor(
         val requirement = serializeVersionRequirement(descriptor)
         if (requirement != null) {
             builder.versionRequirement = requirement
-        }
-        else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
+        } else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
+        } else if (descriptor.hasJvmDefaultAnnotation()) {
+            builder.versionRequirement = writeVersionRequirement(1, 2, 40)
         }
 
         contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
@@ -621,6 +625,16 @@ class DescriptorSerializer private constructor(
             VersionRequirement.Version(languageVersion.major, languageVersion.minor).encode(
                     writeVersion = { version = it },
                     writeVersionFull = { versionFull = it }
+            )
+        }
+        return versionRequirementTable[requirement]
+    }
+
+    private fun writeVersionRequirement(major: Int, minor: Int, patch: Int): Int {
+        val requirement = ProtoBuf.VersionRequirement.newBuilder().apply {
+            VersionRequirement.Version(major, minor, patch).encode(
+                writeVersion = { version = it },
+                writeVersionFull = { versionFull = it }
             )
         }
         return versionRequirementTable[requirement]
