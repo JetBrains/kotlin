@@ -5,19 +5,30 @@
 
 package org.jetbrains.kotlin.jps.platforms
 
-import com.intellij.util.containers.MultiMap
 import org.jetbrains.jps.ModuleChunk
-import org.jetbrains.jps.builders.DirtyFilesHolder
-import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
+import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.jps.build.FSOperationsHelper
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.ChangesCollector
+import org.jetbrains.kotlin.incremental.IncrementalJsCache
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
+import org.jetbrains.kotlin.incremental.js.TranslationResultValue
+import org.jetbrains.kotlin.jps.build.KotlinRoundDirtySourceFilesHolder
+import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
+import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJsCache
 import org.jetbrains.kotlin.jps.model.k2JsCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import org.jetbrains.kotlin.jps.model.productionOutputFilePath
@@ -28,23 +39,56 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils.META_JS_SUFFIX
 import java.io.File
 import java.net.URI
 
+internal class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : IncrementalDataProvider {
+    override val headerMetadata: ByteArray
+        get() = cache.header
+
+    override val compiledPackageParts: Map<File, TranslationResultValue>
+        get() = cache.nonDirtyPackageParts()
+}
+
 class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
-    KotlinModuleBuilderTarget(compileContext, jpsModuleBuildTarget) {
+    KotlinModuleBuildTarget(compileContext, jpsModuleBuildTarget) {
+
+    val sourceToOutputMap
+        get() = context.projectDescriptor.dataManager.getSourceToOutputMap(jpsModuleBuildTarget)
+
+    val isFirstBuild
+        get() = sourceToOutputMap.sources.isEmpty()
+
+    override fun makeServices(
+        builder: Services.Builder,
+        incrementalCaches: Map<ModuleBuildTarget, JpsIncrementalCache>,
+        lookupTracker: LookupTracker,
+        exceptActualTracer: ExpectActualTracker
+    ) {
+        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer)
+
+        with(builder) {
+            register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
+
+            if (IncrementalCompilation.isEnabled() && !isFirstBuild) {
+                val cache = incrementalCaches[jpsModuleBuildTarget] as IncrementalJsCache
+
+                register(
+                    IncrementalDataProvider::class.java,
+                    IncrementalDataProviderFromCache(cache)
+                )
+            }
+        }
+    }
 
     override fun compileModuleChunk(
-        allCompiledFiles: MutableSet<File>,
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-        environment: JpsCompilerEnvironment,
-        filesToCompile: MultiMap<ModuleBuildTarget, File>,
-        fsOperations: FSOperationsHelper
+        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder,
+        environment: JpsCompilerEnvironment
     ): Boolean {
         require(chunk.representativeTarget() == jpsModuleBuildTarget)
         if (reportAndSkipCircular(chunk, environment)) return false
 
-        val sources = sources
-        if (sources.isEmpty()) return false
+        val sources = collectSourcesToCompile(dirtyFilesHolder)
+        if (!checkShouldCompileAndLog(dirtyFilesHolder, sources)) return false
 
         val libraries = libraryFiles + dependenciesMetaFiles
 
@@ -144,12 +188,32 @@ class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTa
 
         if (dependencyBuildTarget != this@KotlinJsModuleBuildTarget &&
             dependencyBuildTarget is KotlinJsModuleBuildTarget &&
-            dependencyBuildTarget.sources.isNotEmpty()
+            dependencyBuildTarget.sourceFiles.isNotEmpty()
         ) {
             val metaFile = dependencyBuildTarget.outputMetaFile
             if (metaFile.exists()) {
                 result.add(metaFile.absolutePath)
             }
         }
+    }
+
+    override fun createCacheStorage(paths: BuildDataPaths) =
+        JpsIncrementalJsCache(jpsModuleBuildTarget, paths)
+
+    override fun updateCaches(
+        jpsIncrementalCache: JpsIncrementalCache,
+        files: List<GeneratedFile>,
+        changesCollector: ChangesCollector,
+        environment: JpsCompilerEnvironment
+    ) {
+        super.updateCaches(jpsIncrementalCache, files, changesCollector, environment)
+
+        val incrementalResults = environment.services[IncrementalResultsConsumer::class.java] as IncrementalResultsConsumerImpl
+
+        val jsCache = jpsIncrementalCache as IncrementalJsCache
+        jsCache.header = incrementalResults.headerMetadata
+
+        jsCache.compareAndUpdate(incrementalResults, changesCollector)
+        jsCache.clearCacheForRemovedClasses(changesCollector)
     }
 }

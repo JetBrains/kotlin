@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import java.io.File
 import java.io.IOException
 
-private val NORMAL_VERSION = 8
-private val DATA_CONTAINER_VERSION = 2
+private val NORMAL_VERSION = 9
+private val DATA_CONTAINER_VERSION = 3
 
 private val NORMAL_VERSION_FILE_NAME = "format-version.txt"
 private val DATA_CONTAINER_VERSION_FILE_NAME = "data-container-format-version.txt"

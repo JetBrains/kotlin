@@ -34,4 +34,10 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-module-name", valueDescription = "<name>", description = "Name of the generated .kotlin_module file")
     var moduleName: String? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xjps",
+        description = "Enable in JPS"
+    )
+    var enabledInJps: Boolean by FreezableVar(false)
 }

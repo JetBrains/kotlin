@@ -13,6 +13,7 @@ dependencies {
     compile(project(":compiler:daemon-common"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(project(":compiler:frontend.java"))
+    compile(project(":js:js.frontend"))
     compile(projectRuntimeJar(":kotlin-preloader"))
     compile(project(":idea:idea-jps-common"))
     compileOnly(group = "org.jetbrains", name = "annotations", version = "13.0")

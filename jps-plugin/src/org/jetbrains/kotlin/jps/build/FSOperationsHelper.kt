@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jps.ModuleChunk
-import org.jetbrains.jps.builders.BuildRootIndex
 import org.jetbrains.jps.builders.BuildTarget
-import org.jetbrains.jps.builders.BuildTargetIndex
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.FSOperations
@@ -43,7 +41,7 @@ class FSOperationsHelper(
 
     fun markChunk(recursively: Boolean, kotlinOnly: Boolean, excludeFiles: Set<File> = setOf()) {
         fun shouldMark(file: File): Boolean {
-            if (kotlinOnly && !KotlinSourceFileCollector.isKotlinSourceFile(file)) return false
+            if (kotlinOnly && !file.isKotlinSourceFile) return false
 
             if (file in excludeFiles) return false
 

@@ -5,49 +5,87 @@
 
 package org.jetbrains.kotlin.jps.platforms
 
-import com.intellij.util.containers.MultiMap
+import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.jps.ModuleChunk
-import org.jetbrains.jps.builders.DirtyFilesHolder
-import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
-import com.intellij.openapi.compiler.CompileContext as JpsCompileContext
+import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.CompileContext
-import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.jps.incremental.fs.CompilationRound
+import org.jetbrains.jps.model.library.JpsOrderRootType
+import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.mergeBeans
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.jps.build.FSOperationsHelper
+import org.jetbrains.kotlin.jps.build.KotlinRoundDirtySourceFilesHolder
+import org.jetbrains.kotlin.jps.incremental.JpsIncrementalJvmCache
 import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
-import java.io.File
 
-class KotlinCommonModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
-    KotlinModuleBuilderTarget(compileContext, jpsModuleBuildTarget) {
+class KotlinCommonModuleBuildTarget(context: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
+    KotlinModuleBuildTarget(context, jpsModuleBuildTarget) {
 
     override fun compileModuleChunk(
-        allCompiledFiles: MutableSet<File>,
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-        environment: JpsCompilerEnvironment,
-        filesToCompile: MultiMap<ModuleBuildTarget, File>,
-        fsOperations: FSOperationsHelper
+        dirtyFilesHolder: KotlinRoundDirtySourceFilesHolder,
+        environment: JpsCompilerEnvironment
     ): Boolean {
-        require(chunk.representativeTarget() == jpsModuleBuildTarget)
-        if (reportAndSkipCircular(chunk, environment)) return false
+        reportAndSkipCircular(chunk, environment)
 
-        // Incremental compilation is not supported, so mark all dependents as dirty
-        FSOperations.markDirtyRecursively(context, CompilationRound.CURRENT, chunk)
-
-        JpsKotlinCompilerRunner().runK2MetadataCompiler(
-            commonArguments,
-            module.k2MetadataCompilerArguments,
-            module.kotlinCompilerSettings,
-            environment,
-            sources
-        )
+        val k2MetadataArguments = module.k2MetadataCompilerArguments
+        if (k2MetadataArguments.enabledInJps || (commonArguments as? K2MetadataCompilerArguments)?.enabledInJps == true) {
+            JpsKotlinCompilerRunner().runK2MetadataCompiler(
+                commonArguments,
+                k2MetadataArguments,
+                module.kotlinCompilerSettings,
+                environment,
+                destination,
+                dependenciesOutputDirs + libraryFiles,
+                sourceFiles // incremental K2MetadataCompiler not supported yet
+            )
+        }
 
         return true
     }
+
+    private val libraryFiles: List<String>
+        get() = mutableListOf<String>().also { result ->
+            for (library in allDependencies.libraries) {
+                for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
+                    result.add(JpsPathUtil.urlToPath(root.url))
+                }
+            }
+        }
+
+    private val dependenciesOutputDirs: List<String>
+        get() = mutableListOf<String>().also { result ->
+            allDependencies.processModules { module ->
+                if (isTests) addDependencyMetaFile(module, result, isTests = true)
+
+                // note: production targets should be also added as dependency to test targets
+                addDependencyMetaFile(module, result, isTests = false)
+            }
+        }
+
+    val destination: String
+        get() = module.k2MetadataCompilerArguments.destination ?: outputDir.absolutePath
+
+    private fun addDependencyMetaFile(
+        module: JpsModule,
+        result: MutableList<String>,
+        isTests: Boolean
+    ) {
+        val dependencyBuildTarget = context.kotlinBuildTargets[ModuleBuildTarget(module, isTests)]
+
+        if (dependencyBuildTarget != this@KotlinCommonModuleBuildTarget &&
+            dependencyBuildTarget is KotlinCommonModuleBuildTarget &&
+            dependencyBuildTarget.sourceFiles.isNotEmpty()
+        ) {
+            result.add(dependencyBuildTarget.destination)
+        }
+    }
+
+    override fun createCacheStorage(paths: BuildDataPaths) = JpsIncrementalJvmCache(jpsModuleBuildTarget, paths) // todo: delete
 }

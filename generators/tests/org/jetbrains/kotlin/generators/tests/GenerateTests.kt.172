@@ -919,6 +919,15 @@ fun main(args: Array<String>) {
             model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
         }
 
+        actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiplatform/multiModule")
+
+        testClass<AbstractMultiplatformJpsTest> {
+            model(
+                "incremental/multiplatform/multiModule", extension = null, excludeParentDirs = true,
+                testClassName = "MultiplatformMultiModule", recursive = true
+            )
+        }
+
         testClass<AbstractJvmLookupTrackerTest> {
             model("incremental/lookupTracker/jvm", extension = null, recursive = false)
         }
@@ -980,10 +989,10 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
-            model("incremental/multiplatform", extension = null, excludeParentDirs = true)
+            model("incremental/multiplatform/singleModule", extension = null, excludeParentDirs = true)
         }
         testClass<AbstractIncrementalMultiplatformJsCompilerRunnerTest> {
-            model("incremental/multiplatform", extension = null, excludeParentDirs = true)
+            model("incremental/multiplatform/singleModule", extension = null, excludeParentDirs = true)
         }
     }
 

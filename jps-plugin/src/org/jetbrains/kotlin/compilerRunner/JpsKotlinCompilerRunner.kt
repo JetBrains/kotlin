@@ -88,10 +88,18 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         k2MetadataArguments: K2MetadataCompilerArguments,
         compilerSettings: CompilerSettings,
         environment: JpsCompilerEnvironment,
+        destination: String,
+        classpath: Collection<String>,
         sourceFiles: Collection<File>
     ) {
         val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2MetadataArguments))
+
+        val classpathSet = arguments.classpath?.split(File.pathSeparator)?.toMutableSet() ?: mutableSetOf()
+        classpathSet.addAll(classpath)
+        arguments.classpath = classpath.joinToString(File.pathSeparator)
         arguments.freeArgs = sourceFiles.map { it.absolutePath }
+        arguments.destination = arguments.destination ?: destination
+
         withCompilerSettings(compilerSettings) {
             runCompiler(K2METADATA_COMPILER, arguments, environment)
         }

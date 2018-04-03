@@ -36,7 +36,7 @@ import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
 
-open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon<FqName>(cachesDir) {
+open class IncrementalJsCache(cachesDir: File) : AbstractIncrementalCache<FqName>(cachesDir) {
     companion object {
         private val TRANSLATION_RESULT_MAP = "translation-result"
         private val INLINE_FUNCTIONS = "inline-functions"
