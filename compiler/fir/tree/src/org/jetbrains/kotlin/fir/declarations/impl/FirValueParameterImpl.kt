@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 class FirValueParameterImpl(
     session: FirSession,
     psi: PsiElement?,
-    val isProperty: Boolean,
     name: Name,
     override var returnType: FirType,
     override val defaultValue: FirExpression?,

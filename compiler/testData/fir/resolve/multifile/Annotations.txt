@@ -10,6 +10,9 @@ FILE: Annotations.kt
     @R|annotations/WithString|(STUB) public? final class Second : @R|annotations/WithInt|(STUB) R|test/First| {
         public? constructor(y: R|kotlin/Char|): super()
 
+        public? final? property y(val): R|kotlin/Char|
+            public? get(): R|kotlin/Char|
+
         public? open? override function foo(arg: R|kotlin/Double|): R|error: Not supported: FirImplicitTypeImpl| {
         }
 

@@ -2,6 +2,9 @@ FILE: nestedClass.kt
     public? abstract class Base {
         public? constructor(s: R|kotlin/String|)
 
+        public? final? property s(val): R|kotlin/String|
+            public? get(): R|kotlin/String|
+
     }
     public? final class Outer {
         public? final class Derived : R|Base| {

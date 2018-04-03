@@ -2,6 +2,9 @@ FILE: derivedClass.kt
     <T> public? open class Base {
         public? constructor(x: T)
 
+        public? final? property x(val): T
+            public? get(): T
+
     }
     <T : Any> public? final class Derived : Base<T> {
         public? constructor(x: T): super(STUB)
