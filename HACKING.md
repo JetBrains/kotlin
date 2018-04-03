@@ -20,6 +20,9 @@ There are several gradle flags one can use for Konan build.
 
         ./gradlew -Pprefix=external_codegen_box_cast run_external
 
+ ## Compiler environment variables
+
+* **KONAN_DATA_DIR** changes `.konan` local data directory location (`$HOME/.konan` by default). Works both with cli compiler and gradle plugin
 
  ## Testing
 

@@ -103,7 +103,7 @@ When given `-library foo` flag, the compiler searches the `foo`  library in the 
 
     * All repositories specified with `-repo` flag.
 
-    * Libraries installed in the default repository (For now the default is  `~/.konan` ).
+    * Libraries installed in the default repository (For now the default is  `~/.konan`, however it could be changed by setting **KONAN_DATA_DIR** environment variable).
 
     * Libraries installed in `$installation/klib` directory.
 
