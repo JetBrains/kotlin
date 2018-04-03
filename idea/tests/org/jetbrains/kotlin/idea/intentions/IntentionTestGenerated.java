@@ -14010,6 +14010,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeRedundantCallsOfConversionMethods"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("booleanToInt.kt")
+        public void testBooleanToInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/booleanToInt.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("byte.kt")
         public void testByte() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeRedundantCallsOfConversionMethods/byte.kt");
