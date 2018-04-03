@@ -9,27 +9,46 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterSymbol
 
-sealed class ConeKotlinTypeProjection(val kind: ProjectionKind)
+sealed class ConeKotlinTypeProjection {
+    abstract val kind: ProjectionKind
+
+    companion object {
+        val EMPTY_ARRAY = arrayOf<ConeKotlinTypeProjection>()
+    }
+}
 
 enum class ProjectionKind {
     STAR, IN, OUT, INVARIANT
 }
 
-object StarProjection : ConeKotlinTypeProjection(ProjectionKind.STAR)
-
-abstract class ConeKotlinTypeProjectionIn : ConeKotlinTypeProjection(ProjectionKind.IN) {
-    abstract val type: ConeKotlinType
+object StarProjection : ConeKotlinTypeProjection() {
+    override val kind: ProjectionKind
+        get() = ProjectionKind.STAR
 }
 
-abstract class ConeKotlinTypeProjectionOut : ConeKotlinTypeProjection(ProjectionKind.OUT) {
-    abstract val type: ConeKotlinType
+class ConeKotlinTypeProjectionIn(val type: ConeKotlinType) : ConeKotlinTypeProjection() {
+    override val kind: ProjectionKind
+        get() = ProjectionKind.IN
+}
+
+class ConeKotlinTypeProjectionOut(val type: ConeKotlinType) : ConeKotlinTypeProjection() {
+    override val kind: ProjectionKind
+        get() = ProjectionKind.OUT
 }
 
 // We assume type IS an invariant type projection to prevent additional wrapper here
 // (more exactly, invariant type projection contains type)
-sealed class ConeKotlinType : ConeKotlinTypeProjection(ProjectionKind.INVARIANT)
+sealed class ConeKotlinType : ConeKotlinTypeProjection() {
+    override val kind: ProjectionKind
+        get() = ProjectionKind.INVARIANT
+
+    abstract val typeArguments: Array<out ConeKotlinTypeProjection>
+}
 
 class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {
+    override val typeArguments: Array<out ConeKotlinTypeProjection>
+        get() = EMPTY_ARRAY
+
     override fun toString(): String {
         return "<ERROR TYPE: $reason>"
     }
@@ -38,8 +57,9 @@ class ConeKotlinErrorType(val reason: String) : ConeKotlinType() {
 class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     override val symbol: ConeClassLikeSymbol
         get() = error("!")
-    override val typeArguments: List<ConeKotlinTypeProjection>
-        get() = emptyList()
+
+    override val typeArguments: Array<out ConeKotlinTypeProjection>
+        get() = EMPTY_ARRAY
 
     override fun toString(): String {
         return "<ERROR CLASS: $reason>"
@@ -52,8 +72,6 @@ sealed class ConeSymbolBasedType : ConeKotlinType() {
 
 abstract class ConeClassLikeType : ConeSymbolBasedType() {
     abstract override val symbol: ConeClassLikeSymbol
-
-    abstract val typeArguments: List<ConeKotlinTypeProjection>
 }
 
 abstract class ConeAbbreviatedType : ConeClassLikeType() {

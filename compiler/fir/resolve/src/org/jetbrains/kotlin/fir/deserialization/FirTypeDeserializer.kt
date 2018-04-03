@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.fir.symbols.LibraryTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeKotlinTypeProjectionInImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeKotlinTypeProjectionOutImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -78,7 +76,7 @@ class FirTypeDeserializer(
 
         val arguments = proto.collectAllArguments().mapIndexed { index, proto ->
             typeArgument(constructor.typeParameters.getOrNull(index), proto)
-        }.toList()
+        }.toTypedArray()
 
         val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
             //createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
@@ -121,8 +119,8 @@ class FirTypeDeserializer(
         val coneType = type(type)
         return when (projection) {
             Variance.INVARIANT -> coneType
-            Variance.IN_VARIANCE -> ConeKotlinTypeProjectionInImpl(coneType)
-            Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOutImpl(coneType)
+            Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
+            Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
         }
     }
 

@@ -25,14 +25,14 @@ class FirTypeResolverImpl : FirTypeResolver {
                     val type = (it.type as FirResolvedType).type
                     when (it.variance) {
                         Variance.INVARIANT -> type
-                        Variance.IN_VARIANCE -> ConeKotlinTypeProjectionInImpl(type)
-                        Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOutImpl(type)
+                        Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(type)
+                        Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(type)
                     }
                 }
                 else -> error("!")
             }
         }
-    }
+    }.toTypedArray()
 
     private fun ConeSymbol.toConeKotlinType(parts: List<FirQualifierPart>): ConeKotlinType? {
 
