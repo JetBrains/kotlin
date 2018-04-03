@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isFlexible
 
@@ -67,10 +68,13 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
         }
     }
 
+    private fun KotlinType.getFqNameAsString(): String? =
+        constructor.declarationDescriptor?.let { DescriptorUtils.getFqName(it).asString() }
+
     private fun KtExpression.isApplicableReceiverExpression(qualifiedName: String): Boolean {
         return when (this) {
             is KtStringTemplateExpression -> String::class.qualifiedName
-            is KtConstantExpression -> getType(analyze())?.getJetTypeFqName(false)
+            is KtConstantExpression -> getType(analyze())?.getFqNameAsString()
             else -> {
                 val resolvedCall = resolveToCall()
                 if ((resolvedCall?.call?.callElement as? KtBinaryExpression)?.operationToken in OperatorConventions.COMPARISON_OPERATIONS) {
@@ -80,7 +84,7 @@ class RemoveRedundantCallsOfConversionMethodsIntention : SelfTargetingRangeInten
                     resolvedCall?.candidateDescriptor?.returnType?.let {
                         if (it.isFlexible()) null
                         else if (it.isMarkedNullable && parent !is KtSafeQualifiedExpression) null
-                        else it.getJetTypeFqName(false)
+                        else it.getFqNameAsString()
                     }
                 }
             }
