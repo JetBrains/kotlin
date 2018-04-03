@@ -66,13 +66,28 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
 
         isReplCheckbox = JCheckBox("Use REPL", false).customize()
         add(isReplCheckbox)
+        isReplCheckbox.addItemListener {
+            scratchFile.getPsiFile()?.virtualFile?.apply {
+                scratchPanelConfig = (scratchPanelConfig ?: ScratchPanelConfig()).copy(isRepl = isReplCheckbox.isSelected)
+            }
+        }
 
         add(JSeparator(SwingConstants.VERTICAL))
 
         isMakeBeforeRunCheckbox = JCheckBox("Make before Run", false).customize()
         add(isMakeBeforeRunCheckbox)
+        isMakeBeforeRunCheckbox.addItemListener {
+            scratchFile.getPsiFile()?.virtualFile?.apply {
+                scratchPanelConfig = (scratchPanelConfig ?: ScratchPanelConfig()).copy(isMakeBeforeRun = isMakeBeforeRunCheckbox.isSelected)
+            }
+        }
 
         add(JSeparator(SwingConstants.VERTICAL))
+
+        (scratchFile.getPsiFile()?.virtualFile?.scratchPanelConfig ?: ScratchPanelConfig()).let {
+            isReplCheckbox.isSelected = it.isRepl
+            isMakeBeforeRunCheckbox.isSelected = it.isMakeBeforeRun
+        }
     }
 
     fun getModule(): Module? = moduleChooser.selectedModule
@@ -99,6 +114,11 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         isReplCheckbox.isSelected = isSelected
     }
 
+    @TestOnly
+    fun setMakeBeforeRun(isSelected: Boolean) {
+        isMakeBeforeRunCheckbox.isSelected = isSelected
+    }
+
     private fun JCheckBox.customize(): JCheckBox {
         verticalTextPosition = SwingConstants.BOTTOM
         return this
@@ -120,3 +140,5 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         }
     }
 }
+
+data class ScratchPanelConfig(val isRepl: Boolean = false, val isMakeBeforeRun: Boolean = false)
