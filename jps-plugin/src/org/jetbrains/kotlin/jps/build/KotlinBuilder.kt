@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
@@ -124,8 +123,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
         super.chunkBuildStarted(context, chunk)
-
-        if (chunk.isDummy(context)) return
 
         val buildLogger = context.testingContext?.buildLogger
         buildLogger?.buildStarted(context, chunk)
