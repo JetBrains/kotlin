@@ -190,7 +190,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             val dirtyFiles = chunkDirtyFiles[target]
             val removedFiles = chunkRemovedFiles[target] ?: emptyList()
 
-            val existingClasses = CompilerRunnerUtil.invokeClassesFqNames(dirtyFiles.toHashSet(), environment)
+            val existingClasses = JpsKotlinCompilerRunner().classesFqNamesByFiles(environment, dirtyFiles.toHashSet())
             val previousClasses = cache.classesBySources(dirtyFiles + removedFiles)
             for (jvmClassName in previousClasses) {
                 val fqName = jvmClassName.fqNameForClassNameWithoutDollars.asString()
