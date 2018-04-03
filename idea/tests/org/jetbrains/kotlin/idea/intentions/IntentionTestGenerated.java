@@ -7431,6 +7431,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("escapedQuote.kt")
+        public void testEscapedQuote() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/escapedQuote.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("escapedQuote2.kt")
+        public void testEscapedQuote2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/escapedQuote2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("insertBracesForSimpleNamedExpression.kt")
         public void testInsertBracesForSimpleNamedExpression() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/insertBracesForSimpleNamedExpression.kt");
@@ -7524,6 +7536,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("multilineString.kt")
         public void testMultilineString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/multilineString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("newLine.kt")
+        public void testNewLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/newLine.kt");
             doTest(fileName);
         }
 
