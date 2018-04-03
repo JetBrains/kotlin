@@ -352,10 +352,8 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
         include 'GRADLE_PLUGIN.md'
         include 'PLATFORM_LIBS.md'
         include 'samples/**'
-        exclude 'samples/gradle.properties'
-        exclude 'samples/settings.gradle'
-        exclude 'samples/androidNativeActivity/settings.gradle'
-        exclude 'samples/androidNativeActivity/gradle.properties'
+        exclude '**/gradle.properties'
+        exclude '**/settings.gradle'
         exclude '**/build'
         exclude '**/.gradle'
         exclude 'samples/**/*.kt.bc-build'
@@ -363,19 +361,17 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     }
 
     from(project.file("samples")) {
-        include 'settings.gradle'
-        include 'androidNativeActivity/settings.gradle'
+        include '**/settings.gradle'
         into "$baseName/samples"
         filter { it.startsWith("includeBuild") ? null : it }
     }
 
     from(project.file("samples")) {
-        include 'gradle.properties'
-        include 'androidNativeActivity/gradle.properties'
+        include '**/gradle.properties'
         into "$baseName/samples"
         filter {
             if (it.startsWith("konan.home=")) {
-                return "konan.home=../.."
+                return it.replace("/dist", "")
             }
             if (it.startsWith("konan.plugin.version=")) {
                 return "konan.plugin.version=$konanVersion"
