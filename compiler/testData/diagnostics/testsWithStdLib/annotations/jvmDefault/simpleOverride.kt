@@ -26,3 +26,7 @@ interface C: ANonDefault, A {
 interface D: A, ANonDefault {
     <!JVM_DEFAULT_REQUIRED_FOR_OVERRIDE!>override fun test()<!> {}
 }
+
+class Foo : A {
+    override fun test() {}
+}

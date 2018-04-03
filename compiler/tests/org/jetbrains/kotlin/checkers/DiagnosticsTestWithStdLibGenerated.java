@@ -518,6 +518,30 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 doTest(fileName);
             }
 
+            @TestMetadata("superCall.kt")
+            public void testSuperCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/superCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("superCallAmbiguity.kt")
+            public void testSuperCallAmbiguity() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/superCallAmbiguity.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("superCallAmbiguity2.kt")
+            public void testSuperCallAmbiguity2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/superCallAmbiguity2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("superCallAmbiguity3.kt")
+            public void testSuperCallAmbiguity3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/superCallAmbiguity3.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("target6.kt")
             public void testTarget6() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/target6.kt");

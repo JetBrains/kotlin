@@ -139,7 +139,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(JVM_DEFAULT_REQUIRED_FOR_OVERRIDE, "'@JvmDefault' is required for an override of a '@JvmDefault' member");
         MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of '@JvmDefault' is only allowed if the flag -Xenable-jvm-default is enabled");
         MAP.put(JVM_DEFAULT_THROUGH_INHERITANCE, "Inheritance from an interface with '@JvmDefault' members is only allowed if the flag -Xenable-jvm-default is enabled");
-        MAP.put(USAGE_OF_JVM_THROUGH_SUPER_CALL, "Super calls of '@JvmDefault' members are only allowed if the flag -Xenable-jvm-default is enabled");
+        MAP.put(USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL, "Super calls of '@JvmDefault' members are only allowed if the flag -Xenable-jvm-default is enabled");
     }
 
     @NotNull
