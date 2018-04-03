@@ -222,4 +222,18 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertContains("Dependency: 'lib'")
         }
     }
+
+    @Test
+    fun testArchivesBaseNameAsCommonModuleName() = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+
+        val moduleName = "my_module_name"
+
+        gradleBuildScript("lib").appendText("\narchivesBaseName = '$moduleName'")
+
+        build("compileKotlinCommon") {
+            assertSuccessful()
+            assertFileExists(kotlinClassesDir(subproject = "lib") + "META-INF/$moduleName.kotlin_module")
+        }
+    }
 }
