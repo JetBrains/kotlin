@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
 
     fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrFunction =

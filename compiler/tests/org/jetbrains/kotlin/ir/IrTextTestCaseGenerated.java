@@ -330,6 +330,93 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("compiler/testData/ir/irText/declarations/annotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Annotations extends AbstractIrTextTestCase {
+            public void testAllFilesPresentInAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("annotationsInAnnotationArguments.kt")
+            public void testAnnotationsInAnnotationArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/annotationsInAnnotationArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("arrayInAnnotationArguments.kt")
+            public void testArrayInAnnotationArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/arrayInAnnotationArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("classesWithAnnotations.kt")
+            public void testClassesWithAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/classesWithAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructorsWithAnnotations.kt")
+            public void testConstructorsWithAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/constructorsWithAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumsInAnnotationArguments.kt")
+            public void testEnumsInAnnotationArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/enumsInAnnotationArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fieldsWithAnnotations.kt")
+            public void testFieldsWithAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/fieldsWithAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionsWithAnnotations.kt")
+            public void testFunctionsWithAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/functionsWithAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertiesWithAnnotations.kt")
+            public void testPropertiesWithAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/propertiesWithAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyAccessorsWithAnnotations.kt")
+            public void testPropertyAccessorsWithAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/propertyAccessorsWithAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAliasesWithAnnotations.kt")
+            public void testTypeAliasesWithAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/typeAliasesWithAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valueParametersWithAnnotations.kt")
+            public void testValueParametersWithAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/valueParametersWithAnnotations.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("varargsInAnnotationArguments.kt")
+            public void testVarargsInAnnotationArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/varargsInAnnotationArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("variablesWithAnnotations.kt")
+            public void testVariablesWithAnnotations() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/annotations/variablesWithAnnotations.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
