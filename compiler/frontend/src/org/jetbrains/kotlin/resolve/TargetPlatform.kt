@@ -24,7 +24,11 @@ abstract class TargetPlatform(val platformName: String) {
     override fun toString() = platformName
 
     abstract val platformConfigurator: PlatformConfigurator
+
+    open val defaultLowPriorityImports: List<ImportPath> get() = emptyList()
+
     abstract fun getDefaultImports(includeKotlinComparisons: Boolean): List<ImportPath>
+
     open val excludedImports: List<FqName> get() = emptyList()
 
     abstract val multiTargetPlatform: MultiTargetPlatform

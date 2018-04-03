@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.ImportPathComparator
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
@@ -59,7 +60,13 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
         val defaultImportProvider = contextFile.getResolutionFacade().frontendService<DefaultImportProvider>()
-        return importPath.isImported(defaultImportProvider.defaultImports, defaultImportProvider.excludedImports)
+        val platform = TargetPlatformDetector.getPlatform(contextFile)
+        return importPath.isImported(defaultImportProvider.allDefaultImports, platform.excludedImports)
+    }
+
+    override fun isImportedWithLowPriorityDefaultImport(importPath: ImportPath, contextFile: KtFile): Boolean {
+        val platform = TargetPlatformDetector.getPlatform(contextFile)
+        return importPath.isImported(platform.defaultLowPriorityImports, platform.excludedImports)
     }
 
     override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean {

@@ -136,14 +136,6 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
             return packageFragmentProviderForWholeModuleWithDependencies
         }
 
-    val packageFragmentProviderForContent: PackageFragmentProvider
-        get() {
-            assertValid()
-            return packageFragmentProviderForModuleContent.sure {
-                "Module $id was not initialized by the time packageFragmentProviderForContent was requested"
-            }
-        }
-
     @Suppress("UNCHECKED_CAST")
     override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
 }

@@ -139,7 +139,8 @@ object ReplaceWithAnnotationAnalyzer {
     }
 
     private fun buildDefaultImportsScopes(resolutionFacade: ResolutionFacade, module: ModuleDescriptor): List<ImportingScope> {
-        val (allUnderImports, aliasImports) = resolutionFacade.frontendService<DefaultImportProvider>().defaultImports.partition { it.isAllUnder }
+        val (allUnderImports, aliasImports) =
+                resolutionFacade.frontendService<DefaultImportProvider>().allDefaultImports.partition { it.isAllUnder }
         // this solution doesn't support aliased default imports with a different alias
         // TODO: Create import directives from ImportPath, create ImportResolver, create LazyResolverScope, see FileScopeProviderImpl
 

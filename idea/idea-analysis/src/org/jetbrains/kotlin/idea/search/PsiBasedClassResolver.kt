@@ -260,7 +260,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
 private fun KtFile.getDefaultImports(): List<ImportPath> {
     val moduleInfo = getNullableModuleInfo() ?: return emptyList()
     val versionSettings = IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
-    return TargetPlatformDetector.getPlatform(this).getDefaultImports(
-            versionSettings.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons)
-    )
+    val platform = TargetPlatformDetector.getPlatform(this)
+    return platform.getDefaultImports(versionSettings.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons)) +
+            platform.defaultLowPriorityImports
 }
