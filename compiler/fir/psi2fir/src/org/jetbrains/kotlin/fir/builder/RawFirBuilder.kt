@@ -74,12 +74,10 @@ class RawFirBuilder(val session: FirSession) {
         }
 
     private inner class Visitor : KtVisitor<FirElement, Unit>() {
-        @Suppress("UNCHECKED_CAST")
-        private fun <R : FirElement> KtElement?.convertSafe(): R? =
+        private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =
             this?.accept(this@Visitor, Unit) as? R
 
-        @Suppress("UNCHECKED_CAST")
-        private fun <R : FirElement> KtElement.convert(): R =
+        private inline fun <reified R : FirElement> KtElement.convert(): R =
             this.accept(this@Visitor, Unit) as R
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirType =
@@ -126,7 +124,6 @@ class RawFirBuilder(val session: FirSession) {
             val firValueParameter = FirValueParameterImpl(
                 session,
                 this,
-                hasValOrVar(),
                 nameAsSafeName,
                 when {
                     typeReference != null -> typeReference.toFirOrErrorType()
@@ -140,6 +137,31 @@ class RawFirBuilder(val session: FirSession) {
             )
             extractAnnotationsTo(firValueParameter)
             return firValueParameter
+        }
+
+        private fun KtParameter.toFirProperty(): FirProperty {
+            require(hasValOrVar())
+            val type = typeReference.toFirOrErrorType()
+            val firProperty = FirMemberPropertyImpl(
+                session,
+                this,
+                nameAsSafeName,
+                visibility,
+                modality,
+                platformStatus,
+                isOverride = hasModifier(KtTokens.OVERRIDE_KEYWORD),
+                isConst = false,
+                isLateInit = false,
+                receiverType = null,
+                returnType = type,
+                isVar = valOrVarKeyword?.node?.elementType == KtTokens.VAR_KEYWORD,
+                initializer = null,
+                getter = FirDefaultPropertyGetter(session, this, type),
+                setter = FirDefaultPropertySetter(session, this, type),
+                delegate = null
+            )
+            extractAnnotationsTo(firProperty)
+            return firProperty
         }
 
         private fun KtModifierListOwner.extractAnnotationsTo(container: FirAbstractAnnotatedDeclaration) {
@@ -297,6 +319,12 @@ class RawFirBuilder(val session: FirSession) {
                 classOrObject.extractAnnotationsTo(firClass)
                 classOrObject.extractTypeParametersTo(firClass)
                 classOrObject.extractSuperTypeListEntriesTo(firClass)
+                classOrObject.primaryConstructor?.valueParameters?.forEach {
+                    if (it.hasValOrVar()) {
+                        firClass.declarations += it.toFirProperty()
+                    }
+                }
+
                 for (declaration in classOrObject.declarations) {
                     firClass.declarations += declaration.convert<FirDeclaration>()
                 }

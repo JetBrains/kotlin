@@ -2,6 +2,9 @@ FILE: derivedClass.kt
     <T> public? open class Base {
         public? constructor(x: R|T|)
 
+        public? final? property x(val): R|T|
+            public? get(): R|T|
+
     }
     <T : R|kotlin/Any|> public? final class Derived : R|Base<T>| {
         public? constructor(x: R|T|): super(STUB)

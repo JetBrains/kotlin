@@ -13,6 +13,12 @@ FILE: enums.kt
     public? final enum class Planet {
         public? constructor(m: Double, r: Double)
 
+        public? final? property m(val): Double
+            public? get(): Double
+
+        internal final? property r(val): Double
+            public? get(): Double
+
         public? final enum entry MERCURY : Planet {
             public? open? override function sayHello(): <implicit> {
             }

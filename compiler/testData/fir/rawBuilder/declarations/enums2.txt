@@ -8,6 +8,9 @@ FILE: enums2.kt
     public? final enum class SomeEnum {
         public? constructor(x: Some)
 
+        public? final? property x(val): Some
+            public? get(): Some
+
         public? final enum entry FIRST : SomeEnum {
             public? open? override function check(y: Some): Boolean {
                 STUB
