@@ -28,7 +28,6 @@ task buildSamplesWithPlatformLibs() {
     dependsOn ':uikit:build'
     dependsOn ':win32:build'
     dependsOn ':workers:build'
-    dependsOn ':calculator:build'
     dependsOn ':globalState:build'
 }
 
