@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.jps.model
 
+import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.model.ex.JpsElementBase
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
+import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CompilerSettings
@@ -18,6 +21,25 @@ val JpsModule.kotlinFacet: JpsKotlinFacetModuleExtension?
 
 val JpsModule.targetPlatform: TargetPlatformKind<*>?
     get() = kotlinFacet?.settings?.targetPlatformKind
+
+val JpsModule.expectedByModules: List<JpsModule>
+    get() {
+        val kotlinFacetExtension = kotlinFacet
+        val implementedModuleNames = kotlinFacetExtension?.settings?.implementedModuleNames ?: return listOf()
+        if (implementedModuleNames.isEmpty()) return listOf()
+
+        val result = ArrayList<JpsModule>(implementedModuleNames.size)
+
+        JpsJavaExtensionService.dependencies(this)
+            .processModules {
+                if (it.name in implementedModuleNames) {
+                    // Note, production sources should be added for both production and tests targets
+                    result.add(it)
+                }
+            }
+
+        return result
+    }
 
 val JpsModule.productionOutputFilePath: String?
     get() {
@@ -59,7 +81,7 @@ private inline fun <reified T : CommonCompilerArguments> JpsModule.getCompilerAr
 
     val facetSettings = kotlinFacet?.settings ?: return projectSettingsCopy
     if (facetSettings.useProjectSettings) return projectSettingsCopy
-    return facetSettings.compilerArguments as? T ?: projectSettingsCopy
+    return facetSettings.mergedCompilerArguments as? T ?: projectSettingsCopy
 }
 
 class JpsKotlinFacetModuleExtension(settings: KotlinFacetSettings) : JpsElementBase<JpsKotlinFacetModuleExtension>() {
