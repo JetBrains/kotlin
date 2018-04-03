@@ -29,6 +29,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/fir/resolve"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("derivedClass.kt")
+    public void testDerivedClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/derivedClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("compiler/testData/fir/resolve/enum.kt");
@@ -52,6 +58,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @TestMetadata("genericFunctions.kt")
     public void testGenericFunctions() throws Exception {
         runTest("compiler/testData/fir/resolve/genericFunctions.kt");
+    }
+
+    @TestMetadata("nestedClass.kt")
+    public void testNestedClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/nestedClass.kt");
+        doTest(fileName);
     }
 
     @TestMetadata("NestedOfAliasedType.kt")
