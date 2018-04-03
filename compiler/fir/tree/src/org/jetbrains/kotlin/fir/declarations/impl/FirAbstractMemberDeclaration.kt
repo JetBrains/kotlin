@@ -29,9 +29,8 @@ abstract class FirAbstractMemberDeclaration(
     final override val typeParameters = mutableListOf<FirTypeParameter>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        annotations.transformInplace(transformer, data)
         typeParameters.transformInplace(transformer, data)
 
-        return this
+        return super<FirAbstractNamedAnnotatedDeclaration>.transformChildren(transformer, data)
     }
 }

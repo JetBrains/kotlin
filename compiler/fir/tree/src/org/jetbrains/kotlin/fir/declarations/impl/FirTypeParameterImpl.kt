@@ -33,6 +33,6 @@ class FirTypeParameterImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         bounds.transformInplace(transformer, data)
 
-        return this
+        return super<FirAbstractNamedAnnotatedDeclaration>.transformChildren(transformer, data)
     }
 }
