@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
+import org.jetbrains.kotlin.parsing.util.classesFqNames
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
@@ -351,6 +352,15 @@ class CompileServiceImpl(
                     CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(printStream, createCompileServices(servicesFacade, eventManager, profiler), *args)
                 }
             }
+
+    override fun classesFqNamesByFiles(
+        sessionId: Int, sourceFiles: Set<File>
+    ): CompileService.CallResult<Set<String>> =
+        ifAlive {
+            withValidClientOrSessionProxy(sessionId) {
+                CompileService.CallResult.Good(classesFqNames(sourceFiles))
+            }
+        }
 
     override fun compile(
             sessionId: Int,
