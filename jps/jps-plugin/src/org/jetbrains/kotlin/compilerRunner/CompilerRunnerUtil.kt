@@ -101,8 +101,8 @@ object CompilerRunnerUtil {
     }
 
     fun invokeClassesFqNames(
-        files: Set<File>,
-        environment: JpsCompilerEnvironment
+        environment: JpsCompilerEnvironment,
+        files: Set<File>
     ): Set<String> = withCompilerClassloader(environment) { classLoader ->
         val klass = Class.forName("org.jetbrains.kotlin.parsing.util.ParseFileUtilsKt", true, classLoader)
         val method = klass.getMethod("classesFqNames", Set::class.java)

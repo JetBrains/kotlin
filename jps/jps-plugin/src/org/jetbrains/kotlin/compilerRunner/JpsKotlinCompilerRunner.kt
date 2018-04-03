@@ -72,6 +72,20 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         const val FAIL_ON_FALLBACK_PROPERTY = "test.kotlin.jps.compiler.runner.fail.on.fallback"
     }
 
+    fun classesFqNamesByFiles(
+        environment: JpsCompilerEnvironment,
+        files: Set<File>
+    ): Set<String> = withDaemonOrFallback(
+        withDaemon = {
+            doWithDaemon(environment) { sessionId, daemon ->
+                daemon.classesFqNamesByFiles(sessionId, files)
+            }
+        },
+        fallback = {
+            CompilerRunnerUtil.invokeClassesFqNames(environment, files)
+        }
+    )
+
     fun runK2JvmCompiler(
         commonArguments: CommonCompilerArguments,
         k2jvmArguments: K2JVMCompilerArguments,
@@ -122,12 +136,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     ): ExitCode {
         log.debug("Using kotlin-home = " + environment.kotlinPaths.homePath)
 
-        return if (isDaemonEnabled()) {
-            val daemonExitCode = compileWithDaemon(compilerClassName, compilerArgs, environment)
-            daemonExitCode ?: fallbackCompileStrategy(compilerArgs, compilerClassName, environment)
-        } else {
-            fallbackCompileStrategy(compilerArgs, compilerClassName, environment)
-        }
+        return withDaemonOrFallback(
+            withDaemon = { compileWithDaemon(compilerClassName, compilerArgs, environment) },
+            fallback = { fallbackCompileStrategy(compilerArgs, compilerClassName, environment) }
+        )
     }
 
     override fun compileWithDaemon(
@@ -141,15 +153,6 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
             else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
         }
-
-        log.debug("Try to connect to daemon")
-        val connection = getDaemonConnection(environment)
-        if (connection == null) {
-            log.info("Could not connect to daemon")
-            return null
-        }
-
-        val (daemon, sessionId) = connection
         val compilerMode = CompilerMode.JPS_COMPILER
         val verbose = compilerArgs.verbose
         val options = CompilationOptions(
@@ -159,10 +162,33 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             reportSeverity(verbose),
             requestedCompilationResults = emptyArray()
         )
-        val res =
+        return doWithDaemon(environment) { sessionId, daemon ->
             daemon.compile(sessionId, withAdditionalCompilerArgs(compilerArgs), options, JpsCompilerServicesFacadeImpl(environment), null)
+        }?.let { exitCodeFromProcessExitCode(it) }
+    }
+
+    private fun <T> withDaemonOrFallback(withDaemon: () -> T?, fallback: () -> T): T =
+        if (isDaemonEnabled()) {
+            withDaemon() ?: fallback()
+        } else {
+            fallback()
+        }
+
+    private fun <T> doWithDaemon(
+        environment: JpsCompilerEnvironment,
+        fn: (sessionId: Int, daemon: CompileService) -> CompileService.CallResult<T>
+    ): T? {
+        log.debug("Try to connect to daemon")
+        val connection = getDaemonConnection(environment)
+        if (connection == null) {
+            log.info("Could not connect to daemon")
+            return null
+        }
+
+        val (daemon, sessionId) = connection
+        val res = fn(sessionId, daemon)
         // TODO: consider implementing connection retry, instead of fallback here
-        return res.takeUnless { it is CompileService.CallResult.Dying }?.let { exitCodeFromProcessExitCode(it.get()) }
+        return res.takeUnless { it is CompileService.CallResult.Dying }?.get()
     }
 
     private fun withAdditionalCompilerArgs(compilerArgs: CommonCompilerArguments): Array<String> {
