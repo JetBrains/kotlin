@@ -8,10 +8,14 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.transformInplace
+import org.jetbrains.kotlin.fir.transformSingle
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirAbstractMemberDeclaration(
@@ -23,4 +27,11 @@ abstract class FirAbstractMemberDeclaration(
     override val platformStatus: FirMemberPlatformStatus
 ) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirMemberDeclaration {
     final override val typeParameters = mutableListOf<FirTypeParameter>()
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        annotations.transformInplace(transformer, data)
+        typeParameters.transformInplace(transformer, data)
+
+        return this
+    }
 }

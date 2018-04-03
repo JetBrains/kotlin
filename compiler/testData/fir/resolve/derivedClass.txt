@@ -1,0 +1,12 @@
+FILE: derivedClass.kt
+    <T> public? open class Base {
+        public? constructor(x: R|T|)
+
+    }
+    <T : R|kotlin/Any|> public? final class Derived : R|Base<T>| {
+        public? constructor(x: R|T|): super(STUB)
+
+    }
+    <T : R|kotlin/Any|> public? final? function create(x: R|T|): R|Derived<T>| {
+        STUB
+    }

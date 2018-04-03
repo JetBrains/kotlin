@@ -31,10 +31,9 @@ abstract class FirAbstractCallableMember(
 ) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, platformStatus), FirCallableMember {
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        annotations.transformInplace(transformer, data)
         receiverType = receiverType?.transformSingle(transformer, data)
         returnType = returnType.transformSingle(transformer, data)
 
-        return this
+        return super<FirAbstractMemberDeclaration>.transformChildren(transformer, data)
     }
 }
