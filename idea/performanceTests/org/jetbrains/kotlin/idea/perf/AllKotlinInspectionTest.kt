@@ -22,7 +22,10 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import java.io.File
+import java.io.PrintWriter
+import java.io.StringWriter
 import kotlin.system.measureNanoTime
+
 
 class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
 
@@ -40,11 +43,6 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
 
         rootProjectFile.copyRecursively(tmp)
         tmp.resolve(".idea").deleteRecursively()
-
-        val inspectionProfilesDir = File(".idea/inspectionProfiles")
-        rootProjectFile.resolve(inspectionProfilesDir).copyRecursively(
-            tmp.resolve(inspectionProfilesDir).also { it.parentFile.mkdirs() }
-        )
 
         (ApplicationManager.getApplication() as ApplicationEx).doNotSave()
         myProject = ProjectUtil.openOrImport(tmp.path, null, false)
@@ -65,29 +63,43 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
         profileTools = ProjectInspectionProfileManager.getInstance(project).currentProfile.getAllEnabledInspectionTools(project)
     }
 
-    fun doTest(file: File): Map<String, Long> {
+    data class PerFileTestResult(val perInspection: Map<String, Long>, val totalNs: Long, val errors: List<Throwable>)
+
+    class ExceptionWhileInspection(insepctionId: String, cause: Throwable) : RuntimeException(insepctionId, cause)
+
+    protected fun doTest(file: File): PerFileTestResult {
 
         val results = mutableMapOf<String, Long>()
-        val vFile = VfsUtil.findFileByIoFile(file, false) ?: return results
+        var totalNs = 0L
+        val vFile = VfsUtil.findFileByIoFile(file, false) ?: run {
+            return PerFileTestResult(results, totalNs, listOf(AssertionError("VirtualFile not found for $file")))
+        }
 
         val psi = PsiManager.getInstance(project)
-        val psiFile = psi.findFile(vFile) ?: return results
+        val psiFile = psi.findFile(vFile) ?: run {
+            return PerFileTestResult(results, totalNs, listOf(AssertionError("PsiFile not found for $vFile")))
+        }
 
+        val errors = mutableListOf<Throwable>()
 
         profileTools.forEach {
-            val tool = it.tool.tool as? LocalInspectionTool ?: return@forEach
-            if (it.tool.language != null && it.tool.language!! !in setOf("kotlin", "UAST")) return@forEach
+            val localInspectionTool = it.tool.tool as? LocalInspectionTool ?: return@forEach
+            if (it.tool.language !in setOf(null, "kotlin", "UAST")) return@forEach
             val result = measureNanoTime {
                 try {
-                    tool.analyze(psiFile)
+                    localInspectionTool.analyze(psiFile)
                 } catch (t: Throwable) {
-                    t.printStackTrace()
+                    val myEx = ExceptionWhileInspection(it.tool.id, t)
+
+                    myEx.printStackTrace()
+                    errors += myEx
                 }
             }
             results[it.tool.id] = result
+            totalNs += result
         }
 
-        return results
+        return PerFileTestResult(results, totalNs, errors)
     }
 
     private fun PsiElement.acceptRecursively(visitor: PsiElementVisitor) {
@@ -98,9 +110,6 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
     }
 
     fun LocalInspectionTool.analyze(file: PsiFile) {
-
-        file.containingDirectory
-
         if (file.textRange == null) return
 
         val holder = ProblemsHolder(InspectionManager.getInstance(file.project), file, false)
@@ -110,17 +119,41 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
     }
 
 
-    inline fun tcSuite(name: String, l: () -> Unit) {
+    inline fun tcSuite(name: String, block: () -> Unit) {
         println("##teamcity[testSuiteStarted name='$name']")
-        l()
+        block()
         println("##teamcity[testSuiteFinished name='$name']")
     }
 
-    inline fun tcTest(name: String, l: () -> Long) {
+    inline fun tcTest(name: String, block: () -> Pair<Long, List<Throwable>>) {
         println("##teamcity[testStarted name='$name' captureStandardOutput='true']")
-        val result = l()
-        println("##teamcity[testFinished name='$name' duration='$result']")
+        val (time, errors) = block()
+        if (errors.isNotEmpty()) {
+
+            val detailsWriter = StringWriter()
+            val errorDetailsPrintWriter = PrintWriter(detailsWriter)
+            errors.forEach {
+                it.printStackTrace(errorDetailsPrintWriter)
+                errorDetailsPrintWriter.println()
+            }
+            errorDetailsPrintWriter.close()
+            val details = detailsWriter.toString()
+            println("##teamcity[testFailed name='$name' message='Exceptions reported' details='${details.tcEscape()}']")
+        } else {
+            println("##teamcity[testFinished name='$name' duration='$time']")
+        }
     }
+
+    fun String.tcEscape(): String {
+        return this
+            .replace("|", "||")
+            .replace("[", "|[")
+            .replace("]", "|]")
+            .replace("\r", "|r")
+            .replace("\n", "|n")
+            .replace("'", "|'")
+    }
+
 
     fun testWholeProjectPerformance() {
 
@@ -131,8 +164,6 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
         statsOutput.appendln("File, InspectionID, Time")
 
         fun appendInspectionResult(file: String, id: String, nanoTime: Long) {
-            totals.merge(id, nanoTime) { a, b -> a + b }
-
             statsOutput.appendln(buildString {
                 append(file)
                 append(", ")
@@ -148,12 +179,11 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
             }.forEach {
                 val filePath = it.relativeTo(tmp).path.replace(File.separatorChar, '/')
                 tcTest(filePath) {
-                    val resultPerInspection = doTest(it)
-                    resultPerInspection.forEach { (k, v) ->
+                    val result = doTest(it)
+                    result.perInspection.forEach { (k, v) ->
                         appendInspectionResult(filePath, k, v)
                     }
-                    val result = (resultPerInspection.values.sum() * 1e-6).toLong()
-                    result
+                    (result.totalNs * 1e-6).toLong() to result.errors
                 }
             }
         }
@@ -165,7 +195,7 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
         tcSuite("Total") {
             totals.forEach { (k, v) ->
                 tcTest(k) {
-                    (v * 1e-6).toLong()
+                    (v * 1e-6).toLong() to emptyList()
                 }
             }
         }
