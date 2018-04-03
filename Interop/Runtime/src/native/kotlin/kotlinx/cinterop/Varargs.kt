@@ -92,8 +92,8 @@ private tailrec fun convertArgument(
 
     is CEnum -> convertArgument(argument.value, isVariadic, location, additionalPlacement)
 
-    is ObjCPointerHolder -> {
-        location.reinterpret<COpaquePointerVar>()[0] = interpretCPointer(argument.rawPtr)
+    is ForeignObjCObject -> {
+        location.reinterpret<COpaquePointerVar>()[0] = interpretCPointer((argument as ObjCObject).rawPtr())
         FFI_TYPE_KIND_POINTER
     }
 

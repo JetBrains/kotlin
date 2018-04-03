@@ -47,6 +47,7 @@ internal fun IrFunction.isObjCClassMethod() = this.descriptor.isObjCClassMethod(
 internal fun IrFunction.canObjCClassMethodBeCalledVirtually(overridden: IrFunction) =
         this.descriptor.canObjCClassMethodBeCalledVirtually(overridden.descriptor)
 internal fun IrClass.isObjCClass() = this.descriptor.isObjCClass()
+internal fun IrClass.isObjCMetaClass() = this.descriptor.isObjCMetaClass()
 internal fun IrFunction.isExternalObjCClassMethod() = this.descriptor.isExternalObjCClassMethod()
 
 internal val IrDeclaration.llvmSymbolOrigin get() = this.descriptor.llvmSymbolOrigin

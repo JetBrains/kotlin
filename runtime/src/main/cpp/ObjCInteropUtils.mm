@@ -44,18 +44,22 @@ namespace {
 
 extern "C" {
 
-id Kotlin_Interop_CreateNSStringFromKString(const ObjHeader* str) {
+id Kotlin_ObjCExport_CreateNSStringFromKString(ObjHeader* str);
+
+id Kotlin_Interop_CreateNSStringFromKString(ObjHeader* str) {
+  // Note: this function is just a bit specialized [Kotlin_Interop_refToObjC].
   if (str == nullptr) {
     return nullptr;
   }
 
-  const KChar* utf16Chars = CharArrayAddressOfElementAt(str->array(), 0);
+  if (str->has_meta_object()) {
+    void* associatedObject = str->meta_object()->associatedObject_;
+    if (associatedObject != nullptr) {
+      return (id)associatedObject;
+    }
+  }
 
-  NSString* result = [[[getNSStringClass() alloc] initWithBytes:utf16Chars
-    length:str->array()->count_*sizeof(KChar)
-    encoding:NSUTF16LittleEndianStringEncoding] autorelease];
-
-  return result;
+  return Kotlin_ObjCExport_CreateNSStringFromKString(str);
 }
 
 OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str) {
@@ -78,7 +82,7 @@ OBJ_GETTER(Kotlin_Interop_ObjCToString, id <NSObject> ptr) {
 }
 
 KInt Kotlin_Interop_ObjCHashCode(id <NSObject> ptr) {
-  KLong hash = ptr.hash;
+  uint64_t hash = ptr.hash;
   return (KInt)(hash ^ (hash >> 32));
 }
 
@@ -147,6 +151,18 @@ KRef Kotlin_Interop_unwrapKotlinObjectHolder(id holder) {
   }
 
   return [((KotlinObjectHolder*)holder) ref];
+}
+
+KBoolean Kotlin_Interop_DoesObjectConformToProtocol(id obj, void* prot, BOOL isMeta) {
+  BOOL objectIsClass = class_isMetaClass(object_getClass(obj));
+  if ((isMeta && !objectIsClass) || (!isMeta && objectIsClass)) return false;
+  // TODO: handle root classes properly.
+
+  return [((id<NSObject>)obj) conformsToProtocol:(Protocol*)prot];
+}
+
+KBoolean Kotlin_Interop_IsObjectKindOfClass(id obj, void* cls) {
+  return [((id<NSObject>)obj) isKindOfClass:(Class)cls];
 }
 
 } // extern "C"

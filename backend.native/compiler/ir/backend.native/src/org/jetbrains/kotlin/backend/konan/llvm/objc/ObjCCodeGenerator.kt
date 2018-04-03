@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     val context = codegen.context
 
-    val dataGenerator = ObjCDataGenerator(codegen)
+    val dataGenerator = codegen.objCDataGenerator!!
 
     fun FunctionGenerationContext.genSelector(selector: String): LLVMValueRef {
         val selectorRef = dataGenerator.genSelectorRef(selector)

@@ -23,9 +23,10 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
+import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.isReal
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
@@ -80,16 +81,6 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
     private fun IrBuilderWithScope.getObjCClass(classSymbol: IrClassSymbol): IrExpression {
         val classDescriptor = classSymbol.descriptor
         assert(!classDescriptor.isObjCMetaClass())
-
-        if (classDescriptor.isExternalObjCClass()) {
-            val companionObject = classDescriptor.companionObjectDescriptor!!
-            if (companionObject.unsubstitutedPrimaryConstructor != scope.scopeOwner) {
-                // Optimization: get class pointer from companion object thus avoiding lookup by name.
-                return irCall(symbols.interopObjCObjectRawValueGetter).apply {
-                    extensionReceiver = irGetObject(symbolTable.referenceClass(companionObject))
-                }
-            }
-        }
         return irCall(symbols.interopGetObjCClass, listOf(classDescriptor.defaultType))
     }
 
@@ -349,6 +340,29 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
             )
         }
 
+        val methodsOfAny =
+                context.ir.symbols.any.owner.declarations.filterIsInstance<IrSimpleFunction>().toSet()
+
+        irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isReal }.forEach { method ->
+            val overriddenMethodOfAny = method.allOverriddenDescriptors.firstOrNull {
+                it in methodsOfAny
+            }
+
+            if (overriddenMethodOfAny != null) {
+                val correspondingObjCMethod = when (method.name.asString()) {
+                    "toString" -> "'description'"
+                    "hashCode" -> "'hash'"
+                    "equals" -> "'isEqual:'"
+                    else -> "corresponding Objective-C method"
+                }
+
+                context.report(
+                        method,
+                        "can't override '${method.name}', override $correspondingObjCMethod instead",
+                        isError = true
+                )
+            }
+        }
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
@@ -367,18 +381,10 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
             if (classContainer is ClassDescriptor && classContainer.isObjCClass() &&
                     constructedClassDescriptor == classContainer.companionObjectDescriptor) {
 
-                val outerConstructedClass = outerClasses[outerClasses.lastIndex - 1]
-                assert (outerConstructedClass.descriptor == classContainer)
+                // Note: it is actually not used; getting values of such objects is handled by code generator
+                // in [FunctionGenerationContext.getObjectValue].
 
-                assert(expression.getArguments().isEmpty())
-
-                return builder.irBlock(expression) {
-                    +expression // Required for the IR to be valid, will be ignored in codegen.
-                    +irCall(symbols.interopObjCObjectInitFromPtr).apply {
-                        extensionReceiver = irGet(constructedClass.thisReceiver!!.symbol)
-                        putValueArgument(0, getObjCClass(outerConstructedClass.symbol))
-                    }
-                }
+                return expression
             }
         }
 
@@ -398,7 +404,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
             val initCall = builder.genLoweredObjCMethodCall(
                     initMethodInfo,
                     superQualifier = symbolTable.referenceClass(expression.descriptor.constructedClass),
-                    receiver = builder.irGet(constructedClass.thisReceiver!!.symbol),
+                    receiver = builder.getRawPtr(builder.irGet(constructedClass.thisReceiver!!.symbol)),
                     arguments = initMethod.valueParameters.map { expression.getValueArgument(it)!! }
             )
 
@@ -451,14 +457,21 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
                 assert(expression.extensionReceiver == null)
                 assert(expression.dispatchReceiver == null)
 
-                builder.at(expression)
-
-                return builder.genLoweredObjCMethodCall(
-                        initMethod.getExternalObjCMethodInfo()!!,
-                        superQualifier = null,
-                        receiver = builder.callAlloc(symbolTable.referenceClass(descriptor.constructedClass)),
-                        arguments = arguments
-                )
+                return builder.irBlock(expression) {
+                    val allocated = irTemporaryVar(callAlloc(symbolTable.referenceClass(descriptor.constructedClass)))
+                    val result = irTemporaryVar(
+                        genLoweredObjCMethodCall(
+                                initMethod.getExternalObjCMethodInfo()!!,
+                                superQualifier = null,
+                                receiver = irGet(allocated.symbol),
+                                arguments = arguments
+                        )
+                    )
+                    +irCall(symbols.interopObjCRelease).apply {
+                        putValueArgument(0, irGet(allocated.symbol)) // Balance pointer retained by alloc.
+                    }
+                    +irGet(result.symbol)
+                }
             }
         }
 
@@ -493,7 +506,7 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
                 return builder.genLoweredObjCMethodCall(
                         methodInfo,
                         superQualifier = expression.superQualifierSymbol,
-                        receiver = expression.dispatchReceiver ?: expression.extensionReceiver!!,
+                        receiver = builder.getRawPtr(expression.dispatchReceiver ?: expression.extensionReceiver!!),
                         arguments = arguments
                 )
             }
@@ -519,6 +532,11 @@ internal class InteropLoweringPart1(val context: Context) : IrBuildingTransforme
             else -> expression
         }
     }
+
+    private fun IrBuilderWithScope.getRawPtr(receiver: IrExpression) =
+            irCall(symbols.interopObjCObjectRawValueGetter).apply {
+                extensionReceiver = receiver
+            }
 }
 
 /**

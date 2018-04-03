@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -358,7 +360,7 @@ tailrec fun IrDeclaration.getContainingFile(): IrFile? {
     }
 }
 
-fun CommonBackendContext.report(declaration: IrDeclaration, message: String, isError: Boolean) {
+internal fun KonanBackendContext.report(declaration: IrDeclaration, message: String, isError: Boolean) {
     val irFile = declaration.getContainingFile()
     this.report(
             declaration,
@@ -371,4 +373,5 @@ fun CommonBackendContext.report(declaration: IrDeclaration, message: String, isE
             },
             isError
     )
+    if (isError) throw KonanCompilationException()
 }

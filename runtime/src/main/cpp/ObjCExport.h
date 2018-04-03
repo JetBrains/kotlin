@@ -12,11 +12,12 @@ extern "C" id objc_retain(id self);
 extern "C" void objc_release(id self);
 
 inline static id GetAssociatedObject(ObjHeader* obj) {
-  return (id)obj->meta_object()->associatedObject;
+  return (id)obj->meta_object()->associatedObject_;
 }
 
+// Note: this function shall not be used on shared objects.
 inline static void SetAssociatedObject(ObjHeader* obj, id value) {
-  obj->meta_object()->associatedObject = (void*)value;
+  obj->meta_object()->associatedObject_ = (void*)value;
 }
 
 extern "C" id Kotlin_ObjCExport_refToObjC(ObjHeader* obj);

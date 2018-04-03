@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.descriptors.stdlibModule
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal class CodeGenerator(override val context: Context) : ContextUtils {
 
@@ -85,16 +87,17 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
 
     fun typeInfoForAllocation(constructedClass: ClassDescriptor): LLVMValueRef {
-        val descriptorForTypeInfo = if (constructedClass.isObjCClass()) {
-            context.ir.symbols.objCPointerHolder.owner
-        } else {
-            constructedClass
-        }
-        return typeInfoValue(descriptorForTypeInfo)
+        assert(!constructedClass.isObjCClass())
+        return typeInfoValue(constructedClass)
     }
 
     fun generateLocationInfo(locationInfo: LocationInfo): DILocationRef? {
         return LLVMCreateLocation(LLVMGetModuleContext(context.llvmModule), locationInfo.line, locationInfo.line, locationInfo.scope)
+    }
+
+    val objCDataGenerator = when (context.config.target) {
+        KonanTarget.IOS_ARM64, KonanTarget.IOS_X64, KonanTarget.MACOS_X64 -> ObjCDataGenerator(this)
+        else -> null
     }
 
 }
@@ -430,6 +433,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBlockAddress(function, bbLabel)!!
     }
 
+    fun not(arg: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildNot(builder, arg, name)!!
     fun and(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildAnd(builder, arg0, arg1, name)!!
     fun or(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildOr(builder, arg0, arg1, name)!!
     fun xor(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildXor(builder, arg0, arg1, name)!!
@@ -613,7 +617,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
 
         val owner = descriptor.containingDeclaration as ClassDescriptor
 
-        val typeInfoPtr: LLVMValueRef = if (owner.isObjCClass()) {
+        val typeInfoPtr: LLVMValueRef = if (descriptor.getObjCMethodInfo() != null) {
             call(context.llvm.getObjCKotlinTypeInfo, listOf(receiver))
         } else {
             val typeInfoOrMetaPtr = structGep(receiver, 0  /* typeInfoOrMeta_ */)
@@ -653,6 +657,20 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     ): LLVMValueRef {
         if (descriptor.isUnit()) {
             return codegen.theUnitInstanceRef.llvm
+        }
+
+        if (descriptor.isCompanion) {
+            val parent = descriptor.parent as IrClass
+            if (parent.isObjCClass()) {
+                // TODO: cache it too.
+
+                return call(
+                        codegen.llvmFunction(context.ir.symbols.interopInterpretObjCPointer.owner),
+                        listOf(getObjCClass(parent, exceptionHandler)),
+                        Lifetime.GLOBAL,
+                        exceptionHandler
+                )
+            }
         }
 
         val objectPtr = codegen.getObjectInstanceStorage(descriptor, shared)
@@ -706,6 +724,53 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
                 Lifetime.GLOBAL,
                 exceptionHandler
         )
+    }
+
+    // TODO: get rid of exceptionHandler argument by ensuring that all called functions are non-throwing.
+    fun getObjCClass(irClass: IrClass, exceptionHandler: ExceptionHandler): LLVMValueRef {
+        assert(!irClass.isInterface)
+
+        return if (irClass.isExternalObjCClass()) {
+            context.llvm.imports.add(irClass.llvmSymbolOrigin)
+
+            if (irClass.isObjCMetaClass()) {
+                val name = irClass.name.asString().removeSuffix("Meta")
+
+                val objCClass = load(codegen.objCDataGenerator!!.genClassRef(name).llvm)
+
+                val getClass = context.llvm.externalFunction(
+                        "object_getClass",
+                        functionType(int8TypePtr, false, int8TypePtr),
+                        origin = context.standardLlvmSymbolsOrigin
+                )
+
+                call(getClass, listOf(objCClass), exceptionHandler = exceptionHandler)
+            } else {
+                load(codegen.objCDataGenerator!!.genClassRef(irClass.name.asString()).llvm)
+            }
+        } else {
+            if (irClass.isObjCMetaClass()) {
+                error("type-checking against Kotlin classes inheriting Objective-C meta-classes isn't supported yet")
+            }
+
+            val objCDeclarations = context.llvmDeclarations.forClass(irClass).objCDeclarations!!
+            val classPointerGlobal = objCDeclarations.classPointerGlobal.llvmGlobal
+
+            val storedClass = this.load(classPointerGlobal)
+
+            val storedClassIsNotNull = this.icmpNe(storedClass, kNullInt8Ptr)
+
+            return this.ifThenElse(storedClassIsNotNull, storedClass) {
+                val newClass = call(
+                        context.llvm.createKotlinObjCClass,
+                        listOf(objCDeclarations.classInfoGlobal.llvmGlobal),
+                        exceptionHandler = exceptionHandler
+                )
+
+                this.store(newClass, classPointerGlobal)
+                newClass
+            }
+        }
     }
 
     fun resetDebugLocation() {

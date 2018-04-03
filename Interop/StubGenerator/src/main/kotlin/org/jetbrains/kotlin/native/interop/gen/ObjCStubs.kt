@@ -112,13 +112,13 @@ class ObjCMethodStub(stubGenerator: StubGenerator,
 
         if (method.nsConsumesSelf) {
             // TODO: do this later due to possible exceptions
-            bodyGenerator.out("objc_retain($kniReceiverParameter.rawPtr())")
+            bodyGenerator.out("objc_retain($kniReceiverParameter)")
         }
 
-        kotlinObjCBridgeParameters.add(kniReceiverParameter to KotlinTypes.objCObject.type)
+        kotlinObjCBridgeParameters.add(kniReceiverParameter to KotlinTypes.nativePtr)
         nativeBridgeArguments.add(
                 TypedKotlinValue(voidPtr,
-                        "getReceiverOrSuper($kniReceiverParameter.rawPtr(), $kniSuperClassParameter)"))
+                        "getReceiverOrSuper($kniReceiverParameter, $kniSuperClassParameter)"))
 
         val kotlinParameterNames = method.getKotlinParameterNames()
 
@@ -289,10 +289,15 @@ private fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
 
 abstract class ObjCContainerStub(stubGenerator: StubGenerator,
                                  private val container: ObjCClassOrProtocol,
-                                 private val isMeta: Boolean) : KotlinStub {
+                                 protected val metaContainerStub: ObjCContainerStub?
+) : KotlinStub {
+
+    private val isMeta: Boolean get() = metaContainerStub == null
 
     private val methods: List<ObjCMethod>
     private val properties: List<ObjCProperty>
+
+    private val protocolGetter: String?
 
     init {
         val superMethods = container.inheritedMethods(isMeta)
@@ -376,7 +381,26 @@ abstract class ObjCContainerStub(stubGenerator: StubGenerator,
         val supersString = supers.joinToString { it.render(stubGenerator.kotlinFile) }
         val classifier = stubGenerator.declarationMapper.getKotlinClassFor(container, isMeta)
         val name = stubGenerator.kotlinFile.declare(classifier)
-        this.classHeader = "@ExternalObjCClass $keywords $name : $supersString"
+
+        val externalObjCClassAnnotationName = "@ExternalObjCClass"
+        val externalObjCClassAnnotation: String
+
+        if (container is ObjCProtocol) {
+            protocolGetter = if (metaContainerStub != null) {
+                metaContainerStub.protocolGetter!!
+            } else {
+                val nativeBacked = object : NativeBacked {}
+                // TODO: handle the case when protocol getter stub can't be compiled.
+                genProtocolGetter(stubGenerator, nativeBacked, container)
+            }
+
+            externalObjCClassAnnotation = externalObjCClassAnnotationName.applyToStrings(protocolGetter)
+        } else {
+            protocolGetter = null
+            externalObjCClassAnnotation = externalObjCClassAnnotationName
+        }
+
+        this.classHeader = "$externalObjCClassAnnotation $keywords $name : $supersString"
     }
 
     open fun generateBody(context: StubGenerationContext): Sequence<String> {
@@ -403,13 +427,10 @@ open class ObjCClassOrProtocolStub(
 ) : ObjCContainerStub(
         stubGenerator,
         container,
-        isMeta = false
+        metaContainerStub = object : ObjCContainerStub(stubGenerator, container, metaContainerStub = null) {}
 ) {
-    private val metaClassStub =
-            object : ObjCContainerStub(stubGenerator, container, isMeta = true) {}
-
     override fun generate(context: StubGenerationContext) =
-            metaClassStub.generate(context) + "" + super.generate(context)
+            metaContainerStub!!.generate(context) + "" + super.generate(context)
 }
 
 class ObjCProtocolStub(stubGenerator: StubGenerator, protocol: ObjCProtocol) :
@@ -485,11 +506,11 @@ class ObjCPropertyStub(
         }
         val result = mutableListOf(
                 "$modifiers$kind $receiver${property.name.asSimpleName()}: $kotlinType",
-                "    get() = ${getterStub.bridgeName}(nativeNullPtr, this)"
+                "    get() = ${getterStub.bridgeName}(nativeNullPtr, this.rawPtr())"
         )
 
         property.setter?.let {
-            result.add("    set(value) = ${setterStub!!.bridgeName}(nativeNullPtr, this, value)")
+            result.add("    set(value) = ${setterStub!!.bridgeName}(nativeNullPtr, this.rawPtr(), value)")
         }
 
         return result.asSequence()
@@ -585,3 +606,22 @@ private fun NativeCodeBuilder.genMethodImp(
     return functionName
 }
 
+private fun genProtocolGetter(
+        stubGenerator: StubGenerator,
+        nativeBacked: NativeBacked,
+        protocol: ObjCProtocol
+): String {
+    val functionName = "kniprot_" + stubGenerator.pkgName.replace('.', '_') + stubGenerator.nextUniqueId()
+
+    val builder = NativeCodeBuilder(stubGenerator.simpleBridgeGenerator.topLevelNativeScope)
+
+    with(builder) {
+        out("Protocol* $functionName() {")
+        out("    return @protocol(${protocol.name});")
+        out("}")
+    }
+
+    stubGenerator.simpleBridgeGenerator.insertNativeBridge(nativeBacked, emptyList(), builder.lines)
+
+    return functionName
+}

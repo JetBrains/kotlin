@@ -802,12 +802,12 @@ class StubGenerator(
         }
 
         nativeIndex.objCClasses.forEach {
-            if (!it.isForwardDeclaration) {
+            if (!it.isForwardDeclaration && !it.isNSStringSubclass()) {
                 stubs.add(ObjCClassStub(this, it))
             }
         }
 
-        nativeIndex.objCCategories.mapTo(stubs) {
+        nativeIndex.objCCategories.filter { !it.clazz.isNSStringSubclass() }.mapTo(stubs) {
             ObjCCategoryStub(this, it)
         }
 
@@ -886,6 +886,7 @@ class StubGenerator(
                 add("MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED") // Workaround for multiple-inherited properties.
                 add("EXTENSION_SHADOWED_BY_MEMBER") // For Objective-C categories represented as extensions.
                 add("REDUNDANT_NULLABLE") // This warning appears due to Obj-C typedef nullability incomplete support.
+                add("DEPRECATION") // For uncheckedCast.
             }
         }
 

@@ -22,43 +22,13 @@ interface ObjCObject
 interface ObjCClass : ObjCObject
 typealias ObjCObjectMeta = ObjCClass
 
-abstract class ObjCObjectBase protected constructor() : ObjCObject {
-    final override fun equals(other: Any?): Boolean {
-        val thisAny: Any = this
-        return thisAny.equals(other) // Call it virtually because ObjCObjectBase is a fake type.
-    }
-    final override fun hashCode(): Int = ObjCHashCode(this.rawPtr())
-    final override fun toString(): String = ObjCToString(this.rawPtr())
-}
+@ExportTypeInfo("theForeignObjCObjectTypeInfo")
+internal open class ForeignObjCObject
 
+abstract class ObjCObjectBase protected constructor() : ObjCObject
 abstract class ObjCObjectBaseMeta protected constructor() : ObjCObjectBase(), ObjCObjectMeta {}
 
 fun optional(): Nothing = throw RuntimeException("Do not call me!!!")
-
-/**
- * The runtime representation of any [ObjCObject].
- */
-@ExportTypeInfo("theObjCPointerHolderTypeInfo")
-class ObjCPointerHolder(inline val rawPtr: NativePtr) {
-    init {
-        assert(rawPtr != nativeNullPtr)
-        objc_retain(rawPtr)
-    }
-
-    final override fun equals(other: Any?): Boolean =
-            if (other is ObjCPointerHolder) {
-                ObjCEquals(this.rawPtr, other.rawPtr)
-            } else {
-                other == this
-            }
-
-    final override fun hashCode(): Int = ObjCHashCode(this.rawPtr)
-    final override fun toString(): String = ObjCToString(this.rawPtr)
-}
-
-@konan.internal.Intrinsic
-@konan.internal.ExportForCompiler
-private external fun ObjCObject.initFromPtr(ptr: NativePtr)
 
 @konan.internal.Intrinsic
 external fun <T : ObjCObjectBase> T.initBy(constructorCall: T): T
@@ -72,19 +42,13 @@ private fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
         throw UnsupportedOperationException("Super initializer has replaced object")
 }
 
+@Deprecated("Use plain Kotlin cast", ReplaceWith("this as T"), DeprecationLevel.WARNING)
 fun <T : Any?> Any?.uncheckedCast(): T = @Suppress("UNCHECKED_CAST") (this as T) // TODO: make private
 
-inline fun <T : ObjCObject?> interpretObjCPointerOrNull(rawPtr: NativePtr): T? = if (rawPtr != nativeNullPtr) {
-    ObjCPointerHolder(rawPtr).uncheckedCast<T>()
-} else {
-    null
-}
+@SymbolName("Kotlin_Interop_refFromObjC")
+external fun <T : ObjCObject?> interpretObjCPointerOrNull(rawPtr: NativePtr): T?
 
-inline fun <T : ObjCObject> interpretObjCPointer(rawPtr: NativePtr): T = if (rawPtr != nativeNullPtr) {
-    ObjCPointerHolder(rawPtr).uncheckedCast<T>()
-} else {
-    throw NullPointerException()
-}
+inline fun <T : ObjCObject> interpretObjCPointer(rawPtr: NativePtr): T = interpretObjCPointerOrNull<T>(rawPtr)!!
 
 @SymbolName("Kotlin_Interop_refToObjC")
 external fun ObjCObject?.rawPtr(): NativePtr
@@ -119,7 +83,7 @@ typealias ObjCBlockVar<T> = ObjCNotImplementedVar<T>
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class ExternalObjCClass()
+annotation class ExternalObjCClass(val protocolGetter: String = "")
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
@@ -155,18 +119,15 @@ private fun getObjCClassByName(name: NativePtr): NativePtr {
 }
 
 @konan.internal.ExportForCompiler
-private fun <T : ObjCObject> allocObjCObject(clazz: NativePtr): T {
+private fun allocObjCObject(clazz: NativePtr): NativePtr {
     val rawResult = objc_allocWithZone(clazz)
     if (rawResult == nativeNullPtr) {
         throw OutOfMemoryError("Unable to allocate Objective-C object")
     }
 
-    val result = interpretObjCPointerOrNull<T>(rawResult)!!
-    // `objc_allocWithZone` returns retained pointer. Balance it:
-    objc_release(rawResult)
-    // TODO: do not retain this pointer in `interpretObjCPointerOrNull` instead.
+    // Note: `objc_allocWithZone` returns retained pointer, and thus it must be balanced by the caller.
 
-    return result
+    return rawResult
 }
 
 @konan.internal.Intrinsic

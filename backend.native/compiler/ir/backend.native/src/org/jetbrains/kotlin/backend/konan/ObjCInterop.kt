@@ -25,11 +25,12 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 private val interopPackageName = InteropBuiltIns.FqNames.packageName
 private val objCObjectFqName = interopPackageName.child(Name.identifier("ObjCObject"))
 private val objCClassFqName = interopPackageName.child(Name.identifier("ObjCClass"))
-private val externalObjCClassFqName = interopPackageName.child(Name.identifier("ExternalObjCClass"))
+internal val externalObjCClassFqName = interopPackageName.child(Name.identifier("ExternalObjCClass"))
 private val objCMethodFqName = interopPackageName.child(Name.identifier("ObjCMethod"))
 private val objCBridgeFqName = interopPackageName.child(Name.identifier("ObjCBridge"))
 
@@ -38,10 +39,7 @@ fun ClassDescriptor.isObjCClass(): Boolean =
                 this.containingDeclaration.fqNameSafe != interopPackageName
 
 fun KotlinType.isObjCObjectType(): Boolean =
-        TypeUtils.getClassDescriptor(this)
-                ?.getAllSuperClassifiers()
-                ?.any { it.fqNameSafe == objCObjectFqName }
-                ?: false
+        (this.supertypes() + this).any { TypeUtils.getClassDescriptor(it)?.fqNameSafe == objCObjectFqName }
 
 fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         this.parentsWithSelf.filterIsInstance<ClassDescriptor>().any {

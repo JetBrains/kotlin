@@ -470,8 +470,23 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
     else -> TODO(type.toString())
 }
 
+internal tailrec fun ObjCClass.isNSStringOrSubclass(): Boolean = when (this.name) {
+    "NSMutableString", // fast path and handling for forward declarations.
+    "NSString" -> true
+    else -> {
+        val baseClass = this.baseClass
+        if (baseClass != null) {
+            baseClass.isNSStringOrSubclass()
+        } else {
+            false
+        }
+    }
+}
+
+internal fun ObjCClass.isNSStringSubclass(): Boolean = this.baseClass?.isNSStringOrSubclass() == true
+
 private fun objCPointerMirror(declarationMapper: DeclarationMapper, type: ObjCPointer): TypeMirror.ByValue {
-    if (type is ObjCObjectPointer && type.def.name == "NSString") {
+    if (type is ObjCObjectPointer && type.def.isNSStringOrSubclass()) {
         val info = TypeInfo.NSString(type)
         return objCMirror(KotlinTypes.string, info, type.isNullable)
     }

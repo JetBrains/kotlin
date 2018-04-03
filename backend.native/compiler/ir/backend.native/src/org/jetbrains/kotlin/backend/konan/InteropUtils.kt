@@ -69,7 +69,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
         val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
     }
 
-    private val packageScope = builtIns.builtInsModule.getPackage(FqNames.packageName).memberScope
+    val packageScope = builtIns.builtInsModule.getPackage(FqNames.packageName).memberScope
 
     val getPointerSize = packageScope.getContributedFunctions("getPointerSize").single()
 
@@ -161,12 +161,6 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     }.toMap()
 
     val objCObject = packageScope.getContributedClass("ObjCObject")
-    val objCPointerHolder = packageScope.getContributedClass("ObjCPointerHolder")
-
-    val objCPointerHolderValue = objCPointerHolder.unsubstitutedMemberScope
-            .getContributedDescriptors().filterIsInstance<PropertyDescriptor>().single()
-
-    val objCObjectInitFromPtr = packageScope.getContributedFunctions("initFromPtr").single()
 
     val allocObjCObject = packageScope.getContributedFunctions("allocObjCObject").single()
 

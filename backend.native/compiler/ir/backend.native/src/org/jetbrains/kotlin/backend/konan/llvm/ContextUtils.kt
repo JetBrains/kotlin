@@ -417,8 +417,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val getObjCKotlinTypeInfo by lazy { importRtFunction("GetObjCKotlinTypeInfo") }
     val missingInitImp by lazy { importRtFunction("MissingInitImp") }
 
+    val Kotlin_Interop_DoesObjectConformToProtocol by lazyRtFunction
+    val Kotlin_Interop_IsObjectKindOfClass by lazyRtFunction
+
     val Kotlin_ObjCExport_refToObjC by lazyRtFunction
     val Kotlin_ObjCExport_refFromObjC by lazyRtFunction
+    val Kotlin_ObjCExport_CreateNSStringFromKString by lazyRtFunction
     val Kotlin_Interop_CreateNSArrayFromKList by lazyRtFunction
     val Kotlin_Interop_CreateNSMutableArrayFromKList by lazyRtFunction
     val Kotlin_Interop_CreateNSSetFromKSet by lazyRtFunction
@@ -430,15 +434,6 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_ObjCExport_AbstractMethodCalled by lazyRtFunction
     val Kotlin_ObjCExport_RethrowExceptionAsNSError by lazyRtFunction
     val Kotlin_ObjCExport_RethrowNSErrorAsException by lazyRtFunction
-
-    val objCExportEnabled = if (context.config.produce.isNativeBinary) {
-        // Note: this defines the global declared in runtime (if any).
-        staticData.placeGlobal("objCExportEnabled", Int8(0), isExported = true).also {
-            it.setConstant(true)
-        }
-    } else {
-        null
-    }
 
     val tlsMode by lazy {
         when (target) {

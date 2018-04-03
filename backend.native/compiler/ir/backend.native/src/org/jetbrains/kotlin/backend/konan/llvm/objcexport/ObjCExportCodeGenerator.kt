@@ -216,10 +216,6 @@ internal class ObjCExportCodeGenerator(
 
         emitSortedAdapters(placedClassAdapters, "Kotlin_ObjCExport_sortedClassAdapters")
         emitSortedAdapters(placedInterfaceAdapters, "Kotlin_ObjCExport_sortedProtocolAdapters")
-
-        context.llvm.objCExportEnabled!!.setInitializer(Int8(1))
-
-        dataGenerator.finishModule() // TODO: move to appropriate place.
     }
 
     private val impType = pointerType(functionType(int8TypePtr, true, int8TypePtr, int8TypePtr))
@@ -408,7 +404,7 @@ private fun ObjCExportCodeGenerator.emitKotlinFunctionAdaptersToBlock() {
 private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
     setObjCExportTypeInfo(
             context.builtIns.string,
-            constPointer(codegen.llvmFunction(context.ir.symbols.interopCreateNSStringFromKString.owner))
+            constPointer(context.llvm.Kotlin_ObjCExport_CreateNSStringFromKString)
     )
 
     setObjCExportTypeInfo(
@@ -444,11 +440,6 @@ private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
     ObjCValueType.values().forEach {
         emitBoxConverter(it)
     }
-
-    setObjCExportTypeInfo(
-            context.interopBuiltIns.objCPointerHolder,
-            constPointer(codegen.llvmFunction(context.ir.symbols.objCPointerHolderValueGetter.owner))
-    )
 
     emitFunctionConverters()
 

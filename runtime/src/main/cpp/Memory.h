@@ -246,7 +246,7 @@ struct MetaObjHeader {
   ObjHeader* counter_;
 
 #ifdef KONAN_OBJC_INTEROP
-  void* associatedObject;
+  void* associatedObject_;
 #endif
 };
 

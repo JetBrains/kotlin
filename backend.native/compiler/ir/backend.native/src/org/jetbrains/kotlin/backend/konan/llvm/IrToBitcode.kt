@@ -340,7 +340,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         declaration.acceptChildrenVoid(this)
 
         // Note: it is here because it also generates some bitcode.
-        ObjCExport(context).produceObjCFramework()
+        ObjCExport(codegen).produce()
+
+        codegen.objCDataGenerator?.finishModule()
 
         appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
         appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
@@ -1247,8 +1249,24 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         assert(!KotlinBuiltIns.isPrimitiveType(dstDescriptor.defaultType) &&
                 !KotlinBuiltIns.isPrimitiveType(value.argument.type))
 
-        val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor)                       // Get TypeInfo for dst type.
         val srcArg        = evaluateExpression(value.argument)                         // Evaluate src expression.
+
+        if (dstDescriptor.defaultType.isObjCObjectType()) {
+            with(functionGenerationContext) {
+                ifThen(not(genInstanceOf(srcArg, dstDescriptor))) {
+                    callDirect(
+                            context.ir.symbols.ThrowTypeCastException.owner,
+                            emptyList(),
+                            Lifetime.GLOBAL
+                    )
+                }
+            }
+            return srcArg
+        }
+        // Note: the code above would actually work for any classes.
+        // However, the code generated below is shorter. Consider it to be a specialization.
+
+        val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor)                       // Get TypeInfo for dst type.
         val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, srcArg)             // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
         call(context.llvm.checkInstanceFunction, args)                                 // Check if dst is subclass of src.
@@ -1295,6 +1313,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun genInstanceOf(obj: LLVMValueRef, dstClass: IrClass): LLVMValueRef {
+        if (dstClass.defaultType.isObjCObjectType()) {
+            return genInstanceOfObjC(obj, dstClass)
+        }
+
         val dstTypeInfo   = codegen.typeInfoValue(dstClass)                            // Get TypeInfo for dst type.
         val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, obj)                // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
@@ -1303,11 +1325,57 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return LLVMBuildTrunc(functionGenerationContext.builder, result, kInt1, "")!!             // Truncate result to boolean
     }
 
+    private fun genInstanceOfObjC(obj: LLVMValueRef, dstClass: IrClass): LLVMValueRef {
+        val objCObject = callDirect(
+                context.ir.symbols.interopObjCObjectRawValueGetter.owner,
+                listOf(obj),
+                Lifetime.IRRELEVANT
+        )
+
+        return if (dstClass.isObjCClass()) {
+            if (dstClass.isInterface) {
+                val isMeta = if (dstClass.isObjCMetaClass()) Int8(1) else Int8(0)
+                call(
+                        context.llvm.Kotlin_Interop_DoesObjectConformToProtocol,
+                        listOf(
+                                objCObject,
+                                genGetObjCProtocol(dstClass),
+                                isMeta.llvm
+                        )
+                )
+            } else {
+                call(
+                        context.llvm.Kotlin_Interop_IsObjectKindOfClass,
+                        listOf(objCObject, genGetObjCClass(dstClass))
+                )
+            }.let {
+                functionGenerationContext.icmpNe(it, Int8(0).llvm)
+            }
+
+
+        } else {
+            // e.g. ObjCObject, ObjCObjectBase etc.
+            if (dstClass.isObjCMetaClass()) {
+                val isClass = context.llvm.externalFunction(
+                        "object_isClass",
+                        functionType(int8Type, false, int8TypePtr),
+                        context.standardLlvmSymbolsOrigin
+                )
+
+                call(isClass, listOf(objCObject)).let {
+                    functionGenerationContext.icmpNe(it, Int8(0).llvm)
+                }
+            } else {
+                kTrue
+            }
+        }
+    }
+
     //-------------------------------------------------------------------------//
 
     private fun evaluateNotInstanceOf(value: IrTypeOperatorCall): LLVMValueRef {
         val instanceOfResult = evaluateInstanceOf(value)
-        return LLVMBuildNot(functionGenerationContext.builder, instanceOfResult, "")!!
+        return functionGenerationContext.not(instanceOfResult)
     }
 
     //-------------------------------------------------------------------------//
@@ -1399,7 +1467,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return if (classDescriptor.isObjCClass()) {
             assert(classDescriptor.isKotlinObjCClass())
 
-            val objCPtr = callDirect(context.ir.symbols.objCPointerHolderValueGetter.owner,
+            val objCPtr = callDirect(context.ir.symbols.interopObjCObjectRawValueGetter.owner,
                     listOf(objectPtr), Lifetime.IRRELEVANT)
 
             val objCDeclarations = context.llvmDeclarations.forClass(classDescriptor).objCDeclarations!!
@@ -1992,9 +2060,19 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 assert(args.isEmpty())
                 functionGenerationContext.allocArray(codegen.typeInfoValue(constructedClass), count = kImmZero,
                         lifetime = resultLifetime(callee))
-            } else if (constructedClass.isKotlinObjCClass()) {
-                callDirect(context.ir.symbols.allocObjCObject.owner, listOf(genGetObjCClass(constructedClass)),
-                        resultLifetime(callee))
+            } else if (constructedClass.isObjCClass()) {
+                assert(constructedClass.isKotlinObjCClass()) // Calls to other ObjC class constructors must be lowered.
+                val symbols = context.ir.symbols
+                val rawPtr = callDirect(
+                        symbols.interopAllocObjCObject.owner,
+                        listOf(genGetObjCClass(constructedClass)),
+                        Lifetime.IRRELEVANT
+                )
+
+                callDirect(symbols.interopInterpretObjCPointer.owner, listOf(rawPtr), resultLifetime(callee)).also {
+                    // Balance pointer retained by alloc:
+                    callDirect(symbols.interopObjCRelease.owner, listOf(rawPtr), Lifetime.IRRELEVANT)
+                }
             } else {
                 functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee))
             }
@@ -2064,10 +2142,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 } else {
                     LLVMBuildSExt(functionGenerationContext.builder, intPtrValue, resultType, "")!!
                 }
-            }
-
-            interop.objCObjectInitFromPtr -> {
-                genObjCObjectInitFromPtr(args)
             }
 
             interop.getObjCReceiverOrSuper -> {
@@ -2226,36 +2300,24 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun genGetObjCClass(classDescriptor: ClassDescriptor): LLVMValueRef {
-        assert(!classDescriptor.isInterface)
+        return functionGenerationContext.getObjCClass(classDescriptor, currentCodeContext.exceptionHandler)
+    }
 
-        return if (classDescriptor.isExternalObjCClass()) {
-            context.llvm.imports.add(classDescriptor.llvmSymbolOrigin)
+    private fun genGetObjCProtocol(irClass: IrClass): LLVMValueRef {
+        // Note: this function will return the same result for Obj-C protocol and corresponding meta-class.
 
-            val lookUpFunction = context.llvm.externalFunction("Kotlin_Interop_getObjCClass",
-                    functionType(int8TypePtr, false, int8TypePtr),
-                    origin = context.standardLlvmSymbolsOrigin
-            )
+        assert(irClass.isInterface)
+        assert(irClass.isExternalObjCClass())
 
-            call(lookUpFunction,
-                    listOf(codegen.staticData.cStringLiteral(classDescriptor.name.asString()).llvm))
-        } else {
-            val objCDeclarations = context.llvmDeclarations.forClass(classDescriptor).objCDeclarations!!
-            val classPointerGlobal = objCDeclarations.classPointerGlobal.llvmGlobal
-            val gen = functionGenerationContext
+        val annotation = irClass.annotations.findAnnotation(externalObjCClassFqName)!!
+        val protocolGetterName = annotation.getStringValue("protocolGetter")
+        val protocolGetter = context.llvm.externalFunction(
+                protocolGetterName,
+                functionType(int8TypePtr, false),
+                irClass.llvmSymbolOrigin
+        )
 
-            val storedClass = gen.load(classPointerGlobal)
-
-            val storedClassIsNotNull = gen.icmpNe(storedClass, kNullInt8Ptr)
-
-            return gen.ifThenElse(storedClassIsNotNull, storedClass) {
-                val newClass = call(context.llvm.createKotlinObjCClass,
-                        listOf(objCDeclarations.classInfoGlobal.llvmGlobal))
-
-                gen.store(newClass, classPointerGlobal)
-                newClass
-            }
-        }
-
+        return call(protocolGetter, emptyList())
     }
 
     private fun genGetObjCMessenger(args: List<LLVMValueRef>, isLU: Boolean): LLVMValueRef {
@@ -2300,11 +2362,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         )!!
 
         return gen.bitcast(int8TypePtr, messenger)
-    }
-
-    private fun genObjCObjectInitFromPtr(args: List<LLVMValueRef>): LLVMValueRef {
-        return callDirect(context.ir.symbols.objCPointerHolder.owner.constructors.single(),
-                args, Lifetime.IRRELEVANT)
     }
 
     private fun genGetObjCReceiverOrSuper(args: List<LLVMValueRef>): LLVMValueRef {

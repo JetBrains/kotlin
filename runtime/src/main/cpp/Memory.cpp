@@ -418,12 +418,6 @@ inline void runDeallocationHooks(ObjHeader* obj) {
   if (obj->has_meta_object()) {
     ObjHeader::destroyMetaObject(&obj->typeInfoOrMeta_);
   }
-#if KONAN_OBJC_INTEROP
-  if (obj->type_info() == theObjCPointerHolderTypeInfo) {
-    void* objcPtr =  *reinterpret_cast<void**>(obj + 1); // TODO: use more reliable layout description
-    objc_release(objcPtr);
-  }
-#endif
 }
 
 inline void runDeallocationHooks(ContainerHeader* container) {
@@ -828,7 +822,7 @@ void ObjHeader::destroyMetaObject(TypeInfo** location) {
   }
 
 #ifdef KONAN_OBJC_INTEROP
-  Kotlin_ObjCExport_releaseAssociatedObject(meta->associatedObject);
+  Kotlin_ObjCExport_releaseAssociatedObject(meta->associatedObject_);
 #endif
 
   konanFreeMemory(meta);

@@ -27,6 +27,7 @@ internal fun CommonBackendContext.reportCompilationError(message: String, irFile
 
 internal fun CommonBackendContext.reportCompilationError(message: String) {
     report(null, null, message, true)
+    throw KonanCompilationException()
 }
 
 internal fun CommonBackendContext.reportCompilationWarning(message: String) {
