@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionContainer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirDelegatedConstructorCall : FirCall, FirTypeProjectionContainer {
+interface FirDelegatedConstructorCall : FirCall {
     // Do we need 'constructedType: FirType' here?
     val constructedType: FirType
 
