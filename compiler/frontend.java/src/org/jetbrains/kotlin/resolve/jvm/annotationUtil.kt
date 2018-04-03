@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
-import org.jetbrains.kotlin.resolve.jvm.checkers.JvmDefaultChecker
 
 fun DeclarationDescriptor.findJvmOverloadsAnnotation() = annotations.findAnnotation(FqName("kotlin.jvm.JvmOverloads"))
 
@@ -30,10 +29,6 @@ fun DeclarationDescriptor.findJvmFieldAnnotation() = DescriptorUtils.getAnnotati
 fun DeclarationDescriptor.hasJvmFieldAnnotation(): Boolean {
     return findJvmFieldAnnotation() != null
 }
-
-fun CallableMemberDescriptor.hasJvmDefaultAnnotation() =
-    hasJvmDefaultAnnotation()
-
 
 fun DeclarationDescriptor.isCallableMemberWithJvmDefaultAnnotation() =
     (this as? CallableMemberDescriptor)?.hasJvmDefaultAnnotation() ?: false
