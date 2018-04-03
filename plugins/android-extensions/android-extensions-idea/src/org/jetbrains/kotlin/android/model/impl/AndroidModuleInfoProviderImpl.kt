@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.android.model.impl
 
 import com.android.builder.model.SourceProvider
-import com.android.tools.idea.gradle.project.GradleProjectInfo
-import com.android.tools.idea.gradle.project.model.AndroidModuleModel
+import com.android.tools.idea.gradle.AndroidGradleModel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider
 import java.io.File
+
+private typealias AndroidModuleModel = AndroidGradleModel
 
 class AndroidModuleInfoProviderImpl(override val module: Module) : AndroidModuleInfoProvider {
     private val androidFacet: AndroidFacet?
@@ -22,7 +23,7 @@ class AndroidModuleInfoProviderImpl(override val module: Module) : AndroidModule
         get() = AndroidModuleModel.get(module)
 
     override fun isAndroidModule() = androidFacet != null
-    override fun isGradleModule() = GradleProjectInfo.getInstance(module.project).isBuildWithGradle
+    override fun isGradleModule() = androidFacet?.requiresAndroidModel() ?: false
 
     override fun getAllResourceDirectories(): List<VirtualFile> {
         return androidFacet?.allResourceDirectories ?: emptyList()
