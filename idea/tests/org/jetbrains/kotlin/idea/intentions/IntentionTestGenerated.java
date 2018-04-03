@@ -7437,9 +7437,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("doubleQuoteChar.kt")
+        public void testDoubleQuoteChar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/doubleQuoteChar.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("endOfLineComment.kt")
         public void testEndOfLineComment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/endOfLineComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("escapeDoubleQuoteChar.kt")
+        public void testEscapeDoubleQuoteChar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/escapeDoubleQuoteChar.kt");
             doTest(fileName);
         }
 
@@ -7518,6 +7530,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("invalidChar.kt")
         public void testInvalidChar() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/invalidChar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invalidChar2.kt")
+        public void testInvalidChar2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/invalidChar2.kt");
             doTest(fileName);
         }
 

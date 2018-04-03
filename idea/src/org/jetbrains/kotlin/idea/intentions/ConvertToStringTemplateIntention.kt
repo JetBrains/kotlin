@@ -90,7 +90,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
                         return expressionText
                             .removePrefix("'")
                             .removeSuffix("'")
-                            .replace("\"", "\\\"")
+                            .replace("\\\"", "\"").replace("\"", "\\\"")
                             .replace("\\'", "'")
                             .run { if (forceBraces) replace("$", "\\$") else this }
                     }
