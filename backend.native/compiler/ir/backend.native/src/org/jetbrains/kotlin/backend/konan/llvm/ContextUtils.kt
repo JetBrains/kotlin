@@ -431,15 +431,6 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_ObjCExport_RethrowExceptionAsNSError by lazyRtFunction
     val Kotlin_ObjCExport_RethrowNSErrorAsException by lazyRtFunction
 
-    val kObjectReservedTailSize = if (context.config.produce.isNativeBinary) {
-        // Note: this defines the global declared in runtime (if any).
-        staticData.placeGlobal("kObjectReservedTailSize", Int32(0), isExported = true).also {
-            it.setConstant(true)
-        }
-    } else {
-        null
-    }
-
     val objCExportEnabled = if (context.config.produce.isNativeBinary) {
         // Note: this defines the global declared in runtime (if any).
         staticData.placeGlobal("objCExportEnabled", Int8(0), isExported = true).also {

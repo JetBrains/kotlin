@@ -105,7 +105,6 @@ extern "C" id Kotlin_ObjCExport_GetAssociatedObject(ObjHeader* obj) {
 
 inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* typeInfo, id associatedObject) {
   ObjHeader* result = AllocInstance(typeInfo, OBJ_RESULT);
-  RuntimeAssert(HasAssociatedObjectField(result), "");
   SetAssociatedObject(result, associatedObject);
   return result;
 }
@@ -157,7 +156,6 @@ static void initializeClass(Class clazz);
   UpdateRef(&result->kotlinObj, obj);
 
   if (!obj->permanent()) {
-    RuntimeAssert(HasAssociatedObjectField(obj), "");
     SetAssociatedObject(obj, result);
   }
   // TODO: permanent objects should probably be supported as custom types.
@@ -196,11 +194,9 @@ static void initializeClass(Class clazz);
 
 @end;
 
-extern "C" void Kotlin_ObjCExport_releaseReservedObjectTail(ObjHeader* obj) {
-  RuntimeAssert(HasAssociatedObjectField(obj), "");
-  id associatedObject = GetAssociatedObject(obj);
+extern "C" void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
   if (associatedObject != nullptr) {
-    [associatedObject releaseAsAssociatedObject];
+    [((id)associatedObject) releaseAsAssociatedObject];
   }
 }
 
@@ -501,7 +497,7 @@ static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj);
 extern "C" id Kotlin_ObjCExport_refToObjC(ObjHeader* obj) {
   if (obj == nullptr) return nullptr;
 
-  if (HasAssociatedObjectField(obj)) {
+  if (obj->has_meta_object()) {
     id associatedObject = GetAssociatedObject(obj);
     if (associatedObject != nullptr) {
       return objc_retainAutoreleaseReturnValue(associatedObject);

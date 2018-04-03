@@ -244,6 +244,10 @@ struct MetaObjHeader {
   const TypeInfo* typeInfo_;
   // Strong reference to counter object.
   ObjHeader* counter_;
+
+#ifdef KONAN_OBJC_INTEROP
+  void* associatedObject;
+#endif
 };
 
 inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {

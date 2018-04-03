@@ -217,7 +217,6 @@ internal class ObjCExportCodeGenerator(
         emitSortedAdapters(placedClassAdapters, "Kotlin_ObjCExport_sortedClassAdapters")
         emitSortedAdapters(placedInterfaceAdapters, "Kotlin_ObjCExport_sortedProtocolAdapters")
 
-        context.llvm.kObjectReservedTailSize!!.setInitializer(Int32(runtime.pointerSize))
         context.llvm.objCExportEnabled!!.setInitializer(Int8(1))
 
         dataGenerator.finishModule() // TODO: move to appropriate place.

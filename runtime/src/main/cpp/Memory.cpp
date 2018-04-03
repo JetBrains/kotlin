@@ -376,17 +376,10 @@ inline container_size_t alignUp(container_size_t size, int alignment) {
   return (size + alignment - 1) & ~(alignment - 1);
 }
 
-#if KONAN_OBJECTS_CAN_HAVE_RESERVED_TAIL
-// Note: defined by a compiler-generated bitcode.
-extern "C" const container_size_t kObjectReservedTailSize;
-#else
-constexpr container_size_t kObjectReservedTailSize = 0;
-#endif
-
 // TODO: shall we do padding for alignment?
 inline container_size_t objectSize(const ObjHeader* obj) {
   const TypeInfo* type_info = obj->type_info();
-  container_size_t size = kObjectReservedTailSize + (type_info->instanceSize_ < 0 ?
+  container_size_t size = (type_info->instanceSize_ < 0 ?
       // An array.
       ArrayDataSizeBytes(obj->array()) + sizeof(ArrayHeader)
       :
@@ -415,7 +408,7 @@ inline bool isRefCounted(KConstRef object) {
 extern "C" {
 
 void objc_release(void* ptr);
-void Kotlin_ObjCExport_releaseReservedObjectTail(ObjHeader* obj);
+void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 RUNTIME_NORETURN void ThrowFreezingException();
 RUNTIME_NORETURN void ThrowInvalidMutabilityException();
 
@@ -426,14 +419,9 @@ inline void runDeallocationHooks(ObjHeader* obj) {
     ObjHeader::destroyMetaObject(&obj->typeInfoOrMeta_);
   }
 #if KONAN_OBJC_INTEROP
-  // TODO: rewrite using meta-object.
   if (obj->type_info() == theObjCPointerHolderTypeInfo) {
     void* objcPtr =  *reinterpret_cast<void**>(obj + 1); // TODO: use more reliable layout description
     objc_release(objcPtr);
-  } else {
-    if (HasReservedObjectTail(obj)) {
-      Kotlin_ObjCExport_releaseReservedObjectTail(obj);
-    }
   }
 #endif
 }
@@ -838,6 +826,11 @@ void ObjHeader::destroyMetaObject(TypeInfo** location) {
     WeakReferenceCounterClear(meta->counter_);
     UpdateRef(&meta->counter_, nullptr);
   }
+
+#ifdef KONAN_OBJC_INTEROP
+  Kotlin_ObjCExport_releaseAssociatedObject(meta->associatedObject);
+#endif
+
   konanFreeMemory(meta);
 }
 
@@ -920,7 +913,7 @@ void FreeContainer(ContainerHeader* container) {
 void ObjectContainer::Init(const TypeInfo* typeInfo) {
   RuntimeAssert(typeInfo->instanceSize_ >= 0, "Must be an object");
   uint32_t alloc_size =
-      sizeof(ContainerHeader) + sizeof(ObjHeader) + typeInfo->instanceSize_ + kObjectReservedTailSize;
+      sizeof(ContainerHeader) + sizeof(ObjHeader) + typeInfo->instanceSize_;
   header_ = AllocContainer(alloc_size);
   if (header_) {
     // One object in this container.
@@ -936,7 +929,7 @@ void ArrayContainer::Init(const TypeInfo* typeInfo, uint32_t elements) {
   RuntimeAssert(typeInfo->instanceSize_ < 0, "Must be an array");
   uint32_t alloc_size =
       sizeof(ContainerHeader) + sizeof(ArrayHeader) -
-      typeInfo->instanceSize_ * elements + kObjectReservedTailSize;
+      typeInfo->instanceSize_ * elements;
   header_ = AllocContainer(alloc_size);
   RuntimeAssert(header_ != nullptr, "Cannot alloc memory");
   if (header_) {
@@ -1019,7 +1012,7 @@ ObjHeader** ArenaContainer::getSlot() {
 
 ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
-  uint32_t size = type_info->instanceSize_ + sizeof(ObjHeader) + kObjectReservedTailSize;
+  uint32_t size = type_info->instanceSize_ + sizeof(ObjHeader);
   ObjHeader* result = reinterpret_cast<ObjHeader*>(place(size));
   if (!result) {
     return nullptr;
@@ -1032,7 +1025,7 @@ ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
 
 ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, uint32_t count) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
-  container_size_t size = sizeof(ArrayHeader) - type_info->instanceSize_ * count + kObjectReservedTailSize;
+  container_size_t size = sizeof(ArrayHeader) - type_info->instanceSize_ * count;
   ArrayHeader* result = reinterpret_cast<ArrayHeader*>(place(size));
   if (!result) {
     return nullptr;
@@ -1218,16 +1211,6 @@ OBJ_GETTER(InitSharedInstance,
   }
 #endif
 #endif
-}
-
-bool HasReservedObjectTail(ObjHeader* obj) {
-  return kObjectReservedTailSize != 0 && !obj->permanent();
-}
-
-void* GetReservedObjectTail(ObjHeader* obj) {
-  return reinterpret_cast<void*>(
-    reinterpret_cast<uintptr_t>(obj) + objectSize(obj) - kObjectReservedTailSize
-  );
 }
 
 void SetRef(ObjHeader** location, const ObjHeader* object) {

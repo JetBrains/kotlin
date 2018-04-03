@@ -11,16 +11,12 @@
 extern "C" id objc_retain(id self);
 extern "C" void objc_release(id self);
 
-inline static bool HasAssociatedObjectField(ObjHeader* obj) {
-  return HasReservedObjectTail(obj);
-}
-
 inline static id GetAssociatedObject(ObjHeader* obj) {
-  return *reinterpret_cast<id*>(GetReservedObjectTail(obj));
+  return (id)obj->meta_object()->associatedObject;
 }
 
 inline static void SetAssociatedObject(ObjHeader* obj, id value) {
-  *reinterpret_cast<id*>(GetReservedObjectTail(obj)) = value;
+  obj->meta_object()->associatedObject = (void*)value;
 }
 
 extern "C" id Kotlin_ObjCExport_refToObjC(ObjHeader* obj);

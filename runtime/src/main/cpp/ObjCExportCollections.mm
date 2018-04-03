@@ -118,7 +118,6 @@ static inline OBJ_GETTER(invokeAndAssociate, KRef (*func)(KRef* result), id obj)
 
   KRef kotlinObj = func(OBJ_RESULT);
 
-  RuntimeAssert(HasAssociatedObjectField(kotlinObj), "");
   SetAssociatedObject(kotlinObj, obj);
 
   return kotlinObj;
