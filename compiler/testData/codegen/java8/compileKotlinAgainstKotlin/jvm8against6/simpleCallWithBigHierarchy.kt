@@ -1,4 +1,5 @@
 // !API_VERSION: 1.3
+// !ENABLE_JVM_DEFAULT
 // FILE: 1.kt
 interface Test {
     fun test(): String {

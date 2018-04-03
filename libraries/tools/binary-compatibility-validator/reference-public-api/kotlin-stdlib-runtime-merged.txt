@@ -2244,6 +2244,9 @@ public final class kotlin/jvm/JvmClassMappingKt {
 	public static final fun getRuntimeClassOfKClassInstance (Lkotlin/reflect/KClass;)Ljava/lang/Class;
 }
 
+public abstract interface annotation class kotlin/jvm/JvmDefault : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/jvm/JvmField : java/lang/annotation/Annotation {
 }
 
