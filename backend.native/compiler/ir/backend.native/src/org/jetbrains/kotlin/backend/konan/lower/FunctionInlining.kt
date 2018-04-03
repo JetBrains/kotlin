@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
@@ -241,12 +243,13 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
     //-------------------------------------------------------------------------//
 
     private fun createTypeSubstitutor(irCall: IrCall): TypeSubstitutor? {
-        val typeArgumentsMap = (irCall as IrMemberAccessExpressionBase).typeArguments
-        if (typeArgumentsMap == null) return null
+        if (irCall.typeArgumentsCount == 0) return null
         val descriptor = irCall.descriptor.resolveFakeOverride().original
         val typeParameters = descriptor.propertyIfAccessor.typeParameters
-        val substitutionContext = typeArgumentsMap.entries.associate { (typeParameter, typeArgument) ->
-            typeParameters[typeParameter.index].typeConstructor to TypeProjectionImpl(typeArgument)
+        val substitutionContext = mutableMapOf<TypeConstructor, TypeProjection>()
+        for (index in 0 until irCall.typeArgumentsCount) {
+            val typeArgument = irCall.getTypeArgument(index) ?: continue
+            substitutionContext[typeParameters[index].typeConstructor] = TypeProjectionImpl(typeArgument)
         }
         return TypeSubstitutor.create(substitutionContext)
     }

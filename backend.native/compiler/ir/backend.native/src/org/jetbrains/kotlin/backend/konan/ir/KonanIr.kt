@@ -196,12 +196,17 @@ internal class IrPrivateFunctionCallImpl(startOffset: Int,
                                          type: KotlinType,
                                          override val symbol: IrFunctionSymbol,
                                          override val descriptor: FunctionDescriptor,
-                                         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+                                         typeArgumentsCount: Int,
                                          override val moduleDescriptor: ModuleDescriptor,
                                          override val totalFunctions: Int,
                                          override val functionIndex: Int
-) : IrPrivateFunctionCall,
-        IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, symbol.descriptor.valueParameters.size, typeArguments) {
+) : IrPrivateFunctionCall, IrCallWithIndexedArgumentsBase(
+        startOffset,
+        endOffset,
+        type,
+        typeArgumentsCount = typeArgumentsCount,
+        valueArgumentsCount = symbol.descriptor.valueParameters.size
+) {
 
     override val superQualifierSymbol: IrClassSymbol?
         get() = null

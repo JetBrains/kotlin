@@ -487,11 +487,14 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                 startOffset    = expression.startOffset,
                 endOffset      = expression.endOffset,
                 type           = newDescriptor.returnType!!,
-                calleeDescriptor = newDescriptor,
-                typeArguments  = substituteTypeArguments(expression.transformTypeArguments(newDescriptor)),
+                descriptor     = newDescriptor,
+                typeArgumentsCount = expression.typeArgumentsCount,
                 origin         = expression.origin,
                 superQualifierDescriptor = mapSuperQualifier(expression.superQualifier)
-            ).transformValueArguments(expression)
+            ).apply {
+                transformValueArguments(expression)
+                substituteTypeArguments(expression)
+            }
         }
 
         //---------------------------------------------------------------------//
@@ -622,18 +625,12 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
     //-------------------------------------------------------------------------//
 
-    private fun substituteTypeArguments(oldTypeArguments: Map <TypeParameterDescriptor, KotlinType>?): Map <TypeParameterDescriptor, KotlinType>? {
-
-        if (oldTypeArguments == null) return null
-        if (typeSubstitutor  == null) return oldTypeArguments
-
-        val newTypeArguments = oldTypeArguments.entries.associate {
-            val typeParameterDescriptor = it.key
-            val oldTypeArgument         = it.value
-            val newTypeArgument         = substituteType(oldTypeArgument)!!
-            typeParameterDescriptor to newTypeArgument
+    private fun IrMemberAccessExpression.substituteTypeArguments(original: IrMemberAccessExpression) {
+        for (index in 0 until original.typeArgumentsCount) {
+            val originalTypeArgument = original.getTypeArgument(index)
+            val newTypeArgument = substituteType(originalTypeArgument)!!
+            this.putTypeArgument(index, newTypeArgument)
         }
-        return newTypeArguments
     }
 
     //-------------------------------------------------------------------------//
@@ -745,10 +742,12 @@ class DescriptorSubstitutorForExternalScope(val globalSubstituteMap: MutableMap<
             type                     = newDescriptor.returnType!!,
             symbol                   = createFunctionSymbol(newDescriptor),
             descriptor               = newDescriptor,
-            typeArguments            = oldExpression.typeArguments,
+            typeArgumentsCount       = oldExpression.typeArgumentsCount,
             origin                   = oldExpression.origin,
             superQualifierSymbol     = createClassSymbolOrNull(oldExpression.superQualifier)
         ).apply {
+            copyTypeArgumentsFrom(oldExpression)
+
             oldExpression.descriptor.valueParameters.forEach {
                 val valueArgument = oldExpression.getValueArgument(it)
                 putValueArgument(it.index, valueArgument)

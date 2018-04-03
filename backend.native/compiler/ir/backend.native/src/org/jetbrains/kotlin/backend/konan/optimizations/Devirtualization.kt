@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.getValueArgument
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -1025,11 +1026,13 @@ internal object Devirtualization {
                             type             = actualType,
                             symbol           = callee.symbol,
                             descriptor       = callee.descriptor,
-                            typeArguments    = (callee as? IrCallImpl)?.typeArguments,
+                            typeArgumentsCount = callee.typeArgumentsCount,
                             moduleDescriptor = devirtualizedCallee.module.descriptor,
                             totalFunctions   = devirtualizedCallee.module.numberOfFunctions,
                             functionIndex    = devirtualizedCallee.symbolTableIndex
-                    )
+                    ).apply {
+                        copyTypeArgumentsFrom(callee)
+                    }
 
         })
     }
