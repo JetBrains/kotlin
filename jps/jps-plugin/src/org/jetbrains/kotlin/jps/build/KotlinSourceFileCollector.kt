@@ -23,9 +23,7 @@ import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot
-import org.jetbrains.jps.util.JpsPathUtil
 
 import java.io.File
 
@@ -51,22 +49,6 @@ object KotlinSourceFileCollector {
         dirtyFilesHolder
             .getRemovedFiles(target)
             .mapNotNull { if (FileUtilRt.extensionEquals(it, "kt")) File(it) else null }
-
-    fun getAllKotlinSourceFiles(target: ModuleBuildTarget): List<File> {
-        val moduleExcludes = target.module.excludeRootsList.urls.mapTo(HashSet(), JpsPathUtil::urlToFile)
-
-        val compilerExcludes = JpsJavaExtensionService.getInstance()
-            .getOrCreateCompilerConfiguration(target.module.project)
-            .compilerExcludes
-
-        val allKotlinFiles = ArrayList<File>()
-        for (sourceRoot in getRelevantSourceRoots(target)) {
-            sourceRoot.file.walkTopDown()
-                .onEnter { it !in moduleExcludes }
-                .filterTo(allKotlinFiles) { !compilerExcludes.isExcluded(it) && it.isFile && isKotlinSourceFile(it) }
-        }
-        return allKotlinFiles
-    }
 
     private fun getRelevantSourceRoots(target: ModuleBuildTarget): Iterable<JpsModuleSourceRoot> {
         val sourceRootType = if (target.isTests) JavaSourceRootType.TEST_SOURCE else JavaSourceRootType.SOURCE

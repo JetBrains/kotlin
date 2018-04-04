@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
@@ -32,8 +31,6 @@ import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
-import org.jetbrains.jps.incremental.Utils.*
-import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
@@ -58,23 +55,21 @@ import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
-import org.jetbrains.kotlin.jps.build.JpsJsModuleUtils.getOutputMetaFile
 import org.jetbrains.kotlin.jps.incremental.*
-import org.jetbrains.kotlin.jps.productionOutputFilePath
-import org.jetbrains.kotlin.jps.testOutputFilePath
+import org.jetbrains.kotlin.jps.platforms.KotlinJsModuleBuildTarget
+import org.jetbrains.kotlin.jps.platforms.kotlinData
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.utils.*
-import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
+import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
-import java.io.IOException
-import java.net.URI
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -218,7 +213,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val allVersions = cacheVersionsProvider.allVersions(targets)
         val actions = allVersions.map { it.checkVersion() }.toMutableSet()
 
-        if (!JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
+        if (chunk.representativeTarget().kotlinData !is KotlinJsModuleBuildTarget) {
             val args = compilerArgumentsForChunk(chunk)
             val currentBuildMetaInfo = JvmBuildMetaInfo(args)
 
@@ -395,10 +390,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             rebuildAfterCacheVersionChanged.clean(target)
         }
 
-        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            copyJsLibraryFilesIfNeeded(chunk)
-            return OK
-        }
+        chunk.representativeTarget().kotlinData?.doAfterBuild()
 
         updateJavaMappings(chunk, context, dirtyFilesHolder, filesToCompile, generatedFiles, incrementalCaches)
 
@@ -543,11 +535,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.debug("Plugin loaded: ${argumentProvider::class.java.simpleName}")
         }
 
-        if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            LOG.debug("Compiling to JS ${filesToCompile.values().size} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
-            return compileToJs(chunk, commonArguments, environment, project)
-        }
-
         if (IncrementalCompilation.isEnabled()) {
             for (target in chunk.targets) {
                 val cache = incrementalCaches[target]!!
@@ -556,7 +543,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
         }
 
-        return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile)
+        val isDoneSomething = representativeTarget.kotlinData?.compileModuleChunk(
+            allCompiledFiles, chunk, commonArguments, context,
+            dirtyFilesHolder, environment, filesToCompile
+        ) ?: false
+
+        return if (isDoneSomething) environment.outputItemsCollector else null
     }
 
     private fun createCompileEnvironment(
@@ -569,7 +561,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             register(LookupTracker::class.java, lookupTracker)
             register(
                 IncrementalCompilationComponents::class.java,
-                IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { TargetId(it.key) })
+                IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { it.key.kotlinData!!.moduleId })
             )
             register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
                 override fun checkCanceled() {
@@ -626,8 +618,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val sourceToTarget = HashMap<File, ModuleBuildTarget>()
         if (chunk.targets.size > 1) {
             for (target in chunk.targets) {
-                for (file in KotlinSourceFileCollector.getAllKotlinSourceFiles(target)) {
-                    sourceToTarget[file] = target
+                target.kotlinData?.sources?.forEach {
+                    sourceToTarget[it] = target
                 }
             }
         }
@@ -720,146 +712,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
     }
 
-    // if null is returned, nothing was done
-    private fun compileToJs(
-        chunk: ModuleChunk,
-        commonArguments: CommonCompilerArguments,
-        environment: JpsCompilerEnvironment,
-        project: JpsProject
-    ): OutputItemsCollector? {
-        val representativeTarget = chunk.representativeTarget()
-        if (chunk.modules.size > 1) {
-            // We do not support circular dependencies, but if they are present, we do our best should not break the build,
-            // so we simply yield a warning and report NOTHING_DONE
-            environment.messageCollector.report(
-                STRONG_WARNING,
-                "Circular dependencies are not supported. The following JS modules depend on each other: "
-                        + chunk.modules.joinToString(", ") { it.name } + ". "
-                        + "Kotlin is not compiled for these modules"
-            )
-            return null
-        }
-
-        val sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(representativeTarget)
-        if (sourceFiles.isEmpty()) {
-            return null
-        }
-
-        val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
-
-        val representativeModule = representativeTarget.module
-        val moduleName = representativeModule.name
-        val isTests = representativeTarget.isTests
-        val explicitOutputPath = if (isTests) representativeModule.testOutputFilePath else representativeModule.productionOutputFilePath
-        val outputFile = explicitOutputPath?.let { File(it) } ?: JpsJsModuleUtils.getOutputFile(outputDir, moduleName, isTests)
-        val libraries = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)
-        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeModule)
-        val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeModule)
-
-        // Compiler starts to produce path relative to base dirs in source maps if at least one statement is true:
-        // 1) base dirs are specified;
-        // 2) prefix is specified (i.e. non-empty)
-        // Otherwise compiler produces paths relative to source maps location.
-        // We don't have UI to configure base dirs, but we have UI to configure prefix.
-        // If prefix is not specified (empty) in UI, we want to produce paths relative to source maps location
-        val sourceRoots = if (k2JsArguments.sourceMapPrefix.isNullOrBlank()) {
-            emptyList()
-        } else {
-            representativeModule.contentRootsList.urls
-                .map { URI.create(it) }
-                .filter { it.scheme == "file" }
-                .map { File(it.path) }
-        }
-
-        val friendPaths = KotlinBuilderModuleScriptGenerator.getProductionModulesWhichInternalsAreVisible(representativeTarget).mapNotNull {
-            val file = getOutputMetaFile(it, false)
-            if (file.exists()) file.absolutePath.toString() else null
-        }
-
-        val compilerRunner = JpsKotlinCompilerRunner()
-        compilerRunner.runK2JsCompiler(
-            commonArguments, k2JsArguments, compilerSettings, environment, sourceFiles, sourceRoots,
-            libraries, friendPaths, outputFile
-        )
-        return environment.outputItemsCollector
-    }
-
-    private fun copyJsLibraryFilesIfNeeded(chunk: ModuleChunk) {
-        val representativeTarget = chunk.representativeTarget()
-        val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
-        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeTarget.module)
-        val k2jsCompilerSettings = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeTarget.module)
-        if (compilerSettings.copyJsLibraryFiles) {
-            val outputLibraryRuntimeDirectory = File(outputDir, compilerSettings.outputDirectoryForJsLibraryFiles).absolutePath
-            val libraryFilesToCopy = arrayListOf<String>()
-            JpsJsModuleUtils.getLibraryFiles(representativeTarget, libraryFilesToCopy)
-            JsLibraryUtils.copyJsFilesFromLibraries(
-                libraryFilesToCopy, outputLibraryRuntimeDirectory,
-                copySourceMap = k2jsCompilerSettings.sourceMap
-            )
-        }
-    }
-
-    // if null is returned, nothing was done
-    private fun compileToJvm(
-        allCompiledFiles: MutableSet<File>,
-        chunk: ModuleChunk,
-        commonArguments: CommonCompilerArguments,
-        context: CompileContext,
-        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-        environment: JpsCompilerEnvironment,
-        filesToCompile: MultiMap<ModuleBuildTarget, File>
-    ): OutputItemsCollector? {
-        if (chunk.modules.size > 1) {
-            environment.messageCollector.report(
-                STRONG_WARNING,
-                "Circular dependencies are only partially supported. The following modules depend on each other: "
-                        + chunk.modules.joinToString(", ") { it.name } + ". "
-                        + "Kotlin will compile them, but some strange effect may happen"
-            )
-        }
-
-        allCompiledFiles.addAll(filesToCompile.values())
-
-        val processedTargetsWithRemoved = getProcessedTargetsWithRemovedFilesContainer(context)
-
-        var totalRemovedFiles = 0
-        for (target in chunk.targets) {
-            val removedFilesInTarget = KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target)
-            if (!removedFilesInTarget.isEmpty()) {
-                if (processedTargetsWithRemoved.add(target)) {
-                    totalRemovedFiles += removedFilesInTarget.size
-                }
-            }
-        }
-
-        val moduleFile =
-            KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk, filesToCompile, totalRemovedFiles != 0)
-        if (moduleFile == null) {
-            KotlinBuilder.LOG.debug("Not compiling, because no files affected: " + filesToCompile.keySet().joinToString { it.presentableName })
-            // No Kotlin sources found
-            return null
-        }
-
-        val module = chunk.representativeTarget().module
-        val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(module)
-        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(module)
-
-        KotlinBuilder.LOG.debug("Compiling to JVM ${filesToCompile.values().size} files"
-                                        + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
-                                        + " in " + filesToCompile.keySet().joinToString { it.presentableName })
-
-        try {
-            val compilerRunner = JpsKotlinCompilerRunner()
-            compilerRunner.runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, environment, moduleFile)
-        } finally {
-            if (System.getProperty("kotlin.jps.delete.module.file.after.build") != "false") {
-                moduleFile.delete()
-            }
-        }
-
-        return environment.outputItemsCollector
-    }
 
     class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
         private var hasErrors = false
@@ -1006,7 +858,7 @@ private fun getDependenciesRecursively(module: JpsModule, kind: JpsJavaClasspath
 // TODO: investigate thread safety
 private val ALL_COMPILED_FILES_KEY = Key.create<MutableSet<File>>("_all_kotlin_compiled_files_")
 
-private fun getAllCompiledFilesContainer(context: CompileContext): MutableSet<File> {
+fun getAllCompiledFilesContainer(context: CompileContext): MutableSet<File> {
     var allCompiledFiles = ALL_COMPILED_FILES_KEY.get(context)
     if (allCompiledFiles == null) {
         allCompiledFiles = THashSet(FileUtil.FILE_HASHING_STRATEGY)
@@ -1018,7 +870,7 @@ private fun getAllCompiledFilesContainer(context: CompileContext): MutableSet<Fi
 // TODO: investigate thread safety
 private val PROCESSED_TARGETS_WITH_REMOVED_FILES = Key.create<MutableSet<ModuleBuildTarget>>("_processed_targets_with_removed_files_")
 
-private fun getProcessedTargetsWithRemovedFilesContainer(context: CompileContext): MutableSet<ModuleBuildTarget> {
+fun getProcessedTargetsWithRemovedFilesContainer(context: CompileContext): MutableSet<ModuleBuildTarget> {
     var set = PROCESSED_TARGETS_WITH_REMOVED_FILES.get(context)
     if (set == null) {
         set = HashSet()
