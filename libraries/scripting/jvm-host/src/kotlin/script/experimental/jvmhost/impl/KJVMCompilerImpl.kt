@@ -111,16 +111,10 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
                     isModularJava = CoreJrtFileSystem.isModularJdk(it)
                 }
 
-                var explicitStdlib = false
                 additionalConfiguration.getOrNull(ScriptCompileConfigurationProperties.dependencies)?.let {
                     addJvmClasspathRoots(
                         it.flatMap {
-                            (it as JvmDependency).classpath.also {
-                                // TODO: use some constants for jar names, consider stricter checking (maybeVersionedJar)
-                                if (!explicitStdlib) {
-                                    explicitStdlib = it.any { it.name.startsWith("kotlin-stdlib") }
-                                }
-                            }
+                            (it as JvmDependency).classpath
                         }
                     )
                 }
@@ -133,10 +127,7 @@ class KJVMCompilerImpl : KJVMCompilerProxy {
                     }
                 }
                 // TODO: implement logic similar to compiler's  -no-stdlib (and -no-reflect?)
-                if (!explicitStdlib) {
-                    addRoot("kotlin.stdlib", KotlinJars.stdlib)
-//                    addRoot("kotlin.script.runtime", KotlinJars.scriptRuntime)
-                }
+                addRoot("kotlin.stdlib", KotlinJars.stdlib)
 
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script") // TODO" take meaningful and valid name from somewhere
                 languageVersionSettings = LanguageVersionSettingsImpl(
