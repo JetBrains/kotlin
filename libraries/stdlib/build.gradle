@@ -71,7 +71,8 @@ jar {
     from("${rootDir}/dist/builtins")
     from sourceSets.builtins.output
     from sourceSets.experimental.output
-    from sourceSets.java9.output
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
 }
 
 task distJar(type: Jar) {
@@ -83,7 +84,8 @@ task distJar(type: Jar) {
     from sourceSets.builtins.output
     from sourceSets.main.output
     from sourceSets.experimental.output
-    from sourceSets.java9.output
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
 }
 
 task builtinsJar(type: Jar) {
