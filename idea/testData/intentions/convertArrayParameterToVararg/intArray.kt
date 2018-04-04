@@ -1,0 +1,1 @@
+fun test(<caret>a: IntArray) = a.size

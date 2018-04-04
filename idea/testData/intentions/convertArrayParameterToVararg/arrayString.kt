@@ -1,0 +1,1 @@
+fun test(a: Array<String><caret>) = a.size
