@@ -1224,18 +1224,6 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doCustomTest(fileName);
         }
 
-        @TestMetadata("inlineOnlyLambdas.kt")
-        public void testInlineOnlyLambdas() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/inlineOnlyLambdas.kt");
-            doCustomTest(fileName);
-        }
-
-        @TestMetadata("inlineOnlyLambdasStepping.kt")
-        public void testInlineOnlyLambdasStepping() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/inlineOnlyLambdasStepping.kt");
-            doCustomTest(fileName);
-        }
-
         @TestMetadata("inlineProperties.kt")
         public void testInlineProperties() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/inlineProperties.kt");
