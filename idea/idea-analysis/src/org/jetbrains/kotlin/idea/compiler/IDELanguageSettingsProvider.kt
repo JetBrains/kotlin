@@ -33,9 +33,7 @@ import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
-import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
-import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.targetPlatform
@@ -43,12 +41,14 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings =
-            when (moduleInfo) {
-                is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
-                is LibraryInfo -> project.getLanguageVersionSettings(extraAnalysisFlags = getExtraAnalysisFlags(project))
-                is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
-                else -> project.getLanguageVersionSettings()
-            }
+        when {
+            moduleInfo is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
+            moduleInfo is LibraryInfo -> project.getLanguageVersionSettings(extraAnalysisFlags = getExtraAnalysisFlags(project))
+            moduleInfo is ScriptModuleInfo -> getVersionLanguageSettingsForScripts(project, moduleInfo.scriptDefinition)
+            moduleInfo is ScriptDependenciesModuleInfo && moduleInfo.scriptModuleInfo != null ->
+                getVersionLanguageSettingsForScripts(project, moduleInfo.scriptModuleInfo.scriptDefinition)
+            else -> project.getLanguageVersionSettings()
+        }
 
     private fun getExtraAnalysisFlags(project: Project): Map<AnalysisFlag<*>, Any?> {
         val map = mutableMapOf<AnalysisFlag<*>, Any>()
