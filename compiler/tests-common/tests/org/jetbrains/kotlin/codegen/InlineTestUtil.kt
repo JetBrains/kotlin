@@ -128,6 +128,9 @@ object InlineTestUtil {
                     if (skipMethodsOfThisClass) {
                         return null
                     }
+                    if (name == "doResume" && desc == "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;") {
+                        return null
+                    }
 
                     return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                         override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {

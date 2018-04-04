@@ -73,7 +73,7 @@ fun MemberDescriptor.isInlineOnlyOrReifiable(): Boolean =
         this is CallableMemberDescriptor && (isReifiable() || DescriptorUtils.getDirectMember(this).isReifiable() || isInlineOnly())
 
 fun MemberDescriptor.isEffectivelyInlineOnly(): Boolean =
-        isInlineOnlyOrReifiable() || safeAs<FunctionDescriptor>()?.let { it.isSuspend && it.isInline } == true
+    isInlineOnlyOrReifiable() || (this is FunctionDescriptor && this.isSuspend && this.valueParameters.any { it.isCrossinline })
 
 fun MemberDescriptor.isInlineOnly(): Boolean {
     if (this !is FunctionDescriptor ||

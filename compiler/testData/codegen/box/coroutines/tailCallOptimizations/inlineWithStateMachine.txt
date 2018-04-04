@@ -24,12 +24,28 @@ final class InlineWithStateMachineKt$mainSuspend$1 {
 }
 
 @kotlin.Metadata
+public final class InlineWithStateMachineKt$suspendHere$1 {
+    field L$0: java.lang.Object
+    field L$1: java.lang.Object
+    synthetic field data: java.lang.Object
+    synthetic field exception: java.lang.Throwable
+    inner class InlineWithStateMachineKt$suspendHere$1
+    public method <init>(p0: COROUTINES_PACKAGE.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
+    synthetic final method getLabel(): int
+    synthetic final method setLabel(p0: int): void
+}
+
+@kotlin.Metadata
 public final class InlineWithStateMachineKt {
     inner class InlineWithStateMachineKt$box$1
     inner class InlineWithStateMachineKt$mainSuspend$1
+    inner class InlineWithStateMachineKt$suspendHere$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method mainSuspend(@org.jetbrains.annotations.NotNull p0: COROUTINES_PACKAGE.Continuation): java.lang.Object
-    private final static method suspendHere(p0: COROUTINES_PACKAGE.Continuation): java.lang.Object
-    private final static method suspendThere(p0: java.lang.String, p1: COROUTINES_PACKAGE.Continuation): java.lang.Object
+    private final static @org.jetbrains.annotations.Nullable method suspendHere$$forInline(@org.jetbrains.annotations.NotNull p0: COROUTINES_PACKAGE.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: COROUTINES_PACKAGE.Continuation): java.lang.Object
+    private final static @org.jetbrains.annotations.Nullable method suspendThere$$forInline(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: COROUTINES_PACKAGE.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method suspendThere(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: COROUTINES_PACKAGE.Continuation): java.lang.Object
 }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy;
+import org.jetbrains.kotlin.codegen.coroutines.SuspendInlineFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
@@ -126,16 +128,28 @@ public class FunctionCodegen {
 
         if (owner.getContextKind() != OwnerKind.DEFAULT_IMPLS || function.hasBody()) {
             FunctionGenerationStrategy strategy;
-            if (functionDescriptor.isSuspend() && !functionDescriptor.isInline()) {
-                strategy = new SuspendFunctionGenerationStrategy(
-                        state,
-                        CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
-                        function,
-                        v.getThisName(),
-                        state.getConstructorCallNormalizationMode()
-                );
-            }
-            else {
+            if (functionDescriptor.isSuspend()) {
+                if (AnnotationUtilKt.isEffectivelyInlineOnly(functionDescriptor)) {
+                    strategy = new FunctionGenerationStrategy.FunctionDefault(state, function);
+                } else if (!functionDescriptor.isInline()) {
+                    strategy = new SuspendFunctionGenerationStrategy(
+                            state,
+                            CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
+                            function,
+                            v.getThisName(),
+                            state.getConstructorCallNormalizationMode()
+                    );
+                } else {
+                    strategy = new SuspendInlineFunctionGenerationStrategy(
+                            state,
+                            CoroutineCodegenUtilKt.<FunctionDescriptor>unwrapInitialDescriptorForSuspendFunction(functionDescriptor),
+                            function,
+                            v.getThisName(),
+                            state.getConstructorCallNormalizationMode(),
+                            this
+                    );
+                }
+            } else {
                 strategy = new FunctionGenerationStrategy.FunctionDefault(state, function);
             }
 
@@ -202,12 +216,12 @@ public class FunctionCodegen {
 
         MethodVisitor mv =
                 strategy.wrapMethodVisitor(
-                        v.newMethod(origin,
-                                    flags,
-                                    asmMethod.getName(),
-                                    asmMethod.getDescriptor(),
-                                    jvmSignature.getGenericsSignature(),
-                                    getThrownExceptions(functionDescriptor, typeMapper)
+                        newMethod(origin,
+                                  flags,
+                                  asmMethod.getName(),
+                                  asmMethod.getDescriptor(),
+                                  jvmSignature.getGenericsSignature(),
+                                  getThrownExceptions(functionDescriptor, typeMapper)
                         ),
                         flags, asmMethod.getName(),
                         asmMethod.getDescriptor()
@@ -252,6 +266,18 @@ public class FunctionCodegen {
                     origin, functionDescriptor, methodContext, strategy, mv, jvmSignature, staticInCompanionObject
             );
         }
+    }
+
+    @NotNull
+    public MethodVisitor newMethod(
+            @NotNull JvmDeclarationOrigin origin,
+            int access,
+            @NotNull String name,
+            @NotNull String desc,
+            @Nullable String signature,
+            @Nullable String[] exceptions
+    ) {
+        return v.newMethod(origin, access, name, desc, signature, exceptions);
     }
 
     private static boolean shouldDelegateMethodBodyToInlineClass(
