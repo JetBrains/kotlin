@@ -10,6 +10,7 @@ import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.NullLogger
 import java.io.File
 import java.rmi.registry.LocateRegistry
 import java.util.logging.Logger
@@ -48,9 +49,9 @@ suspend fun walkDaemonsAsync(
         .map { Pair(it, portExtractor(it.name)) }
         .filter { (file, port) -> port != null && filter(file, port) }
         .map { log.info("(port = ${it.second}, path = ${it.first})"); it }
-        .map { (file, port) ->
+        .mapNotNull { (file, port) ->
             // all actions process concurrently
-            async {
+//            async {
                 assert(port!! in 1..(MAX_PORT_NUMBER - 1))
                 val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
                 report(
@@ -97,9 +98,9 @@ suspend fun walkDaemonsAsync(
                     )
                     null
                 }
-            }
+//            }
         }
-        .mapNotNull { it.await() } // await for completion of the last action
+//        .mapNotNull { it.await() } // await for completion of the last action
 }
 
 private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? {

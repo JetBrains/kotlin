@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
+import io.ktor.network.sockets.ServerSocket
 import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
@@ -30,13 +31,13 @@ interface Server<out T : ServerBase> : ServerBase {
         get() = Logger.getLogger("default server")
 
     enum class State {
-        WORKING, CLOSED, ERROR, DOWNING
+        WORKING, CLOSED, ERROR, DOWNING, UNVERIFIED
     }
 
     suspend fun processMessage(msg: AnyMessage<in T>, output: ByteWriteChannelWrapper): State = when (msg) {
         is Server.Message<in T> -> Server.State.WORKING.also { msg.process(this as T, output) }
         is Server.EndConnectionMessage<in T> -> {
-            println("!EndConnectionMessage!")
+            log.info("!EndConnectionMessage!")
             Server.State.CLOSED
         }
         is Server.ServerDownMessage<in T> -> Server.State.DOWNING
@@ -47,18 +48,31 @@ interface Server<out T : ServerBase> : ServerBase {
         val (input, output) = client.openIO(log)
         if (!tryAcquireHandshakeMessage(input, log) || !trySendHandshakeMessage(output)) {
             log.info("failed to establish connection with client (handshake failed)")
-            return@async Server.State.CLOSED
+            return@async Server.State.UNVERIFIED
         }
         if (!securityCheck(input)) {
             log.info("failed to check securitay")
-            return@async Server.State.CLOSED
+            return@async Server.State.UNVERIFIED
         }
+        log.info("   client verified ($client)")
         var finalState = Server.State.WORKING
         loop@
         while (true) {
-            val state = processMessage(input.nextObject() as Server.AnyMessage<T>, output)
+            val message = input.nextObject()
+            if (message !is Server.AnyMessage<*>) {
+                log.info("contrafact message")
+                finalState = Server.State.ERROR
+                break@loop
+            }
+            log.info("message ($client): $message")
+            val state = processMessage(message as Server.AnyMessage<T>, output)
             when (state) {
                 Server.State.WORKING -> continue@loop
+                Server.State.ERROR -> {
+                    log.info("ERROR after processing message")
+                    finalState = Server.State.DOWNING
+                    break@loop
+                }
                 else -> {
                     finalState = state
                     break@loop
@@ -89,13 +103,20 @@ interface Server<out T : ServerBase> : ServerBase {
                 while (true) {
                     val client = serverSocket.accept()
                     log.info("client accepted! (${client.remoteAddress})")
-                    attachClient(client).invokeOnCompletion {
-                        when (it) {
+                    async {
+                        val state = attachClient(client).await()
+                        log.info("finished ($client) with state : $state")
+                        when (state) {
+                            Server.State.CLOSED, State.UNVERIFIED -> {
+                                client.close()
+                            }
                             Server.State.DOWNING -> {
                                 client.close()
+                                // TODO Down server
                             }
                             else -> {
                                 client.close()
+                                // todo
                             }
                         }
                     }

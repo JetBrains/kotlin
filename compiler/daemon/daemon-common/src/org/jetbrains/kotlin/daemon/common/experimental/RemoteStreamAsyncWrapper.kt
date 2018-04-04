@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.daemon.common.RemoteOutputStream
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 
-class RemoteOutputStreamAsyncWrapper(val rmiOutput: RemoteOutputStream) : RemoteOutputStreamAsyncClientSide, Client by DefaultClientRMIWrapper() {
+class RemoteOutputStreamAsyncWrapper(val rmiOutput: RemoteOutputStream) : RemoteOutputStreamAsyncClientSide,
+    Client<RemoteOutputStreamAsyncServerSide> by DefaultClientRMIWrapper() {
 
     override suspend fun closeStream() =
         rmiOutput.close()
@@ -23,7 +24,8 @@ class RemoteOutputStreamAsyncWrapper(val rmiOutput: RemoteOutputStream) : Remote
 
 }
 
-class RemoteInputStreamAsyncWrapper(private val rmiInput: RemoteInputStream) : RemoteInputStreamClientSide, Client by DefaultClientRMIWrapper() {
+class RemoteInputStreamAsyncWrapper(private val rmiInput: RemoteInputStream) : RemoteInputStreamClientSide,
+    Client<RemoteInputStreamServerSide> by DefaultClientRMIWrapper() {
 
     override suspend fun closeStream() =
         rmiInput.close()

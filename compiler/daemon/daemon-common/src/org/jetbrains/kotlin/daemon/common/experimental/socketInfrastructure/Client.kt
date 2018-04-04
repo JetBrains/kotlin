@@ -14,20 +14,19 @@ import java.io.Serializable
 import java.util.logging.Logger
 
 
-interface Client : Serializable, AutoCloseable {
+interface Client<ServerType : ServerBase> : Serializable, AutoCloseable {
     @Throws(Exception::class)
     fun connectToServer()
 
-    fun sendMessage(msg: Any): Deferred<Unit>
+    fun sendMessage(msg: Server.AnyMessage<out ServerType>): Deferred<Unit>
     fun <T> readMessage(): Deferred<T>
-
 }
 
 @Suppress("UNCHECKED_CAST")
-abstract class DefaultAuthorizableClient(
+abstract class DefaultAuthorizableClient<ServerType: ServerBase>(
     val serverPort: Int,
     val serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName
-) : Client {
+) : Client<ServerType> {
 
     val log: Logger
         @Transient get() = Logger.getLogger("default client")
@@ -47,10 +46,13 @@ abstract class DefaultAuthorizableClient(
     abstract fun authorizeOnServer(serverOutputChannel: ByteWriteChannelWrapper)
 
     override fun close() {
+        runBlocking {
+            output.writeObject(Server.EndConnectionMessage<ServerType>())
+        }
         socket?.close()
     }
 
-    override fun sendMessage(msg: Any) = async { output.writeObject(msg) }
+    override fun sendMessage(msg: Server.AnyMessage<out ServerType>) = async { output.writeObject(msg) }
 
     override fun <T> readMessage() = async { input.nextObject() as T }
 
@@ -65,6 +67,7 @@ abstract class DefaultAuthorizableClient(
                 )
             } catch (e: Throwable) {
                 log.info("EXCEPTION while connecting to server ($e)")
+                close()
                 throw e
             }
             log.info("connected (port = $serverPort, serv =$serverPort)")
@@ -73,9 +76,15 @@ abstract class DefaultAuthorizableClient(
                 input = it.input
                 output = it.output
                 if (!trySendHandshakeMessage(output) || !tryAcquireHandshakeMessage(input, log)) {
+                    close()
                     throw ConnectionResetException("failed to establish connection with server (handshake failed)")
                 }
-                authorizeOnServer(output)
+                try {
+                    authorizeOnServer(output)
+                } catch (e: Exception) {
+                    close()
+                    throw e
+                }
             }
         }
     }
@@ -93,16 +102,16 @@ abstract class DefaultAuthorizableClient(
 
 }
 
-class DefaultClient(
+class DefaultClient<ServerType: ServerBase>(
     serverPort: Int,
     serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName
-) : DefaultAuthorizableClient(serverPort, serverHost) {
+) : DefaultAuthorizableClient<ServerType>(serverPort, serverHost) {
     override fun authorizeOnServer(output: ByteWriteChannelWrapper) {}
 }
 
-class DefaultClientRMIWrapper : Client {
+class DefaultClientRMIWrapper<ServerType: ServerBase> : Client<ServerType> {
     override fun connectToServer() {}
-    override fun sendMessage(msg: Any) = throw UnsupportedOperationException("sendMessage is not supported for RMI wrappers")
+    override fun sendMessage(msg: Server.AnyMessage<out ServerType>) = throw UnsupportedOperationException("sendMessage is not supported for RMI wrappers")
     override fun <T> readMessage() = throw UnsupportedOperationException("readMessage is not supported for RMI wrappers")
     override fun close() {}
 }

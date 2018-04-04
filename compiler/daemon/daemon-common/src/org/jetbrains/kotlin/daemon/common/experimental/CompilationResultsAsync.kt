@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
@@ -28,9 +27,10 @@ interface CompilationResultsServerSide : CompilationResultsAsync, Server<Compila
     }
 }
 
-interface CompilationResultsClientSide : CompilationResultsAsync, Client
+interface CompilationResultsClientSide : CompilationResultsAsync, Client<CompilationResultsServerSide>
 
-class CompilationResultsClientSideImpl(val socketPort: Int) : CompilationResultsClientSide, Client by DefaultClient(socketPort) {
+class CompilationResultsClientSideImpl(val socketPort: Int) : CompilationResultsClientSide,
+    Client<CompilationResultsServerSide> by DefaultClient(socketPort) {
 
     override suspend fun add(compilationResultCategory: Int, value: Serializable) {
         sendMessage(CompilationResultsServerSide.AddMessage(compilationResultCategory, value))
@@ -42,7 +42,8 @@ class CompilationResultsClientSideImpl(val socketPort: Int) : CompilationResults
 
 }
 
-class CompilationResultsAsyncWrapper(val rmiImpl: CompilationResults) : CompilationResultsClientSide, Client by DefaultClientRMIWrapper() {
+class CompilationResultsAsyncWrapper(val rmiImpl: CompilationResults) : CompilationResultsClientSide,
+    Client<CompilationResultsServerSide> by DefaultClientRMIWrapper() {
 
     override suspend fun add(compilationResultCategory: Int, value: Serializable) {
         rmiImpl.add(compilationResultCategory, value)

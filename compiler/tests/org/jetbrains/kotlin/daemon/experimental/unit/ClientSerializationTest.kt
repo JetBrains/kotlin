@@ -9,6 +9,7 @@ import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSideImpl
+import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseServerSide
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import org.jetbrains.kotlin.daemon.common.experimental.toRMI
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
@@ -73,7 +74,7 @@ class ClientSerializationTest : KotlinIntegrationTestBase() {
     }
 
     fun testDefaultClient() = abstractSerializationTest(
-        { DefaultClient(testServer.serverPort) },
+        { DefaultClient<ServerBase>(testServer.serverPort) },
         { client, client2 -> assert(client.serverPort == client2.serverPort) },
         { client, client2 ->
             client2.log.info("abacaba (2)")
