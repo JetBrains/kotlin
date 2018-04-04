@@ -23,7 +23,7 @@ import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
 class KotlinScriptDefinitionAdapterFromNewAPI(val scriptDefinition: ScriptDefinition) :
     KotlinScriptDefinition(scriptDefinition.compilationConfigurator.defaultConfiguration[ScriptingEnvironmentProperties.baseClass]) {
 
-    override val name: String get() = scriptDefinition.properties[ScriptDefinitionProperties.name]
+    override val name: String get() = scriptDefinition.properties.getOrNull(ScriptDefinitionProperties.name) ?: super.name
 
     // TODO: consider creating separate type (subtype? for kotlin scripts)
     override val fileType: LanguageFileType = KotlinFileType.INSTANCE
