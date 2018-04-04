@@ -88,7 +88,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     private fun initEnvironment(project: Project) {
         projectDir = project.projectDir
         platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
-        platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
+        platformBaseNumber = platformVersion.substringBefore(".").takeIf { it.isNotEmpty() }
                 ?: error("Invalid platform version: $platformVersion")
         platformDir = IntellijRootUtils.getIntellijRootDir(project)
     }
