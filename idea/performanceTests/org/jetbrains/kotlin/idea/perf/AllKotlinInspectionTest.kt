@@ -82,21 +82,21 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
 
         val errors = mutableListOf<Throwable>()
 
-        profileTools.forEach {
-            val localInspectionTool = it.tool.tool as? LocalInspectionTool ?: return@forEach
-            if (it.tool.language !in setOf(null, "kotlin", "UAST")) return@forEach
+        for (it in profileTools) {
+            val localInspectionTool = it.tool.tool as? LocalInspectionTool ?: continue
+            if (it.tool.language !in setOf(null, "kotlin", "UAST")) continue
             val result = measureNanoTime {
                 try {
                     localInspectionTool.analyze(psiFile)
                 } catch (t: Throwable) {
                     val myEx = ExceptionWhileInspection(it.tool.id, t)
-
                     myEx.printStackTrace()
                     errors += myEx
                 }
             }
             results[it.tool.id] = result
             totalNs += result
+            if (errors.isNotEmpty()) break
         }
 
         return PerFileTestResult(results, totalNs, errors)
