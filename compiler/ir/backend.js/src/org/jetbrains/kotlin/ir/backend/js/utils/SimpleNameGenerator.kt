@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsName
+import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 
 class SimpleNameGenerator : NameGenerator {
 
@@ -18,30 +21,55 @@ class SimpleNameGenerator : NameGenerator {
 
     override fun getNameForSymbol(symbol: IrSymbol, scope: JsScope): JsName = getNameForDescriptor(symbol.descriptor, scope)
 
-    override fun getSpecialRefForName(name: Name): JsExpression {
-        assert(name.isSpecial)
-
-        val nameString = name.asString()
-        return when (nameString) {
-            Namer.THIS_SPECIAL_NAME -> JsThisRef()
-            else -> JsNameRef(getSpecialNameString(nameString))
-        }
-    }
-
-    override fun getSpecialNameString(specNameString: String): String = when (specNameString) {
-        Namer.SET_SPECIAL_NAME -> Namer.SETTER_ARGUMENT
-        else -> TODO("for Name ${specNameString}")
-    }
-
     private fun getNameForDescriptor(descriptor: DeclarationDescriptor, scope: JsScope): JsName = nameCache.getOrPut(descriptor, {
         val nameBuilder = StringBuilder()
         when (descriptor) {
+            is ReceiverParameterDescriptor -> {
+                when (descriptor.value) {
+                    is ExtensionReceiver -> nameBuilder.append(Namer.EXTENSION_RECEIVER_NAME)
+                    is ImplicitClassReceiver -> nameBuilder.append(Namer.IMPLICIT_RECEIVER_NAME)
+                    else -> TODO("name for $descriptor")
+                }
+            }
+            is ValueParameterDescriptor -> {
+                if (descriptor.name.isSpecial) {
+                    // TODO: consider this case more carefully
+                    nameBuilder.append(Namer.IMPLICIT_RECEIVER_NAME)
+                    nameBuilder.append('_')
+                    nameBuilder.append(descriptor.index)
+                } else {
+                    val declaredName = descriptor.name.identifier
+                    nameBuilder.append(declaredName)
+                    if (declaredName.startsWith("\$")) {
+                        nameBuilder.append('_')
+                        nameBuilder.append(descriptor.index)
+                    }
+                }
+            }
+            is PropertyDescriptor -> {
+                nameBuilder.append(descriptor.name.identifier)
+            }
             is PropertyAccessorDescriptor -> {
                 when (descriptor) {
                     is PropertyGetterDescriptor -> nameBuilder.append(Namer.GETTER_PREFIX)
                     is PropertySetterDescriptor -> nameBuilder.append(Namer.SETTER_PREFIX)
                 }
                 nameBuilder.append(descriptor.correspondingProperty.name.asString())
+            }
+            is ClassDescriptor -> {
+                if (descriptor.name.isSpecial) {
+                    nameBuilder.append(descriptor.name.asString().let {
+                        it.substring(1, it.length - 1) + "${descriptor.hashCode()}"
+                    })
+                } else {
+                    nameBuilder.append(descriptor.name.identifier)
+                }
+            }
+            is ConstructorDescriptor -> {
+                nameBuilder.append(getNameForDescriptor(descriptor.constructedClass, scope))
+            }
+            is LocalVariableDescriptor -> {
+                nameBuilder.append(descriptor.name.identifier)
             }
             is CallableDescriptor -> {
                 nameBuilder.append(descriptor.name.asString())

@@ -12,15 +12,23 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
 
-@Deprecated("Use context.getNameForSymbol(symbol) instead")
-fun Name.toJsName() = JsDynamicScope.declareName(asString())
+// TODO don't use JsDynamicScope
+val dummyScope = JsDynamicScope
 
-fun jsVar(name: Name, initializer: IrExpression?, context: JsGenerationContext): JsVars {
+fun Name.toJsName() =
+// TODO sanitize
+    dummyScope.declareName(asString())
+
+fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
     val jsInitializer = initializer?.accept(IrElementToJsExpressionTransformer(), context)
-    return JsVars(JsVars.JsVar(name.toJsName(), jsInitializer))
+    return JsVars(JsVars.JsVar(name, jsInitializer))
 }
 
-fun <T : JsNode, D : JsGenerationContext> IrWhen.toJsNode(tr: BaseIrElementToJsNodeTransformer<T, D>, data: D, node: (JsExpression, T, T?) -> T): T? =
+fun <T : JsNode, D : JsGenerationContext> IrWhen.toJsNode(
+    tr: BaseIrElementToJsNodeTransformer<T, D>,
+    data: D,
+    node: (JsExpression, T, T?) -> T
+): T? =
     branches.foldRight<IrBranch, T?>(null) { br, n ->
         val body = br.result.accept(tr, data)
         if (br is IrElseBranch) body
@@ -47,14 +55,8 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
         parameters.add(JsParameter(parameter))
     }
 
-    declaration.extensionReceiverParameter?.let { function.addParameter("\$receiver") }
-    declaration.valueParameters.forEach {
-        if (it.name.isSpecial) {
-            function.addParameter(context.staticContext.getSpecialNameString(it.name.asString()))
-        } else {
-            function.addParameter(it.name.asString())
-        }
-    }
+    declaration.extensionReceiverParameter?.let { function.addParameter(context.getNameForSymbol(it.symbol).ident) }
+    declaration.valueParameters.forEach { function.addParameter(context.getNameForSymbol(it.symbol).ident) }
 
     return function
 }

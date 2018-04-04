@@ -114,16 +114,19 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                         return irCall(call, it.symbol)
                     }
 
-                    (symbol.owner as? IrFunction)?.dispatchReceiverParameter?.let {
-                        val key = SimpleMemberKey(it.type, symbol.name)
+                    if (symbol.isBound) {
 
-                        memberToIrFunction[key]?.let {
-                            // TODO: don't apply intrinsics when type of receiver or argument is Long
-                            return irCall(call, it.symbol, dispatchReceiverAsFirstArgument = true)
-                        }
+                        (symbol.owner as? IrFunction)?.dispatchReceiverParameter?.let {
+                            val key = SimpleMemberKey(it.type, symbol.name)
 
-                        memberToTransformer[key]?.let {
-                            return it(call)
+                            memberToIrFunction[key]?.let {
+                                // TODO: don't apply intrinsics when type of receiver or argument is Long
+                                return irCall(call, it.symbol, dispatchReceiverAsFirstArgument = true)
+                            }
+
+                            memberToTransformer[key]?.let {
+                                return it(call)
+                            }
                         }
                     }
                 }

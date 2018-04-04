@@ -5,16 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrElementToJsExpressionTransformer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrElementToJsStatementTransformer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.toJsName
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.name.Name
 
 class JsGenerationContext {
     fun newDeclaration(scope: JsScope, func: IrFunction? = null): JsGenerationContext {
@@ -48,5 +42,4 @@ class JsGenerationContext {
     }
 
     fun getNameForSymbol(symbol: IrSymbol): JsName = staticContext.getNameForSymbol(symbol)
-    fun getSpecialRefForName(name: Name): JsExpression = staticContext.getSpecialRefForName(name)
 }

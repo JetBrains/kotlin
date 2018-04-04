@@ -268,11 +268,18 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement = super.visitFunction(declaration, declaration)
 
         override fun visitCall(expression: IrCall, ownerFunc: IrFunction?): IrElement {
-            val target = expression.symbol.owner as IrFunction
+            if (expression.symbol.isBound) {
 
-            if (target is IrConstructor) {
-                if (!target.descriptor.isPrimary) {
-                    return redirectCall(expression, context.secondaryConstructorsMap[target.symbol]!!.stub)
+                val target = expression.symbol.owner as IrFunction
+
+                if (target is IrConstructor) {
+                    if (!target.descriptor.isPrimary) {
+                        val ctor = context.secondaryConstructorsMap[target.symbol]
+                        if (ctor != null) {
+
+                            return redirectCall(expression, ctor.stub)
+                        }
+                    }
                 }
             }
 

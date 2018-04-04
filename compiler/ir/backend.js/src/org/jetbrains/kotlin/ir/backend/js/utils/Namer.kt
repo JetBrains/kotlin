@@ -40,7 +40,8 @@ object Namer {
 
     val ROOT_PACKAGE = "_"
 
-    val RECEIVER_PARAMETER_NAME = "\$receiver"
+    val EXTENSION_RECEIVER_NAME = "\$receiver"
+    val IMPLICIT_RECEIVER_NAME = "this"
     val ANOTHER_THIS_PARAMETER_NAME = "$this"
 
     val THROW_CLASS_CAST_EXCEPTION_FUN_NAME = "throwCCE"

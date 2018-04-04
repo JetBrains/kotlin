@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
-import org.jetbrains.kotlin.backend.common.descriptors.SharedVariablesManager
+import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*

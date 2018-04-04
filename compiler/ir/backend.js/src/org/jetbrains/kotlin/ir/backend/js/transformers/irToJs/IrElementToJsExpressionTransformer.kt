@@ -5,32 +5,37 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
-import org.jetbrains.kotlin.ir.backend.js.utils.isSpecial
 import org.jetbrains.kotlin.ir.backend.js.utils.name
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
 
-    // TODO: should we prohibit using blocks as expression in the future?
-    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsExpression {
-        if (expression.statements.isEmpty()) {
-            // TODO: what should we do here? Crash? Generate throw? Should it be treated as unreachable code?
-            return super.visitBlock(expression, context)
+    private val neutralExpression: JsExpression = JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
+
+    override fun visitContainerExpression(expression: IrContainerExpression, context: JsGenerationContext): JsExpression =
+        expression.statements.map { it.accept(this, context) }.fold(neutralExpression) { left, right ->
+            if (left != neutralExpression) JsBinaryOperation(JsBinaryOperator.COMMA, left, right) else right
         }
 
-        return expression.statements
-            .map { it.accept(this, context) }
-            .reduce { left, right -> JsBinaryOperation(JsBinaryOperator.COMMA, left, right) }
-    }
+    override fun visitBlock(expression: IrBlock, data: JsGenerationContext): JsExpression = visitContainerExpression(expression, data)
 
-    override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression {
-        return body.expression.accept(this, context)
+    override fun visitComposite(expression: IrComposite, data: JsGenerationContext): JsExpression =
+        visitContainerExpression(expression, data)
+
+    override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
+        body.expression.accept(this, context)
+
+    override fun visitFunctionReference(expression: IrFunctionReference, context: JsGenerationContext): JsExpression {
+        val irFunction = expression.symbol.owner as IrFunction
+        return irFunction.accept(IrFunctionToJsTransformer(), context)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, context: JsGenerationContext): JsExpression {
@@ -61,36 +66,36 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitGetField(expression: IrGetField, context: JsGenerationContext): JsExpression {
-        return JsNameRef(expression.symbol.name.asString(), expression.receiver?.accept(this, context))
+        val fieldName = context.getNameForSymbol(expression.symbol)
+        return JsNameRef(fieldName, expression.receiver?.accept(this, context))
     }
 
-    override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression {
+    override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression =
+        context.getNameForSymbol(expression.symbol).makeRef()
 
-        return if (expression.symbol.isSpecial) {
-            context.getSpecialRefForName(expression.symbol.name)
-        } else {
-            JsNameRef(context.getNameForSymbol(expression.symbol))
-        }
-
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: JsGenerationContext): JsExpression {
+        TODO()
     }
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
-        val dest = JsNameRef(expression.symbol.name.asString(), expression.receiver?.accept(this, context))
+        val fieldName = context.getNameForSymbol(expression.symbol)
+        val dest = JsNameRef(fieldName, expression.receiver?.accept(this, context))
         val source = expression.value.accept(this, context)
         return jsAssignment(dest, source)
     }
 
     override fun visitSetVariable(expression: IrSetVariable, context: JsGenerationContext): JsExpression {
-        val ref = JsNameRef(expression.symbol.name.toJsName())
+        val ref = JsNameRef(context.getNameForSymbol(expression.symbol))
         val value = expression.value.accept(this, context)
         return JsBinaryOperation(JsBinaryOperator.ASG, ref, value)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsExpression {
-        val classNameRef = expression.symbol.owner.descriptor.constructedClass.name.toJsName().makeRef()
+        val classNameRef = context.getNameForSymbol(expression.symbol).makeRef()
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
         val fromPrimary = context.currentFunction is IrConstructor
-        val thisRef = if (fromPrimary) JsThisRef() else JsNameRef("\$this")
+        val thisRef =
+            if (fromPrimary) JsThisRef() else context.getNameForSymbol(context.currentFunction!!.valueParameters.last().symbol).makeRef()
         val arguments = translateCallArguments(expression, context)
         return JsInvocation(callFuncRef, listOf(thisRef) + arguments)
     }
@@ -102,18 +107,26 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return it(expression, context)
         }
 
-        val dispatchReceiver = expression.dispatchReceiver?.accept(this, context)
-        val extensionReceiver = expression.extensionReceiver?.accept(this, context)
-
+        val dispatchReceiver = expression.dispatchReceiver
+        val jsDispatchReceiver = expression.dispatchReceiver?.accept(this, context)
+        val jsExtensionReceiver = expression.extensionReceiver?.accept(this, context)
         val arguments = translateCallArguments(expression, context)
 
+        if (dispatchReceiver != null && dispatchReceiver.type.isFunctionTypeOrSubtype && symbol.name == OperatorNameConventions.INVOKE) {
+            return JsInvocation(jsDispatchReceiver!!, arguments)
+        }
+
+        context.staticContext.intrinsics[symbol]?.let {
+            return it(expression, arguments)
+        }
+
         return if (symbol is IrConstructorSymbol) {
-            JsNew(JsNameRef((symbol.owner.parent as IrClass).name.asString()), arguments)
+            JsNew(context.getNameForSymbol(symbol).makeRef(), arguments)
         } else {
             // TODO sanitize name
             val symbolName = context.getNameForSymbol(symbol)
-            val ref = if (dispatchReceiver != null) JsNameRef(symbolName, dispatchReceiver) else JsNameRef(symbolName)
-            JsInvocation(ref, extensionReceiver?.let { listOf(extensionReceiver) + arguments } ?: arguments)
+            val ref = if (jsDispatchReceiver != null) JsNameRef(symbolName, jsDispatchReceiver) else JsNameRef(symbolName)
+            JsInvocation(ref, jsExtensionReceiver?.let { listOf(jsExtensionReceiver) + arguments } ?: arguments)
         }
     }
 

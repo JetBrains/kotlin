@@ -73,6 +73,7 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                 is IrProperty -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
                 is IrField -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
                 is IrAnonymousInitializer -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
+                // TODO: visit children as well
                 else -> null
             }
         }
@@ -178,8 +179,6 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
 
         private fun collectRewrittenDeclarations(): ArrayList<IrDeclaration> =
                 ArrayList<IrDeclaration>(localFunctions.size + localClasses.size + 1).apply {
-                    add(memberDeclaration)
-
                     localFunctions.values.mapTo(this) {
                         val original = it.declaration
                         it.transformedDeclaration.apply {
@@ -195,6 +194,8 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                     localClasses.values.mapTo(this) {
                         it.declaration
                     }
+
+                    add(memberDeclaration)
                 }
 
         private inner class FunctionBodiesRewriter(val localContext: LocalContext?) : IrElementTransformerVoid() {
@@ -490,7 +491,7 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                     newValueParameters,
                     oldDescriptor.returnType,
                     Modality.FINAL,
-                    Visibilities.PRIVATE
+                    Visibilities.LOCAL
             )
 
             oldDescriptor.extensionReceiverParameter?.let {

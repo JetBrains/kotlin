@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
 
-    private val classNameRef = irClass.name.toJsName().makeRef()
+    private val className = context.getNameForSymbol(irClass.symbol)
+    private val classNameRef = className.makeRef()
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsBlock()
 
@@ -31,12 +30,19 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 if (declaration.symbol.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
                     declaration.symbol.modality != Modality.ABSTRACT
                 ) {
-                    classBlock.statements += declaration.accept(transformer, context).apply { name = null }.let {
-                        val memberName = context.getNameForSymbol(declaration.symbol)
-                        val memberRef = JsNameRef(memberName, classPrototypeRef)
-                        jsAssignment(memberRef, it).makeStmt()
+                    classBlock.statements += declaration.accept(transformer, context).let {
+                        if (declaration.visibility == Visibilities.LOCAL) {
+                            it.makeStmt()
+                        } else {
+                            val memberName = context.getNameForSymbol(declaration.symbol)
+                            val memberRef = JsNameRef(memberName, classPrototypeRef)
+                            jsAssignment(memberRef, it).makeStmt()
+                        }
                     }
                 }
+            } else if (declaration is IrClass) {
+                //TODO: redesign inner classes generation
+                classBlock.statements += JsClassGenerator(declaration, context).generate()
             }
         }
 
@@ -47,7 +53,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun maybeGeneratePrimaryConstructor() {
         if (!irClass.declarations.any { it is IrConstructor }) {
             val func = JsFunction(JsFunctionScope(context.currentScope, "Ctor for ${irClass.name}"), JsBlock(), "Ctor for ${irClass.name}")
-            func.name = irClass.name.toJsName()
+            func.name = className
             classBlock.statements += func.makeStmt()
             classBlock.statements += generateInheritanceCode()
         }
@@ -59,8 +65,9 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             return emptyList()
         }
 
+        val baseName = context.getNameForSymbol(baseClass.owner.symbol)
         val createCall = jsAssignment(
-            classPrototypeRef, JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototypeOf(baseClass.owner.name.toJsName().makeRef()))
+            classPrototypeRef, JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototypeOf(baseName.makeRef()))
         ).makeStmt()
 
         val ctorAssign = jsAssignment(JsNameRef(Namer.CONSTRUCTOR_NAME, classPrototypeRef), classNameRef).makeStmt()
@@ -83,7 +90,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
     private fun generateSuperClasses(): JsPropertyInitializer = JsPropertyInitializer(
         JsNameRef(Namer.METADATA_INTERFACES),
-        JsArrayLiteral(irClass.superClasses.filter { it.kind == ClassKind.INTERFACE }.map { JsNameRef(it.owner.name.toJsName()) })
+        JsArrayLiteral(irClass.superClasses.filter { it.kind == ClassKind.INTERFACE }.map { JsNameRef(context.getNameForSymbol(it.owner.symbol)) })
     )
 
 }

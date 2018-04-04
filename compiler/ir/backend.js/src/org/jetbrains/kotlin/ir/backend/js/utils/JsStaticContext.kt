@@ -18,11 +18,9 @@ class JsStaticContext(
     private val rootScope: JsRootScope,
     private val globalBlock: JsGlobalBlock,
     private val nameGenerator: NameGenerator,
-    val backendContext: JsIrBackendContext
+    backendContext: JsIrBackendContext
 ) {
-    val intrinsics = JsIntrinsicTransformers(backendContext.intrinsics)
+    val intrinsics = JsIntrinsicTransformers(backendContext)
 
     fun getNameForSymbol(irSymbol: IrSymbol) = nameGenerator.getNameForSymbol(irSymbol, rootScope)
-    fun getSpecialRefForName(name: Name): JsExpression = nameGenerator.getSpecialRefForName(name)
-    fun getSpecialNameString(specNameString: String): String = nameGenerator.getSpecialNameString(specNameString)
 }
