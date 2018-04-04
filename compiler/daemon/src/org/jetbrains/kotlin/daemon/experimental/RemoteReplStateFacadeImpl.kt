@@ -40,7 +40,7 @@ class RemoteReplStateFacadeServerSide(
 }
 
 
-class RemoteReplStateFacadeClientSide(val serverPort: Int) : ReplStateFacadeClientSide, Client by DefaultClient(serverPort) {
+class RemoteReplStateFacadeClientSide(val serverPort: Int) : ReplStateFacadeClientSide, Client<ReplStateFacadeServerSide> by DefaultClient(serverPort) {
 
     override suspend fun getId(): Int {
         sendMessage(ReplStateFacadeServerSide.GetIdMessage()).await()

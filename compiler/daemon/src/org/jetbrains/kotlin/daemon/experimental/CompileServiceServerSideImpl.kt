@@ -722,6 +722,7 @@ class CompileServiceServerSideImpl(
 
     // TODO: handover should include mechanism for client to switch to a new daemon then previous "handed over responsibilities" and shot down
     private fun initiateElections() {
+
         ifAliveUnit {
 
             log.info("initiate elections")
@@ -834,7 +835,7 @@ class CompileServiceServerSideImpl(
                     shutdownNow()
                 }
             } else {
-                log.info("Cancel delayed shutdown due to new client")
+                log.info("Cancel delayed shutdown due to a new activity")
             }
         }
     }

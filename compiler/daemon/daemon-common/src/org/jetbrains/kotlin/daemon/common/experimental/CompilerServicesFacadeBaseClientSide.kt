@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Clie
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
 import java.io.Serializable
 
-interface CompilerServicesFacadeBaseClientSide : CompilerServicesFacadeBaseAsync, Client
+interface CompilerServicesFacadeBaseClientSide : CompilerServicesFacadeBaseAsync, Client<CompilerServicesFacadeBaseServerSide>
 
 class CompilerServicesFacadeBaseClientSideImpl(val serverPort: Int) :
     CompilerServicesFacadeBaseClientSide,
-    Client by DefaultClient(serverPort) {
+    Client<CompilerServicesFacadeBaseServerSide> by DefaultClient(serverPort) {
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         sendMessage(

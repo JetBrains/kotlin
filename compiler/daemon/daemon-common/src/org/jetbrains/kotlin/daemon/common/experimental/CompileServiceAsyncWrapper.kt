@@ -16,7 +16,7 @@ import java.io.File
 class CompileServiceAsyncWrapper(
     val rmiCompileService: CompileService,
     override val serverPort: Int
-) : CompileServiceClientSide, Client by DefaultClientRMIWrapper() {
+) : CompileServiceClientSide, Client<CompileServiceServerSide> by DefaultClientRMIWrapper() {
 
     override suspend fun compile(
         sessionId: Int,

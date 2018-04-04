@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.daemon.common.experimental
 
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 
-interface RemoteOutputStreamAsyncClientSide : RemoteOutputStreamAsync, Client
+interface RemoteOutputStreamAsyncClientSide : RemoteOutputStreamAsync, Client<RemoteOutputStreamAsyncServerSide>
 
-interface RemoteInputStreamClientSide : RemoteInputStreamAsync, Client
+interface RemoteInputStreamClientSide : RemoteInputStreamAsync, Client<RemoteInputStreamServerSide>

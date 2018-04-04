@@ -16,7 +16,7 @@ import java.io.Serializable
 
 class IncrementalCompilerServicesFacadeAsyncWrapper(
     val rmiImpl: IncrementalCompilerServicesFacade
-) : IncrementalCompilerServicesFacadeClientSide, Client by DefaultClientRMIWrapper() {
+) : IncrementalCompilerServicesFacadeClientSide, Client<CompilerServicesFacadeBaseServerSide> by DefaultClientRMIWrapper() {
 
     override suspend fun hasAnnotationsFileUpdater() = runBlocking {
         rmiImpl.hasAnnotationsFileUpdater()

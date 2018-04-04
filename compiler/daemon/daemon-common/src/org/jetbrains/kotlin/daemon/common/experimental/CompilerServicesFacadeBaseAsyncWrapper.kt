@@ -15,7 +15,7 @@ import java.io.Serializable
 
 class CompilerServicesFacadeBaseAsyncWrapper(
     val rmiImpl: CompilerServicesFacadeBase
-) : CompilerServicesFacadeBaseClientSide, Client by DefaultClientRMIWrapper() {
+) : CompilerServicesFacadeBaseClientSide, Client<CompilerServicesFacadeBaseServerSide> by DefaultClientRMIWrapper() {
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) =
         rmiImpl.report(category, severity, message, attachment)

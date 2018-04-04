@@ -19,7 +19,7 @@ interface IncrementalCompilerServicesFacadeClientSide : IncrementalCompilerServi
 
 class IncrementalCompilerServicesFacadeClientSideImpl(val serverPort: Int) :
     IncrementalCompilerServicesFacadeClientSide,
-    Client by DefaultClient(serverPort) {
+    Client<CompilerServicesFacadeBaseServerSide> by DefaultClient(serverPort) {
 
     override suspend fun hasAnnotationsFileUpdater(): Boolean {
         sendMessage(HasAnnotationsFileUpdaterMessage()).await()

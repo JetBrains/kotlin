@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.daemon.common.ReplStateFacade
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 
-class ReplStateFacadeAsyncWrapper(val rmiReplStateFacade: ReplStateFacade): ReplStateFacadeClientSide, Client by DefaultClientRMIWrapper() {
+class ReplStateFacadeAsyncWrapper(val rmiReplStateFacade: ReplStateFacade) : ReplStateFacadeClientSide,
+    Client<ReplStateFacadeServerSide> by DefaultClientRMIWrapper() {
 
     override suspend fun getId() = rmiReplStateFacade.getId()
 
@@ -26,7 +27,7 @@ class ReplStateFacadeAsyncWrapper(val rmiReplStateFacade: ReplStateFacade): Repl
 }
 
 fun ReplStateFacade.toClient() = ReplStateFacadeAsyncWrapper(this)
-fun CompileService.CallResult<ReplStateFacade>.toClient()= when (this) {
+fun CompileService.CallResult<ReplStateFacade>.toClient() = when (this) {
     is CompileService.CallResult.Good -> CompileService.CallResult.Good(this.result.toClient())
     is CompileService.CallResult.Dying -> this
     is CompileService.CallResult.Error -> this

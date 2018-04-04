@@ -17,10 +17,11 @@ import java.io.Serializable
 import java.net.InetSocketAddress
 
 
-interface CompilerCallbackServicesFacadeClientSide : CompilerCallbackServicesFacadeAsync, Client, CompilerServicesFacadeBaseClientSide
+interface CompilerCallbackServicesFacadeClientSide : CompilerCallbackServicesFacadeAsync, Client<CompilerServicesFacadeBaseServerSide>, CompilerServicesFacadeBaseClientSide
 
 @Suppress("UNCHECKED_CAST")
-class CompilerCallbackServicesFacadeClientSideImpl(serverPort: Int) : CompilerCallbackServicesFacadeClientSide, Client by DefaultClient(serverPort) {
+class CompilerCallbackServicesFacadeClientSideImpl(serverPort: Int) : CompilerCallbackServicesFacadeClientSide,
+    Client<CompilerServicesFacadeBaseServerSide> by DefaultClient(serverPort) {
 
     override suspend fun hasIncrementalCaches(): Boolean {
         sendMessage(CompilerCallbackServicesFacadeServerSide.HasIncrementalCachesMessage()).await()

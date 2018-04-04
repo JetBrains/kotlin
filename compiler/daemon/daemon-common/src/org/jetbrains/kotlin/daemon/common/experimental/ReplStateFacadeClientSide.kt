@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.daemon.common.experimental
 
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 
-interface ReplStateFacadeClientSide: ReplStateFacadeAsync, Client
+interface ReplStateFacadeClientSide: ReplStateFacadeAsync, Client<ReplStateFacadeServerSide>

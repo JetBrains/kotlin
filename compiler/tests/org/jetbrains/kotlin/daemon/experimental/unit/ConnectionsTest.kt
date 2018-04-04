@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.daemon.experimental.unit
 
 import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -31,7 +30,7 @@ import kotlin.concurrent.schedule
 class ConnectionsTest : KotlinIntegrationTestBase() {
 
     private val logFile = createTempFile("/Users/jetbrains/Documents/kotlin/my_fork/kotlin", ".txt").also {
-        println("log file path : ${it.loggerCompatiblePath}")
+        println("client log file path : ${it.loggerCompatiblePath}")
     }
 
     private val cfg = "handlers = java.util.logging.FileHandler\n" +
@@ -62,13 +61,12 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
 
     private val daemonOptions by lazy { DaemonOptions() }
 
-    private val port by lazy {
-        findPortForSocket(
+    private val port
+        get() = findPortForSocket(
             COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
             COMPILE_DAEMON_PORTS_RANGE_START,
             COMPILE_DAEMON_PORTS_RANGE_END
         )
-    }
 
     private val timer by lazy { Timer(true) }
 
@@ -170,57 +168,117 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         .thenBy(FileAgeComparator()) { it.runFile }
         .thenBy { it.daemon.serverPort }
 
-    fun testConnectionMEchanism_OldClient_OldServer() {
-        runOldServer()
-        val daemons = getOldDaemonsOrRMIWrappers()
-        log.info("daemons : $daemons")
-        assert(daemons.isNotEmpty())
-        val daemon = daemons[0].daemon
+    private fun <DM, D> expectDaemon(
+        getDaemons: () -> List<DM>,
+        chooseDaemon: (List<DM>) -> D,
+        getInfo: (D) -> CompileService.CallResult<String>,
+        registerClient: (D) -> Unit,
+        expectedDaemonCount: Int?
+    ) {
+        val daemons = getDaemons()
+        log.info("daemons (${daemons.size}) : $daemons")
+        expectedDaemonCount?.let {
+            println("expected $it daemons, found ${daemons.size}")
+            assert(daemons.size == it)
+        }
+        val daemon = chooseDaemon(daemons)
         log.info("chosen : $daemon")
-        val info = runBlocking { daemon.getDaemonInfo() }
+        val info = getInfo(daemon)
         log.info("info : $info")
         assert(info.isGood)
+        registerClient(daemon)
+    }
+
+    private enum class ServerType(val instancesNumber: Int?) {
+        OLD(1), NEW(2), ANY(null)
+    }
+
+    private fun expectNewDaemon(serverType: ServerType) = expectDaemon(
+        ::getNewDaemonsOrAsyncWrappers,
+        { daemons -> daemons.maxWith(comparator)!!.daemon },
+        { d -> runBlocking { d.getDaemonInfo() } },
+        { d -> runBlocking { d.registerClient(generateClient()) } },
+        serverType.instancesNumber
+    )
+
+    private fun expectOldDaemon(shouldCheckNumber: Boolean = true) = expectDaemon(
+        ::getOldDaemonsOrRMIWrappers,
+        { daemons -> daemons[0].daemon },
+        { d -> d.getDaemonInfo() },
+        { d -> d.registerClient(generateClient()) },
+        1.takeIf { shouldCheckNumber }
+    )
+
+    private val clientFiles = arrayListOf<File>()
+    private fun generateClient(): String {
+        val file = createTempFile(getTestName(true), ".alive")
+        clientFiles.add(file)
+        return file.absolutePath
+    }
+
+    private fun deleteClients() {
+        clientFiles.forEach { it.delete() }
+    }
+
+    private fun endTest() {
+        deleteClients()
         println("test passed")
+    }
+
+    fun testConnectionMEchanism_OldClient_OldServer() {
+        runOldServer()
+        expectOldDaemon()
+        endTest()
     }
 
 
     fun testConnectionMechanism_NewClient_NewServer() {
-        val runService = runNewServer()
-        val daemons = getNewDaemonsOrAsyncWrappers()
-        log.info("daemons : $daemons")
-        assert(daemons.isNotEmpty())
-        val daemon = daemons.maxWith(comparator)!!.daemon
-        log.info("chosen : $daemon")
-        val info = runBlocking { daemon.getDaemonInfo() }
-        log.info("info : $info")
-        assert(info.isGood)
-        println("test passed")
+        runNewServer()
+        expectNewDaemon(ServerType.NEW)
+        endTest()
     }
 
     fun testConnectionMechanism_OldClient_NewServer() {
-        val runService = runNewServer()
-        val daemons = getOldDaemonsOrRMIWrappers()
-        log.info("daemons : $daemons")
-        assert(daemons.isNotEmpty())
-        val daemon = daemons[0].daemon
-        log.info("chosen : $daemon")
-        val info = runBlocking { daemon.getDaemonInfo() }
-        log.info("info : $info")
-        assert(info.isGood)
-        println("test passed")
+        runNewServer()
+        expectOldDaemon()
+        endTest()
     }
 
     fun testConnectionMechanism_NewClient_OldServer() {
         runOldServer()
-        val daemons = getNewDaemonsOrAsyncWrappers()
-        log.info("daemons : $daemons")
-        assert(daemons.isNotEmpty())
-        val daemon = daemons.maxWith(comparator)!!.daemon
-        log.info("chosen : $daemon")
-        val info = runBlocking { daemon.getDaemonInfo() }
-        log.info("info : $info")
-        assert(info.isGood)
-        println("test passed")
+        expectNewDaemon(ServerType.OLD)
+        endTest()
+    }
+
+
+    fun testConnections_OldDaemon_DifferentClients() {
+        runOldServer()
+        (0..20).forEach {
+            expectNewDaemon(ServerType.OLD)
+            expectOldDaemon()
+        }
+        endTest()
+    }
+
+    fun testConnections_NewDaemon_DifferentClients() {
+        runNewServer()
+        (0..20).forEach {
+            expectNewDaemon(ServerType.NEW)
+            expectOldDaemon()
+        }
+        endTest()
+    }
+
+    fun testConnections_MultipleDaemons_MultipleClients() {
+        (0..3).forEach {
+            runNewServer()
+            runOldServer()
+        }
+        (0..10).forEach {
+            expectNewDaemon(ServerType.ANY)
+            expectOldDaemon(shouldCheckNumber = false)
+        }
+        endTest()
     }
 
 }
