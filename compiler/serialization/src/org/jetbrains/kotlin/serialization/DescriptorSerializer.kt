@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinNames
 import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
@@ -142,6 +143,8 @@ class DescriptorSerializer private constructor(
         val requirement = serializeVersionRequirement(classDescriptor)
         if (requirement != null) {
             builder.versionRequirement = requirement
+        } else {
+            writeVersionRequirementForJvmDefaultIfNeeded(classDescriptor, builder)
         }
 
         val versionRequirementTableProto = versionRequirementTable.serialize()
@@ -239,8 +242,6 @@ class DescriptorSerializer private constructor(
         }
         else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
-        } else if (descriptor.hasJvmDefaultAnnotation()) {
-            builder.versionRequirement = writeVersionRequirement(1, 2, 40)
         }
 
         extension.serializeProperty(descriptor, builder)
@@ -311,8 +312,6 @@ class DescriptorSerializer private constructor(
             builder.versionRequirement = requirement
         } else if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.versionRequirement = writeVersionRequirement(LanguageFeature.Coroutines)
-        } else if (descriptor.hasJvmDefaultAnnotation()) {
-            builder.versionRequirement = writeVersionRequirement(1, 2, 40)
         }
 
         contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
@@ -619,23 +618,36 @@ class DescriptorSerializer private constructor(
         return builder
     }
 
-    private fun writeVersionRequirement(languageFeature: LanguageFeature): Int {
-        val languageVersion = languageFeature.sinceVersion!!
-        val requirement = ProtoBuf.VersionRequirement.newBuilder().apply {
-            VersionRequirement.Version(languageVersion.major, languageVersion.minor).encode(
-                    writeVersion = { version = it },
-                    writeVersionFull = { versionFull = it }
-            )
+    // Interfaces which have @JvmDefault members somewhere in the hierarchy need the compiler 1.2.40+
+    // so that the generated bridges in subclasses would call the super members correctly
+    private fun writeVersionRequirementForJvmDefaultIfNeeded(classDescriptor: ClassDescriptor, builder: ProtoBuf.Class.Builder) {
+        if (
+            isInterface(classDescriptor) &&
+            classDescriptor.unsubstitutedMemberScope.getContributedDescriptors().any {
+                it is CallableMemberDescriptor && it.hasJvmDefaultAnnotation()
+            }
+        ) {
+            builder.versionRequirement = writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION)
         }
-        return versionRequirementTable[requirement]
     }
 
-    private fun writeVersionRequirement(major: Int, minor: Int, patch: Int): Int {
+    private fun writeVersionRequirement(languageFeature: LanguageFeature): Int {
+        val languageVersion = languageFeature.sinceVersion!!
+        return writeVersionRequirement(
+            languageVersion.major, languageVersion.minor, 0,
+            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION
+        )
+    }
+
+    private fun writeVersionRequirement(major: Int, minor: Int, patch: Int, versionKind: ProtoBuf.VersionRequirement.VersionKind): Int {
         val requirement = ProtoBuf.VersionRequirement.newBuilder().apply {
             VersionRequirement.Version(major, minor, patch).encode(
                 writeVersion = { version = it },
                 writeVersionFull = { versionFull = it }
             )
+            if (versionKind != defaultInstanceForType.versionKind) {
+                this.versionKind = versionKind
+            }
         }
         return versionRequirementTable[requirement]
     }
