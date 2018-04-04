@@ -38,7 +38,8 @@ sourceSets {
 
 jar {
     manifestAttributes(manifest, project, 'Main', true)
-    from sourceSets.java9.output
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
 }
 
 artifacts {
