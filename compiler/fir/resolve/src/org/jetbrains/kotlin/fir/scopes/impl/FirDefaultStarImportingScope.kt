@@ -20,7 +20,10 @@ class FirDefaultStarImportingScope(session: FirSession, lookupInFir: Boolean = f
         "kotlin.ranges",
         "kotlin.sequences",
         "kotlin.text",
-        "kotlin.io"
+        "kotlin.io",
+        "java.lang",
+        // We should not (probably) import it for non-JVM projects
+        "kotlin.jvm"
     ).map {
         val fqName = FqName(it)
         FirResolvedPackageStarImport(
