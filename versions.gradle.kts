@@ -38,6 +38,7 @@ when (platform) {
         extra["versions.jar.streamex"] = "0.6.5"
         extra["versions.jar.gson"] = "2.8.2"
         extra["versions.jar.oro"] = "2.0.8"
+        extra["versions.jar.picocontainer"] = "1.2"
         for (jar in gradleJars) {
             extra["versions.jar.$jar"] = "4.5.1"
         }
