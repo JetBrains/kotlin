@@ -215,3 +215,6 @@ messages/**)
 
 # remove when KT-18563 would be fixed
 -keep class org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt { *; }
+
+# for imports dumper in compiler
+-keep class kotlinx.serialization.** { *; }
