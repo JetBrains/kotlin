@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -298,7 +299,7 @@ private fun getModuleRelatedModuleInfo(projectFileIndex: ProjectFileIndex, virtu
     val module = projectFileIndex.getModuleForFile(virtualFile)
     if (module != null && !module.isDisposed) {
         val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
-        if (moduleFileIndex.isInTestSourceContent(virtualFile)) {
+        if (moduleFileIndex.isInTestSourceContentKotlinAware(virtualFile)) {
             return module.testSourceInfo()
         } else if (moduleFileIndex.isInSourceContentWithoutInjected(virtualFile)) {
             return module.productionSourceInfo()

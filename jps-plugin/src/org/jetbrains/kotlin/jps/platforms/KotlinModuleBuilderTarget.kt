@@ -16,10 +16,12 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaClasspathKind
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
+import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.jps.build.FSOperationsHelper
 import org.jetbrains.kotlin.jps.build.KotlinSourceFileCollector
 import org.jetbrains.kotlin.jps.model.kotlinFacet
@@ -33,6 +35,13 @@ import java.io.File
  * Properties and actions for Kotlin test / production module build target.
  */
 abstract class KotlinModuleBuilderTarget(val context: CompileContext, val jpsModuleBuildTarget: ModuleBuildTarget) {
+    val sourceRootTypes: Collection<JpsModuleSourceRootType<*>>
+        get() = if (isTests) {
+            listOf(JavaSourceRootType.TEST_SOURCE, KotlinSourceRootType.TestSource)
+        } else {
+            listOf(JavaSourceRootType.SOURCE, KotlinSourceRootType.Source)
+        }
+
     val module: JpsModule
         get() = jpsModuleBuildTarget.module
 
@@ -116,16 +125,18 @@ abstract class KotlinModuleBuilderTarget(val context: CompileContext, val jpsMod
             .getOrCreateCompilerConfiguration(module.project)
             .compilerExcludes
 
-        val sourceRootType = if (isTests) JavaSourceRootType.TEST_SOURCE else JavaSourceRootType.SOURCE
-        module.getSourceRoots(sourceRootType).forEach {
-            it.file.walkTopDown()
-                .onEnter { it !in moduleExcludes }
-                .filterTo(receiver) {
-                    !compilerExcludes.isExcluded(it) &&
-                            it.isFile &&
-                            KotlinSourceFileCollector.isKotlinSourceFile(it)
-                }
-        }
+        module
+            .sourceRoots
+            .filter { it.rootType in sourceRootTypes }
+            .forEach {
+                it.file.walkTopDown()
+                    .onEnter { it !in moduleExcludes }
+                    .filterTo(receiver) {
+                        !compilerExcludes.isExcluded(it) &&
+                                it.isFile &&
+                                KotlinSourceFileCollector.isKotlinSourceFile(it)
+                    }
+            }
     }
 
     override fun toString() = jpsModuleBuildTarget.toString()

@@ -25,13 +25,16 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.analyzer.CombinedModuleInfo
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
 import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
+import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
+import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
 import org.jetbrains.kotlin.idea.framework.getLibraryPlatform
@@ -217,10 +220,10 @@ fun Module.testSourceInfo(): ModuleTestSourceInfo? = if (hasTestRoots()) ModuleT
 
 internal fun Module.correspondingModuleInfos(): List<ModuleSourceInfo> = listOf(testSourceInfo(), productionSourceInfo()).filterNotNull()
 
-private fun Module.hasProductionRoots() = hasRootsOfType(JavaSourceRootType.SOURCE)
-private fun Module.hasTestRoots() = hasRootsOfType(JavaSourceRootType.TEST_SOURCE)
+private fun Module.hasProductionRoots() = hasRootsOfType(JavaSourceRootType.SOURCE) || hasRootsOfType(KotlinSourceRootType.Source)
+private fun Module.hasTestRoots() = hasRootsOfType(JavaSourceRootType.TEST_SOURCE) || hasRootsOfType(KotlinSourceRootType.TestSource)
 
-private fun Module.hasRootsOfType(sourceRootType: JavaSourceRootType): Boolean =
+private fun Module.hasRootsOfType(sourceRootType: JpsModuleSourceRootType<*>): Boolean =
     rootManager.contentEntries.any { it.getSourceFolders(sourceRootType).isNotEmpty() }
 
 private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project), GlobalSearchScopeWithModuleSources {
@@ -241,7 +244,7 @@ private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(mo
     override fun hashCode(): Int = 31 * module.hashCode()
 
     override fun contains(file: VirtualFile) =
-        moduleFileIndex.isInSourceContentWithoutInjected(file) && !moduleFileIndex.isInTestSourceContent(file)
+        moduleFileIndex.isInSourceContentWithoutInjected(file) && !moduleFileIndex.isInTestSourceContentKotlinAware(file)
 
     override fun toString() = "ModuleProductionSourceScope($module)"
 }
@@ -257,7 +260,7 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
     // KT-6206
     override fun hashCode(): Int = 37 * module.hashCode()
 
-    override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContent(file)
+    override fun contains(file: VirtualFile) = moduleFileIndex.isInTestSourceContentKotlinAware(file)
 
     override fun toString() = "ModuleTestSourceScope($module)"
 }

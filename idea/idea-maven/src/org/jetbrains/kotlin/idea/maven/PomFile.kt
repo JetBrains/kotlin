@@ -39,6 +39,7 @@ import org.jetbrains.idea.maven.project.MavenProject
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.idea.configuration.RepositoryDescription
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -506,12 +507,11 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
     private fun GenericDomValue<String>.isEmpty() = !exists() || stringValue.isNullOrEmpty()
 
     private fun SourceFolder.isRelatedSourceRoot(isTest: Boolean): Boolean {
-        val relevantRootType = when {
-            isTest -> JavaSourceRootType.TEST_SOURCE
-            else -> JavaSourceRootType.SOURCE
+        return if (isTest) {
+            rootType == JavaSourceRootType.TEST_SOURCE || rootType == KotlinSourceRootType.TestSource
+        } else {
+            rootType == JavaSourceRootType.SOURCE || rootType == KotlinSourceRootType.Source
         }
-
-        return rootType === relevantRootType
     }
 
     @Suppress("Unused")
@@ -548,6 +548,8 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
         const val Js = "js"
         const val TestJs = "test-js"
         const val MetaData = "metadata"
+
+        val JvmGoals = listOf(Compile, TestCompile)
     }
 
     companion object {

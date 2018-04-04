@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.caches.project.moduleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
@@ -201,7 +202,7 @@ class MoveConflictChecker(
                                        conflicts: MultiMap<PsiElement, String>) {
         val targetModule = targetScope.getModule(project) ?: return
 
-        val isInTestSources = ModuleRootManager.getInstance(targetModule).fileIndex.isInTestSourceContent(targetScope)
+        val isInTestSources = ModuleRootManager.getInstance(targetModule).fileIndex.isInTestSourceContentKotlinAware(targetScope)
         NextUsage@ for (usage in usages) {
             val element = usage.element ?: continue
             if (PsiTreeUtil.getParentOfType(element, PsiImportStatement::class.java, false) != null) continue
