@@ -47,6 +47,18 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         private val parameters: List<Pair<SuggestedNameInfo, List<ExpectedType>>> = emptyList(),
         private val targetSubstitutor: JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
     ) : CreateMethodRequest {
+        private class SimpleExpectedParameter(
+            private val types: List<ExpectedType>,
+            private val names: Collection<String>
+        ) : ExpectedParameter {
+            override fun getExpectedTypes() = types
+            override fun getSemanticNames() = names
+        }
+
+        override fun getExpectedParameters(): List<ExpectedParameter> {
+            return parameters.map { (name, types) -> SimpleExpectedParameter(types, name.names.asList()) }
+        }
+
         override fun getTargetSubstitutor(): JvmSubstitutor = targetSubstitutor
 
         override fun getModifiers() = modifiers
