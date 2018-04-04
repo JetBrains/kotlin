@@ -28,6 +28,7 @@ internal interface KonanToolRunner: Named {
     val classpath: FileCollection
     val jvmArgs: List<String>
     val environment: Map<String, Any>
+    val additionalSystemProperties: Map<String, String>
 
     fun run(args: List<String>)
     fun run(vararg args: String) = run(args.toList())
@@ -49,10 +50,7 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
             project.fileTree("${project.konanHome}/konan/lib/")
             .apply { include("*.jar")  }
 
-    override val jvmArgs = mutableListOf(
-            "-ea",
-            "-Dkonan.home=${project.konanHome}",
-            "-Djava.library.path=${project.konanHome}/konan/nativelib").apply {
+    override val jvmArgs = mutableListOf("-ea").apply {
         if (project.konanExtension.jvmArgs.none { it.startsWith("-Xmx") } &&
             project.jvmArgs.none { it.startsWith("-Xmx") }) {
             add("-Xmx3G")
@@ -60,6 +58,11 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
         addAll(project.konanExtension.jvmArgs)
         addAll(project.jvmArgs)
     }
+
+    override val additionalSystemProperties = mutableMapOf(
+            "konan.home" to project.konanHome,
+            "java.library.path" to "${project.konanHome}/konan/nativelib"
+    )
 
     override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
@@ -75,6 +78,8 @@ internal abstract class KonanCliRunner(val toolName: String, val fullName: Strin
             spec.main = mainClass
             spec.classpath = classpath
             spec.jvmArgs(jvmArgs)
+            spec.systemProperties(System.getProperties().map { (k, v) -> k.toString() to v }.toMap())
+            spec.systemProperties(additionalSystemProperties)
             spec.args(listOf(toolName) + args)
             blacklistEnvironment.forEach { spec.environment.remove(it) }
             spec.environment(environment)
