@@ -91,7 +91,7 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
         val fromDeprecatedEP = Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.toList()
                 .map(::ScriptTemplatesProviderAdapter)
         val fromNewEp = Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.toList()
-        return fromDeprecatedEP + fromNewEp
+        return fromNewEp.dropLast(1) + fromDeprecatedEP + fromNewEp.last()
     }
 
     fun reloadScriptDefinitions() = lock.write {
