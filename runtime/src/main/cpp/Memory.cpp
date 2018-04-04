@@ -464,7 +464,7 @@ void DeinitInstanceBody(const TypeInfo* typeInfo, void* body) {
 namespace {
 
 template<typename func>
-void traverseContainerObjectFields(ContainerHeader* container, func process) {
+inline void traverseContainerObjectFields(ContainerHeader* container, func process) {
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
   for (int object = 0; object < container->objectCount(); object++) {
     const TypeInfo* typeInfo = obj->type_info();
@@ -485,7 +485,7 @@ void traverseContainerObjectFields(ContainerHeader* container, func process) {
 }
 
 template<typename func>
-void traverseContainerReferredObjects(ContainerHeader* container, func process) {
+inline void traverseContainerReferredObjects(ContainerHeader* container, func process) {
   traverseContainerObjectFields(container, [process](ObjHeader** location) {
     ObjHeader* ref = *location;
     if (ref != nullptr) process(ref);
@@ -510,9 +510,6 @@ inline void processFinalizerQueue(MemoryState* state) {
 #if TRACE_MEMORY
     state->containers->erase(container);
 #endif
-    if (!isAggregatingFrozenContainer(container))
-      runDeallocationHooks(container);
-
     CONTAINER_DESTROY_EVENT(state, container)
     konanFreeMemory(container);
     atomicAdd(&allocCount, -1);
@@ -835,8 +832,12 @@ MetaObjHeader* ObjHeader::createMetaObject(TypeInfo** location) {
 }
 
 void ObjHeader::destroyMetaObject(TypeInfo** location) {
-  TypeInfo* meta = *location;
-  *location = nullptr;
+  MetaObjHeader* meta = *(reinterpret_cast<MetaObjHeader**>(location));
+  *const_cast<const TypeInfo**>(location) = meta->typeInfo_;
+  if (meta->counter_ != nullptr) {
+    WeakReferenceCounterClear(meta->counter_);
+    UpdateRef(&meta->counter_, nullptr);
+  }
   konanFreeMemory(meta);
 }
 
@@ -890,29 +891,29 @@ void FreeAggregatingFrozenContainer(ContainerHeader* container) {
   MEMORY_LOG("Freeing subcontainers done\n");
 }
 
-void FreeContainer(ContainerHeader* header) {
-  RuntimeAssert(!header->permanent(), "this kind of container shalln't be freed");
+void FreeContainer(ContainerHeader* container) {
+  RuntimeAssert(!container->permanent(), "this kind of container shalln't be freed");
   auto state = memoryState;
 
-  CONTAINER_FREE_EVENT(state, header)
+  CONTAINER_FREE_EVENT(state, container)
 
-  if (isAggregatingFrozenContainer(header)) {
-    FreeAggregatingFrozenContainer(header);
+  if (isAggregatingFrozenContainer(container)) {
+    FreeAggregatingFrozenContainer(container);
     return;
+  } else {
+    runDeallocationHooks(container);
   }
 
   // Now let's clean all object's fields in this container.
-  traverseContainerObjectFields(header, [](ObjHeader** location) {
+  traverseContainerObjectFields(container, [](ObjHeader** location) {
     UpdateRef(location, nullptr);
   });
 
   // And release underlying memory.
-  if (!isFreeable(header)) {
-    runDeallocationHooks(header);
-  } else {
-    header->setColor(CONTAINER_TAG_GC_BLACK);
-    if (!header->buffered())
-      scheduleDestroyContainer(state, header, false);
+  if (isFreeable(container)) {
+    container->setColor(CONTAINER_TAG_GC_BLACK);
+    if (!container->buffered())
+      scheduleDestroyContainer(state, container, false);
   }
 }
 
@@ -1232,7 +1233,8 @@ void* GetReservedObjectTail(ObjHeader* obj) {
 void SetRef(ObjHeader** location, const ObjHeader* object) {
   MEMORY_LOG("SetRef *%p: %p\n", location, object)
   *const_cast<const ObjHeader**>(location) = object;
-  AddRef(object);
+  if (object != nullptr)
+    AddRef(object);
 }
 
 ObjHeader** GetReturnSlotIfArena(ObjHeader** returnSlot, ObjHeader** localSlot) {
@@ -1248,16 +1250,6 @@ ObjHeader** GetParamSlotIfArena(ObjHeader* param, ObjHeader** localSlot) {
   return reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(&chunk->arena) | ARENA_BIT);
 }
 
-void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
-  if (isArenaSlot(returnSlot)) {
-    // Not a subject of reference counting.
-    if (object == nullptr || !isRefCounted(object)) return;
-    auto arena = initedArena(asArenaSlot(returnSlot));
-    returnSlot = arena->getSlot();
-  }
-  UpdateRef(returnSlot, object);
-}
-
 void UpdateRef(ObjHeader** location, const ObjHeader* object) {
   RuntimeAssert(!isArenaSlot(location), "must not be a slot");
   ObjHeader* old = *location;
@@ -1270,6 +1262,35 @@ void UpdateRef(ObjHeader** location, const ObjHeader* object) {
     if (reinterpret_cast<uintptr_t>(old) > 1) {
       ReleaseRef(old);
     }
+  }
+}
+
+void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
+  if (isArenaSlot(returnSlot)) {
+    // Not a subject of reference counting.
+    if (object == nullptr || !isRefCounted(object)) return;
+    auto arena = initedArena(asArenaSlot(returnSlot));
+    returnSlot = arena->getSlot();
+  }
+  UpdateRef(returnSlot, object);
+}
+
+void UpdateRefIfNull(ObjHeader** location, const ObjHeader* object) {
+  if (object != nullptr) {
+#if KONAN_NO_THREADS
+    ObjHeader* old = *location;
+    if (old == nullptr) {
+      AddRef(object);
+      *const_cast<const ObjHeader**>(location) = object;
+    }
+#else
+    AddRef(object);
+    auto old = __sync_val_compare_and_swap(location, nullptr, const_cast<ObjHeader*>(object));
+    if (old != nullptr) {
+      // Failed to store, was not null.
+      ReleaseRef(object);
+    }
+#endif
   }
 }
 

@@ -242,6 +242,8 @@ struct ArrayHeader {
 struct MetaObjHeader {
   // Pointer to the type info. Must be first, to match ArrayHeader and ObjHeader layout.
   const TypeInfo* typeInfo_;
+  // Strong reference to counter object.
+  ObjHeader* counter_;
 };
 
 inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
@@ -394,6 +396,10 @@ bool HasReservedObjectTail(ObjHeader* obj) RUNTIME_NOTHROW;
 // Returns the pointer to the reserved space, `HasReservedObjectTail(obj)` must be true.
 void* GetReservedObjectTail(ObjHeader* obj) RUNTIME_NOTHROW;
 
+// Weak reference operations.
+// Atomically clears counter object reference.
+void WeakReferenceCounterClear(ObjHeader* counter);
+
 //
 // Object reference management.
 //
@@ -420,6 +426,8 @@ void* GetReservedObjectTail(ObjHeader* obj) RUNTIME_NOTHROW;
 void SetRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates location.
 void UpdateRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Updates location if it is null, atomically.
+void UpdateRefIfNull(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates reference in return slot.
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
 // Optimization: release all references in range.

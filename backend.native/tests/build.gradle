@@ -2076,6 +2076,11 @@ task memory_escape2(type: RunKonanTest) {
     source = "runtime/memory/escape2.kt"
 }
 
+task memory_weak0(type: RunKonanTest) {
+    goldValue = "Data(s=Hello)\nnull\nOK\n"
+    source = "runtime/memory/weak0.kt"
+}
+
 task mpp1(type: RunStandaloneKonanTest) {
     source = "codegen/mpp/mpp1.kt"
     flags = ['-tr', '-Xmulti-platform']
