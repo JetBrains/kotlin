@@ -68,7 +68,11 @@ fun KotlinMemberInfo.getChildrenToAnalyze(): List<PsiElement> {
 }
 
 internal fun KtNamedDeclaration.resolveToDescriptorWrapperAware(resolutionFacade: ResolutionFacade? = null): DeclarationDescriptor {
-    if (this is KtPsiClassWrapper) return psiClass.getJavaClassDescriptor(resolutionFacade ?: psiClass.javaResolutionFacade())!!
+    if (this is KtPsiClassWrapper) {
+        (resolutionFacade ?: psiClass.javaResolutionFacade())
+            ?.let { psiClass.getJavaClassDescriptor(it) }
+            ?.let { return it }
+    }
     return resolutionFacade?.resolveToDescriptor(this) ?: unsafeResolveToDescriptor()
 }
 
