@@ -395,9 +395,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         }
     }
 
-    override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade {
+    override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade? {
+        if (!ProjectRootsUtil.isInProjectOrLibraryContent(file)) {
+            return null
+        }
+
         assert(file !is PsiCodeFragment)
-        assert(ProjectRootsUtil.isInProjectOrLibraryContent(file))
+
         val moduleInfo = file.getModuleInfo()
         return getResolutionFacadeByModuleInfo(moduleInfo, platform)
     }
