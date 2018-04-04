@@ -11,6 +11,7 @@ import com.intellij.util.ArrayUtil;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function2;
+import org.jetbrains.annotations.Generated;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -540,6 +541,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
+            mv.visitAnnotation(Type.getType(Generated.class).getDescriptor(), false);
             mv.visitCode();
             Label eq = new Label();
             Label ne = new Label();
@@ -597,6 +599,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
+            mv.visitAnnotation(Type.getType(Generated.class).getDescriptor(), false);
             mv.visitCode();
             boolean first = true;
             for (PropertyDescriptor propertyDescriptor : properties) {
@@ -646,6 +649,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(function), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
+            mv.visitAnnotation(Type.getType(Generated.class).getDescriptor(), false);
             mv.visitCode();
             genStringBuilderConstructor(iv);
 
@@ -701,6 +705,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ) {
                     Type componentType = signature.getReturnType();
                     InstructionAdapter iv = new InstructionAdapter(mv);
+                    mv.visitAnnotation(Type.getType(Generated.class).getDescriptor(), false);
+
                     if (!componentType.equals(Type.VOID_TYPE)) {
                         PropertyDescriptor property =
                                 bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, descriptorToDeclaration(parameter));
@@ -737,6 +743,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ) {
                     InstructionAdapter iv = new InstructionAdapter(mv);
 
+                    mv.visitAnnotation(Type.getType(Generated.class).getDescriptor(), false);
                     iv.anew(thisDescriptorType);
                     iv.dup();
 
