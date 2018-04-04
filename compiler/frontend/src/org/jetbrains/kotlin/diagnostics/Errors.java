@@ -227,6 +227,9 @@ public interface Errors {
     DiagnosticFactory0<KtAnnotationEntry> ANNOTATION_USED_AS_ANNOTATION_ARGUMENT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> ANNOTATION_ARGUMENT_IS_NON_CONST = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<KtClassOrObject> LOCAL_ANNOTATION_CLASS = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtClassOrObject> LOCAL_ANNOTATION_CLASS_ERROR = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory1<PsiElement, FqName> ILLEGAL_KOTLIN_VERSION_STRING_VALUE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> NEWER_VERSION_IN_SINCE_KOTLIN = DiagnosticFactory1.create(WARNING);
 
