@@ -25,6 +25,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.caches.resolve.resolution
@@ -147,7 +148,7 @@ internal class ProjectResolutionFacade(
             platformParameters = { platform ->
                 when (platform) {
                     is JvmPlatform -> jvmPlatformParameters
-                    is TargetPlatform.Common -> commonPlatformParameters
+                    is CommonPlatform -> commonPlatformParameters
                     else -> PlatformAnalysisParameters.Empty
                 }
             },

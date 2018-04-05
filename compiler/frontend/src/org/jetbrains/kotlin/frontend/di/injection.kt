@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.frontend.di
 
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.TargetPlatformVersion
@@ -181,7 +182,7 @@ fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtF
         moduleContext,
         FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
         BindingTraceContext(),
-        TargetPlatform.Common,
+        CommonPlatform,
         TargetPlatformVersion.NoVersion,
         CompilerEnvironment,
         LanguageVersionSettingsImpl.DEFAULT

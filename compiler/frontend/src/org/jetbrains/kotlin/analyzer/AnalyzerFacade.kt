@@ -278,37 +278,6 @@ interface PlatformAnalysisParameters {
     object Empty : PlatformAnalysisParameters
 }
 
-interface ModuleInfo {
-    val name: Name
-    val displayedName: String get() = name.asString()
-    fun dependencies(): List<ModuleInfo>
-    val expectedBy: List<ModuleInfo> get() = emptyList()
-    val platform: TargetPlatform? get() = null
-    fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
-    val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
-        get() = mapOf(Capability to this)
-    val stableName: Name?
-        get() = null
-
-    // For common modules, we add built-ins at the beginning of the dependencies list, after the SDK.
-    // This is needed because if a JVM module depends on the common module, we should use JVM built-ins for resolution of both modules.
-    // The common module usually depends on kotlin-stdlib-common which may or may not have its own (common, non-JVM) built-ins,
-    // but if they are present, they should come after JVM built-ins in the dependencies list, because JVM built-ins contain
-    // additional members dependent on the JDK
-    fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-        if (platform == TargetPlatform.Common)
-            ModuleInfo.DependencyOnBuiltIns.AFTER_SDK
-        else
-            ModuleInfo.DependencyOnBuiltIns.LAST
-
-    //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
-    enum class DependencyOnBuiltIns { NONE, AFTER_SDK, LAST }
-
-    companion object {
-        val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
-    }
-}
-
 interface CombinedModuleInfo : ModuleInfo {
     val containedModules: List<ModuleInfo>
 }

@@ -32,6 +32,7 @@ import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer
 import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer
 import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer.*
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.config.getFacetPlatformByConfigurationElement
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.*
@@ -54,7 +55,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
             get() = when (this) {
                 is JvmPlatform -> { roots -> JavaRuntimeDetectionUtil.getRuntimeJar(roots.toList()) != null }
                 is JsPlatform -> { roots -> JsLibraryStdDetectionUtil.getJsStdLibJar(roots.toList()) != null }
-                is TargetPlatform.Common -> { roots -> getLibraryJar(roots, PathUtil.KOTLIN_STDLIB_COMMON_JAR_PATTERN) != null }
+                is CommonPlatform -> { roots -> getLibraryJar(roots, PathUtil.KOTLIN_STDLIB_COMMON_JAR_PATTERN) != null }
                 else -> null
             }
     }
@@ -148,7 +149,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                         .forEach {
                             val platform = it.platform
                             when (platform) {
-                                is TargetPlatform.Common -> {
+                                is CommonPlatform -> {
                                     if (!hasCommonStdlib && it.isStdlib) {
                                         hasCommonStdlib = true
                                     }
@@ -160,7 +161,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
                             }
                         }
 
-                    return if (hasCommonStdlib) TargetPlatform.Common else null
+                    return if (hasCommonStdlib) CommonPlatform else null
                 }
 
                 private fun ModuleSettings.detectPlatform(): TargetPlatform {

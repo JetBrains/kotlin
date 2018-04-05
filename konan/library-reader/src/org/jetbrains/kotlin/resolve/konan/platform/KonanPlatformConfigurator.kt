@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-object KonanPlatformConfigurator : PlatformConfigurator(
+object KonanPlatformConfigurator : PlatformConfiguratorBase(
     DynamicTypesSettings(),
     additionalDeclarationCheckers = listOf(ExpectedActualDeclarationChecker()),
     additionalCallCheckers = listOf(
