@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.psi.KtSuperExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
@@ -46,7 +46,7 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
             context.trace.report(diagnostic.on(reportOn))
         }
 
-        if (getSuperCallExpression(resolvedCall.call) == null) return
+        val superCallExpression = getSuperCallExpression(resolvedCall.call) ?: return
 
         if (!isInterface(descriptor.original.containingDeclaration)) return
 
@@ -54,7 +54,7 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
         val realDescriptorOwner = realDescriptor.containingDeclaration as? ClassDescriptor ?: return
 
         if (isInterface(realDescriptorOwner) && realDescriptor is JavaCallableMemberDescriptor) {
-            val classifier = DescriptorUtils.getParentOfType(context.scope.ownerDescriptor, ClassifierDescriptor::class.java)
+            val classifier = getSuperCallLabelTarget(context.trace.bindingContext, superCallExpression)
             //is java interface default method called from trait
             if (classifier != null && DescriptorUtils.isInterface(classifier)) {
                 context.trace.report(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
@@ -68,4 +68,14 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
 
     private fun isDefaultCallsProhibited(context: CallCheckerContext) =
             context.languageVersionSettings.supportsFeature(LanguageFeature.DefaultMethodsCallFromJava6TargetError)
+
+    private fun getSuperCallLabelTarget(
+        bindingContext: BindingContext,
+        expression: KtSuperExpression
+    ): ClassDescriptor? {
+        val thisTypeForSuperCall = bindingContext.get(BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression) ?: return null
+        val descriptor = thisTypeForSuperCall.constructor.declarationDescriptor
+        return descriptor as? ClassDescriptor
+    }
+
 }
