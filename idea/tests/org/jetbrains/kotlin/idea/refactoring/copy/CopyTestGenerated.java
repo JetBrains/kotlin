@@ -91,6 +91,12 @@ public class CopyTestGenerated extends AbstractCopyTest {
         doTest(fileName);
     }
 
+    @TestMetadata("copyKtFileToTextFile/copyKtFileToTextFile.test")
+    public void testCopyKtFileToTextFile_CopyKtFileToTextFile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyKtFileToTextFile/copyKtFileToTextFile.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("copyLocalClass/copyLocalClass.test")
     public void testCopyLocalClass_CopyLocalClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/copy/copyLocalClass/copyLocalClass.test");
