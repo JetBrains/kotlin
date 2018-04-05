@@ -13,9 +13,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSymbolProvider {
 
-    override val doesLookupInFir: Boolean
-        get() = providers.any(FirSymbolProvider::doesLookupInFir)
-
     override fun getPackage(fqName: FqName): FqName? {
         return providers.firstNotNullResult { it.getPackage(fqName) }
     }

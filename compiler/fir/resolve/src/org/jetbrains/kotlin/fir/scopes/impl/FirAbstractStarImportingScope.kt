@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
@@ -21,7 +22,7 @@ abstract class FirAbstractStarImportingScope(val session: FirSession, lookupInFi
 
     val provider = FirSymbolProvider.getInstance(session).let {
         when {
-            it is FirCompositeSymbolProvider && !lookupInFir -> FirCompositeSymbolProvider(it.providers.filter { !it.doesLookupInFir })
+            it is FirCompositeSymbolProvider && !lookupInFir -> it.providers.find { it is FirDependenciesSymbolProviderImpl }!!
             else -> it
         }
     }

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir
 
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -21,13 +23,16 @@ abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCas
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_NO_RUNTIME)
     }
 
-    fun doCreateAndProcessFir(ktFiles: List<KtFile>): List<FirFile> {
-        val session = createSession()
+    private fun doCreateAndProcessFir(ktFiles: List<KtFile>): List<FirFile> {
+
+        val scope = GlobalSearchScope.filesScope(project, ktFiles.mapNotNull { it.virtualFile })
+            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+        val session = createSession(scope)
 
         val builder = RawFirBuilder(session)
 
         val transformer = FirTotalResolveTransformer()
-        val firFiles = ktFiles.map {
+        return ktFiles.map {
             val firFile = builder.buildFirFile(it)
             (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
             firFile
@@ -39,8 +44,6 @@ abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCas
                 throw e
             }
         }
-
-        return firFiles
     }
 
 
