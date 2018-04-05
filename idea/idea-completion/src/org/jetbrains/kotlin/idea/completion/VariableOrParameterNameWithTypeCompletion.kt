@@ -72,6 +72,7 @@ class VariableOrParameterNameWithTypeCompletion(
     }
 
     private val suggestionsByTypesAdded = HashSet<Type>()
+    private val lookupNamesAdded = HashSet<String>()
 
     fun addFromImportedClasses(position: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
         for ((classNameMatcher, userPrefix) in classNamePrefixMatchers.zip(userPrefixes)) {
@@ -103,7 +104,7 @@ class VariableOrParameterNameWithTypeCompletion(
     }
 
     fun addFromParametersInFile(position: PsiElement, resolutionFacade: ResolutionFacade, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
-        val lookupElementToCount = LinkedHashMap<LookupElement, Int>()
+        val lookupElementToCount = LinkedHashMap<LookupElement, Pair<Int, String>>()
         position.containingFile.forEachDescendantOfType<KtParameter>(
                 canGoInside = { it !is KtExpression || it is KtDeclaration } // we analyze parameters inside bodies to not resolve too much
         ) { parameter ->
@@ -116,16 +117,18 @@ class VariableOrParameterNameWithTypeCompletion(
                     val parameterType = descriptor.type
                     if (parameterType.isVisible(visibilityFilter)) {
                         val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), withType, lookupElementFactory)!!
-                        val count = lookupElementToCount[lookupElement] ?: 0
-                        lookupElementToCount[lookupElement] = count + 1
+                        val (count, name) = lookupElementToCount[lookupElement] ?: Pair(0, name)
+                        lookupElementToCount[lookupElement] = Pair(count + 1, name)
                     }
                 }
             }
         }
 
-        for ((lookupElement, count) in lookupElementToCount) {
+        for ((lookupElement, countAndName) in lookupElementToCount) {
+            val (count, name) = countAndName
             lookupElement.putUserData(PRIORITY_KEY, -count)
-            collector.addElement(lookupElement)
+            if (withType || !lookupNamesAdded.contains(name)) collector.addElement(lookupElement)
+            lookupNamesAdded.add(name)
         }
     }
 
@@ -148,8 +151,9 @@ class VariableOrParameterNameWithTypeCompletion(
                 val lookupElement = MyLookupElement.create(parameterName, type, withType, lookupElementFactory)
                 if (lookupElement != null) {
                     lookupElement.putUserData(PRIORITY_KEY, userPrefix.length) // suggestions with longer user prefix get lower priority
-                    collector.addElement(lookupElement, notImported)
+                    if (withType || !lookupNamesAdded.contains(parameterName)) collector.addElement(lookupElement, notImported)
                     suggestionsByTypesAdded.add(type)
+                    lookupNamesAdded.add(parameterName)
                 }
             }
         }
