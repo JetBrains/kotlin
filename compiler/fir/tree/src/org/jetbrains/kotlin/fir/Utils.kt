@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
@@ -32,3 +33,5 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
 fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
     return this.transform<T, D>(transformer, data).single
 }
+
+fun ModuleInfo.dependenciesWithoutSelf(): Sequence<ModuleInfo> = dependencies().asSequence().filter { it != this }

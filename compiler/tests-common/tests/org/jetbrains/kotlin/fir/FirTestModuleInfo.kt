@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 class FirTestModuleInfo(
     override val name: Name = Name.identifier("TestModule"),
-    private val dependencies: List<ModuleInfo> = emptyList(),
+    val dependencies: MutableList<ModuleInfo> = mutableListOf(),
     override val platform: TargetPlatform = JvmPlatform
 ) : ModuleInfo {
     override fun dependencies(): List<ModuleInfo> = dependencies

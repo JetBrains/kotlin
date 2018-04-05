@@ -91,6 +91,7 @@ import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
+import org.jetbrains.kotlin.idea.fir.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
@@ -803,6 +804,10 @@ fun main(args: Array<String>) {
             model("scratch", extension = "kts", testMethod = "doCompilingTest", testClassName = "Compiling", recursive = false)
             model("scratch", extension = "kts", testMethod = "doReplTest", testClassName = "Repl", recursive = false)
             model("scratch/multiFile", extension = null, testMethod = "doMultiFileTest", recursive = false)
+        }
+
+        testClass<AbstractFirMultiModuleResolveTest> {
+            model("fir/multiModule", recursive = false, extension = null)
         }
     }
 

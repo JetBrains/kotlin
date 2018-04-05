@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.name.FqName
 
 interface FirSymbolProvider {
 
-    val doesLookupInFir: Boolean
-
     fun getSymbolByFqName(classId: ClassId): ConeSymbol?
 
     fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
