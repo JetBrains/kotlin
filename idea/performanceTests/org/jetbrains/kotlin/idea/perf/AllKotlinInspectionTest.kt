@@ -129,19 +129,17 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
         println("##teamcity[testStarted name='$name' captureStandardOutput='true']")
         val (time, errors) = block()
         if (errors.isNotEmpty()) {
-//
-//            val detailsWriter = StringWriter()
-//            val errorDetailsPrintWriter = PrintWriter(detailsWriter)
-//            errors.forEach {
-//                it.printStackTrace(errorDetailsPrintWriter)
-//                errorDetailsPrintWriter.println()
-//            }
-//            errorDetailsPrintWriter.close()
-//            val details = detailsWriter.toString()
-            println("##teamcity[testFailed name='$name' message='Exceptions reported' details='exceptions were thrown while inspecting']")
-        } else {
-            println("##teamcity[testFinished name='$name' duration='$time']")
+            val detailsWriter = StringWriter()
+            val errorDetailsPrintWriter = PrintWriter(detailsWriter)
+            errors.forEach {
+                it.printStackTrace(errorDetailsPrintWriter)
+                errorDetailsPrintWriter.println()
+            }
+            errorDetailsPrintWriter.close()
+            val details = detailsWriter.toString()
+            println("##teamcity[testFailed name='$name' message='Exceptions reported' details='${details.tcEscape()}']")
         }
+        println("##teamcity[testFinished name='$name' duration='$time']")
     }
 
     fun String.tcEscape(): String {
