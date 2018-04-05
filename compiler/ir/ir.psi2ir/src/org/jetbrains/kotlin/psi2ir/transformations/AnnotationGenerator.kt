@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -55,7 +55,7 @@ class AnnotationGenerator(private val context: GeneratorContext) : IrElementVisi
         }
     }
 
-    fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor): IrExpression {
+    fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor): IrCall {
         val annotationType = annotationDescriptor.type
         val annotationClassDescriptor = annotationType.constructor.declarationDescriptor
                 ?: throw AssertionError("No declaration descriptor for annotation $annotationDescriptor")
