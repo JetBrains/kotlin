@@ -505,7 +505,7 @@ public class AsmUtil {
         });
     }
 
-    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
+    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget, boolean isInterface) {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
@@ -516,7 +516,12 @@ public class AsmUtil {
             }
         }
         else if (type.getSort() == Type.OBJECT) {
-            iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
+            if (isInterface) {
+                iv.invokeinterface(type.getInternalName(), "hashCode", "()I");
+            }
+            else {
+                iv.invokevirtual(type.getInternalName(), "hashCode", "()I", false);
+            }
         }
         else if (type.getSort() == Type.BOOLEAN) {
             Label end = new Label();

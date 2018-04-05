@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
@@ -574,8 +575,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifne(ne);
                 }
                 else {
-                    StackValue value = genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
-                    value.put(Type.BOOLEAN_TYPE, iv);
+                    if (isPrimitive(asmType)) {
+                        StackValue value = StackValue.cmp(KtTokens.EQEQ, asmType, StackValue.onStack(asmType), StackValue.onStack(asmType));
+                        value.put(Type.BOOLEAN_TYPE, iv);
+                    } else {
+                        if (DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor())) {
+                            iv.invokeinterface(asmType.getInternalName(), "equals",
+                                               Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE));
+                        }
+                        else {
+                            iv.invokevirtual(asmType.getInternalName(), "equals",
+                                             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE),
+                                             false);
+                        }
+                    }
                     iv.ifeq(ne);
                 }
             }
@@ -616,7 +629,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifnull(ifNull);
                 }
 
-                genHashCode(mv, iv, asmType, state.getTarget());
+                genHashCode(mv, iv, asmType, state.getTarget(),
+                            DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor()));
 
                 if (ifNull != null) {
                     Label end = new Label();
