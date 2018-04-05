@@ -18,15 +18,15 @@ dependencies {
     compile(project(":idea:idea-jvm"))
     compile(project(":idea:idea-jps-common"))
 
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "gson", "jdom", "extensions", "util", rootProject = rootProject) }
-    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") } }
+    compileOnly(intellijDep())
+    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
 
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea:idea-test-framework"))
 
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "gson", "idea_rt", rootProject = rootProject) }
-    testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
+    testCompileOnly(intellijDep())
+    testCompileOnly(intellijPluginDep("maven"))
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
@@ -40,11 +40,11 @@ dependencies {
     testRuntime(intellijDep())
     // TODO: the order of the plugins matters here, consider avoiding order-dependency
     testRuntime(intellijPluginDep("junit"))
-    testRuntime(intellijPluginDep("testng")) { includeJars("jcommander", "resources_en") }
-    testRuntime(intellijPluginDep("properties")) { includeJars("resources_en") }
+    testRuntime(intellijPluginDep("testng"))
+    testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
-    testRuntime(intellijPluginDep("coverage")) { includeJars("jacocoant") }
+    testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
 }

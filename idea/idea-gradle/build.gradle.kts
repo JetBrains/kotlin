@@ -16,33 +16,17 @@ dependencies {
 
     compile(project(":js:js.frontend"))
 
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "external-system-rt", "forms_rt", "extensions", "jdom", "util") }
-    compileOnly(intellijPluginDep("gradle")) {
-        includeJars(
-            "gradle-tooling-api",
-            "gradle",
-            "gradle-base-services",
-            rootProject = rootProject
-        )
-    }
-    compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
-    compileOnly(intellijPluginDep("junit")) { includeJars("idea-junit") }
+    compileOnly(intellijDep())
+    compileOnly(intellijPluginDep("gradle"))
+    compileOnly(intellijPluginDep("Groovy"))
+    compileOnly(intellijPluginDep("junit"))
 
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":idea:idea-test-framework"))
 
-    testCompile(intellijPluginDep("gradle")) {
-        includeJars(
-            "gradle-wrapper",
-            "gradle-base-services",
-            "gradle-tooling-extension-impl",
-            "gradle-tooling-api",
-            "gradle",
-            rootProject = rootProject
-        )
-    }
-    testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
-    testCompileOnly(intellijDep()) { includeJars("groovy-all", "idea_rt", rootProject = rootProject) }
+    testCompile(intellijPluginDep("gradle"))
+    testCompileOnly(intellijPluginDep("Groovy"))
+    testCompileOnly(intellijDep())
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
@@ -55,11 +39,11 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     // TODO: the order of the plugins matters here, consider avoiding order-dependency
     testRuntime(intellijPluginDep("junit"))
-    testRuntime(intellijPluginDep("testng")) { includeJars("jcommander", "resources_en") }
-    testRuntime(intellijPluginDep("properties")) { includeJars("resources_en") }
+    testRuntime(intellijPluginDep("testng"))
+    testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
-    testRuntime(intellijPluginDep("coverage")) { includeJars("jacocoant") }
+    testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
 }
