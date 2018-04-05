@@ -231,6 +231,12 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Nullability.kt")
+        public void testNullability() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/Nullability.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NullableTypeCall.kt")
         public void testNullableTypeCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/NullableTypeCall.kt");
