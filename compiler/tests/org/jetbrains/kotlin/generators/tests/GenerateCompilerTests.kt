@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsR
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.AbstractFirResolveTestCase
+import org.jetbrains.kotlin.fir.AbstractFirResolveTestCaseWithStdlib
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
@@ -206,7 +207,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractFirResolveTestCase> {
-            model("fir/resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("fir/resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib"))
+        }
+
+        testClass<AbstractFirResolveTestCaseWithStdlib> {
+            model("fir/resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractBytecodeListingTest> {
