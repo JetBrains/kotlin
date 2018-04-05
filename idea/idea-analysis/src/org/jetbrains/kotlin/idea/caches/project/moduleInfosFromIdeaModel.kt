@@ -15,6 +15,7 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import java.util.concurrent.ConcurrentHashMap
 
@@ -69,7 +70,7 @@ private fun mergePlatformModules(
     allModules: List<ModuleSourceInfo>,
     platform: TargetPlatform
 ): List<IdeaModuleInfo> {
-    if (platform == TargetPlatform.Common) return allModules
+    if (platform is CommonPlatform) return allModules
 
     val platformModules =
         allModules.flatMap { module ->

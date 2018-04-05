@@ -19,6 +19,7 @@ dependencies {
     compile(project(":compiler:backend"))
     compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend"))
+    compile(project(":compiler:frontend.common"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:frontend.script"))
     compile(project(":js:js.frontend"))

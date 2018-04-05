@@ -40,6 +40,7 @@ val projectsToShadow by extra(listOf(
             emptyArray()
         },
         ":compiler:frontend",
+        ":compiler:frontend.common",
         ":compiler:frontend.java",
         ":compiler:frontend.script",
         ":idea:ide-common",

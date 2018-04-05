@@ -25,6 +25,7 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestActionEvent
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
+import org.jetbrains.kotlin.analyzer.common.CommonPlatform
 import org.jetbrains.kotlin.idea.project.forcedTargetPlatform
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -91,7 +92,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
                 val targetPlatform = when (targetPlatformName) {
                     "JVM" -> JvmPlatform
                     "JavaScript" -> JsPlatform
-                    "Common" -> TargetPlatform.Common
+                    "Common" -> CommonPlatform
                     else -> error("Unexpected platform name: $targetPlatformName")
                 }
                 mainPsiFile.forcedTargetPlatform = targetPlatform
