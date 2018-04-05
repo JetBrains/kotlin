@@ -211,4 +211,5 @@ messages/**)
 # for webdemo
 -keep class com.intellij.openapi.progress.ProgressManager { *; }
 
-        
+# for kapt
+-keep class com.intellij.openapi.project.Project { *; }
