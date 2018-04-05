@@ -14,6 +14,7 @@ dependencies {
     testCompile(project(":compiler:fir:psi2fir"))
     testCompile(project(":compiler:fir:cones"))
     testCompile(project(":compiler:fir:resolve"))
+    testCompile(project(":compiler:fir:java"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:frontend"))
     testCompile(project(":compiler:frontend.java"))

@@ -41,14 +41,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
 
     @TestMetadata("ft.kt")
     public void testFt() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/ft.kt");
-        doTest(fileName);
+        runTest("compiler/testData/fir/resolve/ft.kt");
     }
 
     @TestMetadata("functionTypes.kt")
     public void testFunctionTypes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/functionTypes.kt");
-        doTest(fileName);
+        runTest("compiler/testData/fir/resolve/functionTypes.kt");
     }
 
     @TestMetadata("genericFunctions.kt")
@@ -74,6 +72,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @TestMetadata("simpleTypeAlias.kt")
     public void testSimpleTypeAlias() throws Exception {
         runTest("compiler/testData/fir/resolve/simpleTypeAlias.kt");
+    }
+
+    @TestMetadata("treeSet.kt")
+    public void testTreeSet() throws Exception {
+        runTest("compiler/testData/fir/resolve/treeSet.kt");
     }
 
     @TestMetadata("TwoDeclarationsInSameFile.kt")
@@ -123,8 +126,7 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
 
         @TestMetadata("Annotations.kt")
         public void testAnnotations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/multifile/Annotations.kt");
-            doTest(fileName);
+            runTest("compiler/testData/fir/resolve/multifile/Annotations.kt");
         }
 
         @TestMetadata("NestedSuperType.kt")
