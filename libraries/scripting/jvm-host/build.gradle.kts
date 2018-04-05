@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.Coroutines
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 jvmTarget = "1.6"
