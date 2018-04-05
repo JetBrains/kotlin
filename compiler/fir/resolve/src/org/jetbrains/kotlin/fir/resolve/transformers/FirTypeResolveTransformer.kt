@@ -192,9 +192,9 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
 
                 } else {
                     if (symbol is ConeTypeAliasSymbol) {
-                        symbol.expansionType?.let { walkSymbols(it.symbol) }
+                        symbol.expansionType?.let { if (it !is ConeClassErrorType) walkSymbols(it.symbol) }
                     } else if (symbol is ConeClassSymbol) {
-                        symbol.superTypes.forEach { walkSymbols(it.symbol) }
+                        symbol.superTypes.forEach { if (it !is ConeClassErrorType) walkSymbols(it.symbol) }
                     }
                 }
             }
@@ -228,7 +228,9 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
                 val superClassType =
                     this.superTypes
                         .map { it.computePartialExpansion() }
-                        .firstOrNull { (it?.symbol as? ConeClassSymbol)?.kind == ClassKind.CLASS } ?: return
+                        .firstOrNull {
+                            it !is ConeClassErrorType && (it?.symbol as? ConeClassSymbol)?.kind == ClassKind.CLASS
+                        } ?: return
                 list += superClassType
                 superClassType.symbol.collectSuperTypes(list)
             }

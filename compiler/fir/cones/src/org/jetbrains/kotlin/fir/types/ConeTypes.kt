@@ -41,6 +41,9 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     override val typeArguments: List<ConeKotlinTypeProjection>
         get() = emptyList()
 
+    override fun toString(): String {
+        return "<ERROR CLASS: $reason>"
+    }
 }
 
 sealed class ConeSymbolBasedType : ConeKotlinType() {
