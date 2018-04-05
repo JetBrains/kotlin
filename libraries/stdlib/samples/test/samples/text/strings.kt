@@ -79,4 +79,10 @@ class Strings {
         assertPrints(byteArray.toString(charset), "Hello")
     }
 
+    @Sample
+    fun stringToUpperCase() {
+        assertPrints("Hello".toUpperCase(), "HELLO")
+        assertPrints("Hello".toUpperCase(Locale.ENGLISH), "HELLO")
+    }
+
 }

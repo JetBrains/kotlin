@@ -85,6 +85,7 @@ public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
+ * @sample samples.text.Strings.stringToUpperCase
  */
 @kotlin.internal.InlineOnly
 public inline fun String.toUpperCase(): String = (this as java.lang.String).toUpperCase()
@@ -361,6 +362,7 @@ public inline fun String.toLowerCase(locale: java.util.Locale): String = (this a
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the specified locale.
+ * @sample samples.text.Strings.stringToUpperCase
  */
 @kotlin.internal.InlineOnly
 public inline fun String.toUpperCase(locale: java.util.Locale): String = (this as java.lang.String).toUpperCase(locale)
