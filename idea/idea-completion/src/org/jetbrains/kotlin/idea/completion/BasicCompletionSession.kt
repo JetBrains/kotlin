@@ -189,13 +189,17 @@ class BasicCompletionSession(
             filter
         }
 
+        override fun shouldDisableAutoPopup(): Boolean {
+            return isStartOfExtensionReceiverFor() is KtProperty && wasAutopopupRecentlyCancelled(parameters)
+        }
+
         override fun doComplete() {
             val declaration = isStartOfExtensionReceiverFor()
             if (declaration != null) {
                 completeDeclarationNameFromUnresolvedOrOverride(declaration)
 
                 if (declaration is KtProperty) {
-                    completeVariableName(declaration.modifierList?.hasModifier(KtTokens.LATEINIT_KEYWORD) == true)
+                    completeParameterOrVarNameAndType(declaration.modifierList?.hasModifier(KtTokens.LATEINIT_KEYWORD) == true)
                 }
 
                 // no auto-popup on typing after "val", "var" and "fun" because it's likely the name of the declaration which is being typed by user
@@ -491,25 +495,10 @@ class BasicCompletionSession(
                 else -> null
             }
         }
-
-        private fun completeVariableName(withType: Boolean) {
-            val variableNameAndTypeCompletion = VariableOrParameterNameWithTypeCompletion(collector, basicLookupElementFactory, prefixMatcher, resolutionFacade, withType)
-
-            // if we are typing parameter name, restart completion each time we type an upper case letter because new suggestions will appear (previous words can be used as user prefix)
-            val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
-                override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
-            })
-            collector.restartCompletionOnPrefixChange(prefixPattern)
-
-            variableNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
-            flushToResultSet()
-
-            variableNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilterCheckAlways)
-            flushToResultSet()
-
-            variableNameAndTypeCompletion.addFromAllClasses(parameters, indicesHelper(false))
-        }
     }
+
+    private fun wasAutopopupRecentlyCancelled(parameters: CompletionParameters) =
+        LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)
 
     private val KEYWORDS_ONLY = object : CompletionKind {
         override val descriptorKindFilter: DescriptorKindFilter?
@@ -650,9 +639,7 @@ class BasicCompletionSession(
             completeDeclarationNameFromUnresolvedOrOverride(declaration)
 
             when (declaration) {
-                is KtParameter ->
-                    completeParameterNameAndType()
-
+                is KtParameter -> completeParameterOrVarNameAndType(withType = true)
                 is KtClassOrObject -> {
                     if (declaration.isTopLevel()) {
                         completeTopLevelClassName()
@@ -663,13 +650,7 @@ class BasicCompletionSession(
 
         override fun shouldDisableAutoPopup(): Boolean {
             if (TemplateManager.getInstance(project).getActiveTemplate(parameters.editor) != null) return true
-
-            if (declaration() is KtParameter) {
-                if (LookupCancelWatcher.getInstance(project).wasAutoPopupRecentlyCancelled(parameters.editor, position.startOffset)) {
-                    return true
-                }
-            }
-
+            if (declaration() is KtParameter && wasAutopopupRecentlyCancelled(parameters)) return true
             return false
         }
 
@@ -678,24 +659,6 @@ class BasicCompletionSession(
                 return sorter.weighBefore("prefix", VariableOrParameterNameWithTypeCompletion.Weigher)
             }
             return sorter
-        }
-
-        private fun completeParameterNameAndType() {
-            val parameterNameAndTypeCompletion = VariableOrParameterNameWithTypeCompletion(collector, basicLookupElementFactory, prefixMatcher, resolutionFacade, true)
-
-            // if we are typing parameter name, restart completion each time we type an upper case letter because new suggestions will appear (previous words can be used as user prefix)
-            val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
-                override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
-            })
-            collector.restartCompletionOnPrefixChange(prefixPattern)
-
-            parameterNameAndTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
-            flushToResultSet()
-
-            parameterNameAndTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilterCheckAlways)
-            flushToResultSet()
-
-            parameterNameAndTypeCompletion.addFromAllClasses(parameters, indicesHelper(false))
         }
 
         private fun completeTopLevelClassName() {
@@ -807,6 +770,26 @@ class BasicCompletionSession(
             addReferenceVariants(referenceVariants)
             flushToResultSet()
         }
+    }
+
+    private fun completeParameterOrVarNameAndType(withType: Boolean) {
+        val nameWithTypeCompletion =
+            VariableOrParameterNameWithTypeCompletion(collector, basicLookupElementFactory, prefixMatcher, resolutionFacade, withType)
+
+        // if we are typing parameter name, restart completion each time we type an upper case letter
+        // because new suggestions will appear (previous words can be used as user prefix)
+        val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
+            override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
+        })
+        collector.restartCompletionOnPrefixChange(prefixPattern)
+
+        nameWithTypeCompletion.addFromParametersInFile(position, resolutionFacade, isVisibleFilterCheckAlways)
+        flushToResultSet()
+
+        nameWithTypeCompletion.addFromImportedClasses(position, bindingContext, isVisibleFilterCheckAlways)
+        flushToResultSet()
+
+        nameWithTypeCompletion.addFromAllClasses(parameters, indicesHelper(false))
     }
 }
 
