@@ -714,10 +714,10 @@ internal object Devirtualization {
                     return if (calleeConstraintGraph == null) {
                         constraintGraph.externalFunctions.getOrPut(resolvedCallee) {
                             val fictitiousReturnNode = ordinaryNode { "External$resolvedCallee" }
-                            val possibleReturnTypes = typeHierarchy.inheritorsOf(returnType).filter { instantiatingClasses.containsKey(it) }
-                            for (type in possibleReturnTypes) {
-                                concreteClass(type).addEdge(fictitiousReturnNode)
-                            }
+                            if (returnType.isFinal)
+                                concreteClass(returnType).addEdge(fictitiousReturnNode)
+                            else
+                                constraintGraph.virtualNode.addEdge(fictitiousReturnNode)
                             fictitiousReturnNode
                         }
                     } else {
@@ -802,6 +802,8 @@ internal object Devirtualization {
 
                             val returnType = node.returnType.resolved()
                             val receiverNode = edgeToConstraintNode(node.arguments[0])
+                            if (receiverType == DataFlowIR.Type.Virtual)
+                                constraintGraph.virtualNode.addEdge(receiverNode)
                             val castedReceiver = ordinaryNode { "CastedReceiver\$${function.symbol}" }
                             val castedEdge = createCastEdge(castedReceiver, receiverType)
                             receiverNode.addCastEdge(castedEdge)
