@@ -232,7 +232,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 true
             }
 
-        if (!isEmbeddable && pluginClasspaths.none { File(it).name == PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR }) {
+        if (!isEmbeddable &&
+            pluginClasspaths.none { File(it).name == PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR } &&
+            !arguments.disableDefaultScriptingPlugin
+        ) {
             // if scripting plugin is not enabled explicitly (probably from another path) try to enable it implicitly
             val libPath = paths?.libPath ?: File(".")
             val pluginJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR)
