@@ -29,6 +29,7 @@ dependencies {
     compile(project(":core:util.runtime")) { isTransitive = false }
     compile(project(":compiler:light-classes")) { isTransitive = false }
     compile(project(":compiler:frontend")) { isTransitive = false }
+    compile(project(":compiler:frontend.common")) { isTransitive = false }
     compile(project(":compiler:frontend.java")) { isTransitive = false }
     compile(project(":compiler:util")) { isTransitive = false }
     compile(project(":js:js.frontend")) { isTransitive = false }
