@@ -120,21 +120,23 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
     }
 
     private fun runNewServer(): Deferred<Unit> =
-        CompileServiceServerSideImpl(
-            port,
-            compilerId,
-            daemonOptions,
-            daemonJVMOptions,
-            port,
-            timer,
-            onShutdown
-        ).let {
-            log.info("service created")
-            it.runServer()
+        port.let { serverPort ->
+            CompileServiceServerSideImpl(
+                serverPort,
+                compilerId,
+                daemonOptions,
+                daemonJVMOptions,
+                serverPort,
+                timer,
+                onShutdown
+            ).let {
+                log.info("service created")
+                it.runServer()
+            }
         }
 
     private fun runOldServer() {
-        val (registry, port) = findPortAndCreateRegistry(
+        val (registry, serverPort) = findPortAndCreateRegistry(
             COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
             COMPILE_DAEMON_PORTS_RANGE_START,
             COMPILE_DAEMON_PORTS_RANGE_END
@@ -149,13 +151,14 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                 CompileService.TargetPlatform.METADATA -> metadata
             }
         }
+        log.info("old server run: (port= $serverPort, reg= $registry)")
         CompileServiceImpl(
             registry = registry,
             compiler = compilerSelector,
             compilerId = compilerId,
             daemonOptions = daemonOptions,
             daemonJVMOptions = daemonJVMOptions,
-            port = port,
+            port = serverPort,
             timer = timer,
             onShutdown = onShutdown
         )
@@ -166,23 +169,24 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         { it.jvmOptions }
     )
         .thenBy(FileAgeComparator()) { it.runFile }
-        .thenBy { it.daemon.serverPort }
+        .thenBy { -it.daemon.serverPort }
 
     private fun <DM, D> expectDaemon(
         getDaemons: () -> List<DM>,
         chooseDaemon: (List<DM>) -> D,
         getInfo: (D) -> CompileService.CallResult<String>,
         registerClient: (D) -> Unit,
+        port: (D) -> Int,
         expectedDaemonCount: Int?
     ) {
         val daemons = getDaemons()
-        log.info("daemons (${daemons.size}) : $daemons")
+        log.info("daemons (${daemons.size}) : ${daemons.map { (it ?: 0)::class.java.name }.toList()}\n\n")
         expectedDaemonCount?.let {
-            println("expected $it daemons, found ${daemons.size}")
+            log.info("expected $it daemons, found ${daemons.size}")
             assert(daemons.size == it)
         }
         val daemon = chooseDaemon(daemons)
-        log.info("chosen : $daemon")
+        log.info("chosen : $daemon (port = ${port(daemon)})")
         val info = getInfo(daemon)
         log.info("info : $info")
         assert(info.isGood)
@@ -198,6 +202,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         { daemons -> daemons.maxWith(comparator)!!.daemon },
         { d -> runBlocking { d.getDaemonInfo() } },
         { d -> runBlocking { d.registerClient(generateClient()) } },
+        { d -> d.serverPort },
         serverType.instancesNumber
     )
 
@@ -206,6 +211,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         { daemons -> daemons[0].daemon },
         { d -> d.getDaemonInfo() },
         { d -> d.registerClient(generateClient()) },
+        { d -> -1 },
         1.takeIf { shouldCheckNumber }
     )
 

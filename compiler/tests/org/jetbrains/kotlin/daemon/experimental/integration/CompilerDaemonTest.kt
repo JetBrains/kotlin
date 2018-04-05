@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.daemon.client.experimental.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.client.experimental.KotlinRemoteReplCompilerClientAsync
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSide
+import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
 import org.jetbrains.kotlin.daemon.ifNotContainsSequence
+import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.ByteArrayOutputStream
@@ -32,6 +34,7 @@ import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.logging.LogManager
 import kotlin.concurrent.thread
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -46,6 +49,28 @@ import kotlin.test.fail
 val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
 
 class CompilerDaemonTest : KotlinIntegrationTestBase() {
+
+    private fun createNewLogFile(): File {
+        println("creating logFile")
+        val newLogFile = createTempFile("kotlin-daemon-experimental-test.", ".log")
+        println("logFile created (${newLogFile.loggerCompatiblePath})")
+        return newLogFile
+    }
+
+    init {
+        val newLogFile = createNewLogFile()
+        val cfg: String =
+            "handlers = java.util.logging.FileHandler\n" +
+                    "java.util.logging.FileHandler.level     = ALL\n" +
+                    "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+                    "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+                    "java.util.logging.FileHandler.limit     = 0\n" + // if file is provided - disabled, else - 1Mb
+                    "java.util.logging.FileHandler.count     = 1\n" +
+                    "java.util.logging.FileHandler.append    = true\n" +
+                    "java.util.logging.FileHandler.pattern   = ${newLogFile.loggerCompatiblePath}\n" +
+                    "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
+        LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
+    }
 
     data class CompilerResults(val resultCode: Int, val out: String)
 
@@ -117,7 +142,6 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val additionalArgs = arrayListOf<String>()
         if (logFile != null) {
             additionalArgs.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"")
-            println("LPATH:" + logFile.loggerCompatiblePath)
         }
         args.forEach { additionalArgs.add(it) }
         val baseOpts = if (xmx > 0) DaemonJVMOptions(maxMemory = "${xmx}m") else DaemonJVMOptions()
@@ -673,8 +697,11 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     autostart = true
                 )
                 assertNotNull("failed to connect daemon", daemon)
+                runBlocking {
+                    println("\n_connected_ (${daemon!!.getDaemonInfo()})\n")
+                }
 
-                val (_, port) = findPortAndCreateRegistry(10, 16384, 65535)
+                val port = findPortForSocket(10, 16384, 65535)
                 val resultCodes = arrayOfNulls<Int>(PARALLEL_THREADS_TO_COMPILE)
                 val localEndSignal = CountDownLatch(PARALLEL_THREADS_TO_COMPILE)
                 val outStreams = Array(PARALLEL_THREADS_TO_COMPILE, { ByteArrayOutputStream() })
@@ -682,6 +709,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 fun runCompile(threadNo: Int) =
                     thread {
                         val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
+                        println("compiling...")
                         val res = KotlinCompilerClient.compile(
                             daemon!!,
                             CompileService.NO_SESSION,
@@ -690,6 +718,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                             PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true),
                             port = port
                         )
+                        println("res = $res")
                         synchronized(resultCodes) {
                             resultCodes[threadNo] = res
                         }
