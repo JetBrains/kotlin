@@ -33,6 +33,7 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
     companion object {
         private val rootProjectFile = File(".").absoluteFile
         private val statsFile = File("build/stats.csv").absoluteFile
+        private inline val Long.nsToMs get() = (this / 1e6.toLong())
     }
 
     private val tmp by lazy { createTempDirectory() }
@@ -82,19 +83,19 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
 
         val errors = mutableListOf<Throwable>()
 
-        for (it in profileTools) {
-            val localInspectionTool = it.tool.tool as? LocalInspectionTool ?: continue
-            if (it.tool.language !in setOf(null, "kotlin", "UAST")) continue
+        for (profileTool in profileTools) {
+            val localInspectionTool = profileTool.tool.tool as? LocalInspectionTool ?: continue
+            if (profileTool.tool.language !in setOf(null, "kotlin", "UAST")) continue
             val result = measureNanoTime {
                 try {
                     localInspectionTool.analyze(psiFile)
                 } catch (t: Throwable) {
-                    val myEx = ExceptionWhileInspection(it.tool.id, t)
+                    val myEx = ExceptionWhileInspection(profileTool.tool.id, t)
                     myEx.printStackTrace()
                     errors += myEx
                 }
             }
-            results[it.tool.id] = result
+            results[profileTool.tool.id] = result
             totalNs += result
             if (errors.isNotEmpty()) break
         }
@@ -130,12 +131,12 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
         val (time, errors) = block()
         if (errors.isNotEmpty()) {
             val detailsWriter = StringWriter()
-            val errorDetailsPrintWriter = PrintWriter(detailsWriter)
-            errors.forEach {
-                it.printStackTrace(errorDetailsPrintWriter)
-                errorDetailsPrintWriter.println()
+            PrintWriter(detailsWriter).use { errorDetailsPrintWriter ->
+                errors.forEach {
+                    it.printStackTrace(errorDetailsPrintWriter)
+                    errorDetailsPrintWriter.println()
+                }
             }
-            errorDetailsPrintWriter.close()
             val details = detailsWriter.toString()
             println("##teamcity[testFailed name='$name' message='Exceptions reported' details='${details.tcEscape()}']")
         }
@@ -162,12 +163,14 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
         statsOutput.appendln("File, InspectionID, Time")
 
         fun appendInspectionResult(file: String, id: String, nanoTime: Long) {
+            totals.merge(id, nanoTime) { a, b -> a + b }
+
             statsOutput.appendln(buildString {
                 append(file)
                 append(", ")
                 append(id)
                 append(", ")
-                append((nanoTime * 1e-6).toLong())
+                append(nanoTime.nsToMs)
             })
         }
 
@@ -181,7 +184,7 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
                     result.perInspection.forEach { (k, v) ->
                         appendInspectionResult(filePath, k, v)
                     }
-                    (result.totalNs * 1e-6).toLong() to result.errors
+                    result.totalNs.nsToMs to result.errors
                 }
             }
         }
@@ -193,7 +196,7 @@ class AllKotlinInspectionTest : DaemonAnalyzerTestCase() {
         tcSuite("Total") {
             totals.forEach { (k, v) ->
                 tcTest(k) {
-                    (v * 1e-6).toLong() to emptyList()
+                    v.nsToMs to emptyList()
                 }
             }
         }
