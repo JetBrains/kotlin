@@ -11,6 +11,7 @@ plugins {
 jvmTarget = "1.6"
 
 dependencies {
+    compile(project(":compiler:frontend.common"))
     compile(project(":core:descriptors"))
     compile(project(":compiler:fir:cones"))
     compile(project(":compiler:ir.tree"))
