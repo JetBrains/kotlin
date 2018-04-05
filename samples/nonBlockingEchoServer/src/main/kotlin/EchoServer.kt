@@ -56,7 +56,7 @@ fun main(args: Array<String>) {
                 val bufferLength = 100L
                 val buffer = allocArray<ByteVar>(bufferLength)
                 val connectionIdString = "#${++connectionId}: ".cstr
-                val connectionIdBytes = connectionIdString.getPointer(this)
+                val connectionIdBytes = connectionIdString.ptr
 
                 try {
                     while (true) {

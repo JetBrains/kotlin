@@ -412,6 +412,9 @@ class MemScope : ArenaBase() {
 
     val memScope: MemScope
         get() = this
+
+    val <T: CVariable> CValues<T>.ptr: CPointer<T>
+        get() = this@ptr.getPointer(this@MemScope)
 }
 
 // TODO: consider renaming `memScoped` because it now supports `defer`.

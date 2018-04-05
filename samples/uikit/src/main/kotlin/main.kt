@@ -5,7 +5,7 @@ import platform.UIKit.*
 fun main(args: Array<String>) {
     memScoped {
         val argc = args.size + 1
-        val argv = (arrayOf("konan") + args).map { it.cstr.getPointer(memScope) }.toCValues()
+        val argv = (arrayOf("konan") + args).map { it.cstr.ptr }.toCValues()
 
         autoreleasepool {
             UIApplicationMain(argc, argv, null, NSStringFromClass(AppDelegate))

@@ -15,6 +15,7 @@ buildscript {
 
 repositories {
     jcenter()
+    google()
 }
 
 apply plugin: 'konan'

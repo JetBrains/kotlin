@@ -54,7 +54,7 @@ fun gtkMain(args: Array<String>): Int {
     g_signal_connect(app, "activate", staticCFunction(::activate))
     val status = memScoped {
         g_application_run(app.reinterpret(),
-                args.size, args.map { it.cstr.getPointer(memScope) }.toCValues())
+                args.size, args.map { it.cstr.ptr }.toCValues())
     }
     g_object_unref(app)
     return status

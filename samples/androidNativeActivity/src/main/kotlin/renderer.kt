@@ -306,10 +306,10 @@ class Renderer(val parentArena: NativePlacement, val nativeActivity: ANativeActi
         }
 
         glFrontFace(GL_CW)
-        glVertexPointer(4, GL_FLOAT, 0, vertices.toFloatArray().toCValues().getPointer(this))
-        glTexCoordPointer(2, GL_FLOAT, 0, texCoords.toFloatArray().toCValues().getPointer(this))
-        glNormalPointer(GL_FLOAT, 0, normals.toFloatArray().toCValues().getPointer(this))
-        glDrawElements(GL_TRIANGLES, triangles.size, GL_UNSIGNED_BYTE, triangles.toByteArray().toCValues().getPointer(this))
+        glVertexPointer(4, GL_FLOAT, 0, vertices.toFloatArray().toCValues().ptr)
+        glTexCoordPointer(2, GL_FLOAT, 0, texCoords.toFloatArray().toCValues().ptr)
+        glNormalPointer(GL_FLOAT, 0, normals.toFloatArray().toCValues().ptr)
+        glDrawElements(GL_TRIANGLES, triangles.size, GL_UNSIGNED_BYTE, triangles.toByteArray().toCValues().ptr)
 
         glPopMatrix()
 
