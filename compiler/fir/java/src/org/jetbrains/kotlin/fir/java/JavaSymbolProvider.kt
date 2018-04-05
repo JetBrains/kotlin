@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 
 class JavaSymbolProvider(val project: Project) : FirSymbolProvider {
 
+    override val doesLookupInFir: Boolean
+        get() = false
+
     // TODO: Concrete scope here
     private val allScope = GlobalSearchScope.allScope(project)
 
