@@ -16903,6 +16903,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("noWarningOnDoubleElvis.kt")
+                public void testNoWarningOnDoubleElvis() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/noWarningOnDoubleElvis.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("notNullAfterSafeCall.kt")
                 public void testNotNullAfterSafeCall() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/notNullAfterSafeCall.kt");
