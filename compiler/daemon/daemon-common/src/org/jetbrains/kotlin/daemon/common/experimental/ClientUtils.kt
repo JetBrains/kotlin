@@ -45,13 +45,15 @@ suspend fun walkDaemonsAsync(
     // : Sequence<DaemonWithMetadataAsync>
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
     val portExtractor = org.jetbrains.kotlin.daemon.common.makePortFromRunFilenameExtractor(classPathDigest)
+    log.info("\nssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss\n")
     registryDir.walk().toList() // list, since walk returns Sequence and Sequence.map{...} is not inline => coroutines dont work
         .map { Pair(it, portExtractor(it.name)) }
         .filter { (file, port) -> port != null && filter(file, port) }
-        .map { log.info("(port = ${it.second}, path = ${it.first})"); it }
-        .mapNotNull { (file, port) ->
+        .map { (file, port) ->//.mapNotNull { (file, port) ->
             // all actions process concurrently
-//            async {
+            async {
+                log.info("\n<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>\n")
+                log.info("(port = $port, file = $file)");
                 assert(port!! in 1..(MAX_PORT_NUMBER - 1))
                 val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
                 report(
@@ -97,10 +99,12 @@ suspend fun walkDaemonsAsync(
                         "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}"
                     )
                     null
+                }.also {
+                    log.info("\n\n_______________________________________________________________________________________________________\n\n")
                 }
-//            }
+            }
         }
-//        .mapNotNull { it.await() } // await for completion of the last action
+        .mapNotNull { it.await() } // await for completion of the last action
 }
 
 private inline fun tryConnectToDaemonByRMI(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileServiceClientSide? {
