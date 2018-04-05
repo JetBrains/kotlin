@@ -73,6 +73,7 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             declaration.fileEntry,
             symbolRemapper.getDeclaredFile(declaration.symbol)
         ).apply {
+            transformAnnotations(declaration)
             fileAnnotations.addAll(declaration.fileAnnotations)
             declaration.transformDeclarationsTo(this)
         }
@@ -135,7 +136,7 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             body = declaration.body?.transform()
         }
 
-    private fun IrDeclaration.transformAnnotations(declaration: IrDeclaration) {
+    private fun IrAnnotationContainer.transformAnnotations(declaration: IrAnnotationContainer) {
         declaration.annotations.transformTo(annotations)
     }
 
@@ -170,7 +171,9 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             declaration.delegate.transform(),
             declaration.getter.transform(),
             declaration.setter?.transform()
-        )
+        ).apply {
+            transformAnnotations(declaration)
+        }
 
     override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
         IrEnumEntryImpl(
@@ -178,6 +181,7 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredEnumEntry(declaration.symbol)
         ).apply {
+            transformAnnotations(declaration)
             correspondingClass = declaration.correspondingClass?.transform()
             initializerExpression = declaration.initializerExpression?.transform()
         }
@@ -207,6 +211,7 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             mapDeclarationOrigin(declaration.origin),
             symbolRemapper.getDeclaredTypeParameter(declaration.symbol)
         ).apply {
+            transformAnnotations(declaration)
             declaration.superClassifiers.mapTo(superClassifiers) {
                 symbolRemapper.getReferencedClassifier(it)
             }

@@ -78,6 +78,7 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
                     }
                 }
             }
+            dumpAnnotations(declaration)
             declaration.declarations.dumpElements()
         }
     }

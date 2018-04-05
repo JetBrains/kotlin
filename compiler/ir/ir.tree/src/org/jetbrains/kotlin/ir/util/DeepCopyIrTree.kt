@@ -80,7 +80,9 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             mapPackageFragmentDescriptor(declaration.packageFragmentDescriptor),
             declaration.fileAnnotations.toMutableList(),
             declaration.declarations.map { it.transform() }
-        )
+        ).apply {
+            transformAnnotations(declaration)
+        }
 
     override fun visitDeclaration(declaration: IrDeclaration): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
@@ -202,6 +204,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             mapDeclarationOrigin(originalTypeParameter.origin),
             newTypeParameterDescriptor
         ).apply {
+            transformAnnotations(originalTypeParameter)
             for (i in upperBounds.indices) {
                 val upperBoundClassifier = upperBounds[i].constructor.declarationDescriptor ?: continue
                 val oldSuperClassifierSymbol = originalTypeParameter.superClassifiers[i]
@@ -268,7 +271,9 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             declaration.delegate.transform(),
             declaration.getter.transform(),
             declaration.setter?.transform()
-        )
+        ).apply {
+            transformAnnotations(declaration)
+        }
 
     override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
         IrEnumEntryImpl(
@@ -277,7 +282,9 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             mapEnumEntryDeclaration(declaration.descriptor),
             declaration.correspondingClass?.transform(),
             declaration.initializerExpression?.transform()
-        )
+        ).apply {
+            transformAnnotations(declaration)
+        }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrAnonymousInitializer =
         IrAnonymousInitializerImpl(
