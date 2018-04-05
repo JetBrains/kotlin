@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import kotlin.reflect.KClass
 
 interface FirSession {
-
+    val moduleInfo: ModuleInfo?
 
     val components: Map<KClass<*>, Any>
 
