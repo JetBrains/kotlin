@@ -1,4 +1,4 @@
 data class D(val x: List<String>)
 
-// 1 INVOKEINTERFACE java/util/List.hashCode
-// 1 INVOKEINTERFACE java/util/List.equals
+// 1 INVOKEVIRTUAL java/lang/Object.hashCode
+// 1 INVOKEVIRTUAL java/lang/Object.equals

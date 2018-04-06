@@ -579,15 +579,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         StackValue value = StackValue.cmp(KtTokens.EQEQ, asmType, StackValue.onStack(asmType), StackValue.onStack(asmType));
                         value.put(Type.BOOLEAN_TYPE, iv);
                     } else {
-                        if (DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor())) {
-                            iv.invokeinterface(asmType.getInternalName(), "equals",
-                                               Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE));
-                        }
-                        else {
-                            iv.invokevirtual(asmType.getInternalName(), "equals",
-                                             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE),
-                                             false);
-                        }
+                        Type owner =
+                                DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor())
+                                ? AsmTypes.OBJECT_TYPE
+                                : asmType;
+                        iv.invokevirtual(owner.getInternalName(), "equals",
+                                         Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false);
                     }
                     iv.ifeq(ne);
                 }
