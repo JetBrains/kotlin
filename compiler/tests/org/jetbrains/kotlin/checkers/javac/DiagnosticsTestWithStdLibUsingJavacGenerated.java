@@ -482,6 +482,12 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                 doTest(fileName);
             }
 
+            @TestMetadata("javaOverride.kt")
+            public void testJavaOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/javaOverride.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("jvmDefaultInInheritance.kt")
             public void testJvmDefaultInInheritance() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultInInheritance.kt");
