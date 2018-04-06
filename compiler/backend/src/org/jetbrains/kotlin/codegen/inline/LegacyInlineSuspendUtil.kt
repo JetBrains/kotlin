@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import jdk.internal.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.load.kotlin.getContainingKotlinJvmBinaryClass
