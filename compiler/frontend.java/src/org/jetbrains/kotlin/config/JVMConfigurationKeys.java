@@ -49,6 +49,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS =
             CompilerConfigurationKey.create("script definitions");
 
+    public static final CompilerConfigurationKey<Boolean> DISABLE_STANDARD_SCRIPT_DEFINITION =
+            CompilerConfigurationKey.create("Disable standard kotlin script support");
+
     public static final CompilerConfigurationKey<Boolean> RETAIN_OUTPUT_IN_MEMORY =
             CompilerConfigurationKey.create("retain compiled classes in memory for further use, e.g. when running scripts");
 

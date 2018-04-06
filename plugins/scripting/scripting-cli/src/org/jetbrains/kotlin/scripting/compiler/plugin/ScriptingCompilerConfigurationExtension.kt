@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
+import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.io.IOException
@@ -28,30 +29,39 @@ class ScriptingCompilerConfigurationExtension(val project: MockProject) : Compil
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
 
-        val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
-        val explicitScriptDefinitions = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
+        if (!configuration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPTING_PLUGIN_OPTION)) {
 
-        val scriptDefinitions =
-            if (configuration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION))
-                explicitScriptDefinitions
-            else
-                explicitScriptDefinitions + discoverScriptTemplatesInClasspath(configuration, messageCollector)
+            val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE
+            val explicitScriptDefinitions = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
 
-        if (scriptDefinitions.isNotEmpty()) {
-            val projectRoot = project.run { basePath ?: baseDir?.canonicalPath }?.let(::File)
-            if (projectRoot != null) {
-                configuration.put(
-                    ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
-                    "projectRoot",
-                    projectRoot
+            val scriptDefinitions =
+                if (configuration.getBoolean(ScriptingConfigurationKeys.DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION))
+                    explicitScriptDefinitions
+                else
+                    explicitScriptDefinitions + discoverScriptTemplatesInClasspath(configuration, messageCollector)
+
+            if (scriptDefinitions.isNotEmpty()) {
+                val projectRoot = project.run { basePath ?: baseDir?.canonicalPath }?.let(::File)
+                if (projectRoot != null) {
+                    configuration.put(
+                        ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
+                        "projectRoot",
+                        projectRoot
+                    )
+                }
+                configureScriptDefinitions(
+                    scriptDefinitions,
+                    configuration,
+                    messageCollector,
+                    configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
                 )
             }
-            configureScriptDefinitions(
-                scriptDefinitions,
-                configuration,
-                messageCollector,
-                configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
-            )
+            // If not disabled explicitly, we should always support at least the standard script definition
+            if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
+                !configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).contains(StandardScriptDefinition)
+            ) {
+                configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+            }
         }
     }
 }
@@ -103,7 +113,10 @@ private fun discoverScriptTemplatesInClasspath(configuration: CompilerConfigurat
                     }
                 }
             }
-            else -> messageCollector.report(CompilerMessageSeverity.WARNING, "Configure scripting: Unknown classpath entry $dep")
+            else -> {
+                // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
+                messageCollector.report(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
+            }
         }
     }
     return templates

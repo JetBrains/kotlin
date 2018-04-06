@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CLICompiler.getLibraryFromHome
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -66,6 +67,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configureJdkHome(arguments, configuration, messageCollector).let {
             if (it != OK) return it
+        }
+
+        if (arguments.disableStandardScript) {
+            configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, true)
         }
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
@@ -223,35 +228,40 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     private fun loadPlugins(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
         val pluginClasspaths = arguments.pluginClasspaths?.toMutableList() ?: ArrayList()
         val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
-        val isEmbeddable =
-            try {
-                this::class.java.classLoader.loadClass("com.intellij.mock.MockProject") == null
-            } catch (_: ClassNotFoundException) {
-                true
-            } catch (_: NoClassDefFoundError) {
-                true
-            }
 
-        if (!isEmbeddable &&
-            pluginClasspaths.none { File(it).name == PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR } &&
-            !arguments.disableDefaultScriptingPlugin
-        ) {
-            // if scripting plugin is not enabled explicitly (probably from another path) try to enable it implicitly
-            val libPath = paths?.libPath ?: File(".")
-            val pluginJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR)
-            val scriptingJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_COMMON_JAR)
-            val scriptingJvmJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_JVM_JAR)
-            if (pluginJar.exists() && scriptingJar.exists() && scriptingJvmJar.exists()) {
-                pluginClasspaths.addAll(listOf(pluginJar.canonicalPath, scriptingJar.canonicalPath, scriptingJvmJar.canonicalPath))
-                if (arguments.scriptTemplates?.isNotEmpty() == true) {
-                    pluginOptions.add("-P")
-                    pluginOptions.add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates!!.joinToString(",")}")
-                }
-                if (arguments.scriptResolverEnvironment?.isNotEmpty() == true) {
-                    pluginOptions.add("-P")
-                    pluginOptions.add("plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment!!.joinToString(",")}")
+        if (!arguments.disableDefaultScriptingPlugin) {
+            val explicitOrLoadedScriptingPlugin =
+                pluginClasspaths.any { File(it).name == PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR } ||
+                        try {
+                            PluginCliParser::class.java.classLoader.loadClass("org.jetbrains.kotlin.extensions.ScriptingCompilerConfigurationExtension")
+                            true
+                        } catch (_: Throwable) {
+                            false
+                        }
+            // if scripting plugin is not enabled explicitly (probably from another path) and not in the classpath already,
+            // try to find and enable it implicitly
+            if (!explicitOrLoadedScriptingPlugin) {
+                val libPath = paths?.libPath?.takeIf { it.exists() } ?: File(".")
+                with(PathUtil) {
+                    val jars = arrayOf(KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR)
+                        .mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
+                    if (jars.size == 3) {
+                        pluginClasspaths.addAll(jars)
+                    }
                 }
             }
+            if (arguments.scriptTemplates?.isNotEmpty() == true) {
+                pluginOptions.add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates!!.joinToString(",")}")
+            }
+            if (arguments.scriptResolverEnvironment?.isNotEmpty() == true) {
+                pluginOptions.add(
+                    "plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment!!.joinToString(
+                        ","
+                    )}"
+                )
+            }
+        } else {
+            pluginOptions.add("plugin:kotlin.scripting:disable=true")
         }
         return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, configuration)
     }

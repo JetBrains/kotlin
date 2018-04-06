@@ -10,6 +10,7 @@ where advanced options include:
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
+  -Xdisable-standard-script  Disable standard kotlin script support
   -Xenable-jvm-default       Allow to use '@JvmDefault' for JVM default method support
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
