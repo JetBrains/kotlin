@@ -222,7 +222,7 @@ public class JsConfig {
             }
 
             if (modules.contains(getModuleId())) {
-                report.warning("Module \"" + getModuleId() + "\" depends from module with the same name");
+                report.warning("Module \"" + getModuleId() + "\" depends on module with the same name");
             }
 
             Set<String> friendLibsSet = new HashSet<>(getFriends());
