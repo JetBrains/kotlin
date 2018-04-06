@@ -121,6 +121,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_THROUGH_INHERITANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<PsiElement> USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<KtDeclaration> NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
+
     enum NullabilityInformationSource {
         KOTLIN {
             @NotNull

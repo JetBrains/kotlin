@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
@@ -55,6 +55,14 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
 
         if (memberDescriptor.overriddenDescriptors.any { it.annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME) }) {
             context.trace.report(ErrorsJvm.JVM_DEFAULT_REQUIRED_FOR_OVERRIDE.on(declaration))
+        } else if (enableJvmDefault) {
+            descriptor.overriddenDescriptors.flatMap { OverridingUtil.getOverriddenDeclarations(it) }.toSet().let {
+                for (realDescriptor in OverridingUtil.filterOutOverridden(it)) {
+                    if (realDescriptor is JavaMethodDescriptor && realDescriptor.modality != Modality.ABSTRACT) {
+                        return context.trace.report(ErrorsJvm.NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT.on(declaration))
+                    }
+                }
+            }
         }
     }
 
