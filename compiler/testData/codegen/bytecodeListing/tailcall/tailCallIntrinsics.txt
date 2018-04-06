@@ -15,6 +15,6 @@ public final class TailCallIntrinsicsKt {
     static method <clinit>(): void
     public final static method getP(): int
     public final static method setP(p0: int): void
-    final static @org.jetbrains.annotations.Nullable method withInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
-    final static @org.jetbrains.annotations.Nullable method withoutInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    synthetic final static @org.jetbrains.annotations.Nullable method withInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    synthetic final static @org.jetbrains.annotations.Nullable method withoutInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
