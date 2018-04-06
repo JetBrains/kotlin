@@ -96,29 +96,13 @@ internal class IrSerializer(val context: Context,
             .build()
     }
 
-    private fun serializeTypeMap(typeArguments: Map<TypeParameterDescriptor, KotlinType>): KonanIr.TypeMap {
-        val proto = KonanIr.TypeMap.newBuilder()
-        typeArguments.forEach { key, value ->
-            val pair = KonanIr.TypeMap.Pair.newBuilder()
-                .setDescriptor(serializeDescriptor(key))
-                .setType(serializeKotlinType(value))
-                .build()
-            proto.addPair(pair)
+    private fun serializeTypeArguments(call: IrMemberAccessExpression): KonanIr.TypeArguments {
+        val proto = KonanIr.TypeArguments.newBuilder()
+        for (i in 0 until call.typeArgumentsCount) {
+            proto.addTypeArgument(serializeKotlinType(call.getTypeArgument(i)!!))
         }
         return proto.build()
-    }
-
-    private fun serializeTypeArguments(call: IrMemberAccessExpression): KonanIr.TypeMap {
- 
-        val typeMap = mutableMapOf<TypeParameterDescriptor, KotlinType>()
-        call.descriptor.original.typeParameters.forEach {
-            val type = call.getTypeArgument(it)
-            if (type != null) typeMap[it] = type
-        }
-        return serializeTypeMap(typeMap)
-
-    }
-
+     }
 
     /* -------------------------------------------------------------------------- */
 
@@ -194,7 +178,7 @@ internal class IrSerializer(val context: Context,
         if (call.dispatchReceiver != null)  {
             proto.dispatchReceiver = serializeExpression(call.dispatchReceiver!!)
         }
-        proto.typeMap = serializeTypeArguments(call)
+        proto.typeArguments = serializeTypeArguments(call)
 
         call.descriptor.valueParameters.forEach {
             val actual = call.getValueArgument(it.index)
@@ -229,7 +213,8 @@ internal class IrSerializer(val context: Context,
     private fun serializeCallableReference(callable: IrCallableReference): KonanIr.IrCallableReference {
         val proto = KonanIr.IrCallableReference.newBuilder()
             .setDescriptor(serializeDescriptor(callable.descriptor))
-            .setTypeMap(serializeTypeArguments(callable))
+            .setTypeArguments(serializeTypeArguments(callable))
+
         return proto.build()
     }
 
@@ -734,17 +719,15 @@ internal class IrDeserializer(val context: Context,
     private fun deserializeDescriptor(proto: KonanIr.KotlinDescriptor)
         = descriptorDeserializer.deserializeDescriptor(proto)
 
-    private fun deserializeTypeMap(descriptor: CallableDescriptor, proto: KonanIr.TypeMap):
-        Map<TypeParameterDescriptor, KotlinType> {
-        val typeMap  = mutableMapOf<TypeParameterDescriptor, KotlinType>()
-        val pairProtos = proto.pairList
-        pairProtos.forEachIndexed { index, pair ->
-            val typeParameter = descriptor.original.typeParameters[index]
-
-            typeMap[typeParameter] = deserializeKotlinType(pair.type)
+    private fun deserializeTypeArguments(proto: KonanIr.TypeArguments): List<KotlinType> {
+        context.log{"### deserializeTypeArguments"}
+        val result = mutableListOf<KotlinType>()
+        proto.typeArgumentList.forEachIndexed { index, type ->
+            val kotlinType = deserializeKotlinType(type)
+            result.add(kotlinType)
+            context.log{"$kotlinType"}
         }
-        context.log{"### deserialized typeMap = $typeMap"}
-        return typeMap
+        return result
     }
 
     private fun deserializeBlockBody(proto: KonanIr.IrBlockBody,
@@ -820,6 +803,10 @@ internal class IrDeserializer(val context: Context,
             access.putValueArgument(i, exprOrNull)
         }
 
+        deserializeTypeArguments(proto.typeArguments).forEachIndexed { index, type ->
+            access.putTypeArgument(index, type)
+        }
+
         if (proto.hasDispatchReceiver()) {
             access.dispatchReceiver = deserializeExpression(proto.dispatchReceiver)
         }
@@ -842,11 +829,12 @@ internal class IrDeserializer(val context: Context,
             deserializeDescriptor(proto.`super`) as ClassDescriptor
         } else null
 
-        val typeArgs = deserializeTypeMap(descriptor, proto.memberAccess.getTypeMap())
+        val typeArgs = deserializeTypeArguments(proto.memberAccess.typeArguments)
+
         val call: IrCall = when (proto.kind) {
             KonanIr.IrCall.Primitive.NOT_PRIMITIVE ->
                 // TODO: implement the last three args here.
-                IrCallImpl(start, end, type, createFunctionSymbol(descriptor), descriptor, typeArgs , null, createClassSymbolOrNull(superDescriptor))
+                IrCallImpl(start, end, type, createFunctionSymbol(descriptor), descriptor, proto.memberAccess.typeArguments.typeArgumentCount, null, createClassSymbolOrNull(superDescriptor))
             KonanIr.IrCall.Primitive.NULLARY ->
                 IrNullaryPrimitiveImpl(start, end, null, createFunctionSymbol(descriptor))
             KonanIr.IrCall.Primitive.UNARY ->
@@ -863,11 +851,15 @@ internal class IrDeserializer(val context: Context,
                                              start: Int, end: Int, type: KotlinType): IrCallableReference {
 
         val descriptor = deserializeDescriptor(proto.descriptor) as CallableDescriptor
-        val typeMap = deserializeTypeMap(descriptor, proto.typeMap)
-        return when (descriptor) {
-            is FunctionDescriptor -> IrFunctionReferenceImpl(start, end, type, createFunctionSymbol(descriptor), descriptor, typeMap, null)
+        val callable = when (descriptor) {
+            is FunctionDescriptor -> IrFunctionReferenceImpl(start, end, type, createFunctionSymbol(descriptor), descriptor, proto.typeArguments.typeArgumentCount, null)
             else -> TODO()
         }
+
+        deserializeTypeArguments(proto.typeArguments).forEachIndexed { index, type ->
+            callable.putTypeArgument(index, type)
+        }
+        return callable
     }
 
     private fun deserializeComposite(proto: KonanIr.IrComposite, start: Int, end: Int, type: KotlinType): IrComposite {
@@ -881,9 +873,7 @@ internal class IrDeserializer(val context: Context,
 
     private fun deserializeDelegatingConstructorCall(proto: KonanIr.IrDelegatingConstructorCall, start: Int, end: Int): IrDelegatingConstructorCall {
         val descriptor = deserializeDescriptor(proto.descriptor) as ClassConstructorDescriptor
-        val typeArgs = deserializeTypeMap(descriptor, proto.memberAccess.typeMap)
-
-        val call = IrDelegatingConstructorCallImpl(start, end, IrConstructorSymbolImpl(descriptor.original), descriptor, typeArgs)
+        val call = IrDelegatingConstructorCallImpl(start, end, IrConstructorSymbolImpl(descriptor.original), descriptor, proto.memberAccess.typeArguments.typeArgumentCount)
 
         deserializeMemberAccessCommon(call, proto.memberAccess)
         return call

@@ -70,14 +70,9 @@ message Coordinates {
     required int32 end_offset = 2;
 }
 
-message TypeMap {
-    message Pair {
-        required  KotlinDescriptor descriptor = 1;
-        required  KotlinType type = 2;
-    }
-    repeated Pair pair = 1;
+message TypeArguments {
+    repeated KotlinType type_argument = 1;
 }
-
 /* ------ IrExpressions --------------------------------------------- */
 
 message IrBreak {
@@ -91,10 +86,10 @@ message IrBlock {
 }
 
 message MemberAccessCommon {
-    required TypeMap type_map = 3;
     optional IrExpression dispatch_receiver = 5;
     optional IrExpression extension_receiver = 6;
     repeated NullableIrExpression value_argument = 8;
+    required TypeArguments type_arguments = 9;
 }
 
 message IrCall {
@@ -112,7 +107,7 @@ message IrCall {
 
 message IrCallableReference {
     required KotlinDescriptor descriptor = 1;
-    required TypeMap type_map = 2;
+    required TypeArguments type_arguments = 2;
 }
 
 

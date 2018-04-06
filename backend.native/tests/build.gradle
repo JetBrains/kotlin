@@ -2343,6 +2343,11 @@ task serialized_default_args(type: LinkKonanTest) {
     goldValue = "SomeDataClass(first=17, second=666, third=23)\n"
 }
 
+task serialized_no_typemap(type: RunStandaloneKonanTest) {
+    source = "serialization/regression/no_type_map.kt"
+    goldValue = "OK\n"
+}
+
 task testing_annotations(type: RunStandaloneKonanTest) {
     source = "testing/annotations.kt"
     flags = ['-tr']
