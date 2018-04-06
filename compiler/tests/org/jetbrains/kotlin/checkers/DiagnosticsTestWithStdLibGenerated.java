@@ -488,6 +488,18 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 doTest(fileName);
             }
 
+            @TestMetadata("jvmDefaults.kt")
+            public void testJvmDefaults() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaults.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmDefaultsWithJava.kt")
+            public void testJvmDefaultsWithJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultsWithJava.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noJvmDefaultFlag.kt")
             public void testNoJvmDefaultFlag() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/noJvmDefaultFlag.kt");
