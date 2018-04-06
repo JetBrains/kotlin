@@ -44,9 +44,11 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         private val modifiers: Collection<JvmModifier> = emptyList(),
         private val returnType: ExpectedTypes = emptyList(),
         private val annotations: Collection<AnnotationRequest> = emptyList(),
-        private val parameters: List<Pair<SuggestedNameInfo, List<ExpectedType>>> = emptyList(),
+        parameters: List<ExpectedParameter> = emptyList(),
         private val targetSubstitutor: JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
     ) : CreateMethodRequest {
+        private val expectedParameters = parameters
+
         override fun getTargetSubstitutor(): JvmSubstitutor = targetSubstitutor
 
         override fun getModifiers() = modifiers
@@ -55,7 +57,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
         override fun getAnnotations() = annotations
 
-        override fun getParameters() = parameters
+        override fun getExpectedParameters(): List<ExpectedParameter> = expectedParameters
 
         override fun getReturnType() = returnType
 
@@ -442,7 +444,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
     private fun expectedTypes(vararg psiTypes: PsiType) = psiTypes.map { expectedType(it) }
 
     private fun expectedParams(vararg psyTypes: PsiType) =
-            psyTypes.mapIndexed { index, psiType -> NameInfo("param$index") to expectedTypes(psiType) }
+        psyTypes.mapIndexed { index, psiType -> expectedParameter(expectedTypes(psiType), "param$index") }
 
     private inline fun <reified T : JvmElement> CodeInsightTestFixture.atCaret() = elementAtCaret.toUElement() as T
 
