@@ -54,6 +54,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
         private val CLASS_CONTEXT = "android.content.Context"
         private val CLASS_FRAGMENT = "android.app.Fragment"
         private val CLASS_SUPPORT_FRAGMENT = "android.support.v4.app.Fragment"
+        private val ANDROIDX_CLASS_SUPPORT_FRAGMENT = "androidx.fragment.app.Fragment"
         private val CLASS_VIEW = "android.view.View"
 
         private val GET_STRING_METHOD = "getString"
@@ -173,7 +174,7 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
     }
 
     private fun needContextReceiver(element: PsiElement): Boolean {
-        val classesWithGetSting = listOf(CLASS_CONTEXT, CLASS_FRAGMENT, CLASS_SUPPORT_FRAGMENT)
+        val classesWithGetSting = listOf(CLASS_CONTEXT, CLASS_FRAGMENT, CLASS_SUPPORT_FRAGMENT, ANDROIDX_CLASS_SUPPORT_FRAGMENT)
         val viewClass = listOf(CLASS_VIEW)
         var parent = PsiTreeUtil.findFirstParent(element, true) { it is KtClassOrObject || it is KtFunction || it is KtLambdaExpression }
 
