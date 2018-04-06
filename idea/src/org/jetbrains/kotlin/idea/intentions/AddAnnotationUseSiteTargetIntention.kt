@@ -141,6 +141,6 @@ private fun KtAnnotationEntry.applicableUseSiteTargets(): List<AnnotationUseSite
 
 private fun KtAnnotationEntry.addUseSiteTarget(useSiteTarget: AnnotationUseSiteTarget, project: Project) {
     project.executeWriteCommand("Add use-site target") {
-        replace(KtPsiFactory(this).createAnnotationEntry("@${useSiteTarget.renderName}:$shortName"))
+        replace(KtPsiFactory(this).createAnnotationEntry("@${useSiteTarget.renderName}:$shortName${valueArgumentList?.text ?: ""}"))
     }
 }
