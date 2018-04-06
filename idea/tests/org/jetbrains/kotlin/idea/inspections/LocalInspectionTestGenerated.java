@@ -2805,6 +2805,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("companionNestedObject.kt")
+        public void testCompanionNestedObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/companionNestedObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("directCompanion.kt")
         public void testDirectCompanion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/directCompanion.kt");
