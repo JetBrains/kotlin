@@ -684,6 +684,18 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsTest(fileName);
         }
 
+        @TestMetadata("modulesWithSameNames.args")
+        public void testModulesWithSameNames() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/modulesWithSameNames.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("modulesWithSameNamesAndFunc.args")
+        public void testModulesWithSameNamesAndFunc() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/modulesWithSameNamesAndFunc.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("nonExistingKotlinHome.args")
         public void testNonExistingKotlinHome() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/nonExistingKotlinHome.args");
