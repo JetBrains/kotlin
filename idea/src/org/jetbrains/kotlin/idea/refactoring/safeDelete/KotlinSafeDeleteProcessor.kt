@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.formatClass
 import org.jetbrains.kotlin.idea.refactoring.formatFunction
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
+import org.jetbrains.kotlin.idea.refactoring.isTrueJavaMethod
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
@@ -160,10 +161,13 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
                     is SafeDeleteOverrideAnnotation ->
                         usageInfo.smartPointer.element?.let { usageElement ->
-                            if (usageElement.toLightMethods().all { method -> method.findSuperMethods().isEmpty() }) {
-                                KotlinSafeDeleteOverrideAnnotation(usageElement, usageInfo.referencedElement)
+                            when {
+                                usageElement.isTrueJavaMethod() -> usageInfo
+                                usageElement.toLightMethods().all { method -> method.findSuperMethods().isEmpty() } -> {
+                                    KotlinSafeDeleteOverrideAnnotation(usageElement, usageInfo.referencedElement) as UsageInfo
+                                }
+                                else -> null
                             }
-                            else null
                         }
 
                     is SafeDeleteReferenceJavaDeleteUsageInfo ->
