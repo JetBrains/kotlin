@@ -1,0 +1,15 @@
+// DISABLE-ERRORS
+
+@Experimental
+annotation class FirstExperience
+
+open class ParentTarget {
+    @FirstExperience open fun targetFun() {}
+}
+
+class ChildTarget : ParentTarget() {
+    @FirstExperience
+    override fun targetFun() {
+        <selection><caret>super.targetFun()</selection>
+    }
+}

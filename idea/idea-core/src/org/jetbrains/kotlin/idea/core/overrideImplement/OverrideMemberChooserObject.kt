@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 
 interface OverrideMemberChooserObject : ClassMember {
@@ -138,13 +139,16 @@ fun OverrideMemberChooserObject.generateMember(targetClass: KtClassOrObject, cop
 
 private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
     defaultParameterValueRenderer = null
-    modifiers = setOf(DescriptorRendererModifier.OVERRIDE)
+    modifiers = setOf(DescriptorRendererModifier.OVERRIDE, DescriptorRendererModifier.ANNOTATIONS)
     withDefinedIn = false
     classifierNamePolicy = ClassifierNamePolicy.SOURCE_CODE_QUALIFIED
     overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
     unitReturnType = false
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
     renderUnabbreviatedType = false
+    annotationFilter = {
+        it.type.constructor.declarationDescriptor?.annotations?.hasAnnotation(ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME) ?: false
+    }
 }
 
 private fun PropertyDescriptor.wrap(): PropertyDescriptor {

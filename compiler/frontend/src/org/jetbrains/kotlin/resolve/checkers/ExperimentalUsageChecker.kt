@@ -66,7 +66,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
     }
 
     companion object {
-        internal val EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
+        val EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
         internal val USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
         internal val USE_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
 

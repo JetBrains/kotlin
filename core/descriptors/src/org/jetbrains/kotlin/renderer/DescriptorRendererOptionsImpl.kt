@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.IllegalStateException
@@ -97,6 +99,8 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var excludedAnnotationClasses by property(emptySet<FqName>())
 
     override var excludedTypeAnnotationClasses by property(ExcludedTypeAnnotations.internalAnnotationsForResolve)
+
+    override var annotationFilter: ((AnnotationDescriptor) -> Boolean)? by property(null)
 
     override var annotationArgumentsRenderingPolicy by property(AnnotationArgumentsRenderingPolicy.NO_ARGUMENTS)
 
