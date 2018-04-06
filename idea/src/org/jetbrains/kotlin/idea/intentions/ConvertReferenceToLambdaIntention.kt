@@ -24,13 +24,10 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
@@ -123,10 +120,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression))
 
         if (valueArgumentParent != null && callGrandParent != null) {
-            val moveOutOfParenthesis = MoveLambdaOutsideParenthesesIntention()
-            if (moveOutOfParenthesis.isApplicableTo(callGrandParent, valueArgumentParent.startOffset)) {
-                moveOutOfParenthesis.applyTo(callGrandParent, editor)
-            }
+            callGrandParent.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
         }
     }
 

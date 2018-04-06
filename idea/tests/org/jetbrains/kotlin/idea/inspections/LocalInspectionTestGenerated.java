@@ -2521,6 +2521,123 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MoveLambdaOutsideParentheses extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInMoveLambdaOutsideParentheses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("ambigousOverload.kt")
+        public void testAmbigousOverload() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/ambigousOverload.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionalValueCall.kt")
+        public void testFunctionalValueCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/functionalValueCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicable1.kt")
+        public void testInapplicable1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/inapplicable1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicable2.kt")
+        public void testInapplicable2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/inapplicable2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicable3.kt")
+        public void testInapplicable3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/inapplicable3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableAlreadyHasFunctionLiteral.kt")
+        public void testInapplicableAlreadyHasFunctionLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/inapplicableAlreadyHasFunctionLiteral.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableOptionalParametersAfter.kt")
+        public void testInapplicableOptionalParametersAfter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/inapplicableOptionalParametersAfter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("labeledLambda.kt")
+        public void testLabeledLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/labeledLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaWithCommas.kt")
+        public void testLambdaWithCommas() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/lambdaWithCommas.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaWithCommas2.kt")
+        public void testLambdaWithCommas2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/lambdaWithCommas2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaWithCommas3.kt")
+        public void testLambdaWithCommas3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/lambdaWithCommas3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("moveLambda1.kt")
+        public void testMoveLambda1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/moveLambda1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("moveLambda2.kt")
+        public void testMoveLambda2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/moveLambda2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("moveLambda3.kt")
+        public void testMoveLambda3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/moveLambda3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("moveLambda4.kt")
+        public void testMoveLambda4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/moveLambda4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("moveLambda5.kt")
+        public void testMoveLambda5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/moveLambda5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("moveLambda6.kt")
+        public void testMoveLambda6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/moveLambda6.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noTwoConsequentLambdas.kt")
+        public void testNoTwoConsequentLambdas() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/moveLambdaOutsideParentheses/noTwoConsequentLambdas.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/moveSuspiciousCallableReferenceIntoParentheses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -1,5 +1,4 @@
-// IS_APPLICABLE: false
-
+// PROBLEM: none
 fun <T> doSomething(a: T) {}
 
 fun foo(x: Int) {
