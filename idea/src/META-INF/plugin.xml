@@ -974,11 +974,6 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.MoveLambdaOutsideParenthesesIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.declarations.SplitPropertyDeclarationIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -2765,8 +2760,8 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveRedundantConstructorParenthesesInspection"
-                     displayName="Remove redundant constructor parentheses"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MoveLambdaOutsideParenthesesInspection"
+                     displayName="Move lambda argument out of parentheses"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"

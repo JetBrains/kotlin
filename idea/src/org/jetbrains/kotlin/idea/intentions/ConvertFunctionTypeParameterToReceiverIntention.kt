@@ -97,7 +97,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                     "$receiver.${expression.text}(${arguments.joinToString()})"
             )
             expression.replaced(adapterLambda).let {
-                MoveLambdaOutsideParenthesesIntention.moveFunctionLiteralOutsideParenthesesIfPossible(it)
+                it.moveFunctionLiteralOutsideParenthesesIfPossible()
             }
         }
     }
@@ -159,7 +159,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
             } as KtLambdaExpression
 
             expression.replaced(replacingLambda).let {
-                MoveLambdaOutsideParenthesesIntention.moveFunctionLiteralOutsideParenthesesIfPossible(it)
+                it.moveFunctionLiteralOutsideParenthesesIfPossible()
             }
         }
 

@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-class MyClass(val function: (Int) -> Boolean)
-
-fun foo() {
-    MyClass { it == 7 }
-}
