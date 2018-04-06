@@ -519,5 +519,8 @@ class QuickFixRegistrar : QuickFixContributor {
         ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.registerFactory(SurroundWithArrayOfWithSpreadOperatorInFunctionFix)
 
         JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.registerFactory(KotlinAddRequiredModuleFix)
+
+        JVM_DEFAULT_REQUIRED_FOR_OVERRIDE.registerFactory(AddJvmDefaultAnnotation)
+        NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT.registerFactory(AddJvmDefaultAnnotation)
     }
 }
