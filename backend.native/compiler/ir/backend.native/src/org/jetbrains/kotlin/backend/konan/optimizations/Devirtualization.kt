@@ -179,7 +179,7 @@ internal object Devirtualization {
         private fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
             if (this is DataFlowIR.Type.Declared) return this
             val hash = (this as DataFlowIR.Type.External).hash
-            return externalModulesDFG.publicTypes[hash] ?: error("Unable to resolve exported type $hash")
+            return externalModulesDFG.publicTypes[hash] ?: error("Unable to resolve exported type $this")
         }
 
         private fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
