@@ -11297,6 +11297,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/tooLongCharLiteralToString/doubleQuotesShouldBeEscaped.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("ecapedDoubleQuotesShouldNotBeEscaped.kt")
+        public void testEcapedDoubleQuotesShouldNotBeEscaped() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/tooLongCharLiteralToString/ecapedDoubleQuotesShouldNotBeEscaped.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/typeAddition")
