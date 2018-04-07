@@ -163,7 +163,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
                 lastEntry.statements += JsBreak().apply { source = entry }
                 members
             }
-            Pair(JsSwitch(subjectSupplier(), switchEntries).apply { source = expression }, nextIndex)
+            Pair(JsSwitch(subjectSupplier(), switchEntries).apply { source = whenExpression }, nextIndex)
         }
         else {
             null
