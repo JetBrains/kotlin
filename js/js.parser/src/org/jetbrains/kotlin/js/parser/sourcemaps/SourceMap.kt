@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.parser.sourcemaps
 
+import java.io.File
 import java.io.PrintStream
 import java.io.Reader
 
@@ -31,13 +32,30 @@ class SourceMap(val sourceContentResolver: (String) -> Reader?) {
             writer.println()
         }
     }
+
+    fun debugVerbose(writer: PrintStream, generatedJsFile: File) {
+        assert(generatedJsFile.exists()) { "$generatedJsFile does not exist!" }
+        val generatedLines = generatedJsFile.readLines().toTypedArray()
+        for ((index, group) in groups.withIndex()) {
+            writer.print("${index + 1}:")
+            val generatedLine = generatedLines[index]
+            val segmentsByColumn = group.segments.map { it.generatedColumnNumber to it }.toMap()
+            for (i in generatedLine.indices) {
+                segmentsByColumn[i]?.let { (_, sourceFile, sourceLine, sourceColumn) ->
+                    writer.print("<$sourceFile:${sourceLine + 1}:${sourceColumn + 1}>")
+                }
+                writer.print(generatedLine[i])
+            }
+            writer.println()
+        }
+    }
 }
 
-class SourceMapSegment(
-        val generatedColumnNumber: Int,
-        val sourceFileName: String?,
-        val sourceLineNumber: Int,
-        val sourceColumnNumber: Int
+data class SourceMapSegment(
+    val generatedColumnNumber: Int,
+    val sourceFileName: String?,
+    val sourceLineNumber: Int,
+    val sourceColumnNumber: Int
 )
 
 class SourceMapGroup {
