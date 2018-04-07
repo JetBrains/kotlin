@@ -30,3 +30,15 @@ sealed class G constructor(val y: Int) {
 
     object H : G()
 }
+
+interface I {
+    fun bar()
+}
+
+fun f() {
+    val i = object : I {
+        internal var foo = 0
+        override fun bar() {}
+    }
+    i.foo = 1
+}
