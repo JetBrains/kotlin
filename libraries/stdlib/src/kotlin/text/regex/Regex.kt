@@ -127,6 +127,7 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
      *
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
+     * @sample samples.text.Regexps.find
      */
     public fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
 

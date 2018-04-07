@@ -22,4 +22,22 @@ class Regexps {
         // destructured group values only contain values of the groups, excluding the zeroth group.
         assertPrints(numberedGroupValues, "[John, 9731879]")
     }
+
+    @Sample
+    fun find() {
+        val inputString = "to be or not to be"
+        val regex = ".*be".toRegex()
+        // If there is matching string, then find method returns MatchResult
+        assertTrue(regex.find(inputString) != null)
+
+        val regex2 = ".*this.*".toRegex()
+        // If there is no matching string, then find method returns null
+        assertFalse(regex2.find(inputString) != null)
+
+        val regex3 = "to.*".toRegex()
+        // to be or not to be
+        //              ^^^^^
+        // Because it starts from index 1, find method finds "to be" not the whole sentence.
+        assertPrints(regex3.find(inputString, 1)?.value, "to be")
+    }
 }
