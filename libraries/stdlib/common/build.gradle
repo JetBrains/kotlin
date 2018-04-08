@@ -55,8 +55,13 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.kotlin
 }
 
+configurations {
+    sources
+}
+
 artifacts {
     archives sourcesJar
+    sources sourcesJar
     archives javadocJar
 }
 
