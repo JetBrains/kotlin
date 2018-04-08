@@ -24,4 +24,4 @@ There is a [simple sample](../libraries/examples/browser-example/ReadMe.md) whic
 We love contributions! The JavaScript translation could really use your help! If you fancy contributing:
 
 * check the [contributing section](https://github.com/JetBrains/kotlin/blob/master/ReadMe.md) on general stuff like getting the code etc
-* try fix one of the pending [JavaScript translation issues](https://youtrack.jetbrains.com/issues/KT?q=Subsystems:%20%7BBack-end.%20JavaScript%7D%20-Resolved)
+* try fix one of the pending [JavaScript translation issues](https://youtrack.jetbrains.com/issues/KT?q=Subsystems:%20%7BBackend.%20JS%7D%20-Resolved)
