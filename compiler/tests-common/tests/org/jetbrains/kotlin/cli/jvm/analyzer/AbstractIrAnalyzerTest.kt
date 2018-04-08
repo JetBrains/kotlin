@@ -109,9 +109,12 @@ abstract class AbstractIrAnalyzerTest : AbstractDiagnosticsTestWithStdLib() {
 
     private fun funcBodyUsageAnalyzer(): NewAnalyzer =
         newAnalyzer {
-            functionBody {
-                whileCycle {
-                    variableDefinition { }
+            function {
+                body {
+                    recursiveSearch = true
+                    whileCycle {
+                        variableDefinition { }
+                    }
                 }
             }
         }

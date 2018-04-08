@@ -18,14 +18,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 
 interface AnalyzerComponent {
-    fun execute(
-        irModule: IrModuleFragment,
-        moduleDescriptor: ModuleDescriptor,
-        bindingContext: BindingContext
-    ) {
-        irModule.acceptVoid(visitor)
-    }
-    
     val visitor: IrElementVisitorVoid
 }
 
@@ -37,6 +29,8 @@ open class BaseIrVisitor : IrElementVisitorVoid {
 
 abstract class AbstractScope : AnalyzerComponent {
     protected val innerScopes = mutableListOf<AnalyzerComponent>()
+
+    var recursiveSearch = true
 
     fun classDefinition(init: ClassScope.() -> Unit): ClassScope {
         val scope = ClassScope()
@@ -59,7 +53,7 @@ abstract class AbstractScope : AnalyzerComponent {
         return scope
     }
 
-    fun functionScope(init: FunctionDefinition.() -> Unit): FunctionDefinition {
+    fun function(init: FunctionDefinition.() -> Unit): FunctionDefinition {
         val scope = FunctionDefinition()
         scope.init()
         innerScopes += scope
@@ -76,7 +70,7 @@ abstract class ScopeWithCallings : AbstractScope() {
     }
 }
 
-abstract class CodeScope : ScopeWithCallings() {
+class CodeScope : ScopeWithCallings() {
     fun forCycle(init: ForCycle.() -> Unit): ForCycle {
         val scope = ForCycle()
         scope.init()
@@ -97,6 +91,17 @@ abstract class CodeScope : ScopeWithCallings() {
         innerScopes += scope
         return scope
     }
+
+    override val visitor: IrElementVisitorVoid = MyVisitor()
+
+    inner class MyVisitor : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            innerScopes.forEach { element.acceptVoid(it.visitor) }
+            if (recursiveSearch) {
+                element.acceptChildrenVoid(this)
+            }
+        }
+    }
 }
 
 open class ClassScope : ScopeWithCallings() {
@@ -115,28 +120,24 @@ class ObjectScope : ClassScope()
 
 class InterfaceScope : ClassScope()
 
-class FunctionDefinition : ScopeWithCallings() {
+class FunctionDefinition : AnalyzerComponent {
     override val visitor: IrElementVisitorVoid = MyVisitor()
+
+    var body: CodeScope? = null
+
+    fun body(init: CodeScope.() -> Unit): CodeScope {
+        body = CodeScope()
+        body?.init()
+        return body!!
+    }
 
     private inner class MyVisitor : BaseIrVisitor() {
         override fun visitElement(element: IrElement) {}
 
         override fun visitFunction(declaration: IrFunction) {
-            TODO()
-        }
-    }
-}
-
-class FunctionBody : CodeScope() {
-    override val visitor: IrElementVisitorVoid = MyVisitor()
-
-    private inner class MyVisitor : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-//            innerScopes.forEach { element.acceptChildrenVoid(it.visitor) }
-        }
-
-        override fun visitFunction(declaration: IrFunction) {
-            innerScopes.forEach { declaration.body?.acceptChildrenVoid(it.visitor) }
+            if (body != null) {
+                declaration.body?.acceptChildrenVoid(body!!.visitor)
+            }
         }
     }
 }
@@ -145,9 +146,7 @@ class VariableDefinition : AnalyzerComponent {
     override val visitor: IrElementVisitorVoid = MyVisitor()
 
     private inner class MyVisitor : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
+        override fun visitElement(element: IrElement) {}
 
         override fun visitVariable(declaration: IrVariable) {
             println("variable ${declaration.name}")
@@ -175,16 +174,6 @@ class IfCondition : AnalyzerComponent {
     }
 }
 
-class ThenBranch : CodeScope() {
-    override val visitor: IrElementVisitorVoid
-        get() = TODO("not implemented")
-}
-
-class ElseBranch : CodeScope() {
-    override val visitor: IrElementVisitorVoid
-        get() = TODO("not implemented")
-}
-
 class ForCycle : ScopeWithCallings() {
     override val visitor: IrElementVisitorVoid
         get() = TODO("not implemented")
@@ -204,14 +193,7 @@ class WhileCycle : ScopeWithCallings() {
 }
 
 class NewAnalyzer : AbstractScope() {
-    fun functionBody(init: FunctionBody.() -> Unit): FunctionBody {
-        val scope = FunctionBody()
-        scope.init()
-        innerScopes += scope
-        return scope
-    }
-
-    override fun execute(irModule: IrModuleFragment, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext) {
+    fun execute(irModule: IrModuleFragment, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext) {
         irModule.acceptChildrenVoid(visitor)
     }
 
