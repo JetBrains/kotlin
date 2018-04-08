@@ -102,26 +102,6 @@ class CodeScope : AbstractScope() {
     }
 }
 
-open class ClassScope : AbstractScope() {
-    override val visitor: Visitor
-        get() = TODO("not implemented")
-
-    override fun checkIrNode(element: IrElement): Boolean {
-        TODO("not implemented")
-    }
-
-    fun propertyDefinition(init: PropertyDefinition.() -> Unit): PropertyDefinition {
-        val scope = PropertyDefinition()
-        scope.init()
-        innerScopes += scope
-        return scope
-    }
-}
-
-class ObjectScope : ClassScope()
-
-class InterfaceScope : ClassScope()
-
 class VariableDefinition() : AnalyzerComponent() {
     override val visitor: Visitor = MyVisitor()
 
@@ -145,20 +125,6 @@ class VariableDefinition() : AnalyzerComponent() {
                 s += ". message: $message"
             }
             println(s)
-        }
-    }
-}
-
-class PropertyDefinition : AnalyzerComponent() {
-    override val visitor: Visitor = MyVisitor()
-
-    override fun checkIrNode(element: IrElement): Boolean {
-        TODO("not implemented")
-    }
-
-    inner class MyVisitor : Visitor {
-        override fun visitElement(element: IrElement, data: VisitorData) {
-            TODO("not implemented")
         }
     }
 }
