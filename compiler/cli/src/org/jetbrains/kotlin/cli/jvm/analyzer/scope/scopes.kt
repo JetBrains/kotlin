@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.analyzer.scope
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
@@ -21,17 +18,14 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 
-interface AnalyzerComponent {
-    val visitor: IrElementVisitorVoid
+abstract class AnalyzerComponent {
+    abstract val visitor: IrElementVisitorVoid
+    var info: () -> Unit = {}
+
+    abstract fun checkIrNode(element: IrElement): Boolean
 }
 
-open class BaseIrVisitor : IrElementVisitorVoid {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-}
-
-abstract class AbstractScope : AnalyzerComponent {
+abstract class AbstractScope : AnalyzerComponent() {
     protected val innerScopes = mutableListOf<AnalyzerComponent>()
 
     var recursiveSearch = true
@@ -65,16 +59,9 @@ abstract class AbstractScope : AnalyzerComponent {
     }
 }
 
-abstract class ScopeWithCallings : AbstractScope() {
-    fun variableDefinition(init: VariableDefinition.() -> Unit): VariableDefinition {
-        val scope = VariableDefinition()
-        scope.init()
-        innerScopes += scope
-        return scope
-    }
-}
+class CodeScope : AbstractScope() {
+    override fun checkIrNode(element: IrElement): Boolean = true
 
-class CodeScope : ScopeWithCallings() {
     fun forLoop(init: ForLoop.() -> Unit): ForLoop {
         val scope = ForLoop()
         scope.init()
@@ -96,6 +83,13 @@ class CodeScope : ScopeWithCallings() {
         return scope
     }
 
+    fun variableDefinition(init: VariableDefinition.() -> Unit): VariableDefinition {
+        val scope = VariableDefinition()
+        scope.init()
+        innerScopes += scope
+        return scope
+    }
+
     override val visitor: IrElementVisitorVoid = MyVisitor()
 
     inner class MyVisitor : IrElementVisitorVoid {
@@ -108,9 +102,13 @@ class CodeScope : ScopeWithCallings() {
     }
 }
 
-open class ClassScope : ScopeWithCallings() {
+open class ClassScope : AbstractScope() {
     override val visitor: IrElementVisitorVoid
         get() = TODO("not implemented")
+
+    override fun checkIrNode(element: IrElement): Boolean {
+        TODO("not implemented")
+    }
 
     fun propertyDefinition(init: PropertyDefinition.() -> Unit): PropertyDefinition {
         val scope = PropertyDefinition()
@@ -124,10 +122,22 @@ class ObjectScope : ClassScope()
 
 class InterfaceScope : ClassScope()
 
-class FunctionDefinition : AnalyzerComponent {
+class FunctionDefinition : AnalyzerComponent() {
     override val visitor: IrElementVisitorVoid = MyVisitor()
 
     private var body: CodeScope? = null
+
+    var name: String? = null
+
+    override fun checkIrNode(element: IrElement): Boolean {
+        if (element !is IrFunction) {
+            return false
+        }
+        if (name != null && element is IrSimpleFunction) {
+            return element.name.identifier == name
+        }
+        return true
+    }
 
     fun body(init: CodeScope.() -> Unit): CodeScope {
         body = CodeScope()
@@ -135,10 +145,14 @@ class FunctionDefinition : AnalyzerComponent {
         return body!!
     }
 
-    inner class MyVisitor : BaseIrVisitor() {
+    inner class MyVisitor : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {}
 
         override fun visitFunction(declaration: IrFunction) {
+            if (!checkIrNode(declaration)) {
+                return
+            }
+            info()
             if (body != null) {
                 declaration.body?.acceptChildrenVoid(body!!.visitor)
             }
@@ -146,15 +160,24 @@ class FunctionDefinition : AnalyzerComponent {
     }
 }
 
-class VariableDefinition() : AnalyzerComponent {
+class VariableDefinition() : AnalyzerComponent() {
     override val visitor: IrElementVisitorVoid = MyVisitor()
 
     var message: String? = null
+
+    override fun checkIrNode(element: IrElement): Boolean {
+        // TODO
+        return true
+    }
 
     inner class MyVisitor : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {}
 
         override fun visitVariable(declaration: IrVariable) {
+            if (!checkIrNode(declaration)) {
+                return
+            }
+
             var s = "variable ${declaration.name}"
             if (message != null) {
                 s += ". message: $message"
@@ -164,8 +187,12 @@ class VariableDefinition() : AnalyzerComponent {
     }
 }
 
-class PropertyDefinition : AnalyzerComponent {
+class PropertyDefinition : AnalyzerComponent() {
     override val visitor: IrElementVisitorVoid = MyVisitor()
+
+    override fun checkIrNode(element: IrElement): Boolean {
+        TODO("not implemented")
+    }
 
     inner class MyVisitor : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
@@ -174,11 +201,16 @@ class PropertyDefinition : AnalyzerComponent {
     }
 }
 
-class IfCondition : AnalyzerComponent {
+class IfCondition : AnalyzerComponent() {
     override val visitor: IrElementVisitorVoid = MyVisitor()
 
     private val thenScopes = mutableListOf<CodeScope>()
     private val elseScopes = mutableListOf<CodeScope>()
+
+    override fun checkIrNode(element: IrElement): Boolean {
+        // TODO
+        return true
+    }
 
     fun thenBranch(init: CodeScope.() -> Unit): CodeScope {
         val scope = CodeScope()
@@ -199,6 +231,10 @@ class IfCondition : AnalyzerComponent {
 
         override fun visitWhen(expression: IrWhen) {
             if (expression is IrIfThenElseImpl) {
+                if (!checkIrNode(expression)) {
+                    return
+                }
+                info()
                 thenScopes.forEach { expression.branches[0].acceptVoid(it.visitor) }
                 if (expression.branches.size > 1) {
                     elseScopes.forEach { expression.branches[1].acceptVoid(it.visitor) }
@@ -208,10 +244,15 @@ class IfCondition : AnalyzerComponent {
     }
 }
 
-class ForLoop : AnalyzerComponent {
+class ForLoop : AnalyzerComponent() {
     override val visitor: IrElementVisitorVoid = MyVisitor()
 
     private var body: CodeScope? = null
+
+    override fun checkIrNode(element: IrElement): Boolean {
+        // TODO
+        return true
+    }
 
     fun body(init: CodeScope.() -> Unit): CodeScope {
         body = CodeScope()
@@ -223,7 +264,8 @@ class ForLoop : AnalyzerComponent {
         override fun visitElement(element: IrElement) {}
 
         override fun visitBlock(expression: IrBlock) {
-            if (expression.origin == IrStatementOrigin.FOR_LOOP) {
+            if (expression.origin == IrStatementOrigin.FOR_LOOP && checkIrNode(expression)) {
+                info()
                 val whileLoop = expression.statements.firstOrNull { it is IrWhileLoop }
                 if (whileLoop != null && body != null) {
                     val loopBody = (whileLoop as IrWhileLoop).body ?: return
@@ -236,13 +278,22 @@ class ForLoop : AnalyzerComponent {
     }
 }
 
-class WhileLoop : ScopeWithCallings() {
+class WhileLoop : AbstractScope() {
     override val visitor: IrElementVisitorVoid = MyVisitor()
+
+    override fun checkIrNode(element: IrElement): Boolean {
+        // TODO
+        return true
+    }
 
     inner class MyVisitor : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {}
 
         override fun visitWhileLoop(loop: IrWhileLoop) {
+            if (!checkIrNode(loop)) {
+                return
+            }
+            info()
             innerScopes.forEach { loop.body?.acceptChildrenVoid(it.visitor) }
         }
     }
@@ -253,6 +304,8 @@ class NewAnalyzer : AbstractScope() {
     fun execute(irModule: IrModuleFragment, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext) {
         irModule.acceptChildrenVoid(visitor)
     }
+
+    override fun checkIrNode(element: IrElement): Boolean = true
 
     override val visitor: IrElementVisitorVoid = MyVisitor()
 

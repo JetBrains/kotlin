@@ -12,8 +12,17 @@ val analyzers = listOf(
     analyzerFor1(),
     analyzerFor2(),
     analyzerIf1(),
-    analyzerIf2()
+    analyzerIf2(),
+    functionNameAnalyzer()
 )
+
+fun functionNameAnalyzer() = newAnalyzer {
+    title = "function name"
+    function {
+        name = "foo"
+        info = { println("$name founded") }
+    }
+}
 
 fun analyzerWhile() = newAnalyzer {
     title = "while"
