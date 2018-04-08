@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestWithStdLib
 import org.jetbrains.kotlin.checkers.LazyOperationsLog
 import org.jetbrains.kotlin.checkers.LoggingStorageManager
-import org.jetbrains.kotlin.cli.jvm.analyzer.scope.NewAnalyzer
-import org.jetbrains.kotlin.cli.jvm.analyzer.scope.newAnalyzer
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -101,30 +99,13 @@ abstract class AbstractIrAnalyzerTest : AbstractDiagnosticsTestWithStdLib() {
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext
     ) {
-//        val analyzer = functionUsageAnalyzer()
-        val analyzer = funcBodyUsageAnalyzer()
-        analyzer.execute(irModule, moduleDescriptor, bindingContext)
-        println("------------")
+        for (analyzer in analyzers) {
+            println("------------${analyzer.title}------------")
+            analyzer.execute(irModule, moduleDescriptor, bindingContext)
+            println("------------")
+        }
     }
 
-    private fun funcBodyUsageAnalyzer(): NewAnalyzer =
-        newAnalyzer {
-            function {
-                body {
-                    recursiveSearch = true
-                    whileCycle {
-                        variableDefinition { }
-                    }
-                }
-            }
-        }
-
-
-    private fun functionUsageAnalyzer(): Analyzer =
-        analyzer {
-            functionIssue {
-                function("foo")
-                param("x", Int::class)
-            }
-        }
 }
+
+fun foo() {}
