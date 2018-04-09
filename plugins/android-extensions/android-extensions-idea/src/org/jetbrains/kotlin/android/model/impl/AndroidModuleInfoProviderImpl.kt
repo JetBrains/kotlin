@@ -36,7 +36,7 @@ class AndroidModuleInfoProviderImpl(override val module: Module) : AndroidModule
     }
 
     override fun getApplicationResourceDirectories(createIfNecessary: Boolean): Collection<VirtualFile> {
-        return AppResourceRepository.findExistingInstance(module)?.resourceDirs ?: emptyList()
+        return AppResourceRepository.getOrCreateInstance(module)?.resourceDirs ?: emptyList()
     }
 
     override fun getAllSourceProviders(): List<AndroidModuleInfoProvider.SourceProviderMirror> {
