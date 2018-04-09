@@ -29,6 +29,9 @@ interface MemoizedFunctionToNullable<in P, out R : Any> : Function1<P, R?> {
 interface NotNullLazyValue<out T : Any> : Function0<T> {
     fun isComputed(): Boolean
     fun isComputing(): Boolean
+
+    // Only for debugging
+    fun renderDebugInformation(): String = ""
 }
 
 interface NullableLazyValue<out T : Any> : Function0<T?> {

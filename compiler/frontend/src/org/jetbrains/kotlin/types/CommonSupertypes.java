@@ -142,15 +142,15 @@ public class CommonSupertypes {
         if (commonSupertypes.isEmpty()) {
             StringBuilder info = new StringBuilder();
             for (SimpleType type : types) {
-                String superTypes = type.getConstructor().getSupertypes().stream()
-                        .map(CommonSupertypes::renderTypeFully)
-                        .collect(Collectors.joining(", "));
+                String superTypes = TypeUtils.getAllSupertypes(type).stream()
+                        .map(t -> "-- " + renderTypeFully(t))
+                        .collect(Collectors.joining("\n"));
 
                 info
                         .append("Info about ").append(renderTypeFully(type)).append(": ").append('\n')
-                        .append("- Supertypes: ").append(superTypes).append('\n')
+                        .append("- Supertypes: ").append('\n')
+                        .append(superTypes).append('\n')
                         .append("- DeclarationDescriptor class: ").append(classOfDeclarationDescriptor(type)).append('\n')
-                        .append("- TypeConstructor class: ").append(type.getConstructor().getClass()).append('\n')
                         .append('\n');
             }
             throw new IllegalStateException("There is no common supertype for: " + types + " \n" + info.toString());
@@ -166,7 +166,18 @@ public class CommonSupertypes {
 
     @NotNull
     private static String renderTypeFully(@NotNull KotlinType type) {
-        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
+        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type) + ", typeConstructor debug: " +
+               renderTypeConstructorVerboseDebugInformation(type.getConstructor());
+    }
+
+    @SuppressWarnings("deprecation")
+    private static String renderTypeConstructorVerboseDebugInformation(TypeConstructor typeConstructor) {
+        if (!(typeConstructor instanceof AbstractTypeConstructor)) {
+            return typeConstructor.toString() + "[" + typeConstructor.getClass().getName() + "]";
+        }
+
+        AbstractTypeConstructor abstractTypeConstructor = (AbstractTypeConstructor) typeConstructor;
+        return abstractTypeConstructor.renderAdditionalDebugInformation();
     }
 
     @Nullable

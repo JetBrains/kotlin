@@ -76,4 +76,6 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
     protected open fun getAdditionalNeighboursInSupertypeGraph(useCompanions: Boolean): Collection<KotlinType> = emptyList()
     protected open fun defaultSupertypeIfEmpty(): KotlinType? = null
 
+    // Only for debugging
+    fun renderAdditionalDebugInformation(): String = "supertypes=${supertypes.renderDebugInformation()}"
 }
