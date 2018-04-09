@@ -555,13 +555,10 @@ object Renderers {
     }
 
     private fun renderTypeBounds(typeBounds: TypeBounds, verbosity: ConstraintSystemRenderingVerbosity): String {
-        val typeVariableName = typeBounds.typeVariable.name.asString()
-        val renderedTypeVariable = if (verbosity != ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE)
-            typeVariableName
-        else
-            "TypeVariable $typeVariableName, " +
-                    "descriptor = ${typeBounds.typeVariable.freshTypeParameter}, " +
-                    "typeConstructor = ${renderTypeConstructor(typeBounds.typeVariable.freshTypeParameter.typeConstructor)}"
+        val renderedTypeVariable = renderTypeVariable(
+            typeBounds.typeVariable,
+            includeTypeConstructor = verbosity == ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE
+        )
 
         return if (typeBounds.bounds.isEmpty()) {
             renderedTypeVariable
@@ -575,6 +572,15 @@ object Renderers {
 
             renderedTypeVariable + boundsPrefix + renderedBounds
         }
+    }
+
+    private fun renderTypeVariable(typeVariable: TypeVariable, includeTypeConstructor: Boolean): String {
+        val typeVariableName = typeVariable.name.asString()
+        if (!includeTypeConstructor) return typeVariableName
+
+        return "TypeVariable $typeVariableName, " +
+                "descriptor = ${typeVariable.freshTypeParameter}, " +
+                "typeConstructor = ${renderTypeConstructor(typeVariable.freshTypeParameter.typeConstructor)}"
     }
 
     private fun renderTypeBound(bound: Bound, verbosity: ConstraintSystemRenderingVerbosity): String {
