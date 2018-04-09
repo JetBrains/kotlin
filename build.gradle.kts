@@ -664,3 +664,5 @@ tasks.create("findShadowJarsInClasspath").doLast {
         project.checkConfig("testCompileClasspath")
     }
 }
+
+BuildTimeReporter.configure(gradle)
