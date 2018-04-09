@@ -47,7 +47,7 @@ data class ScriptModuleInfo(
     override fun dependencies(): List<IdeaModuleInfo> {
         return arrayListOf<IdeaModuleInfo>(this).apply {
             add(ScriptDependenciesInfo.ForFile(project, this@ScriptModuleInfo))
-            relatedModuleSourceInfo?.let { add(it) }
+            relatedModuleSourceInfo?.let { addAll(it.dependencies()) }
             findJdk(externalDependencies, project)?.let { add(SdkInfo(project, it)) }
         }
     }
