@@ -22,10 +22,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
@@ -171,11 +169,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
             println("Generating ${filesToCompile.size} files into ${outputDir.name}, configuration: '${environment.configuration}'...")
 
-            val outputFiles = GenerationUtils.compileFiles(
-                filesToCompile,
-                environment,
-                trace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
-            ).run { destroy(); factory }
+            val outputFiles = GenerationUtils.compileFiles(filesToCompile, environment).run { destroy(); factory }
 
             if (!outputDir.exists()) {
                 outputDir.mkdirs()

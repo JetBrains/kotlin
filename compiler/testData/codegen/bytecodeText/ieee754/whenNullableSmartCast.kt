@@ -1,3 +1,4 @@
+// !LANGUAGE: +ProperIeee754Comparisons
 fun box(): String {
     val nullValue: Any? = null
     val nullDouble: Double? = null
