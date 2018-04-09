@@ -99,6 +99,10 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
+    @GradleOption(DefaultValues.BooleanTrueDefault::class)
+    @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
+    var typedArrays: Boolean by FreezableVar(true)
+
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-Xfriend-modules-disabled", description = "Disable internal declaration export")
     var friendModulesDisabled: Boolean by FreezableVar(false)
