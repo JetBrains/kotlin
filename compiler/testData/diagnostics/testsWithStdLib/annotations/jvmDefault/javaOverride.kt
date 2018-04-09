@@ -36,7 +36,7 @@ interface KotlinInterfaceForIndirect : JavaInterface {
 
 }
 
-interface KotlinInterfaceInderectInheritance : KotlinInterfaceForIndirect {
+interface KotlinInterfaceIndirectInheritance : KotlinInterfaceForIndirect {
 
     @JvmDefault
     override fun test() {}

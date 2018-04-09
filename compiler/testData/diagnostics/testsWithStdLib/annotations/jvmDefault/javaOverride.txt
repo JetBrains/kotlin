@@ -33,7 +33,7 @@ public interface KotlinInterfaceForIndirect : JavaInterface {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface KotlinInterfaceInderectInheritance : KotlinInterfaceForIndirect {
+public interface KotlinInterfaceIndirectInheritance : KotlinInterfaceForIndirect {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @kotlin.jvm.JvmDefault public open override /*1*/ fun test(): kotlin.Unit

@@ -46,14 +46,14 @@ interface KotlinInterface : JavaInterface {
     }
 }
 
-interface KotlinInterfaceInderectInheritance : KotlinInterface {
+interface KotlinInterfaceIndirectInheritance : KotlinInterface {
     fun foooo() {
         <!INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>testStatic<!>()
         super.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
 
         object  {
             fun run () {
-                super@KotlinInterfaceInderectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+                super@KotlinInterfaceIndirectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
             }
         }
     }
@@ -64,7 +64,7 @@ interface KotlinInterfaceInderectInheritance : KotlinInterface {
 
             object  {
                 fun run () {
-                    super@KotlinInterfaceInderectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+                    super@KotlinInterfaceIndirectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
                 }
             }
             return ""
@@ -98,7 +98,7 @@ open class KotlinClass : JavaInterface {
         }
 }
 
-class KotlinClassInderectInheritance : KotlinClass() {
+class KotlinClassIndirectInheritance : KotlinClass() {
     fun foo2(){
         <!INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>testStatic<!>()
         super.test()
@@ -106,7 +106,7 @@ class KotlinClassInderectInheritance : KotlinClass() {
 
         object  {
             fun run () {
-                super@KotlinClassInderectInheritance.test()
+                super@KotlinClassIndirectInheritance.test()
             }
         }
     }
@@ -118,14 +118,14 @@ class KotlinClassInderectInheritance : KotlinClass() {
 
             object  {
                 fun run () {
-                    super@KotlinClassInderectInheritance.test()
+                    super@KotlinClassIndirectInheritance.test()
                 }
             }
             return ""
         }
 }
 
-class KotlinClassInderectInheritance2 : KotlinInterfaceInderectInheritance {
+class KotlinClassIndirectInheritance2 : KotlinInterfaceIndirectInheritance {
     fun foo() {
         <!INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>testStatic<!>()
         super.<!DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>test<!>()
@@ -133,7 +133,7 @@ class KotlinClassInderectInheritance2 : KotlinInterfaceInderectInheritance {
 
         object  {
             fun run () {
-                super@KotlinClassInderectInheritance2.<!DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>test<!>()
+                super@KotlinClassIndirectInheritance2.<!DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>test<!>()
             }
         }
     }
@@ -145,7 +145,7 @@ class KotlinClassInderectInheritance2 : KotlinInterfaceInderectInheritance {
 
             object  {
                 fun run () {
-                    super@KotlinClassInderectInheritance2.<!DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>test<!>()
+                    super@KotlinClassIndirectInheritance2.<!DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>test<!>()
                 }
             }
             return ""
@@ -156,11 +156,11 @@ fun test() {
     JavaInterface.<!INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET_ERROR!>testStatic<!>()
     KotlinClass().foo()
     KotlinClass().property
-    KotlinClassInderectInheritance2().foo()
-    KotlinClassInderectInheritance2().property
+    KotlinClassIndirectInheritance2().foo()
+    KotlinClassIndirectInheritance2().property
 
     KotlinClass().test()
     KotlinClass().property
     KotlinClass().testOverride()
-    KotlinClassInderectInheritance().testOverride()
+    KotlinClassIndirectInheritance().testOverride()
 }
