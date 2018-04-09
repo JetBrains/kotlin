@@ -32,10 +32,10 @@ fun fetchChanges(): List<Change>? {
 
 val tcChanges by lazy { fetchChanges() }
 
-fun runGit(vararg args: String) {
+fun runGit(workDir: String, vararg args: String) {
     val process = ProcessBuilder()
             .command("git", *args)
-            .directory(File("../clean"))
+            .directory(File(workDir))
             .inheritIO()
             .start()
     if (process.waitFor() != 0) {
@@ -49,15 +49,17 @@ fun configureRunKotlinBuild(l: GradleBuild.() -> Unit) = tasks.creating(GradleBu
     tasks = listOf("dist", "classes", "testClasses")
 }
 
+val incrementalBuildDir = "../incremental"
+val cleanBuildDir = "../clean"
 val checkoutIncrementalBeforeChanges by tasks.creating {
     doFirst {
 
         val version = vcsStartVersion ?: tcChanges?.lastOrNull()?.version ?: vcsTargetVersion
         println("Worktree Checkout $version^")
 
-        runGit("worktree", "add", "../incremental")
+        runGit(cleanBuildDir, "worktree", "add", incrementalBuildDir)
 
-        runGit("checkout", "$version^")
+        runGit(incrementalBuildDir, "checkout", "$version^")
 
         Unit
     }
@@ -69,11 +71,11 @@ val downloadCC by tasks.creating(Download::class) {
 }
 
 val buildClassesInClean by configureRunKotlinBuild {
-    dir = file("../clean")
+    dir = file(cleanBuildDir)
 }
 
 val buildClassesInIncrementalFirst by configureRunKotlinBuild {
-    dir = file("../incremental")
+    dir = file(incrementalBuildDir)
 }
 
 val checkoutIncrementalOriginal by tasks.creating {
@@ -82,14 +84,14 @@ val checkoutIncrementalOriginal by tasks.creating {
     doFirst {
         println("Checkout $vcsTargetVersion")
 
-        runGit("checkout", "$vcsTargetVersion")
+        runGit(incrementalBuildDir, "checkout", "$vcsTargetVersion")
 
         Unit
     }
 }
 
 val buildClassesInIncrementalSecond by configureRunKotlinBuild {
-    dir = file("../incremental")
+    dir = file(incrementalBuildDir)
     dependsOn(checkoutIncrementalOriginal)
 }
 
