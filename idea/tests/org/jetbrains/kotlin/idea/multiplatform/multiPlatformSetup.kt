@@ -11,7 +11,6 @@ import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.testFramework.PlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
@@ -82,7 +81,7 @@ private fun setupJsTestOutput(module: Module) {
 }
 
 private fun AbstractMultiModuleTest.createModule(name: String): Module {
-    val moduleDir = PlatformTestCase.createTempDir("")
+    val moduleDir = createTempDir("")
     val module = createModule(moduleDir.toString() + "/" + name, StdModuleTypes.JAVA)
     val root = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(moduleDir)
     TestCase.assertNotNull(root)
