@@ -21,8 +21,8 @@ public open class KotlinClass : JavaInterface {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class KotlinClassInderectInheritance : KotlinClass {
-    public constructor KotlinClassInderectInheritance()
+public final class KotlinClassIndirectInheritance : KotlinClass {
+    public constructor KotlinClassIndirectInheritance()
     public final override /*1*/ /*fake_override*/ val property: kotlin.String
     public final val property2: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -34,8 +34,8 @@ public final class KotlinClassInderectInheritance : KotlinClass {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class KotlinClassInderectInheritance2 : KotlinInterfaceInderectInheritance {
-    public constructor KotlinClassInderectInheritance2()
+public final class KotlinClassIndirectInheritance2 : KotlinInterfaceIndirectInheritance {
+    public constructor KotlinClassIndirectInheritance2()
     public final val property: kotlin.String
     @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val propertyy: kotlin.String
     @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val propertyyy: kotlin.String
@@ -59,7 +59,7 @@ public interface KotlinInterface : JavaInterface {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface KotlinInterfaceInderectInheritance : KotlinInterface {
+public interface KotlinInterfaceIndirectInheritance : KotlinInterface {
     @kotlin.jvm.JvmDefault public open override /*1*/ /*fake_override*/ val propertyy: kotlin.String
     @kotlin.jvm.JvmDefault public open val propertyyy: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

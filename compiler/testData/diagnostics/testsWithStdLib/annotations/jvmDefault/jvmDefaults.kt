@@ -105,7 +105,7 @@ interface KotlinInterface : KInterface {
 
 }
 
-interface KotlinInterfaceInderectInheritance : KotlinInterface {
+interface KotlinInterfaceIndirectInheritance : KotlinInterface {
     @JvmDefault
     fun foooo() {
         super.test()
@@ -116,11 +116,11 @@ interface KotlinInterfaceInderectInheritance : KotlinInterface {
 
         object  {
             fun run () {
-                super@KotlinInterfaceInderectInheritance.test()
-                super@KotlinInterfaceInderectInheritance.property
+                super@KotlinInterfaceIndirectInheritance.test()
+                super@KotlinInterfaceIndirectInheritance.property
 
-                super@KotlinInterfaceInderectInheritance.testNonDefault()
-                super@KotlinInterfaceInderectInheritance.propertyNonDefault
+                super@KotlinInterfaceIndirectInheritance.testNonDefault()
+                super@KotlinInterfaceIndirectInheritance.propertyNonDefault
             }
         }
     }
@@ -136,11 +136,11 @@ interface KotlinInterfaceInderectInheritance : KotlinInterface {
 
             object  {
                 fun run () {
-                    super@KotlinInterfaceInderectInheritance.test()
-                    super@KotlinInterfaceInderectInheritance.property
+                    super@KotlinInterfaceIndirectInheritance.test()
+                    super@KotlinInterfaceIndirectInheritance.property
 
-                    super@KotlinInterfaceInderectInheritance.testNonDefault()
-                    super@KotlinInterfaceInderectInheritance.propertyNonDefault
+                    super@KotlinInterfaceIndirectInheritance.testNonDefault()
+                    super@KotlinInterfaceIndirectInheritance.propertyNonDefault
                 }
             }
             return ""
@@ -155,11 +155,11 @@ interface KotlinInterfaceInderectInheritance : KotlinInterface {
 
         object  {
             fun run () {
-                super@KotlinInterfaceInderectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
-                super@KotlinInterfaceInderectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>property<!>
+                super@KotlinInterfaceIndirectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+                super@KotlinInterfaceIndirectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>property<!>
 
-                super@KotlinInterfaceInderectInheritance.testNonDefault()
-                super@KotlinInterfaceInderectInheritance.propertyNonDefault
+                super@KotlinInterfaceIndirectInheritance.testNonDefault()
+                super@KotlinInterfaceIndirectInheritance.propertyNonDefault
             }
         }
     }
@@ -174,11 +174,11 @@ interface KotlinInterfaceInderectInheritance : KotlinInterface {
 
             object  {
                 fun run () {
-                    super@KotlinInterfaceInderectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
-                    super@KotlinInterfaceInderectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>property<!>
+                    super@KotlinInterfaceIndirectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>test<!>()
+                    super@KotlinInterfaceIndirectInheritance.<!INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>property<!>
 
-                    super@KotlinInterfaceInderectInheritance.testNonDefault()
-                    super@KotlinInterfaceInderectInheritance.propertyNonDefault
+                    super@KotlinInterfaceIndirectInheritance.testNonDefault()
+                    super@KotlinInterfaceIndirectInheritance.propertyNonDefault
                 }
             }
             return ""
@@ -226,7 +226,7 @@ open class KotlinClass : KInterface {
         }
 }
 
-class KotlinClassInderectInheritance : KotlinClass() {
+class KotlinClassIndirectInheritance : KotlinClass() {
     fun foo2() {
         super.test()
         super.property
@@ -236,11 +236,11 @@ class KotlinClassInderectInheritance : KotlinClass() {
 
         object  {
             fun run () {
-                super@KotlinClassInderectInheritance.test()
-                super@KotlinClassInderectInheritance.property
+                super@KotlinClassIndirectInheritance.test()
+                super@KotlinClassIndirectInheritance.property
 
-                super@KotlinClassInderectInheritance.testNonDefault()
-                super@KotlinClassInderectInheritance.propertyNonDefault
+                super@KotlinClassIndirectInheritance.testNonDefault()
+                super@KotlinClassIndirectInheritance.propertyNonDefault
             }
         }
 
@@ -256,18 +256,18 @@ class KotlinClassInderectInheritance : KotlinClass() {
 
             object  {
                 fun run () {
-                    super@KotlinClassInderectInheritance.test()
-                    super@KotlinClassInderectInheritance.property
+                    super@KotlinClassIndirectInheritance.test()
+                    super@KotlinClassIndirectInheritance.property
 
-                    super@KotlinClassInderectInheritance.testNonDefault()
-                    super@KotlinClassInderectInheritance.propertyNonDefault
+                    super@KotlinClassIndirectInheritance.testNonDefault()
+                    super@KotlinClassIndirectInheritance.propertyNonDefault
                 }
             }
             return ""
         }
 }
 
-class KotlinClassInderectInheritance2 : KotlinInterfaceInderectInheritance {
+class KotlinClassIndirectInheritance2 : KotlinInterfaceIndirectInheritance {
     fun foo() {
         super.test()
         super.property
@@ -277,11 +277,11 @@ class KotlinClassInderectInheritance2 : KotlinInterfaceInderectInheritance {
 
         object  {
             fun run () {
-                super@KotlinClassInderectInheritance2.test()
-                super@KotlinClassInderectInheritance2.property
+                super@KotlinClassIndirectInheritance2.test()
+                super@KotlinClassIndirectInheritance2.property
 
-                super@KotlinClassInderectInheritance2.testNonDefault()
-                super@KotlinClassInderectInheritance2.propertyNonDefault
+                super@KotlinClassIndirectInheritance2.testNonDefault()
+                super@KotlinClassIndirectInheritance2.propertyNonDefault
             }
         }
     }
@@ -296,11 +296,11 @@ class KotlinClassInderectInheritance2 : KotlinInterfaceInderectInheritance {
 
             object  {
                 fun run () {
-                    super@KotlinClassInderectInheritance2.test()
-                    super@KotlinClassInderectInheritance2.property
+                    super@KotlinClassIndirectInheritance2.test()
+                    super@KotlinClassIndirectInheritance2.property
 
-                    super@KotlinClassInderectInheritance2.testNonDefault()
-                    super@KotlinClassInderectInheritance2.propertyNonDefault
+                    super@KotlinClassIndirectInheritance2.testNonDefault()
+                    super@KotlinClassIndirectInheritance2.propertyNonDefault
                 }
             }
             return ""
@@ -311,10 +311,10 @@ fun test() {
     KotlinClass().test()
     KotlinClass().property
     KotlinClass().propertyNonDefault
-    KotlinClassInderectInheritance2().test()
-    KotlinClassInderectInheritance2().testNonDefault()
-    KotlinClassInderectInheritance2().propertyyy
-    KotlinClassInderectInheritance2().propertyyyNonDefault
+    KotlinClassIndirectInheritance2().test()
+    KotlinClassIndirectInheritance2().testNonDefault()
+    KotlinClassIndirectInheritance2().propertyyy
+    KotlinClassIndirectInheritance2().propertyyyNonDefault
 
     KotlinClass().test()
     KotlinClass().testNonDefault()
