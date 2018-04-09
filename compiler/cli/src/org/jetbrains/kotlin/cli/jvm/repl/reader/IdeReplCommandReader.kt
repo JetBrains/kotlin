@@ -17,53 +17,8 @@
 package org.jetbrains.kotlin.cli.jvm.repl.reader
 
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
 
 class IdeReplCommandReader : ReplCommandReader {
-    override fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine) = readLineForRepl()
+    override fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine) = readLine()
     override fun flushHistory() = Unit
 }
-
-private val stdinForRepl: BufferedReader by lazy {
-    BufferedReader(InputStreamReader(object : InputStream() {
-        override fun read(): Int {
-            return System.`in`.read()
-        }
-
-        override fun reset() {
-            System.`in`.reset()
-        }
-
-        override fun read(b: ByteArray): Int {
-            return System.`in`.read(b)
-        }
-
-        override fun close() {
-            System.`in`.close()
-        }
-
-        override fun mark(readlimit: Int) {
-            System.`in`.mark(readlimit)
-        }
-
-        override fun skip(n: Long): Long {
-            return System.`in`.skip(n)
-        }
-
-        override fun available(): Int {
-            return System.`in`.available()
-        }
-
-        override fun markSupported(): Boolean {
-            return System.`in`.markSupported()
-        }
-
-        override fun read(b: ByteArray, off: Int, len: Int): Int {
-            return System.`in`.read(b, off, len)
-        }
-    }))
-}
-
-private fun readLineForRepl(): String? = stdinForRepl.readLine()
