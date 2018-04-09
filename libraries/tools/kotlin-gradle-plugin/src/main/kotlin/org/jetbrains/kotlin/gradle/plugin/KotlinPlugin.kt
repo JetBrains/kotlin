@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKa
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
+import org.jetbrains.kotlin.scripting.gradle.ScriptingGradleSubplugin
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -427,6 +428,7 @@ internal open class KotlinPlugin(
 
     override fun apply(project: Project) {
         project.createKaptExtension()
+        project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
         super.apply(project)
     }
 }
