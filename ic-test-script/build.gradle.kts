@@ -143,6 +143,6 @@ val prepare by tasks.creating {
 }
 
 val cleanupOnSuccess by tasks.creating(Delete::class) {
-    delete("build/orig.zip")
-    delete("build/inc.zip")
+    delete("$buildDir/orig.zip")
+    delete("$buildDir/inc.zip")
 }
