@@ -25,3 +25,11 @@ Q: How do I run Kotlin/Native behind corporate proxy?
 A: As Kotlin/Native need to download platform specific toolchain, you need to specify
 `-Dhttp.proxyHost=xxx -Dhttp.proxyPort=xxx` as compiler's or `gradlew` arguments,
 or set it via `JAVA_OPTS` environment variable.
+
+Q: How do I specify custom Objective-C prefix/name for my Kotlin framework?
+A: Use `-module_name` compiler option or matching Gradle DSL statement, i.e.
+```
+framework("MyCustomFramework") {
+    extraOpts '-module_name', 'TheName'
+}
+```
