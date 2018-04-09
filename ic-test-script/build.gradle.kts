@@ -20,37 +20,44 @@ val buildId = findProperty("teamcity.build.id") as? String
 val vcsTargetVersion = findProperty("build.vcs.number") as? String
 val vcsStartVersion = (findProperty("first.build.from.revision") as? String)?.takeIf { it.isNotBlank() }
 
+fun fetchChanges(): List<Change>? {
+    return buildId?.let {
+        TeamCityInstanceFactory
+                .guestAuth("https://teamcity.jetbrains.com")
+                .build(BuildId(buildId))
+                .fetchChanges()
+    }
+}
+
+
+val tcChanges by lazy { fetchChanges() }
+
+fun runGit(vararg args: String) {
+    val process = ProcessBuilder()
+            .command("git", *args)
+            .directory(File("../clean"))
+            .inheritIO()
+            .start()
+    if (process.waitFor() != 0) {
+        throw GradleException("git ${args.joinToString(" ")} exited with non-zero code")
+    }
+}
+
+fun configureRunKotlinBuild(l: GradleBuild.() -> Unit) = tasks.creating(GradleBuild::class) {
+    l()
+    buildFile = file("$dir/build.gradle.kts")
+    tasks = listOf("dist", "classes", "testClasses")
+}
 
 val checkoutIncrementalBeforeChanges by tasks.creating {
     doFirst {
 
-        val changes = buildId?.let {
-            TeamCityInstanceFactory
-                    .guestAuth("https://teamcity.jetbrains.com")
-                    .build(BuildId(buildId))
-                    .fetchChanges()
-        }
-
-        val version = vcsStartVersion ?: changes?.lastOrNull()?.version ?: vcsTargetVersion
+        val version = vcsStartVersion ?: tcChanges?.lastOrNull()?.version ?: vcsTargetVersion
         println("Worktree Checkout $version^")
 
-        val worktreeProcess = ProcessBuilder()
-                .command("git", "worktree", "add", "../incremental")
-                .directory(File("../clean"))
-                .inheritIO()
-                .start()
-        if (worktreeProcess.waitFor() != 0) {
-            throw GradleException("Git worktree exited with non-zero code")
-        }
+        runGit("worktree", "add", "../incremental")
 
-        val checkoutProcess = ProcessBuilder()
-                .command("git", "checkout", "$version^")
-                .directory(File("../incremental"))
-                .inheritIO()
-                .start()
-        if (checkoutProcess.waitFor() != 0) {
-            throw GradleException("Git checkout exited with non-zero code")
-        }
+        runGit("checkout", "$version^")
 
         Unit
     }
@@ -61,16 +68,12 @@ val downloadCC by tasks.creating(Download::class) {
     dest(buildDir)
 }
 
-val buildClassesInClean by tasks.creating(GradleBuild::class) {
+val buildClassesInClean by configureRunKotlinBuild {
     dir = file("../clean")
-    buildFile = file("$dir/build.gradle.kts")
-    tasks = listOf("dist", "classes", "testClasses")
 }
 
-val buildClassesInIncrementalFirst by tasks.creating(GradleBuild::class) {
+val buildClassesInIncrementalFirst by configureRunKotlinBuild {
     dir = file("../incremental")
-    buildFile = file("$dir/build.gradle.kts")
-    tasks = listOf("dist", "classes", "testClasses")
 }
 
 val checkoutIncrementalOriginal by tasks.creating {
@@ -79,23 +82,14 @@ val checkoutIncrementalOriginal by tasks.creating {
     doFirst {
         println("Checkout $vcsTargetVersion")
 
-        val process = ProcessBuilder()
-                .command("git", "checkout", "$vcsTargetVersion")
-                .directory(File("../incremental"))
-                .inheritIO()
-                .start()
-        if (process.waitFor() != 0) {
-            throw GradleException("Git exited with non-zero code")
-        }
+        runGit("checkout", "$vcsTargetVersion")
 
         Unit
     }
 }
 
-val buildClassesInIncrementalSecond by tasks.creating(GradleBuild::class) {
+val buildClassesInIncrementalSecond by configureRunKotlinBuild {
     dir = file("../incremental")
-    buildFile = file("$dir/build.gradle.kts")
-    tasks = listOf("dist", "classes", "testClasses")
     dependsOn(checkoutIncrementalOriginal)
 }
 
@@ -146,4 +140,9 @@ val runCompare by tasks.creating(JavaExec::class) {
 
 val prepare by tasks.creating {
     dependsOn(downloadCC, checkoutIncrementalBeforeChanges)
+}
+
+val cleanupOnSuccess by tasks.creating(Delete::class) {
+    delete("build/orig.zip")
+    delete("build/inc.zip")
 }
