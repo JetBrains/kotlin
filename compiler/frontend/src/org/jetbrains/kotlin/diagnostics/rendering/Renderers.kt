@@ -349,7 +349,8 @@ object Renderers {
                 LOG.error(
                     debugMessage(
                         "There is no type parameter with violated upper bound for 'upper bound violated' error",
-                        inferenceErrorData
+                        inferenceErrorData,
+                        verbosity = ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE
                     )
                 )
                 result
@@ -536,6 +537,7 @@ object Renderers {
     enum class ConstraintSystemRenderingVerbosity {
         COMPACT,
         DEBUG, // Includes type bounds positions, types are rendered with FQNs instead of short names
+        EXTRA_VERBOSE // Additionally includes all supertypes of each bounds and type constructors of types
     }
 
     fun renderConstraintSystem(constraintSystem: ConstraintSystem, verbosity: ConstraintSystemRenderingVerbosity): String {
@@ -544,21 +546,34 @@ object Renderers {
             typeBounds.add(constraintSystem.getTypeBounds(variable))
         }
 
+        val separator = if (verbosity == ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE) "\n\n" else "\n"
         return "type parameter bounds:\n" +
-                typeBounds.joinToString("\n") { renderTypeBounds(it, verbosity) } +
+                typeBounds.joinToString(separator = separator) { renderTypeBounds(it, verbosity) } +
                 "\n\n" +
                 "status:\n" +
                 ConstraintsUtil.getDebugMessageForStatus(constraintSystem.status)
     }
 
     private fun renderTypeBounds(typeBounds: TypeBounds, verbosity: ConstraintSystemRenderingVerbosity): String {
-        val typeVariableName = typeBounds.typeVariable.name
-        return if (typeBounds.bounds.isEmpty()) {
-            typeVariableName.asString()
-        } else {
-            val renderedBounds = typeBounds.bounds.joinToString(", ") { renderTypeBound(it, verbosity) }
+        val typeVariableName = typeBounds.typeVariable.name.asString()
+        val renderedTypeVariable = if (verbosity != ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE)
+            typeVariableName
+        else
+            "TypeVariable $typeVariableName, " +
+                    "descriptor = ${typeBounds.typeVariable.freshTypeParameter}, " +
+                    "typeConstructor = ${renderTypeConstructor(typeBounds.typeVariable.freshTypeParameter.typeConstructor)}"
 
-            typeVariableName.asString() + " " + renderedBounds
+        return if (typeBounds.bounds.isEmpty()) {
+            renderedTypeVariable
+        } else {
+            // In 'EXTRA_VERBOSE' bounds take a lot of lines and are rendered as a separate block of text
+            // In other modes they are rendered as a single line
+            val boundsPrefix = if (verbosity == ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE) "\n" else " "
+            val boundsSeparator = if (verbosity == ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE) "\n" else ", "
+
+            val renderedBounds = typeBounds.bounds.joinToString(separator = boundsSeparator) { renderTypeBound(it, verbosity) }
+
+            renderedTypeVariable + boundsPrefix + renderedBounds
         }
     }
 
@@ -578,14 +593,35 @@ object Renderers {
 
         return when (verbosity) {
             ConstraintSystemRenderingVerbosity.COMPACT -> initialBoundRender
+
             ConstraintSystemRenderingVerbosity.DEBUG -> "$initialBoundRender (${bound.position}) "
+
+            ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE -> {
+                "$initialBoundRender (${bound.position})\n" +
+                        "Constraining type additional info: ${renderTypeConstructor(bound.constrainingType.constructor)}\n" +
+                        "Supertypes of constraining type:\n" +
+                        TypeUtils.getAllSupertypes(bound.constrainingType).joinToString("\n") {
+                            "- " + typeRendered.renderType(it) + ", TypeConstructor info: ${renderTypeConstructor(it.constructor)}"
+                        } +
+                        "\n"
+            }
         }
     }
 
-    private fun debugMessage(message: String, inferenceErrorData: InferenceErrorData) = buildString {
+    @Suppress("deprecation")
+    private fun renderTypeConstructor(typeConstructor: TypeConstructor): String {
+        return "$typeConstructor[${typeConstructor.javaClass.name}], " +
+                "${(typeConstructor as? AbstractTypeConstructor)?.renderAdditionalDebugInformation()}"
+    }
+
+    private fun debugMessage(
+        message: String,
+        inferenceErrorData: InferenceErrorData,
+        verbosity: ConstraintSystemRenderingVerbosity = ConstraintSystemRenderingVerbosity.DEBUG
+    ) = buildString {
         append(message)
         append("\nConstraint system: \n")
-        append(renderConstraintSystem(inferenceErrorData.constraintSystem, ConstraintSystemRenderingVerbosity.DEBUG))
+        append(renderConstraintSystem(inferenceErrorData.constraintSystem, verbosity))
         append("\nDescriptor:\n")
         append(inferenceErrorData.descriptor)
         append("\nExpected type:\n")
