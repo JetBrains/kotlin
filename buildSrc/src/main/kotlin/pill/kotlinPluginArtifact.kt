@@ -96,8 +96,8 @@ sealed class ArtifactElement {
 }
 
 fun generateKotlinPluginArtifactFile(rootProject: Project): PFile {
-    val mainIdeaPluginTask = rootProject.tasks.getByName("ideaPlugin") as Copy
-    val gradleArtifactDir = mainIdeaPluginTask.destinationDir
+    val mainIdeaPluginTask = rootProject.tasks.getByName("ideaPlugin")
+    val gradleArtifactDir = File(rootProject.extra["ideaPluginDir"] as File, "lib")
 
     val ideaPluginTasks = mainIdeaPluginTask.taskDependencies
         .getDependencies(mainIdeaPluginTask)
