@@ -545,31 +545,41 @@ object Renderers {
         }
 
         return "type parameter bounds:\n" +
-                StringUtil.join(typeBounds, { renderTypeBounds(it, verbosity) }, "\n") + "\n\n" + "status:\n" +
+                typeBounds.joinToString("\n") { renderTypeBounds(it, verbosity) } +
+                "\n\n" +
+                "status:\n" +
                 ConstraintsUtil.getDebugMessageForStatus(constraintSystem.status)
     }
 
     private fun renderTypeBounds(typeBounds: TypeBounds, verbosity: ConstraintSystemRenderingVerbosity): String {
-        val renderBound = { bound: Bound ->
-            val arrow = when (bound.kind) {
-                LOWER_BOUND -> ">: "
-                UPPER_BOUND -> "<: "
-                else -> ":= "
-            }
-            val renderer = if (verbosity == ConstraintSystemRenderingVerbosity.COMPACT)
-                DescriptorRenderer.SHORT_NAMES_IN_TYPES
-            else
-                DescriptorRenderer.FQ_NAMES_IN_TYPES
-
-            val renderedBound = arrow + renderer.renderType(bound.constrainingType) + if (!bound.isProper) "*" else ""
-
-            if (verbosity == ConstraintSystemRenderingVerbosity.COMPACT) renderedBound else renderedBound + '(' + bound.position + ')'
-        }
         val typeVariableName = typeBounds.typeVariable.name
         return if (typeBounds.bounds.isEmpty()) {
             typeVariableName.asString()
-        } else
-            "$typeVariableName ${StringUtil.join(typeBounds.bounds, renderBound, ", ")}"
+        } else {
+            val renderedBounds = typeBounds.bounds.joinToString(", ") { renderTypeBound(it, verbosity) }
+
+            typeVariableName.asString() + " " + renderedBounds
+        }
+    }
+
+    private fun renderTypeBound(bound: Bound, verbosity: ConstraintSystemRenderingVerbosity): String {
+        val typeRendered = if (verbosity == ConstraintSystemRenderingVerbosity.COMPACT)
+            DescriptorRenderer.SHORT_NAMES_IN_TYPES
+        else
+            DescriptorRenderer.FQ_NAMES_IN_TYPES
+
+        val arrow = when (bound.kind) {
+            LOWER_BOUND -> ">: "
+            UPPER_BOUND -> "<: "
+            else -> ":= "
+        }
+
+        val initialBoundRender = arrow + typeRendered.renderType(bound.constrainingType) + if (!bound.isProper) "*" else ""
+
+        return when (verbosity) {
+            ConstraintSystemRenderingVerbosity.COMPACT -> initialBoundRender
+            ConstraintSystemRenderingVerbosity.DEBUG -> "$initialBoundRender (${bound.position}) "
+        }
     }
 
     private fun debugMessage(message: String, inferenceErrorData: InferenceErrorData) = buildString {
