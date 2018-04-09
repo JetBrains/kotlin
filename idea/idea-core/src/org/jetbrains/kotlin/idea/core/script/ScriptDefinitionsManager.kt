@@ -53,7 +53,7 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionProvider {
+class ScriptDefinitionsManager(private val project: Project) : ScriptDefinitionProvider {
     private val lock = ReentrantReadWriteLock()
     private var definitionsByContributor = mutableMapOf<ScriptDefinitionContributor, List<KotlinScriptDefinition>>()
     private var definitions: List<KotlinScriptDefinition> = emptyList()
@@ -100,7 +100,7 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     private fun getContributors(): List<ScriptDefinitionContributor> {
         @Suppress("DEPRECATION")
         val fromDeprecatedEP = Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.toList()
-                .map(::ScriptTemplatesProviderAdapter)
+            .map(::ScriptTemplatesProviderAdapter)
         val fromNewEp = Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.toList()
         return fromNewEp.dropLast(1) + fromDeprecatedEP + fromNewEp.last()
     }
@@ -123,8 +123,7 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> {
         return try {
             getDefinitions()
-        }
-        catch (t: Throwable) {
+        } catch (t: Throwable) {
             // TODO: review exception handling
             // possibly log, see KT-19276
             emptyList()
@@ -132,7 +131,8 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     }
 
     companion object {
-        fun getInstance(project: Project): ScriptDefinitionsManager = ServiceManager.getService(project, ScriptDefinitionProvider::class.java) as ScriptDefinitionsManager
+        fun getInstance(project: Project): ScriptDefinitionsManager =
+            ServiceManager.getService(project, ScriptDefinitionProvider::class.java) as ScriptDefinitionsManager
     }
 }
 
@@ -140,16 +140,16 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
 private val LOG = Logger.getInstance("ScriptTemplatesProviders")
 
 fun loadDefinitionsFromTemplates(
-        templateClassNames: List<String>,
-        templateClasspath: List<File>,
-        environment: Environment = emptyMap(),
-        // TODO: need to provide a way to specify this in compiler/repl .. etc
-        /*
-         * Allows to specify additional jars needed for DependenciesResolver (and not script template).
-         * Script template dependencies naturally become (part of) dependencies of the script which is not always desired for resolver dependencies.
-         * i.e. gradle resolver may depend on some jars that 'built.gradle.kts' files should not depend on.
-         */
-        additionalResolverClasspath: List<File> = emptyList()
+    templateClassNames: List<String>,
+    templateClasspath: List<File>,
+    environment: Environment = emptyMap(),
+    // TODO: need to provide a way to specify this in compiler/repl .. etc
+    /*
+     * Allows to specify additional jars needed for DependenciesResolver (and not script template).
+     * Script template dependencies naturally become (part of) dependencies of the script which is not always desired for resolver dependencies.
+     * i.e. gradle resolver may depend on some jars that 'built.gradle.kts' files should not depend on.
+     */
+    additionalResolverClasspath: List<File> = emptyList()
 ): List<KotlinScriptDefinition> = try {
     val classpath = templateClasspath + additionalResolverClasspath
     LOG.info("[kts] loading script definitions $templateClassNames using cp: ${classpath.joinToString(File.pathSeparator)}")
@@ -191,8 +191,7 @@ fun loadDefinitionsFromTemplates(
             null
         }
     }
-}
-catch (ex: Throwable) {
+} catch (ex: Throwable) {
     // TODO: review exception handling
     emptyList()
 }
@@ -204,10 +203,10 @@ interface ScriptDefinitionContributor {
 
     companion object {
         val EP_NAME: ExtensionPointName<ScriptDefinitionContributor> =
-                ExtensionPointName.create<ScriptDefinitionContributor>("org.jetbrains.kotlin.scriptDefinitionContributor")
+            ExtensionPointName.create<ScriptDefinitionContributor>("org.jetbrains.kotlin.scriptDefinitionContributor")
 
         inline fun <reified T> find(project: Project) =
-                Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.filterIsInstance<T>().firstOrNull()
+            Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.filterIsInstance<T>().firstOrNull()
     }
 
 }
@@ -225,21 +224,21 @@ class StandardIdeScriptDefinition(project: Project) : KotlinScriptDefinition(Scr
 
 class BundledKotlinScriptDependenciesResolver(private val project: Project) : DependenciesResolver {
     override fun resolve(
-            scriptContents: ScriptContents,
-            environment: Environment
+        scriptContents: ScriptContents,
+        environment: Environment
     ): DependenciesResolver.ResolveResult {
         val virtualFile = scriptContents.file?.let { VfsUtil.findFileByIoFile(it, true) }
 
         val javaHome = getScriptSDK(project, virtualFile)
         val dependencies = ScriptDependencies(
-                javaHome = javaHome?.let(::File),
-                classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
-                    listOf(
-                            reflectPath,
-                            stdlibPath,
-                            scriptRuntimePath
-                    )
-                }
+            javaHome = javaHome?.let(::File),
+            classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
+                listOf(
+                    reflectPath,
+                    stdlibPath,
+                    scriptRuntimePath
+                )
+            }
         )
         return dependencies.asSuccess()
     }
