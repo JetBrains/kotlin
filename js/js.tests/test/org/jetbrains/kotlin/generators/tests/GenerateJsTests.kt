@@ -71,5 +71,9 @@ fun main(args: Array<String>) {
         testClass<AbstractInlineDefaultValuesTests> {
             model("codegen/boxInline/defaultValues/", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
+            model("codegen/box/arrays", targetBackend = TargetBackend.JS)
+        }
     }
 }
