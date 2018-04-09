@@ -28,7 +28,9 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
 import org.apache.log4j.Logger
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.facet.configureFacet
@@ -180,14 +182,29 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     }
 }
 
-fun configureLanguageVersion(fileText: String, project: Project, module: Module) {
+fun configureCompilerOptions(fileText: String, project: Project, module: Module) {
     val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// LANGUAGE_VERSION: ")
-    if (version != null) {
+    val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// JVM_TARGET: ")
+    val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// COMPILER_ARGUMENTS: ")
+    if (version != null || jvmTarget != null || options != null) {
         val accessToken = WriteAction.start()
         try {
             val modelsProvider = IdeModifiableModelsProviderImpl(project)
             val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
-            facet.configureFacet(version, LanguageFeature.State.DISABLED, null, modelsProvider)
+
+            facet.configureFacet(
+                version ?: LanguageVersion.LATEST_STABLE.versionString,
+                LanguageFeature.State.DISABLED,
+                if (jvmTarget != null) TargetPlatformKind.Jvm(JvmTarget.fromString(jvmTarget)!!) else null,
+                modelsProvider
+            )
+            if (options != null) {
+                val compilerSettings = facet.configuration.settings.compilerSettings ?: CompilerSettings().also {
+                    facet.configuration.settings.compilerSettings = it
+                }
+                compilerSettings.additionalArguments = options
+                facet.configuration.settings.updateMergedArguments()
+            }
             modelsProvider.commit()
         }
         finally {
