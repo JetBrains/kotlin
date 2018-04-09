@@ -922,4 +922,11 @@ static void checkLoadedOnce() {
   }
 }
 
+#else
+
+extern "C" ALWAYS_INLINE id Kotlin_Interop_refToObjC(ObjHeader* obj) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
+}
+
 #endif // KONAN_OBJC_INTEROP
