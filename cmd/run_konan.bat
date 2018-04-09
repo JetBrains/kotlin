@@ -72,7 +72,8 @@ set JAVA_OPTS=-ea ^
     -Xmx3G ^
     "-Djava.library.path=%NATIVE_LIB%" ^
     "-Dkonan.home=%_KONAN_HOME%" ^
-    -Dfile.encoding=UTF-8
+    -Dfile.encoding=UTF-8 ^
+    %JAVA_OPTS%
 
 set LIBCLANG_DISABLE_CRASH_RECOVERY=1
 

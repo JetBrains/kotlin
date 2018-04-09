@@ -68,7 +68,8 @@ java_opts=(-ea \
             -Xmx3G \
             "-Djava.library.path=${NATIVE_LIB}" \
             "-Dkonan.home=${KONAN_HOME}" \
-           -Dfile.encoding=UTF-8)
+            -Dfile.encoding=UTF-8 \
+            ${JAVA_OPTS})
 
 # Unset some environment variables which are set by XCode and may potentially affect the tool executed.
 for VAR in `cat "${KONAN_HOME}/tools/env_blacklist"`; do
