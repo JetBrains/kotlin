@@ -82,11 +82,16 @@
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
     </action>
 
+    <group id = "ConvertJavaToKotlinGroup">
+      <separator/>
     <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction"
             text="Convert Java File to Kotlin File">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift K"/>
+      </action>
       <add-to-group group-id="CodeMenu" anchor="last"/>
-    </action>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorTabPopupMenu" anchor="last"/>
+    </group>
 
     <group id="KotlinToolsGroup" popup="true" text="Kotlin" icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
            class="org.jetbrains.kotlin.idea.actions.KotlinActionGroup">
