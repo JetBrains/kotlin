@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.parsing.util
+package org.jetbrains.kotlin.incremental.parsing
 
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreProjectEnvironment
@@ -80,7 +80,9 @@ private inline fun <T> withPsiSetup(fn: PsiSetup.() -> T): T {
         val applicationEnvironment = CoreApplicationEnvironment(disposable, false)
         val projectEnvironment = CoreProjectEnvironment(disposable, applicationEnvironment)
         CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaLanguage.EP_NAME, MetaLanguage::class.java)
-        applicationEnvironment.registerApplicationService(ScriptDefinitionProvider::class.java, NoopScriptDefinitionProvider())
+        applicationEnvironment.registerApplicationService(ScriptDefinitionProvider::class.java,
+                                                          NoopScriptDefinitionProvider()
+        )
         applicationEnvironment.registerFileType(KotlinFileType.INSTANCE, "kt")
         applicationEnvironment.registerParserDefinition(KotlinParserDefinition())
 
