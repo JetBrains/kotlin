@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 interface TransformationInfo {
@@ -60,7 +61,7 @@ class WhenMappingTransformationInfo(
     }
 }
 
-class AnonymousObjectTransformationInfo internal constructor(
+class AnonymousObjectTransformationInfo private constructor(
         override val oldClassName: String,
         private val needReification: Boolean,
         val lambdasToInline: Map<Int, LambdaInfo>,
@@ -68,12 +69,14 @@ class AnonymousObjectTransformationInfo internal constructor(
         private val alreadyRegenerated: Boolean,
         val constructorDesc: String?,
         private val isStaticOrigin: Boolean,
-        parentNameGenerator: NameGenerator,
+        override val nameGenerator: NameGenerator,
         private val capturesAnonymousObjectThatMustBeRegenerated: Boolean = false
 ) : TransformationInfo {
 
-    override val nameGenerator by lazy {
-        parentNameGenerator.subGenerator(true, null)
+    private var lambdaTransformedIntoSingletonDecider: (() -> Boolean)? = null
+
+    val isLambdaTransformedIntoSingleton: Boolean by lazy {
+        lambdaTransformedIntoSingletonDecider!!()
     }
 
     lateinit var newConstructorDescriptor: String
@@ -84,14 +87,6 @@ class AnonymousObjectTransformationInfo internal constructor(
 
     override val wasAlreadyRegenerated: Boolean
         get() = alreadyRegenerated
-
-    constructor(
-            ownerInternalName: String,
-            needReification: Boolean,
-            alreadyRegenerated: Boolean,
-            isStaticOrigin: Boolean,
-            nameGenerator: NameGenerator
-    ) : this(ownerInternalName, needReification, hashMapOf(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator)
 
     override fun shouldRegenerate(sameModule: Boolean): Boolean =
             !alreadyRegenerated &&
@@ -109,4 +104,58 @@ class AnonymousObjectTransformationInfo internal constructor(
         continuationClassName: String?
     ): ObjectTransformer<*> =
         AnonymousObjectTransformer(this, inliningContext, sameModule, continuationClassName)
+
+    fun notLambdaTransformedIntoSingleton() {
+        lambdaTransformedIntoSingletonDecider = { false }
+    }
+
+    fun inheritLambdaTransformedIntoSingleton(info: AnonymousObjectTransformationInfo) {
+        if (lambdaTransformedIntoSingletonDecider == null) {
+            lambdaTransformedIntoSingletonDecider = { info.isLambdaTransformedIntoSingleton }
+        }
+    }
+
+    fun computeLambdaTransformedIntoSingleton() {
+        lambdaTransformedIntoSingletonDecider = {
+            !wasSingletonOriginally && Type.getArgumentTypes(newConstructorDescriptor).isEmpty()
+        }
+    }
+
+    private val wasSingletonOriginally: Boolean get() = constructorDesc == null
+
+    companion object {
+        fun forSingletonLoad(
+            oldClassName: String, needReification: Boolean, capturedOuterRegenerated: Boolean,
+            alreadyRegenerated: Boolean, nameGenerator: NameGenerator
+        ): AnonymousObjectTransformationInfo =
+            AnonymousObjectTransformationInfo(
+                oldClassName,
+                needReification,
+                hashMapOf(),
+                capturedOuterRegenerated,
+                alreadyRegenerated,
+                constructorDesc = null,
+                isStaticOrigin = true,
+                nameGenerator = nameGenerator
+            ).also {
+                it.notLambdaTransformedIntoSingleton()
+            }
+
+        fun forConstructorInvocation(
+            oldClassName: String, needReification: Boolean, lambdasToInline: Map<Int, LambdaInfo>,
+            capturedOuterRegenerated: Boolean, alreadyRegenerated: Boolean, constructorDesc: String?,
+            nameGenerator: NameGenerator, capturesAnonymousObjectThatMustBeRegenerated: Boolean
+        ): AnonymousObjectTransformationInfo =
+            AnonymousObjectTransformationInfo(
+                oldClassName,
+                needReification,
+                lambdasToInline,
+                capturedOuterRegenerated,
+                alreadyRegenerated,
+                constructorDesc = constructorDesc,
+                isStaticOrigin = false,
+                nameGenerator = nameGenerator,
+                capturesAnonymousObjectThatMustBeRegenerated = capturesAnonymousObjectThatMustBeRegenerated
+            )
+    }
 }

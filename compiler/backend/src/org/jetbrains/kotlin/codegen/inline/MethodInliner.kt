@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.SmartList
@@ -189,13 +190,27 @@ class MethodInliner(
                     }
                 }
                 else if (!transformationInfo!!.wasAlreadyRegenerated) {
+                    // Didn't need to be regenerated in the first place, so it was not transformed.
                     result.addNotChangedClass(oldClassName)
+                    (transformationInfo as? AnonymousObjectTransformationInfo)?.notLambdaTransformedIntoSingleton()
+                }
+                else if (transformationInfo is AnonymousObjectTransformationInfo) {
+                    // Needs regeneration which was already done.
+                    val newInfo = transformationInfo as AnonymousObjectTransformationInfo
+                    val existingInfo = inliningContext.findAnonymousObjectTransformationInfo(newInfo.oldClassName)!!
+                    assert(existingInfo !== newInfo)
+                    assert(newInfo.newClassName == existingInfo.newClassName)
+                    newInfo.inheritLambdaTransformedIntoSingleton(existingInfo)
                 }
             }
 
             override fun anew(type: Type) {
                 if (isSamWrapper(type.internalName) || isAnonymousClass(type.internalName)) {
                     handleAnonymousObjectRegeneration()
+                    if ((transformationInfo as? AnonymousObjectTransformationInfo)?.isLambdaTransformedIntoSingleton == true) {
+                        super.visitFieldInsn(Opcodes.GETSTATIC, type.internalName, JvmAbi.INSTANCE_FIELD, type.descriptor)
+                        return
+                    }
                 }
 
                 //in case of regenerated transformationInfo type would be remapped to new one via remappingMethodAdapter
@@ -283,36 +298,42 @@ class MethodInliner(
                     if (shouldRegenerate || isContinuation) {
                         assert(shouldRegenerate || inlineCallSiteInfo.ownerClassName == transformationInfo!!.oldClassName) { "Only coroutines can call their own constructors" }
 
-                        //put additional captured parameters on stack
                         var info = transformationInfo as AnonymousObjectTransformationInfo
+                        if (info.isLambdaTransformedIntoSingleton) {
+                            // Just remove the call, replace it with POP, pair
+                            // DUP/POP will be removed in later optimizations.
+                            visitInsn(Opcodes.POP)
 
-                        val oldInfo = inliningContext.findAnonymousObjectTransformationInfo(owner)
-                        if (oldInfo != null && isContinuation) {
-                            info = oldInfo
-                        }
-
-                        val isContinuationCreate = isContinuation && oldInfo != null && resultNode.name == "create" &&
-                                resultNode.desc.endsWith(")" + CONTINUATION_ASM_TYPE.descriptor)
-
-                        for (capturedParamDesc in info.allRecapturedParameters) {
-                            if (capturedParamDesc.fieldName == THIS && isContinuationCreate) {
-                                // Common inliner logic doesn't support cases when transforming anonymous object can
-                                // be instantiated by itself.
-                                // To support such cases workaround with 'oldInfo' is used.
-                                // But it corresponds to outer context and a bit inapplicable for nested 'create' method context.
-                                // 'This' in outer context corresponds to outer instance in current
-                                visitFieldInsn(
-                                    Opcodes.GETSTATIC, owner,
-                                    CAPTURED_FIELD_FOLD_PREFIX + THIS_0, capturedParamDesc.type.descriptor
-                                )
-                            } else {
-                                visitFieldInsn(
-                                    Opcodes.GETSTATIC, capturedParamDesc.containingLambdaName,
-                                    CAPTURED_FIELD_FOLD_PREFIX + capturedParamDesc.fieldName, capturedParamDesc.type.descriptor
-                                )
+                        } else {
+                            //put additional captured parameters on stack
+                            val oldInfo = inliningContext.findAnonymousObjectTransformationInfo(owner)
+                            if (oldInfo != null && isContinuation) {
+                                info = oldInfo
                             }
+
+                            val isContinuationCreate = isContinuation && oldInfo != null && resultNode.name == "create" &&
+                                    resultNode.desc.endsWith(")" + CONTINUATION_ASM_TYPE.descriptor)
+
+                            for (capturedParamDesc in info.allRecapturedParameters) {
+                                if (capturedParamDesc.fieldName == THIS && isContinuationCreate) {
+                                    // Common inliner logic doesn't support cases when transforming anonymous object can
+                                    // be instantiated by itself.
+                                    // To support such cases workaround with 'oldInfo' is used.
+                                    // But it corresponds to outer context and a bit inapplicable for nested 'create' method context.
+                                    // 'This' in outer context corresponds to outer instance in current
+                                    visitFieldInsn(
+                                        Opcodes.GETSTATIC, owner,
+                                        CAPTURED_FIELD_FOLD_PREFIX + THIS_0, capturedParamDesc.type.descriptor
+                                    )
+                                } else {
+                                    visitFieldInsn(
+                                        Opcodes.GETSTATIC, capturedParamDesc.containingLambdaName,
+                                        CAPTURED_FIELD_FOLD_PREFIX + capturedParamDesc.fieldName, capturedParamDesc.type.descriptor
+                                    )
+                                }
+                            }
+                            super.visitMethodInsn(opcode, info.oldClassName, name, info.newConstructorDescriptor, itf)
                         }
-                        super.visitMethodInsn(opcode, info.newClassName, name, info.newConstructorDescriptor, itf)
 
                         //TODO: add new inner class also for other contexts
                         if (inliningContext.parent is RegeneratedClassContext) {
@@ -516,9 +537,16 @@ class MethodInliner(
                             }
 
                             recordTransformation(
-                                    buildConstructorInvocation(
-                                            owner, cur.desc, lambdaMapping, awaitClassReification, capturesAnonymousObjectThatMustBeRegenerated
+                                buildAnonymousObjectTransformationInfo(
+                                    AnonymousObjectTransformationInfo.forConstructorInvocation(
+                                        owner, awaitClassReification, lambdaMapping,
+                                        inliningContext.classRegeneration,
+                                        isAlreadyRegenerated(owner),
+                                        cur.desc,
+                                        createAnonymousObjectNameGenerator(owner),
+                                        capturesAnonymousObjectThatMustBeRegenerated
                                     )
+                                )
                             )
                             awaitClassReification = false
                         }
@@ -534,10 +562,14 @@ class MethodInliner(
                         val className = fieldInsnNode!!.owner
                         if (isAnonymousSingletonLoad(className, fieldInsnNode.name)) {
                             recordTransformation(
-                                    AnonymousObjectTransformationInfo(
-                                            className, awaitClassReification, isAlreadyRegenerated(className), true,
-                                            inliningContext.nameGenerator
+                                buildAnonymousObjectTransformationInfo(
+                                    AnonymousObjectTransformationInfo.forSingletonLoad(
+                                        className, awaitClassReification,
+                                        inliningContext.classRegeneration,
+                                        isAlreadyRegenerated(className),
+                                        createAnonymousObjectNameGenerator(className)
                                     )
+                                )
                             )
                             awaitClassReification = false
                         }
@@ -663,6 +695,10 @@ class MethodInliner(
         return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == CONTINUATION_ASM_TYPE }
     }
 
+    private fun createAnonymousObjectNameGenerator(className: String) =
+        inliningContext.findAnonymousObjectTransformationInfo(className)?.nameGenerator
+                ?: inliningContext.nameGenerator.subGenerator(true, null)
+
     private fun preprocessNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {
         try {
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
@@ -707,25 +743,8 @@ class MethodInliner(
         return info != null && info.shouldRegenerate(true)
     }
 
-    private fun buildConstructorInvocation(
-            anonymousType: String,
-            desc: String,
-            lambdaMapping: Map<Int, LambdaInfo>,
-            needReification: Boolean,
-            capturesAnonymousObjectThatMustBeRegenerated: Boolean
-    ): AnonymousObjectTransformationInfo {
-
-        val info = AnonymousObjectTransformationInfo(
-                anonymousType, needReification, lambdaMapping,
-                inliningContext.classRegeneration,
-                isAlreadyRegenerated(anonymousType),
-                desc,
-                false,
-                inliningContext.nameGenerator,
-                capturesAnonymousObjectThatMustBeRegenerated
-        )
-
-        val memoizeAnonymousObject = inliningContext.findAnonymousObjectTransformationInfo(anonymousType)
+    private fun buildAnonymousObjectTransformationInfo(info: AnonymousObjectTransformationInfo): AnonymousObjectTransformationInfo {
+        val memoizeAnonymousObject = inliningContext.findAnonymousObjectTransformationInfo(info.oldClassName)
         if (memoizeAnonymousObject == null ||
             //anonymous object could be inlined in several context without transformation (keeps same class name)
             // and on further inlining such code some of such cases would be transformed and some not,
@@ -734,7 +753,7 @@ class MethodInliner(
             info.shouldRegenerate(isSameModule)
         ) {
 
-            inliningContext.recordIfNotPresent(anonymousType, info)
+            inliningContext.recordIfNotPresent(info.oldClassName, info)
         }
         return info
     }

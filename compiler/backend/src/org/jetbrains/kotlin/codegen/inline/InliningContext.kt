@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.psi.KtElement
 
 class RootInliningContext(
         expressionMap: Map<Int, LambdaInfo>,
@@ -72,6 +71,7 @@ open class InliningContext(
                 ?: if (searchInParent) parent?.findAnonymousObjectTransformationInfo(internalName, searchInParent) else null
 
     fun recordIfNotPresent(internalName: String, info: AnonymousObjectTransformationInfo) {
+        assert((internalNameToAnonymousObjectTransformationInfo[internalName]?.oldClassName ?: info.oldClassName) == info.oldClassName)
         internalNameToAnonymousObjectTransformationInfo.putIfAbsent(internalName, info)
     }
 
