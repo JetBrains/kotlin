@@ -235,6 +235,12 @@ public inline fun CharSequence?.isNullOrEmpty(): Boolean {
 }
 
 /**
+ * Returns `true` if this nullable char sequence is not null or empty
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharSequence?.isNotNullOrEmpty(): Boolean = !isNullOrEmpty()
+
+/**
  * Returns `true` if this char sequence is empty (contains no characters).
  */
 @kotlin.internal.InlineOnly
@@ -267,6 +273,12 @@ public inline fun CharSequence?.isNullOrBlank(): Boolean {
 
     return this == null || this.isBlank()
 }
+
+/**
+ * Returns `true` if this nullable char sequence is either not `null` or not empty or does not consist solely of whitespace characters.
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharSequence?.isNotNullOrBlank(): Boolean = !isNullOrBlank()
 
 /**
  * Iterator for characters of the given char sequence.
