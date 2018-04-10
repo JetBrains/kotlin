@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -75,11 +74,14 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
             !DescriptorUtils.isAnnotationClass(descriptor)
         ) {
             return descriptor.getSuperInterfaces().all {
-                checkJvmDefaultThroughInheritance(it, enableJvmDefault)
+                checkJvmDefaultAnnotation(it)
             }
         }
 
+        return checkJvmDefaultAnnotation(descriptor)
+    }
 
+    private fun checkJvmDefaultAnnotation(descriptor: ClassDescriptor): Boolean {
         return descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>().all {
             !it.hasJvmDefaultAnnotation()
         }
