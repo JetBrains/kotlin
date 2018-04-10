@@ -20,22 +20,22 @@ package kotlin.test
  * Marks a function as a test.
  */
 @Target(AnnotationTarget.FUNCTION)
-public annotation class Test
+public actual annotation class Test
 
 /**
  * Marks a test or a suite as ignored.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-public annotation class Ignore
+public actual annotation class Ignore
 
 /**
  * Marks a function to be invoked before each test.
  */
 @Target(AnnotationTarget.FUNCTION)
-public annotation class BeforeTest
+public actual annotation class BeforeTest
 
 /**
  * Marks a function to be invoked after each test.
  */
 @Target(AnnotationTarget.FUNCTION)
-public annotation class AfterTest
+public actual annotation class AfterTest

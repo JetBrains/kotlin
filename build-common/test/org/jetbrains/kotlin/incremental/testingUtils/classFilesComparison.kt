@@ -19,10 +19,14 @@ package org.jetbrains.kotlin.incremental.testingUtils
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.DebugProtoBuf
+import org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.protobuf.ExtensionRegistry
-import org.jetbrains.kotlin.serialization.DebugProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
-import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
+import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
@@ -34,6 +38,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
 import java.util.zip.CRC32
+import java.util.zip.GZIPInputStream
 import kotlin.comparisons.compareBy
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
@@ -163,6 +168,24 @@ private fun classFileToString(classFile: File): String {
     return out.toString()
 }
 
+private fun metaJsToString(metaJsFile: File): String {
+    val out = StringWriter()
+
+    val metadataList = arrayListOf<KotlinJavascriptMetadata>()
+    KotlinJavascriptMetadataUtils.parseMetadata(metaJsFile.readText(), metadataList)
+
+    for (metadata in metadataList) {
+        val (header, content) = GZIPInputStream(ByteArrayInputStream(metadata.body)).use { stream ->
+            DebugJsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
+                    DebugJsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
+        }
+        out.write("\n------ header -----\n$header")
+        out.write("\n------ library -----\n$content")
+    }
+
+    return out.toString()
+}
+
 private fun getExtensionRegistry(): ExtensionRegistry {
     val registry = ExtensionRegistry.newInstance()!!
     DebugJvmProtoBuf.registerAllExtensions(registry)
@@ -173,6 +196,9 @@ private fun fileToStringRepresentation(file: File): String {
     return when {
         file.name.endsWith(".class") -> {
             classFileToString(file)
+        }
+        file.name.endsWith(KotlinJavascriptMetadataUtils.META_JS_SUFFIX) -> {
+            metaJsToString(file)
         }
         else -> {
             file.readText()

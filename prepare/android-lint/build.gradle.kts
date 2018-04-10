@@ -1,7 +1,10 @@
 
 description = "Kotlin Android Lint"
 
-apply { plugin("java-base") }
+plugins {
+    `java-base`
+    id("jps-compatible-base")
+}
 
 val projectsToShadow = listOf(
         ":plugins:lint",
@@ -12,8 +15,6 @@ sourceSets {
     "main" {}
     "test" {}
 }
-
-containsEmbeddedComponents()
 
 dependencies {
     projectsToShadow.forEach { p ->

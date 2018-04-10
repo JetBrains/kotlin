@@ -49,12 +49,12 @@ public class KotlinSurrounderUtils {
     }
 
     public static boolean isUsedAsStatement(@NotNull KtExpression expression) {
-        BindingContext context = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL);
+        BindingContext context = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL_WITH_CFA);
         return BindingContextUtilsKt.isUsedAsStatement(expression, context);
     }
 
     public static boolean isUsedAsExpression(@NotNull KtExpression expression) {
-        BindingContext context = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL);
+        BindingContext context = ResolutionUtils.analyze(expression, BodyResolveMode.PARTIAL_WITH_CFA);
         return BindingContextUtilsKt.isUsedAsExpression(expression, context);
     }
 }

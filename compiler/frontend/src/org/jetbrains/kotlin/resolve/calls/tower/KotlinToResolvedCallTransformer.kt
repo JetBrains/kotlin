@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.tower
@@ -43,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
@@ -82,11 +72,13 @@ class KotlinToResolvedCallTransformer(
 
     fun <D : CallableDescriptor> transformAndReport(
         baseResolvedCall: CallResolutionResult,
-        context: BasicCallResolutionContext
+        context: BasicCallResolutionContext,
+        tracingStrategy: TracingStrategy
     ): ResolvedCall<D> {
-        val candidate = baseResolvedCall.resultCallAtom!!
-        when (baseResolvedCall.type) {
-            CallResolutionResult.Type.PARTIAL -> {
+        return when (baseResolvedCall) {
+            is PartialCallResolutionResult -> {
+                val candidate = baseResolvedCall.resultCallAtom
+
                 val psiKotlinCall = candidate.atom.psiKotlinCall
                 val psiCall = if (psiKotlinCall is PSIKotlinCallForInvoke)
                     psiKotlinCall.baseCall.psiCall
@@ -94,10 +86,16 @@ class KotlinToResolvedCallTransformer(
                     psiKotlinCall.psiCall
 
                 context.trace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, baseResolvedCall)
+                context.inferenceSession.addPartialCallInfo(
+                    PSIPartialCallInfo(baseResolvedCall, context, tracingStrategy)
+                )
 
-                return createStubResolvedCallAndWriteItToTrace(candidate, context.trace, baseResolvedCall.diagnostics)
+                createStubResolvedCallAndWriteItToTrace(candidate, context.trace, baseResolvedCall.diagnostics)
             }
-            CallResolutionResult.Type.ERROR, CallResolutionResult.Type.COMPLETED -> {
+
+            is CompletedCallResolutionResult, is ErrorCallResolutionResult -> {
+                val candidate = (baseResolvedCall as SingleCallResolutionResult).resultCallAtom
+
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
                     resultSubstitutor, context.trace, context, this, expressionTypingServices, argumentTypeResolver,
@@ -108,9 +106,11 @@ class KotlinToResolvedCallTransformer(
                     ktPrimitiveCompleter.completeAll(subKtPrimitive)
                 }
 
-                return ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.diagnostics) as ResolvedCall<D>
+                ktPrimitiveCompleter.completeResolvedCall(candidate, baseResolvedCall.diagnostics) as ResolvedCall<D>
             }
-            CallResolutionResult.Type.ALL_CANDIDATES -> error("Cannot transform result for ALL_CANDIDATES mode")
+
+            is SingleCallResolutionResult -> error("Call resolution result for one candidate didn't transformed: $baseResolvedCall")
+            is AllCandidatesResolutionResult -> error("Cannot transform result for ALL_CANDIDATES mode")
         }
     }
 

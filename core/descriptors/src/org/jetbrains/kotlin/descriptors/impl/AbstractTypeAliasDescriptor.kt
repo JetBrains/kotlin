@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
 abstract class AbstractTypeAliasDescriptor(
-        containingDeclaration: DeclarationDescriptor,
-        annotations: Annotations,
-        name: Name,
-        sourceElement: SourceElement,
-        private val visibilityImpl: Visibility
+    containingDeclaration: DeclarationDescriptor,
+    annotations: Annotations,
+    name: Name,
+    sourceElement: SourceElement,
+    private val visibilityImpl: Visibility
 ) : DeclarationDescriptorNonRootImpl(containingDeclaration, annotations, name, sourceElement),
-        TypeAliasDescriptor {
+    TypeAliasDescriptor {
 
     protected abstract val storageManager: StorageManager
 
@@ -44,19 +44,19 @@ abstract class AbstractTypeAliasDescriptor(
     }
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
-            visitor.visitTypeAliasDescriptor(this, data)
+        visitor.visitTypeAliasDescriptor(this, data)
 
     override fun isInner(): Boolean =
-            // NB: it's ok to use underlyingType here, since referenced inner type aliases also capture type parameters.
-            // Using expandedType looks "proper", but in fact will cause a recursion in expandedType resolution,
-            // which will silently produce wrong result.
-            TypeUtils.contains(underlyingType) { type ->
-                !type.isError && run {
-                    val constructorDescriptor = type.constructor.declarationDescriptor
-                    constructorDescriptor is TypeParameterDescriptor &&
-                    constructorDescriptor.containingDeclaration != this@AbstractTypeAliasDescriptor
-                }
+        // NB: it's ok to use underlyingType here, since referenced inner type aliases also capture type parameters.
+        // Using expandedType looks "proper", but in fact will cause a recursion in expandedType resolution,
+        // which will silently produce wrong result.
+        TypeUtils.contains(underlyingType) { type ->
+            !type.isError && run {
+                val constructorDescriptor = type.constructor.declarationDescriptor
+                constructorDescriptor is TypeParameterDescriptor &&
+                        constructorDescriptor.containingDeclaration != this@AbstractTypeAliasDescriptor
             }
+        }
 
 
     fun getTypeAliasConstructors(): Collection<TypeAliasConstructorDescriptor> {
@@ -68,7 +68,7 @@ abstract class AbstractTypeAliasDescriptor(
     }
 
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> =
-            declaredTypeParametersImpl
+        declaredTypeParametersImpl
 
     override fun getModality() = Modality.FINAL
 
@@ -81,7 +81,7 @@ abstract class AbstractTypeAliasDescriptor(
     override fun isExternal() = false
 
     override fun getTypeConstructor(): TypeConstructor =
-            typeConstructor
+        typeConstructor
 
     override fun toString(): String = "typealias ${name.asString()}"
 
@@ -90,26 +90,26 @@ abstract class AbstractTypeAliasDescriptor(
     protected abstract fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor>
 
     protected fun computeDefaultType(): SimpleType =
-            TypeUtils.makeUnsubstitutedType(this, classDescriptor?.unsubstitutedMemberScope ?: MemberScope.Empty)
+        TypeUtils.makeUnsubstitutedType(this, classDescriptor?.unsubstitutedMemberScope ?: MemberScope.Empty)
 
     private val typeConstructor = object : TypeConstructor {
         override fun getDeclarationDescriptor(): TypeAliasDescriptor =
-                this@AbstractTypeAliasDescriptor
+            this@AbstractTypeAliasDescriptor
 
         override fun getParameters(): List<TypeParameterDescriptor> =
-                getTypeConstructorTypeParameters()
+            getTypeConstructorTypeParameters()
 
         override fun getSupertypes(): Collection<KotlinType> =
-                declarationDescriptor.underlyingType.constructor.supertypes
+            declarationDescriptor.underlyingType.constructor.supertypes
 
         override fun isFinal(): Boolean =
-                declarationDescriptor.underlyingType.constructor.isFinal
+            declarationDescriptor.underlyingType.constructor.isFinal
 
         override fun isDenotable(): Boolean =
-                true
+            true
 
         override fun getBuiltIns(): KotlinBuiltIns =
-                declarationDescriptor.builtIns
+            declarationDescriptor.builtIns
 
         override fun toString(): String = "[typealias ${declarationDescriptor.name.asString()}]"
     }

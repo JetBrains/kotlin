@@ -78,7 +78,7 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
                                     consumer: (KtDeclaration) -> Boolean): Boolean {
             assert(annClass.isAnnotationType) { "Annotation type should be passed to annotated members search" }
 
-            val psiBasedClassResolver = PsiBasedClassResolver(annClass)
+            val psiBasedClassResolver = PsiBasedClassResolver.getInstance(annClass)
             val annotationFQN = annClass.qualifiedName!!
 
             val candidates = getKotlinAnnotationCandidates(annClass, useScope)

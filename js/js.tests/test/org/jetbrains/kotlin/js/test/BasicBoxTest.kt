@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test
@@ -58,10 +47,10 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.js.util.TextOutputImpl
+import org.jetbrains.kotlin.metadata.DebugProtoBuf
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.serialization.DebugProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -81,6 +70,7 @@ abstract class BasicBoxTest(
         protected val pathToTestDir: String,
         testGroupOutputDirPrefix: String,
         pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
+        private val typedArraysEnabled: Boolean = true,
         private val generateSourceMap: Boolean = false,
         private val generateNodeJsRunner: Boolean = true
 ) : KotlinTestWithEnvironment() {
@@ -93,6 +83,7 @@ abstract class BasicBoxTest(
     protected open fun getOutputPostfixFile(testFilePath: String): File? = null
 
     protected open val runMinifierByDefault: Boolean = false
+    protected open val skipMinification = System.getProperty("kotlin.js.skipMinificationTest", "false")!!.toBoolean()
 
     fun doTest(filePath: String) {
         doTest(filePath, "OK", MainCallParameters.noCall())
@@ -114,14 +105,19 @@ abstract class BasicBoxTest(
 
             val orderedModules = DFS.topologicalOrder(modules.values) { module -> module.dependencies.mapNotNull { modules[it] } }
 
+            val testPackage = testFactory.testPackage
+            val testFunction = TEST_FUNCTION
+
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependencies.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
                 val friends = module.friends.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
-                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
-                                       !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
-                                       outputPrefixFile, outputPostfixFile, mainCallParameters)
+                generateJavaScriptFile(
+                    file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
+                    !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
+                    outputPrefixFile, outputPostfixFile, mainCallParameters, testPackage, testFunction
+                )
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) Pair(outputFileName, module) else null
             }
@@ -168,17 +164,17 @@ abstract class BasicBoxTest(
             if (generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
                 val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
                 val ignored = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.JS, file)
-                val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, ignored, testFactory.testPackage)
+                val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, ignored, testPackage)
                 FileUtil.writeToFile(File(nodeRunnerName), nodeRunnerText)
             }
 
-            runGeneratedCode(allJsFiles, mainModuleName, testFactory.testPackage, TEST_FUNCTION, expectedResult, withModuleSystem)
+            runGeneratedCode(allJsFiles, mainModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
 
             val expectedReachableNodesMatcher = EXPECTED_REACHABLE_NODES.matcher(fileContent)
             val expectedReachableNodesFound = expectedReachableNodesMatcher.find()
-            val skipMinification = System.getProperty("kotlin.js.skipMinificationTest", "false").toBoolean()
+
             if (!skipMinification &&
                 (runMinifierByDefault || expectedReachableNodesFound) &&
                 !SKIP_MINIFICATION.matcher(fileContent).find()
@@ -207,22 +203,22 @@ abstract class BasicBoxTest(
 
                 val outputDirForMinification = getOutputDir(file, testGroupOutputDirForMinification)
                 minifyAndRun(
-                        workDir = File(outputDirForMinification, file.nameWithoutExtension),
-                        allJsFiles = allJsFiles,
-                        generatedJsFiles = generatedJsFiles,
-                        expectedResult = expectedResult,
-                        testModuleName = mainModuleName,
-                        testPackage = testFactory.testPackage,
-                        testFunction = TEST_FUNCTION,
-                        withModuleSystem = withModuleSystem,
-                        minificationThresholdChecker =  thresholdChecker)
+                    workDir = File(outputDirForMinification, file.nameWithoutExtension),
+                    allJsFiles = allJsFiles,
+                    generatedJsFiles = generatedJsFiles,
+                    expectedResult = expectedResult,
+                    testModuleName = mainModuleName,
+                    testPackage = testPackage,
+                    testFunction = testFunction,
+                    withModuleSystem = withModuleSystem,
+                    minificationThresholdChecker =  thresholdChecker)
             }
         }
     }
 
     protected open fun runGeneratedCode(
             jsFiles: List<String>,
-            testModuleName: String,
+            testModuleName: String?,
             testPackage: String?,
             testFunction: String,
             expectedResult: String,
@@ -290,7 +286,9 @@ abstract class BasicBoxTest(
             remap: Boolean,
             outputPrefixFile: File?,
             outputPostfixFile: File?,
-            mainCallParameters: MainCallParameters
+            mainCallParameters: MainCallParameters,
+            testPackage: String?,
+            testFunction: String
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -310,12 +308,16 @@ abstract class BasicBoxTest(
         val outputFile = File(outputFileName)
 
         val incrementalData = IncrementalData()
-        translateFiles(psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
-                       mainCallParameters, incrementalData, remap)
+        translateFiles(
+            psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
+            mainCallParameters, incrementalData, remap, testPackage, testFunction
+        )
 
         if (module.hasFilesToRecompile) {
-            checkIncrementalCompilation(sourceDirs, module, kotlinFiles, dependencies, friends, multiModule, remap,
-                                        outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData)
+            checkIncrementalCompilation(
+                sourceDirs, module, kotlinFiles, dependencies, friends, multiModule, remap,
+                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction
+            )
         }
     }
 
@@ -331,7 +333,9 @@ abstract class BasicBoxTest(
             outputPrefixFile: File?,
             outputPostfixFile: File?,
             mainCallParameters: MainCallParameters,
-            incrementalData: IncrementalData
+            incrementalData: IncrementalData,
+            testPackage: String?,
+            testFunction: String
     ) {
         val sourceToTranslationUnit = hashMapOf<File, TranslationUnit>()
         for (testFile in kotlinFiles) {
@@ -351,8 +355,10 @@ abstract class BasicBoxTest(
         val recompiledConfig = createConfig(sourceDirs, module, dependencies, friends, multiModule, incrementalData)
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
-        translateFiles(translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-                       mainCallParameters, incrementalData, remap)
+        translateFiles(
+            translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
+            mainCallParameters, incrementalData, remap, testPackage, testFunction
+        )
 
         val originalOutput = FileUtil.loadFile(outputFile)
         val recompiledOutput = removeRecompiledSuffix(FileUtil.loadFile(recompiledOutputFile))
@@ -402,15 +408,17 @@ abstract class BasicBoxTest(
 
     class IncrementalData(var header: ByteArray? = null, val translatedFiles: MutableMap<File, TranslationResultValue> = hashMapOf())
 
-    private fun translateFiles(
-            units: List<TranslationUnit>,
-            outputFile: File,
-            config: JsConfig,
-            outputPrefixFile: File?,
-            outputPostfixFile: File?,
-            mainCallParameters: MainCallParameters,
-            incrementalData: IncrementalData,
-            remap: Boolean
+    protected open fun translateFiles(
+        units: List<TranslationUnit>,
+        outputFile: File,
+        config: JsConfig,
+        outputPrefixFile: File?,
+        outputPostfixFile: File?,
+        mainCallParameters: MainCallParameters,
+        incrementalData: IncrementalData,
+        remap: Boolean,
+        testPackage: String?,
+        testFunction: String
     ) {
         val translator = K2JSTranslator(config)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -558,6 +566,8 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, module.sourceMapSourceEmbedding)
+
+        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, typedArraysEnabled)
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }

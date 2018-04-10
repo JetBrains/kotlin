@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/enum.kt
     CONSTRUCTOR visibility:private <> () returnType:TestEnum1 flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: TestEnum1
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum1'
     ENUM_ENTRY name:TEST1
       init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum1()'
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/enum.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: TestEnum2
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum2'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
@@ -138,7 +138,7 @@ FILE fqName:<root> fileName:/enum.kt
     CONSTRUCTOR visibility:private <> () returnType:TestEnum3 flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: TestEnum3
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum3'
     ENUM_ENTRY name:TEST
       init: ENUM_CONSTRUCTOR_CALL 'constructor TEST()'
@@ -252,7 +252,7 @@ FILE fqName:<root> fileName:/enum.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: TestEnum4
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum4'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
@@ -461,7 +461,7 @@ FILE fqName:<root> fileName:/enum.kt
           CONST Int type=kotlin.Int value=0
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: TestEnum5
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum5'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public

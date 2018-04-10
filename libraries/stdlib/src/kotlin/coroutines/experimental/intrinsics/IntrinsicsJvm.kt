@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:kotlin.jvm.JvmName("IntrinsicsKt")
+@file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmVersion
 package kotlin.coroutines.experimental.intrinsics
 import kotlin.coroutines.experimental.*
@@ -46,3 +48,77 @@ public inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn
         receiver: R,
         completion: Continuation<T>
 ): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+
+
+// JVM declarations
+
+/**
+ * Creates a coroutine without receiver and with result type [T].
+ * This function creates a new, fresh instance of suspendable computation every time it is invoked.
+ *
+ * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
+ *
+ * This function is _unchecked_. Repeated invocation of any resume function on the resulting continuation corrupts the
+ * state machine of the coroutine and may result in arbitrary behaviour or exception.
+ */
+@SinceKotlin("1.1")
+@kotlin.jvm.JvmVersion
+public fun <T> (suspend () -> T).createCoroutineUnchecked(
+        completion: Continuation<T>
+): Continuation<Unit> =
+        if (this !is kotlin.coroutines.experimental.jvm.internal.CoroutineImpl)
+                buildContinuationByInvokeCall(completion) {
+                        @Suppress("UNCHECKED_CAST")
+                        (this as Function1<Continuation<T>, Any?>).invoke(completion)
+                }
+        else
+                (this.create(completion) as kotlin.coroutines.experimental.jvm.internal.CoroutineImpl).facade
+
+/**
+ * Creates a coroutine with receiver type [R] and result type [T].
+ * This function creates a new, fresh instance of suspendable computation every time it is invoked.
+ *
+ * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
+ *
+ * This function is _unchecked_. Repeated invocation of any resume function on the resulting continuation corrupts the
+ * state machine of the coroutine and may result in arbitrary behaviour or exception.
+ */
+@SinceKotlin("1.1")
+@kotlin.jvm.JvmVersion
+public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+        receiver: R,
+        completion: Continuation<T>
+): Continuation<Unit> =
+        if (this !is kotlin.coroutines.experimental.jvm.internal.CoroutineImpl)
+                buildContinuationByInvokeCall(completion) {
+                        @Suppress("UNCHECKED_CAST")
+                        (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+                }
+        else
+                (this.create(receiver, completion) as kotlin.coroutines.experimental.jvm.internal.CoroutineImpl).facade
+
+// INTERNAL DEFINITIONS
+
+@kotlin.jvm.JvmVersion
+private inline fun <T> buildContinuationByInvokeCall(
+        completion: Continuation<T>,
+        crossinline block: () -> Any?
+): Continuation<Unit> {
+        val continuation =
+                object : Continuation<Unit> {
+                        override val context: CoroutineContext
+                                get() = completion.context
+
+                        override fun resume(value: Unit) {
+                                processBareContinuationResume(completion, block)
+                        }
+
+                        override fun resumeWithException(exception: Throwable) {
+                                completion.resumeWithException(exception)
+                        }
+                }
+
+        return kotlin.coroutines.experimental.jvm.internal.interceptContinuationIfNeeded(completion.context, continuation)
+}

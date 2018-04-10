@@ -1,6 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testCompile(project(":core:descriptors"))
@@ -22,14 +24,14 @@ dependencies {
     testCompile(project(":js:js.frontend"))
     testCompile(project(":js:js.translator"))
     testCompileOnly(project(":plugins:android-extensions-compiler"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common-jvm6"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
     testCompile(androidDxJar()) { isTransitive = false }
     testCompile(intellijCoreDep()) { includeJars("intellij-core"); isTransitive = false }
     testCompile(intellijDep()) {
-        includeJars("openapi", "idea", "idea_rt", "guava", "trove4j", "picocontainer", "asm-all", "log4j", "jdom", rootProject = rootProject)
+        includeJars("openapi", "idea", "idea_rt", "guava", "trove4j", "picocontainer", "asm-all", "log4j", "jdom", "annotations", rootProject = rootProject)
         isTransitive = false
     }
 }

@@ -5,7 +5,7 @@ public final class ClassA {
 
     public companion object Companion {
         private constructor Companion()
-        public final val stat: kotlin.Int
+        public final val stat: kotlin.Int = 250
 
         public final class D {
             public constructor D()
@@ -36,15 +36,5 @@ public final class ClassA {
     public final inner class classC {
         public constructor classC()
         public final val memberFromC: kotlin.Int = 200
-
-        public final class CC {
-            public constructor CC()
-            public final val memberFromCC: kotlin.Int = 250
-        }
-
-        public object CO {
-            private constructor CO()
-            public final val memberFromCO: kotlin.Int = 265
-        }
     }
 }

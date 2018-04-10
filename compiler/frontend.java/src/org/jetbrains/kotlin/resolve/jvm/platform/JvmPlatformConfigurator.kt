@@ -91,9 +91,11 @@ object JvmPlatformConfigurator : PlatformConfigurator(
         container.useImpl<JavaSyntheticScopes>()
         container.useImpl<SamConversionResolverImpl>()
         container.useImpl<InterfaceDefaultMethodCallChecker>()
+        container.useImpl<JvmDefaultChecker>()
         container.useImpl<InlinePlatformCompatibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker>()
         container.useImpl<JvmModuleAccessibilityChecker.ClassifierUsage>()
         container.useInstance(JvmTypeSpecificityComparator)
+        container.useImpl<JvmDefaultSuperCallChecker>()
     }
 }

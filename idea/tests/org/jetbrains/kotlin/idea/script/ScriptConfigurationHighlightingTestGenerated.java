@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -79,15 +79,39 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         doTest(fileName);
     }
 
+    @TestMetadata("errorResolver")
+    public void testErrorResolver() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/errorResolver/");
+        doTest(fileName);
+    }
+
     @TestMetadata("javaNestedClass")
     public void testJavaNestedClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/javaNestedClass/");
         doTest(fileName);
     }
 
+    @TestMetadata("multiModule")
+    public void testMultiModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/multiModule/");
+        doTest(fileName);
+    }
+
     @TestMetadata("noResolver")
     public void testNoResolver() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/noResolver/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyAccessor")
+    public void testPropertyAccessor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/propertyAccessor/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyAccessorFromModule")
+    public void testPropertyAccessorFromModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/propertyAccessorFromModule/");
         doTest(fileName);
     }
 

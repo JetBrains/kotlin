@@ -1,10 +1,10 @@
 
 description = "Annotation Processor for Kotlin"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
-
-containsEmbeddedComponents()
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }

@@ -1,0 +1,16 @@
+my_js/
+  lib/
+    kotlin.js
+    kotlin.meta.js
+  myproject/
+    root-package.kjsm
+  myproject.js
+  myproject.meta.js
+my_test-js/
+  lib/
+    kotlin.js
+    kotlin.meta.js
+  myproject-tests/
+    root-package.kjsm
+  myproject-tests.js
+  myproject-tests.meta.js

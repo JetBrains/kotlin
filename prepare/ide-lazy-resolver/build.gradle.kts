@@ -2,12 +2,14 @@ import java.util.Properties
 
 description = "Kotlin IDE Lazy Resolver"
 
-apply { plugin("java") }
+plugins {
+    java
+}
 
 val versions by configurations.creating
 val versionFilePath = "$rootDir/dependencies/dependencies.properties"
 val ideaVersion = findProperty("versions.intellijSdk").toString()
-val markdownVersion = findProperty("markdownParserVersion").toString()
+val markdownVersion = findProperty("versions.markdown").toString()
 
 val writeVersions by tasks.creating {
     val versionFile = File(versionFilePath)

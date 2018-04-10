@@ -12,6 +12,17 @@ import java.util.TreeMap
 import java.util.concurrent.ConcurrentMap
 
 
+/**
+ * Returns an immutable map, mapping only the specified key to the
+ * specified value.
+ *
+ * The returned map is serializable.
+ *
+ * @sample samples.collections.Maps.Instantiation.mapFromPairs
+ */
+@JvmVersion
+public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.singletonMap(pair.first, pair.second)
+
 
 /**
  * Concurrent getOrPut, that is safe for concurrent maps.
@@ -64,4 +75,15 @@ public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedM
 @kotlin.internal.InlineOnly
 public inline fun Map<String, String>.toProperties(): Properties
         = Properties().apply { putAll(this@toProperties) }
+
+
+// creates a singleton copy of map, if there is specialization available in target platform, otherwise returns itself
+@kotlin.jvm.JvmVersion
+@kotlin.internal.InlineOnly
+internal inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = toSingletonMap()
+
+// creates a singleton copy of map
+@kotlin.jvm.JvmVersion
+internal fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
+        = with (entries.iterator().next()) { java.util.Collections.singletonMap(key, value) }
 

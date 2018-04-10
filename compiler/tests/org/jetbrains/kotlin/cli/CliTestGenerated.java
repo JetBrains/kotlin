@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -681,6 +681,18 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("libraryDirNotFound.args")
         public void testLibraryDirNotFound() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/libraryDirNotFound.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("modulesWithSameNames.args")
+        public void testModulesWithSameNames() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/modulesWithSameNames.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("modulesWithSameNamesAndFunc.args")
+        public void testModulesWithSameNamesAndFunc() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/modulesWithSameNamesAndFunc.args");
             doJsTest(fileName);
         }
 

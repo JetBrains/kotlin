@@ -85,17 +85,17 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val debugName: String,
     private val projectContext: ProjectContext,
     modules: Collection<M>,
-    private val analyzerFacade: (M) -> AnalyzerFacade,
-    private val modulesContent: (M) -> ModuleContent,
+    private val modulesContent: (M) -> ModuleContent<M>,
+    private val modulePlatforms: (M) -> MultiTargetPlatform?,
+    private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
+    private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val platformParameters: PlatformAnalysisParameters,
     private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
     override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
+    private val packagePartProviderFactory: (ModuleContent<M>) -> PackagePartProvider = { _ -> PackagePartProvider.Empty },
     private val firstDependency: M? = null,
-    private val modulePlatforms: (M) -> MultiTargetPlatform?,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    private val languageSettingsProvider: LanguageSettingsProvider = LanguageSettingsProvider.Default,
     private val invalidateOnOOCB: Boolean = true
 ) : ResolverForProject<M>() {
 
@@ -110,8 +110,12 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         }
     }
 
+    // Protected by ("projectContext.storageManager.lock")
     private val descriptorByModule = mutableMapOf<M, ModuleData>()
+
+    // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
+
     val modules = modules.toSet()
 
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
@@ -140,6 +144,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         )
     }
 
+    // Protected by ("projectContext.storageManager.lock")
     private val resolverByModuleDescriptor = mutableMapOf<ModuleDescriptor, ResolverForModule>()
 
     override val allModules: Collection<M> by lazy {
@@ -161,30 +166,50 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 return@compute delegateResolver.resolverForModuleDescriptor(descriptor)
             }
             resolverByModuleDescriptor.getOrPut(descriptor) {
+                checkModuleIsCorrect(module)
+
                 ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
-                analyzerFacade(module).createResolverForModule(
-                    module, descriptor as ModuleDescriptorImpl, projectContext.withModule(descriptor), modulesContent(module),
-                    platformParameters, targetEnvironment, this@ResolverForProjectImpl,
-                    languageSettingsProvider,
-                    packagePartProviderFactory(module, modulesContent(module))
+                val moduleContent = modulesContent(module)
+                val packagePartProvider = packagePartProviderFactory(moduleContent)
+                val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
+
+                val languageVersionSettings = moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project)
+                val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module)
+
+                resolverForModuleFactory.createResolverForModule(
+                    descriptor as ModuleDescriptorImpl,
+                    projectContext.withModule(descriptor),
+                    moduleContent,
+                    platformParameters,
+                    targetEnvironment,
+                    this@ResolverForProjectImpl,
+                    languageVersionSettings,
+                    targetPlatformVersion,
+                    packagePartProvider
                 )
             }
         }
     }
 
     internal fun isResolverForModuleDescriptorComputed(descriptor: ModuleDescriptor) =
-        descriptor in resolverByModuleDescriptor
+        projectContext.storageManager.compute {
+            descriptor in resolverByModuleDescriptor
+        }
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
-        if (!isCorrectModuleInfo(moduleInfo)) {
-            diagnoseUnknownModuleInfo(listOf(moduleInfo))
-        }
+        checkModuleIsCorrect(moduleInfo)
         return doGetDescriptorForModule(moduleInfo)
     }
 
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) =
         throw AssertionError("$name does not know how to resolve $infos")
+
+    private fun checkModuleIsCorrect(moduleInfo: M) {
+        if (!isCorrectModuleInfo(moduleInfo)) {
+            diagnoseUnknownModuleInfo(listOf(moduleInfo))
+        }
+    }
 
     private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
         if (module in modules) {
@@ -228,7 +253,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     }
 }
 
-data class ModuleContent(
+data class ModuleContent<out M: ModuleInfo>(
+    val moduleInfo: M,
     val syntheticFiles: Collection<KtFile>,
     val moduleContentScope: GlobalSearchScope
 )
@@ -268,16 +294,16 @@ interface TrackableModuleInfo : ModuleInfo {
     fun createModificationTracker(): ModificationTracker
 }
 
-abstract class AnalyzerFacade {
+abstract class ResolverForModuleFactory {
     abstract fun <M : ModuleInfo> createResolverForModule(
-        moduleInfo: M,
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
-        moduleContent: ModuleContent,
+        moduleContent: ModuleContent<M>,
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageSettingsProvider: LanguageSettingsProvider,
+        languageVersionSettings: LanguageVersionSettings,
+        targetPlatformVersion: TargetPlatformVersion,
         packagePartProvider: PackagePartProvider
     ): ResolverForModule
 
@@ -292,7 +318,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 ) : ModuleDependencies {
     private val dependencies = storageManager.createLazyValue {
         val moduleDescriptor = resolverForProject.descriptorForModule(module)
-        buildSequence {
+        buildSequence<ModuleDescriptorImpl> {
             if (firstDependency != null) {
                 yield(resolverForProject.descriptorForModule(firstDependency))
             }
@@ -326,7 +352,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
     private val resolverForProject: ResolverForProjectImpl<M>,
     private val module: ModuleDescriptor,
-    moduleContent: ModuleContent,
+    moduleContent: ModuleContent<M>,
     private val packageOracle: PackageOracle
 ) : PackageFragmentProvider {
     private val syntheticFilePackages = moduleContent.syntheticFiles.map { it.packageFqName }.toSet()

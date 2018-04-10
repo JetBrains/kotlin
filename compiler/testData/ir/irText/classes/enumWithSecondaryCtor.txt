@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: Test0
         INSTANCE_INITIALIZER_CALL classDescriptor='Test0'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: Test1
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
@@ -152,7 +152,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: Test2
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public

@@ -56,11 +56,7 @@ class ResolvedAtomCompleter(
             is ResolvedCallableReferenceAtom -> completeCallableReference(resolvedAtom)
             is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
             is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
-            is CallResolutionResult -> {
-                if (resolvedAtom.type == CallResolutionResult.Type.PARTIAL) {
-                    resolvedAtom.resultCallAtom?.let { completeResolvedCall(it, resolvedAtom.diagnostics) }
-                }
-            }
+            is PartialCallResolutionResult -> completeResolvedCall(resolvedAtom.resultCallAtom, resolvedAtom.diagnostics)
         }
     }
 

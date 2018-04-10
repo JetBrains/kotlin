@@ -1,23 +1,11 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.containers.Stack
-import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
@@ -28,7 +16,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
-import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.sure
@@ -53,7 +41,8 @@ class CoroutineTransformerMethodVisitor(
     obtainClassBuilderForCoroutineState: () -> ClassBuilder,
     private val isForNamedFunction: Boolean,
     private val shouldPreserveClassInitialization: Boolean,
-    private val element: KtElement,
+    private val lineNumber: Int,
+    private val languageVersionSettings: LanguageVersionSettings,
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
@@ -67,24 +56,26 @@ class CoroutineTransformerMethodVisitor(
     private var exceptionIndex = if (isForNamedFunction) -1 else 2
 
     override fun performTransformations(methodNode: MethodNode) {
+        removeFakeContinuationConstructorCall(methodNode)
+
+        replaceFakeContinuationsWithRealOnes(
+            methodNode,
+            if (isForNamedFunction) getLastParameterIndex(methodNode.desc, methodNode.access) else 0
+        )
+
+        FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
+        RedundantLocalsEliminationMethodTransformer(languageVersionSettings).transform(containingClassInternalName, methodNode)
+        updateMaxStack(methodNode)
+
         val suspensionPoints = collectSuspensionPoints(methodNode)
 
         // First instruction in the method node may change in case of named function
         val actualCoroutineStart = methodNode.instructions.first
 
-        FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
-
         if (isForNamedFunction) {
             ReturnUnitMethodTransformer.transform(containingClassInternalName, methodNode)
 
             if (allSuspensionPointsAreTailCalls(containingClassInternalName, methodNode, suspensionPoints)) {
-                continuationIndex =
-                        if (isStatic(methodNode.access))
-                            Type.getArgumentTypes(methodNode.desc).size - 1
-                        else
-                            Type.getArgumentTypes(methodNode.desc).size
-                replaceFakeContinuationsWithRealOnes(methodNode, continuationIndex)
-
                 dropSuspensionMarkers(methodNode, suspensionPoints)
                 return
             }
@@ -94,6 +85,8 @@ class CoroutineTransformerMethodVisitor(
             continuationIndex = methodNode.maxLocals++
 
             prepareMethodNodePreludeForNamedFunction(methodNode)
+        } else {
+            ReturnUnitMethodTransformer.cleanUpReturnsUnitMarkers(methodNode, ReturnUnitMethodTransformer.findReturnsUnitMarks(methodNode))
         }
 
         for (suspensionPoint in suspensionPoints) {
@@ -102,8 +95,6 @@ class CoroutineTransformerMethodVisitor(
 
         // Actual max stack might be increased during the previous phases
         updateMaxStack(methodNode)
-
-        replaceFakeContinuationsWithRealOnes(methodNode, continuationIndex)
 
         // Remove unreachable suspension points
         // If we don't do this, then relevant frames will not be analyzed, that is unexpected from point of view of next steps (e.g. variable spilling)
@@ -123,13 +114,12 @@ class CoroutineTransformerMethodVisitor(
             val startLabel = LabelNode()
             val defaultLabel = LabelNode()
             val tableSwitchLabel = LabelNode()
-            val lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0
 
             // tableswitch(this.label)
             insertBefore(
                 actualCoroutineStart,
                 insnListOf(
-                    *withInstructionAdapter { loadCoroutineSuspendedMarker() }.toArray(),
+                    *withInstructionAdapter { loadCoroutineSuspendedMarker(languageVersionSettings) }.toArray(),
                     tableSwitchLabel,
                     // Allow debugger to stop on enter into suspend function
                     LineNumberNode(lineNumber, tableSwitchLabel),
@@ -159,12 +149,15 @@ class CoroutineTransformerMethodVisitor(
         methodNode.removeEmptyCatchBlocks()
     }
 
-    private fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, continuationIndex: Int) {
-        val fakeContinuations = methodNode.instructions.asSequence().filter(::isFakeContinuationMarker)
-        for (fakeContinuation in fakeContinuations) {
-            methodNode.instructions.removeAll(listOf(fakeContinuation.previous.previous, fakeContinuation.previous))
-            methodNode.instructions.set(fakeContinuation, VarInsnNode(Opcodes.ALOAD, continuationIndex))
+    private fun removeFakeContinuationConstructorCall(methodNode: MethodNode) {
+        val seq = methodNode.instructions.asSequence()
+        val first = seq.firstOrNull(::isBeforeFakeContinuationConstructorCallMarker)?.previous ?: return
+        val last = seq.firstOrNull(::isAfterFakeContinuationConstructorCallMarker).sure {
+            "BeforeFakeContinuationConstructorCallMarker without AfterFakeContinuationConstructorCallMarker"
         }
+        val toRemove = InsnSequence(first, last).toList()
+        methodNode.instructions.removeAll(toRemove)
+        methodNode.instructions.set(last, InsnNode(Opcodes.ACONST_NULL))
     }
 
     private fun createInsnForReadingLabel() =
@@ -179,7 +172,7 @@ class CoroutineTransformerMethodVisitor(
         else
             FieldInsnNode(
                 Opcodes.GETFIELD,
-                COROUTINE_IMPL_ASM_TYPE.internalName,
+                languageVersionSettings.coroutineImplAsmType().internalName,
                 COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
             )
 
@@ -195,7 +188,7 @@ class CoroutineTransformerMethodVisitor(
         else
             FieldInsnNode(
                 Opcodes.PUTFIELD,
-                COROUTINE_IMPL_ASM_TYPE.internalName,
+                languageVersionSettings.coroutineImplAsmType().internalName,
                 COROUTINE_LABEL_FIELD_NAME, Type.INT_TYPE.descriptor
             )
 
@@ -283,30 +276,14 @@ class CoroutineTransformerMethodVisitor(
 
             visitLabel(createStateInstance)
 
-            anew(objectTypeForState)
-            dup()
-
-            val parameterTypesAndIndices =
-                getParameterTypesIndicesForCoroutineConstructor(
-                    methodNode.desc,
-                    methodNode.access,
-                    needDispatchReceiver, internalNameForDispatchReceiver ?: containingClassInternalName
-                )
-            for ((type, index) in parameterTypesAndIndices) {
-                load(index, type)
-            }
-
-            invokespecial(
-                classBuilderForCoroutineState.thisName,
-                "<init>",
-                Type.getMethodDescriptor(
-                    Type.VOID_TYPE,
-                    *getParameterTypesForCoroutineConstructor(
-                        methodNode.desc, needDispatchReceiver,
-                        internalNameForDispatchReceiver ?: containingClassInternalName
-                    )
-                ),
-                false
+            generateContinuationConstructorCall(
+                objectTypeForState,
+                methodNode,
+                needDispatchReceiver,
+                internalNameForDispatchReceiver,
+                containingClassInternalName,
+                classBuilderForCoroutineState,
+                languageVersionSettings
             )
 
             visitVarInsn(Opcodes.ASTORE, continuationIndex)
@@ -499,7 +476,7 @@ class CoroutineTransformerMethodVisitor(
     ): LabelNode {
         val continuationLabel = LabelNode()
         val continuationLabelAfterLoadedResult = LabelNode()
-        val suspendElementLineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0
+        val suspendElementLineNumber = lineNumber
         val nextLineNumberNode = suspension.suspensionCallEnd.findNextOrNull { it is LineNumberNode } as? LineNumberNode
         with(methodNode.instructions) {
             // Save state
@@ -614,6 +591,43 @@ class CoroutineTransformerMethodVisitor(
     }
 }
 
+internal fun InstructionAdapter.generateContinuationConstructorCall(
+    objectTypeForState: Type?,
+    methodNode: MethodNode,
+    needDispatchReceiver: Boolean,
+    internalNameForDispatchReceiver: String?,
+    containingClassInternalName: String,
+    classBuilderForCoroutineState: ClassBuilder,
+    languageVersionSettings: LanguageVersionSettings
+) {
+    anew(objectTypeForState)
+    dup()
+
+    val parameterTypesAndIndices =
+        getParameterTypesIndicesForCoroutineConstructor(
+            methodNode.desc,
+            methodNode.access,
+            needDispatchReceiver, internalNameForDispatchReceiver ?: containingClassInternalName,
+            languageVersionSettings
+        )
+    for ((type, index) in parameterTypesAndIndices) {
+        load(index, type)
+    }
+
+    invokespecial(
+        classBuilderForCoroutineState.thisName,
+        "<init>",
+        Type.getMethodDescriptor(
+            Type.VOID_TYPE,
+            *getParameterTypesForCoroutineConstructor(
+                methodNode.desc, needDispatchReceiver,
+                internalNameForDispatchReceiver ?: containingClassInternalName
+            )
+        ),
+        false
+    )
+}
+
 private fun InstructionAdapter.generateResumeWithExceptionCheck(exceptionIndex: Int) {
     // Check if resumeWithException has been called
     load(exceptionIndex, AsmTypes.OBJECT_TYPE)
@@ -683,7 +697,8 @@ private fun getParameterTypesIndicesForCoroutineConstructor(
     desc: String,
     containingFunctionAccess: Int,
     needDispatchReceiver: Boolean,
-    thisName: String
+    thisName: String,
+    languageVersionSettings: LanguageVersionSettings
 ): Collection<Pair<Type, Int>> {
     return mutableListOf<Pair<Type, Int>>().apply {
         if (needDispatchReceiver) {
@@ -691,7 +706,7 @@ private fun getParameterTypesIndicesForCoroutineConstructor(
         }
         val continuationIndex =
             getAllParameterTypes(desc, !isStatic(containingFunctionAccess), thisName).dropLast(1).map(Type::getSize).sum()
-        add(CONTINUATION_ASM_TYPE to continuationIndex)
+        add(languageVersionSettings.continuationAsmType() to continuationIndex)
     }
 }
 
@@ -801,3 +816,11 @@ private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode):
 
 private val SAFE_OPCODES =
     ((Opcodes.DUP..Opcodes.DUP2_X2) + Opcodes.NOP + Opcodes.POP + Opcodes.POP2 + (Opcodes.IFEQ..Opcodes.GOTO)).toSet()
+
+private fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, continuationIndex: Int) {
+    val fakeContinuations = methodNode.instructions.asSequence().filter(::isFakeContinuationMarker).toList()
+    for (fakeContinuation in fakeContinuations) {
+        methodNode.instructions.removeAll(listOf(fakeContinuation.previous.previous, fakeContinuation.previous))
+        methodNode.instructions.set(fakeContinuation, VarInsnNode(Opcodes.ALOAD, continuationIndex))
+    }
+}

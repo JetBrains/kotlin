@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test;
@@ -106,6 +95,9 @@ public class KotlinTestUtils {
 
     public static final String TEST_GENERATOR_NAME = "org.jetbrains.kotlin.generators.tests.TestsPackage";
     public static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
+
+    public static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
+            Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
 
     private static final List<File> filesToDelete = new ArrayList<>();
 
@@ -568,10 +560,7 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(jdk6));
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
-            File home = getJdk9HomeIfPossible();
-            if (home != null) {
-                configuration.put(JVMConfigurationKeys.JDK_HOME, home);
-            }
+            configuration.put(JVMConfigurationKeys.JDK_HOME, getJdk9Home());
         }
         else if (SystemInfo.IS_AT_LEAST_JAVA9) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
@@ -595,24 +584,16 @@ public class KotlinTestUtils {
         return configuration;
     }
 
-    @Nullable
-    public static File getJdk9HomeIfPossible() {
-        String jdk9 = System.getenv("JDK_19");
+    @NotNull
+    public static File getJdk9Home() {
+        String jdk9 = System.getenv("JDK_9");
         if (jdk9 == null) {
-            jdk9 = System.getenv("JDK_9");
-        }
-        if (jdk9 == null) {
-            // TODO: replace this with a failure as soon as Java 9 is installed on all TeamCity agents
-            System.err.println("Environment variable JDK_19 is not set, the test will be skipped");
-            return null;
+            jdk9 = System.getenv("JDK_19");
+            if (jdk9 == null) {
+                throw new AssertionError("Environment variable JDK_9 is not set!");
+            }
         }
         return new File(jdk9);
-    }
-
-    @NotNull
-    private static String getJreHome(@NotNull String jdkHome) {
-        File jre = new File(jdkHome, "jre");
-        return jre.isDirectory() ? jre.getPath() : jdkHome;
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
@@ -990,11 +971,8 @@ public class KotlinTestUtils {
     }
 
     public static boolean compileJavaFilesExternallyWithJava9(@NotNull Collection<File> files, @NotNull List<String> options) {
-        File jdk9 = getJdk9HomeIfPossible();
-        assert jdk9 != null : "Environment variable JDK_19 is not set";
-
         List<String> command = new ArrayList<>();
-        command.add(new File(jdk9, "bin/javac").getPath());
+        command.add(new File(getJdk9Home(), "bin/javac").getPath());
         command.addAll(options);
         for (File file : files) {
             command.add(file.getPath());

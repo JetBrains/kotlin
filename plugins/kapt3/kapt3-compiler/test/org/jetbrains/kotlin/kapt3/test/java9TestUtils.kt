@@ -32,11 +32,7 @@ interface Java9TestLauncher {
         //TODO unmute after investigation (tests are failing on TeamCity)
         if (SystemInfoRt.isWindows) return
 
-        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: run {
-            println("JDK9 not found, the test was skipped")
-            return
-        }
-
+        val jdk9Home = KotlinTestUtils.getJdk9Home()
         val javaExe = File(jdk9Home, "bin/java.exe").takeIf { it.exists() } ?: File(jdk9Home, "bin/java")
         assert(javaExe.exists()) { "Can't find 'java' executable in $jdk9Home" }
 

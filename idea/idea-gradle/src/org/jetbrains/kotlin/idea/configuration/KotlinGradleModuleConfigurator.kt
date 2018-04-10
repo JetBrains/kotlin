@@ -40,11 +40,11 @@ class KotlinGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     override fun getJvmTarget(sdk: Sdk?, version: String) = getDefaultJvmTarget(sdk, version)?.description
 
     override fun configureModule(
-            module: Module,
-            file: PsiFile,
-            isTopLevelProjectFile: Boolean,
-            version: String, collector: NotificationMessageCollector,
-            filesToOpen: MutableCollection<PsiFile>
+        module: Module,
+        file: PsiFile,
+        isTopLevelProjectFile: Boolean,
+        version: String, collector: NotificationMessageCollector,
+        filesToOpen: MutableCollection<PsiFile>
     ) {
         super.configureModule(module, file, isTopLevelProjectFile, version, collector, filesToOpen)
 

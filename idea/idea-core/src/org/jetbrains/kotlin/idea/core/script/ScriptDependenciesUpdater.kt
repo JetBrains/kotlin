@@ -41,7 +41,6 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.*
@@ -50,6 +49,7 @@ import java.util.concurrent.Executors
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.dependencies.ScriptReport
 
 class ScriptDependenciesUpdater(
     private val project: Project,
@@ -96,7 +96,7 @@ class ScriptDependenciesUpdater(
     }
 
     fun reloadModifiedScripts() {
-        for (it in modifiedScripts) {
+        for (it in modifiedScripts.filter { cache[it] != null }) {
             performUpdate(it)
         }
         modifiedScripts.clear()
@@ -127,10 +127,6 @@ class ScriptDependenciesUpdater(
     }
 
     private fun performUpdate(file: VirtualFile) {
-        if (ScriptDefinitionsManager.getInstance(project).hasFailedDefinitions && !ProjectRootsUtil.isProjectSourceFile(project, file)) {
-            return
-        }
-
         val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
         when (scriptDef.dependencyResolver) {
             is AsyncDependenciesResolver, is LegacyResolverWrapper -> {
@@ -211,8 +207,8 @@ class ScriptDependenciesUpdater(
                 requests.replace(file.path, lastRequest, ModStampedRequest(lastRequest.modificationStamp, job = null))
             }
             ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
-            val resultingDependencies = (result.dependencies ?: ScriptDependencies.Empty).adjustByDefinition(scriptDef)
-            if (saveNewDependencies(resultingDependencies, file)) {
+            val resultingDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
+            if (saveNewDependencies(resultingDependencies, file, result.reports.any { it.severity == ScriptReport.Severity.FATAL })) {
                 notifyRootsChanged()
             }
         }
@@ -220,17 +216,23 @@ class ScriptDependenciesUpdater(
 
 
     fun updateSync(file: VirtualFile, scriptDef: KotlinScriptDefinition): Boolean {
-        val newDeps = contentLoader.loadContentsAndResolveDependencies(scriptDef, file) ?: ScriptDependencies.Empty
-        return saveNewDependencies(newDeps, file)
+        val result = contentLoader.loadContentsAndResolveDependencies(scriptDef, file)
+        val newDeps = result.dependencies?.adjustByDefinition(scriptDef) ?: ScriptDependencies.Empty
+        return saveNewDependencies(newDeps, file, result.reports.any { it.severity == ScriptReport.Severity.FATAL })
     }
 
     private fun saveNewDependencies(
         new: ScriptDependencies,
-        file: VirtualFile
+        file: VirtualFile,
+        hasFatalErrors: Boolean
     ): Boolean {
         val rootsChanged = cache.hasNotCachedRoots(new)
         if (cache.save(file, new)) {
-            file.scriptDependencies = new
+            if (hasFatalErrors) {
+                file.scriptDependencies = null
+            } else {
+                file.scriptDependencies = new
+            }
         }
         return rootsChanged
     }

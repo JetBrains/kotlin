@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.builders
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -146,8 +147,12 @@ fun IrBuilderWithScope.irNotEquals(arg1: IrExpression, arg2: IrExpression) =
 fun IrBuilderWithScope.irGet(receiver: IrExpression, getterSymbol: IrFunctionSymbol): IrCall =
     IrGetterCallImpl(startOffset, endOffset, getterSymbol, getterSymbol.descriptor, null, receiver, null, IrStatementOrigin.GET_PROPERTY)
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: KotlinType): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor, null)
+fun IrBuilderWithScope.irCall(
+    callee: IrFunctionSymbol,
+    type: KotlinType,
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
+): IrCall =
+    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor, typeArguments)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrCall =
     irCall(callee, callee.descriptor.returnType!!)

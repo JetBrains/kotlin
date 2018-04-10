@@ -13,7 +13,15 @@ import java.io.File
 class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
 class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(androidGradlePluginVersion = "2.3.+")
 
-class KotlinAndroid30GradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("4.1"), androidGradlePluginVersion = "3.0.0-beta1") {
+// TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
+class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.5"), "3.2.0-alpha06")
+
+class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(GradleVersionRequired.AtLeast("4.1"), "3.0.0")
+
+abstract class KotlinAndroid3GradleIT(
+    gradleVersionRequired: GradleVersionRequired,
+    androidGradlePluginVersion: String
+) : AbstractKotlinAndroidGradleTests(gradleVersionRequired, androidGradlePluginVersion) {
 
     @Test
     fun testApplyWithFeaturePlugin() {
@@ -315,4 +323,3 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
         }
     }
 }
-

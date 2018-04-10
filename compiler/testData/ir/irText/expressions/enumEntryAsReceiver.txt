@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
     CONSTRUCTOR visibility:private <> () returnType:X flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
-          <E : Enum<E>>: null
+          <E : Enum<E>>: X
         INSTANCE_INITIALIZER_CALL classDescriptor='X'
     ENUM_ENTRY name:B
       init: ENUM_CONSTRUCTOR_CALL 'constructor B()'

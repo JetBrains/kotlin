@@ -7,4 +7,4 @@ class MyClass() {
 
 // TESTED_OBJECT_KIND: function
 // TESTED_OBJECTS: MyClass, test$default
-// FLAGS: ACC_STATIC, ACC_BRIDGE, ACC_SYNTHETIC
+// FLAGS: ACC_STATIC, ACC_SYNTHETIC

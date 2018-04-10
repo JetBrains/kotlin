@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -6606,13 +6606,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("passExtLambdaToNative.kt")
         public void testPassExtLambdaToNative() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/passExtLambdaToNative.kt");
+            if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+                doTest(fileName);
+                return;
+            }
             try {
                 doTest(fileName);
             }
             catch (Throwable ignore) {
+                ignore.printStackTrace();
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("passMemberOrExtFromNative.kt")
@@ -6624,13 +6629,18 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("passMemberOrExtToNative.kt")
         public void testPassMemberOrExtToNative() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/passMemberOrExtToNative.kt");
+            if (KotlinTestUtils.RUN_IGNORED_TESTS_AS_REGULAR) {
+                doTest(fileName);
+                return;
+            }
             try {
                 doTest(fileName);
             }
             catch (Throwable ignore) {
+                ignore.printStackTrace();
                 return;
             }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive or add it to whitelist for that.");
         }
 
         @TestMetadata("passTopLevelFunctionFromNative.kt")
@@ -6828,6 +6838,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("byteAndShortConversions.kt")
         public void testByteAndShortConversions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/byteAndShortConversions.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constantPropagation.kt")
+        public void testConstantPropagation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/number/constantPropagation.kt");
             doTest(fileName);
         }
 
@@ -8079,6 +8095,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("primCtorDelegation1.kt")
+        public void testPrimCtorDelegation1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/primCtorDelegation1.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertiesAsParametersInitialized.kt")
         public void testPropertiesAsParametersInitialized() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/propertiesAsParametersInitialized.kt");
@@ -8088,6 +8110,30 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("propertyAccess.kt")
         public void testPropertyAccess() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/propertyAccess.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secCtorDelegation1.kt")
+        public void testSecCtorDelegation1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/secCtorDelegation1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secCtorDelegation2.kt")
+        public void testSecCtorDelegation2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/secCtorDelegation2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secCtorDelegation3.kt")
+        public void testSecCtorDelegation3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/secCtorDelegation3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secCtorDelegation4.kt")
+        public void testSecCtorDelegation4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/secCtorDelegation4.kt");
             doTest(fileName);
         }
 

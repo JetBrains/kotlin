@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(T = ...): Test1<T>'
           CALL 'constructor Test1(T)' type=Test1<T> origin=null
-            <T>: null
+            <T>: T
             x: GET_VAR 'value-parameter x: T = ...' type=T origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test1<T>) returnType:String flags:
       overridden:

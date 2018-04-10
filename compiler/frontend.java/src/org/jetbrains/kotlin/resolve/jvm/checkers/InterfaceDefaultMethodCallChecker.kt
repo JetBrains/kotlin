@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
+import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -36,7 +38,8 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val supportDefaults = jvmTarget == JvmTarget.JVM_1_8
 
-        val descriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
+        val descriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
+        if (descriptor is JavaPropertyDescriptor) return
 
         if (!supportDefaults &&
             isStaticDeclaration(descriptor) &&
@@ -46,26 +49,64 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
             context.trace.report(diagnostic.on(reportOn))
         }
 
-        if (getSuperCallExpression(resolvedCall.call) == null) return
+        val superCallExpression = getSuperCallExpression(resolvedCall.call) ?: return
 
         if (!isInterface(descriptor.original.containingDeclaration)) return
 
         val realDescriptor = unwrapFakeOverride(descriptor)
         val realDescriptorOwner = realDescriptor.containingDeclaration as? ClassDescriptor ?: return
 
-        if (isInterface(realDescriptorOwner) && realDescriptor is JavaCallableMemberDescriptor) {
-            val classifier = DescriptorUtils.getParentOfType(context.scope.ownerDescriptor, ClassifierDescriptor::class.java)
-            //is java interface default method called from trait
-            if (classifier != null && DescriptorUtils.isInterface(classifier)) {
-                context.trace.report(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
+        if (isInterface(realDescriptorOwner) && (realDescriptor is JavaCallableMemberDescriptor || realDescriptor.hasJvmDefaultAnnotation())) {
+            val bindingContext = context.trace.bindingContext
+            val thisForSuperCall = getSuperCallLabelTarget(bindingContext, superCallExpression)
+
+            if (thisForSuperCall != null && DescriptorUtils.isInterface(thisForSuperCall)) {
+                val declarationWithCall = findInterfaceMember(thisForSuperCall, superCallExpression, bindingContext)
+                if (declarationWithCall?.hasJvmDefaultAnnotation() == false) {
+                    context.trace.report(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
+                    return
+                }
             }
-            else if (!supportDefaults) {
-                val diagnostic = if (isDefaultCallsProhibited(context)) DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR else DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET
+
+            if (!supportDefaults) {
+                val diagnostic =
+                    if (isDefaultCallsProhibited(context)) DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET_ERROR else DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET
                 context.trace.report(diagnostic.on(reportOn))
             }
         }
     }
 
+    private fun findInterfaceMember(
+        descriptorToSearch: ClassDescriptor,
+        startExpression: KtSuperExpression,
+        bindingContext: BindingContext
+    ): CallableMemberDescriptor? {
+        val parents = generateSequence({ startExpression.parent }) { it.parent }
+        parents.fold<PsiElement, PsiElement>(startExpression) { child, parent ->
+            if (parent is KtClassBody &&
+                descriptorToSearch == bindingContext.get(BindingContext.CLASS, parent.parent)
+            ) {
+                return when (child) {
+                    is KtNamedFunction -> bindingContext.get(BindingContext.FUNCTION, child)
+                    is KtProperty -> bindingContext.get(BindingContext.VARIABLE, child) as? PropertyDescriptor
+                    else -> null
+                }
+            } else parent
+        }
+
+        return null
+    }
+
     private fun isDefaultCallsProhibited(context: CallCheckerContext) =
-            context.languageVersionSettings.supportsFeature(LanguageFeature.DefaultMethodsCallFromJava6TargetError)
+        context.languageVersionSettings.supportsFeature(LanguageFeature.DefaultMethodsCallFromJava6TargetError)
+
+    private fun getSuperCallLabelTarget(
+        bindingContext: BindingContext,
+        expression: KtSuperExpression
+    ): ClassDescriptor? {
+        val thisTypeForSuperCall = bindingContext.get(BindingContext.THIS_TYPE_FOR_SUPER_EXPRESSION, expression) ?: return null
+        val descriptor = thisTypeForSuperCall.constructor.declarationDescriptor
+        return descriptor as? ClassDescriptor
+    }
+
 }

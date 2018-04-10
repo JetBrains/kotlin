@@ -493,7 +493,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(Array<T> = ...): Test2<T>'
           CALL 'constructor Test2(Array<T>)' type=Test2<T> origin=null
-            <T>: null
+            <T>: T
             genericArray: GET_VAR 'value-parameter genericArray: Array<T> = ...' type=kotlin.Array<T> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test2<T>) returnType:String flags:
       overridden:

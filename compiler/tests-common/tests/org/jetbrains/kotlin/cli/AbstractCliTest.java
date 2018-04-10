@@ -143,6 +143,26 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             }
         }
 
+        List<String> notContainsTextList = InTextDirectivesUtils.findLinesWithPrefixesRemoved(content, "// NOT_CONTAINS: ");
+        for (String notContainsSpec : notContainsTextList) {
+            String[] parts = notContainsSpec.split(",", 2);
+            String fileName = parts[0].trim();
+            String contentToSearch = parts[1].trim();
+            File file = checkedPathToFile(fileName, argsFilePath);
+            if (!file.exists()) {
+                diagnostics.add("File does not exist: " + fileName);
+            }
+            else if (file.isDirectory()) {
+                diagnostics.add("File is a directory: " + fileName);
+            }
+            else {
+                String text = FilesKt.readText(file, Charsets.UTF_8);
+                if (text.contains(contentToSearch)) {
+                    diagnostics.add("File " + fileName + " contains string: " + contentToSearch);
+                }
+            }
+        }
+
         if (!diagnostics.isEmpty()) {
             diagnostics.add(0, diagnostics.size() + " problem(s) found:");
             Assert.fail(StringsKt.join(diagnostics, "\n"));

@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.SettingConstants
 
 abstract class BaseJpsCompilerSettingsSerializer<T : Any>(
-        componentName: String,
-        private val settingsFactory: () -> T
-): JpsProjectExtensionSerializer(SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE, componentName) {
+    componentName: String,
+    private val settingsFactory: () -> T
+) : JpsProjectExtensionSerializer(SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE, componentName) {
     protected abstract fun onLoad(project: JpsProject, settings: T)
 
     override fun loadExtension(project: JpsProject, componentTag: Element) {

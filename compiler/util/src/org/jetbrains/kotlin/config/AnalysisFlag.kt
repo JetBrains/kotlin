@@ -66,5 +66,11 @@ class AnalysisFlag<out T> internal constructor(
 
         @JvmStatic
         val useExperimental by Flag.ListOfStrings
+
+        @JvmStatic
+        val explicitApiVersion by Flag.Boolean
+
+        @JvmStatic
+        val enableJvmDefault by Flag.Boolean
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -250,6 +250,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("javaClassImportAliasByRef/javaClassImportAliasByRef.test")
     public void testJavaClassImportAliasByRef_JavaClassImportAliasByRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/javaClassImportAliasByRef/javaClassImportAliasByRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("javaEnumValueOf/javaEnumValueOf.test")
+    public void testJavaEnumValueOf_JavaEnumValueOf() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/javaEnumValueOf/javaEnumValueOf.test");
         doTest(fileName);
     }
 

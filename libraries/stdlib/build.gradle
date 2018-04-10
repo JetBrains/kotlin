@@ -41,6 +41,11 @@ sourceSets {
             srcDir 'test'
         }
     }
+    java9 {
+        java {
+            srcDir 'jvm/java9'
+        }
+    }
 }
 
 dependencies {
@@ -62,21 +67,25 @@ task originalStdlibJar(type: Jar) {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main')
+    manifestAttributes(manifest, project, 'Main', true)
     from("${rootDir}/dist/builtins")
     from sourceSets.builtins.output
     from sourceSets.experimental.output
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
 }
 
 task distJar(type: Jar) {
     baseName = 'dist-kotlin-stdlib'
     version = null
-    manifestAttributes(manifest, project, 'Main')
+    manifestAttributes(manifest, project, 'Main', true)
     from("${rootDir}/dist/builtins")
     from sourceSets.annotations.output
     from sourceSets.builtins.output
     from sourceSets.main.output
     from sourceSets.experimental.output
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
 }
 
 task builtinsJar(type: Jar) {
@@ -158,5 +167,7 @@ compileExperimentalKotlin {
         ]
     }
 }
+
+compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.builtins.output, sourceSets.main.output])
 
 kotlin.experimental.coroutines 'enable'

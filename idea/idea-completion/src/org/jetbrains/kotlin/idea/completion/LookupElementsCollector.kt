@@ -24,6 +24,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.patterns.ElementPattern
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -35,7 +36,8 @@ class LookupElementsCollector(
         private val completionParameters: CompletionParameters,
         resultSet: CompletionResultSet,
         sorter: CompletionSorter,
-        private val filter: ((LookupElement) -> Boolean)?
+        private val filter: ((LookupElement) -> Boolean)?,
+        private val allowExpectDeclarations: Boolean
 ) {
 
     var bestMatchingDegree = Int.MIN_VALUE
@@ -102,6 +104,10 @@ class LookupElementsCollector(
 
     fun addElement(element: LookupElement, notImported: Boolean = false) {
         if (!prefixMatcher.prefixMatches(element)) return
+        if (!allowExpectDeclarations) {
+            val descriptor = (element.`object` as? DeclarationLookupObject)?.descriptor
+            if ((descriptor as? MemberDescriptor)?.isExpect == true) return
+        }
 
         if (notImported) {
             element.putUserData(NOT_IMPORTED_KEY, Unit)

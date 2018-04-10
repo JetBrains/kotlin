@@ -40,8 +40,8 @@ package kotlin.jvm
  * Methods defined in `MyPureList<T>` overriding methods in `MutableList` use `T` as non-platform types:
  *
  * ```kotlin
- *  MyList<Int>().add(null) // Error
- *  MyList<Int?>().add(null) // Ok
+ *  MyPureList<Int>().add(null) // Error
+ *  MyPureList<Int?>().add(null) // Ok
  * ```
  */
 @Target(AnnotationTarget.CLASS)

@@ -23,14 +23,6 @@ public inline fun <T> Sequence(crossinline iterator: () -> Iterator<T>): Sequenc
 public fun <T> Iterator<T>.asSequence(): Sequence<T> = Sequence { this }.constrainOnce()
 
 /**
- * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.
- * @sample samples.collections.Sequences.Building.sequenceFromEnumeration
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun<T> java.util.Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
-
-/**
  * Creates a sequence that returns the specified values.
  *
  * @sample samples.collections.Sequences.Building.sequenceOfValues
@@ -551,16 +543,6 @@ public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
     // as? does not work in js
     //return this as? ConstrainedOnceSequence<T> ?: ConstrainedOnceSequence(this)
     return if (this is ConstrainedOnceSequence<T>) this else ConstrainedOnceSequence(this)
-}
-
-@kotlin.jvm.JvmVersion
-private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
-    private val sequenceRef = java.util.concurrent.atomic.AtomicReference(sequence)
-
-    override fun iterator(): Iterator<T> {
-        val sequence = sequenceRef.getAndSet(null) ?: throw IllegalStateException("This sequence can be consumed only once.")
-        return sequence.iterator()
-    }
 }
 
 

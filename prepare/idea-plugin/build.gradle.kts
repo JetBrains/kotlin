@@ -16,11 +16,14 @@ val projectsToShadow by extra(listOf(
         ":compiler:cli-common",
         ":compiler:container",
         ":compiler:daemon-common",
+        ":core:metadata",
+        ":core:metadata.jvm",
         ":core:descriptors",
         ":core:descriptors.jvm",
         ":core:deserialization",
         ":eval4j",
         ":idea:formatter",
+        ":compiler:psi",
         ":compiler:frontend",
         ":compiler:frontend.java",
         ":compiler:frontend.script",
@@ -65,7 +68,7 @@ dependencies {
     sideJars(commonDep("javax.inject"))
     sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
-    sideJars("teamcity:markdown")
+    sideJars(commonDep("org.jetbrains", "markdown")) { isTransitive = false }
 }
 
 val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
@@ -79,6 +82,7 @@ val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
 }
 
 ideaPlugin {
+    duplicatesStrategy = DuplicatesStrategy.FAIL // Investigation is required if we have multiple jars with same name
     dependsOn(":dist")
     from(jar)
     from(sideJars)

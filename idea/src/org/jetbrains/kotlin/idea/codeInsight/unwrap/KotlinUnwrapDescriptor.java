@@ -34,6 +34,7 @@ public class KotlinUnwrapDescriptor extends UnwrapDescriptorBase {
                 new KotlinUnwrappers.KotlinFinallyUnwrapper("unwrap.expression"),
                 new KotlinUnwrappers.KotlinFinallyRemover("remove.expression"),
                 new KotlinLambdaUnwrapper("unwrap.expression"),
+                new KotlinFunctionParameterUnwrapper("unwrap.expression")
         };
     }
 }

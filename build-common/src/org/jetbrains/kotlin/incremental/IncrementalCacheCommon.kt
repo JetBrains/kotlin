@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.incremental.storage.*
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.deserialization.supertypes
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.File
 
 /**
@@ -53,13 +54,16 @@ abstract class IncrementalCacheCommon<ClassName>(workingDir: File) : BasicMapsOw
     internal abstract val sourceToClassesMap: AbstractSourceToOutputMap<ClassName>
     internal abstract val dirtyOutputClassesMap: AbstractDirtyClassesMap<ClassName>
 
+    fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName> =
+        files.flatMapTo(HashSet()) { sourceToClassesMap.getFqNames(it) }
+
     fun getSubtypesOf(className: FqName): Sequence<FqName> =
             subtypesMap[className].asSequence()
 
     fun getSourceFileIfClass(fqName: FqName): File? =
             classFqNameToSourceMap[fqName]
 
-    open fun markDirty(removedAndCompiledSources: List<File>) {
+    open fun markDirty(removedAndCompiledSources: Collection<File>) {
         for (sourceFile in removedAndCompiledSources) {
             val classes = sourceToClassesMap[sourceFile]
             classes.forEach {

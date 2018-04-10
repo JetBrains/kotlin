@@ -61,6 +61,7 @@ internal annotation class Metadata(
          * does not differ from the JVM's package FQ name. These names can be different in case the [JvmPackageName] annotation is used.
          * Note that this information is also stored in the corresponding module's `.kotlin_module` file.
          */
+        @SinceKotlin("1.2")
         val pn: String = "",
         /**
          * An extra int. Bits of this number represent the following flags:

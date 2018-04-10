@@ -413,7 +413,7 @@ class CallExpressionResolver(
         val currentContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT)
         val trace = currentContext.trace
 
-        val elementChain = expression.elementChain(context)
+        val elementChain = expression.elementChain(currentContext)
         val firstReceiver = elementChain.first().receiver
 
         var receiverTypeInfo = when (trace.get(BindingContext.QUALIFIER, firstReceiver)) {

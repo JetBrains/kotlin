@@ -2,7 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Kotlin Mock Runtime for Tests"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String

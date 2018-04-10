@@ -5,7 +5,9 @@ UFile (package = )
             USimpleNameReferenceExpression (identifier = Style)
             UClass (name = null)
                 UAnnotationMethod (name = getExitAnimation)
-                    ULiteralExpression (value = "bar")
+                    UBlockExpression
+                        UReturnExpression
+                            ULiteralExpression (value = "bar")
                 UAnnotationMethod (name = SHEET)
         UField (name = value)
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)

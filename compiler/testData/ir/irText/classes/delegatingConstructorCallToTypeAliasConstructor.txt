@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     CONSTRUCTOR visibility:public <> () returnType:C1 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
-          <T>: null
+          <T>: String
           value: CONST String type=kotlin.String value=O
         INSTANCE_INITIALIZER_CALL classDescriptor='C1'
     PROPERTY FAKE_OVERRIDE name:value type:kotlin.String visibility:public modality:FINAL flags:val
@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     CONSTRUCTOR visibility:public <> () returnType:C2 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
-          <T>: null
+          <T>: String
           value: CONST String type=kotlin.String value=K
         INSTANCE_INITIALIZER_CALL classDescriptor='C2'
     PROPERTY FAKE_OVERRIDE name:value type:kotlin.String visibility:public modality:FINAL flags:val

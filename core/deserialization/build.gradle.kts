@@ -1,15 +1,15 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
+    compile(project(":core:metadata"))
     compile(project(":core:util.runtime"))
     compile(project(":core:descriptors"))
-    compile(protobufLite())
     compile(commonDep("javax.inject"))
 }
 
@@ -19,11 +19,6 @@ sourceSets {
 }
 
 tasks.withType<JavaCompile> {
-    dependsOn(protobufLiteTask)
     sourceCompatibility = "1.6"
     targetCompatibility = "1.6"
-}
-
-tasks.withType<KotlinCompile> {
-    dependsOn(protobufLiteTask)
 }

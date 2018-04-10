@@ -140,6 +140,9 @@ class LazyJavaClassDescriptor(
         // we'll just say that the interface MAY BE a SAM when it's not and then more detailed check will be applied.
         if (candidates.count { it.name.identifier !in PUBLIC_METHOD_NAMES_IN_OBJECT } > 1) return true
 
+        // If we have default methods the interface could be a SAM even while a super interface has more than one abstract method
+        if (jClass.methods.any { !it.isAbstract && it.typeParameters.isEmpty() }) return false
+
         // Check if any of the super-interfaces contain too many methods to be a SAM
         return typeConstructor.supertypes.any {
             it.constructor.declarationDescriptor.safeAs<LazyJavaClassDescriptor>()?.isDefinitelyNotSamInterface == true

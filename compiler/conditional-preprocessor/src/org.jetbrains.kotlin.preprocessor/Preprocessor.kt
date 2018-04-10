@@ -37,7 +37,9 @@ fun createJvmProfile(targetRoot: File, version: Int): Profile = Profile("JVM$ver
 fun createJsProfile(targetRoot: File): Profile = Profile("JS", JsPlatformEvaluator(), File(targetRoot, "js"))
 
 val profileEvaluators: Map<String, () -> Evaluator> =
-        listOf(6, 7, 8).associateBy({ version -> "JVM$version" }, { version -> { JvmPlatformEvaluator(version) } }) + ("JS" to { JsPlatformEvaluator() })
+    listOf(6, 7, 8)
+        .associateBy({ version -> "JVM$version" }, { version -> { JvmPlatformEvaluator(version) } })
+        .plus<String, () -> PlatformEvaluator>(("JS" to { JsPlatformEvaluator() }))
 
 fun createProfile(name: String, targetRoot: File): Profile {
     val (profileName, evaluator) = profileEvaluators.entries.firstOrNull { it.key.equals(name, ignoreCase = true) } ?: throw IllegalArgumentException("Profile with name '$name' is not supported")

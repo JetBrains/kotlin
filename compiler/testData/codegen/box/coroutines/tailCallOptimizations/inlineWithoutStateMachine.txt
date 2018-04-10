@@ -14,7 +14,6 @@ final class InlineWithoutStateMachineKt$box$1 {
 @kotlin.Metadata
 final class InlineWithoutStateMachineKt$complexSuspend$1 {
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     inner class InlineWithoutStateMachineKt$complexSuspend$1

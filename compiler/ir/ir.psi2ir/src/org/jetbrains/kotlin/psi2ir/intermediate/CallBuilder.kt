@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.psi2ir.isValueArgumentReorderingRequired
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -28,6 +25,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class CallBuilder(
     val original: ResolvedCall<*>, // TODO get rid of "original", sometimes we want to generate a call without ResolvedCall
     val descriptor: CallableDescriptor,
+    val typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
     val isExtensionInvokeCall: Boolean = false
 ) {
     var superQualifier: ClassDescriptor? = null

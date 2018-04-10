@@ -32,11 +32,15 @@ import java.util.*
 object PluginCliParser {
 
     @JvmStatic
-    fun loadPluginsSafe(arguments: CommonCompilerArguments, configuration: CompilerConfiguration): ExitCode {
+    fun loadPluginsSafe(pluginClasspaths: Array<String>?, pluginOptions: Array<String>?, configuration: CompilerConfiguration): ExitCode =
+        loadPluginsSafe(pluginClasspaths?.asIterable(), pluginOptions?.asIterable(), configuration)
+
+    @JvmStatic
+    fun loadPluginsSafe(pluginClasspaths: Iterable<String>?, pluginOptions: Iterable<String>?, configuration: CompilerConfiguration): ExitCode {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         try {
-            PluginCliParser.loadPlugins(arguments, configuration)
+            PluginCliParser.loadPlugins(pluginClasspaths, pluginOptions, configuration)
         }
         catch (e: PluginCliOptionProcessingException) {
             val message = e.message + "\n\n" + cliPluginUsageString(e.pluginId, e.options)
@@ -55,9 +59,9 @@ object PluginCliParser {
     }
 
     @JvmStatic
-    fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
+    fun loadPlugins(pluginClasspaths: Iterable<String>?, pluginOptions: Iterable<String>?, configuration: CompilerConfiguration) {
         val classLoader = PluginURLClassLoader(
-                arguments.pluginClasspaths
+                pluginClasspaths
                         ?.map { File(it).toURI().toURL() }
                         ?.toTypedArray()
                         ?: arrayOf<URL>(),
@@ -68,15 +72,15 @@ object PluginCliParser {
         componentRegistrars.addAll(BundledCompilerPlugins.componentRegistrars)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
-        processPluginOptions(arguments, configuration, classLoader)
+        processPluginOptions(pluginOptions, configuration, classLoader)
     }
 
     private fun processPluginOptions(
-            arguments: CommonCompilerArguments,
+            pluginOptions: Iterable<String>?,
             configuration: CompilerConfiguration,
             classLoader: ClassLoader
     ) {
-        val optionValuesByPlugin = arguments.pluginOptions?.map(::parsePluginOption)?.groupBy {
+        val optionValuesByPlugin = pluginOptions?.map(::parsePluginOption)?.groupBy {
             if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments.PLUGIN_OPTION_FORMAT}")
             it.pluginId
         } ?: mapOf()

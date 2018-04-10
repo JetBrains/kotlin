@@ -18,6 +18,8 @@ package test
 
 public expect fun assertTypeEquals(expected: Any?, actual: Any?)
 
+public expect fun randomInt(limit: Int): Int
+
 internal expect fun String.removeLeadingPlusOnJava6(): String
 internal expect fun doubleTotalOrderEquals(a: Double?, b: Double?): Boolean
 

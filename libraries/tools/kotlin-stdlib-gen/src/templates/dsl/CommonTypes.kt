@@ -75,6 +75,7 @@ fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
 enum class Inline {
     No,
     Yes,
+    YesSuppressWarning,  // with suppressed warning about nothing to inline
     Only;
 
     fun isInline() = this != No

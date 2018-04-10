@@ -102,6 +102,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
     VALUE_PARAMETER name:cv index:1 type:CInt32Var /* = CInt32VarX<kotlin.Int> */ flags:
     BLOCK_BODY
       CALL '<set-value>(Int) on CInt32VarX<Int>: Unit' type=kotlin.Unit origin=EQ
+        <`0>: Int
         $receiver: GET_VAR 'value-parameter cv: CInt32Var /* = CInt32VarX<Int> */' type=CInt32Var /* = CInt32VarX<kotlin.Int> */ origin=null
         value: CALL '<get-value>(): Int' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'value-parameter value: IdType' type=IdType origin=null

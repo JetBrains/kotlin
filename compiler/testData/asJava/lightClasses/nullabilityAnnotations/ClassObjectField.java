@@ -10,8 +10,6 @@ public final class ClassObjectField {
         @org.jetbrains.annotations.Nullable
         public final java.lang.String getX() { /* compiled code */ }
 
-        private final java.lang.String getY() { /* compiled code */ }
-
         private Companion() { /* compiled code */ }
     }
 }

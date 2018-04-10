@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -1675,6 +1675,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("ReceiverAnnotations.kt")
                 public void testReceiverAnnotations() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/ReceiverAnnotations.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiverUseSiteTargetOnExtensionFunction.kt")
+                public void testReceiverUseSiteTargetOnExtensionFunction() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/withUseSiteTarget/receiverUseSiteTargetOnExtensionFunction.kt");
                     doTest(fileName);
                 }
 
@@ -4790,6 +4796,18 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("commonSupertypeForCyclicAndUsualTypes.kt")
+            public void testCommonSupertypeForCyclicAndUsualTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/commonSupertypeForCyclicAndUsualTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("commonSupertypeForCyclicTypes.kt")
+            public void testCommonSupertypeForCyclicTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/commonSupertypeForCyclicTypes.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("cyclicHierarchy.kt")
             public void testCyclicHierarchy() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/cyclicHierarchy.kt");
@@ -6217,6 +6235,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/inference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("delegateExpressionAsLambda.kt")
+                public void testDelegateExpressionAsLambda() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/delegateExpressionAsLambda.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("differentDelegatedExpressions.kt")
                 public void testDifferentDelegatedExpressions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/differentDelegatedExpressions.kt");
@@ -6268,6 +6292,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("noExpectedTypeForSupertypeConstraint.kt")
                 public void testNoExpectedTypeForSupertypeConstraint() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/noExpectedTypeForSupertypeConstraint.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("resultTypeOfLambdaForConventionMethods.kt")
+                public void testResultTypeOfLambdaForConventionMethods() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/resultTypeOfLambdaForConventionMethods.kt");
                     doTest(fileName);
                 }
 
@@ -10885,6 +10915,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     doTest(fileName);
                 }
 
+                @TestMetadata("returnLambdaFromLambda.kt")
+                public void testReturnLambdaFromLambda() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/returnLambdaFromLambda.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("subtypeConstraintOnNullableType.kt")
                 public void testSubtypeConstraintOnNullableType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/subtypeConstraintOnNullableType.kt");
@@ -11555,6 +11591,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("defaultLambdaInlineDisable.kt")
             public void testDefaultLambdaInlineDisable() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/defaultLambdaInlineDisable.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaultLambdaInlineSuspend.kt")
+            public void testDefaultLambdaInlineSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inline/defaultLambdaInlineSuspend.kt");
                 doTest(fileName);
             }
 
@@ -12578,6 +12620,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("flexibleNothing.kt")
+            public void testFlexibleNothing() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/flexibleNothing.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("genericConstructorWithMultipleBounds.kt")
             public void testGenericConstructorWithMultipleBounds() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/genericConstructorWithMultipleBounds.kt");
@@ -13230,6 +13278,12 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/typeInferenceOnSamAdapters.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("withDefaultMethods.kt")
+                public void testWithDefaultMethods() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/sam/withDefaultMethods.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/j+k/samByProjectedType")
@@ -13646,6 +13700,27 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("kt828.kt")
             public void testKt828() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/library/kt828.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/localClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LocalClasses extends AbstractDiagnosticsUsingJavacTest {
+            public void testAllFilesPresentInLocalClasses() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/localClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("localAnnotationClass.kt")
+            public void testLocalAnnotationClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/localClasses/localAnnotationClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localAnnotationClassError.kt")
+            public void testLocalAnnotationClassError() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/localClasses/localAnnotationClassError.kt");
                 doTest(fileName);
             }
         }
@@ -24515,6 +24590,18 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("AmbiguousVararg.kt")
             public void testAmbiguousVararg() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/AmbiguousVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignNonConstSingleArrayElementAsVarargInAnnotation.kt")
+            public void testAssignNonConstSingleArrayElementAsVarargInAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/assignNonConstSingleArrayElementAsVarargInAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("assignNonConstSingleArrayElementAsVarargInAnnotationError.kt")
+            public void testAssignNonConstSingleArrayElementAsVarargInAnnotationError() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/assignNonConstSingleArrayElementAsVarargInAnnotationError.kt");
                 doTest(fileName);
             }
 

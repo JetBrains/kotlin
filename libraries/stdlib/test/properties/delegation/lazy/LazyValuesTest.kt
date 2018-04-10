@@ -1,6 +1,5 @@
 package test.properties.delegation.lazy
 
-import kotlin.properties.*
 import kotlin.test.*
 
 class LazyValTest {
@@ -12,24 +11,6 @@ class LazyValTest {
     @Test fun doTest() {
         a
         assertTrue(a == 1, "fail: initializer should be invoked only once")
-    }
-}
-
-@JvmVersion
-class SynchronizedLazyValTest {
-    @Volatile var result = 0
-    val a by lazy(this) {
-        ++result
-    }
-
-    @Test fun doTest() {
-        synchronized(this) {
-            kotlin.concurrent.thread { a } // not available in js
-            result = 1
-            a
-        }
-        assertTrue(a == 2, "fail: initializer should be invoked only once")
-        assertTrue(result == 2, "fail result should be incremented after test")
     }
 }
 

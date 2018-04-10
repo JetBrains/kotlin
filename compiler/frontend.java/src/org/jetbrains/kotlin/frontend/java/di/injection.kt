@@ -68,7 +68,6 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<AnnotationResolverImpl>()
     useImpl<SignaturePropagatorImpl>()
     useImpl<TraceBasedErrorReporter>()
-    useImpl<PsiBasedExternalAnnotationResolver>()
     useInstance(InternalFlexibleTypeTransformer)
 
     useImpl<CompilerDeserializationConfiguration>()

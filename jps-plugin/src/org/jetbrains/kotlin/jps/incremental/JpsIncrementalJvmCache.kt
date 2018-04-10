@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.File
 
 class JpsIncrementalJvmCache(
-        target: ModuleBuildTarget,
-        paths: BuildDataPaths
+    target: ModuleBuildTarget,
+    paths: BuildDataPaths
 ) : IncrementalJvmCache(paths.getTargetDataRoot(target), target.outputDir), StorageOwner {
     override fun debugLog(message: String) {
         KotlinBuilder.LOG.debug(message)
@@ -35,8 +35,8 @@ class JpsIncrementalJvmCache(
 }
 
 private class KotlinIncrementalStorageProvider(
-        private val target: ModuleBuildTarget,
-        private val paths: BuildDataPaths
+    private val target: ModuleBuildTarget,
+    private val paths: BuildDataPaths
 ) : StorageProvider<JpsIncrementalJvmCache>() {
 
     override fun equals(other: Any?) = other is KotlinIncrementalStorageProvider && target == other.target
@@ -44,9 +44,9 @@ private class KotlinIncrementalStorageProvider(
     override fun hashCode() = target.hashCode()
 
     override fun createStorage(targetDataDir: File): JpsIncrementalJvmCache =
-            JpsIncrementalJvmCache(target, paths)
+        JpsIncrementalJvmCache(target, paths)
 }
 
 fun BuildDataManager.getKotlinCache(target: ModuleBuildTarget): JpsIncrementalJvmCache =
-        getStorage(target, KotlinIncrementalStorageProvider(target, dataPaths))
+    getStorage(target, KotlinIncrementalStorageProvider(target, dataPaths))
 

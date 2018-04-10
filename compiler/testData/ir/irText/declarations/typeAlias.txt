@@ -3,6 +3,10 @@ FILE fqName:<root> fileName:/typeAlias.kt
   FUN name:foo visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       TYPEALIAS typealias TestLocal = String type=kotlin.String
+        annotations:
+          CALL 'constructor Suppress(vararg String)' type=kotlin.Suppress origin=null
+            names: VARARG type=Array<out String> varargElementType=String
+              CONST String type=kotlin.String value=TOPLEVEL_TYPEALIASES_ONLY
   CLASS CLASS name:C modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
     superClasses:
@@ -12,6 +16,10 @@ FILE fqName:<root> fileName:/typeAlias.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
     TYPEALIAS typealias TestNested = String type=kotlin.String
+      annotations:
+        CALL 'constructor Suppress(vararg String)' type=kotlin.Suppress origin=null
+          names: VARARG type=Array<out String> varargElementType=String
+            CONST String type=kotlin.String value=TOPLEVEL_TYPEALIASES_ONLY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

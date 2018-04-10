@@ -22,6 +22,7 @@ import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.utils.Pair;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.text.StringUtil;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -392,14 +393,20 @@ public class ApiClass implements Comparable<ApiClass> {
 
         for (Pair<String, Integer> superClass : mSuperClasses) {
             ApiClass clz = info.getClass(superClass.getFirst());
-            assert clz != null : superClass.getSecond();
+            if (clz == null) {
+                throw new NullPointerException(
+                        "Null is not expected in [" + StringUtil.join(mSuperClasses, ", ") + "], " + superClass.getSecond());
+            }
             clz.addAllFields(info, set);
         }
 
         // Get methods from implemented interfaces as well;
         for (Pair<String, Integer> superClass : mInterfaces) {
             ApiClass clz = info.getClass(superClass.getFirst());
-            assert clz != null : superClass.getSecond();
+            if (clz == null) {
+                throw new NullPointerException(
+                        "Null is not expected in [" + StringUtil.join(mSuperClasses, ", ") + "], " + superClass.getSecond());
+            }
             clz.addAllFields(info, set);
         }
     }

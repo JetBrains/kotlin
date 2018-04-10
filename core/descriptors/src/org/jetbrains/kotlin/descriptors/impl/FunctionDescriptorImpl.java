@@ -372,6 +372,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
         private Boolean newHasSynthesizedParameterNames = null;
         protected boolean justForTypeSubstitution = false;
+        private boolean dropSuspend = false;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -502,6 +503,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         @Override
         @NotNull
+        public CopyConfiguration setDropSuspend() {
+            this.dropSuspend = true;
+            return this;
+        }
+
+        @Override
+        @NotNull
         public CopyConfiguration setHiddenToOvercomeSignatureClash() {
             isHiddenToOvercomeSignatureClash = true;
             return this;
@@ -599,6 +607,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         final TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
                 unsubstitutedTypeParameters, configuration.substitution, substitutedDescriptor, substitutedTypeParameters, wereChanges
         );
+        if (substitutor == null) return null;
 
         KotlinType substitutedReceiverParameterType = null;
         if (configuration.newExtensionReceiverParameterType != null) {
@@ -663,7 +672,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setExternal(isExternal);
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
-        substitutedDescriptor.setSuspend(isSuspend);
+        if (configuration.dropSuspend) {
+            substitutedDescriptor.setSuspend(false);
+        } else {
+            substitutedDescriptor.setSuspend(isSuspend);
+        }
         substitutedDescriptor.setExpect(isExpect);
         substitutedDescriptor.setActual(isActual);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
@@ -766,6 +779,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitFunctionDescriptor(this, data);
+    }
+
+    @Nullable
+    public static List<ValueParameterDescriptor> getSubstitutedValueParameters(
+            FunctionDescriptor substitutedDescriptor,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @NotNull TypeSubstitutor substitutor
+    ) {
+        return getSubstitutedValueParameters(substitutedDescriptor, unsubstitutedValueParameters, substitutor, false, false, null);
     }
 
     @Nullable

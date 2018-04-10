@@ -309,6 +309,7 @@ class DeclarationsChecker(
 
     private fun checkClass(classDescriptor: ClassDescriptorWithResolutionScopes, classOrObject: KtClassOrObject) {
         checkSupertypesForConsistency(classDescriptor, classOrObject)
+        checkLocalAnnotation(classDescriptor, classOrObject)
         checkTypesInClassHeader(classOrObject)
 
         when (classOrObject) {
@@ -326,6 +327,16 @@ class DeclarationsChecker(
         checkPrimaryConstructor(classOrObject, classDescriptor)
 
         checkPrivateExpectedDeclaration(classOrObject, classDescriptor)
+    }
+
+    private fun checkLocalAnnotation(classDescriptor: ClassDescriptor, classOrObject: KtClassOrObject) {
+        if (classDescriptor.kind == ClassKind.ANNOTATION_CLASS && DescriptorUtils.isLocal(classDescriptor)) {
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitLocalAnnotations)) {
+                trace.report(LOCAL_ANNOTATION_CLASS_ERROR.on(classOrObject))
+            } else {
+                trace.report(LOCAL_ANNOTATION_CLASS.on(classOrObject))
+            }
+        }
     }
 
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {

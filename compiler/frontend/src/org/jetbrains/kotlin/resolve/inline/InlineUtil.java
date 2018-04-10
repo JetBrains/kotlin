@@ -36,7 +36,7 @@ public class InlineUtil {
     public static boolean isInlineParameterExceptNullability(@NotNull ParameterDescriptor valueParameterOrReceiver) {
         return !(valueParameterOrReceiver instanceof ValueParameterDescriptor
                  && ((ValueParameterDescriptor) valueParameterOrReceiver).isNoinline()) &&
-               FunctionTypesKt.isFunctionType(valueParameterOrReceiver.getOriginal().getType());
+               FunctionTypesKt.isBuiltinFunctionalType(valueParameterOrReceiver.getOriginal().getType());
     }
 
     public static boolean isInlineParameter(@NotNull ParameterDescriptor valueParameterOrReceiver) {
@@ -55,7 +55,7 @@ public class InlineUtil {
     }
 
     public static boolean isPropertyWithAllAccessorsAreInline(@NotNull DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof PropertyDescriptor))  return false;
+        if (!(descriptor instanceof PropertyDescriptor)) return false;
 
         PropertyGetterDescriptor getter = ((PropertyDescriptor) descriptor).getGetter();
         if (getter == null || !getter.isInline()) return false;

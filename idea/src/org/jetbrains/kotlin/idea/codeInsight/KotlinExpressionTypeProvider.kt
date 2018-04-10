@@ -84,7 +84,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     private fun KtExpression.shouldShowStatementType(): Boolean {
         if (parent !is KtBlockExpression) return true
         if (parent.children.lastOrNull() == this) {
-            return analyze(BodyResolveMode.PARTIAL)[BindingContext.USED_AS_EXPRESSION, this] ?: false
+            return analyze(BodyResolveMode.PARTIAL_WITH_CFA)[BindingContext.USED_AS_EXPRESSION, this] ?: false
         }
         return false
     }

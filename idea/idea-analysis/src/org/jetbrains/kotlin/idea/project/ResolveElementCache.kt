@@ -72,7 +72,7 @@ class ResolveElementCache(
         }
     }
 
-    // drop whole cache after change "out of code block"
+    // drop whole cache after change "out of code block", each entry is checked with own modification stamp
     private val fullResolveCache: CachedValue<MutableMap<KtElement, CachedFullResolve>> =
         CachedValuesManager.getManager(project).createCachedValue(
             CachedValueProvider<MutableMap<KtElement, ResolveElementCache.CachedFullResolve>> {
@@ -409,12 +409,15 @@ class ResolveElementCache(
             }
         }
 
-        val controlFlowTrace =
-            DelegatingBindingTrace(trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true)
-        ControlFlowInformationProvider(
-            resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
-        ).checkDeclaration()
-        controlFlowTrace.addOwnDataTo(trace, null, false)
+        if (bodyResolveMode.doControlFlowAnalysis) {
+            val controlFlowTrace = DelegatingBindingTrace(
+                trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true
+            )
+            ControlFlowInformationProvider(
+                resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
+            ).checkDeclaration()
+            controlFlowTrace.addOwnDataTo(trace, null, false)
+        }
 
         return Pair(trace.bindingContext, statementFilterUsed)
     }

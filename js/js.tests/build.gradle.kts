@@ -3,15 +3,14 @@ import com.moowork.gradle.node.npm.NpmExecRunner
 import com.moowork.gradle.node.npm.NpmTask
 
 plugins {
+    kotlin("jvm")
+    id("jps-compatible")
     id("com.moowork.node").version("1.2.0")
 }
 
 node {
     download = true
 }
-
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
 
 val antLauncherJar by configurations.creating
 
@@ -25,6 +24,7 @@ dependencies {
     testCompileOnly(project(":compiler:util"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
+    testCompile(project(":compiler:backend.js"))
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))

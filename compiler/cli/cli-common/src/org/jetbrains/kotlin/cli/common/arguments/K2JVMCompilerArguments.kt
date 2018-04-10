@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -137,6 +138,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xmultifile-parts-inherit", description = "Compile multifile classes as a hierarchy of parts and facade")
     var inheritMultifileParts: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xuse-type-table", description = "Use type table in metadata serialization")
+    var useTypeTable: Boolean by FreezableVar(false)
+
     @Argument(
         value = "-Xskip-runtime-version-check",
         description = "Allow Kotlin runtime libraries of incompatible versions in the classpath"
@@ -224,6 +228,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
+    @Argument(value = "-Xenable-jvm-default", description = "Allow to use '@JvmDefault' for JVM default method support")
+    var enableJvmDefault: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
+    var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
+
     // Paths to output directories for friend modules.
     var friendPaths: Array<String>? by FreezableVar(null)
 
@@ -233,6 +243,15 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations
         )
+        result[AnalysisFlag.enableJvmDefault] = enableJvmDefault
+        return result
+    }
+
+    override fun configureLanguageFeatures(collector: MessageCollector): MutableMap<LanguageFeature, LanguageFeature.State> {
+        val result = super.configureLanguageFeatures(collector)
+        if (strictJavaNullabilityAssertions) {
+            result[LanguageFeature.StrictJavaNullabilityAssertions] = LanguageFeature.State.ENABLED
+        }
         return result
     }
 }

@@ -729,4 +729,30 @@ class KotlinGradleIT: BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun testNoUnnamedInputsOutputs() {
+        // Use a new Gradle version to enable the usage of the input/output builders, which are new API:
+        val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.4")
+
+        val projects = listOf(
+            Project("simpleProject", gradleVersionRequirement),
+            Project("kotlin2JsProject", gradleVersionRequirement),
+            Project("multiplatformProject", gradleVersionRequirement),
+            Project("simple", gradleVersionRequirement, "kapt2")
+        )
+
+        projects.forEach {
+            it.apply {
+                // Enable caching to make sure Gradle reports the task inputs/outputs during key construction:
+                val options = defaultBuildOptions().copy(withBuildCache = true)
+                build("assemble", options = options) {
+                    // Check that all inputs/outputs added at runtime have proper names
+                    // (the unnamed ones are listed as $1, $2 etc.):
+                    assertNotContains("Appending inputPropertyHash for '\\$\\d+'".toRegex())
+                    assertNotContains("Appending outputPropertyName to build cache key: \\$\\d+".toRegex())
+                }
+            }
+        }
+    }
 }

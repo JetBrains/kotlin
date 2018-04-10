@@ -40,7 +40,7 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
         val right = element.right as? KtBinaryExpression ?: return false
         if (right.left == null || right.right == null) return false
 
-        val bindingContext = right.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = right.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         if (!checkExpressionRepeat(left, right, bindingContext)) return false
 
         // now check that the resulting operator assignment will be resolved

@@ -146,6 +146,11 @@ public class LockBasedStorageManager implements StorageManager {
             protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
                 return RecursionDetectedResult.value(onRecursiveCall);
             }
+
+            @Override
+            protected String presentableName() {
+                return "RecursionTolerantLazyValue";
+            }
         };
     }
 
@@ -170,6 +175,11 @@ public class LockBasedStorageManager implements StorageManager {
             protected void postCompute(@NotNull T value) {
                 postCompute.invoke(value);
             }
+
+            @Override
+            protected String presentableName() {
+                return "LazyValueWithPostCompute";
+            }
         };
     }
 
@@ -188,6 +198,11 @@ public class LockBasedStorageManager implements StorageManager {
             protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
                 return RecursionDetectedResult.value(onRecursiveCall);
             }
+
+            @Override
+            protected String presentableName() {
+                return "RecursionTolerantNullableLazyValue";
+            }
         };
     }
 
@@ -200,6 +215,11 @@ public class LockBasedStorageManager implements StorageManager {
             @Override
             protected void postCompute(@Nullable T value) {
                 postCompute.invoke(value);
+            }
+
+            @Override
+            protected String presentableName() {
+                return "NullableLazyValueWithPostCompute";
             }
         };
     }
@@ -355,6 +375,15 @@ public class LockBasedStorageManager implements StorageManager {
 
         protected void postCompute(T value) {
             // Doing something in post-compute helps prevent infinite recursion
+        }
+
+        @NotNull
+        public String renderDebugInformation() {
+            return presentableName() + ", storageManager=" + storageManager;
+        }
+
+        protected String presentableName() {
+            return this.getClass().getName();
         }
     }
 

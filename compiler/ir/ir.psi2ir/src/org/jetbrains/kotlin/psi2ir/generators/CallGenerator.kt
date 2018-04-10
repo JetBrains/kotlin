@@ -105,7 +105,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                     ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
             val constructorSymbol = context.symbolTable.referenceConstructor(descriptor.original)
             val irCall =
-                IrDelegatingConstructorCallImpl(startOffset, endOffset, constructorSymbol, descriptor, getTypeArguments(call.original))
+                IrDelegatingConstructorCallImpl(startOffset, endOffset, constructorSymbol, descriptor, call.typeArguments)
             irCall.dispatchReceiver = dispatchReceiver?.load()
             irCall.extensionReceiver = extensionReceiver?.load()
             addParametersToCall(startOffset, endOffset, call, irCall, descriptor.builtIns.unitType)
@@ -121,7 +121,11 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
             if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
             val constructorSymbol = context.symbolTable.referenceConstructor(constructorDescriptor.original)
-            val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, constructorSymbol)
+            val irCall = IrEnumConstructorCallImpl(
+                startOffset, endOffset,
+                constructorSymbol,
+                call.typeArguments
+            )
             addParametersToCall(startOffset, endOffset, call, irCall, constructorDescriptor.returnType)
         }
     }
@@ -142,7 +146,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                     startOffset, endOffset,
                     getterSymbol,
                     getterDescriptor,
-                    getTypeArguments(call.original),
+                    call.typeArguments,
                     dispatchReceiverValue?.load(),
                     extensionReceiverValue?.load(),
                     IrStatementOrigin.GET_PROPERTY,
@@ -177,7 +181,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 returnType,
                 functionSymbol,
                 functionDescriptor,
-                getTypeArguments(call.original),
+                call.typeArguments,
                 origin,
                 superQualifierSymbol
             )

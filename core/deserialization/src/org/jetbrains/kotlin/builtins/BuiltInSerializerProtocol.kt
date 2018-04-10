@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
 object BuiltInSerializerProtocol : SerializerExtensionProtocol(
         ExtensionRegistryLite.newInstance().apply { BuiltInsProtoBuf.registerAllExtensions(this) },

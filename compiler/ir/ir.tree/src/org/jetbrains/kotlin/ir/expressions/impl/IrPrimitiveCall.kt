@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallWithShallowCopy
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -35,11 +34,23 @@ abstract class IrPrimitiveCallBase(
     startOffset: Int,
     endOffset: Int,
     override val origin: IrStatementOrigin?,
-    override val symbol: IrFunctionSymbol
-) : IrExpressionBase(startOffset, endOffset, symbol.descriptor.returnType!!), IrCall {
+    override val symbol: IrFunctionSymbol,
+    override val valueArgumentsCount: Int
+) : IrExpressionBase(startOffset, endOffset, symbol.descriptor.returnType!!),
+    IrCall {
+
     override val descriptor: FunctionDescriptor get() = symbol.descriptor
     override val superQualifier: ClassDescriptor? get() = null
     override val superQualifierSymbol: IrClassSymbol? get() = null
+
+    override val typeArgumentsCount: Int = 0
+
+    override fun getTypeArgument(index: Int): KotlinType? =
+        throw AssertionError("Primitive $descriptor has no type arguments")
+
+    override fun putTypeArgument(index: Int, type: KotlinType?) {
+        throw AssertionError("Primitive $descriptor has no type arguments")
+    }
 
     override var dispatchReceiver: IrExpression?
         get() = null
@@ -55,9 +66,6 @@ abstract class IrPrimitiveCallBase(
                 throw UnsupportedOperationException("Operator call expression can't have a receiver")
         }
 
-    override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType? =
-        null // IR primitives have no type parameters
-
     override fun removeValueArgument(index: Int) {
         throw AssertionError("Operator call expression can't have a default argument")
     }
@@ -72,8 +80,14 @@ abstract class IrPrimitiveCallBase(
     }
 }
 
-class IrNullaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, symbol: IrFunctionSymbol) :
-    IrPrimitiveCallBase(startOffset, endOffset, origin, symbol), IrCallWithShallowCopy {
+class IrNullaryPrimitiveImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrStatementOrigin?,
+    symbol: IrFunctionSymbol
+) : IrPrimitiveCallBase(startOffset, endOffset, origin, symbol, 0),
+    IrCallWithShallowCopy {
+
     override fun getValueArgument(index: Int): IrExpression? = null
 
     override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
@@ -95,8 +109,14 @@ class IrNullaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStateme
         IrNullaryPrimitiveImpl(startOffset, endOffset, newOrigin, createFunctionSymbol(newCallee))
 }
 
-class IrUnaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, symbol: IrFunctionSymbol) :
-    IrPrimitiveCallBase(startOffset, endOffset, origin, symbol), IrCallWithShallowCopy {
+class IrUnaryPrimitiveImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrStatementOrigin?,
+    symbol: IrFunctionSymbol
+) : IrPrimitiveCallBase(startOffset, endOffset, origin, symbol, 1),
+    IrCallWithShallowCopy {
+
     @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int, endOffset: Int,
@@ -160,8 +180,14 @@ class IrUnaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatement
         IrUnaryPrimitiveImpl(startOffset, endOffset, newOrigin, newCallee)
 }
 
-class IrBinaryPrimitiveImpl(startOffset: Int, endOffset: Int, origin: IrStatementOrigin?, symbol: IrFunctionSymbol) :
-    IrPrimitiveCallBase(startOffset, endOffset, origin, symbol), IrCallWithShallowCopy {
+class IrBinaryPrimitiveImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrStatementOrigin?,
+    symbol: IrFunctionSymbol
+) : IrPrimitiveCallBase(startOffset, endOffset, origin, symbol, 2),
+    IrCallWithShallowCopy {
+
     @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int, endOffset: Int, origin: IrStatementOrigin?,

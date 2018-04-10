@@ -21,8 +21,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
@@ -31,15 +32,16 @@ import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.isStableValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -158,11 +160,23 @@ fun KtPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Edito
     (this.baseExpression as? KtNameReferenceExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
-fun KtExpression.isStable(context: BindingContext = this.analyze()): Boolean {
-    if (this is KtConstantExpression || this is KtThisExpression) return true
-    val descriptor = BindingContextUtils.extractVariableDescriptorFromReference(context, this)
-    return descriptor is VariableDescriptor &&
-            isStableValue(descriptor, DescriptorUtils.getContainingModule(descriptor))
+// I.e. stable val/var/receiver
+// We exclude stable complex expressions here, because we don't do smartcasts on them (even though they are stable)
+fun KtExpression.isStableSimpleExpression(context: BindingContext = this.analyze()): Boolean {
+    val dataFlowValue = this.toDataFlowValue(context)
+    return dataFlowValue?.isStable == true &&
+            dataFlowValue.kind != DataFlowValue.Kind.STABLE_COMPLEX_EXPRESSION
+
+}
+
+fun KtExpression.isStableVal(context: BindingContext = this.analyze()): Boolean {
+    return this.toDataFlowValue(context)?.kind == DataFlowValue.Kind.STABLE_VALUE
+}
+
+private fun KtExpression.toDataFlowValue(context: BindingContext): DataFlowValue? {
+    val expressionType = this.getType(context) ?: return null
+    val dataFlowValueFactory = this.getResolutionFacade().frontendService<DataFlowValueFactory>()
+    return dataFlowValueFactory.createDataFlowValue(this, expressionType, context, findModuleDescriptor())
 }
 
 data class IfThenToSelectData(

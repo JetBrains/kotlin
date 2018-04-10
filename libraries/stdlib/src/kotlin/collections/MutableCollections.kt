@@ -45,18 +45,6 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
 @kotlin.internal.InlineOnly
 public inline fun <T> MutableList<T>.remove(index: Int): T = removeAt(index)
 
-@Deprecated("Use sortWith(comparator) instead.", ReplaceWith("this.sortWith(comparator)"), level = DeprecationLevel.ERROR)
-@JvmVersion
-@kotlin.internal.InlineOnly
-@Suppress("UNUSED_PARAMETER")
-public inline fun <T> MutableList<T>.sort(comparator: Comparator<in T>): Unit = throw NotImplementedError()
-
-@Deprecated("Use sortWith(Comparator(comparison)) instead.", ReplaceWith("this.sortWith(Comparator(comparison))"), level = DeprecationLevel.ERROR)
-@JvmVersion
-@kotlin.internal.InlineOnly
-@Suppress("UNUSED_PARAMETER")
-public inline fun <T> MutableList<T>.sort(comparison: (T, T) -> Int): Unit = throw NotImplementedError()
-
 /**
  * Adds the specified [element] to this mutable collection.
  */
@@ -267,67 +255,3 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
     clear()
     return result
 }
-
-/**
- * Sorts elements in the list in-place according to their natural sort order.
- */
-@kotlin.jvm.JvmVersion
-public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
-    if (size > 1) java.util.Collections.sort(this)
-}
-
-/**
- * Sorts elements in the list in-place according to the order specified with [comparator].
- */
-@kotlin.jvm.JvmVersion
-public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
-    if (size > 1) java.util.Collections.sort(this, comparator)
-}
-
-/**
- * Fills the list with the provided [value].
- *
- * Each element in the list gets replaced with the [value].
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-@SinceKotlin("1.2")
-public inline fun <T> MutableList<T>.fill(value: T) {
-    java.util.Collections.fill(this, value)
-}
-
-
-/**
- * Randomly shuffles elements in this mutable list.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-@SinceKotlin("1.2")
-public inline fun <T> MutableList<T>.shuffle() {
-    java.util.Collections.shuffle(this)
-}
-
-/**
- * Randomly shuffles elements in this mutable list using the specified [random] instance as the source of randomness.
- */
-@kotlin.jvm.JvmVersion
-@kotlin.internal.InlineOnly
-@SinceKotlin("1.2")
-public inline fun <T> MutableList<T>.shuffle(random: java.util.Random) {
-    java.util.Collections.shuffle(this, random)
-}
-
-/**
- * Returns a new list with the elements of this list randomly shuffled.
- */
-@kotlin.jvm.JvmVersion
-@SinceKotlin("1.2")
-public fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
-
-/**
- * Returns a new list with the elements of this list randomly shuffled
- * using the specified [random] instance as the source of randomness.
- */
-@kotlin.jvm.JvmVersion
-@SinceKotlin("1.2")
-public fun <T> Iterable<T>.shuffled(random: java.util.Random): List<T> = toMutableList().apply { shuffle(random) }

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.android.jps
 
 import com.intellij.util.PathUtil
-import org.jetbrains.jps.android.AndroidJpsUtil
+import org.jetbrains.jps.android.model.base.AndroidExtensionsDataProvider
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.module.JpsModule
@@ -37,23 +37,22 @@ class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
 
         return if (resPath != null && applicationId != null) {
             listOf(
-                    getPluginOptionString(pluginId, VARIANT_OPTION_NAME, "main;$resPath"),
-                    getPluginOptionString(pluginId, PACKAGE_OPTION_NAME, applicationId))
-        }
-        else emptyList()
+                getPluginOptionString(pluginId, VARIANT_OPTION_NAME, "main;$resPath"),
+                getPluginOptionString(pluginId, PACKAGE_OPTION_NAME, applicationId)
+            )
+        } else emptyList()
     }
 
     private fun isAndroidModuleWithoutGradle(module: JpsModule): Boolean {
-        val androidFacet = AndroidJpsUtil.getExtension(module) ?: return false
-        return !androidFacet.isGradleProject
+        val androidFacet = AndroidExtensionsDataProvider.getExtension(module) ?: return false
+        return !androidFacet.isGradleProject()
     }
 
     private fun hasAndroidJpsPlugin(): Boolean {
         try {
             Class.forName(ANDROID_JPS_UTIL_CLASS_FQNAME)
             return true
-        }
-        catch (e: ClassNotFoundException) {
+        } catch (e: ClassNotFoundException) {
             return false
         }
     }
@@ -78,35 +77,31 @@ class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
             }
 
             listOf(compilerPluginJar.absolutePath)
-        }
-        else emptyList()
+        } else emptyList()
     }
 
     private fun getAndroidResPath(module: JpsModule): String? {
-        val extension = AndroidJpsUtil.getExtension(module) ?: return null
-        return AndroidJpsUtil.getResourceDirForCompilationPath(extension)?.absolutePath
+        return AndroidExtensionsDataProvider.getExtension(module)?.getResourceDirForCompilationPath()?.absolutePath
     }
 
     private fun getAndroidManifest(module: JpsModule): File? {
-        val extension = AndroidJpsUtil.getExtension(module) ?: return null
-        return AndroidJpsUtil.getManifestFileForCompilationPath(extension)
+        return AndroidExtensionsDataProvider.getExtension(module)?.getManifestFileForCompilationPath()
     }
 
     companion object {
-        private val ANDROID_JPS_UTIL_CLASS_FQNAME = "org.jetbrains.jps.android.AndroidJpsUtil"
+        private const val ANDROID_JPS_UTIL_CLASS_FQNAME = "org.jetbrains.jps.android.AndroidJpsUtil"
 
-        private val JAR_FILE_NAME = "android-extensions-compiler.jar"
-        private val ANDROID_COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.android"
+        private const val JAR_FILE_NAME = "android-extensions-compiler.jar"
+        private const val ANDROID_COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.android"
 
-        private val VARIANT_OPTION_NAME = "variant"
-        private val PACKAGE_OPTION_NAME = "package"
+        private const val VARIANT_OPTION_NAME = "variant"
+        private const val PACKAGE_OPTION_NAME = "package"
 
         private fun getApplicationPackageFromManifest(manifestFile: File): String? {
-            try {
-                return manifestFile.parseXml().documentElement.getAttribute("package")
-            }
-            catch (e: Exception) {
-                return null
+            return try {
+                manifestFile.parseXml().documentElement.getAttribute("package")
+            } catch (e: Exception) {
+                null
             }
         }
 

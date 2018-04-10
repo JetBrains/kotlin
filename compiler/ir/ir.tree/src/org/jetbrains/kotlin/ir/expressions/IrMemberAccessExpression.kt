@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -30,13 +27,47 @@ interface IrMemberAccessExpression : IrExpression {
     val descriptor: CallableDescriptor
     val origin: IrStatementOrigin?
 
-    // NB `typeParameterDescriptor` should be taken from `descriptor.original`
-    fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType?
+    val typeArgumentsCount: Int
+    fun getTypeArgument(index: Int): KotlinType?
+    fun putTypeArgument(index: Int, type: KotlinType?)
 
+    val valueArgumentsCount: Int
     fun getValueArgument(index: Int): IrExpression?
     fun putValueArgument(index: Int, valueArgument: IrExpression?)
     fun removeValueArgument(index: Int)
 }
+
+fun IrMemberAccessExpression.getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType? =
+    getTypeArgument(typeParameterDescriptor.index)
+
+fun IrMemberAccessExpression.copyTypeArgumentsFrom(other: IrMemberAccessExpression) {
+    assert(typeArgumentsCount == other.typeArgumentsCount) {
+        "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
+    }
+    for (i in 0 until typeArgumentsCount) {
+        putTypeArgument(i, other.getTypeArgument(i))
+    }
+}
+
+fun IrMemberAccessExpression.copyTypeArgumentsFrom(source: Map<TypeParameterDescriptor, KotlinType>?) {
+    if (source == null) return
+    for ((typeParameter, typeArgument) in source) {
+        val index = typeParameter.index
+        assert(index < typeArgumentsCount) {
+            "Index out of range for type parameter $typeParameter; " +
+                    "containingDeclaration: ${typeParameter.containingDeclaration}; " +
+                    "callee: $descriptor"
+        }
+        putTypeArgument(index, typeArgument)
+    }
+}
+
+val CallableDescriptor.typeArgumentsCount: Int
+    get() =
+        when (this) {
+            is PropertyAccessorDescriptor -> correspondingProperty.typeParameters.size
+            else -> typeParameters.size
+        }
 
 fun IrMemberAccessExpression.getTypeArgumentOrDefault(typeParameterDescriptor: TypeParameterDescriptor) =
     getTypeArgument(typeParameterDescriptor) ?: typeParameterDescriptor.defaultType

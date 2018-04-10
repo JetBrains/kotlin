@@ -23,6 +23,8 @@ public fun assertTypeEquals(expected: Any?, actual: Any?) {
     assertEquals(expected?.javaClass, actual?.javaClass)
 }
 
+@JvmVersion
+public fun randomInt(limit: Int): Int = (Math.random() * limit).toInt()
 
 @kotlin.jvm.JvmVersion
 private val isJava6 = System.getProperty("java.version").startsWith("1.6.")

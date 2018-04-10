@@ -22,36 +22,75 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
+import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class GotoSuperActionHandler : CodeInsightActionHandler {
+    internal data class SuperDeclarationsAndDescriptor(val supers: List<PsiElement>, val descriptor: DeclarationDescriptor?) {
+        constructor() : this(emptyList(), null)
+
+        companion object {
+            fun forDeclarationAtCaret(editor: Editor, file: PsiFile): SuperDeclarationsAndDescriptor {
+                val element = file.findElementAt(editor.caretModel.offset) ?: return SuperDeclarationsAndDescriptor()
+                val declaration =
+                    PsiTreeUtil.getParentOfType<KtDeclaration>(
+                        element,
+                        KtNamedFunction::class.java,
+                        KtClass::class.java,
+                        KtProperty::class.java,
+                        KtObjectDeclaration::class.java
+                    ) ?: return SuperDeclarationsAndDescriptor()
+
+                val expectDeclaration = if (declaration.hasActualModifier()) declaration.expectedDeclarationIfAny() else null
+
+                val descriptor = declaration.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL)
+                val superDeclarations = findSuperDeclarations(file.project, descriptor)
+                return SuperDeclarationsAndDescriptor(
+                    supers = (superDeclarations ?: emptyList()) + listOfNotNull(expectDeclaration),
+                    descriptor = descriptor
+                )
+            }
+
+            private fun findSuperDeclarations(project: Project, descriptor: DeclarationDescriptor): List<PsiElement>? {
+                val superDescriptors: Collection<DeclarationDescriptor> = when (descriptor) {
+                    is ClassDescriptor -> {
+                        val supertypes = descriptor.typeConstructor.supertypes
+                        val superclasses = supertypes.mapNotNull { type ->
+                            type.constructor.declarationDescriptor as? ClassDescriptor
+                        }
+                        ContainerUtil.removeDuplicates(superclasses)
+                        superclasses
+                    }
+                    is CallableMemberDescriptor -> descriptor.getDirectlyOverriddenDeclarations()
+                    else -> return null
+                }
+
+                return superDescriptors.mapNotNull { superDescriptor ->
+                    if (superDescriptor is ClassDescriptor && isAny(superDescriptor)) {
+                        null
+                    } else
+                        DescriptorToSourceUtilsIde.getAnyDeclaration(project, superDescriptor)
+                }
+            }
+
+        }
+    }
+
     override fun invoke(project: Project, editor: Editor, file: PsiFile) {
         FeatureUsageTracker.getInstance().triggerFeatureUsed(GotoSuperAction.FEATURE_ID)
 
-        val element = file.findElementAt(editor.caretModel.offset) ?: return
-        val declaration =
-            PsiTreeUtil.getParentOfType<KtDeclaration>(
-                element,
-                KtNamedFunction::class.java,
-                KtClass::class.java,
-                KtProperty::class.java,
-                KtObjectDeclaration::class.java
-            ) ?: return
-
-        val descriptor = declaration.unsafeResolveToDescriptor(BodyResolveMode.PARTIAL)
-
-        val superDeclarations = findSuperDeclarations(project, descriptor)
-
-        if (superDeclarations == null || superDeclarations.isEmpty()) return
-        if (superDeclarations.size == 1) {
-            val navigatable = EditSourceUtil.getDescriptor(superDeclarations[0])
+        val (allDeclarations, descriptor) = SuperDeclarationsAndDescriptor.forDeclarationAtCaret(editor, file)
+        if (allDeclarations.isEmpty()) return
+        if (allDeclarations.size == 1) {
+            val navigatable = EditSourceUtil.getDescriptor(allDeclarations[0])
             if (navigatable != null && navigatable.canNavigate()) {
                 navigatable.navigate(true)
             }
         } else {
-            val message = getTitle(descriptor)
-            val superDeclarationsArray = PsiUtilCore.toPsiElementArray(superDeclarations)
+            val message = getTitle(descriptor!!)
+            val superDeclarationsArray = PsiUtilCore.toPsiElementArray(allDeclarations)
             val popup = if (descriptor is ClassDescriptor)
                 NavigationUtil.getPsiElementPopup(superDeclarationsArray, message)
             else
@@ -64,34 +103,12 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
     }
 
     private fun getTitle(descriptor: DeclarationDescriptor): String? =
-        when(descriptor) {
+        when (descriptor) {
             is ClassDescriptor -> KotlinBundle.message("goto.super.class.chooser.title")
             is PropertyDescriptor -> KotlinBundle.message("goto.super.property.chooser.title")
             is SimpleFunctionDescriptor -> KotlinBundle.message("goto.super.function.chooser.title")
             else -> null
         }
-
-    private fun findSuperDeclarations(project: Project, descriptor: DeclarationDescriptor): List<PsiElement>? {
-        val superDescriptors: Collection<DeclarationDescriptor> = when (descriptor) {
-            is ClassDescriptor -> {
-                val supertypes = descriptor.typeConstructor.supertypes
-                val superclasses = supertypes.mapNotNull { type ->
-                    type.constructor.declarationDescriptor as? ClassDescriptor
-                }
-                ContainerUtil.removeDuplicates(superclasses)
-                superclasses
-            }
-            is CallableMemberDescriptor -> descriptor.getDirectlyOverriddenDeclarations()
-            else -> return null
-        }
-
-        return superDescriptors.mapNotNull { descriptor ->
-            if (descriptor is ClassDescriptor && isAny(descriptor)) {
-                null
-            } else
-                DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-        }
-    }
 
     override fun startInWriteAction() = false
 }

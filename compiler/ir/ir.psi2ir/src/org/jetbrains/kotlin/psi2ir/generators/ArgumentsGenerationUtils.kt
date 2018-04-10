@@ -269,6 +269,16 @@ fun StatementGenerator.pregenerateCall(resolvedCall: ResolvedCall<*>): CallBuild
     return call
 }
 
+fun getTypeArguments(resolvedCall: ResolvedCall<*>?): Map<TypeParameterDescriptor, KotlinType>? {
+    if (resolvedCall == null) return null
+
+    val descriptor = resolvedCall.resultingDescriptor
+    if (descriptor.typeParameters.isEmpty()) return null
+
+    return resolvedCall.typeArguments
+}
+
+
 fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall<*>): CallBuilder {
     val extensionInvoke = resolvedCall.resultingDescriptor
     val functionNClass = extensionInvoke.containingDeclaration as? ClassDescriptor
@@ -277,6 +287,10 @@ fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall
         functionNClass.unsubstitutedMemberScope.getContributedFunctions(extensionInvoke.name, NoLookupLocation.FROM_BACKEND)
     val unsubstitutedPlainInvoke = unsubstitutedPlainInvokes.singleOrNull()
             ?: throw AssertionError("There should be a single 'invoke' in FunctionN class: $unsubstitutedPlainInvokes")
+
+    assert(unsubstitutedPlainInvoke.typeParameters.isEmpty()) {
+        "'operator fun invoke' should have no type parameters: $unsubstitutedPlainInvoke"
+    }
 
     val expectedValueParametersCount = extensionInvoke.valueParameters.size + 1
     assert(unsubstitutedPlainInvoke.valueParameters.size == expectedValueParametersCount) {
@@ -289,7 +303,12 @@ fun StatementGenerator.pregenerateExtensionInvokeCall(resolvedCall: ResolvedCall
 
     val ktCallElement = resolvedCall.call.callElement
 
-    val call = CallBuilder(resolvedCall, plainInvoke, isExtensionInvokeCall = true)
+    val call = CallBuilder(
+        resolvedCall,
+        plainInvoke,
+        typeArguments = null, // FunctionN#invoke has no type parameters of its own
+        isExtensionInvokeCall = true
+    )
 
     val functionReceiverValue = run {
         val dispatchReceiver =
@@ -329,15 +348,6 @@ private fun ResolvedCall<*>.isExtensionInvokeCall(): Boolean {
     return extensionReceiver != null
 }
 
-fun getTypeArguments(resolvedCall: ResolvedCall<*>?): Map<TypeParameterDescriptor, KotlinType>? {
-    if (resolvedCall == null) return null
-
-    val descriptor = resolvedCall.resultingDescriptor
-    if (descriptor.typeParameters.isEmpty()) return null
-
-    return resolvedCall.typeArguments
-}
-
 private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, resolvedCall: ResolvedCall<*>) {
     resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
         val valueParameter = call.descriptor.valueParameters[index]
@@ -346,7 +356,7 @@ private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, reso
 }
 
 fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): CallBuilder {
-    val call = CallBuilder(resolvedCall, unwrapCallableDescriptor(resolvedCall.resultingDescriptor))
+    val call = unwrapCallableDescriptorAndTypeArguments(resolvedCall)
 
     call.callReceiver = generateCallReceiver(
         resolvedCall.call.callElement,
@@ -361,12 +371,73 @@ fun StatementGenerator.pregenerateCallReceivers(resolvedCall: ResolvedCall<*>): 
     return call
 }
 
-fun unwrapCallableDescriptor(resultingDescriptor: CallableDescriptor): CallableDescriptor =
-    when (resultingDescriptor) {
-        is ImportedFromObjectCallableDescriptor<*> ->
-            resultingDescriptor.callableFromObject
-        is TypeAliasConstructorDescriptor ->
-            resultingDescriptor.underlyingConstructorDescriptor
-        else ->
-            resultingDescriptor
+fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>): CallBuilder {
+    val originalDescriptor = resolvedCall.resultingDescriptor
+
+    val unwrappedDescriptor = when (originalDescriptor) {
+        is ImportedFromObjectCallableDescriptor<*> -> originalDescriptor.callableFromObject
+        is TypeAliasConstructorDescriptor -> originalDescriptor.underlyingConstructorDescriptor
+        else -> originalDescriptor
     }
+
+    val originalTypeArguments = resolvedCall.typeArguments
+    val unsubstitutedUnwrappedDescriptor = unwrappedDescriptor.original
+    val unsubstitutedUnwrappedTypeParameters = unsubstitutedUnwrappedDescriptor.typeParameters
+
+    val unwrappedTypeArguments = when (originalDescriptor) {
+        is ImportedFromObjectCallableDescriptor<*> -> {
+            assert(originalDescriptor.typeParameters.size == unsubstitutedUnwrappedTypeParameters.size) {
+                "Mismatching original / unwrapped type parameters: " +
+                        "originalDescriptor: $originalDescriptor; " +
+                        "unsubstitutedUnwrappedDescriptor: $unsubstitutedUnwrappedDescriptor"
+            }
+
+            if (unsubstitutedUnwrappedTypeParameters.isEmpty())
+                null
+            else
+                unsubstitutedUnwrappedTypeParameters.associate {
+                    val originalTypeParameter = originalDescriptor.original.typeParameters[it.index]
+                    val originalTypeArgument = originalTypeArguments[originalTypeParameter]
+                            ?: throw AssertionError("No type argument for $originalTypeParameter")
+                    it to originalTypeArgument
+                }
+        }
+
+        is TypeAliasConstructorDescriptor -> {
+            val substitutedType = originalDescriptor.returnType
+            if (substitutedType.arguments.isEmpty())
+                null
+            else
+                unsubstitutedUnwrappedTypeParameters.associate {
+                    it to substitutedType.arguments[it.index].type
+                }
+        }
+
+        else -> {
+            if (originalTypeArguments.keys.all { it.containingDeclaration == unsubstitutedUnwrappedDescriptor })
+                originalTypeArguments.takeIf { it.isNotEmpty() }
+            else {
+                assert(unsubstitutedUnwrappedTypeParameters.size == originalTypeArguments.size) {
+                    "Mismatching type parameters and type arguments: " +
+                            "unsubstitutedUnwrappedDescriptor: $unsubstitutedUnwrappedDescriptor; " +
+                            "originalDescriptor: $originalDescriptor; " +
+                            "originalTypeArguments: $originalTypeArguments"
+                }
+
+                if (unsubstitutedUnwrappedTypeParameters.isEmpty())
+                    null
+                else {
+                    originalTypeArguments.keys.associate { originalTypeParameter ->
+                        val unwrappedTypeParameter = unsubstitutedUnwrappedTypeParameters[originalTypeParameter.index]
+                        val originalTypeArgument = originalTypeArguments[originalTypeParameter]
+                                ?: throw AssertionError("No type argument for $unwrappedTypeParameter <= $originalTypeParameter")
+                        unwrappedTypeParameter to originalTypeArgument
+                    }
+                }
+
+            }
+        }
+    }
+
+    return CallBuilder(resolvedCall, unwrappedDescriptor, unwrappedTypeArguments)
+}

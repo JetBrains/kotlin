@@ -29,15 +29,16 @@ Welcome to [Kotlin](https://kotlinlang.org/)! Some handy links:
 
 In order to build Kotlin distribution you need to have:
 
-- JDK 1.6, 1.7 and 1.8
+- JDK 1.6, 1.7, 1.8 and 9
 - Setup environment variables as following:
 
         JAVA_HOME="path to JDK 1.8"
         JDK_16="path to JDK 1.6"
         JDK_17="path to JDK 1.7"
         JDK_18="path to JDK 1.8"
+        JDK_9="path to JDK 9"
 
-For local development, if you're not working on bytecode generation or the standard library, it's OK to have only JDK 8 installed, and to point all of the environment variables mentioned above to your JDK 8 installation.
+For local development, if you're not working on bytecode generation or the standard library, it's OK to have only JDK 1.8 and JDK 9 installed, and to point JDK_16 and JDK_17 environment variables to your JDK 1.8 installation.
 
 You also can use [Gradle properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_properties_and_system_properties) to setup JDK_* variables.
 
@@ -100,6 +101,18 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 * VCS -> Git -> Pull
 * Run the "IDEA" run configuration in the project
 * a child IntelliJ IDEA with the Kotlin plugin will then startup
+
+### Including into composite build
+
+To include kotlin compiler into [composite build](https://docs.gradle.org/current/userguide/composite_builds.html) you need to define `dependencySubstitution` for `kotlin-compiler` module in `settings.gradle`
+
+```
+includeBuild('/path/to/kotlin') {
+    dependencySubstitution {
+        substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':include:kotlin-compiler')
+    }
+}
+```
 
 # Contributing
 

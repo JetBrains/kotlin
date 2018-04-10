@@ -19,11 +19,14 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.VISIBILITY
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.metadata.deserialization.underlyingType
 
 fun createTypeAliasStub(
         parent: StubElement<out PsiElement>,
@@ -55,5 +58,6 @@ fun createTypeAliasStub(
         createAnnotationStubs(typeAliasProto.annotationList.map { context.nameResolver.getClassId(it.id) }, modifierList)
     }
 
-    typeStubBuilder.createTypeReferenceStub(typeAlias, typeAliasProto.underlyingType)
+    val typeAliasUnderlyingType = typeAliasProto.underlyingType(context.typeTable)
+    typeStubBuilder.createTypeReferenceStub(typeAlias, typeAliasUnderlyingType)
 }

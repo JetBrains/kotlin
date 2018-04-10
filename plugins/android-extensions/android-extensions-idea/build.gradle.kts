@@ -1,8 +1,10 @@
 
 description = "Kotlin Android Extensions IDEA"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
@@ -17,9 +19,9 @@ dependencies {
     compile(project(":idea:idea-gradle"))
     compile(project(":plugins:android-extensions-compiler"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
-    compileOnly(intellijPluginDep("android")) { includeJars("android", "android-common", "sdk-common", "sdk-tools") }
-    compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
-    compileOnly(intellijDep()) { includeJars("extensions", "openapi", "util", "idea", "android-base-common", rootProject = rootProject) }
+    compileOnly(intellijPluginDep("android"))
+    compileOnly(intellijPluginDep("Groovy"))
+    compileOnly(intellijDep())
 
     testCompile(project(":compiler:tests-common"))
     testCompile(project(":compiler:cli"))
@@ -32,9 +34,9 @@ dependencies {
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(commonDep("junit:junit"))
     testRuntime(projectDist(":kotlin-reflect"))
-    testCompile(intellijPluginDep("android")) { includeJars("android", "android-common", "sdk-common", "sdk-tools") }
-    testCompile(intellijPluginDep("Groovy")) { includeJars("Groovy") }
-    testCompile(intellijDep()) { includeJars("extensions") }
+    testCompile(intellijPluginDep("android"))
+    testCompile(intellijPluginDep("Groovy"))
+    testCompile(intellijDep())
 
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":plugins:android-extensions-jps"))
@@ -65,9 +67,6 @@ projectTest {
     workingDir = rootDir
     useAndroidSdk()
     useAndroidJar()
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }
 
 runtimeJar()

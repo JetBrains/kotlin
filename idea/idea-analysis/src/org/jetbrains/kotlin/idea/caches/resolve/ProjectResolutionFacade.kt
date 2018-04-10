@@ -111,7 +111,7 @@ internal class ProjectResolutionFacade(
         val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)
 
         val modulesContentFactory = { module: IdeaModuleInfo ->
-            ModuleContent(syntheticFilesByModule[module] ?: listOf(), module.contentScope())
+            ModuleContent(module, syntheticFilesByModule[module] ?: listOf(), module.contentScope())
         }
 
         val jvmPlatformParameters = JvmPlatformParameters { javaClass: JavaClass ->
@@ -123,20 +123,20 @@ internal class ProjectResolutionFacade(
             resolverDebugName,
             globalContext.withProject(project),
             modulesToCreateResolversFor,
-            { module ->
-                val platform = module.platform ?: settings.platform
+            modulesContentFactory,
+            modulePlatforms = { module -> module.platform?.multiTargetPlatform },
+            moduleLanguageSettingsProvider = IDELanguageSettingsProvider,
+            resolverForModuleFactoryByPlatform = { modulePlatform ->
+                val platform = modulePlatform ?: settings.platform
                 IdePlatformSupport.facades[platform] ?: throw UnsupportedOperationException("Unsupported platform $platform")
             },
-            modulesContentFactory,
-            jvmPlatformParameters,
-            IdeaEnvironment,
-            builtIns,
-            delegateResolverForProject,
-            packagePartProviderFactory = { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
+            platformParameters = jvmPlatformParameters,
+            targetEnvironment = IdeaEnvironment,
+            builtIns = builtIns,
+            delegateResolver = delegateResolverForProject,
+            packagePartProviderFactory = { moduleContent -> IDEPackagePartProvider(moduleContent.moduleContentScope) },
             firstDependency = settings.sdk?.let { SdkInfo(project, it) },
-            modulePlatforms = { module -> module.platform?.multiTargetPlatform },
             packageOracleFactory = ServiceManager.getService(project, IdePackageOracleFactory::class.java),
-            languageSettingsProvider = IDELanguageSettingsProvider,
             invalidateOnOOCB = invalidateOnOOCB
         )
 
@@ -152,22 +152,22 @@ internal class ProjectResolutionFacade(
         return resolverForProject
     }
 
-    fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = cachedResolverForProject.resolverForModule(moduleInfo)
+    internal fun resolverForModuleInfo(moduleInfo: IdeaModuleInfo) = cachedResolverForProject.resolverForModule(moduleInfo)
 
-    fun resolverForElement(element: PsiElement): ResolverForModule {
+    internal fun resolverForElement(element: PsiElement): ResolverForModule {
         val infos = element.getModuleInfos()
         return infos.asIterable().firstNotNullResult { cachedResolverForProject.tryGetResolverForModule(it) }
                 ?: cachedResolverForProject.tryGetResolverForModule(NotUnderContentRootModuleInfo)
                 ?: cachedResolverForProject.diagnoseUnknownModuleInfo(infos.toList())
     }
 
-    fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = cachedResolverForProject.resolverForModuleDescriptor(moduleDescriptor)
+    internal fun resolverForDescriptor(moduleDescriptor: ModuleDescriptor) = cachedResolverForProject.resolverForModuleDescriptor(moduleDescriptor)
 
-    fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
+    internal fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
         return cachedResolverForProject.descriptorForModule(ideaModuleInfo)
     }
 
-    fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
+    internal fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }
         val slruCache = synchronized(analysisResults) {
             analysisResults.value!!
@@ -192,7 +192,7 @@ internal class ProjectResolutionFacade(
         return "$debugString@${Integer.toHexString(hashCode())}"
     }
 
-    companion object {
+    private companion object {
         private fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns {
             val supportInstance = IdePlatformSupport.platformSupport[settings.platform] ?: return DefaultBuiltIns.Instance
             return supportInstance.createBuiltIns(settings, sdkContext)

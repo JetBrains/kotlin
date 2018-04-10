@@ -40,10 +40,12 @@ public class DescriptorSubstitutor {
             @NotNull DeclarationDescriptor newContainingDeclaration,
             @NotNull @Mutable List<TypeParameterDescriptor> result
     ) {
-        return substituteTypeParameters(typeParameters, originalSubstitution, newContainingDeclaration, result, null);
+        TypeSubstitutor substitutor = substituteTypeParameters(typeParameters, originalSubstitution, newContainingDeclaration, result, null);
+        if (substitutor == null) throw new AssertionError("Substitution failed");
+        return substitutor;
     }
 
-    @NotNull
+    @Nullable
     public static TypeSubstitutor substituteTypeParameters(
             @ReadOnly @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull TypeSubstitution originalSubstitution,
@@ -80,7 +82,7 @@ public class DescriptorSubstitutor {
             TypeParameterDescriptorImpl substituted = substitutedMap.get(descriptor);
             for (KotlinType upperBound : descriptor.getUpperBounds()) {
                 KotlinType substitutedBound = substitutor.substitute(upperBound, Variance.IN_VARIANCE);
-                assert substitutedBound != null : "Upper bound failed to substitute: " + descriptor;
+                if (substitutedBound == null) return null;
 
                 if (substitutedBound != upperBound && wereChanges != null) {
                     wereChanges[0] = true;

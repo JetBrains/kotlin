@@ -93,14 +93,6 @@ public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elem
 public inline fun <T> listOf(): List<T> = emptyList()
 
 /**
- * Returns an immutable list containing only the specified object [element].
- * The returned list is serializable.
- * @sample samples.collections.Collections.Lists.singletonReadOnlyList
- */
-@JvmVersion
-public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList(element)
-
-/**
  * Returns an empty new [MutableList].
  * @sample samples.collections.Collections.Lists.emptyMutableList
  */
@@ -201,15 +193,6 @@ public inline fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyLis
 public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
 /**
- * Returns a list containing the elements returned by this enumeration
- * in the order they are returned by the enumeration.
- * @sample samples.collections.Collections.Lists.listFromEnumeration
- */
-@JvmVersion
-@kotlin.internal.InlineOnly
-public inline fun <T> java.util.Enumeration<T>.toList(): List<T> = java.util.Collections.list(this)
-
-/**
  * Checks if all elements in the specified collection are contained in this collection.
  *
  * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.
@@ -224,25 +207,6 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
     1 -> listOf(this[0])
     else -> this
 }
-
-@JvmVersion
-@kotlin.internal.InlineOnly
-internal inline fun copyToArrayImpl(collection: Collection<*>): Array<Any?> =
-    kotlin.jvm.internal.collectionToArray(collection)
-
-@JvmVersion
-@kotlin.internal.InlineOnly
-internal inline fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> =
-    kotlin.jvm.internal.collectionToArray(collection, array as Array<Any?>) as Array<T>
-
-// copies typed varargs array to array of objects
-@JvmVersion
-private fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<Any?> =
-        if (isVarargs && this.javaClass == Array<Any?>::class.java)
-            // if the array came from varargs and already is array of Any, copying isn't required
-            @Suppress("UNCHECKED_CAST") (this as Array<Any?>)
-        else
-            java.util.Arrays.copyOf(this, this.size, Array<Any?>::class.java)
 
 /**
  * Searches this list or its range for the provided [element] using the binary search algorithm.

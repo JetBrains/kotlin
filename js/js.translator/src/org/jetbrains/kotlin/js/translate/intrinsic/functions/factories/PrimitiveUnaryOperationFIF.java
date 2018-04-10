@@ -230,7 +230,7 @@ public enum PrimitiveUnaryOperationFIF implements FunctionIntrinsicFactory {
 
     @Nullable
     @Override
-    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
         if (!PATTERN.test(descriptor)) {
             return null;
         }

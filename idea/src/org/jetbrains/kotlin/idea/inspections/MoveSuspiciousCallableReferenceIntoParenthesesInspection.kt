@@ -13,9 +13,12 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.ConvertLambdaToReferenceIntention
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.ValueArgument
@@ -33,7 +36,7 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                 val parentResolvedCall = lambdaExpression.getParentResolvedCall(context)
                 if (parentResolvedCall != null) {
                     val originalParameterDescriptor =
-                            parentResolvedCall.getParameterForArgument(lambdaExpression.parent as? ValueArgument)?.original
+                        parentResolvedCall.getParameterForArgument(lambdaExpression.parent as? ValueArgument)?.original
                     if (originalParameterDescriptor != null) {
                         val expectedType = originalParameterDescriptor.type
                         if (expectedType.isBuiltinFunctionalType) {
@@ -43,10 +46,10 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                     }
                 }
                 holder.registerProblem(
-                        lambdaExpression,
-                        "Suspicious callable reference as the only lambda element",
-                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                        IntentionWrapper(MoveIntoParenthesesIntention(), lambdaExpression.containingFile)
+                    lambdaExpression,
+                    "Suspicious callable reference as the only lambda element",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    IntentionWrapper(MoveIntoParenthesesIntention(), lambdaExpression.containingFile)
                 )
 
             }
@@ -54,15 +57,29 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
     }
 
     class MoveIntoParenthesesIntention : ConvertLambdaToReferenceIntention(
-            "Move suspicious callable reference into parentheses '()'"
+        "Move suspicious callable reference into parentheses '()'"
     ) {
         override fun buildReferenceText(element: KtLambdaExpression): String? {
             val callableReferenceExpression =
-                    element.bodyExpression?.statements?.singleOrNull() as? KtCallableReferenceExpression ?: return null
+                element.bodyExpression?.statements?.singleOrNull() as? KtCallableReferenceExpression ?: return null
             val callableReference = callableReferenceExpression.callableReference
-            val resolvedCall = callableReference.resolveToCall(BodyResolveMode.FULL)
-            val receiverValue = resolvedCall?.let { it.extensionReceiver ?: it.dispatchReceiver }
-            return (receiverValue?.let { "${it.type}" } ?: "") + "::${callableReference.text}"
+            val receiverExpression = callableReferenceExpression.receiverExpression
+            val receiver = if (receiverExpression == null) {
+                ""
+            } else {
+                val descriptor = receiverExpression.getCallableDescriptor()
+                val literal = element.functionLiteral
+                if (descriptor == null ||
+                    descriptor is ValueParameterDescriptor && descriptor.containingDeclaration == literal.resolveToDescriptorIfAny()
+                ) {
+                    callableReference.resolveToCall(BodyResolveMode.FULL)
+                        ?.let { it.extensionReceiver ?: it.dispatchReceiver }
+                        ?.let { "${it.type}" } ?: ""
+                } else {
+                    receiverExpression.text
+                }
+            }
+            return "$receiver::${callableReference.text}"
         }
 
         override fun isApplicableTo(element: KtLambdaExpression) = true

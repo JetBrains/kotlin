@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -51,21 +51,9 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             doTest(fileName);
         }
 
-        @TestMetadata("defaultMethodCompatibility.kt")
-        public void testDefaultMethodCompatibility() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultMethodCompatibility.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("defaultProperty.kt")
         public void testDefaultProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultProperty.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("defaultPropertyCompatibility.kt")
-        public void testDefaultPropertyCompatibility() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/writeFlags/defaults/defaultPropertyCompatibility.kt");
             doTest(fileName);
         }
     }

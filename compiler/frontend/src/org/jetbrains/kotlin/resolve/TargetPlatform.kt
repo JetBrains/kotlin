@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
@@ -143,3 +146,6 @@ abstract class PlatformConfigurator(
 
 fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit) =
     composeContainer(id, platform.platformConfigurator.platformSpecificContainer, init)
+
+
+var KtFile.targetPlatform: TargetPlatform? by UserDataProperty(Key.create("TARGET_PLATFORM"))

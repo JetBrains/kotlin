@@ -1,5 +1,6 @@
 package test.utils
 
+import test.randomInt
 import kotlin.test.*
 
 
@@ -55,10 +56,8 @@ class KotlinVersionTest {
         }
     }
 
-    @JvmVersion // until there's random in JS
     @Test fun randomVersionComparison() {
-        val random = java.util.Random()
-        fun randomComponent(): Int = random.nextInt(KotlinVersion.MAX_COMPONENT_VALUE + 1)
+        fun randomComponent(): Int = randomInt(KotlinVersion.MAX_COMPONENT_VALUE + 1)
         fun randomVersion() = KotlinVersion(randomComponent(), randomComponent(), randomComponent())
         repeat(1000) {
             val v1 = randomVersion()

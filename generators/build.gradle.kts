@@ -1,6 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(projectTests(":compiler:cli"))
@@ -16,8 +18,8 @@ dependencies {
     compile(projectTests(":kotlin-noarg-compiler-plugin"))
     compile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(projectTests(":generators:test-generator"))
-    compileOnly(intellijDep("jps-build-test"))
-    compileOnly(project(":kotlin-reflect-api"))
+    testCompileOnly(intellijDep("jps-build-test"))
+    testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(intellijDep("jps-build-test"))
     testRuntime(intellijDep()) { includeJars("idea_rt") }
     testRuntime(projectDist(":kotlin-reflect"))
@@ -38,3 +40,5 @@ val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.Gene
 val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare")
 
 val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt")
+
+testsJar()

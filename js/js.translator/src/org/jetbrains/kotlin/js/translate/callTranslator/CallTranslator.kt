@@ -268,15 +268,15 @@ interface DelegateIntrinsic<in I : CallInfo> {
     fun I.getDescriptor(): CallableDescriptor
     fun I.getArgs(): List<JsExpression>
 
-    fun intrinsic(callInfo: I): JsExpression? = if (callInfo.canBeApply()) callInfo.getIntrinsic() else null
+    fun intrinsic(callInfo: I, context: TranslationContext): JsExpression? = if (callInfo.canBeApply()) callInfo.getIntrinsic(context) else null
 
-    private fun I.getIntrinsic(): JsExpression? {
+    private fun I.getIntrinsic(context: TranslationContext): JsExpression? {
         val descriptor = getDescriptor()
 
         // Now intrinsic support only FunctionDescriptor. See DelegatePropertyAccessIntrinsic.getDescriptor()
         if (descriptor is FunctionDescriptor) {
-            val intrinsic = context.intrinsics().getFunctionIntrinsic(descriptor)
-            if (intrinsic.exists()) {
+            val intrinsic = context.intrinsics().getFunctionIntrinsic(descriptor, context)
+            if (intrinsic != null) {
                 return intrinsic.apply(this, getArgs(), context)
             }
         }

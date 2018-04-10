@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.junit.Assert
 
 abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtureTestCase() {
-    private fun isFileWithHeader(predicate: (KotlinClassHeader, ClassId) -> Boolean) : VirtualFile.() -> Boolean = {
+    private fun isFileWithHeader(predicate: (IDEKotlinBinaryClassCache.KotlinBinaryClassHeaderData, ClassId) -> Boolean) : VirtualFile.() -> Boolean = {
         val info = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(this)
-        info != null && predicate(info.classHeader, info.classId)
+        info != null && predicate(info, info.classId)
     }
 
     protected fun isSyntheticClass(): VirtualFile.() -> Boolean =

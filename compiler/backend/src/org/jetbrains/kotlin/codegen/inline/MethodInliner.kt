@@ -1,26 +1,31 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.backend.jvm.codegen.IrExpressionLambda
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
+import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -45,11 +50,12 @@ class MethodInliner(
         private val shouldPreprocessApiVersionCalls: Boolean = false
 ) {
     private val typeMapper = inliningContext.state.typeMapper
+    private val languageVersionSettings = inliningContext.state.languageVersionSettings
     private val invokeCalls = ArrayList<InvokeCall>()
     //keeps order
     private val transformations = ArrayList<TransformationInfo>()
     //current state
-    private val currentTypeMapping = HashMap<String, String>()
+    private val currentTypeMapping = HashMap<String, String?>()
     private val result = InlineResult.create()
     private var lambdasFinallyBlocks: Int = 0
 
@@ -159,7 +165,11 @@ class MethodInliner(
                             currentTypeMapping,
                             inlineCallSiteInfo
                     )
-                    val transformer = transformationInfo!!.createTransformer(childInliningContext, isSameModule)
+                    val transformer = transformationInfo!!.createTransformer(
+                        childInliningContext,
+                        isSameModule,
+                        findFakeContinuationConstructorClassName(node)
+                    )
 
                     val transformResult = transformer.doTransform(nodeRemapper)
                     result.merge(transformResult)
@@ -282,18 +292,33 @@ class MethodInliner(
                             info = oldInfo
                         }
 
+                        val isContinuationCreate = isContinuation && oldInfo != null && resultNode.name == "create" &&
+                                resultNode.desc.endsWith(")" + languageVersionSettings.continuationAsmType().descriptor)
+
                         for (capturedParamDesc in info.allRecapturedParameters) {
-                            visitFieldInsn(
+                            if (capturedParamDesc.fieldName == THIS && isContinuationCreate) {
+                                // Common inliner logic doesn't support cases when transforming anonymous object can
+                                // be instantiated by itself.
+                                // To support such cases workaround with 'oldInfo' is used.
+                                // But it corresponds to outer context and a bit inapplicable for nested 'create' method context.
+                                // 'This' in outer context corresponds to outer instance in current
+                                visitFieldInsn(
+                                    Opcodes.GETSTATIC, owner,
+                                    CAPTURED_FIELD_FOLD_PREFIX + THIS_0, capturedParamDesc.type.descriptor
+                                )
+                            } else {
+                                visitFieldInsn(
                                     Opcodes.GETSTATIC, capturedParamDesc.containingLambdaName,
                                     CAPTURED_FIELD_FOLD_PREFIX + capturedParamDesc.fieldName, capturedParamDesc.type.descriptor
-                            )
+                                )
+                            }
                         }
                         super.visitMethodInsn(opcode, info.newClassName, name, info.newConstructorDescriptor, itf)
 
                         //TODO: add new inner class also for other contexts
                         if (inliningContext.parent is RegeneratedClassContext) {
                             inliningContext.parent.typeRemapper.addAdditionalMappings(
-                                    transformationInfo!!.oldClassName, transformationInfo!!.newClassName
+                                transformationInfo!!.oldClassName, transformationInfo!!.newClassName
                             )
                         }
 
@@ -304,7 +329,7 @@ class MethodInliner(
                     }
                 }
                 else if ((!inliningContext.isInliningLambda || isDefaultLambdaWithReification(inliningContext.lambdaInfo!!)) &&
-                         ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))) {
+                    ReifiedTypeInliner.isNeedClassReificationMarker(MethodInsnNode(opcode, owner, name, desc, false))) {
                     //we shouldn't process here content of inlining lambda it should be reified at external level except default lambdas
                 }
                 else {
@@ -345,7 +370,14 @@ class MethodInliner(
         )
 
         val transformationVisitor = object : MethodVisitor(API, transformedNode) {
-            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && inlineOnlySmapSkipper == null
+            /*
+                Ignore simple @InlineOnly functions such as 'error()' or 'assert()' without lambda parameters,
+                as we likely to want to have a line number from the call site in a stack trace.
+             */
+            private val GENERATE_LINE_NUMBERS = GENERATE_SMAP && (inlineOnlySmapSkipper == null || run {
+                val callableDescriptor = inliningContext.root.sourceCompilerForInline.callableDescriptor
+                callableDescriptor != null && callableDescriptor.valueParameters.any { it.type.isFunctionType }
+            })
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
@@ -377,7 +409,7 @@ class MethodInliner(
             }
 
             override fun visitLineNumber(line: Int, start: Label) {
-                if (isInliningLambda || GENERATE_DEBUG_INFO) {
+                if (isInliningLambda || GENERATE_LINE_NUMBERS) {
                     super.visitLineNumber(line, start)
                 }
             }
@@ -405,7 +437,7 @@ class MethodInliner(
             override fun visitLocalVariable(
                     name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
             ) {
-                if (isInliningLambda || GENERATE_DEBUG_INFO) {
+                if (isInliningLambda || (GENERATE_SMAP && inlineOnlySmapSkipper == null)) {
                     val varSuffix = if (inliningContext.isRoot && !isFakeLocalVariableForInline(name)) INLINE_FUN_VAR_SUFFIX else ""
                     val varName = if (!varSuffix.isEmpty() && name == "this") name + "_" else name
                     super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index))
@@ -427,6 +459,8 @@ class MethodInliner(
         val processingNode = prepareNode(node, finallyDeepShift)
 
         preprocessNodeBeforeInline(processingNode, labelOwner)
+
+        replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode)
 
         val sources = analyzeMethodNodeBeforeInline(processingNode)
 
@@ -569,6 +603,67 @@ class MethodInliner(
         return processingNode
     }
 
+    // Replace ALOAD 0
+    // with
+    //   ICONST fakeContinuationMarker
+    //   INVOKESTATIC InlineMarker.mark
+    //   ACONST_NULL
+    // iff this ALOAD 0 is continuation and one of the following conditions is met
+    //   1) it is passed as the last parameter to suspending function
+    //   2) it is ASTORE'd right after
+    //   3) it is passed to invoke of lambda
+    private fun replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode: MethodNode) {
+        val lambdaInfo = inliningContext.lambdaInfo ?: return
+        if (!lambdaInfo.invokeMethodDescriptor.isSuspend) return
+        val aload0s = processingNode.instructions.asSequence().filter { it.opcode == Opcodes.ALOAD && it.safeAs<VarInsnNode>()?.`var` == 0 }
+        // Expected pattern here:
+        //     ALOAD 0
+        //     ICONST_0
+        //     INVOKESTATIC InlineMarker.mark
+        //     INVOKE* suspendingFunction(..., Continuation;)Ljava/lang/Object;
+        val continuationAsParameterAload0s =
+            aload0s.filter { it.next?.next?.let(::isBeforeSuspendMarker) == true && isSuspendCall(it.next?.next?.next) }
+        replaceContinuationsWithFakeOnes(continuationAsParameterAload0s, processingNode)
+        // Expected pattern here:
+        //     ALOAD 0
+        //     ASTORE N
+        // This pattern may occur after multiple inlines
+        val continuationToStoreAload0s = aload0s.filter { it.next?.opcode == Opcodes.ASTORE }
+        replaceContinuationsWithFakeOnes(continuationToStoreAload0s, processingNode)
+        // Expected pattern here:
+        //     ALOAD 0
+        //     INVOKEINTERFACE kotlin/jvm/functions/FunctionN.invoke (...,Ljava/lang/Object;)Ljava/lang/Object;
+        val continuationAsLambdaParameterAload0s = aload0s.filter { isLambdaCall(it.next) }
+        replaceContinuationsWithFakeOnes(continuationAsLambdaParameterAload0s, processingNode)
+    }
+
+    private fun isLambdaCall(invoke: AbstractInsnNode?): Boolean {
+        if (invoke?.opcode != Opcodes.INVOKEINTERFACE) return false
+        invoke as MethodInsnNode
+        if (!invoke.owner.startsWith("kotlin/jvm/functions/Function")) return false
+        if (invoke.name != "invoke") return false
+        if (Type.getReturnType(invoke.desc) != OBJECT_TYPE) return false
+        return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == OBJECT_TYPE }
+    }
+
+    private fun replaceContinuationsWithFakeOnes(
+        continuations: Sequence<AbstractInsnNode>,
+        node: MethodNode
+    ) {
+        for (toReplace in continuations) {
+            insertNodeBefore(createFakeContinuationMethodNodeForInline(), node, toReplace)
+            node.instructions.remove(toReplace)
+        }
+    }
+
+    private fun isSuspendCall(invoke: AbstractInsnNode?): Boolean {
+        if (invoke !is MethodInsnNode) return false
+        // We can't have suspending constructors.
+        assert(invoke.opcode != Opcodes.INVOKESPECIAL)
+        if (Type.getReturnType(invoke.desc) != OBJECT_TYPE) return false
+        return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == languageVersionSettings.continuationAsmType() }
+    }
+
     private fun preprocessNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {
         try {
             FixStackWithLabelNormalizationMethodTransformer().transform("fake", node)
@@ -620,7 +715,6 @@ class MethodInliner(
             needReification: Boolean,
             capturesAnonymousObjectThatMustBeRegenerated: Boolean
     ): AnonymousObjectTransformationInfo {
-        val memoizeAnonymousObject = inliningContext.findAnonymousObjectTransformationInfo(anonymousType) == null
 
         val info = AnonymousObjectTransformationInfo(
                 anonymousType, needReification, lambdaMapping,
@@ -632,8 +726,16 @@ class MethodInliner(
                 capturesAnonymousObjectThatMustBeRegenerated
         )
 
-        if (memoizeAnonymousObject) {
-            inliningContext.root.internalNameToAnonymousObjectTransformationInfo.put(anonymousType, info)
+        val memoizeAnonymousObject = inliningContext.findAnonymousObjectTransformationInfo(anonymousType)
+        if (memoizeAnonymousObject == null ||
+            //anonymous object could be inlined in several context without transformation (keeps same class name)
+            // and on further inlining such code some of such cases would be transformed and some not,
+            // so we should distinguish one classes from another more clearly
+            !memoizeAnonymousObject.shouldRegenerate(isSameModule) &&
+            info.shouldRegenerate(isSameModule)
+        ) {
+
+            inliningContext.recordIfNotPresent(anonymousType, info)
         }
         return info
     }

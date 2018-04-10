@@ -4,9 +4,8 @@ description = "Kotlin compiler client embeddable"
 
 plugins {
     maven
+    kotlin("jvm")
 }
-
-apply { plugin("kotlin") }
 
 val jarContents by configurations.creating
 val testRuntimeCompilerJar by configurations.creating
@@ -20,7 +19,7 @@ dependencies {
     jarContents(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(project(":compiler:cli-common"))
     testCompile(project(":compiler:daemon-common"))
-    testCompile(project(":kotlin-daemon-client"))
+    testCompile(projectRuntimeJar(":kotlin-daemon-client"))
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))

@@ -14,14 +14,13 @@ import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
+import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -50,6 +48,11 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.util.Textifier
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.io.StringWriter
+import java.io.PrintWriter
 import java.util.*
 
 fun generateIsCheck(
@@ -224,26 +227,6 @@ fun ClassBuilder.generateMethod(
         iv.generate()
         iv.areturn(method.returnType)
         FunctionCodegen.endVisit(mv, debugString, element)
-    }
-}
-
-
-fun reportTarget6InheritanceErrorIfNeeded(
-    classDescriptor: ClassDescriptor, classElement: PsiElement, restrictedInheritance: List<FunctionDescriptor>, state: GenerationState
-) {
-    if (!restrictedInheritance.isEmpty()) {
-        val groupBy = restrictedInheritance.groupBy { descriptor -> descriptor.containingDeclaration as ClassDescriptor }
-
-        for ((key, value) in groupBy) {
-            state.diagnostics.report(
-                ErrorsJvm.TARGET6_INTERFACE_INHERITANCE.on(
-                    classElement, classDescriptor, key,
-                    value.joinToString(separator = "\n", prefix = "\n") {
-                        Renderers.COMPACT.render(JvmCodegenUtil.getDirectMember(it), RenderingContext.Empty)
-                    }
-                )
-            )
-        }
     }
 }
 
@@ -423,4 +406,14 @@ inline fun FrameMap.evaluateOnce(
     if (valueOrTmp != value) {
         leaveTemp(asType)
     }
+}
+
+// Handy debugging routine. Print all instructions from methodNode.
+fun MethodNode.textifyMethodNode(): String {
+    val text = Textifier()
+    val tmv = TraceMethodVisitor(text)
+    this.instructions.asSequence().forEach { it.accept(tmv) }
+    val sw = StringWriter()
+    text.print(PrintWriter(sw))
+    return "$sw"
 }

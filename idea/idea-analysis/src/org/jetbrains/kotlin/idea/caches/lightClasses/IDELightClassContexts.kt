@@ -85,7 +85,7 @@ class IDELightClassConstructionContext(bindingContext: BindingContext, module: M
     override fun toString() = "${this.javaClass.simpleName}:$mode"
 }
 
-object IDELightClassContexts {
+internal object IDELightClassContexts {
 
     private val LOG = Logger.getInstance(this::class.java)
 

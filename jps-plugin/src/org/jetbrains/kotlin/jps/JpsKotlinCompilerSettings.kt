@@ -69,9 +69,9 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
             val facetArguments = facetSettings.compilerArguments ?: return defaultArguments
             return copyBean(facetArguments).apply {
                 multiPlatform = module
-                        .dependenciesList
-                        .dependencies
-                        .any { (it as? JpsModuleDependency)?.module?.targetPlatform == TargetPlatformKind.Common }
+                    .dependenciesList
+                    .dependencies
+                    .any { (it as? JpsModuleDependency)?.module?.targetPlatform == TargetPlatformKind.Common }
             }
         }
 
@@ -116,3 +116,17 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
 
 val JpsModule.targetPlatform: TargetPlatformKind<*>?
     get() = kotlinFacetExtension?.settings?.targetPlatformKind
+
+val JpsModule.productionOutputFilePath: String?
+    get() {
+        val facetSettings = kotlinFacetExtension?.settings ?: return null
+        if (facetSettings.useProjectSettings) return null
+        return facetSettings.productionOutputPath
+    }
+
+val JpsModule.testOutputFilePath: String?
+    get() {
+        val facetSettings = kotlinFacetExtension?.settings ?: return null
+        if (facetSettings.useProjectSettings) return null
+        return facetSettings.testOutputPath
+    }

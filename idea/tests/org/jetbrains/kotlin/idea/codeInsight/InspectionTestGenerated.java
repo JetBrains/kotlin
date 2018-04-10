@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,12 +36,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("convertToStringTemplate/inspectionData/inspections.test")
         public void testConvertToStringTemplate_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
-        @TestMetadata("deprecatedCallableAddReplaceWith/inspectionData/inspections.test")
-        public void testDeprecatedCallableAddReplaceWith_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -276,6 +270,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("publicApiImplicitType/inspectionData/inspections.test")
+        public void testPublicApiImplicitType_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/publicApiImplicitType/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("recursivePropertyAccessor/inspectionData/inspections.test")
         public void testRecursivePropertyAccessor_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/recursivePropertyAccessor/inspectionData/inspections.test");
@@ -498,6 +498,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test")
         public void testConventionNameCalls_replaceGetOrSet_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deprecatedCallableAddReplaceWith/inspectionData/inspections.test")
+        public void testDeprecatedCallableAddReplaceWith_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/inspectionData/inspections.test");
             doTest(fileName);
         }
 

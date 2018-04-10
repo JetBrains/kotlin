@@ -1,6 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
@@ -9,7 +11,7 @@ dependencies {
     compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend.java"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("jdom", "util") }
+    compileOnly(intellijDep())
 }
 
 sourceSets {

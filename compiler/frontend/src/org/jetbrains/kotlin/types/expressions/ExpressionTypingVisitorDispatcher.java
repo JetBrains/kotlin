@@ -9,8 +9,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilKt;
@@ -230,7 +230,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
         try {
             // This trows AssertionError in CLI and reports the error in the IDE
             LOG.error(
-                    new KotlinExceptionWithAttachments("Exception while analyzing expression at " + DiagnosticUtils.atLocation(expression), e)
+                    new KotlinExceptionWithAttachments("Exception while analyzing expression at " + PsiDiagnosticUtils.atLocation(expression), e)
                         .withAttachment("expression.kt", expression.getText())
             );
         }

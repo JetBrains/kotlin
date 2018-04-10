@@ -29,11 +29,14 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNamesUtilKt;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
+import org.jetbrains.kotlin.psi.KtEnumEntry;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker;
 
 import java.util.Collection;
@@ -58,15 +61,15 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
     private final Project project;
     private final PsiManager psiManager;
-    private final LightClassGenerationSupport lightClassGenerationSupport;
+    private final KotlinAsJavaSupport kotlinAsJavaSupport;
 
     public JavaElementFinder(
             @NotNull Project project,
-            @NotNull LightClassGenerationSupport lightClassGenerationSupport
+            @NotNull KotlinAsJavaSupport kotlinAsJavaSupport
     ) {
         this.project = project;
         this.psiManager = PsiManager.getInstance(project);
-        this.lightClassGenerationSupport = lightClassGenerationSupport;
+        this.kotlinAsJavaSupport = kotlinAsJavaSupport;
     }
 
     @Override
@@ -87,8 +90,8 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         FqName qualifiedName = new FqName(qualifiedNameString);
 
         findClassesAndObjects(qualifiedName, scope, answer);
-        answer.addAll(lightClassGenerationSupport.getFacadeClasses(qualifiedName, scope));
-        answer.addAll(lightClassGenerationSupport.getKotlinInternalClasses(qualifiedName, scope));
+        answer.addAll(kotlinAsJavaSupport.getFacadeClasses(qualifiedName, scope));
+        answer.addAll(kotlinAsJavaSupport.getKotlinInternalClasses(qualifiedName, scope));
 
         return sortByClasspath(answer, scope).toArray(new PsiClass[answer.size()]);
     }
@@ -99,7 +102,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         findInterfaceDefaultImpls(qualifiedName, scope, answer);
 
         Collection<KtClassOrObject> classOrObjectDeclarations =
-                lightClassGenerationSupport.findClassOrObjectDeclarations(qualifiedName, scope);
+                kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName, scope);
 
         for (KtClassOrObject declaration : classOrObjectDeclarations) {
             if (!(declaration instanceof KtEnumEntry)) {
@@ -116,7 +119,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         if (!qualifiedName.shortName().asString().equals(JvmAbi.DEFAULT_IMPLS_CLASS_NAME)) return;
 
-        for (KtClassOrObject classOrObject : lightClassGenerationSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
+        for (KtClassOrObject classOrObject : kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
             //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
             if (classOrObject instanceof KtClass && ((KtClass) classOrObject).isInterface()) {
                 PsiClass interfaceClass = toLightClass(classOrObject);
@@ -135,10 +138,10 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     public Set<String> getClassNames(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
-        Collection<KtClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
+        Collection<KtClassOrObject> declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
 
         Set<String> answer = Sets.newHashSet();
-        answer.addAll(lightClassGenerationSupport.getFacadeNames(packageFQN, scope));
+        answer.addAll(kotlinAsJavaSupport.getFacadeNames(packageFQN, scope));
 
         for (KtClassOrObject declaration : declarations) {
             String name = declaration.getName();
@@ -160,7 +163,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         // allScope() because the contract says that the whole project
         GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
-        if (lightClassGenerationSupport.packageExists(fqName, allScope)) {
+        if (kotlinAsJavaSupport.packageExists(fqName, allScope)) {
             return new KtLightPackage(psiManager, fqName, allScope);
         }
 
@@ -172,7 +175,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     public PsiPackage[] getSubPackages(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
-        Collection<FqName> subpackages = lightClassGenerationSupport.getSubPackages(packageFQN, scope);
+        Collection<FqName> subpackages = kotlinAsJavaSupport.getSubPackages(packageFQN, scope);
 
         Collection<PsiPackage> answer = Collections2.transform(subpackages, input -> new KtLightPackage(psiManager, input, scope));
 
@@ -185,9 +188,9 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         List<PsiClass> answer = new SmartList<>();
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
 
-        answer.addAll(lightClassGenerationSupport.getFacadeClassesInPackage(packageFQN, scope));
+        answer.addAll(kotlinAsJavaSupport.getFacadeClassesInPackage(packageFQN, scope));
 
-        Collection<KtClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
+        Collection<KtClassOrObject> declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
         for (KtClassOrObject declaration : declarations) {
             PsiClass aClass = toLightClass(declaration);
             if (aClass != null) {
@@ -203,7 +206,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
     public PsiFile[] getPackageFiles(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
         FqName packageFQN = new FqName(psiPackage.getQualifiedName());
         // TODO: this does not take into account JvmPackageName annotation
-        Collection<KtFile> result = lightClassGenerationSupport.findFilesForPackage(packageFQN, scope);
+        Collection<KtFile> result = kotlinAsJavaSupport.findFilesForPackage(packageFQN, scope);
         return result.toArray(new PsiFile[result.size()]);
     }
 
