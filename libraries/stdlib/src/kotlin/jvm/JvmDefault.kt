@@ -15,6 +15,7 @@ import kotlin.internal.RequireKotlinVersionKind
  * This annotation requires explicit compilation flag to be enabled: `-Xenable-jvm-default`.
  * Also this requires jvmTarget 1.8 or higher.
  * Adding or removing this annotation to an interface member is a binary incompatible change.
+ * @JvmDefault methods are excluded from interface delegation.
  */
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.40", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
