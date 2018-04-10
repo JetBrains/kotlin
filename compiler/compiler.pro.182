@@ -56,6 +56,9 @@ messages/**)
 -dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
 -dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
 
+# Depends on apache batick which has lots of dependencies
+-dontwarn com.intellij.util.SVGLoader*
+
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
 #-libraryjars '<bootstrap.runtime>'
