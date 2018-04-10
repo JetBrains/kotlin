@@ -17,7 +17,7 @@ FILE: simpleClass.kt
             public? get(): R|error: Not supported: FirImplicitTypeImpl| {
                 STUB
             }
-            public? set(value: R|kotlin/Boolean|): R|error: Not supported: FirImplicitTypeImpl| {
+            public? set(value: R|kotlin/Boolean|): R|kotlin/Unit| {
             }
 
         public? final? property fau(var): R|kotlin/Double|

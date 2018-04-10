@@ -85,6 +85,9 @@ class RawFirBuilder(val session: FirSession) {
         private fun KtTypeReference?.toFirOrImplicitType(): FirType =
             convertSafe() ?: FirImplicitTypeImpl(session, this)
 
+        private fun KtTypeReference?.toFirOrUnitType(): FirType =
+            convertSafe() ?: implicitUnitType
+
         private fun KtTypeReference?.toFirOrErrorType(): FirType =
             convertSafe() ?: FirErrorTypeImpl(session, this, if (this == null) "Incomplete code" else "Conversion failed")
 
@@ -111,7 +114,11 @@ class RawFirBuilder(val session: FirSession) {
                 this,
                 isGetter,
                 visibility,
-                returnTypeReference.toFirOrImplicitType(),
+                if (isGetter) {
+                    returnTypeReference.toFirOrImplicitType()
+                } else {
+                    returnTypeReference.toFirOrUnitType()
+                },
                 bodyExpression.toFirBody()
             )
             extractAnnotationsTo(firAccessor)
@@ -374,7 +381,7 @@ class RawFirBuilder(val session: FirSession) {
                 function.hasModifier(KtTokens.EXTERNAL_KEYWORD),
                 function.receiverTypeReference.convertSafe(),
                 if (function.hasBlockBody()) {
-                    typeReference?.toFirOrImplicitType() ?: implicitUnitType
+                    typeReference.toFirOrUnitType()
                 } else {
                     typeReference.toFirOrImplicitType()
                 },
