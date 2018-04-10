@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
@@ -13,12 +13,9 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirExplicitImportingScope(imports: List<FirImport>) : FirScope {
+abstract class FirAbstractSimpleImportingScope(val session: FirSession) : FirScope {
 
-    private val simpleImports =
-        imports.filterIsInstance<FirResolvedImportImpl>()
-            .filter { !it.isAllUnder }
-            .groupBy { it.aliasName ?: it.resolvedFqName.shortClassName }
+    protected abstract val simpleImports: Map<Name, List<FirResolvedImportImpl>>
 
     override fun processClassifiersByName(
         name: Name,
@@ -27,7 +24,7 @@ class FirExplicitImportingScope(imports: List<FirImport>) : FirScope {
     ): Boolean {
         val imports = simpleImports[name] ?: return true
         if (imports.isEmpty()) return true
-        val provider = FirSymbolProvider.getInstance(imports.first().session)
+        val provider = FirSymbolProvider.getInstance(session)
         for (import in imports) {
             val symbol = provider.getSymbolByFqName(import.resolvedFqName) ?: continue
             if (!processor(symbol)) {

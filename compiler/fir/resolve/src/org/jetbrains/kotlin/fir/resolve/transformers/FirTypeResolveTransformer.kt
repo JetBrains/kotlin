@@ -33,13 +33,15 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
     lateinit var scope: FirCompositeScope
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
+        val session = file.session
         scope = FirCompositeScope(
             mutableListOf(
                 // from high priority to low priority
-                FirExplicitImportingScope(file.imports),
-                FirSelfImportingScope(file.packageFqName, file.session),
-                FirExplicitStarImportingScope(file.imports, file.session),
-                FirDefaultStarImportingScope(file.session)
+                FirExplicitSimpleImportingScope(file.imports, session),
+                FirSelfImportingScope(file.packageFqName, session),
+                FirDefaultSimpleImportingScope(session),
+                FirExplicitStarImportingScope(file.imports, session),
+                FirDefaultStarImportingScope(session)
             )
         )
         return super.transformFile(file, data)
