@@ -13,7 +13,6 @@ import com.intellij.util.containers.MultiMap
 import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
-import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
@@ -25,8 +24,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.*
+import org.jetbrains.kotlin.jps.k2JvmCompilerArguments
+import org.jetbrains.kotlin.jps.kotlinCompilerSettings
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import java.io.File
 import java.io.IOException
@@ -74,8 +74,6 @@ class KotlinJvmModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotl
         }
 
         val module = chunk.representativeTarget().module
-        val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(module)
-        val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(module)
 
         KotlinBuilder.LOG.debug("Compiling to JVM ${filesToCompile.values().size} files"
                                         + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
@@ -83,7 +81,13 @@ class KotlinJvmModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotl
 
         try {
             val compilerRunner = JpsKotlinCompilerRunner()
-            compilerRunner.runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, environment, moduleFile)
+            compilerRunner.runK2JvmCompiler(
+                commonArguments,
+                module.k2JvmCompilerArguments,
+                module.kotlinCompilerSettings,
+                environment,
+                moduleFile
+            )
         } finally {
             if (System.getProperty("kotlin.jps.delete.module.file.after.build") != "false") {
                 moduleFile.delete()

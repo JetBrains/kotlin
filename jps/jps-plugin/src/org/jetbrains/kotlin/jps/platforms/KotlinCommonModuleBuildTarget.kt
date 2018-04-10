@@ -13,10 +13,14 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
+import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.jps.k2MetadataCompilerArguments
+import org.jetbrains.kotlin.jps.kotlinCompilerSettings
 import java.io.File
 
 class KotlinCommonModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) :
     KotlinModuleBuilderTarget(jpsModuleBuildTarget) {
+
     override fun compileModuleChunk(
         allCompiledFiles: MutableSet<File>,
         chunk: ModuleChunk,
@@ -28,6 +32,14 @@ class KotlinCommonModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) :
     ): Boolean {
         require(chunk.representativeTarget() == jpsModuleBuildTarget)
         if (reportAndSkipCircular(chunk, environment)) return false
+
+        JpsKotlinCompilerRunner().runK2MetadataCompiler(
+            commonArguments,
+            module.k2MetadataCompilerArguments,
+            module.kotlinCompilerSettings,
+            environment,
+            sources
+        )
 
         // TODO: Compile metadata
         return false

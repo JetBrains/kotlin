@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.KotlinSourceFileCollector
+import org.jetbrains.kotlin.jps.kotlinCompilerSettings
 import org.jetbrains.kotlin.jps.model.kotlinFacetExtension
 import org.jetbrains.kotlin.jps.productionOutputFilePath
 import org.jetbrains.kotlin.jps.testOutputFilePath
@@ -51,8 +52,6 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
             return TargetId(name, jpsModuleBuildTarget.targetType.typeId)
         }
 
-    val kotlinFacetExtension by lazy { module.kotlinFacetExtension }
-
     val outputDir by lazy {
         val explicitOutputPath = if (isTests) module.testOutputFilePath else module.productionOutputFilePath
         val explicitOutputDir = explicitOutputPath?.let { File(it).absoluteFile.parentFile }
@@ -60,8 +59,6 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
                 ?: jpsModuleBuildTarget.outputDir
                 ?: throw ProjectBuildException("No output directory found for " + this)
     }
-
-    val compilerSettings by lazy { JpsKotlinCompilerSettings.getCompilerSettings(module) }
 
     val friendBuildTargets: List<KotlinModuleBuilderTarget>
         get() {

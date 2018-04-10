@@ -20,11 +20,12 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
+import org.jetbrains.kotlin.jps.k2JsCompilerArguments
 
 internal class Kotlin2JsCompilerArgumentsSerializer : BaseJpsCompilerSettingsSerializer<K2JSCompilerArguments>(
     KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION, ::K2JSCompilerArguments
 ) {
     override fun onLoad(project: JpsProject, settings: K2JSCompilerArguments) {
-        JpsKotlinCompilerSettings.setK2JsCompilerArguments(project, settings)
+        project.k2JsCompilerArguments = settings
     }
 }
