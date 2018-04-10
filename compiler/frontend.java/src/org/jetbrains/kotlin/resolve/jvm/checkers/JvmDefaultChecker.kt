@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
@@ -42,7 +42,7 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
                 descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>().any {
                     it.kind.isReal && it.hasJvmDefaultAnnotation()
                 }
-            if (!hasDeclaredJvmDefaults && !checkJvmDefaultThroughInheritance(descriptor, enableJvmDefault)) {
+            if (!hasDeclaredJvmDefaults && !checkJvmDefaultsInHierarchy(descriptor, enableJvmDefault)) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_THROUGH_INHERITANCE.on(declaration))
             }
         }
@@ -65,25 +65,17 @@ class JvmDefaultChecker(val jvmTarget: JvmTarget) : DeclarationChecker {
         }
     }
 
-    private fun checkJvmDefaultThroughInheritance(descriptor: DeclarationDescriptor, enableJvmDefault: Boolean): Boolean {
+    private fun checkJvmDefaultsInHierarchy(descriptor: DeclarationDescriptor, enableJvmDefault: Boolean): Boolean {
         if (enableJvmDefault) return true
 
         if (descriptor !is ClassDescriptor) return true
 
-        if (!DescriptorUtils.isInterface(descriptor) &&
-            !DescriptorUtils.isAnnotationClass(descriptor)
-        ) {
-            return descriptor.getSuperInterfaces().all {
-                checkJvmDefaultAnnotation(it)
+        return descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>()
+            .all { memberDescriptor ->
+                memberDescriptor.kind.isReal || OverridingUtil.filterOutOverridden(memberDescriptor.overriddenDescriptors.toSet()).all {
+                    !isInterface(it.containingDeclaration) || !it.hasJvmDefaultAnnotation() || it.modality == Modality.ABSTRACT
+                }
             }
-        }
-
-        return checkJvmDefaultAnnotation(descriptor)
     }
 
-    private fun checkJvmDefaultAnnotation(descriptor: ClassDescriptor): Boolean {
-        return descriptor.unsubstitutedMemberScope.getContributedDescriptors().filterIsInstance<CallableMemberDescriptor>().all {
-            !it.hasJvmDefaultAnnotation()
-        }
-    }
 }
