@@ -1,0 +1,5 @@
+// FIX: Change @Retention to SOURCE
+
+@Retention(AnnotationRetention.SOURCE)
+@Target(<caret>AnnotationTarget.EXPRESSION)
+annotation class Ann

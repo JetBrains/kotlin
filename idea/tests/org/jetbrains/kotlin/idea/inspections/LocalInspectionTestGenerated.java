@@ -29,6 +29,54 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/annotationTargetExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AnnotationTargetExpression extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAnnotationTargetExpression() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/annotationTargetExpression"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("binaryRetention.kt")
+        public void testBinaryRetention() throws Exception {
+            runTest("idea/testData/inspectionsLocal/annotationTargetExpression/binaryRetention.kt");
+        }
+
+        @TestMetadata("emptyRetention.kt")
+        public void testEmptyRetention() throws Exception {
+            runTest("idea/testData/inspectionsLocal/annotationTargetExpression/emptyRetention.kt");
+        }
+
+        @TestMetadata("emptyRetention2.kt")
+        public void testEmptyRetention2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/annotationTargetExpression/emptyRetention2.kt");
+        }
+
+        @TestMetadata("noRetention.kt")
+        public void testNoRetention() throws Exception {
+            runTest("idea/testData/inspectionsLocal/annotationTargetExpression/noRetention.kt");
+        }
+
+        @TestMetadata("propertyTarget.kt")
+        public void testPropertyTarget() throws Exception {
+            runTest("idea/testData/inspectionsLocal/annotationTargetExpression/propertyTarget.kt");
+        }
+
+        @TestMetadata("runtimeRetention.kt")
+        public void testRuntimeRetention() throws Exception {
+            runTest("idea/testData/inspectionsLocal/annotationTargetExpression/runtimeRetention.kt");
+        }
+
+        @TestMetadata("sourceRetention.kt")
+        public void testSourceRetention() throws Exception {
+            runTest("idea/testData/inspectionsLocal/annotationTargetExpression/sourceRetention.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/arrayInDataClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
