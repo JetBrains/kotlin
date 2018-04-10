@@ -64,14 +64,19 @@ fun HierarchicalScope.collectDescriptorsFiltered(
 
 @Deprecated("Use getContributedProperties instead")
 fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
-    return findFirstFromMeAndParent {
-        when {
-            it is LexicalScopeWrapper -> it.delegate.findLocalVariable(name)
+    return findFirstFromMeAndParent { originalScope ->
+        // Unpacking LexicalScopeWrapper may be important to check that it is not ImportingScope
+        val possiblyUnpackedScope = when (originalScope) {
+            is LexicalScopeWrapper -> originalScope.delegate
+            else -> originalScope
+        }
 
-            it !is ImportingScope && it !is LexicalChainedScope -> it.getContributedVariables(
-                name,
-                NoLookupLocation.WHEN_GET_LOCAL_VARIABLE
-            ).singleOrNull() /* todo check this*/
+        when {
+            possiblyUnpackedScope !is ImportingScope && possiblyUnpackedScope !is LexicalChainedScope ->
+                possiblyUnpackedScope.getContributedVariables(
+                    name,
+                    NoLookupLocation.WHEN_GET_LOCAL_VARIABLE
+                ).singleOrNull() /* todo check this*/
 
             else -> null
         }
