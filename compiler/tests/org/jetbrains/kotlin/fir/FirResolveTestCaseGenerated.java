@@ -31,8 +31,7 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
 
     @TestMetadata("companion.kt")
     public void testCompanion() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/companion.kt");
-        doTest(fileName);
+        runTest("compiler/testData/fir/resolve/companion.kt");
     }
 
     @TestMetadata("derivedClass.kt")

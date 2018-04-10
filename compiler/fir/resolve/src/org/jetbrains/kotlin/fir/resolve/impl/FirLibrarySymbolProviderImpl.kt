@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.FirTypeDeserializer
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.LibraryClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -92,8 +94,20 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider 
 
     private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
 
+    private val fictitiousFunctionSymbols = mutableMapOf<Int, ConeSymbol>()
+
     override fun getSymbolByFqName(classId: ClassId): ConeSymbol? {
-        return allPackageFragments[classId.packageFqName]?.firstNotNullResult { it.getSymbolByFqName(classId, this) }
+        return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
+            it.getSymbolByFqName(classId, this)
+        } ?: with(classId) {
+            val className = relativeClassName.asString()
+            val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(packageFqName, className) ?: return@with null
+            val prefix = kind.classNamePrefix
+            val arity = className.substring(prefix.length).toIntOrNull() ?: return null
+            fictitiousFunctionSymbols.getOrPut(arity) {
+                FirClassSymbol(classId)
+            }
+        }
     }
 
 }
