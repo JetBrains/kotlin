@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.build.*
-import org.jetbrains.kotlin.jps.k2JvmCompilerArguments
-import org.jetbrains.kotlin.jps.kotlinCompilerSettings
+import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
+import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import java.io.File
 import java.io.IOException

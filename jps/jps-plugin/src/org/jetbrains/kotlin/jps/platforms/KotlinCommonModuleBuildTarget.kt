@@ -14,8 +14,8 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.jps.k2MetadataCompilerArguments
-import org.jetbrains.kotlin.jps.kotlinCompilerSettings
+import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
+import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import java.io.File
 
 class KotlinCommonModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) :

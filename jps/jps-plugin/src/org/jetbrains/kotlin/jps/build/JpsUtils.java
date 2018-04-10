@@ -27,8 +27,7 @@ import org.jetbrains.jps.model.library.JpsLibraryRoot;
 import org.jetbrains.jps.model.library.JpsOrderRootType;
 import org.jetbrains.jps.util.JpsPathUtil;
 import org.jetbrains.kotlin.config.TargetPlatformKind;
-import org.jetbrains.kotlin.jps.ModuleSettingsKt;
-import org.jetbrains.kotlin.jps.ProjectSettingsKt;
+import org.jetbrains.kotlin.jps.model.ModuleSettingsKt;
 import org.jetbrains.kotlin.utils.LibraryUtils;
 
 import java.util.Map;
