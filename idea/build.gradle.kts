@@ -36,6 +36,8 @@ dependencies {
     compile(project(":j2k"))
     compile(project(":idea:formatter"))
     compile(project(":idea:fir-view"))
+    compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:java"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))

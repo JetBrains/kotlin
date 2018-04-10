@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
 class FirJavaModuleBasedSession(
     moduleInfo: ModuleInfo,
     override val sessionProvider: FirProjectSessionProvider,
-    scope: GlobalSearchScope
+    scope: GlobalSearchScope,
+    dependenciesProvider: FirSymbolProvider? = null
 ) : FirModuleBasedSession(moduleInfo) {
+
     init {
         sessionProvider.sessionCache[moduleInfo] = this
         registerComponent(
@@ -28,7 +30,8 @@ class FirJavaModuleBasedSession(
                 listOf(
                     service<FirProvider>(),
                     JavaSymbolProvider(this, sessionProvider.project, scope),
-                    FirDependenciesSymbolProviderImpl(this)
+                    FirLibrarySymbolProviderImpl(this),
+                    dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
                 )
             )
         )
