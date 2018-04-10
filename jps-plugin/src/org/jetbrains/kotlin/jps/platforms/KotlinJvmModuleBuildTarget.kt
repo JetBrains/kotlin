@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.jps.build.*
+import org.jetbrains.kotlin.jps.build.FSOperationsHelper
+import org.jetbrains.kotlin.jps.build.KotlinBuilder
+import org.jetbrains.kotlin.jps.build.KotlinSourceFileCollector
+import org.jetbrains.kotlin.jps.build.processedTargetsWithRemovedFilesContainer
 import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
@@ -39,7 +42,8 @@ class KotlinJvmModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotl
         context: CompileContext,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         environment: JpsCompilerEnvironment,
-        filesToCompile: MultiMap<ModuleBuildTarget, File>
+        filesToCompile: MultiMap<ModuleBuildTarget, File>,
+        fsOperations: FSOperationsHelper
     ): Boolean {
         if (chunk.modules.size > 1) {
             environment.messageCollector.report(
@@ -52,7 +56,7 @@ class KotlinJvmModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotl
 
         allCompiledFiles.addAll(filesToCompile.values())
 
-        val processedTargetsWithRemoved = getProcessedTargetsWithRemovedFilesContainer(context)
+        val processedTargetsWithRemoved = context.processedTargetsWithRemovedFilesContainer
 
         var totalRemovedFiles = 0
         for (target in chunk.targets) {
@@ -131,7 +135,7 @@ class KotlinJvmModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotl
                 }
             }
 
-            val kotlinModuleId = target.moduleId
+            val kotlinModuleId = target.targetId
             builder.addModule(
                 kotlinModuleId.name,
                 outputDir.absolutePath,

@@ -10,10 +10,13 @@ import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.incremental.CompileContext
+import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.jps.build.FSOperationsHelper
 import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import java.io.File
@@ -28,10 +31,14 @@ class KotlinCommonModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) :
         context: CompileContext,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         environment: JpsCompilerEnvironment,
-        filesToCompile: MultiMap<ModuleBuildTarget, File>
+        filesToCompile: MultiMap<ModuleBuildTarget, File>,
+        fsOperations: FSOperationsHelper
     ): Boolean {
         require(chunk.representativeTarget() == jpsModuleBuildTarget)
         if (reportAndSkipCircular(chunk, environment)) return false
+
+        // Incremental compilation is not supported, so mark all dependents as dirty
+        FSOperations.markDirtyRecursively(context, CompilationRound.CURRENT, chunk)
 
         JpsKotlinCompilerRunner().runK2MetadataCompiler(
             commonArguments,
@@ -41,7 +48,6 @@ class KotlinCommonModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) :
             sources
         )
 
-        // TODO: Compile metadata
-        return false
+        return true
     }
 }

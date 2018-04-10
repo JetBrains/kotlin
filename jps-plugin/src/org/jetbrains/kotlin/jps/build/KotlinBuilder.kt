@@ -274,7 +274,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         outputConsumer: ModuleLevelBuilder.OutputConsumer
     ): ModuleLevelBuilder.ExitCode {
-        if (chunk.isDummy(context)) return NOTHING_DONE
+        if (chunk.isDummy(context))
+            return NOTHING_DONE
 
         val messageCollector = MessageCollectorAdapter(context)
         val fsOperations = FSOperationsHelper(context, chunk, LOG)
@@ -359,7 +360,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val start = System.nanoTime()
         val outputItemCollector = doCompileModuleChunk(
             allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder,
-            environment, filesToCompile, incrementalCaches, project
+            environment, filesToCompile, incrementalCaches, fsOperations
         )
 
         statisticsLogger.registerStatistic(chunk, System.nanoTime() - start)
@@ -510,10 +511,15 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         chunk.representativeTarget().module.kotlinCompilerArguments
 
     private fun doCompileModuleChunk(
-        allCompiledFiles: MutableSet<File>, chunk: ModuleChunk, commonArguments: CommonCompilerArguments, context: CompileContext,
-        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>, environment: JpsCompilerEnvironment,
-        filesToCompile: MultiMap<ModuleBuildTarget, File>, incrementalCaches: Map<ModuleBuildTarget, IncrementalJvmCache>,
-        project: JpsProject
+        allCompiledFiles: MutableSet<File>,
+        chunk: ModuleChunk,
+        commonArguments: CommonCompilerArguments,
+        context: CompileContext,
+        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
+        environment: JpsCompilerEnvironment,
+        filesToCompile: MultiMap<ModuleBuildTarget, File>,
+        incrementalCaches: Map<ModuleBuildTarget, IncrementalJvmCache>,
+        fsOperations: FSOperationsHelper
     ): OutputItemsCollector? {
 
         val representativeTarget = chunk.representativeTarget()
@@ -545,7 +551,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val isDoneSomething = representativeTarget.kotlinData?.compileModuleChunk(
             allCompiledFiles, chunk, commonArguments, context,
-            dirtyFilesHolder, environment, filesToCompile
+            dirtyFilesHolder, environment, filesToCompile, fsOperations
         ) ?: false
 
         return if (isDoneSomething) environment.outputItemsCollector else null
@@ -561,7 +567,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             register(LookupTracker::class.java, lookupTracker)
             register(
                 IncrementalCompilationComponents::class.java,
-                IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { it.key.kotlinData!!.moduleId })
+                IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { it.key.kotlinData!!.targetId })
             )
             register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
                 override fun checkCanceled() {
@@ -628,9 +634,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         fun SimpleOutputItem.target() =
             sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?: chunk.targets.singleOrNull {
                 it.outputDir?.let {
-                    outputFile.startsWith(
-                        it
-                    )
+                    outputFile.startsWith(it)
                 } ?: false
             } ?: representativeTarget
 
@@ -870,14 +874,15 @@ fun getAllCompiledFilesContainer(context: CompileContext): MutableSet<File> {
 // TODO: investigate thread safety
 private val PROCESSED_TARGETS_WITH_REMOVED_FILES = Key.create<MutableSet<ModuleBuildTarget>>("_processed_targets_with_removed_files_")
 
-fun getProcessedTargetsWithRemovedFilesContainer(context: CompileContext): MutableSet<ModuleBuildTarget> {
-    var set = PROCESSED_TARGETS_WITH_REMOVED_FILES.get(context)
-    if (set == null) {
-        set = HashSet()
-        PROCESSED_TARGETS_WITH_REMOVED_FILES.set(context, set)
+val CompileContext.processedTargetsWithRemovedFilesContainer: MutableSet<ModuleBuildTarget>
+    get() {
+        var set = PROCESSED_TARGETS_WITH_REMOVED_FILES.get(this)
+        if (set == null) {
+            set = HashSet()
+            PROCESSED_TARGETS_WITH_REMOVED_FILES.set(this, set)
+        }
+        return set
     }
-    return set
-}
 
 private fun hasKotlinDirtyOrRemovedFiles(
     dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,

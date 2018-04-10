@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.platforms
 
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
@@ -21,6 +20,7 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
+import org.jetbrains.kotlin.jps.build.FSOperationsHelper
 import org.jetbrains.kotlin.jps.build.KotlinSourceFileCollector
 import org.jetbrains.kotlin.jps.model.kotlinFacet
 import org.jetbrains.kotlin.jps.model.productionOutputFilePath
@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
+/**
+ * Properties and actions for Kotlin test / production module build target.
+ */
 abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTarget) {
     val module: JpsModule
         get() = jpsModuleBuildTarget.module
@@ -36,7 +39,7 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
     val isTests: Boolean
         get() = jpsModuleBuildTarget.isTests
 
-    val moduleId: TargetId
+    val targetId: TargetId
         get() {
             // Since IDEA 2016 each gradle source root is imported as a separate module.
             // One gradle module X is imported as two JPS modules:
@@ -75,7 +78,7 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
             JpsJavaExtensionService.getInstance().getOutputDirectory(it.module, false)
         }
 
-    val relatedProductionModule: JpsModule?
+    private val relatedProductionModule: JpsModule?
         get() = JpsJavaExtensionService.getInstance().getTestModuleProperties(module)?.productionModule
 
     val allDependencies by lazy {
@@ -94,11 +97,6 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
             .filter { it.name in implementedModuleNames }
             .map { ModuleBuildTarget(it, isTests).kotlinData!! }
     }
-
-    fun getRemovedKotlinFiles(dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>): List<File> =
-        dirtyFilesHolder
-            .getRemovedFiles(jpsModuleBuildTarget)
-            .mapNotNull { if (FileUtilRt.extensionEquals(it, "kt")) File(it) else null }
 
     val sources by lazy {
         mutableListOf<File>().also { result ->
@@ -139,7 +137,8 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
         context: CompileContext,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         environment: JpsCompilerEnvironment,
-        filesToCompile: MultiMap<ModuleBuildTarget, File>
+        filesToCompile: MultiMap<ModuleBuildTarget, File>,
+        fsOperations: FSOperationsHelper
     ): Boolean
 
     protected fun reportAndSkipCircular(
