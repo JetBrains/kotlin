@@ -14,10 +14,12 @@ class FirDefaultStarImportingScope(session: FirSession, lookupInFir: Boolean = f
     FirAbstractStarImportingScope(session, lookupInFir) {
 
     // TODO: put languageVersionSettings into FirSession?
-    override val starImports = session.moduleInfo?.platform?.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT, true)?.map {
-        FirResolvedPackageStarImport(
-            FirImportImpl(session, null, it.fqName, isAllUnder = true, aliasName = null),
-            it.fqName
-        )
-    } ?: emptyList()
+    override val starImports = session.moduleInfo?.platform?.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT, true)
+        ?.filter { it.isAllUnder }
+        ?.map {
+            FirResolvedPackageStarImport(
+                FirImportImpl(session, null, it.fqName, isAllUnder = true, aliasName = null),
+                it.fqName
+            )
+        } ?: emptyList()
 }
