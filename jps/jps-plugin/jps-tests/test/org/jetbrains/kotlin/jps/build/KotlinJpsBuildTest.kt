@@ -62,6 +62,8 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
 import org.jetbrains.kotlin.jps.model.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
+import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
+import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import org.jetbrains.kotlin.jps.platforms.KotlinJsModuleBuildTarget
 import org.jetbrains.kotlin.jps.platforms.clearKotlinModuleBuildTargetDataBindings
 import org.jetbrains.kotlin.jps.platforms.kotlinData
@@ -525,9 +527,9 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         assertEquals(1, myProject.modules.size)
         val module = myProject.modules.first()
-        val args = JpsKotlinCompilerSettings.getCommonCompilerArguments(module)
+        val args = module.kotlinCompilerArguments
         args.apiVersion = "1.2"
-        JpsKotlinCompilerSettings.setCommonCompilerArguments(myProject, args)
+        myProject.kotlinCommonCompilerArguments = args
 
         buildAllModules().assertSuccessful()
     }

@@ -50,11 +50,6 @@ object KotlinSourceFileCollector {
             .getRemovedFiles(target)
             .mapNotNull { if (FileUtilRt.extensionEquals(it, "kt")) File(it) else null }
 
-    private fun getRelevantSourceRoots(target: ModuleBuildTarget): Iterable<JpsModuleSourceRoot> {
-        val sourceRootType = if (target.isTests) JavaSourceRootType.TEST_SOURCE else JavaSourceRootType.SOURCE
-        return target.module.getSourceRoots<JavaSourceRootProperties>(sourceRootType)
-    }
-
     internal fun isKotlinSourceFile(file: File): Boolean {
         return FileUtilRt.extensionEquals(file.name, "kt")
     }

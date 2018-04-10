@@ -17,6 +17,7 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.jps.build.FSOperationsHelper
 import org.jetbrains.kotlin.jps.model.k2JsCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import org.jetbrains.kotlin.jps.model.productionOutputFilePath
@@ -28,26 +29,93 @@ import java.io.File
 import java.net.URI
 
 class KotlinJsModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : KotlinModuleBuilderTarget(jpsModuleBuildTarget) {
+    override fun compileModuleChunk(
+        allCompiledFiles: MutableSet<File>,
+        chunk: ModuleChunk,
+        commonArguments: CommonCompilerArguments,
+        context: CompileContext,
+        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
+        environment: JpsCompilerEnvironment,
+        filesToCompile: MultiMap<ModuleBuildTarget, File>,
+        fsOperations: FSOperationsHelper
+    ): Boolean {
+        require(chunk.representativeTarget() == jpsModuleBuildTarget)
+        if (reportAndSkipCircular(chunk, environment)) return false
+
+        val sources = sources
+        if (sources.isEmpty()) return false
+
+        val libraries = libraryFiles + dependenciesMetaFiles
+
+        JpsKotlinCompilerRunner().runK2JsCompiler(
+            commonArguments,
+            module.k2JsCompilerArguments,
+            module.kotlinCompilerSettings,
+            environment,
+            sources,
+            sourceMapRoots,
+            libraries,
+            friendBuildTargetsMetaFiles,
+            outputFile
+        )
+
+        return true
+    }
+
+    override fun doAfterBuild() {
+        copyJsLibraryFilesIfNeeded()
+    }
+
+    private fun copyJsLibraryFilesIfNeeded() {
+        if (module.kotlinCompilerSettings.copyJsLibraryFiles) {
+            val outputLibraryRuntimeDirectory = File(outputDir, module.kotlinCompilerSettings.outputDirectoryForJsLibraryFiles).absolutePath
+            JsLibraryUtils.copyJsFilesFromLibraries(
+                libraryFiles, outputLibraryRuntimeDirectory,
+                copySourceMap = module.k2JsCompilerArguments.sourceMap
+            )
+        }
+    }
+
+    private val sourceMapRoots: List<File>
+        get() {
+            // Compiler starts to produce path relative to base dirs in source maps if at least one statement is true:
+            // 1) base dirs are specified;
+            // 2) prefix is specified (i.e. non-empty)
+            // Otherwise compiler produces paths relative to source maps location.
+            // We don't have UI to configure base dirs, but we have UI to configure prefix.
+            // If prefix is not specified (empty) in UI, we want to produce paths relative to source maps location
+            return if (module.k2JsCompilerArguments.sourceMapPrefix.isNullOrBlank()) emptyList()
+            else module.contentRootsList.urls
+                .map { URI.create(it) }
+                .filter { it.scheme == "file" }
+                .map { File(it.path) }
+        }
+
+    val friendBuildTargetsMetaFiles
+        get() = friendBuildTargets.mapNotNull {
+            (it as? KotlinJsModuleBuildTarget)?.outputMetaFile?.absoluteFile?.toString()
+        }
+
     val outputFile
         get() = explicitOutputPath?.let { File(it) } ?: implicitOutputFile
 
-    val explicitOutputPath
+    private val explicitOutputPath
         get() = if (isTests) module.testOutputFilePath else module.productionOutputFilePath
 
-    val implicitOutputFile: File
+    private val implicitOutputFile: File
         get() {
             val suffix = if (isTests) "_test" else ""
 
             return File(outputDir, module.name + suffix + JS_EXT)
         }
 
-    val outputFileBaseName: String
+    private val outputFileBaseName: String
         get() = outputFile.path.substringBeforeLast(".")
 
     val outputMetaFile: File
         get() = File(outputFileBaseName + META_JS_SUFFIX)
 
-    val libraryFiles: List<String>
+    private val libraryFiles: List<String>
         get() = mutableListOf<String>().also { result ->
             for (library in allDependencies.libraries) {
                 for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
@@ -56,12 +124,12 @@ class KotlinJsModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotli
             }
         }
 
-    val dependenciesMetaFiles: List<String>
+    private val dependenciesMetaFiles: List<String>
         get() = mutableListOf<String>().also { result ->
             allDependencies.processModules { module ->
                 if (isTests) addDependencyMetaFile(module, result, isTests = true)
 
-                // production targets should be also added as dependency to test targets
+                // note: production targets should be also added as dependency to test targets
                 addDependencyMetaFile(module, result, isTests = false)
             }
         }
@@ -81,74 +149,6 @@ class KotlinJsModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotli
             if (metaFile.exists()) {
                 result.add(metaFile.absolutePath)
             }
-        }
-    }
-
-    override fun compileModuleChunk(
-        allCompiledFiles: MutableSet<File>,
-        chunk: ModuleChunk,
-        commonArguments: CommonCompilerArguments,
-        context: CompileContext,
-        dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-        environment: JpsCompilerEnvironment,
-        filesToCompile: MultiMap<ModuleBuildTarget, File>
-    ): Boolean {
-        require(chunk.representativeTarget() == jpsModuleBuildTarget)
-        if (reportAndSkipCircular(chunk, environment)) return false
-
-        val sources = sources
-        if (sources.isEmpty()) return false
-
-        val k2JsCompilerArguments = module.k2JsCompilerArguments
-
-        // Compiler starts to produce path relative to base dirs in source maps if at least one statement is true:
-        // 1) base dirs are specified;
-        // 2) prefix is specified (i.e. non-empty)
-        // Otherwise compiler produces paths relative to source maps location.
-        // We don't have UI to configure base dirs, but we have UI to configure prefix.
-        // If prefix is not specified (empty) in UI, we want to produce paths relative to source maps location
-        val sourceRoots = if (k2JsCompilerArguments.sourceMapPrefix.isNullOrBlank()) {
-            emptyList()
-        } else {
-            module.contentRootsList.urls
-                .map { URI.create(it) }
-                .filter { it.scheme == "file" }
-                .map { File(it.path) }
-        }
-
-        val friendPaths = friendBuildTargets.mapNotNull {
-            (it as? KotlinJsModuleBuildTarget)?.outputMetaFile?.absoluteFile?.toString()
-        }
-
-        val libraries = libraryFiles + dependenciesMetaFiles
-
-        val compilerRunner = JpsKotlinCompilerRunner()
-        compilerRunner.runK2JsCompiler(
-            commonArguments,
-            k2JsCompilerArguments,
-            module.kotlinCompilerSettings,
-            environment,
-            sources,
-            sourceRoots,
-            libraries,
-            friendPaths,
-            outputFile
-        )
-
-        return true
-    }
-
-    override fun doAfterBuild() {
-        copyJsLibraryFilesIfNeeded()
-    }
-
-    private fun copyJsLibraryFilesIfNeeded() {
-        if (module.kotlinCompilerSettings.copyJsLibraryFiles) {
-            val outputLibraryRuntimeDirectory = File(outputDir, module.kotlinCompilerSettings.outputDirectoryForJsLibraryFiles).absolutePath
-            JsLibraryUtils.copyJsFilesFromLibraries(
-                libraryFiles, outputLibraryRuntimeDirectory,
-                copySourceMap = module.k2JsCompilerArguments.sourceMap
-            )
         }
     }
 }
