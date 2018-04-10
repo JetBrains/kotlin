@@ -3,3 +3,8 @@ FILE: functionX.kt
         public? get(): R|kotlin/jvm/functions/Function0<kotlin/Int>|
     public? final? property y(val): R|kotlin/Function1<kotlin/String, kotlin/String>| = STUB
         public? get(): R|kotlin/Function1<kotlin/String, kotlin/String>|
+    public? final class MyFunction : R|kotlin/Function2<kotlin/Int, kotlin/String, kotlin/Unit>| {
+        public? open? override function invoke(p1: R|kotlin/Int|, p2: R|kotlin/String|): R|error: Not supported: FirImplicitTypeImpl| {
+        }
+
+    }
