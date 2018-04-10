@@ -33,5 +33,3 @@ private val isJava6 = System.getProperty("java.version").startsWith("1.6.")
 internal actual fun String.removeLeadingPlusOnJava6(): String =
     if (isJava6) removePrefix("+") else this
 
-@kotlin.jvm.JvmVersion
-internal actual fun doubleTotalOrderEquals(a: Double?, b: Double?) = (a as Any?) == b

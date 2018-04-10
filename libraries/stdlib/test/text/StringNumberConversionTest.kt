@@ -150,6 +150,7 @@ class StringNumberConversionTest {
     }
 }
 
+internal fun doubleTotalOrderEquals(a: Double?, b: Double?): Boolean = (a as Any?) == b
 
 internal fun <T : Any> compareConversion(convertOrFail: (String) -> T,
                                         convertOrNull: (String) -> T?,

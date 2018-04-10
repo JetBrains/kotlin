@@ -27,4 +27,3 @@ public actual fun randomInt(limit: Int): Int = (kotlin.js.Math.random() * limit)
 
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun String.removeLeadingPlusOnJava6(): String = this
-internal actual fun doubleTotalOrderEquals(a: Double?, b: Double?) = a == b || (a != a && b != b)
