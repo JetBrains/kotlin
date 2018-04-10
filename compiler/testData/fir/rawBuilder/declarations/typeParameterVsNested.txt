@@ -8,7 +8,7 @@ FILE: typeParameterVsNested.kt
         public? abstract property x(val): T
             public? get(): T
 
-        public? abstract function foo(arg: T): <implicit>
+        public? abstract function foo(arg: T): kotlin.Unit
 
         public? abstract property y(val): My.T
             public? get(): My.T

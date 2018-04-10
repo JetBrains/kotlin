@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.types.Variance
 
 class RawFirBuilder(val session: FirSession) {
 
+    private val implicitUnitType = FirImplicitUnitType(session, null)
+
     fun buildFirFile(file: KtFile): FirFile {
         return file.accept(Visitor(), Unit) as FirFile
     }
@@ -356,6 +358,7 @@ class RawFirBuilder(val session: FirSession) {
                 // TODO: what if name is not null but we're in expression position?
                 return FirExpressionStub(session, function)
             }
+            val typeReference = function.typeReference
             val firFunction = FirMemberFunctionImpl(
                 session,
                 function,
@@ -370,7 +373,11 @@ class RawFirBuilder(val session: FirSession) {
                 function.hasModifier(KtTokens.TAILREC_KEYWORD),
                 function.hasModifier(KtTokens.EXTERNAL_KEYWORD),
                 function.receiverTypeReference.convertSafe(),
-                function.typeReference.toFirOrImplicitType(),
+                if (function.hasBlockBody()) {
+                    typeReference?.toFirOrImplicitType() ?: implicitUnitType
+                } else {
+                    typeReference.toFirOrImplicitType()
+                },
                 function.bodyExpression.toFirBody()
             )
             function.extractAnnotationsTo(firFunction)
