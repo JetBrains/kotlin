@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class FirNestedClassifierScope(val classId: ClassId, val session: FirSession) : FirScope {
-
-    private val firProvider = FirProvider.getInstance(session)
-
+class FirNestedClassifierScope(
+    val classId: ClassId,
+    private val symbolProvider: FirSymbolProvider
+) : FirScope {
 
     override fun processClassifiersByName(
         name: Name,
@@ -24,7 +23,7 @@ class FirNestedClassifierScope(val classId: ClassId, val session: FirSession) : 
         processor: (ConeSymbol) -> Boolean
     ): Boolean {
         val child = classId.createNestedClassId(name)
-        val symbol = firProvider.getSymbolByFqName(child)
+        val symbol = symbolProvider.getSymbolByFqName(child)
 
         return symbol == null || processor(symbol)
     }

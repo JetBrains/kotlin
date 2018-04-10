@@ -73,7 +73,11 @@ class FirTypeResolverImpl : FirTypeResolver {
                 scope.processClassifiersByName(type.qualifier.first().name, position) { symbol ->
                     resolvedSymbol = when (symbol) {
                         is ConeClassLikeSymbol -> {
-                            qualifierResolver.resolveSymbolWithPrefix(type.qualifier, symbol.classId)
+                            if (type.qualifier.size == 1) {
+                                symbol
+                            } else {
+                                qualifierResolver.resolveSymbolWithPrefix(type.qualifier, symbol.classId)
+                            }
                         }
                         is ConeTypeParameterSymbol -> {
                             assert(type.qualifier.size == 1)
