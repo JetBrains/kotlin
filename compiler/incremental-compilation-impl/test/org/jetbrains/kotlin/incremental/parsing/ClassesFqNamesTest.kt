@@ -3,16 +3,14 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.parsing.utils
+package org.jetbrains.kotlin.incremental.parsing
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.parsing.util.classesFqNames
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.io.File
-import kotlin.test.assertEquals
 
 class ClassesFqNamesTest {
     private lateinit var workingDir: File
