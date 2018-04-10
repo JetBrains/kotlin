@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -25,8 +26,10 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isSuperOrDelegatingConstructorCall
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionStatelessCallbacks
+import org.jetbrains.kotlin.resolve.calls.inference.isCoroutineCallWithAdditionalInference
 import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCall
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -57,4 +60,7 @@ class KotlinResolutionStatelessCallbacksImpl(
 
     override fun getVariableCandidateIfInvoke(functionCall: KotlinCall) =
         functionCall.safeAs<PSIKotlinCallForInvoke>()?.variableCall
+
+    override fun isCoroutineCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean =
+        isCoroutineCallWithAdditionalInference(parameter, argument.psiCallArgument.valueArgument)
 }

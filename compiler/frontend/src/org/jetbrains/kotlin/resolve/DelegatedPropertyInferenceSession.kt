@@ -9,16 +9,14 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
-import org.jetbrains.kotlin.resolve.calls.components.ErrorCallInfo
-import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
-import org.jetbrains.kotlin.resolve.calls.components.PartialCallInfo
-import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.DelegatedPropertyConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
@@ -26,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ManyCandidatesResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSIPartialCallInfo
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -83,6 +82,8 @@ class DelegatedPropertyInferenceSession(
 
         addConstraintForThis(candidateDescriptor, commonSystem)
     }
+
+    override fun inferPostponedVariables(initialStorage: ConstraintStorage): Map<TypeConstructor, UnwrappedType> = emptyMap()
 }
 
 object InferenceSessionForExistingCandidates : InferenceSession {
@@ -91,9 +92,9 @@ object InferenceSessionForExistingCandidates : InferenceSession {
     }
 
     override fun addPartialCallInfo(callInfo: PartialCallInfo) {}
+    override fun addCompletedCallInfo(callInfo: CompletedCallInfo) {}
     override fun addErrorCallInfo(callInfo: ErrorCallInfo) {}
 
-    override fun currentConstraintSystem(): ConstraintStorage {
-        return ConstraintStorage.Empty
-    }
+    override fun currentConstraintSystem(): ConstraintStorage = ConstraintStorage.Empty
+    override fun inferPostponedVariables(initialStorage: ConstraintStorage): Map<TypeConstructor, UnwrappedType> = emptyMap()
 }

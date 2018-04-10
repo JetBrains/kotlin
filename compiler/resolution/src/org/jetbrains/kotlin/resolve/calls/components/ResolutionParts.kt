@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.KnownTypeParameterConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
@@ -21,6 +18,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -191,6 +189,20 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             }
         }
         return toFreshVariables
+    }
+}
+
+internal object InferLaterInitializerResolutionPart : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        resolvedCall.argumentToCandidateParameter
+            .filter { (argument, parameter) -> callComponents.statelessCallbacks.isCoroutineCall(argument, parameter) }
+            .flatMap { (_, parameter) ->
+                resolvedCall.substitutor.freshVariables.filter { variable ->
+                    parameter.type.contains { it.constructor == variable.originalTypeParameter.typeConstructor }
+                }
+            }
+            .distinct()
+            .forEach { csBuilder.markPostponedVariable(it) }
     }
 }
 

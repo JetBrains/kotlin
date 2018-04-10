@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -42,6 +43,7 @@ interface ConstraintStorage {
     val errors: List<KotlinCallDiagnostic>
     val hasContradiction: Boolean
     val fixedTypeVariables: Map<TypeConstructor, UnwrappedType>
+    val postponedTypeVariables: List<NewTypeVariable>
 
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructor, NewTypeVariable> get() = emptyMap()
@@ -51,6 +53,7 @@ interface ConstraintStorage {
         override val errors: List<KotlinCallDiagnostic> get() = emptyList()
         override val hasContradiction: Boolean get() = false
         override val fixedTypeVariables: Map<TypeConstructor, UnwrappedType> get() = emptyMap()
+        override val postponedTypeVariables: List<NewTypeVariable> get() = emptyList()
     }
 }
 

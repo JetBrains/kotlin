@@ -96,6 +96,10 @@ class KotlinToResolvedCallTransformer(
             is CompletedCallResolutionResult, is ErrorCallResolutionResult -> {
                 val candidate = (baseResolvedCall as SingleCallResolutionResult).resultCallAtom
 
+                context.inferenceSession.addCompletedCallInfo(
+                    PSICompletedCallInfo(baseResolvedCall as CompletedCallResolutionResult, context, tracingStrategy)
+                )
+
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
                     resultSubstitutor, context.trace, context, this, expressionTypingServices, argumentTypeResolver,
@@ -153,8 +157,7 @@ class KotlinToResolvedCallTransformer(
         diagnostics: Collection<KotlinCallDiagnostic>
     ): NewResolvedCallImpl<D> {
         if (trace != null) {
-            val storedResolvedCall =
-                completedSimpleAtom.atom.psiKotlinCall.psiCall.getResolvedCall(trace.bindingContext)?.safeAs<NewResolvedCallImpl<D>>()
+            val storedResolvedCall = completedSimpleAtom.atom.psiKotlinCall.getResolvedPsiKotlinCall<D>(trace)
             if (storedResolvedCall != null) {
                 storedResolvedCall.setResultingSubstitutor(resultSubstitutor)
                 storedResolvedCall.updateDiagnostics(diagnostics)
@@ -339,7 +342,7 @@ class KotlinToResolvedCallTransformer(
         reportCallDiagnostic(context, trace, functionCall.resolvedCallAtom, functionCall.resultingDescriptor, emptyList())
     }
 
-    private fun reportCallDiagnostic(
+    fun reportCallDiagnostic(
         context: BasicCallResolutionContext,
         trace: BindingTrace,
         completedCallAtom: ResolvedCallAtom,

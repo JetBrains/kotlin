@@ -1533,6 +1533,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("applyInsideCoroutine.kt")
+            public void testApplyInsideCoroutine() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/applyInsideCoroutine.kt");
+            }
+
             @TestMetadata("correctMember.kt")
             public void testCorrectMember() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/correctMember.kt");
@@ -1581,6 +1586,16 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("simpleGenerator.kt")
             public void testSimpleGenerator() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/simpleGenerator.kt");
+            }
+
+            @TestMetadata("suspendCallsWithErrors.kt")
+            public void testSuspendCallsWithErrors() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/suspendCallsWithErrors.kt");
+            }
+
+            @TestMetadata("suspendCallsWrongUpperBound.kt")
+            public void testSuspendCallsWrongUpperBound() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/suspendCallsWrongUpperBound.kt");
             }
 
             @TestMetadata("typeFromReceiver.kt")

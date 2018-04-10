@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintS
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.types.NonFixedType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -68,6 +69,14 @@ class NewConstraintSystemImpl(
         transactionRegisterVariable(variable)
         storage.allTypeVariables[variable.freshTypeConstructor] = variable
         storage.notFixedTypeVariables[variable.freshTypeConstructor] = MutableVariableWithConstraints(variable)
+    }
+
+    override fun markPostponedVariable(variable: NewTypeVariable) {
+        storage.postponedTypeVariables += variable
+    }
+
+    override fun unmarkPostponedVariable(variable: NewTypeVariable) {
+        storage.postponedTypeVariables -= variable
     }
 
     override fun addSubtypeConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition) =
@@ -163,6 +172,7 @@ class NewConstraintSystemImpl(
                 Math.max(storage.maxTypeDepthFromInitialConstraints, otherSystem.maxTypeDepthFromInitialConstraints)
         storage.errors.addAll(otherSystem.errors)
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
+        storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
     }
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder
@@ -204,6 +214,18 @@ class NewConstraintSystemImpl(
             return storage.notFixedTypeVariables
         }
 
+    override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.fixedTypeVariables
+        }
+
+    override val postponedTypeVariables: List<NewTypeVariable>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.postponedTypeVariables
+        }
+
     // ConstraintInjector.Context, KotlinConstraintSystemCompleter.Context
     override fun addError(error: KotlinCallDiagnostic) {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
@@ -232,10 +254,33 @@ class NewConstraintSystemImpl(
         return !type.contains { storage.notFixedTypeVariables.containsKey(it.constructor) }
     }
 
+    override fun containsOnlyFixedOrPostponedVariables(type: UnwrappedType): Boolean {
+        checkState(State.BUILDING, State.COMPLETION)
+        return !type.contains {
+            val variable = storage.notFixedTypeVariables[it.constructor]?.typeVariable
+            variable !in storage.postponedTypeVariables && storage.notFixedTypeVariables.containsKey(it.constructor)
+        }
+    }
+
     // PostponedArgumentsAnalyzer.Context
     override fun buildCurrentSubstitutor(): NewTypeSubstitutor {
         checkState(State.BUILDING, State.COMPLETION)
-        return storage.buildCurrentSubstitutor()
+        return buildCurrentSubstitutor(emptyMap())
+    }
+
+    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructor, NonFixedType>): NewTypeSubstitutor {
+        checkState(State.BUILDING, State.COMPLETION)
+        return storage.buildCurrentSubstitutor(additionalBindings)
+    }
+
+    override fun bindingStubsForPostponedVariables(): Map<NewTypeVariable, NonFixedType> {
+        checkState(State.BUILDING, State.COMPLETION)
+        return storage.postponedTypeVariables.associate { it to NonFixedType(it.freshTypeConstructor) }
+    }
+
+    override fun copyCurrentStorage(): ConstraintStorage {
+        checkState(State.BUILDING, State.COMPLETION)
+        return storage.copy()
     }
 
     // PostponedArgumentsAnalyzer.Context

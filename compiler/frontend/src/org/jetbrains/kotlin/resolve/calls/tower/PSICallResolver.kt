@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -61,7 +63,9 @@ class PSICallResolver(
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val effectSystem: EffectSystem,
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
+    private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
 
@@ -160,7 +164,8 @@ class PSICallResolver(
         KotlinResolutionCallbacksImpl(
             trace, expressionTypingServices, typeApproximator,
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
-            dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver
+            dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver,
+            this, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {

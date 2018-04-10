@@ -23,7 +23,11 @@ import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -33,10 +37,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.types.TypeApproximator
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -60,7 +61,11 @@ class KotlinResolutionCallbacksImpl(
     val dataFlowValueFactory: DataFlowValueFactory,
     override val inferenceSession: InferenceSession,
     val constantExpressionEvaluator: ConstantExpressionEvaluator,
-    val typeResolver: TypeResolver
+    val typeResolver: TypeResolver,
+    val psiCallResolver: PSICallResolver,
+    val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+    val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
+    val callComponents: KotlinCallComponents
 ) : KotlinResolutionCallbacks {
     class LambdaInfo(val expectedType: UnwrappedType, val contextDependency: ContextDependency) {
         val returnStatements = ArrayList<Pair<KtReturnExpression, LambdaContextInfo?>>()
@@ -76,8 +81,9 @@ class KotlinResolutionCallbacksImpl(
         isSuspend: Boolean,
         receiverType: UnwrappedType?,
         parameters: List<UnwrappedType>,
-        expectedReturnType: UnwrappedType?
-    ): List<KotlinCallArgument> {
+        expectedReturnType: UnwrappedType?,
+        stubsForPostponedVariables: Map<NewTypeVariable, NonFixedType>
+    ): Pair<List<KotlinCallArgument>, InferenceSession?> {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
         val outerCallContext = psiCallArgument.outerCallContext
 
@@ -122,11 +128,22 @@ class KotlinResolutionCallbacksImpl(
         val approximatesExpectedType =
             typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
 
+        val coroutineSession =
+            if (stubsForPostponedVariables.isNotEmpty())
+                CoroutineInferenceSession(
+                    psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
+                    callComponents, builtIns, stubsForPostponedVariables, trace, kotlinToResolvedCallTransformer
+                )
+            else
+                null
+
         val actualContext = outerCallContext
             .replaceBindingTrace(trace)
             .replaceContextDependency(lambdaInfo.contextDependency)
             .replaceExpectedType(approximatesExpectedType)
-            .replaceDataFlowInfo(psiCallArgument.lambdaInitialDataFlowInfo)
+            .replaceDataFlowInfo(psiCallArgument.lambdaInitialDataFlowInfo).let {
+                if (coroutineSession != null) it.replaceInferenceSession(coroutineSession) else it
+            }
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
         trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
@@ -159,7 +176,7 @@ class KotlinResolutionCallbacksImpl(
 
         returnArguments.addIfNotNull(lastExpressionArgument)
 
-        return returnArguments
+        return Pair(returnArguments, coroutineSession)
     }
 
     private fun getLastDeparentesizedExpression(psiCallArgument: PSIKotlinCallArgument): KtExpression? {

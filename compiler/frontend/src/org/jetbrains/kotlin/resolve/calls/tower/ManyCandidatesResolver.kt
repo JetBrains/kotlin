@@ -7,28 +7,31 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.types.TypeConstructor
 
 abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     private val psiCallResolver: PSICallResolver,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
-    private val callComponents: KotlinCallComponents,
+    protected val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
+    protected val callComponents: KotlinCallComponents,
     val builtIns: KotlinBuiltIns
 ) : InferenceSession {
     private val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
     private val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
 
-    abstract fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>)
+    open fun prepareForCompletion(commonSystem: NewConstraintSystem, resolvedCallsInfo: List<PSIPartialCallInfo>) {
+        // do nothing
+    }
 
     override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
         return false
@@ -39,6 +42,10 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
             throw AssertionError("Call info for $callInfo should be instance of PSIPartialCallInfo")
         }
         partiallyResolvedCallsInfo.add(callInfo)
+    }
+
+    override fun addCompletedCallInfo(callInfo: CompletedCallInfo) {
+        // do nothing
     }
 
     override fun addErrorCallInfo(callInfo: ErrorCallInfo) {
@@ -107,6 +114,12 @@ class PSIPartialCallInfo(
     val context: BasicCallResolutionContext,
     val tracingStrategy: TracingStrategy
 ) : PartialCallInfo
+
+class PSICompletedCallInfo(
+    override val callResolutionResult: CompletedCallResolutionResult,
+    val context: BasicCallResolutionContext,
+    val tracingStrategy: TracingStrategy
+) : CompletedCallInfo
 
 class PSIErrorCallInfo<D : CallableDescriptor>(
     override val callResolutionResult: CallResolutionResult,

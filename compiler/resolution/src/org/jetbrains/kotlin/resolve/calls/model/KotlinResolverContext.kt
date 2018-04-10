@@ -191,7 +191,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         NoArguments,
         CreateFreshVariablesSubstitutor,
         CheckExplicitReceiverKindConsistency,
-        CheckReceivers
+        CheckReceivers,
+        InferLaterInitializerResolutionPart
     ),
     FUNCTION(
         CheckInstantiationOfAbstractClass,
@@ -205,7 +206,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CheckExplicitReceiverKindConsistency,
         CheckReceivers,
         CheckArguments,
-        CheckExternalArgument
+        CheckExternalArgument,
+        InferLaterInitializerResolutionPart
     ),
     INVOKE(*FUNCTION.resolutionSequence.toTypedArray()),
     UNSUPPORTED();
