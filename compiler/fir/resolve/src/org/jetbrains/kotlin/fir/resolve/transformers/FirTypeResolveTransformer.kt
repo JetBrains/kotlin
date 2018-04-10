@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -49,8 +50,8 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
         return super.transformFile(file, data)
     }
 
-    private fun lookupSuperTypes(klass: FirClass): List<ClassId> {
-        return mutableListOf<ConeClassLikeType>().also { klass.symbol.collectSuperTypes(it) }.map { it.symbol.classId }
+    private fun lookupSuperTypes(klass: FirClass): List<ConeClassLikeType> {
+        return mutableListOf<ConeClassLikeType>().also { klass.symbol.collectSuperTypes(it) }
     }
 
     private fun resolveSuperTypesAndExpansions(element: FirMemberDeclaration) {
@@ -69,14 +70,23 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
         scope.scopes += FirClassLikeTypeParameterScope(klass)
         resolveSuperTypesAndExpansions(klass)
 
-        scope.scopes += FirNestedClassifierScope(classId, klass.session)
+
+        val firProvider = FirProvider.getInstance(klass.session)
+        scope.scopes += FirNestedClassifierScope(classId, firProvider)
         val companionObjects = klass.declarations.filterIsInstance<FirClass>().filter { it.isCompanion }
         for (companionObject in companionObjects) {
             val companionId = ClassId(packageFqName, classLikeName.child(companionObject.name), false)
-            scope.scopes += FirNestedClassifierScope(companionId, klass.session)
+            scope.scopes += FirNestedClassifierScope(companionId, firProvider)
         }
 
-        val superTypeScopes = lookupSuperTypes(klass).map { FirNestedClassifierScope(it, klass.session) }
+        val superTypeScopes = lookupSuperTypes(klass).map {
+            val symbol = it.symbol
+            if (symbol is FirBasedSymbol<*>) {
+                FirNestedClassifierScope(symbol.classId, FirProvider.getInstance(symbol.fir.session))
+            } else {
+                FirNestedClassifierScope(symbol.classId, FirSymbolProvider.getInstance(klass.session))
+            }
+        }
         scope.scopes.addAll(superTypeScopes)
         val result = super.transformClass(klass, data)
         scope = scope.scopes[0] as FirCompositeScope
