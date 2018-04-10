@@ -21,7 +21,7 @@ FILE: Annotations.kt
                 STUB
             }
 
-        @R|annotations/WithString|(STUB) public? constructor(): this(STUB)
+        @R|annotations/WithString|(STUB) public? constructor(): this()
 
     }
     @R|annotations/WithInt|(STUB) @R|annotations/WithInt|(STUB) public? final typealias Third = @R|annotations/Simple|() R|test/Second|

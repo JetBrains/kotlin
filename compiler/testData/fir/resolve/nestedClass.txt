@@ -8,7 +8,7 @@ FILE: nestedClass.kt
     }
     public? final class Outer {
         public? final class Derived : R|Base| {
-            public? constructor(s: R|kotlin/String|): super(STUB)
+            public? constructor(s: R|kotlin/String|): super()
 
         }
 
