@@ -20,10 +20,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.jps.api.GlobalOptions
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.mergeBeans
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
@@ -85,6 +82,20 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             CompilerRunnerUtil.invokeClassesFqNames(environment, files)
         }
     )
+
+    fun runK2MetadataCompiler(
+        commonArguments: CommonCompilerArguments,
+        k2MetadataArguments: K2MetadataCompilerArguments,
+        compilerSettings: CompilerSettings,
+        environment: JpsCompilerEnvironment,
+        sourceFiles: Collection<File>
+    ) {
+        val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2MetadataArguments))
+        arguments.freeArgs = sourceFiles.map { it.absolutePath }
+        withCompilerSettings(compilerSettings) {
+            runCompiler(K2JVM_COMPILER, arguments, environment)
+        }
+    }
 
     fun runK2JvmCompiler(
         commonArguments: CommonCompilerArguments,

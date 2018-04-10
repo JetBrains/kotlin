@@ -22,12 +22,13 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.setApiVersionToLanguageVersionIfNeeded
 import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
+import org.jetbrains.kotlin.jps.kotlinCommonCompilerArguments
 
 internal class KotlinCommonCompilerArgumentsSerializer : BaseJpsCompilerSettingsSerializer<CommonCompilerArguments.DummyImpl>(
     KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION, CommonCompilerArguments::DummyImpl
 ) {
     override fun onLoad(project: JpsProject, settings: CommonCompilerArguments.DummyImpl) {
         settings.setApiVersionToLanguageVersionIfNeeded()
-        JpsKotlinCompilerSettings.setCommonCompilerArguments(project, settings)
+        project.kotlinCommonCompilerArguments = settings
     }
 }

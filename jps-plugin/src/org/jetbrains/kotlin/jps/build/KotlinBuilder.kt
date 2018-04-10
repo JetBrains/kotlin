@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
+import org.jetbrains.kotlin.jps.kotlinCompilerArguments
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.platforms.KotlinJsModuleBuildTarget
 import org.jetbrains.kotlin.jps.platforms.kotlinData
@@ -507,7 +507,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     }
 
     private fun compilerArgumentsForChunk(chunk: ModuleChunk): CommonCompilerArguments =
-        JpsKotlinCompilerSettings.getCommonCompilerArguments(chunk.representativeTarget().module)
+        chunk.representativeTarget().module.kotlinCompilerArguments
 
     private fun doCompileModuleChunk(
         allCompiledFiles: MutableSet<File>, chunk: ModuleChunk, commonArguments: CommonCompilerArguments, context: CompileContext,

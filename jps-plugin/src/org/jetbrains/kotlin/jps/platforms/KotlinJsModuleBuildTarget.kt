@@ -17,9 +17,7 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
-import org.jetbrains.kotlin.jps.productionOutputFilePath
-import org.jetbrains.kotlin.jps.testOutputFilePath
+import org.jetbrains.kotlin.jps.*
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils.JS_EXT
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils.META_JS_SUFFIX
@@ -27,9 +25,6 @@ import java.io.File
 import java.net.URI
 
 class KotlinJsModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : KotlinModuleBuilderTarget(jpsModuleBuildTarget) {
-    val jsCompilerArguments
-        get() = JpsKotlinCompilerSettings.getK2JsCompilerArguments(module)
-
     val outputFile
         get() = explicitOutputPath?.let { File(it) } ?: implicitOutputFile
 
@@ -101,13 +96,15 @@ class KotlinJsModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotli
         val sources = sources
         if (sources.isEmpty()) return false
 
+        val k2JsCompilerArguments = module.k2JsCompilerArguments
+
         // Compiler starts to produce path relative to base dirs in source maps if at least one statement is true:
         // 1) base dirs are specified;
         // 2) prefix is specified (i.e. non-empty)
         // Otherwise compiler produces paths relative to source maps location.
         // We don't have UI to configure base dirs, but we have UI to configure prefix.
         // If prefix is not specified (empty) in UI, we want to produce paths relative to source maps location
-        val sourceRoots = if (jsCompilerArguments.sourceMapPrefix.isNullOrBlank()) {
+        val sourceRoots = if (k2JsCompilerArguments.sourceMapPrefix.isNullOrBlank()) {
             emptyList()
         } else {
             module.contentRootsList.urls
@@ -125,8 +122,8 @@ class KotlinJsModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotli
         val compilerRunner = JpsKotlinCompilerRunner()
         compilerRunner.runK2JsCompiler(
             commonArguments,
-            jsCompilerArguments,
-            compilerSettings,
+            k2JsCompilerArguments,
+            module.kotlinCompilerSettings,
             environment,
             sources,
             sourceRoots,
@@ -143,11 +140,11 @@ class KotlinJsModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotli
     }
 
     private fun copyJsLibraryFilesIfNeeded() {
-        if (compilerSettings.copyJsLibraryFiles) {
-            val outputLibraryRuntimeDirectory = File(outputDir, compilerSettings.outputDirectoryForJsLibraryFiles).absolutePath
+        if (module.kotlinCompilerSettings.copyJsLibraryFiles) {
+            val outputLibraryRuntimeDirectory = File(outputDir, module.kotlinCompilerSettings.outputDirectoryForJsLibraryFiles).absolutePath
             JsLibraryUtils.copyJsFilesFromLibraries(
                 libraryFiles, outputLibraryRuntimeDirectory,
-                copySourceMap = jsCompilerArguments.sourceMap
+                copySourceMap = module.k2JsCompilerArguments.sourceMap
             )
         }
     }

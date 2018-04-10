@@ -20,11 +20,12 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
+import org.jetbrains.kotlin.jps.kotlinCompilerSettings
 
 internal class KotlinCompilerSettingsSerializer : BaseJpsCompilerSettingsSerializer<CompilerSettings>(
     KOTLIN_COMPILER_SETTINGS_SECTION, ::CompilerSettings
 ) {
     override fun onLoad(project: JpsProject, settings: CompilerSettings) {
-        JpsKotlinCompilerSettings.setCompilerSettings(project, settings)
+        project.kotlinCompilerSettings = settings
     }
 }
