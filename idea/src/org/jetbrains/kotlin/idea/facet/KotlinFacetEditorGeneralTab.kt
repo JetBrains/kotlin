@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.facet
 import com.intellij.facet.ui.*
 import com.intellij.ide.actions.ShowSettingsUtilImpl
 import com.intellij.openapi.project.Project
-import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.HoverHyperlinkLabel
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
@@ -29,10 +28,10 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.config.createCompilerArguments
 import org.jetbrains.kotlin.config.splitArgumentString
 import org.jetbrains.kotlin.idea.compiler.configuration.*
+import org.jetbrains.kotlin.idea.util.onTextChange
 import java.awt.BorderLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
-import javax.swing.event.DocumentEvent
 import kotlin.reflect.full.findAnnotation
 
 class KotlinFacetEditorGeneralTab(
@@ -241,13 +240,7 @@ class KotlinFacetEditorGeneralTab(
     }
 
     private fun JTextField.validateOnChange() {
-        document.addDocumentListener(
-                object : DocumentAdapter() {
-                    override fun textChanged(e: DocumentEvent) {
-                        doValidate()
-                    }
-                }
-        )
+        onTextChange { doValidate() }
     }
 
     private fun AbstractButton.validateOnChange() {

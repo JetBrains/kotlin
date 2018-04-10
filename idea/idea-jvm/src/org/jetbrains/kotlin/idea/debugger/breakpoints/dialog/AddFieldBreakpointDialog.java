@@ -25,9 +25,10 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.DocumentAdapter;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject;
+import org.jetbrains.kotlin.idea.util.UiUtilKt;
 import org.jetbrains.kotlin.psi.KtProperty;
 
 import javax.swing.*;
@@ -51,12 +52,13 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
 
     @Override
     protected JComponent createCenterPanel() {
-        myClassChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            public void textChanged(DocumentEvent event) {
-                updateUI();
-            }
-        });
+        UiUtilKt.onTextChange(
+                myClassChooser.getTextField(),
+                (DocumentEvent e) -> {
+                    updateUI();
+                    return Unit.INSTANCE;
+                }
+        );
 
         myClassChooser.addActionListener(new ActionListener() {
             @Override
