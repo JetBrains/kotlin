@@ -3,27 +3,32 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.jps
+package org.jetbrains.kotlin.jps.model
 
+import org.jetbrains.jps.model.ex.JpsElementBase
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.jps.model.kotlinFacetExtension
+
+val JpsModule.kotlinFacet: JpsKotlinFacetModuleExtension?
+    get() = container.getChild(JpsKotlinFacetModuleExtension.KIND)
 
 val JpsModule.targetPlatform: TargetPlatformKind<*>?
-    get() = kotlinFacetExtension?.settings?.targetPlatformKind
+    get() = kotlinFacet?.settings?.targetPlatformKind
 
 val JpsModule.productionOutputFilePath: String?
     get() {
-        val facetSettings = kotlinFacetExtension?.settings ?: return null
+        val facetSettings = kotlinFacet?.settings ?: return null
         if (facetSettings.useProjectSettings) return null
         return facetSettings.productionOutputPath
     }
 
 val JpsModule.testOutputFilePath: String?
     get() {
-        val facetSettings = kotlinFacetExtension?.settings ?: return null
+        val facetSettings = kotlinFacet?.settings ?: return null
         if (facetSettings.useProjectSettings) return null
         return facetSettings.testOutputPath
     }
@@ -31,7 +36,7 @@ val JpsModule.testOutputFilePath: String?
 val JpsModule.kotlinCompilerSettings: CompilerSettings
     get() {
         val defaultSettings = copyBean(project.kotlinCompilerSettings)
-        val facetSettings = kotlinFacetExtension?.settings ?: return defaultSettings
+        val facetSettings = kotlinFacet?.settings ?: return defaultSettings
         if (facetSettings.useProjectSettings) return defaultSettings
         return facetSettings.compilerSettings ?: defaultSettings
     }
@@ -52,7 +57,25 @@ private inline fun <reified T : CommonCompilerArguments> JpsModule.getCompilerAr
     val projectSettings = project.kotlinCompilerSettingsContainer[T::class.java]
     val projectSettingsCopy = copyBean(projectSettings)
 
-    val facetSettings = kotlinFacetExtension?.settings ?: return projectSettingsCopy
+    val facetSettings = kotlinFacet?.settings ?: return projectSettingsCopy
     if (facetSettings.useProjectSettings) return projectSettingsCopy
     return facetSettings.compilerArguments as? T ?: projectSettingsCopy
+}
+
+class JpsKotlinFacetModuleExtension(settings: KotlinFacetSettings) : JpsElementBase<JpsKotlinFacetModuleExtension>() {
+    var settings = settings
+        private set
+
+    companion object {
+        val KIND = JpsElementChildRoleBase.create<JpsKotlinFacetModuleExtension>("kotlin facet extension")
+        // These must be changed in sync with KotlinFacetType.TYPE_ID and KotlinFacetType.NAME
+        val FACET_TYPE_ID = "kotlin-language"
+        val FACET_NAME = "Kotlin"
+    }
+
+    override fun createCopy() = JpsKotlinFacetModuleExtension(settings)
+
+    override fun applyChanges(modified: JpsKotlinFacetModuleExtension) {
+        this.settings = modified.settings
+    }
 }

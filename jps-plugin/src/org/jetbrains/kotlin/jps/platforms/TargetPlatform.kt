@@ -13,7 +13,7 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.jps.targetPlatform
+import org.jetbrains.kotlin.jps.model.targetPlatform
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.util.concurrent.ConcurrentHashMap
 

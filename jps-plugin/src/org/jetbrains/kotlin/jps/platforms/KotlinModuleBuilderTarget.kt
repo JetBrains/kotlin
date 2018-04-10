@@ -21,12 +21,10 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
-import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.KotlinSourceFileCollector
-import org.jetbrains.kotlin.jps.kotlinCompilerSettings
-import org.jetbrains.kotlin.jps.model.kotlinFacetExtension
-import org.jetbrains.kotlin.jps.productionOutputFilePath
-import org.jetbrains.kotlin.jps.testOutputFilePath
+import org.jetbrains.kotlin.jps.model.kotlinFacet
+import org.jetbrains.kotlin.jps.model.productionOutputFilePath
+import org.jetbrains.kotlin.jps.model.testOutputFilePath
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -88,7 +86,7 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
     val expectedBy by lazy(::findExpectedBy)
 
     private fun findExpectedBy(): List<KotlinModuleBuilderTarget> {
-        val kotlinFacetExtension = module.kotlinFacetExtension
+        val kotlinFacetExtension = module.kotlinFacet
         val implementedModuleNames = kotlinFacetExtension?.settings?.implementedModuleNames ?: return listOf()
         if (implementedModuleNames.isEmpty()) return listOf()
 
