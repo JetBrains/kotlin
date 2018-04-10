@@ -1,0 +1,23 @@
+FILE: companion.kt
+    public? abstract class Some {
+        public? final companion object Companion {
+            public? final class InCompanion {
+            }
+
+        }
+
+        public? abstract property x(val): R|test/Some.Companion.InCompanion|
+            public? get(): R|test/Some.Companion.InCompanion|
+
+    }
+    public? abstract class Another {
+        public? final companion object NamedCompanion {
+            public? final class InCompanion {
+            }
+
+        }
+
+        public? abstract property x(val): R|test/Another.NamedCompanion.InCompanion|
+            public? get(): R|test/Another.NamedCompanion.InCompanion|
+
+    }

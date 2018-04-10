@@ -29,6 +29,12 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/fir/resolve"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true, "stdlib");
     }
 
+    @TestMetadata("companion.kt")
+    public void testCompanion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/companion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() throws Exception {
         runTest("compiler/testData/fir/resolve/derivedClass.kt");

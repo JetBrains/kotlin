@@ -70,6 +70,12 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
         resolveSuperTypesAndExpansions(klass)
 
         scope.scopes += FirNestedClassifierScope(classId, klass.session)
+        val companionObjects = klass.declarations.filterIsInstance<FirClass>().filter { it.isCompanion }
+        for (companionObject in companionObjects) {
+            val companionId = ClassId(packageFqName, classLikeName.child(companionObject.name), false)
+            scope.scopes += FirNestedClassifierScope(companionId, klass.session)
+        }
+
         val superTypeScopes = lookupSuperTypes(klass).map { FirNestedClassifierScope(it, klass.session) }
         scope.scopes.addAll(superTypeScopes)
         val result = super.transformClass(klass, data)
