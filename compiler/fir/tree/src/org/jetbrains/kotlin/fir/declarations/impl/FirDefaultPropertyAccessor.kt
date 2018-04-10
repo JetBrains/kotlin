@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBody
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
-import org.jetbrains.kotlin.fir.types.impl.FirUnitType
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirDefaultPropertyAccessor(
@@ -57,7 +57,7 @@ class FirDefaultPropertySetter(
 ) : FirDefaultPropertyAccessor(session, psi, isGetter = false) {
     override val valueParameters = mutableListOf(FirDefaultSetterValueParameter(session, psi, propertyType))
 
-    override var returnType: FirType = FirUnitType(session, psi)
+    override var returnType: FirType = FirImplicitUnitType(session, psi)
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         valueParameters.transformInplace(transformer, data)
