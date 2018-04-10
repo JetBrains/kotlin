@@ -1,7 +1,7 @@
 FILE: Annotations.kt
     @FILE:R|annotations/Simple|()
     @R|annotations/WithInt|(STUB) public? abstract class First {
-        @R|annotations/Simple|() public? abstract function foo(@R|annotations/WithString|(STUB) arg: @R|annotations/Simple|() R|kotlin/Double|): R|error: Not supported: FirImplicitTypeImpl|
+        @R|annotations/Simple|() public? abstract function foo(@R|annotations/WithString|(STUB) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|
 
         @R|annotations/Complex|(STUB, STUB) public? abstract property v(val): R|kotlin/String|
             public? get(): R|kotlin/String|
@@ -13,7 +13,7 @@ FILE: Annotations.kt
         public? final? property y(val): R|kotlin/Char|
             public? get(): R|kotlin/Char|
 
-        public? open? override function foo(arg: R|kotlin/Double|): R|error: Not supported: FirImplicitTypeImpl| {
+        public? open? override function foo(arg: R|kotlin/Double|): R|kotlin/Unit| {
         }
 
         public? open? override property v(val): R|kotlin/String|

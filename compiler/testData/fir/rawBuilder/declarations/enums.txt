@@ -20,19 +20,19 @@ FILE: enums.kt
             public? get(): Double
 
         public? final enum entry MERCURY : Planet {
-            public? open? override function sayHello(): <implicit> {
+            public? open? override function sayHello(): kotlin.Unit {
             }
 
         }
 
         public? final enum entry VENERA : Planet {
-            public? open? override function sayHello(): <implicit> {
+            public? open? override function sayHello(): kotlin.Unit {
             }
 
         }
 
         public? final enum entry EARTH : Planet {
-            public? open? override function sayHello(): <implicit> {
+            public? open? override function sayHello(): kotlin.Unit {
             }
 
         }
@@ -40,7 +40,7 @@ FILE: enums.kt
         public? final? property g(val): Double = STUB
             public? get(): Double
 
-        public? abstract function sayHello(): <implicit>
+        public? abstract function sayHello(): kotlin.Unit
 
         public? final companion object Companion {
             public? final? const property G(val): <implicit> = STUB

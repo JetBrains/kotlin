@@ -8,7 +8,7 @@ FILE: typeParameterVsNested.kt
         public? abstract property x(val): R|T|
             public? get(): R|T|
 
-        public? abstract function foo(arg: R|T|): R|error: Not supported: FirImplicitTypeImpl|
+        public? abstract function foo(arg: R|T|): R|kotlin/Unit|
 
         public? abstract property y(val): R|test/My.T|
             public? get(): R|test/My.T|

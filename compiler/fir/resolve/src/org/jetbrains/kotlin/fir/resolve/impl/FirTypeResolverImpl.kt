@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.impl
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.scopes.FirPosition
@@ -54,6 +56,8 @@ class FirTypeResolverImpl : FirTypeResolver {
         }
     }
 
+    private val implicitUnitTypeSymbols = mutableMapOf<FirSession, ConeSymbol>()
+
     override fun resolveToSymbol(
         type: FirType,
         scope: FirScope,
@@ -83,6 +87,15 @@ class FirTypeResolverImpl : FirTypeResolver {
                 // TODO: Imports
                 resolvedSymbol ?: qualifierResolver.resolveSymbol(type.qualifier)
             }
+            is FirImplicitUnitType -> implicitUnitTypeSymbols[type.session] ?: run {
+                var resolvedSymbol: ConeSymbol? = null
+                scope.processClassifiersByName(KotlinBuiltIns.FQ_NAMES.unit.shortName(), position) {
+                    resolvedSymbol = (it as ConeClassLikeSymbol)
+                    resolvedSymbol == null
+                }
+                implicitUnitTypeSymbols[type.session] = resolvedSymbol!!
+                resolvedSymbol
+            }
             else -> null
         }
     }
@@ -111,6 +124,9 @@ class FirTypeResolverImpl : FirTypeResolver {
                     type.valueParameters.map { it.returnType.coneTypeUnsafe<ConeKotlinType>() },
                     type.returnType.coneTypeUnsafe()
                 )
+            }
+            is FirImplicitUnitType -> {
+                resolveToSymbol(type, scope, position)!!.toConeKotlinType(emptyList())!!
             }
             is FirDynamicType, is FirImplicitType, is FirDelegatedType -> {
                 ConeKotlinErrorType("Not supported: ${type::class.simpleName}")
