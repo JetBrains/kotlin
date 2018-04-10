@@ -18,7 +18,7 @@ interface C : B {
     }
 }
 
-open class <!JVM_DEFAULT_THROUGH_INHERITANCE!>Foo<!> : B {
+open class Foo : B {
     override fun test() {
         super.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
     }
@@ -37,7 +37,7 @@ open class Bar2 : Bar() {
     }
 }
 
-class <!JVM_DEFAULT_THROUGH_INHERITANCE!>ManySupers<!>: Foo2(), B {
+class ManySupers: Foo2(), B {
     fun foo() {
         super<Foo2>.test()
         super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>B<!>>.<!USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL!>test<!>()
