@@ -17,7 +17,7 @@ FILE: simpleClass.kt
             public? get(): <implicit> {
                 STUB
             }
-            public? set(value: Boolean): <implicit> {
+            public? set(value: Boolean): kotlin.Unit {
             }
 
         public? final? lateinit property fau(var): Double
