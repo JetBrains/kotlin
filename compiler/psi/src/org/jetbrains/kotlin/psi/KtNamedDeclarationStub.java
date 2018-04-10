@@ -18,15 +18,18 @@ package org.jetbrains.kotlin.psi;
 
 import com.google.common.collect.ImmutableSet;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.PsiPackage;
+import com.intellij.psi.search.*;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -148,6 +151,23 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
             }
             if (containingClass != null) {
                 return new LocalSearchScope(containingClass);
+            }
+            KtFile ktFile = getContainingKtFile();
+            if (this instanceof KtClassOrObject) {
+                // Private top-level class may be used in non-Kotlin JVM code
+                Project project = getProject();
+                GlobalSearchScope kotlinFilesScope = GlobalSearchScope.getScopeRestrictedByFileTypes(
+                        GlobalSearchScope.allScope(project),
+                        KotlinFileType.INSTANCE
+                );
+                PsiPackage psiPackage = JavaPsiFacade.getInstance(project).findPackage(ktFile.getPackageFqName().asString());
+                SearchScope baseScope = psiPackage != null
+                                        ? new PackageScope(psiPackage, false, true)
+                                        : super.getUseScope();
+                baseScope.intersectWith(GlobalSearchScope.notScope(kotlinFilesScope));
+            }
+            else {
+                return new LocalSearchScope(ktFile);
             }
         }
 
