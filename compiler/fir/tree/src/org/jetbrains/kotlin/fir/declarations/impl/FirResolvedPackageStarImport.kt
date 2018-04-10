@@ -5,22 +5,36 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 class FirResolvedPackageStarImport(
     val delegate: FirImport,
     override val packageFqName: FqName
-) : FirResolvedImport, FirImport by delegate {
+) : FirResolvedImport, FirImport {
     override val relativeClassName: FqName?
         get() = null
 
     override val resolvedFqName: ClassId?
         get() = null
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitResolvedImport(this, data)
+    override val aliasName: Name?
+        get() = delegate.aliasName
+
+    override val importedFqName: FqName?
+        get() = delegate.importedFqName
+
+    override val isAllUnder: Boolean
+        get() = delegate.isAllUnder
+
+    override val psi: PsiElement?
+        get() = delegate.psi
+
+    override val session: FirSession
+        get() = delegate.session
 }
