@@ -19,8 +19,8 @@ repositories {
 }
 
 //TODO: property
-def ringWarmup=1000
-def iterations=2000
+def jvmWarmup = 10000
+def nativeWarmup = 10
 
 apply plugin: 'kotlin'
 apply plugin: 'application'
@@ -31,8 +31,15 @@ checkKonanCompiler.dependsOn ':dist'
 
 konanArtifacts {
     program('Ring') {
+        srcDir 'src/main/kotlin'
+        srcDir 'src/main/kotlin-native'
         enableOptimizations true
     }
+}
+
+sourceSets {
+    main.kotlin.srcDir 'src/main/kotlin'
+    main.kotlin.srcDir 'src/main/kotlin-jvm'
 }
 
 compileKotlin {
@@ -51,7 +58,7 @@ task jvmRun(type: JavaExec) {
     def output = new ByteArrayOutputStream()
     classpath sourceSets.main.runtimeClasspath
     main = "MainKt"
-    args "$ringWarmup", "$iterations"
+    args "$jvmWarmup"
     standardOutput = output
     doLast {
         dumpReport('jvmReport', output)
@@ -67,7 +74,7 @@ private void dumpReport(String name, ByteArrayOutputStream output) {
 task konanRun(type: Exec) {
     dependsOn 'build'
     def output = new ByteArrayOutputStream()
-    commandLine konanArtifacts.Ring.getByTarget('host').artifact.absolutePath, "$ringWarmup", "$iterations"
+    commandLine konanArtifacts.Ring.getByTarget('host').artifact.absolutePath, "$nativeWarmup"
     standardOutput = output
     doLast {
         dumpReport('konanReport', output)
@@ -86,24 +93,28 @@ task bench(type:DefaultTask) {
         def jvmReport = new Report(project.file("build/jvmReport.txt"))
         def konanReport = new Report(project.file("build/konanReport.txt"))
         def average = "none"
+        def absoluteAverage = "none"
         jvmReport.report.each { k, v ->
-            def ratio = String.format('%.2f', konanReport.report[k]/v * 100)
+            def konanValue = konanReport.report[k]
+            def ratio = String.format('%.2f', konanValue/v)
+            def formattedKonanValue = String.format('%.2f', konanValue/1000)
             if (k == 'RingAverage') {
                 average = ratio
+                absoluteAverage = formattedKonanValue
             }
-            println("$k : $ratio %")
+            println("$k : absolute = $formattedKonanValue us, ratio = $ratio")
             if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null)
                 println("##teamcity[buildStatisticValue key='$k' value='$ratio']")
         }
 
         println()
-        println("Average Ring score: $average %")
+        println("Average Ring score: absolute = $absoluteAverage us, ratio = $average")
     }
 }
 
 
 class Report {
-    def Map<String, Double> report = new HashMap()
+    def Map<String, Double> report = new TreeMap()
 
     Report(File path) {
         path.readLines().drop(3).findAll { it.split(':').length == 2 }.each {

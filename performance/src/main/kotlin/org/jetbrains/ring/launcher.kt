@@ -23,21 +23,38 @@ val BENCHMARK_SIZE = 100
 
 //-----------------------------------------------------------------------------//
 
-class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
+class Launcher(val numWarmIterations: Int) {
     val results = mutableMapOf<String, Long>()
 
-    fun launch(benchmark: () -> Any?, coeff: Double = 1.0): Long {                          // If benchmark runs too long - use coeff to speed it up.
-        var i = (numWarmIterations    * coeff).toInt()
-        var j = (numMeasureIterations * coeff).toInt()
+    fun launch(benchmark: () -> Any?): Long {                          // If benchmark runs too long - use coeff to speed it up.
+        var i = numWarmIterations
 
         while (i-- > 0) benchmark()
-        val time = measureNanoTime {
-            while (j-- > 0) {
-                benchmark()
+        cleanup()
+
+        var autoEvaluatedNumberOfMeasureIteration = 1
+        while (true) {
+            var j = autoEvaluatedNumberOfMeasureIteration
+            val time = measureNanoTime {
+                while (j-- > 0) {
+                    benchmark()
+                }
+                cleanup()
             }
+            if (time >= 100L * 1_000_000) // 100ms
+                break
+            autoEvaluatedNumberOfMeasureIteration *= 2
         }
 
-        return (time / numMeasureIterations / coeff).toLong()
+        i = autoEvaluatedNumberOfMeasureIteration
+        val time = measureNanoTime {
+            while (i-- > 0) {
+                benchmark()
+            }
+            cleanup()
+        }
+
+        return time / autoEvaluatedNumberOfMeasureIteration
     }
 
     //-------------------------------------------------------------------------//
@@ -85,7 +102,7 @@ class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
 
     fun printResultsNormalized() {
         var total = 0.0
-        results.forEach {
+        results.asSequence().sortedBy { it.key }.forEach {
             val normaTime = NormaResults[it.key]
             if (normaTime == null) println("ERROR: no norma for benchmark ${it.key}")
 
@@ -436,7 +453,7 @@ class Launcher(val numWarmIterations: Int, val numMeasureIterations: Int) {
     //-------------------------------------------------------------------------//
 
     fun runOctoTest() {
-        results["OctoTest"] = launch(::octoTest, 0.1)
+        results["OctoTest"] = launch(::octoTest)
     }
 
     //-------------------------------------------------------------------------//
