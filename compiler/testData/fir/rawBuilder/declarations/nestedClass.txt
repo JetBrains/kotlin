@@ -8,7 +8,7 @@ FILE: nestedClass.kt
     }
     public? final class Outer {
         public? final class Derived : Base {
-            public? constructor(s: String): super(STUB)
+            public? constructor(s: String): super()
 
         }
 

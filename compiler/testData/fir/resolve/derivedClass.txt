@@ -7,7 +7,7 @@ FILE: derivedClass.kt
 
     }
     <T : R|kotlin/Any|> public? final class Derived : R|Base<T>| {
-        public? constructor(x: R|T|): super(STUB)
+        public? constructor(x: R|T|): super()
 
     }
     <T : R|kotlin/Any|> public? final? function create(x: R|T|): R|Derived<T>| {

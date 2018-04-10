@@ -24,14 +24,13 @@ import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.psi.psiUtil.modalityModifierType
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.types.Variance
 
 class RawFirBuilder(val session: FirSession) {
@@ -43,26 +42,24 @@ class RawFirBuilder(val session: FirSession) {
     }
 
     private val KtModifierListOwner.visibility: Visibility
-        get() {
-            val modifierType = visibilityModifierType()
-            return when (modifierType) {
-                KtTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
-                KtTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
-                KtTokens.INTERNAL_KEYWORD -> Visibilities.INTERNAL
-                KtTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
-                else -> Visibilities.UNKNOWN
+        get() = with(modifierList) {
+            when {
+                this == null -> Visibilities.UNKNOWN
+                hasModifier(PRIVATE_KEYWORD) -> Visibilities.PRIVATE
+                hasModifier(PUBLIC_KEYWORD) -> Visibilities.PUBLIC
+                hasModifier(PROTECTED_KEYWORD) -> Visibilities.PROTECTED
+                else -> if (hasModifier(INTERNAL_KEYWORD)) Visibilities.INTERNAL else Visibilities.UNKNOWN
             }
         }
 
     private val KtDeclaration.modality: Modality?
-        get() {
-            val modifierType = modalityModifierType()
-            return when (modifierType) {
-                KtTokens.FINAL_KEYWORD -> Modality.FINAL
-                KtTokens.SEALED_KEYWORD -> Modality.SEALED
-                KtTokens.ABSTRACT_KEYWORD -> Modality.ABSTRACT
-                KtTokens.OPEN_KEYWORD -> Modality.OPEN
-                else -> null
+        get() = with(modifierList) {
+            when {
+                this == null -> null
+                hasModifier(FINAL_KEYWORD) -> Modality.FINAL
+                hasModifier(SEALED_KEYWORD) -> Modality.SEALED
+                hasModifier(ABSTRACT_KEYWORD) -> Modality.ABSTRACT
+                else -> if (hasModifier(OPEN_KEYWORD)) Modality.OPEN else null
             }
         }
 
@@ -91,11 +88,16 @@ class RawFirBuilder(val session: FirSession) {
         private fun KtTypeReference?.toFirOrErrorType(): FirType =
             convertSafe() ?: FirErrorTypeImpl(session, this, if (this == null) "Incomplete code" else "Conversion failed")
 
-        private fun KtExpression?.toFirBody(): FirBody? =
-            convertSafe<FirExpression>()?.let { it as? FirBody ?: FirExpressionBodyImpl(session, it) }
+        private fun KtDeclarationWithBody.buildFirBody(): FirBody? =
+            when {
+                !hasBody() -> null
+                hasBlockBody() -> FirBlockBodyImpl(session, this)
+                else -> FirExpressionBodyImpl(session, FirExpressionStub(session, null))
+            }
 
-        private fun KtExpression?.toFirExpression(): FirExpression =
+        private fun ValueArgument?.toFirExpression(): FirExpression = with(this as? KtElement) {
             convertSafe() ?: FirErrorExpressionImpl(session, this)
+        }
 
         private fun KtPropertyAccessor?.toFirPropertyAccessor(
             property: KtProperty,
@@ -119,7 +121,7 @@ class RawFirBuilder(val session: FirSession) {
                 } else {
                     returnTypeReference.toFirOrUnitType()
                 },
-                bodyExpression.toFirBody()
+                this.buildFirBody()
             )
             extractAnnotationsTo(firAccessor)
             extractValueParametersTo(firAccessor, propertyType)
@@ -139,7 +141,7 @@ class RawFirBuilder(val session: FirSession) {
                     defaultType != null -> defaultType
                     else -> null.toFirOrErrorType()
                 },
-                defaultValue?.convert(),
+                if (hasDefaultValue()) FirExpressionStub(session, this) else null,
                 isCrossinline = hasModifier(KtTokens.CROSSINLINE_KEYWORD),
                 isNoinline = hasModifier(KtTokens.NOINLINE_KEYWORD),
                 isVararg = isVarArg
@@ -163,7 +165,7 @@ class RawFirBuilder(val session: FirSession) {
                 isLateInit = false,
                 receiverType = null,
                 returnType = type,
-                isVar = valOrVarKeyword?.node?.elementType == KtTokens.VAR_KEYWORD,
+                isVar = isMutable,
                 initializer = null,
                 getter = FirDefaultPropertyGetter(session, this, type),
                 setter = FirDefaultPropertySetter(session, this, type),
@@ -196,7 +198,7 @@ class RawFirBuilder(val session: FirSession) {
 
         private fun KtCallElement.extractArgumentsTo(container: FirAbstractCall) {
             for (argument in this.valueArguments) {
-                container.arguments += argument.getArgumentExpression().toFirExpression()
+                container.arguments += argument.toFirExpression()
             }
         }
 
@@ -215,7 +217,7 @@ class RawFirBuilder(val session: FirSession) {
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
                         container.superTypes += FirDelegatedTypeImpl(
                             type,
-                            superTypeListEntry.delegateExpression.convertSafe()
+                            FirExpressionStub(session, superTypeListEntry)
                         )
                     }
                 }
@@ -233,7 +235,8 @@ class RawFirBuilder(val session: FirSession) {
                     FirErrorTypeImpl(session, constructorCallee, "Not implemented yet"),
                     isThis = false
                 ).apply {
-                    superTypeCallEntry.extractArgumentsTo(this)
+                    // TODO: arguments are not needed for light classes, but will be needed later
+                    //superTypeCallEntry.extractArgumentsTo(this)
                 }
             }
             val firConstructor = FirPrimaryConstructorImpl(
@@ -385,7 +388,7 @@ class RawFirBuilder(val session: FirSession) {
                 } else {
                     typeReference.toFirOrImplicitType()
                 },
-                function.bodyExpression.toFirBody()
+                function.buildFirBody()
             )
             function.extractAnnotationsTo(firFunction)
             function.extractTypeParametersTo(firFunction)
@@ -401,7 +404,7 @@ class RawFirBuilder(val session: FirSession) {
                 constructor,
                 constructor.visibility,
                 constructor.getDelegationCall().convert(),
-                constructor.bodyExpression.toFirBody()
+                constructor.buildFirBody()
             )
             constructor.extractAnnotationsTo(firConstructor)
             constructor.extractValueParametersTo(firConstructor)
@@ -415,7 +418,8 @@ class RawFirBuilder(val session: FirSession) {
                 FirErrorTypeImpl(session, call, "Not implemented yet"),
                 call.isCallToThis || call.isImplicit
             )
-            call.extractArgumentsTo(firConstructorCall)
+            // TODO: arguments are not needed for light classes, but will be needed later
+            // call.extractArgumentsTo(firConstructorCall)
             return firConstructorCall
         }
 
@@ -423,7 +427,7 @@ class RawFirBuilder(val session: FirSession) {
             return FirAnonymousInitializerImpl(
                 session,
                 initializer,
-                initializer.body.toFirBody()
+                FirBlockBodyImpl(session, initializer)
             )
         }
 
@@ -442,10 +446,10 @@ class RawFirBuilder(val session: FirSession) {
                 property.receiverTypeReference.convertSafe(),
                 propertyType,
                 property.isVar,
-                property.initializer?.convert(),
+                if (property.hasInitializer()) FirExpressionStub(session, property) else null,
                 property.getter.toFirPropertyAccessor(property, propertyType, isGetter = true),
                 property.setter.toFirPropertyAccessor(property, propertyType, isGetter = false),
-                property.delegateExpression?.convert()
+                if (property.hasDelegate()) FirExpressionStub(session, property) else null
             )
             property.extractAnnotationsTo(firProperty)
             property.extractTypeParametersTo(firProperty)
