@@ -38,6 +38,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
                 klass.getSubclasses()
                     .withEmptyConstructors()
                     .thatAreFinal()
+                    .thatHasNoTypeParameters()
                     .thatHasNoInnerClasses()
                     .thatHasNoCompanionObjects()
                     .forEach { reportPossibleObject(it) }
@@ -72,6 +73,10 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
 
     private fun List<KtClass>.thatAreFinal(): List<KtClass> {
         return filter { klass -> klass.getModalityFromDescriptor() == KtTokens.FINAL_KEYWORD }
+    }
+
+    private fun List<KtClass>.thatHasNoTypeParameters(): List<KtClass> {
+        return filter { klass -> klass.typeParameters.isEmpty() }
     }
 
     private fun List<KtClass>.thatHasNoInnerClasses(): List<KtClass> {
