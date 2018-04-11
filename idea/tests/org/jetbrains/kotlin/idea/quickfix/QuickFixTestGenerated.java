@@ -754,6 +754,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addJvmDefault")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddJvmDefault extends AbstractQuickFixTest {
+        public void testAllFilesPresentInAddJvmDefault() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addJvmDefault"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("functionOverride.kt")
+        public void testFunctionOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addJvmDefault/functionOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyOverride.kt")
+        public void testPropertyOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addJvmDefault/propertyOverride.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addNewLineAfterAnnotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -11274,6 +11295,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("doubleQuotesShouldBeEscaped.kt")
         public void testDoubleQuotesShouldBeEscaped() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/tooLongCharLiteralToString/doubleQuotesShouldBeEscaped.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ecapedDoubleQuotesShouldNotBeEscaped.kt")
+        public void testEcapedDoubleQuotesShouldNotBeEscaped() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/tooLongCharLiteralToString/ecapedDoubleQuotesShouldNotBeEscaped.kt");
             doTest(fileName);
         }
     }

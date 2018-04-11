@@ -10,4 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 
 object JsLoweredDeclarationOrigin : IrDeclarationOrigin {
     object CLASS_STATIC_INITIALIZER : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER")
+    object SECONDARY_CTOR_RECEIVER : IrDeclarationOriginImpl("SECONDARY_CTOR_RECEIVER")
+    object JS_INTRINSICS_STUB : IrDeclarationOriginImpl("JS_INTRINSICS_STUB")
 }

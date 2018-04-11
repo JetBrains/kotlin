@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve;
@@ -49,9 +38,15 @@ public class DescriptorUtils {
     public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
     private static final FqName VOLATILE = new FqName("kotlin.jvm.Volatile");
     private static final FqName SYNCHRONIZED = new FqName("kotlin.jvm.Synchronized");
-    public static final FqName COROUTINES_PACKAGE_FQ_NAME = new FqName("kotlin.coroutines.experimental");
-    public static final FqName COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("intrinsics"));
-    public static final FqName CONTINUATION_INTERFACE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation"));
+    public static final FqName COROUTINES_PACKAGE_FQ_NAME_RELEASE = new FqName("kotlin.coroutines");
+    public static final FqName COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL =
+            COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("experimental"));
+    public static final FqName COROUTINES_INTRINSICS_PACKAGE_FQ_NAME_EXPERIMENTAL =
+            COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("intrinsics"));
+    public static final FqName CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL =
+            COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("Continuation"));
+    public static final FqName CONTINUATION_INTERFACE_FQ_NAME_RELEASE =
+            COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"));
 
     private DescriptorUtils() {
     }

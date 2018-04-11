@@ -16,18 +16,26 @@
 
 package org.jetbrains.kotlin.idea.script
 
+import com.intellij.codeInsight.highlighting.HighlightUsagesHandler
 import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.module.JavaModuleType
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -44,6 +52,10 @@ import kotlin.script.dependencies.Environment
 abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfigurationTest() {
     fun doTest(path: String) {
         configureScriptFile(path)
+
+        // Highlight references at caret
+        HighlightUsagesHandler.invoke(project, editor, myFile)
+
         checkHighlighting(
             editor,
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_WARNINGS"),
@@ -83,25 +95,60 @@ internal val switches = listOf(
 )
 
 abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
+    companion object {
+        private const val SCRIPT_NAME = "script.kts"
+    }
+
+    override fun setUpModule() {
+        // do not create default module
+    }
+
+    private fun findMainScript(testDir: String) = File(testDir).walkTopDown().find { it.name == SCRIPT_NAME }
+            ?: error("Couldn't find $SCRIPT_NAME file in $testDir")
 
     protected fun configureScriptFile(path: String) {
-        val environment = createScriptEnvironment(path)
+        val mainScriptFile = findMainScript(path)
+        val environment = createScriptEnvironment(mainScriptFile)
         registerScriptTemplateProvider(environment)
 
+        File(path, "mainModule").takeIf { it.exists() }?.let {
+            myModule = createTestModuleFromDir(it)
+        }
+
+        File(path).listFiles { file -> file.name.startsWith("module") }.filter { it.exists() }.forEach {
+            val newModule = createTestModuleFromDir(it)
+            assert(myModule != null) { "Main module should exists" }
+            ModuleRootModificationUtil.addDependency(myModule, newModule)
+        }
+
         if (configureConflictingModule in environment) {
-            val sharedLib = LocalFileSystem.getInstance ().findFileByIoFile(environment["lib-classes"] as File)!!
+            val sharedLib = LocalFileSystem.getInstance().findFileByIoFile(environment["lib-classes"] as File)!!
+            if (module == null) {
+                myModule = createTestModuleByName("mainModule")
+            }
             module.addDependency(projectLibrary("sharedLib", classesRoot = sharedLib))
         }
 
-        val scriptFile = createFileAndSyncDependencies(path)
-        configureByExistingFile(scriptFile)
+        createFileAndSyncDependencies(mainScriptFile)
     }
 
+    private fun createTestModuleByName(name: String): Module {
+        val newModuleDir = runWriteAction { VfsUtil.createDirectoryIfMissing(project.baseDir, name) }
+        val newModule = createModuleAtWrapper(name, project, JavaModuleType.getModuleType(), newModuleDir.path)
+        PsiTestUtil.addSourceContentToRoots(newModule, newModuleDir)
+        return newModule
+    }
 
-    private fun createScriptEnvironment(path: String): Environment {
-        val defaultEnvironment = defaultEnvironment(path)
+    private fun createTestModuleFromDir(dir: File): Module {
+        return createTestModuleByName(dir.name).apply {
+            PlatformTestCase.copyDirContentsTo(LocalFileSystem.getInstance().findFileByIoFile(dir)!!, moduleFile!!.parent)
+        }
+    }
+
+    private fun createScriptEnvironment(scriptFile: File): Environment {
+        val defaultEnvironment = defaultEnvironment(scriptFile.parent + File.separator)
         val env = mutableMapOf<String, Any?>()
-        File("${path}script.kts").forEachLine { line ->
+        scriptFile.forEachLine { line ->
             line.trim().takeIf { useDefaultTemplate in it }?.substringAfter(useDefaultTemplate)?.split(";")?.forEach { entry ->
                 val (key, values) = entry.splitOrEmpty(":").map { it.trim() }
                 assert(key in validKeys) { "Unexpected key: $key" }
@@ -142,13 +189,25 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         )
     }
 
-    private fun createFileAndSyncDependencies(path: String): VirtualFile {
-        val scriptDir = KotlinTestUtils.tmpDir("scriptDir")
-        val target = File(scriptDir, "script.kts")
-        File("${path}script.kts").copyTo(target)
-        val scriptFile = LocalFileSystem.getInstance().findFileByPath(target.path)!!
-        updateScriptDependenciesSynchronously(scriptFile, project)
-        return scriptFile
+    private fun createFileAndSyncDependencies(scriptFile: File) {
+        var script: VirtualFile? = null
+        if (module != null) {
+            script = module.moduleFile?.parent?.findChild(SCRIPT_NAME)
+        }
+
+        if (script == null) {
+            val target = File(project.basePath, SCRIPT_NAME)
+            scriptFile.copyTo(target)
+            script = LocalFileSystem.getInstance().findFileByPath(target.path)
+        }
+
+        assert(script != null)
+        configureByExistingFile(script!!)
+
+        updateScriptDependenciesSynchronously(script, project)
+        VfsUtil.markDirtyAndRefresh(false, true, true, project.baseDir)
+        // This is needed because updateScriptDependencies invalidates psiFile that was stored in myFile field
+        myFile = psiManager.findFile(script)
     }
 
     private fun compileLibToDir(srcDir: File, vararg classpath: String): File {

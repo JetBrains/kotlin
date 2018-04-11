@@ -1194,4 +1194,13 @@ public class KotlinTestUtils {
     public static String nameToCompare(@NotNull String name) {
         return (SystemInfo.isFileSystemCaseSensitive ? name : name.toLowerCase()).replace('\\', '/');
     }
+
+    public static boolean isMultiExtensionName(@NotNull String name) {
+        int firstDotIndex = name.indexOf('.');
+        if (firstDotIndex == -1) {
+            return false;
+        }
+        // Several extension if name contains another dot
+        return name.indexOf('.', firstDotIndex + 1) != -1;
+    }
 }

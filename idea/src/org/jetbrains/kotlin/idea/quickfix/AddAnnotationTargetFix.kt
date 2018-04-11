@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -14,15 +15,21 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.WRONG_ANNOTATION_TARGET
 import org.jetbrains.kotlin.diagnostics.Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.EMPTY
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_CLASSIFIER
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_CONSTRUCTOR
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_EXPRESSION
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_LOCAL_VARIABLE
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_MEMBER_FUNCTION
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_MEMBER_PROPERTY
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -74,13 +81,39 @@ private fun KtAnnotationEntry.getRequiredAnnotationTargets(annotationClass: KtCl
     val requiredTargets = getActualTargetList()
     if (requiredTargets.isEmpty()) return emptyList()
 
-    val searchScope = GlobalSearchScope.allScope(project).restrictToKotlinSources()
+    val searchScope = GlobalSearchScope.allScope(project)
     val otherReferenceRequiredTargets = ReferencesSearch.search(annotationClass, searchScope).mapNotNull { reference ->
-        reference.element.getNonStrictParentOfType<KtAnnotationEntry>()?.takeIf { it != this }?.getActualTargetList()
+        if (reference.element is KtNameReferenceExpression) {
+            // Kotlin annotation
+            reference.element.getNonStrictParentOfType<KtAnnotationEntry>()?.takeIf { it != this }?.getActualTargetList()
+        } else {
+            // Java annotation
+            (reference.element.parent as? PsiAnnotation)?.getActualTargetList()
+        }
     }.flatten().toSet()
-
     val annotationTargetValueNames = AnnotationTarget.values().map { it.name }
     return (requiredTargets + otherReferenceRequiredTargets).distinct().filter { it.name in annotationTargetValueNames }
+}
+
+private fun getActualTargetList(annotated: PsiTarget): AnnotationChecker.Companion.TargetList {
+    return when (annotated) {
+        is PsiClass -> T_CLASSIFIER
+        is PsiMethod ->
+            when {
+                annotated.isConstructor -> T_CONSTRUCTOR
+                else -> T_MEMBER_FUNCTION
+            }
+        is PsiExpression -> T_EXPRESSION
+        is PsiField -> T_MEMBER_PROPERTY(true, false)
+        is PsiLocalVariable -> T_LOCAL_VARIABLE
+        is PsiParameter -> T_VALUE_PARAMETER_WITHOUT_VAL
+        else -> EMPTY
+    }
+}
+
+private fun PsiAnnotation.getActualTargetList(): List<KotlinTarget> {
+    val annotated = parent.parent as? PsiTarget ?: return emptyList()
+    return getActualTargetList(annotated).defaultTargets
 }
 
 private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {

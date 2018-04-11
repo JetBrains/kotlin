@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -73,8 +75,10 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsExpression {
         val classNameRef = expression.symbol.owner.descriptor.constructedClass.name.toJsName().makeRef()
         val callFuncRef = JsNameRef(Namer.CALL_FUNCTION, classNameRef)
+        val fromPrimary = context.currentFunction is IrConstructor
+        val thisRef = if (fromPrimary) JsThisRef() else JsNameRef("\$this")
         val arguments = translateCallArguments(expression, expression.symbol.parameterCount, context)
-        return JsInvocation(callFuncRef, listOf(JsThisRef()) + arguments)
+        return JsInvocation(callFuncRef, listOf(thisRef) + arguments)
     }
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
@@ -86,6 +90,14 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         // * getters and setters
         // * binary and unary operations
 
+        if (expression.symbol == context.staticContext.backendContext.objectCreate.symbol) {
+            // TODO: temporary workaround until there is no an intrinsic infrastructure
+            assert(expression.typeArgumentsCount == 1 && expression.valueArgumentsCount == 0)
+            val classToCreate = expression.getTypeArgument(0)!!
+            val prototype = prototypeOf(classToCreate.constructor.declarationDescriptor!!.name.toJsName().makeRef())
+            return JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
+        }
+
         val symbol = expression.symbol
 
         val dispatchReceiver = expression.dispatchReceiver?.accept(this, context)
@@ -94,7 +106,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
         val arguments = translateCallArguments(expression, expression.symbol.parameterCount, context)
 
-        return if (symbol is IrConstructorSymbol && symbol.isPrimary) {
+        return if (symbol is IrConstructorSymbol) {
             JsNew(JsNameRef((symbol.owner.parent as IrClass).name.asString()), arguments)
         } else {
             // TODO sanitize name

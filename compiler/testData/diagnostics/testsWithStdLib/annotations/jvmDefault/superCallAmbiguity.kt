@@ -10,6 +10,11 @@ interface B{
     }
 }
 
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>interface <!JVM_DEFAULT_THROUGH_INHERITANCE!>AB<!><!>: A, B
+
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>interface <!JVM_DEFAULT_THROUGH_INHERITANCE!>BA<!><!>: B, A
+
+
 interface C : A, B {
     <!JVM_DEFAULT_IN_DECLARATION!>@JvmDefault
     override fun test()<!> {

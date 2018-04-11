@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
+import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
 import org.jetbrains.kotlin.name.Name
 
 class SimpleNameGenerator : NameGenerator {
@@ -48,6 +50,13 @@ class SimpleNameGenerator : NameGenerator {
             }
 
         }
-        return@getOrPut scope.declareName(nameBuilder.toString())
+        scope.declareName(sanitizeName(nameBuilder.toString()))
     })
+
+    private fun sanitizeName(name: String): String {
+        if (name.isEmpty()) return "_"
+
+        val first = name.first().let { if (it.isES5IdentifierStart()) it else '_' }
+        return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
+    }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
@@ -14,7 +15,8 @@ import org.jetbrains.kotlin.name.Name
 class JsStaticContext(
     private val rootScope: JsRootScope,
     private val globalBlock: JsGlobalBlock,
-    private val nameGenerator: NameGenerator
+    private val nameGenerator: NameGenerator,
+    val backendContext: JsIrBackendContext
 ) {
 
     fun getNameForSymbol(irSymbol: IrSymbol) = nameGenerator.getNameForSymbol(irSymbol, rootScope)

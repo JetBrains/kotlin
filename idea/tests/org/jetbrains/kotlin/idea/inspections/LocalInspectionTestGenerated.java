@@ -1234,6 +1234,63 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/convertSealedSubClassToObject")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertSealedSubClassToObject extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInConvertSealedSubClassToObject() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/convertSealedSubClassToObject"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("convertSubClassWithModifiers.kt")
+        public void testConvertSubClassWithModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/convertSealedSubClassToObject/convertSubClassWithModifiers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("convertSubClassWithParentheses.kt")
+        public void testConvertSubClassWithParentheses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/convertSealedSubClassToObject/convertSubClassWithParentheses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("convertSubClassWithoutParentheses.kt")
+        public void testConvertSubClassWithoutParentheses() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/convertSealedSubClassToObject/convertSubClassWithoutParentheses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("generic.kt")
+        public void testGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/convertSealedSubClassToObject/generic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonEmptyConstructor.kt")
+        public void testNonEmptyConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/convertSealedSubClassToObject/nonEmptyConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("openSubclass.kt")
+        public void testOpenSubclass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/convertSealedSubClassToObject/openSubclass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withCompanion.kt")
+        public void testWithCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/convertSealedSubClassToObject/withCompanion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withInner.kt")
+        public void testWithInner() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/convertSealedSubClassToObject/withInner.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/copyWithoutNamedArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -2340,6 +2397,36 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ecplicitType.kt")
+        public void testEcplicitType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ecplicitType2.kt")
+        public void testEcplicitType2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ecplicitType3.kt")
+        public void testEcplicitType3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ecplicitType4.kt")
+        public void testEcplicitType4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ecplicitType5.kt")
+        public void testEcplicitType5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/ecplicitType5.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mayBeConstant/enum.kt");
@@ -2754,6 +2841,12 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("companionNested.kt")
         public void testCompanionNested() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/companionNested.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companionNestedObject.kt")
+        public void testCompanionNestedObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/redundantCompanionReference/companionNestedObject.kt");
             doTest(fileName);
         }
 

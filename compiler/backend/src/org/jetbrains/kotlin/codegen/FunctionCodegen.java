@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -161,7 +162,8 @@ public class FunctionCodegen {
             @NotNull FunctionGenerationStrategy strategy
     ) {
         if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(descriptor)) {
-            generateMethod(origin, CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, bindingContext), strategy);
+            generateMethod(origin, CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, state.getLanguageVersionSettings()
+                    .supportsFeature(LanguageFeature.ReleaseCoroutines), bindingContext), strategy);
             return;
         }
 
@@ -625,7 +627,11 @@ public class FunctionCodegen {
         Type thisType = getThisTypeForFunction(functionDescriptor, context, typeMapper);
 
         if (functionDescriptor instanceof AnonymousFunctionDescriptor && functionDescriptor.isSuspend()) {
-            functionDescriptor = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(functionDescriptor, typeMapper.getBindingContext());
+            functionDescriptor = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                    functionDescriptor,
+                    parentCodegen.state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines),
+                    typeMapper.getBindingContext()
+            );
         }
         generateLocalVariableTable(
                 mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind(), typeMapper,

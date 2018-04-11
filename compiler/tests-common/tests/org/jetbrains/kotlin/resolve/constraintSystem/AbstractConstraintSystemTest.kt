@@ -108,7 +108,7 @@ abstract class AbstractConstraintSystemTest : KotlinTestWithEnvironment() {
 
         val system = builder.build()
 
-        val resultingStatus = Renderers.renderConstraintSystem(system, shortTypeBounds = true)
+        val resultingStatus = Renderers.renderConstraintSystem(system, Renderers.ConstraintSystemRenderingVerbosity.COMPACT)
 
         val resultingSubstitutor = system.resultingSubstitutor
         val result = typeParameterDescriptors.map {

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -159,5 +160,15 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
         }
 
         return additionalNeighbours;
+    }
+
+    @Nullable
+    @Override
+    protected KotlinType defaultSupertypeIfEmpty() {
+        if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(this.getDeclarationDescriptor())) {
+            return null;
+        } else {
+            return getBuiltIns().getAnyType();
+        }
     }
 }

@@ -33,6 +33,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addAnnotationUseSiteTarget"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("hasAnnotationArgs.kt")
+        public void testHasAnnotationArgs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/hasAnnotationArgs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("hasTarget1.kt")
         public void testHasTarget1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/hasTarget1.kt");

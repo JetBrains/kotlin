@@ -23,10 +23,8 @@ dependencies {
     compile(androidDxJar())
 
     compileOnly(project(":kotlin-android-extensions-runtime"))
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "util", "guava", "android-base-common", rootProject = rootProject) }
-    compileOnly(intellijPluginDep("android")) {
-        includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
-    }
+    compileOnly(intellijDep())
+    compileOnly(intellijPluginDep("android"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
@@ -37,11 +35,9 @@ dependencies {
     testCompile(projectTests(":idea:idea-gradle"))
     testCompile(commonDep("junit:junit"))
 
-    testCompile(intellijDep()) { includeJars("gson", rootProject = rootProject) }
+    testCompile(intellijDep())
     testCompile(intellijPluginDep("properties"))
-    testCompileOnly(intellijPluginDep("android")) {
-        includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
-    }
+    testCompileOnly(intellijPluginDep("android"))
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":plugins:android-extensions-ide"))

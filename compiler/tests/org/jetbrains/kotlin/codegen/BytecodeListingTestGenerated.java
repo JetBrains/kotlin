@@ -145,6 +145,18 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("privateSuspendFun.kt")
+    public void testPrivateSuspendFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/privateSuspendFun.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("releaseCoroutines.kt")
+    public void testReleaseCoroutines() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/releaseCoroutines.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("samAdapterAndInlinedOne.kt")
     public void testSamAdapterAndInlinedOne() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/samAdapterAndInlinedOne.kt");

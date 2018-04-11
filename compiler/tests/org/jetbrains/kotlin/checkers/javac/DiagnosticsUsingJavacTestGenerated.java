@@ -4796,6 +4796,18 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 doTest(fileName);
             }
 
+            @TestMetadata("commonSupertypeForCyclicAndUsualTypes.kt")
+            public void testCommonSupertypeForCyclicAndUsualTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/commonSupertypeForCyclicAndUsualTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("commonSupertypeForCyclicTypes.kt")
+            public void testCommonSupertypeForCyclicTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/commonSupertypeForCyclicTypes.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("cyclicHierarchy.kt")
             public void testCyclicHierarchy() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/cyclicHierarchy.kt");
