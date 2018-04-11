@@ -16,7 +16,7 @@ Below one can find a step-by-step tutorial of creating a Kotlin multiplatform ap
 
 ## Creating multiplatform Android/iOS application with Kotlin
 
-To create MPP application one has to start with clear understanding which parts of an application is common for a different
+To create an MPP application one has to start with clear understanding which parts of an application is common for a different
 targets, and which ones are specific, and organize module structure accordingly. For shared Kotlin code the common
 ground consist of the Kotlin's standard library, which does include basic data structures and computational primitives,
 along with expect classes with platform-specific implementation. Most frequently, such code consists of GUI,
@@ -25,7 +25,7 @@ input-output, cryptography and other APIs, available on the particular platform.
 In this tutorial, the multiplatform application will include three parts:
 
  * An **Android application** represented by a separate Android Studio project written in Kotlin.
- * An **iOS application** represented by a separate XCode project, written in Swift.
+ * An **iOS application** represented by a separate Xcode project, written in Swift.
  * A **multiplatform library** containing a business logic of the application and used by both Android and iOS applications.
    This library can contain both platform-dependent and platform-independent code and is compiled into a `jar`-library
    for Android and in a `Framework` for iOS by Gradle.
@@ -69,7 +69,7 @@ Here we declare all subprojects for our `greeting` multiplatform library. All ot
 in the project also must be declared here.
 
 Note that both iOS and Android applications are not included in the root Gradle build. They are represented by
-independent builds which are managed by specific IDEs (Android Studio and XCode). Such an approach makes work with
+independent builds which are managed by specific IDEs (Android Studio and Xcode). Such an approach makes work with
 these builds easier from these IDEs.
 
 As for IDE for other parts of the project, [IntelliJ IDEA](https://www.jetbrains.com/idea/) is recommended to be used.
@@ -291,16 +291,16 @@ After these steps we can access our library as any other Kotlin code:
 ### 4. iOS application
 
 As said above the multiplatform library can also be used in iOS applications. The general approach here is the same as
-in case of an Android application: we create a separate XCode project and add the library as a framework. But we need
+in case of an Android application: we create a separate Xcode project and add the library as a framework. But we need
 to make some additional steps here.
 
-Unlike Android Studio XCode doesn't use Gradle, so we cannot just add the library as a dependency. Instead we need to
-create a new framework in the XCode project and then replace its default build phases with a custom one which delegates
+Unlike Android Studio Xcode doesn't use Gradle, so we cannot just add the library as a dependency. Instead we need to
+create a new framework in the Xcode project and then replace its default build phases with a custom one which delegates
 building the framework to Gradle.
 
 To do this, make the following steps:
 
-1. Create a new XCode project using `iosApp` as a root directory for it.
+1. Create a new Xcode project using `iosApp` as a root directory for it.
 2. Add a new framework in the project. Go `File` -> `New` -> `Target` -> `Cocoa Touch Framework`. Specify the same
 framework name as in `greeting/ios/build.gradle`: `Greeting`.
 3. Choose the new framework in the `Project Navigator` and open `Build Settings` tab. Here we need to add a new build
@@ -329,7 +329,7 @@ the platform:
     * `--no-daemon` - disable the [Gradle daemon](https://docs.gradle.org/current/userguide/gradle_daemon.html). This
     setting allows us to workaround [this issue](https://github.com/gradle/gradle/issues/3468) related to a build
     environment in Java 9. If you have Java 8 or earlier you may omit this flag.
-    * `-Pkonan.useEnvironmentVariables=true` - enable passing build parameters from XCode to the Kotlin/Native Gradle
+    * `-Pkonan.useEnvironmentVariables=true` - enable passing build parameters from Xcode to the Kotlin/Native Gradle
     plugin via environment variables.
 
 6. Add Kotlin sources into the framework: run `File` -> `Add files to "iosApp"...` and choose a directory with
