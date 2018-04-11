@@ -40,7 +40,11 @@ private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInf
 
 val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
     get() {
-        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
+        val moduleInfo = getCapability(ModuleInfo.Capability)
+        if (moduleInfo is PlatformModuleInfo) {
+            return listOf(this)
+        }
+        val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return emptyList()
         val module = moduleSourceInfo.module
         return module.cached(CachedValueProvider {
             val implementingModuleInfos = module.findImplementingModuleInfos(moduleSourceInfo)
@@ -57,7 +61,10 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
 
 val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
     get() {
-        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
+        val moduleInfo = getCapability(ModuleInfo.Capability)
+        if (moduleInfo is PlatformModuleInfo) return listOf(this)
+
+        val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return emptyList()
 
         return moduleSourceInfo.expectedBy.mapNotNull {
             KotlinCacheService.getInstance(moduleSourceInfo.module.project)

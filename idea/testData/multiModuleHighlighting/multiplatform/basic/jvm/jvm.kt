@@ -6,10 +6,11 @@ expect class <error descr="[NO_ACTUAL_FOR_EXPECT] Expected class 'His' has no ac
 
 }
 
+// NOTE: can declare expect and actual in platform module
 expect class Their {
 
 }
 
-actual class <error descr="[ACTUAL_WITHOUT_EXPECT] Actual class 'Their' has no corresponding expected declaration">Their</error> {
+actual class Their {
 
 }
