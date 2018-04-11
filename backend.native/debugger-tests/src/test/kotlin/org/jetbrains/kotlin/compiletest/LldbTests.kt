@@ -16,19 +16,23 @@ class LldbTests {
 
         > r
         Process [..] stopped
-        [..] at main.kt:2, [..] stop reason = breakpoint 1.1
+        [..] stop reason = breakpoint 1.1
+        [..] at main.kt:2
 
         > n
         Process [..] stopped
-        [..] at main.kt:3, [..] stop reason = step over
+        [..] stop reason = step over
+        [..] at main.kt:3
 
         > n
         Process [..] stopped
-        [..] at main.kt:4, [..] stop reason = step over
+        [..] stop reason = step over
+        [..] at main.kt:4
 
         > n
         Process [..] stopped
-        [..] at main.kt:5, [..] stop reason = step over
+        [..] stop reason = step over
+        [..] at main.kt:5
     """)
 
     //FIXME: Boolean and Int are wrong
