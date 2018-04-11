@@ -145,7 +145,7 @@ public class ResourceReferenceAnnotatorUtil {
             if (items.isEmpty()) {
                 return null;
             }
-            return items.get(0).getResourceValue(true);
+            return items.get(0).getResourceValue();
         } else {
             LocalResourceRepository appResources = AppResourceRepository.getOrCreateInstance(module);
             if (appResources == null) {
