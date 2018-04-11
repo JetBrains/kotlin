@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.cli.jvm.analyzer.scope
 
-import org.jetbrains.kotlin.ir.IrElement
-
 open class ClassPredicate : ScopePredicate() {
 
-    override fun checkIrNode(element: IrElement): VisitorData {
-        TODO("not implemented")
-    }
+    override val visitor: Visitor
+        get() = TODO("not implemented")
 
     fun propertyDefinition(init: PropertyPredicate.() -> Unit): PropertyPredicate {
         val scope = PropertyPredicate()
@@ -26,9 +23,6 @@ class ObjectPredicate : ClassPredicate()
 class InterfacePredicate : ClassPredicate()
 
 class PropertyPredicate : AbstractPredicate() {
-
-    override fun checkIrNode(element: IrElement): VisitorData {
-        TODO("not implemented")
-    }
-
+    override val visitor: Visitor
+        get() = TODO("not implemented")
 }

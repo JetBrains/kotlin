@@ -8,8 +8,7 @@ fun bar(): Int {
     while(true) {
 
     }
-//    foo()
-//
+
     while (true) {
         val whileA = 1
         if (true) {
@@ -18,7 +17,7 @@ fun bar(): Int {
             val whileElse = 1
         }
     }
-//
+
     for (x in 0..10) {
         val forA = x
         foo()
@@ -60,9 +59,9 @@ fun bar(): Int {
 //fun foo(x: Int, y: Int) = x + y
 
 
-fun f() {
-    while(true) {
-        if (true) {} else {}
-    }
-
-}
+//fun f() {
+//    while(true) {
+//        if (true) {} else {}
+//    }
+//
+//}
