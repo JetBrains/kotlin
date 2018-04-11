@@ -1,0 +1,4 @@
+// DISABLE-ERRORS
+<caret>fun main(args: Array<String>): Unit {
+    return 1
+}
