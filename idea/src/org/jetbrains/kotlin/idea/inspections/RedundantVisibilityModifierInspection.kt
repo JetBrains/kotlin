@@ -9,13 +9,10 @@ import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.declarationVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -23,9 +20,12 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
             val visibilityModifier = declaration.visibilityModifier() ?: return@declarationVisitor
             val implicitVisibility = declaration.implicitVisibility()
             val redundantVisibility = when {
-                visibilityModifier.node.elementType == implicitVisibility -> implicitVisibility
-                declaration.hasModifier(KtTokens.INTERNAL_KEYWORD) && declaration.inAnonymousObject() -> KtTokens.INTERNAL_KEYWORD
-                else -> null
+                visibilityModifier.node.elementType == implicitVisibility ->
+                    implicitVisibility
+                declaration.hasModifier(KtTokens.INTERNAL_KEYWORD) && declaration.containingClassOrObject?.isLocal == true ->
+                    KtTokens.INTERNAL_KEYWORD
+                else ->
+                    null
             }
             if (redundantVisibility != null) {
                 holder.registerProblem(
@@ -40,11 +40,4 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
             }
         }
     }
-}
-
-private fun KtDeclaration.inAnonymousObject(): Boolean {
-    val containingClassOrObject = this.containingClassOrObject ?: return false
-    if (!containingClassOrObject.isLocal) return false
-    val descriptor = containingClassOrObject.descriptor ?: return false
-    return DescriptorUtils.isAnonymousObject(descriptor)
 }

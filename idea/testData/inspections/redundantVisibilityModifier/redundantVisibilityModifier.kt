@@ -41,4 +41,9 @@ fun f() {
         override fun bar() {}
     }
     i.foo = 1
+
+    class LocalClass {
+        internal var foo = 0
+    }
+    LocalClass().foo = 1
 }
