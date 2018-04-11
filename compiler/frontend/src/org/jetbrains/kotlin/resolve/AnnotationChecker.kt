@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.psi.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -204,6 +205,22 @@ class AnnotationChecker(
 
         private fun DeclarationDescriptor?.hasBackingField(bindingTrace: BindingTrace) =
             (this as? PropertyDescriptor)?.let { bindingTrace.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
+
+        fun getActualTargetList(annotated: PsiTarget): List<KotlinTarget> {
+            return when (annotated) {
+                is PsiClass -> TargetLists.T_CLASSIFIER
+                is PsiMethod ->
+                    when {
+                        annotated.isConstructor -> TargetLists.T_CONSTRUCTOR
+                        else -> TargetLists.T_MEMBER_FUNCTION
+                    }
+                is PsiExpression -> TargetLists.T_EXPRESSION
+                is PsiField -> TargetLists.T_MEMBER_PROPERTY(true, false)
+                is PsiLocalVariable -> TargetLists.T_LOCAL_VARIABLE
+                is PsiParameter -> TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
+                else -> TargetLists.EMPTY
+            }.defaultTargets
+        }
 
         fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, trace: BindingTrace): TargetList {
             return when (annotated) {
