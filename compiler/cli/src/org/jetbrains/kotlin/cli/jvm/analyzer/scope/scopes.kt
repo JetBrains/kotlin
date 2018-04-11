@@ -15,78 +15,78 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
 
 
-typealias Visitor = IrElementVisitor<Unit, BooleanHolder>
 typealias VisitorData = BooleanHolder
+typealias Visitor = IrElementVisitor<Unit, VisitorData>
 
-abstract class AnalyzerComponent {
+abstract class AbstractPredicate {
     abstract val visitor: Visitor
     var info: () -> Unit = {}
 
     abstract fun checkIrNode(element: IrElement): Boolean
 }
 
-abstract class AbstractScope : AnalyzerComponent() {
-    protected val innerScopes = mutableListOf<AnalyzerComponent>()
+abstract class ScopePredicate : AbstractPredicate() {
+    protected val innerPredicates = mutableListOf<AbstractPredicate>()
 
     var recursiveSearch = true
 
-    fun classDefinition(init: ClassScope.() -> Unit): ClassScope {
-        val scope = ClassScope()
+    fun classDefinition(init: ClassPredicate.() -> Unit): ClassPredicate {
+        val scope = ClassPredicate()
         scope.init()
-        innerScopes += scope
+        innerPredicates += scope
         return scope
     }
 
-    fun objectDefinition(init: ObjectScope.() -> Unit): ObjectScope {
-        val scope = ObjectScope()
+    fun objectDefinition(init: ObjectPredicate.() -> Unit): ObjectPredicate {
+        val scope = ObjectPredicate()
         scope.init()
-        innerScopes += scope
+        innerPredicates += scope
         return scope
     }
 
-    fun interfaceDefinition(init: InterfaceScope.() -> Unit): InterfaceScope {
-        val scope = InterfaceScope()
+    fun interfaceDefinition(init: InterfacePredicate.() -> Unit): InterfacePredicate {
+        val scope = InterfacePredicate()
         scope.init()
-        innerScopes += scope
+        innerPredicates += scope
         return scope
     }
 
-    fun function(init: FunctionDefinition.() -> Unit): FunctionDefinition {
-        val scope = FunctionDefinition()
+    fun function(init: FunctionPredicate.() -> Unit): FunctionPredicate {
+        val scope = FunctionPredicate()
         scope.init()
-        innerScopes += scope
+        innerPredicates += scope
         return scope
     }
 }
 
-class CodeScope : AbstractScope() {
+class CodeBlockPredicate : ScopePredicate() {
     override fun checkIrNode(element: IrElement): Boolean = true
 
-    fun forLoop(init: ForLoop.() -> Unit): ForLoop {
-        val scope = ForLoop()
+    fun forLoop(init: ForLoopPredicate.() -> Unit): ForLoopPredicate {
+        val scope = ForLoopPredicate()
         scope.init()
-        innerScopes += scope
+        innerPredicates += scope
         return scope
     }
 
-    fun whileLoop(init: WhileLoop.() -> Unit): WhileLoop {
-        val scope = WhileLoop()
+    fun whileLoop(init: WhileLoopPredicate.() -> Unit): WhileLoopPredicate {
+        val scope = WhileLoopPredicate()
         scope.init()
-        innerScopes += scope
+        innerPredicates += scope
         return scope
     }
 
-    fun ifCondition(init: IfCondition.() -> Unit): IfCondition {
-        val scope = IfCondition()
+    fun ifCondition(init: IfPredicate.() -> Unit): IfPredicate {
+        val scope = IfPredicate()
         scope.init()
-        innerScopes += scope
+        innerPredicates += scope
         return scope
     }
 
-    fun variableDefinition(init: VariableDefinition.() -> Unit): VariableDefinition {
-        val scope = VariableDefinition()
+    fun variableDefinition(init: VariablePredicate.() -> Unit): VariablePredicate {
+        val scope = VariablePredicate()
         scope.init()
-        innerScopes += scope
+        innerPredicates += scope
         return scope
     }
 
@@ -94,7 +94,7 @@ class CodeScope : AbstractScope() {
 
     inner class MyVisitor : Visitor {
         override fun visitElement(element: IrElement, data: VisitorData) {
-            innerScopes.forEach { element.accept(it.visitor, data) }
+            innerPredicates.forEach { element.accept(it.visitor, data) }
             if (recursiveSearch) {
                 element.acceptChildren(this, data)
             }
@@ -102,7 +102,7 @@ class CodeScope : AbstractScope() {
     }
 }
 
-class VariableDefinition() : AnalyzerComponent() {
+class VariablePredicate : AbstractPredicate() {
     override val visitor: Visitor = MyVisitor()
 
     var message: String? = null
@@ -129,10 +129,10 @@ class VariableDefinition() : AnalyzerComponent() {
     }
 }
 
-class FunctionDefinition : AnalyzerComponent() {
+class FunctionPredicate : AbstractPredicate() {
     override val visitor: Visitor = MyVisitor()
 
-    private var body: CodeScope? = null
+    private var body: CodeBlockPredicate? = null
 
     var name: String? = null
 
@@ -146,8 +146,8 @@ class FunctionDefinition : AnalyzerComponent() {
         return true
     }
 
-    fun body(init: CodeScope.() -> Unit): CodeScope {
-        body = CodeScope()
+    fun body(init: CodeBlockPredicate.() -> Unit): CodeBlockPredicate {
+        body = CodeBlockPredicate()
         body?.init()
         return body!!
     }
@@ -167,28 +167,28 @@ class FunctionDefinition : AnalyzerComponent() {
     }
 }
 
-class IfCondition : AnalyzerComponent() {
+class IfPredicate : AbstractPredicate() {
     override val visitor: Visitor = MyVisitor()
 
-    private val thenScopes = mutableListOf<CodeScope>()
-    private val elseScopes = mutableListOf<CodeScope>()
+    private val thenPredicates = mutableListOf<CodeBlockPredicate>()
+    private val elsePredicates = mutableListOf<CodeBlockPredicate>()
 
     override fun checkIrNode(element: IrElement): Boolean {
         // TODO
         return true
     }
 
-    fun thenBranch(init: CodeScope.() -> Unit): CodeScope {
-        val scope = CodeScope()
+    fun thenBranch(init: CodeBlockPredicate.() -> Unit): CodeBlockPredicate {
+        val scope = CodeBlockPredicate()
         scope.init()
-        thenScopes += scope
+        thenPredicates += scope
         return scope
     }
 
-    fun elseBranch(init: CodeScope.() -> Unit): CodeScope {
-        val scope = CodeScope()
+    fun elseBranch(init: CodeBlockPredicate.() -> Unit): CodeBlockPredicate {
+        val scope = CodeBlockPredicate()
         scope.init()
-        elseScopes += scope
+        elsePredicates += scope
         return scope
     }
 
@@ -201,27 +201,27 @@ class IfCondition : AnalyzerComponent() {
                     return
                 }
                 info()
-                thenScopes.forEach { expression.branches[0].accept(it.visitor, data) }
+                thenPredicates.forEach { expression.branches[0].accept(it.visitor, data) }
                 if (expression.branches.size > 1) {
-                    elseScopes.forEach { expression.branches[1].accept(it.visitor, data) }
+                    elsePredicates.forEach { expression.branches[1].accept(it.visitor, data) }
                 }
             }
         }
     }
 }
 
-class ForLoop : AnalyzerComponent() {
+class ForLoopPredicate : AbstractPredicate() {
     override val visitor: Visitor = MyVisitor()
 
-    private var body: CodeScope? = null
+    private var body: CodeBlockPredicate? = null
 
     override fun checkIrNode(element: IrElement): Boolean {
         // TODO
         return true
     }
 
-    fun body(init: CodeScope.() -> Unit): CodeScope {
-        body = CodeScope()
+    fun body(init: CodeBlockPredicate.() -> Unit): CodeBlockPredicate {
+        body = CodeBlockPredicate()
         body?.init()
         return body!!
     }
@@ -246,7 +246,7 @@ class ForLoop : AnalyzerComponent() {
     }
 }
 
-class WhileLoop : AbstractScope() {
+class WhileLoopPredicate : ScopePredicate() {
     override val visitor: Visitor = MyVisitor()
 
     override fun checkIrNode(element: IrElement): Boolean {
@@ -262,13 +262,13 @@ class WhileLoop : AbstractScope() {
                 return
             }
             info()
-            innerScopes.forEach { loop.body?.acceptChildren(it.visitor, data) }
+            innerPredicates.forEach { loop.body?.acceptChildren(it.visitor, data) }
         }
     }
 
 }
 
-class FunctionCall : AnalyzerComponent() {
+class FunctionCallPredicate : AbstractPredicate() {
     override val visitor: Visitor = MyVisitor()
 
     override fun checkIrNode(element: IrElement): Boolean {
@@ -284,7 +284,7 @@ class FunctionCall : AnalyzerComponent() {
     }
 }
 
-class NewAnalyzer : AbstractScope() {
+class NewAnalyzer : ScopePredicate() {
     fun execute(irModule: IrModuleFragment, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext) {
         irModule.acceptChildren(visitor, result)
     }
@@ -303,7 +303,7 @@ class NewAnalyzer : AbstractScope() {
         }
 
         override fun visitFile(declaration: IrFile, data: VisitorData) {
-            innerScopes.forEach { declaration.acceptChildren(it.visitor, data) }
+            innerPredicates.forEach { declaration.acceptChildren(it.visitor, data) }
         }
     }
 }
@@ -313,3 +313,11 @@ fun newAnalyzer(init: NewAnalyzer.() -> Unit): NewAnalyzer {
     analyzer.init()
     return analyzer
 }
+
+/*
+    TODO: rename scopes to predicates
+    в analyzer запихнуть главный предикат, убрать наследование от Scope
+    DataHolder = Map<>? / emptyMap
+    change recursiveSearch to everywhere {...} *minor
+    сделать свой класс для типов, сравнивать типы по fqn
+ */

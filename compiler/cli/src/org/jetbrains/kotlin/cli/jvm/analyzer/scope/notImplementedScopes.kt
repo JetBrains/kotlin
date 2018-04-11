@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.cli.jvm.analyzer.scope
 
 import org.jetbrains.kotlin.ir.IrElement
 
-open class ClassScope : AbstractScope() {
+open class ClassPredicate : ScopePredicate() {
     override val visitor: Visitor
         get() = TODO("not implemented")
 
@@ -15,19 +15,19 @@ open class ClassScope : AbstractScope() {
         TODO("not implemented")
     }
 
-    fun propertyDefinition(init: PropertyDefinition.() -> Unit): PropertyDefinition {
-        val scope = PropertyDefinition()
+    fun propertyDefinition(init: PropertyPredicate.() -> Unit): PropertyPredicate {
+        val scope = PropertyPredicate()
         scope.init()
-        innerScopes += scope
+        innerPredicates += scope
         return scope
     }
 }
 
-class ObjectScope : ClassScope()
+class ObjectPredicate : ClassPredicate()
 
-class InterfaceScope : ClassScope()
+class InterfacePredicate : ClassPredicate()
 
-class PropertyDefinition : AnalyzerComponent() {
+class PropertyPredicate : AbstractPredicate() {
     override val visitor: Visitor = MyVisitor()
 
     override fun checkIrNode(element: IrElement): Boolean {
