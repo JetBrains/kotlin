@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.backend.js.lower.IntrinsicifyBuiltinOperationsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.SecondaryCtorLowering
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -60,4 +61,6 @@ fun JsIrBackendContext.lower(file: IrFile) {
     PropertiesLowering().lower(file)
     InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).runOnFilePostfix(file)
     SecondaryCtorLowering(this).lower(file)
+
+    IntrinsicifyBuiltinOperationsLowering(this).lower(file)
 }

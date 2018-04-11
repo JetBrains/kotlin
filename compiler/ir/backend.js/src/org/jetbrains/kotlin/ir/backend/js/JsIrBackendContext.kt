@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -34,6 +37,9 @@ class JsIrBackendContext(
     irModuleFragment: IrModuleFragment,
     symbolTable: SymbolTable
 ) : CommonBackendContext {
+
+    val intrinsics = JsIntrinsics(irBuiltIns)
+
     override val builtIns = module.builtIns
     override val sharedVariablesManager = JsSharedVariablesManager(builtIns)
 
