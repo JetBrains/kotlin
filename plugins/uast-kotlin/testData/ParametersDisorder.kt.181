@@ -26,3 +26,10 @@ class A {
     fun String.with2Receivers(a: Int, b: Float) {}
 
 }
+
+open class Parent(a: String, b: Int)
+
+fun objectLiteral() {
+
+    object : Parent(b = 1, a = "foo")
+}

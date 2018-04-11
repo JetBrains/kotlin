@@ -19,10 +19,18 @@ public final class ParametersDisorderKt {
             "def".with2Receivers(8, 7.0)
         })
     }
+    public static final fun objectLiteral() : void {
+        anonymous object : Parent(b = 1, a = "foo")
+
+    }
 }
 
 public final class A {
     public final fun with2Receivers(@org.jetbrains.annotations.NotNull $receiver: java.lang.String, @org.jetbrains.annotations.NotNull a: int, @org.jetbrains.annotations.NotNull b: float) : void {
     }
     public fun A() = UastEmptyExpression
+}
+
+public class Parent {
+    public fun Parent(@org.jetbrains.annotations.NotNull a: java.lang.String, @org.jetbrains.annotations.NotNull b: int) = UastEmptyExpression
 }
