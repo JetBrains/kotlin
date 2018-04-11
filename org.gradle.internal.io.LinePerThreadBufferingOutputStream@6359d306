@@ -1,0 +1,52 @@
+2018-03-19 18:42:26.050 [compiler] INFO: init(port= 17568)
+2018-03-19 18:42:26.145 [compiler] INFO: port.toString() = 17568 | serverSocketWithPort = 17568
+2018-03-19 18:42:26.147 [compiler] INFO: last_init_end
+2018-03-19 18:42:26.147 [ConnectionsTest] INFO: service created
+2018-03-19 18:42:26.148 [default server] INFO: binding to address(17568)
+2018-03-19 18:42:26.150 [compiler] INFO: initiate elections
+2018-03-19 18:42:26.180 [client utils] INFO: (port = 13130, path = /Users/jetbrains/Library/Application Support/kotlin/daemon/kotlin-daemon.2018-03-19T15-42-26.136Z.d41d8cd98f00b204e9800998ecf8427e.13130.runServer)
+2018-03-19 18:42:26.188 [default server] INFO: accepting clientSocket...
+2018-03-19 18:42:26.189 [compiler] INFO: found daemon on socketPort 13130 (0 ms old), trying to connect
+2018-03-19 18:42:26.189 [client utils] INFO: found daemon on socketPort 13130 (0 ms old), trying to connect
+2018-03-19 18:42:26.190 [client utils] INFO: tryConnectToDaemonBySockets(port = 13130)
+2018-03-19 18:42:26.197 [client utils] INFO: daemon(13130) = org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSideImpl@57daa409
+2018-03-19 18:42:26.198 [client utils] INFO: daemon(13130) connecting to server...
+2018-03-19 18:42:26.199 [default client] INFO: connectToServer(port =13130 | host = 127.0.0.1)
+2018-03-19 18:42:26.200 [ConnectionsTest] INFO: found daemon on socketPort 13130 (-1521474146000 ms old), trying to connect
+2018-03-19 18:42:26.208 [default client] INFO: EXCEPTION (java.net.ConnectException: Connection refused)
+2018-03-19 18:42:26.209 [compiler] INFO: cannot find or connect to socket
+2018-03-19 18:42:26.209 [client utils] INFO: daemon = null (port= 13130)
+2018-03-19 18:42:26.210 [compiler] INFO: found fresh runServer file '/Users/jetbrains/Library/Application Support/kotlin/daemon/kotlin-daemon.2018-03-19T15-42-26.136Z.d41d8cd98f00b204e9800998ecf8427e.13130.runServer' (0 ms old), but no daemon, ignoring it
+2018-03-19 18:42:26.210 [client utils] INFO: try daemon = ...   (null(port=13130)), daemon != null : false
+2018-03-19 18:42:26.210 [client utils] INFO: DaemonWithMetadataAsync == null)
+2018-03-19 18:42:26.236 [client utils] INFO: in wrapper's getDaemonJVMOptions
+2018-03-19 18:42:26.237 [compiler] INFO: getDaemonJVMOptions: DaemonJVMOptions(maxMemory=1100m, maxPermSize=, reservedCodeCacheSize=128m, jvmParams=[-Didea.home.path=/Users/jetbrains/Documents/kotlin/my_fork/kotlin/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/173.4548.28/intellij, -Didea.is.unit.test=true, -Djava.security.manager=worker.org.gradle.process.internal.worker.child.BootstrapSecurityManager, -Djna.nosys=true, -Djps.kotlin.home=/Users/jetbrains/Documents/kotlin/my_fork/kotlin/dist/kotlinc, -Dkotlin.ant.classpath=/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/lib/tools.jar:/Users/jetbrains/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant/1.8.2/fc33bf7cd8c5309dd7b81228e8626515ee42efd9/ant-1.8.2.jar:/Users/jetbrains/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant-launcher/1.8.2/6a5466384e7e2086b13d3d281dadaa059b0d0923/ant-launcher-1.8.2.jar, -Dkotlin.ant.launcher.class=org.apache.tools.ant.Main, -Dkotlin.ni=false, -Dkotlin.test.script.classpath=/Users/jetbrains/Documents/kotlin/my_fork/kotlin/compiler/build/classes/java/test:/Users/jetbrains/Documents/kotlin/my_fork/kotlin/compiler/build/classes/kotlin/test, -Dorg.gradle.native=false, -XX:+HeapDumpOnOutOfMemoryError, -XX:+UseCodeCacheFlushing, -javaagent:/Users/jetbrains/Documents/kotlin/my_fork/kotlin/test-instrumenter/build/libs/test-instrumenter-1.2-SNAPSHOT.jar, -Dfile.encoding=UTF-8, -Duser.country=US, -Duser.language=en, -Duser.variant, -ea])
+2018-03-19 18:42:26.237 [client utils] INFO: server returned DaemonJVMOptions(maxMemory=1100m, maxPermSize=, reservedCodeCacheSize=128m, jvmParams=[-Didea.home.path=/Users/jetbrains/Documents/kotlin/my_fork/kotlin/buildSrc/prepare-deps/intellij-sdk/build/repo/kotlin.build.custom.deps/173.4548.28/intellij, -Didea.is.unit.test=true, -Djava.security.manager=worker.org.gradle.process.internal.worker.child.BootstrapSecurityManager, -Djna.nosys=true, -Djps.kotlin.home=/Users/jetbrains/Documents/kotlin/my_fork/kotlin/dist/kotlinc, -Dkotlin.ant.classpath=/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home/lib/tools.jar:/Users/jetbrains/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant/1.8.2/fc33bf7cd8c5309dd7b81228e8626515ee42efd9/ant-1.8.2.jar:/Users/jetbrains/.gradle/caches/modules-2/files-2.1/org.apache.ant/ant-launcher/1.8.2/6a5466384e7e2086b13d3d281dadaa059b0d0923/ant-launcher-1.8.2.jar, -Dkotlin.ant.launcher.class=org.apache.tools.ant.Main, -Dkotlin.ni=false, -Dkotlin.test.script.classpath=/Users/jetbrains/Documents/kotlin/my_fork/kotlin/compiler/build/classes/java/test:/Users/jetbrains/Documents/kotlin/my_fork/kotlin/compiler/build/classes/kotlin/test, -Dorg.gradle.native=false, -XX:+HeapDumpOnOutOfMemoryError, -XX:+UseCodeCacheFlushing, -javaagent:/Users/jetbrains/Documents/kotlin/my_fork/kotlin/test-instrumenter/build/libs/test-instrumenter-1.2-SNAPSHOT.jar, -Dfile.encoding=UTF-8, -Duser.country=US, -Duser.language=en, -Duser.variant, -ea])
+2018-03-19 18:42:26.242 [ConnectionsTest] INFO: found daemon on socketPort 17568 (-1521474146000 ms old), trying to connect
+2018-03-19 18:42:26.246 [default server] INFO: client accepted! (/127.0.0.1:63806)
+2018-03-19 18:42:26.282 [default server] INFO: length : 
+2018-03-19 18:42:26.292 [default server] INFO: length : [74, 82, 77, 73]
+2018-03-19 18:42:26.292 [default server] INFO:    1246907721
+2018-03-19 18:42:27.141 [compiler] INFO: No more clients left
+2018-03-19 18:42:27.142 [compiler] INFO: Delayed shutdown in 1000ms
+2018-03-19 18:42:28.146 [compiler] INFO: Shutdown started
+2018-03-19 18:42:28.147 [compiler] INFO: Memory stats: total: 245mb, free: 204mb, max: 978mb
+2018-03-19 18:42:28.148 [compiler] INFO: Shutdown complete
+2018-03-19 18:42:29.149 [compiler] INFO: Cannot perform operation, requested state: LastSession > actual: Dying
+2018-03-19 18:42:29.150 [compiler] INFO: Cannot perform operation, requested state: Alive > actual: Dying
+2018-03-19 18:42:30.151 [compiler] INFO: Cannot perform operation, requested state: LastSession > actual: Dying
+2018-03-19 18:42:30.152 [compiler] INFO: Cannot perform operation, requested state: Alive > actual: Dying
+2018-03-19 18:42:31.152 [compiler] INFO: Cannot perform operation, requested state: LastSession > actual: Dying
+2018-03-19 18:42:31.153 [compiler] INFO: Cannot perform operation, requested state: Alive > actual: Dying
+2018-03-19 18:42:32.153 [compiler] INFO: Cannot perform operation, requested state: LastSession > actual: Dying
+2018-03-19 18:42:32.154 [compiler] INFO: Cannot perform operation, requested state: Alive > actual: Dying
+2018-03-19 18:42:33.154 [compiler] INFO: Cannot perform operation, requested state: LastSession > actual: Dying
+2018-03-19 18:42:33.155 [compiler] INFO: Cannot perform operation, requested state: Alive > actual: Dying
+2018-03-19 18:42:34.157 [compiler] INFO: Cannot perform operation, requested state: LastSession > actual: Dying
+2018-03-19 18:42:34.157 [compiler] INFO: Cannot perform operation, requested state: Alive > actual: Dying
+2018-03-19 18:42:35.158 [compiler] INFO: Cannot perform operation, requested state: LastSession > actual: Dying
+2018-03-19 18:42:35.159 [compiler] INFO: Cannot perform operation, requested state: Alive > actual: Dying
+2018-03-19 18:42:36.161 [compiler] INFO: Cannot perform operation, requested state: LastSession > actual: Dying
+2018-03-19 18:42:36.162 [compiler] INFO: Cannot perform operation, requested state: Alive > actual: Dying
+2018-03-19 18:42:37.161 [compiler] INFO: Cannot perform operation, requested state: LastSession > actual: Dying
+2018-03-19 18:42:37.162 [compiler] INFO: Cannot perform operation, requested state: Alive > actual: Dying

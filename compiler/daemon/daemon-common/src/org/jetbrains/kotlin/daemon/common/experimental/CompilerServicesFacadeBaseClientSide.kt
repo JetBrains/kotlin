@@ -16,7 +16,7 @@ class CompilerServicesFacadeBaseClientSideImpl(val serverPort: Int) :
     Client<CompilerServicesFacadeBaseServerSide> by DefaultClient(serverPort) {
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-        sendMessage(
+        sendNoReplyMessage(
             CompilerServicesFacadeBaseServerSide.ReportMessage(
                 category, severity, message, attachment
             )

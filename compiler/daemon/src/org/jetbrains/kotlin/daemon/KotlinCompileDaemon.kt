@@ -71,7 +71,7 @@ object KotlinCompileDaemon {
                     "java.util.logging.FileHandler.limit     = ${if (fileIsGiven) 0 else (1 shl 20)}\n" + // if file is provided - disabled, else - 1Mb
                     "java.util.logging.FileHandler.count     = ${if (fileIsGiven) 1 else 3}\n" +
                     "java.util.logging.FileHandler.append    = $fileIsGiven\n" +
-                    "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log")}\n" +
+                    "java.util.logging.FileHandler.pattern   = $logPath\n" + //${if (fileIsGiven) logPath else (logPath + File.separator + "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX.$logTime.%u%g.log")}\n" +
                     "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
 
         LogManager.getLogManager().readConfiguration(cfg.byteInputStream())

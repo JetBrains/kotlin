@@ -3,60 +3,199 @@ package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
+import kotlinx.coroutines.experimental.CompletableDeferred
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.channels.Channel
+import kotlinx.coroutines.experimental.channels.actor
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.io.ByteBuffer
 import kotlinx.coroutines.experimental.io.ByteReadChannel
 import kotlinx.coroutines.experimental.io.ByteWriteChannel
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.io.copyAndClose
+import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.io.core.readBytes
-import org.jetbrains.kotlin.daemon.common.CompileService
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
+import java.io.*
 import java.util.logging.Logger
 
-class ByteReadChannelWrapper(private val readChannel: ByteReadChannel, private val log: Logger) {
+private val DEFAULT_BYTE_ARRAY = byteArrayOf(0, 0, 0, 0)
 
-    suspend fun readBytes(length: Int) =
-        readChannel.readPacket(length).readBytes()
+class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logger) {
 
-    private suspend fun getObject(length: Int) =
-        if (length >= 0) {
-            ObjectInputStream(
-                ByteArrayInputStream(readBytes(length))
-            ).use {
-                it.readObject()
+    private interface ReadQuery
+
+    private open class BytesQuery(val bytes: CompletableDeferred<ByteArray>) : ReadQuery
+
+    private class SerObjectQuery(val obj: CompletableDeferred<Any?>) : ReadQuery
+
+    suspend fun readLength(readChannel: ByteReadChannel) =
+        if (readChannel.isClosedForRead)
+            null
+        else
+            try {
+                readChannel.readPacket(4).readBytes()
+            } catch (e: IOException) {
+                log.info("failed to read message length, ${e.message}")
+                null
             }
-        } else { // optimize for long strings!
-            String(
-                ByteArrayInputStream(
-                    readBytes(-length)
-                ).readBytes()
-            )
-        }.also {
-            log.info("object : ${if (it is CompileService.CallResult<*> && it.isGood) it.get() else it}")
+
+    suspend fun readPacket(length: Int, readChannel: ByteReadChannel) =
+        try {
+            readChannel.readPacket(
+                length
+            ).readBytes()
+        } catch (e: IOException) {
+            log.info("failed to read packet (${e.message})")
+            null
         }
 
-    suspend fun getLength(): Int {
-        log.info("length : ")
-        val packet = readBytes(4)
-        log.info("length : ${packet.toList()}")
+    private val readActor = actor<ReadQuery>(capacity = Channel.UNLIMITED) {
+        consumeEach { message ->
+            if (!readChannel.isClosedForRead) {
+                readLength(readChannel)?.let { messageLength ->
+                    when (message) {
+                        is BytesQuery -> message.bytes.complete(
+                            readChannel.readPacket(
+                                getLength(messageLength)
+                            ).readBytes()
+                        )
+
+                        is SerObjectQuery -> message.obj.complete(
+                            getObject(
+                                getLength(messageLength),
+                                { len -> readPacket(len, readChannel) }
+                            )
+                        )
+
+                        else -> {
+                        }
+                    }
+                }
+            } else {
+                println("read chanel closed " + log.name)
+            }
+        }
+    }
+
+    private fun getLength(packet: ByteArray): Int {
         val (b1, b2, b3, b4) = packet.map(Byte::toInt)
         return (0xFF and b1 shl 24 or (0xFF and b2 shl 16) or
                 (0xFF and b3 shl 8) or (0xFF and b4)).also { log.info("   $it") }
     }
 
-    suspend fun nextObject() = getObject(getLength())
+    /** reads exactly <tt>length</tt>  bytes.
+     * after deafault timeout returns <tt>DEFAULT_BYTE_ARRAY</tt> */
+    suspend fun readBytes(length: Int): ByteArray = runBlockingWithTimeout {
+        val expectedBytes = CompletableDeferred<ByteArray>()
+//        readActor.send(GivenLengthBytesQuery(length, expectedBytes))
+        expectedBytes.await()
+    } ?: DEFAULT_BYTE_ARRAY
+
+    /** first reads <t>length</t> token (4 bytes) and then -- reads <t>length</t> bytes.
+     * after deafault timeout returns <tt>DEFAULT_BYTE_ARRAY</tt> */
+    suspend fun nextBytes(): ByteArray = runBlockingWithTimeout {
+        val expectedBytes = CompletableDeferred<ByteArray>()
+        readActor.send(BytesQuery(expectedBytes))
+        expectedBytes.await()
+    } ?: DEFAULT_BYTE_ARRAY
+
+    private suspend fun getObject(length: Int, readPacket: suspend (Int) -> ByteArray?): Any? =
+        if (length >= 0) {
+            readPacket(length)?.let { bytes ->
+                ObjectInputStream(
+                    ByteArrayInputStream(bytes)
+                ).use {
+                    it.readObject()
+                }
+            }
+        } else { // optimize for long strings!
+            readPacket(-length)?.let { bytes ->
+                String(
+                    ByteArrayInputStream(
+                        bytes
+                    ).readBytes()
+                )
+            }
+        }
+
+    /** first reads <t>length</t> token (4 bytes), then reads <t>length</t> bytes and returns deserialized object */
+    suspend fun nextObject() = runBlocking {
+        val obj = CompletableDeferred<Any?>()
+        readActor.send(SerObjectQuery(obj))
+        val result = obj.await()
+        if (result is Server.ServerDownMessage<*>) {
+            throw IOException("connection closed by server")
+        }
+        result
+    }
 
 }
 
 
-class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel, private val log: Logger) {
+class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: Logger) {
 
-    suspend fun printBytes(bytes: ByteArray) {
-        bytes.forEach { writeChannel.writeByte(it) }
-        writeChannel.flush()
+    private interface WriteActorQuery
+
+    private open class ByteData(val bytes: ByteArray): WriteActorQuery {
+        open fun toByteArray(): ByteArray = bytes
     }
+
+    private class ObjectWithLength(val lengthBytes: ByteArray, bytes: ByteArray) : ByteData(bytes) {
+        override fun toByteArray() = lengthBytes + bytes
+    }
+
+    private class CloseMessage: WriteActorQuery
+
+    private suspend fun tryPrint(b: Byte, writeChannel: ByteWriteChannel) {
+        if (!writeChannel.isClosedForWrite) {
+            try {
+                writeChannel.writeByte(b)
+            } catch (e: IOException) {
+                log.info("failed to print message, ${e.message}")
+            }
+        } else {
+            log.info("closed chanel (write)")
+        }
+    }
+
+    private val writeActor = actor<WriteActorQuery>(capacity = Channel.UNLIMITED) {
+        consumeEach { message ->
+            if (!writeChannel.isClosedForWrite) {
+                when (message) {
+                    is CloseMessage -> {
+                        log.info("${log.name} closing chanel...")
+                        writeChannel.close()
+                    }
+                    is ByteData -> {
+                        message.toByteArray().forEach {
+                            tryPrint(it, writeChannel)
+                        }
+                        if (!writeChannel.isClosedForWrite) {
+                            try {
+                                writeChannel.flush()
+                            } catch (e: IOException) {
+                                log.info("failed to flush byte write chanel")
+                            }
+                        }
+                    }
+                }
+            } else {
+                println("${log.name} write chanel closed")
+            }
+        }
+    }
+
+    suspend fun printBytesAndLength(length: Int, bytes: ByteArray) {
+        writeActor.send(
+            ObjectWithLength(
+                getLengthBytes(length),
+                bytes
+            )
+        )
+    }
+
+//    suspend fun printBytes(bytes: ByteArray) {
+//        writeActor.send(ByteData(bytes))
+//    }
 
     private suspend fun printObjectImpl(obj: Any?) =
         ByteArrayOutputStream().use { bos ->
@@ -64,21 +203,16 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel, privat
                 objOut.writeObject(obj)
                 objOut.flush()
                 val bytes = bos.toByteArray()
-                printLength(bytes.size)
-                printBytes(bytes)
+                printBytesAndLength(bytes.size, bytes)
             }
         }
             .also {
                 log.info("sent object : $obj")
             }
 
-    private suspend fun printString(s: String) {
-        printLength(-s.length)
-        printBytes(s.toByteArray())
-    }
+    private suspend fun printString(s: String) = printBytesAndLength(-s.length, s.toByteArray())
 
-
-    suspend fun printLength(length: Int) = printBytes(
+    fun getLengthBytes(length: Int) =
         ByteBuffer
             .allocate(4)
             .putInt(length)
@@ -86,12 +220,15 @@ class ByteWriteChannelWrapper(private val writeChannel: ByteWriteChannel, privat
             .also {
                 log.info("printLength $length")
             }
-    )
 
     suspend fun writeObject(obj: Any?) {
-        launch {
-            if (obj is String) printString(obj)
-            else printObjectImpl(obj)
+        if (obj is String) printString(obj)
+        else printObjectImpl(obj)
+    }
+
+    fun close() {
+        runBlocking {
+            writeActor.send(CloseMessage())
         }
     }
 }

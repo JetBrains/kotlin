@@ -6,24 +6,31 @@
 package org.jetbrains.kotlin.daemon.experimental.integration
 
 import junit.framework.TestCase
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
+import org.jetbrains.kotlin.daemon.CompileServiceImpl
+import org.jetbrains.kotlin.daemon.CompilerSelector
 import org.jetbrains.kotlin.daemon.LinePattern
 import org.jetbrains.kotlin.daemon.client.experimental.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.experimental.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.client.experimental.KotlinRemoteReplCompilerClientAsync
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceAsyncWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
 import org.jetbrains.kotlin.daemon.ifNotContainsSequence
-import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.net.URL
@@ -31,7 +38,9 @@ import java.net.URLClassLoader
 import java.nio.charset.Charset
 import java.rmi.ConnectException
 import java.rmi.ConnectIOException
+import java.rmi.NoSuchObjectException
 import java.rmi.UnmarshalException
+import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.logging.LogManager
@@ -676,7 +685,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     private val PARALLEL_THREADS_TO_COMPILE = 10
-    private val PARALLEL_WAIT_TIMEOUT_S = 60L
+    private val PARALLEL_WAIT_TIMEOUT_S = 200L
 
     fun testParallelCompilationOnDaemon() {
 
@@ -686,6 +695,21 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val daemonOptions = makeTestDaemonOptions(getTestName(true))
 
             withLogFile("kotlin-daemon-test") { logFile ->
+
+
+                val cfg: String =
+                    "handlers = java.util.logging.FileHandler\n" +
+                            "java.util.logging.FileHandler.level     = ALL\n" +
+                            "java.util.logging.FileHandler.formatter = java.util.logging.SimpleFormatter\n" +
+                            "java.util.logging.FileHandler.encoding  = UTF-8\n" +
+                            "java.util.logging.FileHandler.limit     = 0\n" + // if file is provided - disabled, else - 1Mb
+                            "java.util.logging.FileHandler.count     = 1\n" +
+                            "java.util.logging.FileHandler.append    = true\n" +
+                            "java.util.logging.FileHandler.pattern   = ${logFile.loggerCompatiblePath}\n" +
+                            "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
+                LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
+
+
                 val daemonJVMOptions = makeTestDaemonJvmOptions(logFile, xmx = -1)
 
                 val daemon = KotlinCompilerClient.connectToCompileService(
@@ -697,11 +721,11 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     autostart = true
                 )
                 assertNotNull("failed to connect daemon", daemon)
+                TestCase.assertTrue("daemon is not new!", daemon !is CompileService)
                 runBlocking {
-                    println("\n_connected_ (${daemon!!.getDaemonInfo()})\n")
+                    println("\n_connected_ (${(daemon ?: 5)::class.java.name})\n")
                 }
 
-                val port = findPortForSocket(10, 16384, 65535)
                 val resultCodes = arrayOfNulls<Int>(PARALLEL_THREADS_TO_COMPILE)
                 val localEndSignal = CountDownLatch(PARALLEL_THREADS_TO_COMPILE)
                 val outStreams = Array(PARALLEL_THREADS_TO_COMPILE, { ByteArrayOutputStream() })
@@ -715,8 +739,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                             CompileService.NO_SESSION,
                             CompileService.TargetPlatform.JVM,
                             arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
-                            PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true),
-                            port = port
+                            PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true)
                         )
                         println("res = $res")
                         synchronized(resultCodes) {
@@ -868,22 +891,27 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 autostart = true
             )
             assertNotNull("failed to connect daemon", daemon)
-            runBlocking { daemon?.registerClient(flagFile.absolutePath) }
-
-            runBlocking { KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions) }
-            Thread.sleep(200)
-
             val exception: Exception? =
-                try {
-                    runBlocking { daemon!!.getUsedMemory() }
-                    null
-                } catch (e: ConnectException) {
-                    e
-                } catch (e: UnmarshalException) {
-                    e
-                } catch (e: ConnectIOException) {
-                    e
+                runBlocking {
+                    daemon?.registerClient(flagFile.absolutePath)
+                    KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+                    delay(2000L)
+
+                    try {
+                        daemon!!.getUsedMemory()
+                        null
+                    } catch (e: ConnectException) {
+                        e
+                    } catch (e: UnmarshalException) {
+                        e
+                    } catch (e: ConnectIOException) {
+                        e
+                    } catch (e: IOException) {
+                        e
+                    }
+
                 }
+            println("${(exception ?: Exception())::class.java.simpleName} : ${exception?.message}")
             assertNotNull(exception)
         }
     }
@@ -950,6 +978,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 classpathFromClassloader(),
                 ScriptWithNoParam::class.qualifiedName!!
             )
+            println("repl = $repl")
+            println("sessionId : ${repl.sessionId}")
 
             val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
 
@@ -977,10 +1007,31 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    private fun doReplTestWithLocalEval(replCompiler: KotlinRemoteReplCompilerClientAsync, localEvaluator: ReplEvaluator) {
+    fun testDaemonReplLocalEvalStandardTemplate_OldDaemon_NewClient() {
+        withOldDaemon { daemon ->
+            val repl = KotlinRemoteReplCompilerClientAsync(
+                daemon, null, CompileService.TargetPlatform.JVM, emptyArray(),
+                TestMessageCollector(),
+                classpathFromClassloader(),
+                "kotlin.script.templates.standard.ScriptTemplateWithArgs"
+            )
 
+            val localEvaluator = GenericReplEvaluator(
+                emptyList(), Thread.currentThread().contextClassLoader,
+                ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class))
+            )
+
+            doReplTestWithLocalEval(repl, localEvaluator)
+            repl.dispose()
+        }
+    }
+
+    private fun doReplTestWithLocalEval(replCompiler: KotlinRemoteReplCompilerClientAsync, localEvaluator: ReplEvaluator) {
+        println("doReplTestWithLocalEval...")
         val compilerState = replCompiler.createState()
+        println("compilerState = $compilerState")
         val evaluatorState = localEvaluator.createState()
+        println("evaluatorState = $evaluatorState")
 
         val res0 = replCompiler.check(compilerState, ReplCodeLine(0, 0, "val x ="))
         TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
@@ -1025,6 +1076,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     DaemonReportingTargets(out = System.err),
                     autostart = true
                 )
+                println("daemon : $daemon")
                 assertNotNull("failed to connect daemon", daemon)
 
                 val replCompiler = KotlinRemoteReplCompilerClientAsync(
@@ -1075,11 +1127,69 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     DaemonReportingTargets(out = System.err),
                     autostart = true
                 )
+                println("daemon : $daemon")
                 assertNotNull("failed to connect daemon", daemon)
 
                 body(daemon!!)
             }
         }
+    }
+
+    internal fun withOldDaemon(body: (CompileServiceClientSide) -> Unit) {
+        withFlagFile(getTestName(true), ".alive") { flagFile ->
+            val daemonOptions = makeTestDaemonOptions(getTestName(true))
+            withLogFile("kotlin-daemon-test") { logFile ->
+                val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
+                runOldServer(daemonOptions, daemonJVMOptions)
+                val daemon: CompileServiceClientSide? = KotlinCompilerClient.connectToCompileService(
+                    compilerId,
+                    flagFile,
+                    daemonJVMOptions,
+                    daemonOptions,
+                    DaemonReportingTargets(out = System.err),
+                    autostart = true
+                )
+                println("daemon : $daemon, port : ${daemon?.serverPort}")
+                TestCase.assertTrue(daemon is CompileServiceAsyncWrapper)
+                assertNotNull("failed to connect daemon", daemon)
+
+                body(daemon!!)
+            }
+        }
+    }
+
+    private fun runOldServer(
+        daemonOptions: DaemonOptions,
+        daemonJVMOptions: DaemonJVMOptions,
+        timer: Timer = Timer(),
+        onShutdown: () -> Unit = {}
+    ) {
+        val (registry, serverPort) = findPortAndCreateRegistry(
+            COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
+            COMPILE_DAEMON_PORTS_RANGE_START,
+            COMPILE_DAEMON_PORTS_RANGE_END
+        )
+        val compilerSelector = object : CompilerSelector {
+            private val jvm by lazy { K2JVMCompiler() }
+            private val js by lazy { K2JSCompiler() }
+            private val metadata by lazy { K2MetadataCompiler() }
+            override fun get(targetPlatform: CompileService.TargetPlatform): CLICompiler<*> = when (targetPlatform) {
+                CompileService.TargetPlatform.JVM -> jvm
+                CompileService.TargetPlatform.JS -> js
+                CompileService.TargetPlatform.METADATA -> metadata
+            }
+        }
+        CompileServiceImpl(
+            registry = registry,
+            compiler = compilerSelector,
+            compilerId = compilerId,
+            daemonOptions = daemonOptions,
+            daemonJVMOptions = daemonJVMOptions,
+            port = serverPort,
+            timer = timer,
+            onShutdown = onShutdown
+        )
+        println("old daemon init: port = $serverPort")
     }
 }
 

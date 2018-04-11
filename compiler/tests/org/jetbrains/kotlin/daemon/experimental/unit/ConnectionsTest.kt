@@ -6,25 +6,32 @@
 package org.jetbrains.kotlin.daemon.experimental.unit
 
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.CompileServiceImpl
 import org.jetbrains.kotlin.daemon.CompilerSelector
+import org.jetbrains.kotlin.daemon.client.experimental.BasicCompilerServicesWithResultsFacadeServerServerSide
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.DaemonWithMetadataAsync
-import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
-import org.jetbrains.kotlin.daemon.common.experimental.walkDaemonsAsync
+import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
+import java.io.PrintStream
 import java.util.*
 import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
+import kotlin.concurrent.thread
 
 
 class ConnectionsTest : KotlinIntegrationTestBase() {
@@ -119,6 +126,10 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         ).toList()
     }
 
+    companion object {
+
+    }
+
     private fun runNewServer(): Deferred<Unit> =
         port.let { serverPort ->
             CompileServiceServerSideImpl(
@@ -126,7 +137,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                 compilerId,
                 daemonOptions,
                 daemonJVMOptions,
-                serverPort,
+                serverPort.port,
                 timer,
                 onShutdown
             ).let {
@@ -177,7 +188,8 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         getInfo: (D) -> CompileService.CallResult<String>,
         registerClient: (D) -> Unit,
         port: (D) -> Int,
-        expectedDaemonCount: Int?
+        expectedDaemonCount: Int?,
+        extraAction: (D) -> Unit = {}
     ) {
         val daemons = getDaemons()
         log.info("daemons (${daemons.size}) : ${daemons.map { (it ?: 0)::class.java.name }.toList()}\n\n")
@@ -191,28 +203,31 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         log.info("info : $info")
         assert(info.isGood)
         registerClient(daemon)
+        extraAction(daemon)
     }
 
     private enum class ServerType(val instancesNumber: Int?) {
         OLD(1), NEW(2), ANY(null)
     }
 
-    private fun expectNewDaemon(serverType: ServerType) = expectDaemon(
+    private fun expectNewDaemon(serverType: ServerType, extraAction: (CompileServiceClientSide) -> Unit = {}) = expectDaemon(
         ::getNewDaemonsOrAsyncWrappers,
         { daemons -> daemons.maxWith(comparator)!!.daemon },
         { d -> runBlocking { d.getDaemonInfo() } },
         { d -> runBlocking { d.registerClient(generateClient()) } },
         { d -> d.serverPort },
-        serverType.instancesNumber
+        serverType.instancesNumber,
+        extraAction
     )
 
-    private fun expectOldDaemon(shouldCheckNumber: Boolean = true) = expectDaemon(
+    private fun expectOldDaemon(shouldCheckNumber: Boolean = true, extraAction: (CompileService) -> Unit = {}) = expectDaemon(
         ::getOldDaemonsOrRMIWrappers,
         { daemons -> daemons[0].daemon },
         { d -> d.getDaemonInfo() },
         { d -> d.registerClient(generateClient()) },
         { d -> -1 },
-        1.takeIf { shouldCheckNumber }
+        1.takeIf { shouldCheckNumber },
+        extraAction
     )
 
     private val clientFiles = arrayListOf<File>()
@@ -268,8 +283,10 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
 
     fun testConnections_NewDaemon_DifferentClients() {
         runNewServer()
-        (0..20).forEach {
+        (0..4).forEach {
+            println(it)
             expectNewDaemon(ServerType.NEW)
+            println(it)
             expectOldDaemon()
         }
         endTest()
@@ -280,11 +297,85 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
             runNewServer()
             runOldServer()
         }
-        (0..10).forEach {
+        (0..4).forEach {
+            println(it)
             expectNewDaemon(ServerType.ANY)
+            println(it)
             expectOldDaemon(shouldCheckNumber = false)
         }
         endTest()
+    }
+
+    fun testShutdown() {
+        runNewServer()
+        expectNewDaemon(ServerType.NEW) { daemon ->
+            runBlocking {
+                println("shutdown...")
+                daemon.shutdown()
+                delay(1000L)
+                val mem: Long = try {
+                    daemon.getUsedMemory().get()
+                } catch (e: IOException) {
+                    println(e.message)
+                    -100500L
+                }
+                assertTrue(mem == -100500L)
+            }
+        }
+    }
+
+
+    fun testCompile() {
+        runNewServer()
+        expectNewDaemon(ServerType.ANY) { daemon ->
+            assertTrue(daemon !is CompileServiceAsyncWrapper)
+            val outStream = ByteArrayOutputStream()
+            val msgCollector = PrintingMessageCollector(PrintStream(outStream), MessageRenderer.WITHOUT_PATHS, true)
+            val codes = (0 until 10).toMutableList()
+            fun runThread(i: Int) {
+                thread {
+                    val jar = tmpdir.absolutePath + File.separator + "hello.$i.jar"
+                    val code = runBlocking {
+                        val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
+                            msgCollector,
+                            { _, _ -> },
+                            findCallbackServerSocket()
+                        )
+                        val serverRun = services.runServer()
+                        daemon.compile(
+                            CompileService.NO_SESSION,
+                            arrayOf(
+                                "-include-runtime",
+                                File(KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/helloApp", "hello.kt").absolutePath,
+                                "-d",
+                                jar
+                            ),
+                            CompilationOptions(
+                                CompilerMode.NON_INCREMENTAL_COMPILER,
+                                CompileService.TargetPlatform.JVM,
+                                arrayOf(
+                                    ReportCategory.COMPILER_MESSAGE.code,
+                                    ReportCategory.DAEMON_MESSAGE.code,
+                                    ReportCategory.EXCEPTION.code,
+                                    ReportCategory.OUTPUT_MESSAGE.code
+                                ),
+                                ReportSeverity.INFO.code,
+                                emptyArray()
+                            ),
+                            services.clientSide,
+                            null
+                        )
+                    }.get().also { println("CODE = $it") }
+                    codes[i] = code
+                }
+            }
+            (0 until 10).forEach(::runThread)
+            runBlocking {
+                delay(20000L)
+                codes.forEach { println(it) }
+                assertTrue(codes.all { it == 0 })
+            }
+        }
     }
 
 }

@@ -12,28 +12,28 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Serv
 interface ReplStateFacadeServerSide: ReplStateFacadeAsync, Server<ReplStateFacadeServerSide> {
 
     // Query messages:
-    class GetIdMessage : Server.Message<ReplStateFacadeServerSide> {
-        override suspend fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
-            output.writeObject(server.getId())
+    class GetIdMessage : Server.Message<ReplStateFacadeServerSide>() {
+        override suspend fun processImpl(server: ReplStateFacadeServerSide, printObject: (Any?) -> Unit) =
+            printObject(server.getId())
     }
 
-    class GetHistorySizeMessage : Server.Message<ReplStateFacadeServerSide> {
-        override suspend fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
-            output.writeObject(server.getHistorySize())
+    class GetHistorySizeMessage : Server.Message<ReplStateFacadeServerSide>() {
+        override suspend fun processImpl(server: ReplStateFacadeServerSide, printObject: (Any?) -> Unit) =
+            printObject(server.getHistorySize())
     }
 
-    class HistoryGetMessage(val index: Int) : Server.Message<ReplStateFacadeServerSide> {
-        override suspend fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
-            output.writeObject(server.historyGet(index))
+    class HistoryGetMessage(val index: Int) : Server.Message<ReplStateFacadeServerSide>() {
+        override suspend fun processImpl(server: ReplStateFacadeServerSide, printObject: (Any?) -> Unit) =
+            printObject(server.historyGet(index))
     }
 
-    class HistoryResetMessage : Server.Message<ReplStateFacadeServerSide> {
-        override suspend fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
-            output.writeObject(server.historyReset())
+    class HistoryResetMessage : Server.Message<ReplStateFacadeServerSide>() {
+        override suspend fun processImpl(server: ReplStateFacadeServerSide, printObject: (Any?) -> Unit) =
+            printObject(server.historyReset())
     }
 
-    class HistoryResetToMessage(val id: ILineId) : Server.Message<ReplStateFacadeServerSide> {
-        override suspend fun process(server: ReplStateFacadeServerSide, output: ByteWriteChannelWrapper) =
-            output.writeObject(server.historyResetTo(id))
+    class HistoryResetToMessage(val id: ILineId) : Server.Message<ReplStateFacadeServerSide>() {
+        override suspend fun processImpl(server: ReplStateFacadeServerSide, printObject: (Any?) -> Unit) =
+            printObject(server.historyResetTo(id))
     }
 }

@@ -16,10 +16,12 @@ interface CompilerServicesFacadeBaseServerSide : CompilerServicesFacadeBaseAsync
         val severity: Int,
         val message: String?,
         val attachment: Serializable?
-    ) : Server.Message<CompilerServicesFacadeBaseServerSide> {
+    ) : Server.Message<CompilerServicesFacadeBaseServerSide>() {
 
-        override suspend fun process(server: CompilerServicesFacadeBaseServerSide, output: ByteWriteChannelWrapper) =
+        override suspend fun processImpl(server: CompilerServicesFacadeBaseServerSide, sendReply: (Any?) -> Unit) {
+            println("reporting_-_-_-_-")
             server.report(category, severity, message, attachment)
+        }
 
     }
 }

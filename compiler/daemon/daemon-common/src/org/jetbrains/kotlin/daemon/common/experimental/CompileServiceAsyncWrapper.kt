@@ -48,11 +48,11 @@ class CompileServiceAsyncWrapper(
         templateClassName
     )
 
-    override suspend fun replCreateState(sessionId: Int) = rmiCompileService.replCreateState(sessionId).toClient()
+    override suspend fun replCreateState(sessionId: Int) =
+        rmiCompileService.replCreateState(sessionId).toClient()
 
     override suspend fun getUsedMemory() =
         rmiCompileService.getUsedMemory()
-
 
     override suspend fun getDaemonOptions() =
         rmiCompileService.getDaemonOptions()

@@ -9,8 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.async
+import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -30,13 +29,10 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.daemon.KotlinJvmReplService
 import org.jetbrains.kotlin.daemon.LazyClasspathWatcher
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteReadChannelWrapper
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.runWithTimeout
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdaterAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteArtifactChangesProviderAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteChangesRegistryAsync
@@ -53,10 +49,8 @@ import java.io.File
 import java.io.PrintStream
 import java.rmi.RemoteException
 import java.security.PrivateKey
-import java.security.PublicKey
 import java.util.*
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -91,7 +85,7 @@ typealias Message = Server.Message<CompileServiceServerSide>
 typealias EndConnectionMessage = Server.EndConnectionMessage<CompileServiceServerSide>
 
 class CompileServiceServerSideImpl(
-    override val serverPort: Int,
+    override val serverSocketWithPort: ServerSocketWrapper,
     val compiler: CompilerSelector,
     val compilerId: CompilerId,
     val daemonOptions: DaemonOptions,
@@ -101,20 +95,19 @@ class CompileServiceServerSideImpl(
     val onShutdown: () -> Unit
 ) : CompileServiceServerSide {
 
-    override fun securityCheck(clientInputChannel: ByteReadChannelWrapper): Boolean =
-        runBlocking {
-            try {
-                val verified = runWithTimeout {
-                    getSignatureAndVerify(clientInputChannel, securityData.token, securityData.publicKey)
-                }
-                verified
-            } catch (e: TimeoutException) {
-                false
-            }
-        }
+    override val clients = hashMapOf<Socket, Server.ClientInfo>()
+
+    override suspend fun securityCheck(clientInputChannel: ByteReadChannelWrapper): Boolean =
+        runWithTimeout {
+            getSignatureAndVerify(clientInputChannel, securityData.token, securityData.publicKey)
+        } ?: false
+
+    override suspend fun serverHandshake(input: ByteReadChannelWrapper, output: ByteWriteChannelWrapper, log: Logger): Boolean {
+        return tryAcquireHandshakeMessage(input, log) && trySendHandshakeMessage(output, log)
+    }
 
     constructor(
-        serverPort: Int,
+        serverSocket: ServerSocketWrapper,
         compilerId: CompilerId,
         daemonOptions: DaemonOptions,
         daemonJVMOptions: DaemonJVMOptions,
@@ -122,7 +115,7 @@ class CompileServiceServerSideImpl(
         timer: Timer,
         onShutdown: () -> Unit
     ) : this(
-        serverPort,
+        serverSocket,
         CompilerSelector.getDefault(),
         compilerId,
         daemonOptions,
@@ -136,13 +129,13 @@ class CompileServiceServerSideImpl(
 
     init {
 
-        log.info("init(port= $serverPort)")
+        log.info("init(port= $serverSocketWithPort)")
 
         // assuming logically synchronized
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
         // TODO UNCOMMENT THIS : this.toRMIServer(daemonOptions, compilerId) // also create RMI server in order to support old clients
-        this.toRMIServer(daemonOptions, compilerId)
+//        this.toRMIServer(daemonOptions, compilerId)
 
         timer.schedule(10) {
             exceptionLoggingTimerThread { initiateElections() }
@@ -189,6 +182,8 @@ class CompileServiceServerSideImpl(
         private val sessions: MutableMap<Int, ClientOrSessionProxy<Any>> = hashMapOf()
         private val sessionsIdCounter = AtomicInteger(0)
 
+        val lastSessionId get() = sessionsIdCounter.get()
+
         fun <T : Any> leaseSession(session: ClientOrSessionProxy<T>): Int = lock.write {
             val newId = getValidId(sessionsIdCounter) {
                 it != CompileService.NO_SESSION && !sessions.containsKey(it)
@@ -220,6 +215,7 @@ class CompileServiceServerSideImpl(
         }
     }
 
+
     // TODO: encapsulate operations on state here
     private val state = object {
 
@@ -234,8 +230,13 @@ class CompileServiceServerSideImpl(
 
         val aliveClientsCount: Int get() = clientProxies.size
 
+        private val _clientsCounter = AtomicInteger(0)
+
+        val clientsCounter get() = _clientsCounter.get()
+
         fun addClient(aliveFlagPath: String?) {
             clientsLock.write {
+                _clientsCounter.incrementAndGet()
                 clientProxies.add(ClientOrSessionProxy(aliveFlagPath))
             }
         }
@@ -285,7 +286,7 @@ class CompileServiceServerSideImpl(
     init {
         val runFileDir = File(daemonOptions.runFilesPathOrDefault)
         runFileDir.mkdirs()
-        log.info("port.toString() = $port | serverPort = $serverPort")
+        log.info("port.toString() = $port | serverSocketWithPort = $serverSocketWithPort")
         runFile = File(
             runFileDir,
             makeRunFilenameString(
@@ -391,8 +392,8 @@ class CompileServiceServerSideImpl(
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide?
     ): CompileService.CallResult<Int> = ifAlive {
-        servicesFacade.connectToServer()
-        compilationResults?.connectToServer()
+        //        compilationResults?.connectToServer()
+        log.info("servicesFacade : $servicesFacade")
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = DaemonMessageReporterAsync(servicesFacade, compilationOptions)
         val targetPlatform = compilationOptions.targetPlatform
@@ -587,9 +588,9 @@ class CompileServiceServerSideImpl(
             val disposable = Disposer.newDisposable()
             val messageCollector =
                 CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
-            val repl = KotlinJvmReplService(
-                disposable, port, templateClasspath, templateClassName,
-                messageCollector, null
+            val repl = KotlinJvmReplServiceAsync(
+                disposable, serverSocketWithPort, templateClasspath, templateClassName,
+                messageCollector
             )
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
 
@@ -603,7 +604,9 @@ class CompileServiceServerSideImpl(
     override suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeClientSide> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
-                CompileService.CallResult.Good(createRemoteState(port).clientSide)
+                CompileService.CallResult.Good(
+                    createRemoteState(findReplServerSocket()).clientSide
+                )
             }
         }
 
@@ -722,6 +725,7 @@ class CompileServiceServerSideImpl(
 
     // TODO: handover should include mechanism for client to switch to a new daemon then previous "handed over responsibilities" and shot down
     private fun initiateElections() {
+return
         ifAliveUnit {
 
             log.info("initiate elections")
@@ -738,6 +742,12 @@ class CompileServiceServerSideImpl(
                     DaemonJVMOptionsMemoryComparator(),
                     { it.jvmOptions }
                 )
+                    .thenBy {
+                        when (it.daemon) {
+                            is CompileServiceAsyncWrapper -> 0
+                            else -> 1
+                        }
+                    }
                     .thenBy(FileAgeComparator()) { it.runFile }
                     .thenBy { it.daemon.serverPort }
                 aliveWithOpts.maxWith(comparator)?.let { bestDaemonWithMetadata ->
@@ -747,25 +757,19 @@ class CompileServiceServerSideImpl(
                             runFile
                         ) < 0
                     ) {
-                        runBlocking {
-                            // all others are smaller that me, take overs' clients and shut them down
-                            log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                            aliveWithOpts.map { (daemon, runFile, _) ->
-                                async {
-                                    try {
-                                        daemon.getClients().takeIf { it.isGood }?.let {
-                                            it.get().map { clientAliveFile ->
-                                                async {
-                                                    registerClient(clientAliveFile)
-                                                }
-                                            }.forEach { it.await() }
-                                        }
-                                        daemon.scheduleShutdown(true)
-                                    } catch (e: Throwable) {
-                                        log.info("Cannot connect to a daemon, assuming dying ('${runFile.canonicalPath}'): ${e.message}")
+                        // all others are smaller that me, take overs' clients and shut them down
+                        log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                        aliveWithOpts.forEach { (daemon, runFile, _) ->
+                            try {
+                                daemon.getClients().takeIf { it.isGood }?.let {
+                                    it.get().forEach { clientAliveFile ->
+                                        registerClient(clientAliveFile)
                                     }
                                 }
-                            }.forEach { it.await() }
+                                daemon.scheduleShutdown(true)
+                            } catch (e: Throwable) {
+                                log.info("Cannot connect to a daemon, assuming dying ('${runFile.canonicalPath}'): ${e.message}")
+                            }
                         }
                     }
                     // TODO: seems that the second part of condition is incorrect, reconsider:
@@ -788,14 +792,12 @@ class CompileServiceServerSideImpl(
                             runFile
                         ) > 0
                     ) {
-                        runBlocking {
-                            // there is at least one bigger, handover my clients to it and shutdown
-                            log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                            getClients().takeIf { it.isGood }?.let {
-                                it.get().forEach { bestDaemonWithMetadata.daemon.registerClient(it) }
-                            }
-                            scheduleShutdown(true)
+                        // there is at least one bigger, handover my clients to it and shutdown
+                        log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                        getClients().takeIf { it.isGood }?.let {
+                            it.get().forEach { bestDaemonWithMetadata.daemon.registerClient(it) }
                         }
+                        scheduleShutdown(true)
                     } else {
                         // undecided, do nothing
                         log.info("${LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE} equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
@@ -815,8 +817,7 @@ class CompileServiceServerSideImpl(
             log.info("Memory stats: total: ${totalMemory().mb()}mb, free: ${freeMemory().mb()}mb, max: ${maxMemory().mb()}mb")
         }
         state.alive.set(Aliveness.Dying.ordinal)
-
-        // TODO : unexportSelf(true) - what is the purpose?
+        downServer()
         log.info("Shutdown complete")
         onShutdown()
         log.handlers.forEach { it.flush() }
@@ -824,12 +825,21 @@ class CompileServiceServerSideImpl(
 
     private fun shutdownWithDelay() {
         state.delayedShutdownQueued.set(true)
+        val currentClientsCount = state.clientsCounter
+        val currentSessionId = state.sessions.lastSessionId
         val currentCompilationsCount = compilationsCounter.get()
         log.info("Delayed shutdown in ${daemonOptions.shutdownDelayMilliseconds}ms")
         timer.schedule(daemonOptions.shutdownDelayMilliseconds) {
+            println("${log.name} .......shutdowning........")
+            println("${log.name} currentCompilationsCount = $currentCompilationsCount, compilationsCounter.get(): ${compilationsCounter.get()}")
             state.delayedShutdownQueued.set(false)
-            if (currentCompilationsCount == compilationsCounter.get()) {
+            if (currentClientsCount == state.clientsCounter &&
+                currentCompilationsCount == compilationsCounter.get() &&
+                currentSessionId == state.sessions.lastSessionId
+            ) {
+                println("currentCompilationsCount == compilationsCounter.get()")
                 ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession) {
+                    println("Execute delayed shutdown!!!")
                     log.fine("Execute delayed shutdown")
                     shutdownNow()
                 }
@@ -877,6 +887,7 @@ class CompileServiceServerSideImpl(
         body: (EventManager, Profiler) -> ExitCode
     ): CompileService.CallResult<Int> =
         ifAlive {
+            log.info("alive!")
             withValidClientOrSessionProxy(sessionId) {
                 tracer?.before("compile")
                 val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
@@ -964,6 +975,7 @@ class CompileServiceServerSideImpl(
         minAliveness: Aliveness = Aliveness.LastSession,
         body: () -> CompileService.CallResult<R>
     ): CompileService.CallResult<R> = rwlock.read {
+        println("alive?")
         ifAliveChecksImpl(minAliveness, body)
     }
 
@@ -993,6 +1005,7 @@ class CompileServiceServerSideImpl(
         body: () -> CompileService.CallResult<R>
     ): CompileService.CallResult<R> {
         val curState = state.alive.get()
+        log.info("alive check? - state = $curState ; minAliveness.ordinal = ${minAliveness.ordinal}")
         return when {
             curState < minAliveness.ordinal -> {
                 log.info("Cannot perform operation, requested state: ${minAliveness.name} > actual: ${curState.toAlivenessName()}")
@@ -1000,6 +1013,7 @@ class CompileServiceServerSideImpl(
             }
             else -> {
                 try {
+                    println("alive!!!")
                     body()
                 } catch (e: Throwable) {
                     log.log(Level.SEVERE, "Exception", e)

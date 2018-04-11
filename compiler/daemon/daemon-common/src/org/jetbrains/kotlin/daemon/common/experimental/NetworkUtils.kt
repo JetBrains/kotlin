@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import io.ktor.network.sockets.ServerSocket
 import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.IOException
@@ -66,7 +66,7 @@ object LoopbackNetworkInterface {
         override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
-        override fun createServerSocket(port: Int): ServerSocket =
+        override fun createServerSocket(port: Int): java.net.ServerSocket =
             ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(null))
     }
 
@@ -115,15 +115,20 @@ object LoopbackNetworkInterface {
 
 private val portSelectionRng = Random()
 
-fun findPortForSocket(attempts: Int, portRangeStart: Int, portRangeEnd: Int): Int {
+data class ServerSocketWrapper(val port: Int, val socket: ServerSocket)
+
+fun findPortForSocket(attempts: Int, portRangeStart: Int, portRangeEnd: Int): ServerSocketWrapper {
     var i = 0
-    var lastException: RemoteException? = null
+    var lastException: Exception? = null
 
     while (i++ < attempts) {
         val port = portSelectionRng.nextInt(portRangeEnd - portRangeStart) + portRangeStart
         try {
-            return port
-        } catch (e: RemoteException) {
+            return ServerSocketWrapper(
+                port,
+                LoopbackNetworkInterface.serverLoopbackSocketFactoryKtor.createServerSocket(port)
+            )
+        } catch (e: Exception) {
             // assuming that the socketPort is already taken
             lastException = e
         }

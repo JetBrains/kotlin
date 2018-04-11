@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.client.experimental
 
-import kotlinx.coroutines.experimental.Unconfined
+import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -47,7 +48,7 @@ object KotlinCompilerClient {
     private val log = Logger.getLogger("KotlinCompilerClient")
 
     fun getOrCreateClientFlagFile(daemonOptions: DaemonOptions): File =
-            // for jps property is passed from IDEA to JPS in KotlinBuildProcessParametersProvider
+    // for jps property is passed from IDEA to JPS in KotlinBuildProcessParametersProvider
         System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
             ?.let(String::trimQuotes)
             ?.takeUnless(String::isBlank)
@@ -128,7 +129,7 @@ object KotlinCompilerClient {
         }
         if (service != null) {
             log.info("service != null => service.connectToServer()")
-            service.connectToServer()
+//            service.connectToServer()
             service.leaseImpl()
         } else {
             log.info("service == null <==> no suitable daemons found")
@@ -143,7 +144,7 @@ object KotlinCompilerClient {
         }
     }
 
-    suspend fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions): Unit {
+    suspend fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions) {
         connectToCompileService(
             compilerId,
             DaemonJVMOptions(),
@@ -176,30 +177,33 @@ object KotlinCompilerClient {
         outputsCollector: ((File, List<File>) -> Unit)? = null,
         compilerMode: CompilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
         reportSeverity: ReportSeverity = ReportSeverity.INFO,
-        port: Int = findCallbackServerSocket(),
         profiler: Profiler = DummyProfiler()
     ): Int = profiler.withMeasure(this) {
         runBlocking {
-            val services = BasicCompilerServicesWithResultsFacadeServerServerSide(messageCollector, outputsCollector, port)
+            val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
+                messageCollector,
+                outputsCollector,
+                findCallbackServerSocket()
+            )
             log.info("[BasicCompilerServicesWithResultsFacadeServerServerSide] services.runServer()")
             val serverRun = services.runServer()
             compilerService.compile(
-                sessionId,
-                args,
-                CompilationOptions(
-                    compilerMode,
-                    targetPlatform,
-                    arrayOf(
-                        ReportCategory.COMPILER_MESSAGE.code,
-                        ReportCategory.DAEMON_MESSAGE.code,
-                        ReportCategory.EXCEPTION.code,
-                        ReportCategory.OUTPUT_MESSAGE.code
-                    ),
-                    reportSeverity.code,
-                    emptyArray()
+                    sessionId,
+            args,
+            CompilationOptions(
+                compilerMode,
+                targetPlatform,
+                arrayOf(
+                    ReportCategory.COMPILER_MESSAGE.code,
+                    ReportCategory.DAEMON_MESSAGE.code,
+                    ReportCategory.EXCEPTION.code,
+                    ReportCategory.OUTPUT_MESSAGE.code
                 ),
-                services.clientSide,
-                null
+                reportSeverity.code,
+                emptyArray()
+            ),
+            services.clientSide,
+            null
             )
         }.get().also { log.info("CODE = $it") }
     }
@@ -300,7 +304,9 @@ object KotlinCompilerClient {
 
                     val compResults = object : CompilationResultsServerSide {
 
-                        override val serverPort: Int
+                        override val clients = hashMapOf<Socket, Server.ClientInfo>()
+
+                        override val serverSocketWithPort: ServerSocketWrapper
                             get() = resultsPort
 
                         private val resultsPort = findPortForSocket(
@@ -312,7 +318,7 @@ object KotlinCompilerClient {
                         private val resultsMap = hashMapOf<Int, MutableList<Serializable>>()
 
                         override val clientSide: CompilationResultsClientSide
-                            get() = CompilationResultsClientSideImpl(resultsPort)
+                            get() = CompilationResultsClientSideImpl(resultsPort.port)
 
                         override suspend fun add(compilationResultCategory: Int, value: Serializable) {
                             resultsMap.putIfAbsent(compilationResultCategory, mutableListOf())
@@ -423,7 +429,14 @@ object KotlinCompilerClient {
         } finally {
             timestampMarker.delete()
         }
+        log.info("aliveWithMetadata: ${aliveWithMetadata.map { it.daemon::class.java.name }}")
         val comparator = compareBy<DaemonWithMetadataAsync, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
+            .thenBy {
+                when (it.daemon) {
+                    is CompileServiceAsyncWrapper -> 0
+                    else -> 1
+                }
+            }
             .thenBy(FileAgeComparator()) { it.runFile }
         val optsCopy = daemonJVMOptions.copy()
         // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon

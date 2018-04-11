@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.experimental.ServerSocketWrapper
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
@@ -31,7 +32,7 @@ import kotlin.concurrent.write
 
 open class KotlinJvmReplServiceAsync(
     disposable: Disposable,
-    val portForServers: Int,
+    val portForServers: ServerSocketWrapper,
     templateClasspath: List<File>,
     templateClassName: String,
     protected val messageCollector: MessageCollector
@@ -92,9 +93,13 @@ open class KotlinJvmReplServiceAsync(
         } finally { }
     }
 
-    fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeServerSide = statesLock.write {
+    fun createRemoteState(port: ServerSocketWrapper = portForServers): RemoteReplStateFacadeServerSide = statesLock.write {
         val id = getValidId(stateIdCounter) { id -> states.none { runBlocking { it.key.getId() == id } } }
-        val stateFacade = RemoteReplStateFacadeServerSide(id, createState().asState(GenericReplCompilerState::class.java), port)
+        val stateFacade = RemoteReplStateFacadeServerSide(
+            id,
+            createState().asState(GenericReplCompilerState::class.java),
+            port
+        )
         stateFacade.runServer()
         states.put(stateFacade, true)
         stateFacade

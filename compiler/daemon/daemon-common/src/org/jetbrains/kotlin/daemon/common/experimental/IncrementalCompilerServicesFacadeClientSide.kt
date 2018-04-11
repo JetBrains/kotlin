@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.daemon.common.experimental
 
 import io.ktor.network.sockets.aSocket
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.future.await
 import org.jetbrains.kotlin.daemon.common.SimpleDirtyData
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import java.beans.Transient
@@ -22,33 +23,33 @@ class IncrementalCompilerServicesFacadeClientSideImpl(val serverPort: Int) :
     Client<CompilerServicesFacadeBaseServerSide> by DefaultClient(serverPort) {
 
     override suspend fun hasAnnotationsFileUpdater(): Boolean {
-        sendMessage(HasAnnotationsFileUpdaterMessage()).await()
-        return readMessage<Boolean>().await()
+        val id = sendMessage(HasAnnotationsFileUpdaterMessage())
+        return readMessage(id)
     }
 
     override suspend fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) {
-        sendMessage(UpdateAnnotationsMessage(outdatedClassesJvmNames)).await()
+        val id = sendMessage(UpdateAnnotationsMessage(outdatedClassesJvmNames))
     }
 
     override suspend fun revert() {
-        sendMessage(RevertMessage()).await()
+        val id = sendMessage(RevertMessage())
     }
 
     override suspend fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) {
-        sendMessage(RegisterChangesMessage(timestamp, dirtyData)).await()
+        val id = sendMessage(RegisterChangesMessage(timestamp, dirtyData))
     }
 
     override suspend fun unknownChanges(timestamp: Long) {
-        sendMessage(UnknownChangesMessage(timestamp)).await()
+        val id = sendMessage(UnknownChangesMessage(timestamp))
     }
 
     override suspend fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>? {
-        sendMessage(HasAnnotationsFileUpdaterMessage()).await()
-        return readMessage<Iterable<SimpleDirtyData>?>().await()
+        val id = sendMessage(HasAnnotationsFileUpdaterMessage())
+        return readMessage(id)
     }
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-        sendMessage(CompilerServicesFacadeBaseServerSide.ReportMessage(category, severity, message, attachment))
+        val id = sendMessage(CompilerServicesFacadeBaseServerSide.ReportMessage(category, severity, message, attachment))
     }
 
 }

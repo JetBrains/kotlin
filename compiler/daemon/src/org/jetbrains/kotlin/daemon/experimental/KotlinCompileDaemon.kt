@@ -29,8 +29,6 @@ import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
 
-val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
-val DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS = 60000L
 
 class LogStream(name: String) : OutputStream() {
 
@@ -172,7 +170,7 @@ object KotlinCompileDaemon {
                     compilerId,
                     daemonOptions,
                     daemonJVMOptions,
-                    port,
+                    port.port,
                     timer,
                     {
                         if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_TIMEOUT_INFINITE_MS) {
