@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParenthesesIfPossible
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.*
@@ -246,13 +247,10 @@ object J2KPostProcessingRegistrar {
     private class MoveLambdaOutsideParenthesesProcessing : J2kPostProcessing {
         override val writeActionNeeded = true
 
-        private val intention = MoveLambdaOutsideParenthesesIntention()
-
         override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
             if (element !is KtCallExpression) return null
             val literalArgument = element.valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral() ?: return null
-            if (!intention.isApplicableTo(element, literalArgument.textOffset)) return null
-            return { intention.applyTo(element, null) }
+            return { literalArgument.moveFunctionLiteralOutsideParenthesesIfPossible() }
         }
     }
 
