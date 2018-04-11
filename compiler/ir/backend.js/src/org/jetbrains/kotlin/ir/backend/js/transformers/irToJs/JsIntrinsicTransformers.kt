@@ -26,13 +26,37 @@ class JsIntrinsicTransformers(intrinsics: JsIntrinsics) {
             binOp(intrinsics.jsEqeq, JsBinaryOperator.EQ)
             binOp(intrinsics.jsNotEq, JsBinaryOperator.NEQ)
 
+            binOp(intrinsics.jsGt, JsBinaryOperator.GT)
+            binOp(intrinsics.jsGtEq, JsBinaryOperator.GTE)
+            binOp(intrinsics.jsLt, JsBinaryOperator.LT)
+            binOp(intrinsics.jsLtEq, JsBinaryOperator.LTE)
+
             prefixOp(intrinsics.jsNot, JsUnaryOperator.NOT)
+
+            prefixOp(intrinsics.jsUnaryPlus, JsUnaryOperator.POS)
+            prefixOp(intrinsics.jsUnaryMinus, JsUnaryOperator.NEG)
+
+            prefixOp(intrinsics.jsPrefixInc, JsUnaryOperator.INC)
+            postfixOp(intrinsics.jsPostfixInc, JsUnaryOperator.INC)
+            prefixOp(intrinsics.jsPrefixDec, JsUnaryOperator.DEC)
+            postfixOp(intrinsics.jsPostfixDec, JsUnaryOperator.DEC)
 
             binOp(intrinsics.jsPlus, JsBinaryOperator.ADD)
             binOp(intrinsics.jsMinus, JsBinaryOperator.SUB)
             binOp(intrinsics.jsMult, JsBinaryOperator.MUL)
             binOp(intrinsics.jsDiv, JsBinaryOperator.DIV)
             binOp(intrinsics.jsMod, JsBinaryOperator.MOD)
+
+            binOp(intrinsics.jsBitAnd, JsBinaryOperator.BIT_AND)
+            binOp(intrinsics.jsBitOr, JsBinaryOperator.BIT_OR)
+            binOp(intrinsics.jsBitXor, JsBinaryOperator.BIT_XOR)
+            prefixOp(intrinsics.jsBitNot, JsUnaryOperator.BIT_NOT)
+
+            binOp(intrinsics.jsBitShiftR, JsBinaryOperator.SHR)
+            binOp(intrinsics.jsBitShiftRU, JsBinaryOperator.SHRU)
+            binOp(intrinsics.jsBitShiftL, JsBinaryOperator.SHL)
+
+            binOp(intrinsics.jsInstanceOf, JsBinaryOperator.INSTANCEOF)
 
             add(intrinsics.jsObjectCreate) { call, _ ->
                 val classToCreate = call.getTypeArgument(0)!!
@@ -56,4 +80,8 @@ private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrFunction, 
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.prefixOp(function: IrFunction, op: JsUnaryOperator) {
     put(function.symbol, { _, args -> JsPrefixOperation(op, args[0]) })
+}
+
+private fun MutableMap<IrSymbol, IrCallTransformer>.postfixOp(function: IrFunction, op: JsUnaryOperator) {
+    put(function.symbol, { _, args -> JsPostfixOperation(op, args[0]) })
 }
