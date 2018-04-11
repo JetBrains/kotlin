@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.resolve.JsPlatform.builtIns
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.Variance
 
@@ -22,23 +23,61 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
 
     private val stubBuilder = DeclarationStubGenerator(symbolTable, JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB)
 
-    // Equality
+    // Equality operations:
+
     val jsEqeq = binOpBool("jsEqeq")
     val jsNotEq = binOpBool("jsNotEq")
     val jsEqeqeq = binOpBool("jsEqeqeq")
     val jsNotEqeq = binOpBool("jsNotEqeq")
 
-    // Unary operations
+    val jsGt = binOpBool("jsGt")
+    val jsGtEq = binOpBool("jsGtEq")
+    val jsLt = binOpBool("jsLt")
+    val jsLtEq = binOpBool("jsLtEq")
+
+
+    // Unary operations:
+
     val jsNot = unOpBool("jsNot")
 
-    // Binary operations
+    val jsUnaryPlus = unOp("jsUnaryPlus")
+    val jsUnaryMinus = unOp("jsUnaryMinus")
+
+    val jsPrefixInc = unOp("jsPrefixInc")
+    val jsPostfixInc = unOp("jsPostfixInc")
+    val jsPrefixDec = unOp("jsPrefixDec")
+    val jsPostfixDec = unOp("jsPostfixDec")
+
+    // Binary operations:
+
     val jsPlus = binOp("jsPlus")
     val jsMinus = binOp("jsMinus")
     val jsMult = binOp("jsMult")
     val jsDiv = binOp("jsDiv")
     val jsMod = binOp("jsMod")
 
+    val jsAnd = binOp("jsAnd")
+    val jsOr = binOp("jsOr")
+
+
+    // Bit operations:
+
+    val jsBitAnd = binOpInt("jsBitAnd")
+    val jsBitOr = binOpInt("jsBitOr")
+    val jsBitXor = binOpInt("jsBitXor")
+    val jsBitNot = unOpInt("jsBitNot")
+
+    val jsBitShiftR = binOpInt("jsBitShiftR")
+    val jsBitShiftRU = binOpInt("jsBitShiftRU")
+    val jsBitShiftL = binOpInt("jsBitShiftL")
+
+
+    // Other:
+
+    val jsInstanceOf = binOpBool("jsInstanceOf")
+
     val jsObjectCreate: IrSimpleFunction = defineObjectCreateIntrinsic()
+
 
     // Helpers:
 
@@ -70,8 +109,15 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
         return stubBuilder.generateFunctionStub(desc)
     }
 
-    private fun unOpBool(name: String) = irBuiltIns.run { defineOperator(name, bool, listOf(anyN, anyN)) }
-    private fun binOpBool(name: String) = irBuiltIns.run { defineOperator(name, bool, listOf(anyN, anyN)) }
-    private fun unOp(name: String) = irBuiltIns.run { defineOperator(name, anyN, listOf(anyN, anyN)) }
-    private fun binOp(name: String) = irBuiltIns.run { defineOperator(name, anyN, listOf(anyN, anyN)) }
+    private fun unOp(name: String, returnType: KotlinType = irBuiltIns.anyN) =
+        irBuiltIns.run { defineOperator(name, returnType, listOf(anyN)) }
+
+    private fun unOpBool(name: String) = unOp(name, irBuiltIns.bool)
+    private fun unOpInt(name: String) = unOp(name, irBuiltIns.int)
+
+    private fun binOp(name: String, returnType: KotlinType = irBuiltIns.anyN) =
+        irBuiltIns.run { defineOperator(name, returnType, listOf(anyN, anyN)) }
+
+    private fun binOpBool(name: String) = binOp(name, irBuiltIns.bool)
+    private fun binOpInt(name: String) = binOp(name, irBuiltIns.int)
 }
