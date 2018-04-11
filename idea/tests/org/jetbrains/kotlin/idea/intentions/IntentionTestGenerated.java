@@ -8391,38 +8391,37 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class IndentRawString extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInIndentRawString() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/indentRawString"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("hasIndent.kt")
         public void testHasIndent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/hasIndent.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/indentRawString/hasIndent.kt");
         }
 
         @TestMetadata("notRawString.kt")
         public void testNotRawString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/notRawString.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/indentRawString/notRawString.kt");
         }
 
         @TestMetadata("receiver.kt")
         public void testReceiver() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/receiver.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/indentRawString/receiver.kt");
         }
 
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/simple.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/indentRawString/simple.kt");
         }
 
         @TestMetadata("singleLine.kt")
         public void testSingleLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/singleLine.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/indentRawString/singleLine.kt");
         }
     }
 
@@ -12476,6 +12475,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitType"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("anonymousFunctionInitializer.kt")
+        public void testAnonymousFunctionInitializer() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/anonymousFunctionInitializer.kt");
+        }
+
+        @TestMetadata("anonymousFunctionInitializer2.kt")
+        public void testAnonymousFunctionInitializer2() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/anonymousFunctionInitializer2.kt");
+        }
+
+        @TestMetadata("anonymousFunctionInitializer3.kt")
+        public void testAnonymousFunctionInitializer3() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/anonymousFunctionInitializer3.kt");
+        }
+
         @TestMetadata("funNoBody.kt")
         public void testFunNoBody() throws Exception {
             runTest("idea/testData/intentions/removeExplicitType/funNoBody.kt");
@@ -12489,6 +12503,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("hasAnnotation.kt")
         public void testHasAnnotation() throws Exception {
             runTest("idea/testData/intentions/removeExplicitType/hasAnnotation.kt");
+        }
+
+        @TestMetadata("lambdaExpressionBody.kt")
+        public void testLambdaExpressionBody() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/lambdaExpressionBody.kt");
+        }
+
+        @TestMetadata("lambdaInitializer.kt")
+        public void testLambdaInitializer() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/lambdaInitializer.kt");
+        }
+
+        @TestMetadata("lambdaInitializer2.kt")
+        public void testLambdaInitializer2() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/lambdaInitializer2.kt");
+        }
+
+        @TestMetadata("lambdaInitializer3.kt")
+        public void testLambdaInitializer3() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/lambdaInitializer3.kt");
+        }
+
+        @TestMetadata("lambdaInitializer4.kt")
+        public void testLambdaInitializer4() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/lambdaInitializer4.kt");
+        }
+
+        @TestMetadata("lambdaInitializer5.kt")
+        public void testLambdaInitializer5() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/lambdaInitializer5.kt");
         }
 
         @TestMetadata("notOnParameterOfFunctionType.kt")
