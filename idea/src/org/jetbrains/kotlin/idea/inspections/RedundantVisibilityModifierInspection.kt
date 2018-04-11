@@ -9,7 +9,9 @@ import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.declarationVisitor
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 
 class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -17,12 +19,24 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
         return declarationVisitor { declaration ->
             val visibilityModifier = declaration.visibilityModifier() ?: return@declarationVisitor
             val implicitVisibility = declaration.implicitVisibility()
-            if (visibilityModifier.node.elementType == implicitVisibility) {
-                holder.registerProblem(visibilityModifier,
-                                       "Redundant visibility modifier",
-                                       ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                       IntentionWrapper(RemoveModifierFix(declaration, implicitVisibility, isRedundant = true),
-                                                        declaration.containingFile))
+            val redundantVisibility = when {
+                visibilityModifier.node.elementType == implicitVisibility ->
+                    implicitVisibility
+                declaration.hasModifier(KtTokens.INTERNAL_KEYWORD) && declaration.containingClassOrObject?.isLocal == true ->
+                    KtTokens.INTERNAL_KEYWORD
+                else ->
+                    null
+            }
+            if (redundantVisibility != null) {
+                holder.registerProblem(
+                    visibilityModifier,
+                    "Redundant visibility modifier",
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    IntentionWrapper(
+                        RemoveModifierFix(declaration, redundantVisibility, isRedundant = true),
+                        declaration.containingFile
+                    )
+                )
             }
         }
     }
