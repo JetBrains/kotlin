@@ -29,11 +29,10 @@
 
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
-  <!-- CLION-PLUGIN-PLACEHOLDER-START -->
+  <!-- CIDR-PLUGIN-PLACEHOLDER-START -->
   <depends>com.intellij.modules.java</depends>
-  <depends optional="true" config-file="jvm.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
-  <!-- CLION-PLUGIN-PLACEHOLDER-END -->
+  <!-- CIDR-PLUGIN-PLACEHOLDER-END -->
 
   <project-components>
     <component>
@@ -2823,6 +2822,10 @@
 
     <checkinHandlerFactory implementation="org.jetbrains.kotlin.idea.vcs.BunchFileCheckInHandlerFactory"/>
   </extensions>
+
+  <!-- CIDR-PLUGIN-EXCLUDE-START -->
+  <xi:include href="jvm.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!-- CIDR-PLUGIN-EXCLUDE-END -->
 
   <xi:include href="tipsAndTricks.xml" xpointer="xpointer(/idea-plugin/*)"/>
 

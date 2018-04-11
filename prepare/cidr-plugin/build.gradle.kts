@@ -30,8 +30,13 @@ val pluginXml by tasks.creating {
 
     doFirst {
         val placeholderRegex = Regex(
-                """<!-- CLION-PLUGIN-PLACEHOLDER-START -->(.*)<!-- CLION-PLUGIN-PLACEHOLDER-END -->""",
+                """<!-- CIDR-PLUGIN-PLACEHOLDER-START -->(.*)<!-- CIDR-PLUGIN-PLACEHOLDER-END -->""",
                 RegexOption.DOT_MATCHES_ALL)
+
+        val excludeRegex = Regex(
+            """<!-- CIDR-PLUGIN-EXCLUDE-START -->(.*)<!-- CIDR-PLUGIN-EXCLUDE-END -->""",
+            RegexOption.DOT_MATCHES_ALL)
+
         val versionRegex = Regex("""<version>([^<]+)</version>""")
 
         zipTree(inputs.files.singleFile)
@@ -39,6 +44,7 @@ val pluginXml by tasks.creating {
             .singleFile
             .readText()
             .replace(placeholderRegex, "")
+            .replace(excludeRegex, "")
             .replace(versionRegex, "<version>$pluginFullVersionNumber</version>")
             .also { pluginXmlText ->
                 outputs.files.singleFile.writeText(pluginXmlText)
