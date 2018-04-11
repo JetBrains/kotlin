@@ -10,7 +10,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
     compile(project(":idea:idea-core"))
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "util", "extensions", "asm-all") }
+    compileOnly(intellijDep()) { includeJars("openapi", "java-api", "java-impl", "idea", "util", "extensions", "asm-all") }
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
