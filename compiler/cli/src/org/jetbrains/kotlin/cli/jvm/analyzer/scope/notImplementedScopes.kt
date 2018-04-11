@@ -11,10 +11,10 @@ open class ClassPredicate : ScopePredicate() {
         get() = TODO("not implemented")
 
     fun propertyDefinition(init: PropertyPredicate.() -> Unit): PropertyPredicate {
-        val scope = PropertyPredicate()
-        scope.init()
-        innerPredicates += scope
-        return scope
+        val predicate = PropertyPredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
     }
 }
 

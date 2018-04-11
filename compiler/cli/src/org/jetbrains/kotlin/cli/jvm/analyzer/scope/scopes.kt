@@ -35,31 +35,31 @@ abstract class ScopePredicate : AbstractPredicate() {
     var recursiveSearch = true
 
     fun classDefinition(init: ClassPredicate.() -> Unit): ClassPredicate {
-        val scope = ClassPredicate()
-        scope.init()
-        innerPredicates += scope
-        return scope
+        val predicate = ClassPredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
     }
 
     fun objectDefinition(init: ObjectPredicate.() -> Unit): ObjectPredicate {
-        val scope = ObjectPredicate()
-        scope.init()
-        innerPredicates += scope
-        return scope
+        val predicate = ObjectPredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
     }
 
     fun interfaceDefinition(init: InterfacePredicate.() -> Unit): InterfacePredicate {
-        val scope = InterfacePredicate()
-        scope.init()
-        innerPredicates += scope
-        return scope
+        val predicate = InterfacePredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
     }
 
     fun function(init: FunctionPredicate.() -> Unit): FunctionPredicate {
-        val scope = FunctionPredicate()
-        scope.init()
-        innerPredicates += scope
-        return scope
+        val predicate = FunctionPredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
     }
 }
 
@@ -99,32 +99,40 @@ class CodeBlockPredicate : ScopePredicate() {
     }
 
     fun forLoop(init: ForLoopPredicate.() -> Unit): ForLoopPredicate {
-        val scope = ForLoopPredicate()
-        scope.init()
-        innerPredicates += scope
-        return scope
+        val predicate = ForLoopPredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
     }
 
     fun whileLoop(init: WhileLoopPredicate.() -> Unit): WhileLoopPredicate {
-        val scope = WhileLoopPredicate()
-        scope.init()
-        innerPredicates += scope
-        return scope
+        val predicate = WhileLoopPredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
     }
 
     fun ifCondition(init: IfPredicate.() -> Unit): IfPredicate {
-        val scope = IfPredicate()
-        scope.init()
-        innerPredicates += scope
-        return scope
+        val predicate = IfPredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
     }
 
     fun variableDefinition(init: VariablePredicate.() -> Unit): VariablePredicate {
-        val scope = VariablePredicate()
-        scope.init()
-        innerPredicates += scope
-        return scope
+        val predicate = VariablePredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
     }
+    
+    fun functionCall(func: FunctionPredicate, init: FunctionCallPredicate.() -> Unit): FunctionCallPredicate {
+        val predicate = FunctionCallPredicate(func)
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
+    }
+    
 }
 
 class VariablePredicate : AbstractPredicate() {
@@ -214,17 +222,17 @@ class IfPredicate : AbstractPredicate() {
     }
 
     fun thenBranch(init: CodeBlockPredicate.() -> Unit): CodeBlockPredicate {
-        val scope = CodeBlockPredicate()
-        scope.init()
-        thenPredicate = scope
-        return scope
+        val predicate = CodeBlockPredicate()
+        predicate.init()
+        thenPredicate = predicate
+        return predicate
     }
 
     fun elseBranch(init: CodeBlockPredicate.() -> Unit): CodeBlockPredicate {
-        val scope = CodeBlockPredicate()
-        scope.init()
-        elsePredicate = scope
-        return scope
+        val predicate = CodeBlockPredicate()
+        predicate.init()
+        elsePredicate = predicate
+        return predicate
     }
 }
 
@@ -266,9 +274,18 @@ class ForLoopPredicate : LoopPredicate()
 
 class WhileLoopPredicate : LoopPredicate()
 
-class FunctionCallPredicate : AbstractPredicate() {
+class FunctionCallPredicate(val functionPredicate: FunctionPredicate) : AbstractPredicate() {
     override val visitor: Visitor
-        get() = TODO("not implemented")
+        get() = MyVisitor()
+    
+    inner class MyVisitor : Visitor {
+        override fun visitElement(element: IrElement, data: Unit): VisitorData = falseVisitorData()
+
+        override fun visitCall(expression: IrCall, data: Unit): VisitorData {
+            val calledFunction = expression.symbol.owner
+            return functionPredicate.checkIrNode(calledFunction)
+        }
+    }
 }
 
 class FilePredicate : ScopePredicate() {
@@ -318,7 +335,7 @@ fun analyzer(title: String, init: FilePredicate.() -> Unit): Analyzer {
 }
 
 /*
-    TODO: rename scopes to predicates
+    TODO: rename predicates to predicates
     в analyzer запихнуть главный предикат, убрать наследование от Scope
     DataHolder = Map<>? / emptyMap
     change recursiveSearch to everywhere {...} *minor

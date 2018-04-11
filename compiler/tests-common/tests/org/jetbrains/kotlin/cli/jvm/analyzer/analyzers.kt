@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.cli.jvm.analyzer
 import org.jetbrains.kotlin.cli.jvm.analyzer.scope.analyzer
 
 val analyzers = listOf(
+    functionCallAnalyzer(),
+    functionCallAnalyzer2(),
     analyzerWhile(),
     analyzerFor1(),
     analyzerFor2(),
@@ -15,6 +17,30 @@ val analyzers = listOf(
     analyzerIf2(),
     functionNameAnalyzer()
 )
+
+fun functionCallAnalyzer() = analyzer("call foo") {
+    val foo = function {
+        name = "foo"
+    }
+
+    function {
+        body {
+            functionCall(foo) {}
+        }
+    }
+}
+
+fun functionCallAnalyzer2() = analyzer("call baz") {
+    val baz = function {
+        name = "baz"
+    }
+
+    function {
+        body {
+            functionCall(baz) {}
+        }
+    }
+}
 
 fun functionNameAnalyzer() = analyzer("function name") {
     function {

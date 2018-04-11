@@ -5,6 +5,8 @@ package aaa.bbb
 fun foo() {}
 
 fun bar(): Int {
+    foo()
+
     while(true) {
 
     }
@@ -57,11 +59,3 @@ fun bar(): Int {
 //}
 
 //fun foo(x: Int, y: Int) = x + y
-
-
-//fun f() {
-//    while(true) {
-//        if (true) {} else {}
-//    }
-//
-//}
