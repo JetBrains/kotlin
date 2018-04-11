@@ -24,6 +24,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.changeSignature.CallerChooserBase
+import com.intellij.refactoring.changeSignature.MemberNodeBase
 import com.intellij.refactoring.changeSignature.MethodNodeBase
 import com.intellij.ui.ColoredTreeCellRenderer
 import com.intellij.ui.JBColor
