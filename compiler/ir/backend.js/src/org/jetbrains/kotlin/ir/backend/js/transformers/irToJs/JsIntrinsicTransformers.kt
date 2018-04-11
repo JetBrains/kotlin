@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -32,10 +33,21 @@ class JsIntrinsicTransformers(intrinsics: JsIntrinsics) {
             binOp(intrinsics.jsMult, JsBinaryOperator.MUL)
             binOp(intrinsics.jsDiv, JsBinaryOperator.DIV)
             binOp(intrinsics.jsMod, JsBinaryOperator.MOD)
+
+            add(intrinsics.jsObjectCreate) { call, _ ->
+                val classToCreate = call.getTypeArgument(0)!!
+                val prototype = prototypeOf(classToCreate.constructor.declarationDescriptor!!.name.toJsName().makeRef())
+                JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
+
+            }
         }
     }
 
     operator fun get(symbol: IrSymbol): IrCallTransformer? = transformers[symbol]
+}
+
+private fun MutableMap<IrSymbol, IrCallTransformer>.add(function: IrFunction, t: IrCallTransformer) {
+    put(function.symbol, t)
 }
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrFunction, op: JsBinaryOperator) {
