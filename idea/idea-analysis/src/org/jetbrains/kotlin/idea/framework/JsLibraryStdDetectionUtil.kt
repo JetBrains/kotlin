@@ -49,7 +49,7 @@ object JsLibraryStdDetectionUtil {
         return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION)
     }
 
-    private fun getJsStdLibJar(classesRoots: List<VirtualFile>): VirtualFile? {
+    fun getJsStdLibJar(classesRoots: List<VirtualFile>): VirtualFile? {
         for (root in classesRoots) {
             if (root.fileSystem.protocol !== StandardFileSystems.JAR_PROTOCOL) continue
 
