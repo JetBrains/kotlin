@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 
 open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
@@ -33,8 +31,6 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
     }
 
     lateinit var scope: FirCompositeScope
-    lateinit var packageFqName: FqName
-    private var classLikeName: FqName = FqName.ROOT
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         scope = FirCompositeScope(
@@ -46,7 +42,6 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
                 FirDefaultStarImportingScope(file.session)
             )
         )
-        packageFqName = file.packageFqName
         return super.transformFile(file, data)
     }
 
@@ -64,65 +59,74 @@ open class FirTypeResolveTransformer : FirTransformer<Nothing?>() {
     }
 
     override fun transformClass(klass: FirClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        classLikeName = classLikeName.child(klass.name)
-        val classId = ClassId(packageFqName, classLikeName, false)
-        scope = FirCompositeScope(mutableListOf(scope))
-        scope.scopes += FirClassLikeTypeParameterScope(klass)
-        resolveSuperTypesAndExpansions(klass)
+        return withScopeCleanup {
+            klass.withTypeParametersScope {
+                resolveSuperTypesAndExpansions(klass)
 
+                val firProvider = FirProvider.getInstance(klass.session)
+                val classId = klass.symbol.classId
+                scope.scopes += FirNestedClassifierScope(classId, firProvider)
+                val companionObjects = klass.declarations.filterIsInstance<FirClass>().filter { it.isCompanion }
+                for (companionObject in companionObjects) {
+                    scope.scopes += FirNestedClassifierScope(companionObject.symbol.classId, firProvider)
+                }
 
-        val firProvider = FirProvider.getInstance(klass.session)
-        scope.scopes += FirNestedClassifierScope(classId, firProvider)
-        val companionObjects = klass.declarations.filterIsInstance<FirClass>().filter { it.isCompanion }
-        for (companionObject in companionObjects) {
-            val companionId = ClassId(packageFqName, classLikeName.child(companionObject.name), false)
-            scope.scopes += FirNestedClassifierScope(companionId, firProvider)
-        }
-
-        val superTypeScopes = lookupSuperTypes(klass).map {
-            val symbol = it.symbol
-            if (symbol is FirBasedSymbol<*>) {
-                FirNestedClassifierScope(symbol.classId, FirProvider.getInstance(symbol.fir.session))
-            } else {
-                FirNestedClassifierScope(symbol.classId, FirSymbolProvider.getInstance(klass.session))
+                lookupSuperTypes(klass).mapTo(scope.scopes) {
+                    val symbol = it.symbol
+                    if (symbol is FirBasedSymbol<*>) {
+                        FirNestedClassifierScope(symbol.classId, FirProvider.getInstance(symbol.fir.session))
+                    } else {
+                        FirNestedClassifierScope(symbol.classId, FirSymbolProvider.getInstance(klass.session))
+                    }
+                }
+                super.transformClass(klass, data)
             }
         }
-        scope.scopes.addAll(superTypeScopes)
-        val result = super.transformClass(klass, data)
-        scope = scope.scopes[0] as FirCompositeScope
-        classLikeName = classLikeName.parent()
-
-        return result
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        classLikeName = classLikeName.child(typeAlias.name)
-        if (typeAlias.typeParameters.isNotEmpty()) {
-            scope = FirCompositeScope(mutableListOf(scope))
-            scope.scopes += FirClassLikeTypeParameterScope(typeAlias)
+        // TODO: Remove comment when KT-23742 fixed
+        // Warning: boxing inline class here ()
+        return typeAlias.withTypeParametersScope {
+            resolveSuperTypesAndExpansions(typeAlias)
+            super.transformTypeAlias(typeAlias, data)
         }
+    }
 
-        resolveSuperTypesAndExpansions(typeAlias)
 
-        if (typeAlias.typeParameters.isNotEmpty()) {
-            scope = scope.scopes[0] as FirCompositeScope
+    private inline fun <T> FirMemberDeclaration.withTypeParametersScope(crossinline l: () -> T): T {
+        val scopes = scope.scopes
+        if (typeParameters.isNotEmpty()) {
+            scopes += FirMemberTypeParameterScope(this)
         }
-        classLikeName = classLikeName.parent()
-        return super.transformTypeAlias(typeAlias, data)
+        val result = l()
+        if (typeParameters.isNotEmpty()) {
+            scopes.removeAt(scopes.lastIndex)
+        }
+        return result
+    }
+
+    private inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
+        val scopeBefore = scope
+        val scopes = scope.scopes
+        val sizeBefore = scopes.size
+        val result = l()
+        scope = scopeBefore
+        assert(scopes.size >= sizeBefore)
+        scopes.subList(sizeBefore + 1, scopes.size).clear()
+        return result
+    }
+
+    override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        return property.withTypeParametersScope {
+            super.transformProperty(property, data)
+        }
     }
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        if (namedFunction.typeParameters.isNotEmpty()) {
-            scope = FirCompositeScope(mutableListOf(scope))
-            scope.scopes += FirFunctionTypeParameterScope(namedFunction)
+        return namedFunction.withTypeParametersScope {
+            super.transformNamedFunction(namedFunction, data)
         }
-
-        val result = super.transformNamedFunction(namedFunction, data)
-        if (namedFunction.typeParameters.isNotEmpty()) {
-            scope = scope.scopes[0] as FirCompositeScope
-        }
-
-        return result
     }
 
     override fun transformType(type: FirType, data: Nothing?): CompositeTransformResult<FirType> {
