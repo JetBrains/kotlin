@@ -36,6 +36,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ArrayUtil
+import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
@@ -200,7 +201,11 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
         val mainFileDir = mainFile.parentFile!!
 
         val mainFileName = mainFile.name
-        val extraFiles = mainFileDir.listFiles { _, name -> name.startsWith(extraFileNamePrefix(mainFileName)) && name != mainFileName }!!
+        val extraFiles = mainFileDir.listFiles { _, name ->
+            name.startsWith(extraFileNamePrefix(mainFileName))
+                    && name != mainFileName
+                    && PathUtil.getFileExtension(name).let { it == "kt" || it == "java" || it == "groovy" }
+        }!!
 
         val testFiles = ArrayList<String>()
         testFiles.add(mainFile.name)

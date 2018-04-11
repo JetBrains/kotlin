@@ -25,6 +25,7 @@ import com.intellij.slicer.SliceAnalysisParams
 import com.intellij.slicer.SliceNode
 import com.intellij.slicer.SliceRootNode
 import com.intellij.usages.TextChunk
+import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -112,7 +113,9 @@ abstract class AbstractSlicerTest : KotlinLightCodeInsightFixtureTestCase() {
         val rootDir = mainFile.parentFile
 
         val namePrefix = FileUtil.getNameWithoutExtension(mainFile)
-        val extraFiles = rootDir.listFiles { _, name -> name.startsWith("$namePrefix.") }
+        val extraFiles = rootDir.listFiles { _, name ->
+            name.startsWith("$namePrefix.") && PathUtil.getFileExtension(name).let { it == "kt" || it == "java" }
+        }
 
         myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${rootDir.path}"
 
