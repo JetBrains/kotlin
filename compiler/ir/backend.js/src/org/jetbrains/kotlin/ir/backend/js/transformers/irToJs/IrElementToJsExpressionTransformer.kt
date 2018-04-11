@@ -83,14 +83,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
-        // TODO rewrite more accurately, right now it just copy-pasted and adopted from old version
-        // TODO support:
-        // * ir intrinsics
-        // * js be intrinsics
-        // * js function
-        // * getters and setters
-        // * binary and unary operations
-
         if (expression.symbol == context.staticContext.backendContext.objectCreate.symbol) {
             // TODO: temporary workaround until there is no an intrinsic infrastructure
             assert(expression.typeArgumentsCount == 1 && expression.valueArgumentsCount == 0)
@@ -104,8 +96,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val dispatchReceiver = expression.dispatchReceiver?.accept(this, context)
         val extensionReceiver = expression.extensionReceiver?.accept(this, context)
 
-
         val arguments = translateCallArguments(expression, context)
+
+        context.staticContext.intrinsics[symbol]?.let {
+            return it(expression, arguments)
+        }
 
         return if (symbol is IrConstructorSymbol) {
             JsNew(JsNameRef((symbol.owner.parent as IrClass).name.asString()), arguments)
