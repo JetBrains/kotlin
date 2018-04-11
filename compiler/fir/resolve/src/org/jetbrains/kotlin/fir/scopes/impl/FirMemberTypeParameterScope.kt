@@ -8,6 +8,6 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
 
-class FirClassLikeTypeParameterScope(classLike: FirMemberDeclaration) : FirTypeParameterScope {
-    override val typeParameters = classLike.typeParameters.groupBy { it.name }
+class FirMemberTypeParameterScope(callableMember: FirMemberDeclaration) : FirTypeParameterScope {
+    override val typeParameters = callableMember.typeParameters.groupBy { it.name }
 }
