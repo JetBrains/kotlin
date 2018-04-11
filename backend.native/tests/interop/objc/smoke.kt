@@ -46,7 +46,7 @@ fun run() {
     // hashCode (directly):
     if (foo.hashCode() == foo.hash().toInt()) {
         // toString (virtually):
-        println(map.keys.map { it.toString() }.min() == foo.description())
+        println(listOf(foo, pair).map { it.toString() }.min() == foo.description())
     }
 
     println(globalString)
