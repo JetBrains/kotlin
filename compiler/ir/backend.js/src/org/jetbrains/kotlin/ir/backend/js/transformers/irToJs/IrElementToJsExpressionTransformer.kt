@@ -83,14 +83,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
-        if (expression.symbol == context.staticContext.backendContext.objectCreate.symbol) {
-            // TODO: temporary workaround until there is no an intrinsic infrastructure
-            assert(expression.typeArgumentsCount == 1 && expression.valueArgumentsCount == 0)
-            val classToCreate = expression.getTypeArgument(0)!!
-            val prototype = prototypeOf(classToCreate.constructor.declarationDescriptor!!.name.toJsName().makeRef())
-            return JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
-        }
-
         val symbol = expression.symbol
 
         val dispatchReceiver = expression.dispatchReceiver?.accept(this, context)

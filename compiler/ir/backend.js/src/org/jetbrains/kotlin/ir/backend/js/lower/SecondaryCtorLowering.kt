@@ -232,7 +232,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
             ctorOrig.origin, functionSymbol
         )
 
-        val createFunctionIntrinsic = context.objectCreate
+        val createFunctionIntrinsic = context.intrinsics.jsObjectCreate
         val irBuilder = context.createIrBuilder(functionSymbol, ctorOrig.startOffset, ctorOrig.endOffset).irBlockBody {
             val thisVar = irTemporaryVar(
                 IrCallImpl(
