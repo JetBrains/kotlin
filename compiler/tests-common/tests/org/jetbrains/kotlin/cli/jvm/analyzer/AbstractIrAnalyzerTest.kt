@@ -103,6 +103,7 @@ abstract class AbstractIrAnalyzerTest : AbstractDiagnosticsTestWithStdLib() {
             println("------------${analyzer.title}------------")
             analyzer.execute(irModule, moduleDescriptor, bindingContext)
             println("------------")
+            println()
         }
     }
 

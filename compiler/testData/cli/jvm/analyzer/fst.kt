@@ -5,8 +5,11 @@ package aaa.bbb
 fun foo() {}
 
 fun bar(): Int {
-    foo()
+    while(true) {
 
+    }
+//    foo()
+//
     while (true) {
         val whileA = 1
         if (true) {
@@ -15,7 +18,7 @@ fun bar(): Int {
             val whileElse = 1
         }
     }
-
+//
     for (x in 0..10) {
         val forA = x
         foo()
@@ -23,18 +26,18 @@ fun bar(): Int {
             val forIf = x
         }
     }
-
-    if (true) {
-        foo()
-        val thenV = 10
-    } else {
-        foo()
-        val elseV = 10
-    }
-
-    if (true) {
-        val thenNoElse = 10
-    }
+//
+//    if (true) {
+//        foo()
+//        val thenV = 10
+//    } else {
+//        foo()
+//        val elseV = 10
+//    }
+//
+//    if (true) {
+//        val thenNoElse = 10
+//    }
 }
 
 //fun baz() {
@@ -55,3 +58,11 @@ fun bar(): Int {
 //}
 
 //fun foo(x: Int, y: Int) = x + y
+
+
+fun f() {
+    while(true) {
+        if (true) {} else {}
+    }
+
+}

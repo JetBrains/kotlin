@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.analyzer
 
-import org.jetbrains.kotlin.cli.jvm.analyzer.scope.newAnalyzer
+import org.jetbrains.kotlin.cli.jvm.analyzer.scope.analyzer
 
 val analyzers = listOf(
     analyzerWhile(),
@@ -16,16 +16,14 @@ val analyzers = listOf(
     functionNameAnalyzer()
 )
 
-fun functionNameAnalyzer() = newAnalyzer {
-    title = "function name"
+fun functionNameAnalyzer() = analyzer("function name") {
     function {
         name = "foo"
         info = { println("$name founded") }
     }
 }
 
-fun analyzerWhile() = newAnalyzer {
-    title = "while"
+fun analyzerWhile() = analyzer("while") {
     function {
         body {
             whileLoop {
@@ -39,8 +37,7 @@ fun analyzerWhile() = newAnalyzer {
     }
 }
 
-fun analyzerFor1() = newAnalyzer {
-    title = "for recursive true"
+fun analyzerFor1() = analyzer("for recursive true") {
     function {
         body {
             forLoop {
@@ -55,8 +52,7 @@ fun analyzerFor1() = newAnalyzer {
     }
 }
 
-fun analyzerFor2() = newAnalyzer {
-    title = "for recursive false"
+fun analyzerFor2() = analyzer("for recursive false") {
     function {
         body {
             forLoop {
@@ -71,8 +67,7 @@ fun analyzerFor2() = newAnalyzer {
     }
 }
 
-fun analyzerIf1() = newAnalyzer {
-    title = "if then else"
+fun analyzerIf1() = analyzer("if then else") {
     function {
         body {
             ifCondition {
@@ -91,8 +86,7 @@ fun analyzerIf1() = newAnalyzer {
     }
 }
 
-fun analyzerIf2() = newAnalyzer {
-    title = "if then else no rec"
+fun analyzerIf2() = analyzer("if then else no rec") {
     function {
         body {
             recursiveSearch = false

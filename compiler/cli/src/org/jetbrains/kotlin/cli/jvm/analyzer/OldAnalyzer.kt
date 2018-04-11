@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class Analyzer {
+class OldAnalyzer {
     private val issues = mutableListOf<Issue>()
 
     fun functionIssue(init: FunctionDeclarationIssue.() -> Unit) {
@@ -27,10 +27,10 @@ class Analyzer {
     }
 }
 
-fun analyzer(
-    init: Analyzer.() -> Unit
-): Analyzer {
-    val analyzer = Analyzer()
+fun oldAnalyzer(
+    init: OldAnalyzer.() -> Unit
+): OldAnalyzer {
+    val analyzer = OldAnalyzer()
     analyzer.init()
     return analyzer
 }
