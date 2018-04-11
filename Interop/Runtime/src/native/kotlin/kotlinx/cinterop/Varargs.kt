@@ -44,7 +44,7 @@ private tailrec fun convertArgument(
             // If it is fixed argument, then it is not C string because it must have been already converted;
             // then treat it as NSString.
             // TODO: handle fixed NSString arguments in the stub instead.
-            interpretCPointer<COpaque>(CreateNSStringFromKString(argument))
+            interpretCPointer<COpaque>(argument.objcPtr())
         } else {
             // It is passed as variadic argument; no type information available, so treat it as C string.
             argument.cstr.getPointer(additionalPlacement)
@@ -93,7 +93,7 @@ private tailrec fun convertArgument(
     is CEnum -> convertArgument(argument.value, isVariadic, location, additionalPlacement)
 
     is ForeignObjCObject -> {
-        location.reinterpret<COpaquePointerVar>()[0] = interpretCPointer((argument as ObjCObject).rawPtr())
+        location.reinterpret<COpaquePointerVar>()[0] = interpretCPointer(argument.objcPtr())
         FFI_TYPE_KIND_POINTER
     }
 

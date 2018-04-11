@@ -166,10 +166,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val getObjCClass = packageScope.getContributedFunctions("getObjCClass").single()
 
-    val objCObjectRawPtr = packageScope.getContributedFunctions("rawPtr").single {
-        val extensionReceiverType = it.extensionReceiverParameter?.type
-        extensionReceiverType != null && TypeUtils.getClassDescriptor(extensionReceiverType) == objCObject
-    }
+    val objCObjectRawPtr = packageScope.getContributedFunctions("objcPtr").single()
 
     val getObjCReceiverOrSuper = packageScope.getContributedFunctions("getReceiverOrSuper").single()
 

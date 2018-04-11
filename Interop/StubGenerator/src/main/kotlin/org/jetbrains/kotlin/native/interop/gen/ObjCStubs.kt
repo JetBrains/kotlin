@@ -506,11 +506,11 @@ class ObjCPropertyStub(
         }
         val result = mutableListOf(
                 "$modifiers$kind $receiver${property.name.asSimpleName()}: $kotlinType",
-                "    get() = ${getterStub.bridgeName}(nativeNullPtr, this.rawPtr())"
+                "    get() = ${getterStub.bridgeName}(nativeNullPtr, this.objcPtr())"
         )
 
         property.setter?.let {
-            result.add("    set(value) = ${setterStub!!.bridgeName}(nativeNullPtr, this.rawPtr(), value)")
+            result.add("    set(value) = ${setterStub!!.bridgeName}(nativeNullPtr, this.objcPtr(), value)")
         }
 
         return result.asSequence()

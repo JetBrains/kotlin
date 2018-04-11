@@ -29,11 +29,11 @@ inline fun <R> autoreleasepool(block: () -> R): R {
 fun <T : ObjCObject> ObjCObject.reinterpret() = @Suppress("DEPRECATION") this.uncheckedCast<T>()
 
 // TODO: null checks
-var <T : ObjCObject?> ObjCObjectVar<T>.value: T
+var <T> ObjCObjectVar<T>.value: T
     @Suppress("DEPRECATION") get() =
         interpretObjCPointerOrNull<T>(nativeMemUtils.getNativePtr(this)).uncheckedCast<T>()
 
-    set(value) = nativeMemUtils.putNativePtr(this, value.rawPtr())
+    set(value) = nativeMemUtils.putNativePtr(this, value.objcPtr())
 
 /**
  * Makes Kotlin method in Objective-C class accessible through Objective-C dispatch

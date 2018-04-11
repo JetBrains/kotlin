@@ -38,7 +38,7 @@ private fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
     if (superInitCallResult == null)
         throw RuntimeException("Super initialization failed")
 
-    if (superInitCallResult.rawPtr() != this.rawPtr())
+    if (superInitCallResult.objcPtr() != this.objcPtr())
         throw UnsupportedOperationException("Super initializer has replaced object")
 }
 
@@ -46,25 +46,25 @@ private fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
 fun <T : Any?> Any?.uncheckedCast(): T = @Suppress("UNCHECKED_CAST") (this as T) // TODO: make private
 
 @SymbolName("Kotlin_Interop_refFromObjC")
-external fun <T : ObjCObject?> interpretObjCPointerOrNull(rawPtr: NativePtr): T?
+external fun <T> interpretObjCPointerOrNull(objcPtr: NativePtr): T?
 
-inline fun <T : ObjCObject> interpretObjCPointer(rawPtr: NativePtr): T = interpretObjCPointerOrNull<T>(rawPtr)!!
+inline fun <T : Any> interpretObjCPointer(objcPtr: NativePtr): T = interpretObjCPointerOrNull<T>(objcPtr)!!
 
 @SymbolName("Kotlin_Interop_refToObjC")
-external fun ObjCObject?.rawPtr(): NativePtr
+external fun Any?.objcPtr(): NativePtr
 
 @SymbolName("Kotlin_Interop_createKotlinObjectHolder")
 external fun createKotlinObjectHolder(any: Any?): NativePtr
 
-inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: ObjCObject?): T {
-    return unwrapKotlinObjectHolderImpl(holder!!.rawPtr()) as T
+inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: Any?): T {
+    return unwrapKotlinObjectHolderImpl(holder!!.objcPtr()) as T
 }
 
 @PublishedApi
 @SymbolName("Kotlin_Interop_unwrapKotlinObjectHolder")
 external internal fun unwrapKotlinObjectHolderImpl(ptr: NativePtr): Any
 
-class ObjCObjectVar<T : ObjCObject?>(rawPtr: NativePtr) : CVariable(rawPtr) {
+class ObjCObjectVar<T>(rawPtr: NativePtr) : CVariable(rawPtr) {
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
@@ -139,9 +139,11 @@ private external fun <T : ObjCObject> getObjCClass(): NativePtr
 
 // Konan runtme:
 
+@Deprecated("Use plain Kotlin cast of String to NSString", level = DeprecationLevel.WARNING)
 @SymbolName("Kotlin_Interop_CreateNSStringFromKString")
 external fun CreateNSStringFromKString(str: String?): NativePtr
 
+@Deprecated("Use plain Kotlin cast of NSString to String", level = DeprecationLevel.WARNING)
 @SymbolName("Kotlin_Interop_CreateKStringFromNSString")
 external fun CreateKStringFromNSString(ptr: NativePtr): String?
 
