@@ -36,7 +36,7 @@ class JvmBuiltInClassDescriptorFactory(
         ClassDescriptorImpl(
                 computeContainingDeclaration(moduleDescriptor),
                 CLONEABLE_NAME, Modality.ABSTRACT, ClassKind.INTERFACE, listOf(moduleDescriptor.builtIns.anyType),
-                SourceElement.NO_SOURCE, /* isExternal = */ false
+                SourceElement.NO_SOURCE, /* isExternal = */ false, storageManager
         ).apply {
             initialize(CloneableClassScope(storageManager, this), emptySet(), null)
         }

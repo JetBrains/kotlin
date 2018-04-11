@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
                 supertypes.add(substitutor.substitute(supertype, Variance.INVARIANT));
             }
 
-            typeConstructor = new ClassTypeConstructorImpl(this, typeConstructorParameters, supertypes);
+            typeConstructor = new ClassTypeConstructorImpl(this, typeConstructorParameters, supertypes, LockBasedStorageManager.NO_LOCKS);
         }
 
         return typeConstructor;

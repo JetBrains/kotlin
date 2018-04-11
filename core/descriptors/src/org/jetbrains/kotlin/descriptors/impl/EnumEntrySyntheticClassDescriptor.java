@@ -69,7 +69,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         this.annotations = annotations;
         this.typeConstructor = new ClassTypeConstructorImpl(
-                this, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype)
+                this, Collections.<TypeParameterDescriptor>emptyList(), Collections.singleton(supertype), storageManager
         );
 
         this.scope = new EnumEntryScope(storageManager);
