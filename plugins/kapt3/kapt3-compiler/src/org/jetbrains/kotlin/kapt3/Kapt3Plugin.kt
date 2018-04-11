@@ -229,7 +229,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         try {
             Class.forName(JAVAC_CONTEXT_CLASS)
         } catch (e: ClassNotFoundException) {
-            logger.warn("'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is absent in the plugin classpath). Kapt won't work.")
+            logger.error("'$JAVAC_CONTEXT_CLASS' class can't be found ('tools.jar' is absent in the plugin classpath). Kapt won't work.")
             return
         }
 
