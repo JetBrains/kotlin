@@ -64,7 +64,7 @@ fun sendTokenKeyPair(output: FileOutputStream, token: ByteArray, privateKey: Pri
 }
 
 suspend fun getSignatureAndVerify(input: ByteReadChannelWrapper, expectedToken: ByteArray, publicKey: PublicKey): Boolean {
-    val signature = input.readBytes(input.getLength())
+    val signature = input.nextBytes()
     val dsa = Signature.getInstance("SHA1withDSA", "SUN")
     dsa.initVerify(publicKey)
     dsa.update(expectedToken, 0, SECURITY_TOKEN_SIZE)
@@ -84,7 +84,4 @@ fun readTokenKeyPairAndSign(input: FileInputStream): ByteArray {
     return dsa.sign()
 }
 
-suspend fun sendSignature(output: ByteWriteChannelWrapper, signature: ByteArray) {
-    output.printLength(signature.size)
-    output.printBytes(signature)
-}
+suspend fun sendSignature(output: ByteWriteChannelWrapper, signature: ByteArray) = output.printBytesAndLength(signature.size, signature)

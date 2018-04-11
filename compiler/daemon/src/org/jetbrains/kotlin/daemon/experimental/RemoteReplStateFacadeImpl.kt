@@ -9,7 +9,6 @@ import io.ktor.network.sockets.Socket
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompilerState
 import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_FIND_PORT_ATTEMPTS
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 
@@ -17,12 +16,14 @@ import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 class RemoteReplStateFacadeServerSide(
     val _id: Int,
     val state: GenericReplCompilerState,
-    override val serverPort: Int = findPortForSocket(
+    override val serverSocketWithPort: ServerSocketWrapper = findPortForSocket(
         COMPILE_DAEMON_FIND_PORT_ATTEMPTS,
         REPL_SERVER_PORTS_RANGE_START,
         REPL_SERVER_PORTS_RANGE_END
     )
 ) : ReplStateFacadeServerSide {
+
+    override val clients = hashMapOf<Socket, Server.ClientInfo>()
 
     override suspend fun getId(): Int = _id
 
@@ -35,7 +36,7 @@ class RemoteReplStateFacadeServerSide(
     override suspend fun historyResetTo(id: ILineId): List<ILineId> = state.history.resetTo(id).toList()
 
     val clientSide: RemoteReplStateFacadeClientSide
-        get() = RemoteReplStateFacadeClientSide(serverPort)
+        get() = RemoteReplStateFacadeClientSide(serverSocketWithPort.port)
 
 }
 
@@ -43,28 +44,28 @@ class RemoteReplStateFacadeServerSide(
 class RemoteReplStateFacadeClientSide(val serverPort: Int) : ReplStateFacadeClientSide, Client<ReplStateFacadeServerSide> by DefaultClient(serverPort) {
 
     override suspend fun getId(): Int {
-        sendMessage(ReplStateFacadeServerSide.GetIdMessage()).await()
-        return readMessage<Int>().await()
+        val id = sendMessage(ReplStateFacadeServerSide.GetIdMessage())
+        return readMessage(id)
     }
 
     override suspend fun getHistorySize(): Int {
-        sendMessage(ReplStateFacadeServerSide.GetHistorySizeMessage()).await()
-        return readMessage<Int>().await()
+        val id = sendMessage(ReplStateFacadeServerSide.GetHistorySizeMessage())
+        return readMessage(id)
     }
 
     override suspend fun historyGet(index: Int): ILineId {
-        sendMessage(ReplStateFacadeServerSide.HistoryGetMessage(index)).await()
-        return readMessage<ILineId>().await()
+        val id = sendMessage(ReplStateFacadeServerSide.HistoryGetMessage(index))
+        return readMessage(id)
     }
 
     override suspend fun historyReset(): List<ILineId> {
-        sendMessage(ReplStateFacadeServerSide.HistoryResetMessage()).await()
-        return readMessage<List<ILineId>>().await()
+        val id = sendMessage(ReplStateFacadeServerSide.HistoryResetMessage())
+        return readMessage(id)
     }
 
     override suspend fun historyResetTo(id: ILineId): List<ILineId> {
-        sendMessage(ReplStateFacadeServerSide.HistoryResetToMessage(id)).await()
-        return readMessage<List<ILineId>>().await()
+        val id = sendMessage(ReplStateFacadeServerSide.HistoryResetToMessage(id))
+        return readMessage(id)
     }
 
 }

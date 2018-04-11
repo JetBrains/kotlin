@@ -6,14 +6,9 @@
 package org.jetbrains.kotlin.daemon.client.experimental
 
 import io.ktor.network.sockets.Socket
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.daemon.client.reportFromDaemon
-import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_FIND_PORT_ATTEMPTS
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.daemon.common.experimental.*
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ByteWriteChannelWrapper
-
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
+
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -21,7 +16,6 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartPro
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.isProcessCanceledException
-import java.io.File
 import java.io.Serializable
 import java.util.logging.Logger
 
@@ -29,13 +23,15 @@ open class CompilerCallbackServicesFacadeServerSide(
     val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
     val lookupTracker: LookupTracker? = null,
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
-    override val serverPort: Int = findCallbackServerSocket()
+    override val serverSocketWithPort: ServerSocketWrapper = findCallbackServerSocket()
 ) : CompilerServicesFacadeBaseServerSide {
+
+    override val clients = hashMapOf<Socket, Server.ClientInfo>()
 
     private val log = Logger.getLogger("CompilerCallbackServicesFacadeServerSide")
 
     val clientSide : CompilerServicesFacadeBaseClientSide
-        get() = CompilerServicesFacadeBaseClientSideImpl(serverPort)
+        get() = CompilerServicesFacadeBaseClientSideImpl(serverSocketWithPort.port)
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         //TODO : some report

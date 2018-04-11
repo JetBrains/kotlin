@@ -10,6 +10,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSideImpl
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseServerSide
+import org.jetbrains.kotlin.daemon.common.experimental.ReplStateFacadeAsync
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import org.jetbrains.kotlin.daemon.common.experimental.toRMI
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
@@ -28,12 +29,7 @@ class TestServer(val serverPort: Int = 6999) {
         log.info("client accepted! (${client.remoteAddress})")
         val (input, output) = client.openIO(log)
 
-        if (runBlocking { !tryAcquireHandshakeMessage(input, log) || !trySendHandshakeMessage(output) }) {
-            log.info("failed to establish connection with client (handshake failed)")
-            false
-        } else {
-            true
-        }
+        true
     }
 }
 
@@ -64,7 +60,7 @@ class ClientSerializationTest : KotlinIntegrationTestBase() {
                     it.readObject() as T
                 }
             }
-            connected = runWithTimeout { clientAwait.await() }
+            connected = runWithTimeout { clientAwait.await() } ?: false
         }
         assert(connected)
         log.info("read")
@@ -88,5 +84,10 @@ class ClientSerializationTest : KotlinIntegrationTestBase() {
     )
 
     fun testRMIWrapper() = abstractSerializationTest({ CompilerServicesFacadeBaseClientSideImpl(testServer.serverPort).toRMI() })
+
+//    fun testReplAsync() = abstractSerializationTest(
+//        { ReplStateFacadeAsyncC(testServer.serverPort) },
+//        { client, client2 -> assert(client.serverPort == client2.serverPort) }
+//    )
 
 }

@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.daemon.client.experimental
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.daemon.client.RemoteReplCompilerState
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSide
+import org.jetbrains.kotlin.daemon.common.experimental.ServerSocketWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.findCallbackServerSocket
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
@@ -23,10 +24,9 @@ open class KotlinRemoteReplCompilerClientAsync(
     args: Array<out String>,
     messageCollector: MessageCollector,
     templateClasspath: List<File>,
-    templateClassName: String,
-    port: Int = SOCKET_ANY_FREE_PORT
+    templateClassName: String
 ) : ReplCompiler {
-    val services = BasicCompilerServicesWithResultsFacadeServerServerSide(messageCollector, null, port)
+    val services = BasicCompilerServicesWithResultsFacadeServerServerSide(messageCollector, null, findCallbackServerSocket())
 
     val sessionId = runBlocking {
         compileService.leaseReplSession(
@@ -61,11 +61,18 @@ open class KotlinRemoteReplCompilerClientAsync(
     }
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> =
-        runBlocking { RemoteReplCompilerStateAsync(compileService.replCreateState(sessionId).get(), lock) }
+        runBlocking {
+            println("creating state...")
+            val stateRes = compileService.replCreateState(sessionId)
+            println("stateRes = $stateRes")
+            val state = stateRes.get()
+            println("state = $state")
+            RemoteReplCompilerStateAsync(state, lock)
+        }
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult =
-        runBlocking { compileService.replCheck(sessionId, state.asState(RemoteReplCompilerState::class.java).replStateFacade.getId(), codeLine).get() }
+        runBlocking { compileService.replCheck(sessionId, state.asState(RemoteReplCompilerStateAsync::class.java).replStateFacade.getId(), codeLine).get() }
 
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult =
-        runBlocking { compileService.replCompile(sessionId, state.asState(RemoteReplCompilerState::class.java).replStateFacade.getId(), codeLine).get() }
+        runBlocking { compileService.replCompile(sessionId, state.asState(RemoteReplCompilerStateAsync::class.java).replStateFacade.getId(), codeLine).get() }
 }

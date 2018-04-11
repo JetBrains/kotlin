@@ -20,8 +20,8 @@ interface CompilationResultsServerSide : CompilationResultsAsync, Server<Compila
     class AddMessage(
         val compilationResultCategory: Int,
         val value: Serializable
-    ) : Server.Message<CompilationResultsServerSide> {
-        override suspend fun process(server: CompilationResultsServerSide, output: ByteWriteChannelWrapper) {
+    ) : Server.Message<CompilationResultsServerSide>() {
+        override suspend fun processImpl(server: CompilationResultsServerSide, printObject: (Any?) -> Unit) {
             server.add(compilationResultCategory, value)
         }
     }
