@@ -2792,6 +2792,8 @@
 
     <statistics.usagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector" />
     <statistics.usagesCollector implementation="org.jetbrains.kotlin.idea.parameterInfo.KotlinInlayParameterHintsUsageCollector" />
+
+    <checkinHandlerFactory implementation="org.jetbrains.kotlin.idea.vcs.BunchFileCheckInHandlerFactory"/>
   </extensions>
 
   <xi:include href="tipsAndTricks.xml" xpointer="xpointer(/idea-plugin/*)"/>
