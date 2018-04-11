@@ -441,6 +441,7 @@ class RunStandaloneKonanTest extends KonanTest {
 // project.exec + a shell script isolate the jvm
 // from IDEA. Use the RunKonanTest instead.
 class RunDriverKonanTest extends KonanTest {
+    public def inDevelopersRun = true
 
     RunDriverKonanTest() {
         super()
@@ -478,6 +479,7 @@ class RunDriverKonanTest extends KonanTest {
 }
 
 class RunInteropKonanTest extends KonanTest {
+    public def inDevelopersRun = true
 
     private String interop
     private NamedNativeInteropConfig interopConf
