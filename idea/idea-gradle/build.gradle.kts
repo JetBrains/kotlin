@@ -14,7 +14,7 @@ dependencies {
 
     compile(project(":js:js.frontend"))
 
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "external-system-rt", "forms_rt", "extensions", "jdom", "util") }
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "external-system-rt", "forms_rt", "java-api", "java-impl", "extensions", "jdom", "util") }
     compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-api", "gradle", rootProject = rootProject) }
     compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     compileOnly(intellijPluginDep("junit")) { includeJars("idea-junit") }
@@ -24,7 +24,7 @@ dependencies {
 
     testCompile(intellijPluginDep("gradle")) { includeJars("gradle-wrapper", "gradle-tooling-extension-impl", "gradle-api", "gradle", rootProject = rootProject) }
     testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
-    testCompileOnly(intellijDep()) { includeJars("groovy-all", "idea_rt", rootProject = rootProject) }
+    testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl", "groovy-all", "idea_rt", rootProject = rootProject) }
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
