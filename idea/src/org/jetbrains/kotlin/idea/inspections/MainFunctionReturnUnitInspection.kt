@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 class MainFunctionReturnUnitInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return namedFunctionVisitor(fun(function: KtNamedFunction) {
+            if (function.name != "main") return
 
             val descriptor = function.descriptor as? FunctionDescriptor ?: return
             if (!MainFunctionDetector.isMain(descriptor, checkReturnType = false)) return
