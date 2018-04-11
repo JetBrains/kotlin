@@ -87,7 +87,7 @@ internal fun emitLLVM(context: Context) {
     }
 
     @Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
-    var devirtualizationAnalysisResult: Map<DataFlowIR.Node.VirtualCall, Devirtualization.DevirtualizedCallSite>? = null
+    var devirtualizationAnalysisResult: Devirtualization.AnalysisResult? = null
     phaser.phase(KonanPhase.DEVIRTUALIZATION) {
         devirtualizationAnalysisResult = Devirtualization.run(irModule, context, moduleDFG!!, externalModulesDFG!!)
 
@@ -107,7 +107,7 @@ internal fun emitLLVM(context: Context) {
     }
 
     phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
-        val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG!!).build()
+        val callGraph = CallGraphBuilder(context, moduleDFG!!, externalModulesDFG!!, devirtualizationAnalysisResult, false).build()
         EscapeAnalysis.computeLifetimes(moduleDFG!!, externalModulesDFG!!, callGraph, lifetimes)
     }
 
