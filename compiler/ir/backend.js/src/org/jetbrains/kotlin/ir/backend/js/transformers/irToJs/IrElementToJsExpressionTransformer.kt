@@ -74,6 +74,14 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
     }
 
+    override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsExpression {
+        return JsBinaryOperation(JsBinaryOperator.COMMA, JsStringLiteral("<return>"), expression.value.accept(IrElementToJsExpressionTransformer(), context))
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, context: JsGenerationContext): JsExpression {
+        return expression.argument.accept(IrElementToJsExpressionTransformer(), context)
+    }
+
     override fun <T> visitConst(expression: IrConst<T>, context: JsGenerationContext): JsExpression {
         val kind = expression.kind
         return when (kind) {

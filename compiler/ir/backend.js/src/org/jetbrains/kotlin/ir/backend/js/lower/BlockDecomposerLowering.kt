@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -125,7 +127,13 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
         override fun visitReturn(expression: IrReturn, data: VisitData): VisitResult {
             val expressionResult = expression.value.accept(expressionVisitor, data)
 
-            return expressionResult.runIfChanged {
+            val target = expression.returnTargetSymbol
+            return returnMap[target]?.let { (variable, loop) ->
+                val (st, result) = expressionResult.runIfChangedOrDefault(mutableListOf<IrStatement>() to expression.value) { statements to resultValue }
+                st += JsIrBuilder.buildSetVariable(variable, result)
+                st += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
+                DecomposedResult(st, unitValue)
+            } ?: expressionResult.runIfChanged {
                 val returnValue = expressionResult.resultValue
                 expressionResult.statements += IrReturnImpl(
                     expression.startOffset,
@@ -345,8 +353,15 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
         }
     }
 
+    data class ReturnInfo(val resultVariable: IrVariableSymbol,
+                          val loop: IrLoop)
+
+    private val returnMap = mutableMapOf<IrReturnableBlockSymbol, ReturnInfo>()
+
     inner class ExpressionVisitor : DecomposerVisitor() {
         override fun visitExpression(expression: IrExpression, data: VisitData) = KeptResult
+
+        private var labelCnt = 0
 
         //
         // val x = block {
@@ -368,6 +383,43 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
 
             val blockStatements = expression.statements
             val lastStatement: IrStatement? = blockStatements.lastOrNull()
+
+            if (expression is IrReturnableBlock) {
+                val block = IrBlockImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    context.builtIns.unitType,
+                    expression.origin
+                )
+
+                val loop = IrWhileLoopImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, expression.origin).apply {
+                    label = "l_${labelCnt++}"
+                    condition = constTrue
+                    body = block
+                }
+
+                returnMap[expression.symbol] = ReturnInfo(variable, loop)
+
+                val collectingList = block.statements
+
+                for (it in blockStatements.take(blockStatements.size - 1)) {
+                    val tempResult = it.accept(statementVisitor, data)
+                    collectingList += tempResult.runIfChangedOrDefault(listOf(it)) { statements }
+                }
+
+                blockStatements.lastOrNull()?.let { lastStatement ->
+                    val tempResult = lastStatement.accept(statementVisitor, data)
+                    val result = tempResult.runIfChangedOrDefault(lastStatement as IrExpression) {
+                        collectingList += statements
+                        resultValue
+                    }
+                    collectingList += JsIrBuilder.buildSetVariable(variable, result)
+                }
+
+                collectingList += JsIrBuilder.buildBreak(context.builtIns.unitType, loop)
+
+                return DecomposedResult(mutableListOf(varDeclaration, loop), JsIrBuilder.buildGetValue(variable))
+            }
 
             val body = when (expression) {
                 is IrBlock -> IrBlockImpl(
@@ -587,7 +639,7 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
 
         private fun <T : IrStatement> transformTermination(
             value: IrExpression,
-            instantiater: (value: IrExpression) -> T,
+            instantiater: (value: IrExpression) -> List<T>,
             data: VisitData
         ): TerminatedResult {
             val valueResult = value.accept(this, data)
@@ -606,13 +658,19 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : FunctionLowerin
 
         override fun visitReturn(expression: IrReturn, data: VisitData) = transformTermination(
             expression.value,
-            { v -> IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, expression.returnTargetSymbol, v) },
+            { v ->
+                val target = expression.returnTargetSymbol
+                returnMap[target]?.let { (variable, loop) ->
+                    listOf(JsIrBuilder.buildSetVariable(variable, v),
+                           JsIrBuilder.buildBreak(context.builtIns.unitType, loop))
+                } ?: listOf(IrReturnImpl(expression.startOffset, expression.endOffset, expression.type, expression.returnTargetSymbol, v))
+            },
             data
         )
 
         override fun visitThrow(expression: IrThrow, data: VisitData) = transformTermination(
             expression.value,
-            { v -> IrThrowImpl(expression.startOffset, expression.endOffset, expression.type, v) },
+            { v -> listOf(IrThrowImpl(expression.startOffset, expression.endOffset, expression.type, v)) },
             data
         )
 
