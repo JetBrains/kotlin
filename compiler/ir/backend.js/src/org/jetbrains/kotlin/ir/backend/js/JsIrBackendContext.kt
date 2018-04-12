@@ -47,6 +47,8 @@ class JsIrBackendContext(
         ReflectionTypes(module, FqName("kotlin.reflect"))
     }
 
+    val originalModuleIndex = ModuleIndex(irModuleFragment)
+
     override val ir: Ir<CommonBackendContext> = object : Ir<CommonBackendContext>(this, irModuleFragment) {
         override val symbols: Symbols<CommonBackendContext> = object : Symbols<CommonBackendContext>(this@JsIrBackendContext, symbolTable) {
 

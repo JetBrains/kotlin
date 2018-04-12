@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.math.exp
 
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
 
@@ -66,12 +67,31 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         } ?: JsArrayLiteral(arrayLiteralElements)
     }
 
+    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsExpression {
+
+        val block = IrElementToJsStatementTransformer().visitBlock(expression, context)
+        block.statements.lastOrNull()?.let {
+            if (it is JsExpressionStatement) {
+                block.statements[block.statements.size - 1] = JsReturn(it.expression)
+            }
+        }
+        return JsInvocation(JsFunction(context.currentScope, block, ""))
+    }
+
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
         body.expression.accept(this, context)
 
     override fun visitFunctionReference(expression: IrFunctionReference, context: JsGenerationContext): JsExpression {
         val irFunction = expression.symbol.owner as IrFunction
         return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
+    }
+
+    override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsExpression {
+        return JsBinaryOperation(JsBinaryOperator.COMMA, JsStringLiteral("<return>"), expression.value.accept(IrElementToJsExpressionTransformer(), context))
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, context: JsGenerationContext): JsExpression {
+        return expression.argument.accept(IrElementToJsExpressionTransformer(), context)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, context: JsGenerationContext): JsExpression {
