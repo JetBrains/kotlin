@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.plugin.test
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import spock.lang.Ignore
 import spock.lang.Unroll
 
 import static org.jetbrains.kotlin.gradle.plugin.test.KonanProject.escapeBackSlashes
@@ -109,10 +110,13 @@ class EnvVariableSpecification extends BaseKonanSpecification {
                 prefix = target.family.dynamicPrefix
                 suffix = target.family.dynamicSuffix
                 break
+            case ArtifactType.FRAMEWORK:
+                suffix = "framework"
         }
         return "$prefix${baseName}.$suffix"
     }
 
+    @Ignore("The plugin doesn't use env vars until https://github.com/gradle/gradle/issues/3468 is fixed.")
     @Unroll("Plugin should support #action via an env variable")
     def 'Plugin should support enabling/disabling debug/opt via an env variable'() {
         when:
@@ -126,7 +130,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
                 task assertEnableDebug {
                     doLast {
                         konanArtifacts.main.forEach {
-                            if (!$assertion) throw new AssertionError("$message for \${it.name}")
+                            if (!($assertion)) throw new AssertionError("$message for \${it.name}")
                         }
                     }
                 }
@@ -146,6 +150,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         "disabling opt"   |"KONAN_ENABLE_OPTIMIZATIONS" |"NO"  |"!it.enableOptimizations" |"Opts should be disabled"
     }
 
+    @Ignore("The plugin doesn't use env vars until https://github.com/gradle/gradle/issues/3468 is fixed.")
     def 'Plugin should support setting destination directory via an env variable'() {
         when:
         def project = createProjectWithWrapper()
@@ -194,6 +199,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         }
     }
 
+    @Ignore("The plugin doesn't use env vars until https://github.com/gradle/gradle/issues/3468 is fixed.")
     def 'Plugin should throw an exception if CONFIGURATION_BUILD_DIR contains a relative path'() {
         when:
         def project = createProjectWithWrapper()
@@ -210,6 +216,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         wrapperResult.getStderr().contains("A path passed using CONFIGURATION_BUILD_DIR should be absolute")
     }
 
+    @Ignore("The plugin doesn't use env vars until https://github.com/gradle/gradle/issues/3468 is fixed.")
     def 'Plugin should rerun tasks if CONFIGURATION_BUILD_DIR has been changed'() {
         when:
         def project = createProjectWithWrapper()
@@ -241,6 +248,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         files2.contains(artifactFileName("main", ArtifactType.LIBRARY))
     }
 
+    @Ignore("The plugin doesn't use env vars until https://github.com/gradle/gradle/issues/3468 is fixed.")
     def 'Plugin should ignore environmentVariables if konan.useEnvironmentVariables is false or is not set'() {
         when:
         def project = createProjectWithWrapper()
@@ -292,6 +300,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         resultFalseValue == 0
     }
 
+    @Ignore("The plugin doesn't use env vars until https://github.com/gradle/gradle/issues/3468 is fixed.")
     def 'Up-to-date checks should work with different directories for different targets'() {
         when:
         def project = createProjectWithWrapper()

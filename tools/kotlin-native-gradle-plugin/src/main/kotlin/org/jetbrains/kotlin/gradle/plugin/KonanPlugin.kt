@@ -277,7 +277,13 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         KONAN_BUILD_TARGETS            ("konan.build.targets"),
         KONAN_JVM_ARGS                 ("konan.jvmArgs"),
         KONAN_USE_ENVIRONMENT_VARIABLES("konan.useEnvironmentVariables"),
-        DOWNLOAD_COMPILER              ("download.compiler")
+        DOWNLOAD_COMPILER              ("download.compiler"),
+
+        // Properties used instead of env vars until https://github.com/gradle/gradle/issues/3468 is fixed.
+        // TODO: Remove them when an API for env vars is provided.
+        KONAN_CONFIGURATION_BUILD_DIR  ("konan.configuration.build.dir"),
+        KONAN_DEBUGGING_SYMBOLS        ("konan.debugging.symbols"),
+        KONAN_OPTIMIZATIONS_ENABLE     ("konan.optimizations.enable")
     }
 
     companion object {

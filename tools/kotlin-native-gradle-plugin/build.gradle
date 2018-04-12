@@ -83,6 +83,9 @@ dependencies {
 
     testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
+    testCompile "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
+    testCompile "org.tools4j:tools4j-spockito:1.6"
     testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
     }
@@ -123,6 +126,10 @@ processResources {
     expand('konanVersion': konanVersion)
     from(file("$rootBuildDirectory/utilities/env_blacklist"))
 }
+
+compileTestGroovy.dependsOn.remove('compileTestJava')
+compileTestKotlin.dependsOn compileTestGroovy
+compileTestKotlin.classpath += files(compileTestGroovy.destinationDir)
 
 // TODO: Get rid of manual pom generation.
 publishing {
