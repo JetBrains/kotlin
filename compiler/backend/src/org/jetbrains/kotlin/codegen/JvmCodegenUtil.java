@@ -11,6 +11,7 @@ import kotlin.collections.CollectionsKt;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FacadePartWithSourceFile;
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.io.File;
 
@@ -347,5 +349,18 @@ public class JvmCodegenUtil {
         return !isJvmInterface(descriptor.getContainingDeclaration()) &&
                kind != OwnerKind.DEFAULT_IMPLS &&
                !Boolean.FALSE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor));
+    }
+
+    public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof FunctionInvokeDescriptor && ((FunctionInvokeDescriptor) descriptor).hasBigArity();
+    }
+
+    public static boolean isOverrideOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {
+        return descriptor instanceof FunctionDescriptor &&
+               descriptor.getName().equals(OperatorNameConventions.INVOKE) &&
+               CollectionsKt.any(
+                       DescriptorUtils.getAllOverriddenDeclarations((FunctionDescriptor) descriptor),
+                       JvmCodegenUtil::isDeclarationOfBigArityFunctionInvoke
+               );
     }
 }

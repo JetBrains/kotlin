@@ -10275,6 +10275,54 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/functions/recursiveIncrementCall.kt");
         }
 
+        @TestMetadata("compiler/testData/codegen/box/functions/bigArity")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class BigArity extends AbstractBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInBigArity() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/functions/bigArity"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("callWithIncorrectNumberOfArguments.kt")
+            public void testCallWithIncorrectNumberOfArguments() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/callWithIncorrectNumberOfArguments.kt");
+            }
+
+            @TestMetadata("function255.kt")
+            public void testFunction255() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/function255.kt");
+            }
+
+            @TestMetadata("instanceOfCallableReference.kt")
+            public void testInstanceOfCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/instanceOfCallableReference.kt");
+            }
+
+            @TestMetadata("invokeCallableReference.kt")
+            public void testInvokeCallableReference() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/invokeCallableReference.kt");
+            }
+
+            @TestMetadata("invokeLambda.kt")
+            public void testInvokeLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/invokeLambda.kt");
+            }
+
+            @TestMetadata("javaLambda.kt")
+            public void testJavaLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/javaLambda.kt");
+            }
+
+            @TestMetadata("subclass.kt")
+            public void testSubclass() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/subclass.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/functions/functionExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -11675,6 +11723,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("extensionReceiverParameter.kt")
             public void testExtensionReceiverParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/extensionReceiverParameter.kt");
+            }
+
+            @TestMetadata("functionWithBigArity.kt")
+            public void testFunctionWithBigArity() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/functionWithBigArity.kt");
             }
 
             @TestMetadata("incWithNullabilityAssertionOnExtensionReceiverInPrivateOperator_lv11.kt")
@@ -16634,6 +16687,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/call"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("bigArity.kt")
+            public void testBigArity() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/call/bigArity.kt");
+            }
+
             @TestMetadata("callInstanceJavaMethod.kt")
             public void testCallInstanceJavaMethod() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/call/callInstanceJavaMethod.kt");
@@ -18063,6 +18121,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
             public void testAllFilesPresentInParameters() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("bigArity.kt")
+            public void testBigArity() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/parameters/bigArity.kt");
             }
 
             @TestMetadata("boundInnerClassConstructor.kt")

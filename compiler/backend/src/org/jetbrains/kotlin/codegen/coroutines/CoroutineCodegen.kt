@@ -43,7 +43,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-
 abstract class AbstractCoroutineCodegen(
     outerExpressionCodegen: ExpressionCodegen,
     element: KtElement,
@@ -228,7 +227,7 @@ class CoroutineCodegenForLambda private constructor(
             val bridgeParameters = (1 until delegate.argumentTypes.size).map { AsmTypes.OBJECT_TYPE } + delegate.argumentTypes.last()
             val bridge = Method(delegate.name, delegate.returnType, bridgeParameters.toTypedArray())
 
-            generateBridge(bridge, createCoroutineDescriptor.returnType, delegate, createCoroutineDescriptor.returnType)
+            generateBridge(bridge, createCoroutineDescriptor.returnType, delegate, createCoroutineDescriptor.returnType, false)
         }
     }
 
