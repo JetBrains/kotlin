@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.createValueParameter
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -67,7 +68,7 @@ object JsSymbolBuilder {
         )
     )
 
-    fun buildTempVar(containingSymbol: IrFunctionSymbol, type: KotlinType, name: String? = null, mutable: Boolean = false) =
+    fun buildTempVar(containingSymbol: IrSymbol, type: KotlinType, name: String? = null, mutable: Boolean = false) =
         buildTempVar(containingSymbol.descriptor, type, name, mutable)
 
     fun buildTempVar(containingDeclaration: DeclarationDescriptor, type: KotlinType, name: String? = null, mutable: Boolean = false) =
