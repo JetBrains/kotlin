@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -16,6 +17,20 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class MoveLambdaOutsideParenthesesInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(KtCallExpression::class.java) {
+    private fun KtCallExpression.withInformationLevel(): Boolean {
+        return when {
+            valueArguments.lastOrNull()?.isNamed() == true -> true
+            valueArguments.count { it.getArgumentExpression()?.unpackFunctionLiteral() != null } > 1 -> true
+            else -> false
+        }
+    }
+
+    private val KtCallExpression.verb: String
+        get() = if (withInformationLevel()) "can" else "should"
+
+    override fun inspectionHighlightType(element: KtCallExpression): ProblemHighlightType =
+        if (element.withInformationLevel()) ProblemHighlightType.INFORMATION else ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+
     override fun isApplicable(element: KtCallExpression) = element.canMoveLambdaOutsideParentheses()
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
@@ -26,7 +41,7 @@ class MoveLambdaOutsideParenthesesInspection : AbstractApplicabilityBasedInspect
         }
     }
 
-    override fun inspectionText(element: KtCallExpression) = "Lambda argument should be moved out of parentheses"
+    override fun inspectionText(element: KtCallExpression) = "Lambda argument ${element.verb} be moved out of parentheses"
 
     override fun inspectionTarget(element: KtCallExpression): KtElement {
         return element.getLastLambdaExpression()?.getStrictParentOfType<KtValueArgument>()?.asElement() ?: element
