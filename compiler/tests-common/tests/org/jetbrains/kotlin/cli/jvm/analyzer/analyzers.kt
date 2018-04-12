@@ -21,6 +21,7 @@ val analyzers = listOf(
 fun functionCallAnalyzer() = analyzer("call foo") {
     val foo = function {
         name = "foo"
+        info = { println("Welcome to foo") }
     }
 
     function {

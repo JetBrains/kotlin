@@ -24,9 +24,17 @@ fun falseVisitorData() = false to Unit
 
 abstract class AbstractPredicate {
     abstract val visitor: Visitor
+    private val cachedResults = mutableMapOf<IrElement, VisitorData>()
     var info: () -> Unit = {}
 
-    open fun checkIrNode(element: IrElement): VisitorData = element.accept(visitor, Unit)
+    open fun checkIrNode(element: IrElement): VisitorData {
+        if (element in cachedResults) {
+            return cachedResults[element]!!
+        }
+        val result = element.accept(visitor, Unit)
+        cachedResults[element] = result
+        return result
+    }
 }
 
 abstract class ScopePredicate : AbstractPredicate() {
