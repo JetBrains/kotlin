@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.protobuf.ExtensionRegistry
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.Printer
@@ -40,7 +41,6 @@ import java.io.*
 import java.util.*
 import java.util.zip.CRC32
 import java.util.zip.GZIPInputStream
-import kotlin.comparisons.compareBy
 
 // Set this to true if you want to dump all bytecode (test will fail in this case)
 private val DUMP_ALL = System.getProperty("comparison.dump.all") == "true"
@@ -187,6 +187,23 @@ private fun metaJsToString(metaJsFile: File): String {
     return out.toString()
 }
 
+private fun kjsmToString(kjsmFile: File): String {
+    val out = StringWriter()
+
+    val stream = DataInputStream(kjsmFile.inputStream())
+    // Read and skip the metadata version
+    repeat(stream.readInt()) { stream.readInt() }
+
+    val (header, content) =
+            DebugJsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
+                    DebugJsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
+
+    out.write("\n------ header -----\n$header")
+    out.write("\n------ library -----\n$content")
+
+    return out.toString()
+}
+
 private fun sourceMapFileToString(sourceMapFile: File, generatedJsFile: File): String {
     val sourceMapParseResult = SourceMapParser.parse(StringReader(sourceMapFile.readText()))
     return when (sourceMapParseResult) {
@@ -216,6 +233,9 @@ private fun fileToStringRepresentation(file: File): String {
         }
         file.name.endsWith(KotlinJavascriptMetadataUtils.META_JS_SUFFIX) -> {
             metaJsToString(file)
+        }
+        file.name.endsWith(KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION) -> {
+            kjsmToString(file)
         }
         file.name.endsWith(".js.map") -> {
             val generatedJsPath = file.canonicalPath.removeSuffix(".map")
