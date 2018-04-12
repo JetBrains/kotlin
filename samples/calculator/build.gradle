@@ -3,3 +3,9 @@ task build {
         dependsOn("${it.path}:build")
     }
 }
+
+task clean {
+    subprojects.each {
+        dependsOn("${it.path}:clean")
+    }
+}
