@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IntrinsicifyBuiltinOperationsLowering(private val context: JsIrBackendContext) : FileLoweringPass {
 
+    // TODO: should/can we unify these maps?
     private val primitiveNumberIntrinsics: Map<SimpleMemberKey, IrSimpleFunction>
     private val comparisonIntrinsics: Map<IrFunctionSymbol, IrSimpleFunction>
 
