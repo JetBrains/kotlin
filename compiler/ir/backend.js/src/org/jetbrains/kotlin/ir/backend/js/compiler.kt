@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -43,6 +45,27 @@ fun compile(
     )
 
     ExternalDependenciesGenerator(psi2IrContext.symbolTable, psi2IrContext.irBuiltIns).generateUnboundSymbolsAsDependencies(moduleFragment)
+
+    println("Before inlining:")
+    println(moduleFragment.dump())
+
+    FunctionInlining(context).inline(moduleFragment)
+
+    println("After inlining:")
+    println(moduleFragment.dump())
+
+    val symbolTable = context.symbolTable
+    moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
+
+    do {
+        @Suppress("DEPRECATION")
+        moduleFragment.replaceUnboundSymbols(context)
+        moduleFragment.referenceAllTypeExternalClassifiers(symbolTable)
+    } while (symbolTable.unboundClasses.isNotEmpty())
+
+    moduleFragment.patchDeclarationParents()
+
+
 
     moduleFragment.files.forEach { context.lower(it) }
     val transformer = SecondaryCtorLowering.CallsiteRedirectionTransformer(context)
