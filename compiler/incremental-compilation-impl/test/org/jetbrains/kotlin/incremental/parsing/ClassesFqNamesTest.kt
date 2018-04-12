@@ -7,22 +7,25 @@ package org.jetbrains.kotlin.incremental.parsing
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.io.File
 
-class ClassesFqNamesTest {
+class ClassesFqNamesTest : KtUsefulTestCase() {
     private lateinit var workingDir: File
 
     @Before
-    fun setUp() {
+    override fun setUp() {
+        super.setUp()
         workingDir = FileUtil.createTempDirectory("ClassesFqNamesTest", null)
     }
 
     @After
-    fun tearDown() {
+    override fun tearDown() {
         workingDir.deleteRecursively()
+        super.tearDown()
     }
 
     @Test
