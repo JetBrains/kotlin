@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -21,6 +22,14 @@ import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
 object JavaToKotlinClassMap : PlatformToKotlinClassMap {
+    private val NUMBERED_FUNCTION_PREFIX =
+        FunctionClassDescriptor.Kind.Function.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.Function.classNamePrefix
+    private val NUMBERED_K_FUNCTION_PREFIX =
+        FunctionClassDescriptor.Kind.KFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.KFunction.classNamePrefix
+
+    private val FUNCTION_N_CLASS_ID = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
+    private val FUNCTION_N_FQ_NAME = FUNCTION_N_CLASS_ID.asSingleFqName()
+    private val K_FUNCTION_CLASS_ID = ClassId.topLevel(FqName("kotlin.reflect.KFunction"))
 
     private val javaToKotlin = HashMap<FqNameUnsafe, ClassId>()
     private val kotlinToJava = HashMap<FqNameUnsafe, ClassId>()
@@ -82,17 +91,14 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
             )
         }
 
-        // TODO: support also functions with >= 23 parameters
-        val kFunction = FunctionClassDescriptor.Kind.KFunction
-        val kFun = kFunction.packageFqName.toString() + "." + kFunction.classNamePrefix
-        for (i in 0..22) {
-            add(ClassId.topLevel(FqName("kotlin.jvm.functions.Function" + i)), KotlinBuiltIns.getFunctionClassId(i))
-            addKotlinToJava(FqName(kFun + i), ClassId.topLevel(FqName(kFun)))
+        for (i in 0 until FunctionInvokeDescriptor.BIG_ARITY) {
+            add(ClassId.topLevel(FqName("kotlin.jvm.functions.Function$i")), KotlinBuiltIns.getFunctionClassId(i))
+            addKotlinToJava(FqName(NUMBERED_K_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
-        for (i in 0 until 22) {
+        for (i in 0 until FunctionInvokeDescriptor.BIG_ARITY - 1) {
             val kSuspendFunction = FunctionClassDescriptor.Kind.KSuspendFunction
             val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
-            addKotlinToJava(FqName(kSuspendFun + i), ClassId.topLevel(FqName(kFun)))
+            addKotlinToJava(FqName(kSuspendFun + i), K_FUNCTION_CLASS_ID)
         }
 
         addKotlinToJava(FQ_NAMES.nothing.toSafe(), classId(Void::class.java))
@@ -107,13 +113,16 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
      * java.util.Map.Entry -> kotlin.Map.Entry
      * java.lang.Void -> null
      * kotlin.jvm.functions.Function3 -> kotlin.Function3
+     * kotlin.jvm.functions.FunctionN -> null // Without a type annotation like @Arity(n), it's impossible to find out arity
      */
     fun mapJavaToKotlin(fqName: FqName): ClassId? {
         return javaToKotlin[fqName.toUnsafe()]
     }
 
-    fun mapJavaToKotlin(fqName: FqName, builtIns: KotlinBuiltIns): ClassDescriptor? {
-        val kotlinClassId = mapJavaToKotlin(fqName)
+    fun mapJavaToKotlin(fqName: FqName, builtIns: KotlinBuiltIns, functionTypeArity: Int? = null): ClassDescriptor? {
+        val kotlinClassId =
+            if (functionTypeArity != null && fqName == FUNCTION_N_FQ_NAME) KotlinBuiltIns.getFunctionClassId(functionTypeArity)
+            else mapJavaToKotlin(fqName)
         return if (kotlinClassId != null) builtIns.getBuiltInClassByFqName(kotlinClassId.asSingleFqName()) else null
     }
 
@@ -125,10 +134,23 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
      * kotlin.Nothing -> java.lang.Void
      * kotlin.IntArray -> null
      * kotlin.Function3 -> kotlin.jvm.functions.Function3
+     * kotlin.Function42 -> kotlin.jvm.functions.FunctionN
      * kotlin.reflect.KFunction3 -> kotlin.reflect.KFunction
+     * kotlin.reflect.KFunction42 -> kotlin.reflect.KFunction
      */
-    fun mapKotlinToJava(kotlinFqName: FqNameUnsafe): ClassId? {
-        return kotlinToJava[kotlinFqName]
+    fun mapKotlinToJava(kotlinFqName: FqNameUnsafe): ClassId? = when {
+        isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_FUNCTION_PREFIX) -> FUNCTION_N_CLASS_ID
+        isKotlinFunctionWithBigArity(kotlinFqName, NUMBERED_K_FUNCTION_PREFIX) -> K_FUNCTION_CLASS_ID
+        else -> kotlinToJava[kotlinFqName]
+    }
+
+    private fun isKotlinFunctionWithBigArity(kotlinFqName: FqNameUnsafe, prefix: String): Boolean {
+        val arityString = kotlinFqName.asString().substringAfter(prefix, "")
+        if (arityString.isNotEmpty() && !arityString.startsWith('0')) {
+            val arity = arityString.toIntOrNull()
+            return arity != null && arity >= FunctionInvokeDescriptor.BIG_ARITY
+        }
+        return false
     }
 
     private fun addMapping(platformMutabilityMapping: PlatformMutabilityMapping) {

@@ -66,6 +66,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
@@ -1172,7 +1173,16 @@ public class KotlinTypeMapper {
                                 skipGenericSignature);
         }
 
-        return mapSignatureWithCustomParameters(f, kind, f.getValueParameters(), skipGenericSignature, hasSpecialBridge);
+        if (isDeclarationOfBigArityFunctionInvoke(f)) {
+            KotlinBuiltIns builtIns = DescriptorUtilsKt.getBuiltIns(f);
+            KotlinType arrayOfNullableAny = builtIns.getArrayType(Variance.INVARIANT, builtIns.getNullableAnyType());
+            return mapSignatureWithCustomParameters(f, kind, Stream.of(arrayOfNullableAny), false, false);
+        }
+
+        return mapSignatureWithCustomParameters(
+                f, kind, f.getValueParameters().stream().map(ValueParameterDescriptor::getType),
+                skipGenericSignature, hasSpecialBridge
+        );
     }
 
     @NotNull
@@ -1182,14 +1192,17 @@ public class KotlinTypeMapper {
             @NotNull List<ValueParameterDescriptor> valueParameters,
             boolean skipGenericSignature
     ) {
-        return mapSignatureWithCustomParameters(f, kind, valueParameters, skipGenericSignature, false);
+        return mapSignatureWithCustomParameters(
+                f, kind, valueParameters.stream().map(ValueParameterDescriptor::getType),
+                skipGenericSignature, false
+        );
     }
 
     @NotNull
     private JvmMethodGenericSignature mapSignatureWithCustomParameters(
             @NotNull FunctionDescriptor f,
             @NotNull OwnerKind kind,
-            @NotNull List<ValueParameterDescriptor> valueParameters,
+            @NotNull Stream<KotlinType> valueParameterTypes,
             boolean skipGenericSignature,
             boolean hasSpecialBridge
     ) {
@@ -1203,9 +1216,7 @@ public class KotlinTypeMapper {
             sw.writeParametersStart();
             writeAdditionalConstructorParameters((ClassConstructorDescriptor) f, sw);
 
-            for (ValueParameterDescriptor parameter : valueParameters) {
-                writeParameter(sw, parameter.getType(), f);
-            }
+            valueParameterTypes.forEach(type -> writeParameter(sw, type, f));
 
             if (f instanceof AccessorForConstructorDescriptor) {
                 writeParameter(sw, JvmMethodParameterKind.CONSTRUCTOR_MARKER, DEFAULT_CONSTRUCTOR_MARKER);
@@ -1242,14 +1253,10 @@ public class KotlinTypeMapper {
                 writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.getType(), f);
             }
 
-            for (ValueParameterDescriptor parameter : valueParameters) {
+            valueParameterTypes.forEach(type -> {
                 boolean forceBoxing = MethodSignatureMappingKt.forceSingleValueParameterBoxing(f);
-                writeParameter(
-                        sw,
-                        forceBoxing ? TypeUtils.makeNullable(parameter.getType()) : parameter.getType(),
-                        f
-                );
-            }
+                writeParameter(sw, forceBoxing ? TypeUtils.makeNullable(type) : type, f);
+            });
 
             sw.writeReturnType();
             mapReturnType(f, sw);

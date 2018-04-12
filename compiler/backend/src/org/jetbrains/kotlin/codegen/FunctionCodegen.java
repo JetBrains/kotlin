@@ -1417,17 +1417,29 @@ public class FunctionCodegen {
         if (!state.getClassBuilderMode().generateBodies) return;
 
         mv.visitCode();
+        InstructionAdapter iv = new InstructionAdapter(mv);
 
         Type[] argTypes = bridge.getArgumentTypes();
         Type[] originalArgTypes = delegateTo.getArgumentTypes();
 
-        List<ParameterDescriptor> allKotlinParameters = new ArrayList<>(argTypes.length);
+        List<ParameterDescriptor> allKotlinParameters = new ArrayList<>(originalArgTypes.length);
         if (descriptor.getExtensionReceiverParameter() != null) allKotlinParameters.add(descriptor.getExtensionReceiverParameter());
         allKotlinParameters.addAll(descriptor.getValueParameters());
 
-        boolean safeToUseKotlinTypes = allKotlinParameters.size() == argTypes.length;
+        boolean safeToUseKotlinTypes = allKotlinParameters.size() == originalArgTypes.length;
 
-        InstructionAdapter iv = new InstructionAdapter(mv);
+        boolean isVarargInvoke = JvmCodegenUtil.isOverrideOfBigArityFunctionInvoke(descriptor);
+        if (isVarargInvoke) {
+            assert argTypes.length == 1 && argTypes[0].equals(AsmUtil.getArrayType(OBJECT_TYPE)) :
+                    "Vararg invoke must have one parameter of type [Ljava/lang/Object;: " + bridge;
+            AsmUtil.generateVarargInvokeArityAssert(iv, originalArgTypes.length);
+        }
+        else {
+            assert argTypes.length == originalArgTypes.length :
+                    "Number of parameters of the bridge and delegate must be the same.\n" +
+                    "Descriptor: " + descriptor + "\nBridge: " + bridge + "\nDelegate: " + delegateTo;
+        }
+
         MemberCodegen.markLineNumberForDescriptor(owner.getThisDescriptor(), iv);
 
         if (delegateTo.getArgumentTypes().length > 0 && isSpecialBridge) {
@@ -1435,11 +1447,18 @@ public class FunctionCodegen {
         }
 
         iv.load(0, OBJECT_TYPE);
-        for (int i = 0, reg = 1; i < argTypes.length; i++) {
+        for (int i = 0, reg = 1; i < originalArgTypes.length; i++) {
             KotlinType kotlinType = safeToUseKotlinTypes ? allKotlinParameters.get(i).getType() : null;
-            StackValue.local(reg, argTypes[i], kotlinType).put(originalArgTypes[i], kotlinType, iv);
-            //noinspection AssignmentToForLoopParameter
-            reg += argTypes[i].getSize();
+            StackValue value;
+            if (isVarargInvoke) {
+                value = StackValue.arrayElement(OBJECT_TYPE, null, StackValue.local(1, argTypes[0]), StackValue.constant(i));
+            }
+            else {
+                value = StackValue.local(reg, argTypes[i], kotlinType);
+                //noinspection AssignmentToForLoopParameter
+                reg += argTypes[i].getSize();
+            }
+            value.put(originalArgTypes[i], kotlinType, iv);
         }
 
         if (isStubDeclarationWithDelegationToSuper) {
