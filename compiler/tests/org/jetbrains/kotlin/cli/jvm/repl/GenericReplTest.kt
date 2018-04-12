@@ -157,6 +157,19 @@ class GenericReplTest : KtUsefulTestCase() {
             assertEquals(res.second.toString(), evals, (res.second as? ReplEvalResult.ValueResult)?.value)
         }
     }
+
+    fun testReplSlowdownKt22740() {
+        TestRepl().use { repl ->
+            val state = repl.createState()
+
+            repl.compileAndEval(state, ReplCodeLine(0, 0, "class Test<T>(val x: T) { fun <R> map(f: (T) -> R): R = f(x) }".trimIndent()))
+
+            // We expect that analysis time is not exponential
+            for (i in 1..60) {
+                repl.compileAndEval(state, ReplCodeLine(i, 0, "fun <T> Test<T>.map(f: (T) -> Double): List<Double> = listOf(f(this.x))"))
+            }
+        }
+    }
 }
 
 

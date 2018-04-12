@@ -18,7 +18,7 @@ abstract class BasicIrBoxTest(
     pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
     generateSourceMap: Boolean = false,
     generateNodeJsRunner: Boolean = false
-) : BasicBoxTest(pathToTestDir, testGroupOutputDirPrefix, pathToRootOutputDir, generateSourceMap, generateNodeJsRunner) {
+) : BasicBoxTest(pathToTestDir, testGroupOutputDirPrefix, pathToRootOutputDir, true, generateSourceMap, generateNodeJsRunner) {
 
     override var skipMinification = true
 

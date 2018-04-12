@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -90,7 +91,8 @@ public class SamWrapperCodegen {
                 ClassKind.CLASS,
                 Collections.singleton(samType.getType()),
                 SourceElement.NO_SOURCE,
-                /* isExternal = */ false
+                /* isExternal = */ false,
+                LockBasedStorageManager.NO_LOCKS
         );
         // e.g. compare(T, T)
         SimpleFunctionDescriptor erasedInterfaceFunction = samType.getOriginalAbstractMethod().copy(

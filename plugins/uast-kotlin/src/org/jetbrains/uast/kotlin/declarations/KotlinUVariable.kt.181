@@ -380,7 +380,7 @@ class KotlinUEnumConstant(
         psi: PsiEnumConstant,
         override val sourcePsi: KtElement?,
         givenParent: UElement?
-) : AbstractKotlinUVariable(givenParent), UEnumConstant, PsiEnumConstant by psi {
+) : AbstractKotlinUVariable(givenParent), UEnumConstant, UCallExpressionEx, PsiEnumConstant by psi {
 
     override val initializingClass: UClass? by lz {
         (psi.initializingClass as? KtLightClass)?.let { initializingClass ->
@@ -458,4 +458,7 @@ class KotlinUEnumConstant(
         override val identifier: String
             get() = psi.containingClass?.name ?: "<error>"
     }
+
+    override fun getArgumentForParameter(i: Int): UExpression? = valueArguments.getOrNull(i)
+
 }

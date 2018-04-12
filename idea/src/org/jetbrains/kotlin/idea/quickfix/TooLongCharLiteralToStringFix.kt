@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class TooLongCharLiteralToStringFix(
-        element: KtConstantExpression
+    element: KtConstantExpression
 ) : KotlinQuickFixAction<KtConstantExpression>(element) {
     override fun getText(): String = "Convert too long character literal to string"
 
@@ -22,8 +22,9 @@ class TooLongCharLiteralToStringFix(
         }
 
         val newStringContent = text
-                .slice(1..text.length - 2)
-                .replace("\"", "\\\"")
+            .slice(1..text.length - 2)
+            .replace("\\\"", "\"")
+            .replace("\"", "\\\"")
         val newElement = KtPsiFactory(element).createStringTemplate(newStringContent)
 
         element.replace(newElement)
