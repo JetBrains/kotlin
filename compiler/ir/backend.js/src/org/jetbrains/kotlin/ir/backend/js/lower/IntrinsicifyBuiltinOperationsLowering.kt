@@ -38,6 +38,7 @@ class IntrinsicifyBuiltinOperationsLowering(private val context: JsIrBackendCont
                 op(type, OperatorNameConventions.UNARY_PLUS, context.intrinsics.jsUnaryPlus)
                 op(type, OperatorNameConventions.UNARY_MINUS, context.intrinsics.jsUnaryMinus)
 
+                // TODO: inc & dec are mapped wrongly
                 op(type, OperatorNameConventions.INC, context.intrinsics.jsPrefixInc)
                 op(type, OperatorNameConventions.DEC, context.intrinsics.jsPrefixDec)
 
@@ -69,7 +70,10 @@ class IntrinsicifyBuiltinOperationsLowering(private val context: JsIrBackendCont
 
         comparisonIntrinsics.run {
             add(context.irBuiltIns.eqeqeqSymbol, context.intrinsics.jsEqeqeq)
+            // TODO: implement it a right way
             add(context.irBuiltIns.eqeqSymbol, context.intrinsics.jsEqeq)
+            // TODO: implement it a right way
+            add(context.irBuiltIns.ieee754equalsFunByOperandType, context.intrinsics.jsEqeqeq)
 
             add(context.irBuiltIns.booleanNotSymbol, context.intrinsics.jsNot)
 
