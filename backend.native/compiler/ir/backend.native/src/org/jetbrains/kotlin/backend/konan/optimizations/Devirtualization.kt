@@ -355,6 +355,7 @@ internal object Devirtualization {
                             if (node.receiverType == DataFlowIR.Type.Virtual)
                                 continue@nodeLoop
                             val receiverType = node.receiverType.resolved()
+                            val vCallReturnType = node.returnType.resolved()
 
                             DEBUG_OUTPUT(1) {
                                 println("Adding virtual callsite:")
@@ -366,6 +367,12 @@ internal object Devirtualization {
                                 typeHierarchy.inheritorsOf(receiverType)
                                         .filter { instantiatingClasses.contains(it) }
                                         .forEach { println("        $it") }
+                            }
+
+                            if (entryPoint == null && vCallReturnType.isFinal) {
+                                // If we are in a library and facing final return type then
+                                // this type can be returned by some user of this library, so propagate it explicitly.
+                                addInstantiatingClass(vCallReturnType)
                             }
 
                             typesVirtualCallSites.getOrPut(receiverType, { mutableListOf() }).add(node)
