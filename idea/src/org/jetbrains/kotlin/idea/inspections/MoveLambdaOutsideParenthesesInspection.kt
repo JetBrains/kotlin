@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-class MoveLambdaOutsideParenthesesInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(
-        KtCallExpression::class.java
-) {
+class MoveLambdaOutsideParenthesesInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(KtCallExpression::class.java) {
     override fun isApplicable(element: KtCallExpression) = element.canMoveLambdaOutsideParentheses()
 
     override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
@@ -28,7 +26,7 @@ class MoveLambdaOutsideParenthesesInspection : AbstractApplicabilityBasedInspect
         }
     }
 
-    override fun inspectionText(element: KtCallExpression) = "Should be moved lambda argument out of parentheses"
+    override fun inspectionText(element: KtCallExpression) = "Lambda argument should be moved out of parentheses"
 
     override fun inspectionTarget(element: KtCallExpression): KtElement {
         return element.getLastLambdaExpression()?.getStrictParentOfType<KtValueArgument>()?.asElement() ?: element
