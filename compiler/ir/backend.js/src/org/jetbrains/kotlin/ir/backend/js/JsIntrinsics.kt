@@ -81,6 +81,7 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
 
     // Helpers:
 
+    // TODO: unify how we create intrinsic symbols -- avoid using `defineOperator`
     private fun defineObjectCreateIntrinsic(): IrSimpleFunction {
 
         val typeParam = TypeParameterDescriptorImpl.createWithDefaultBound(
