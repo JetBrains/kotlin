@@ -2081,6 +2081,11 @@ task memory_weak0(type: RunKonanTest) {
     source = "runtime/memory/weak0.kt"
 }
 
+task memory_weak1(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "runtime/memory/weak1.kt"
+}
+
 task mpp1(type: RunStandaloneKonanTest) {
     source = "codegen/mpp/mpp1.kt"
     flags = ['-tr', '-Xmulti-platform']

@@ -50,7 +50,7 @@ fun run() {
     // hashCode (directly):
     if (foo.hashCode() == foo.hash().let { it.toInt() xor (it shr 32).toInt() }) {
         // toString (virtually):
-        println(listOf(foo, pair).map { it.toString() }.min() == foo.description())
+        println(map.keys.map { it.toString() }.min() == foo.description())
     }
 
     println(globalString)
