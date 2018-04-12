@@ -16,6 +16,19 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
+
+    // TODO: should we prohibit using blocks as expression in the future?
+    override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsExpression {
+        if (expression.statements.isEmpty()) {
+            // TODO: what should we do here? Crash? Generate throw? Should it be treated as unreachable code?
+            return super.visitBlock(expression, context)
+        }
+
+        return expression.statements
+            .map { it.accept(this, context) }
+            .reduce { left, right -> JsBinaryOperation(JsBinaryOperator.COMMA, left, right) }
+    }
+
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression {
         return body.expression.accept(this, context)
     }
