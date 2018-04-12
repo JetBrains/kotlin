@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.metadata.jvm.deserialization
 
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import java.io.ByteArrayInputStream
-import java.io.DataInputStream
-import java.io.IOException
+import java.io.*
 
 class ModuleMapping private constructor(
     val packageFqName2Parts: Map<String, PackageParts>,
@@ -209,4 +207,16 @@ class PackageParts(val packageFqName: String) {
 
     override fun toString() =
             (parts + metadataParts).toString()
+}
+
+fun JvmModuleProtoBuf.Module.serializeToByteArray(versionArray: IntArray): ByteArray {
+    val moduleMapping = ByteArrayOutputStream(4096)
+    val out = DataOutputStream(moduleMapping)
+    out.writeInt(versionArray.size)
+    for (number in versionArray) {
+        out.writeInt(number)
+    }
+    writeTo(out)
+    out.flush()
+    return moduleMapping.toByteArray()
 }

@@ -16,16 +16,12 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.util.io.DataOutputStream
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
-import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.io.ByteArrayOutputStream
 
 fun ClassFileFactory.getClassFiles(): Iterable<OutputFile> {
     return asList().filterClassFiles()
@@ -56,17 +52,4 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
                     allOldPackageParts.forEach { packageParts -> this += packageParts }
                 }
             }
-}
-
-fun JvmModuleProtoBuf.Module.serializeToByteArray(): ByteArray {
-    val moduleMapping = ByteArrayOutputStream(4096)
-    val out = DataOutputStream(moduleMapping)
-    val version = JvmMetadataVersion.INSTANCE.toArray()
-    out.writeInt(version.size)
-    for (number in version) {
-        out.writeInt(number)
-    }
-    writeTo(out)
-    out.flush()
-    return moduleMapping.toByteArray()
 }
