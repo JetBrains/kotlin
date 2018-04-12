@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import javax.swing.JComponent
 
-internal class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
+class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
     override fun getFrameworkType(): FrameworkTypeEx = JavaFrameworkType.instance
 
     override fun createConfigurable(model: FrameworkSupportModel): FrameworkSupportInModuleConfigurable {
