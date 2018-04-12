@@ -81,7 +81,7 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
     protected abstract val artifactPrefix: String
         @Internal get
 
-    internal open fun init(destinationDir: File, artifactName: String, target: KonanTarget) {
+    internal open fun init(config:KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(target)
         this.destinationDir = destinationDir
         this.artifactName = artifactName
@@ -98,7 +98,7 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
 
         project.pluginManager.withPlugin("maven-publish") {
             platformConfiguration.artifacts.add(object: PublishArtifact {
-                override fun getName() = "${artifact.name}/${target.name}"
+                override fun getName() = "${artifact.name.removeSuffix("$artifactSuffix")}/${target.name}"
                 override fun getExtension() = if (artifactSuffix.startsWith('.')) artifactSuffix.substring(1) else artifactSuffix
                 override fun getType() = artifactSuffix
                 override fun getClassifier():String? = target.name
@@ -109,8 +109,8 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
             val objectFactory = project.objects
             val linkUsage = objectFactory.named(Usage::class.java, Usage.NATIVE_LINK)
             val runtimeUsage = objectFactory.named(Usage::class.java, Usage.NATIVE_RUNTIME)
-            val konanSoftwareComponent = project.extensions.getByName(KonanPlugin.KONAN_MAIN_VARIANT) as KonanSoftwareComponent
-            konanSoftwareComponent.addVariant(NativeVariant(Names.of(target.name), linkUsage, null, linkUsage, platformConfiguration))
+            val konanSoftwareComponent = config.mainVariant
+            konanSoftwareComponent.addVariant(NativeVariant(Names.of("${artifact.name.removeSuffix("$artifactSuffix")}_${target.name}"), linkUsage, null, linkUsage, platformConfiguration))
         }
     }
 

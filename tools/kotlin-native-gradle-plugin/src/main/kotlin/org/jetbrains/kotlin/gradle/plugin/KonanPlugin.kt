@@ -309,7 +309,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
         project.tasks.create(KONAN_GENERATE_CMAKE_TASK_NAME, KonanGenerateCMakeTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
-        val mainVariant = project.extensions.create(ComponentWithVariants::class.java, KONAN_MAIN_VARIANT, KonanSoftwareComponent::class.java, project)
         val container = project.extensions.create(KonanArtifactContainer::class.java, ARTIFACTS_CONTAINER_NAME, KonanArtifactContainer::class.java, project)
 
         // Set additional project properties like konan.home, konan.build.targets etc.
@@ -353,11 +352,11 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         // Enable multiplatform support
         project.pluginManager.apply(KotlinNativePlatformPlugin::class.java)
         project.afterEvaluate {
-            val konanSoftwareComponent = mainVariant as KonanSoftwareComponent
             project.pluginManager.withPlugin("maven-publish") {
                 container.all {
                     val buildingConfig = it
                     val artifactId = buildingConfig.name
+                    val konanSoftwareComponent = buildingConfig.mainVariant
                     project.extensions.configure(PublishingExtension::class.java) {
                         val publishing = it
                         it.publications.create(artifactId, MavenPublication::class.java) {
@@ -366,11 +365,14 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                             it.from(konanSoftwareComponent)
                             (it as MavenPublicationInternal).publishWithOriginalFileName()
                         }
+                    }
+
+                    project.extensions.configure(PublishingExtension::class.java) {
+                        val publishing = it
                         for (v in konanSoftwareComponent.variants) {
                             // TODO: with gradle 4.7 don't forget to change to SoftwareComponentsWithCoordinates
-                            val name = "${v.name}/$artifactId"
-                            publishing.publications.create(name, MavenPublication::class.java) {
-                                it.artifactId = "${artifactId}-${v.name}"
+                            publishing.publications.create(v.name, MavenPublication::class.java) {
+                                it.artifactId = v.name
                                 it.groupId = project.group.toString()
                                 it.version = project.version.toString()
                                 it.from(v)

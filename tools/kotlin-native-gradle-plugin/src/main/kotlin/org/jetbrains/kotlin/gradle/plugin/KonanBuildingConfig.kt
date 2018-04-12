@@ -39,6 +39,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
                                                          val targets: Iterable<String>)
     : KonanBuildingSpec, Named, DefaultNamedDomainObjectSet<T>(type, instantiator, { it.konanTarget.visibleName }) {
 
+    internal val mainVariant = KonanSoftwareComponent(project)
     override fun getName() = name_
 
     protected val targetToTask = mutableMapOf<KonanTarget, T>()
@@ -114,7 +115,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     protected fun createTask(target: KonanTarget): T =
             project.tasks.create(generateTaskName(target), type) {
                 val outputDescription = determineOutputPlacement(target)
-                it.init(outputDescription.destinationDir, outputDescription.artifactName, target)
+                it.init(this, outputDescription.destinationDir, outputDescription.artifactName, target)
                 it.group = BasePlugin.BUILD_GROUP
                 it.description = generateTaskDescription(it)
             } ?: throw Exception("Cannot create task for target: ${target.visibleName}")
