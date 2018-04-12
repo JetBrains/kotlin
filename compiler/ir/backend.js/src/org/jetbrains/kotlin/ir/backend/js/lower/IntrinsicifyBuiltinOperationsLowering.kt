@@ -19,26 +19,69 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IntrinsicifyBuiltinOperationsLowering(private val context: JsIrBackendContext) : FileLoweringPass {
 
+    // TODO: should/can we unify these maps?
     private val primitiveNumberIntrinsics: Map<SimpleMemberKey, IrSimpleFunction>
+    private val comparisonIntrinsics: Map<IrFunctionSymbol, IrSimpleFunction>
 
     init {
         primitiveNumberIntrinsics = mutableMapOf()
+        comparisonIntrinsics = mutableMapOf()
 
         primitiveNumberIntrinsics.run {
             val primitiveNumbers = context.irBuiltIns.run { listOf(int, short, byte, float, double) }
 
             for (type in primitiveNumbers) {
-                binOp(type, OperatorNameConventions.PLUS, context.intrinsics.jsPlus)
-                binOp(type, OperatorNameConventions.MINUS, context.intrinsics.jsMinus)
-                binOp(type, OperatorNameConventions.TIMES, context.intrinsics.jsMult)
-                binOp(type, OperatorNameConventions.DIV, context.intrinsics.jsDiv)
-                binOp(type, OperatorNameConventions.MOD, context.intrinsics.jsMod)
-                binOp(type, OperatorNameConventions.REM, context.intrinsics.jsMod)
+                op(type, OperatorNameConventions.UNARY_PLUS, context.intrinsics.jsUnaryPlus)
+                op(type, OperatorNameConventions.UNARY_MINUS, context.intrinsics.jsUnaryMinus)
+
+                // TODO: inc & dec are mapped wrongly
+                op(type, OperatorNameConventions.INC, context.intrinsics.jsPrefixInc)
+                op(type, OperatorNameConventions.DEC, context.intrinsics.jsPrefixDec)
+
+                op(type, OperatorNameConventions.PLUS, context.intrinsics.jsPlus)
+                op(type, OperatorNameConventions.MINUS, context.intrinsics.jsMinus)
+                op(type, OperatorNameConventions.TIMES, context.intrinsics.jsMult)
+                op(type, OperatorNameConventions.DIV, context.intrinsics.jsDiv)
+                op(type, OperatorNameConventions.MOD, context.intrinsics.jsMod)
+                op(type, OperatorNameConventions.REM, context.intrinsics.jsMod)
             }
+
+            context.irBuiltIns.int.let {
+                op(it, "shl", context.intrinsics.jsBitShiftL)
+                op(it, "shr", context.intrinsics.jsBitShiftR)
+                op(it, "ushr", context.intrinsics.jsBitShiftRU)
+                op(it, "and", context.intrinsics.jsBitAnd)
+                op(it, "or", context.intrinsics.jsBitOr)
+                op(it, "xor", context.intrinsics.jsBitXor)
+                op(it, "inv", context.intrinsics.jsBitNot)
+            }
+
+            context.irBuiltIns.bool.let {
+                op(it, OperatorNameConventions.AND, context.intrinsics.jsAnd)
+                op(it, OperatorNameConventions.OR, context.intrinsics.jsOr)
+                op(it, OperatorNameConventions.NOT, context.intrinsics.jsNot)
+                op(it, "xor", context.intrinsics.jsBitXor)
+            }
+        }
+
+        comparisonIntrinsics.run {
+            add(context.irBuiltIns.eqeqeqSymbol, context.intrinsics.jsEqeqeq)
+            // TODO: implement it a right way
+            add(context.irBuiltIns.eqeqSymbol, context.intrinsics.jsEqeq)
+            // TODO: implement it a right way
+            add(context.irBuiltIns.ieee754equalsFunByOperandType, context.intrinsics.jsEqeqeq)
+
+            add(context.irBuiltIns.booleanNotSymbol, context.intrinsics.jsNot)
+
+            add(context.irBuiltIns.lessFunByOperandType, context.intrinsics.jsLt)
+            add(context.irBuiltIns.lessOrEqualFunByOperandType, context.intrinsics.jsLtEq)
+            add(context.irBuiltIns.greaterFunByOperandType, context.intrinsics.jsGt)
+            add(context.irBuiltIns.greaterOrEqualFunByOperandType, context.intrinsics.jsGtEq)
         }
     }
 
@@ -50,20 +93,8 @@ class IntrinsicifyBuiltinOperationsLowering(private val context: JsIrBackendCont
                 if (call is IrCall) {
                     val symbol = call.symbol
 
-                    when (symbol) {
-                        context.irBuiltIns.eqeqeqSymbol -> {
-                            context.intrinsics.jsEqeqeq.symbol
-                        }
-                        context.irBuiltIns.eqeqSymbol -> {
-                            // TODO implement right way
-                            context.intrinsics.jsEqeq.symbol
-                        }
-                        context.irBuiltIns.booleanNotSymbol -> {
-                            context.intrinsics.jsNot.symbol
-                        }
-                        else -> null
-                    }?.let {
-                        return irCall(call, it)
+                    comparisonIntrinsics[symbol]?.let {
+                        return irCall(call, it.symbol)
                     }
 
                     (symbol.owner as? IrFunction)?.dispatchReceiverParameter?.let {
@@ -118,8 +149,23 @@ private fun IrCall.copyTypeAndValueArgumentsFrom(call: IrCall, dispatchReceiverA
     }
 }
 
-private fun <V> MutableMap<SimpleMemberKey, V>.binOp(type: KotlinType, name: Name, v: V) {
+private fun <V> MutableMap<SimpleMemberKey, V>.op(type: KotlinType, name: Name, v: V) {
     put(SimpleMemberKey(type, name), v)
+}
+
+// TODO issue: marked as unused, but used; rename works wrongly.
+private fun <V> MutableMap<SimpleMemberKey, V>.op(type: KotlinType, name: String, v: V) {
+    put(SimpleMemberKey(type, Name.identifier(name)), v)
+}
+
+private fun <V> MutableMap<IrFunctionSymbol, V>.add(from: Map<SimpleType, IrSimpleFunction>, to: V) {
+    from.forEach { _, func ->
+        add(func.symbol, to)
+    }
+}
+
+private fun <V> MutableMap<IrFunctionSymbol, V>.add(from: IrFunctionSymbol, to: V) {
+    put(from, to)
 }
 
 private data class SimpleMemberKey(val klass: KotlinType, val name: Name)
