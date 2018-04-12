@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.ModuleIndex
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -59,6 +60,8 @@ class JsIrBackendContext(
     val secondaryConstructorsMap = mutableMapOf<IrConstructorSymbol, SecondaryCtorPair>()
 
     fun getOperatorByName(name: Name, type: KotlinType) = operatorMap[name]?.get(type)
+
+    val originalModuleIndex = ModuleIndex(irModuleFragment)
 
     override val ir = object : Ir<CommonBackendContext>(this, irModuleFragment) {
         override val symbols = object : Symbols<CommonBackendContext>(this@JsIrBackendContext, symbolTable) {

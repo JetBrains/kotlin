@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.types.KotlinType
 
 private typealias VisitData = Nothing?
@@ -153,7 +152,9 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
         private fun processStatement(statement: IrStatement, data: VisitData): List<IrStatement>? {
             val result = statement.accept(this, data)
 
-            if (result == KeptResult) return null
+            if (result == KeptResult) {
+                return if (statement is IrComposite) statement.statements else null
+            }
             return result.statements
         }
 
@@ -436,7 +437,11 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
                     resultValue
                 }
                 collectingList += JsIrBuilder.buildSetVariable(variable, result)
-                DecomposedResult(mutableListOf(varDeclaration, body), JsIrBuilder.buildGetValue(variable))
+                if (body is IrComposite) {
+                    DecomposedResult(mutableListOf(varDeclaration, *collectingList.toTypedArray()) , JsIrBuilder.buildGetValue(variable))
+                } else {
+                    DecomposedResult(mutableListOf(varDeclaration, body as IrStatement), JsIrBuilder.buildGetValue(variable))
+                }
             } else {
                 // do not allow variable to be uninitialized
                 DecomposedResult(mutableListOf(), unitValue)
@@ -658,6 +663,19 @@ class BlockDecomposerLowering(val context: JsIrBackendContext) : DeclarationCont
             return DecomposedResult(jump, JsIrBuilder.buildCall(unreachableFunction))
         }
 
+        override fun visitLoop(loop: IrLoop, data: VisitData): VisitResult {
+            val result = loop.accept(statementVisitor, null)
+            return if (result.status == VisitStatus.KEPT) {
+                DecomposedResult(loop, unitValue)
+            } else result
+        }
+
+        override fun visitSetField(expression: IrSetField, data: VisitData): VisitResult {
+            val result = expression.accept(statementVisitor, null)
+            return if (result.status == VisitStatus.KEPT) {
+                DecomposedResult(expression, unitValue)
+            } else result
+        }
     }
 
     fun makeTempVar(type: KotlinType) =
