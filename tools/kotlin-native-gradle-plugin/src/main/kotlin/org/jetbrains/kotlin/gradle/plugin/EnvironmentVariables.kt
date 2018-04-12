@@ -23,7 +23,7 @@ import java.io.File
 /**
  *  The plugin allows an IDE to specify some building parameters. These parameters
  *  are passed to the plugin via environment variables. Two variables are supported:
- *      - CONFIGURATION_BUILD_DIR    - An absolute path to a destination directory for all compilation tasks.
+ *      - CONFIGURATION_BUILD_DIR    - A path to a destination directory for all compilation tasks.
  *                                     The IDE should take care about specifying different directories
  *                                     for different targets. This setting has less priority than
  *                                     an explicitly specified destination directory in the build script.
@@ -57,10 +57,10 @@ internal class EnvironmentVariablesUnused: EnvironmentVariables {
         get() = false
 }
 
-internal class EnvironmentVariablesImpl:  EnvironmentVariables {
+internal class EnvironmentVariablesImpl(val project: Project):  EnvironmentVariables {
     override val configurationBuildDir: File?
         get() = System.getenv("CONFIGURATION_BUILD_DIR")?.let {
-            File(it).apply { check(isAbsolute) { "A path passed using CONFIGURATION_BUILD_DIR should be absolute" } }
+            project.file(it)
         }
 
     override val debuggingSymbols: Boolean

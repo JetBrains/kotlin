@@ -200,23 +200,6 @@ class EnvVariableSpecification extends BaseKonanSpecification {
     }
 
     @Ignore("The plugin doesn't use env vars until https://github.com/gradle/gradle/issues/3468 is fixed.")
-    def 'Plugin should throw an exception if CONFIGURATION_BUILD_DIR contains a relative path'() {
-        when:
-        def project = createProjectWithWrapper()
-        project.buildFile.append("""\
-            apply plugin: 'konan'
-            konanArtifacts {
-                library('main')
-            }
-        """.stripIndent())
-        def wrapperResult = runWrapper(project, "tasks", ["CONFIGURATION_BUILD_DIR": "some_relative_path"])
-
-        then:
-        wrapperResult.getExitValue() != 0
-        wrapperResult.getStderr().contains("A path passed using CONFIGURATION_BUILD_DIR should be absolute")
-    }
-
-    @Ignore("The plugin doesn't use env vars until https://github.com/gradle/gradle/issues/3468 is fixed.")
     def 'Plugin should rerun tasks if CONFIGURATION_BUILD_DIR has been changed'() {
         when:
         def project = createProjectWithWrapper()
