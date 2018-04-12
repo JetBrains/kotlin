@@ -39,7 +39,8 @@ internal actual inline fun String.nativeLastIndexOf(str: String, fromIndex: Int)
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-public actual fun String?.equals(other: String?, ignoreCase: Boolean /*= false*/): Boolean {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
     if (this === null)
         return other === null
     return if (!ignoreCase)
@@ -51,7 +52,8 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean /*= false*/
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  */
-public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean /*= false*/): String {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
     if (!ignoreCase)
         return (this as java.lang.String).replace(oldChar, newChar)
     else
@@ -62,14 +64,16 @@ public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
-public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean/* = false*/): String =
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
         splitToSequence(oldValue, ignoreCase = ignoreCase).joinToString(separator = newValue)
 
 
 /**
  * Returns a new string with the first occurrence of [oldChar] replaced with [newChar].
  */
-public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean /*= false*/): String {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
     val index = indexOf(oldChar, ignoreCase = ignoreCase)
     return if (index < 0) this else this.replaceRange(index, index + 1, newChar.toString())
 }
@@ -78,7 +82,8 @@ public actual fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: 
  * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
-public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean /*= false*/): String {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
     val index = indexOf(oldValue, ignoreCase = ignoreCase)
     return if (index < 0) this else this.replaceRange(index, index + oldValue.length, newValue)
 }
@@ -333,7 +338,8 @@ public inline fun String.offsetByCodePoints(index: Int, codePointOffset: Int): I
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
-public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean /*= false*/): Boolean {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean {
     if (this is String && other is String)
         return this.regionMatches(thisOffset, other, otherOffset, length, ignoreCase)
     else
