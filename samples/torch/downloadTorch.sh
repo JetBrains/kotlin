@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-TH_TARGET_DIRECTORY=~/.konan/third-party/torch
+KONAN_USER_DIR=${KONAN_DATA_DIR:-"$HOME/.konan"}
+TH_TARGET_DIRECTORY="$KONAN_USER_DIR/third-party/torch"
 NO_CUDA=true # set to false for GPU support
 
 if [ ! -d $TH_TARGET_DIRECTORY/include/THNN ]; then

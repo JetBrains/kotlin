@@ -2,6 +2,8 @@ apply plugin: 'konan'
 
 konan.targets = ['macbook', 'linux', 'raspberrypi']
 
+def konanUserDir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
+
 konanArtifacts {
 
     interop ('sdl') {
@@ -20,7 +22,7 @@ konanArtifacts {
         }
 
         target 'raspberrypi', {
-            includeDirs "${System.getProperty("user.home")}/.konan/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
+            includeDirs "$konanUserDir/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
         }
     }
 

@@ -6,5 +6,5 @@ else
     PATH="$KONAN_HOME/bin:$PATH"
 fi
 
-KONAN_USER_DIR="$HOME/.konan"
+KONAN_USER_DIR=${KONAN_DATA_DIR:-"$HOME/.konan"}
 KONAN_DEPS="$KONAN_USER_DIR/dependencies"

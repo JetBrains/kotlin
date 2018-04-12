@@ -22,6 +22,7 @@ repositories {
 
 konanArtifacts {
     program('Curl') {
+        dependsOn ':libcurl:publish'
         dependencies {
             artifactCurl 'org.jetbrains.kotlin.native:libcurl:1.0'
         }

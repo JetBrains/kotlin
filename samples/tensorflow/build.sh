@@ -6,7 +6,8 @@ source "$DIR/../konan.sh"
 
 $DIR/downloadTensorflow.sh
 
-TF_TARGET_DIRECTORY="$HOME/.konan/third-party/tensorflow"
+# KONAN_USER_DIR is set by konan.sh
+TF_TARGET_DIRECTORY="$KONAN_USER_DIR/third-party/tensorflow"
 TF_TYPE="cpu" # Change to "gpu" for GPU support
 
 if [ x$TARGET == x ]; then

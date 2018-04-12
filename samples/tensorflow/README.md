@@ -13,7 +13,8 @@ showing how a TensorFlow client in Kotlin/Native could look like.
     ./downloadTensorflow.sh
 
 will install [TensorFlow for C](https://www.tensorflow.org/versions/r1.1/install/install_c) into
-`$HOME/.konan/third-party/tensorflow` (if not yet done). 
+`$HOME/.konan/third-party/tensorflow` (if not yet done). One may override the location of
+`third-party/tensorflow` by setting the `KONAN_DATA_DIR` environment variable.
 
 To build use `../gradlew build` or `./build.sh`.
     

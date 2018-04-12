@@ -4,7 +4,8 @@ DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 source "$DIR/../konan.sh"
 
-DEPS="$HOME/.konan/dependencies"
+# KONAN_DEPS is set in konan.sh
+DEPS="$KONAN_DEPS"
 
 CFLAGS_macbook=-I$HOME/Library/Frameworks/SDL2.framework/Headers
 LINKER_ARGS_macbook="-F $HOME/Library/Frameworks -framework SDL2"

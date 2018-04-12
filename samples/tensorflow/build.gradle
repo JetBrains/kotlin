@@ -2,7 +2,8 @@ apply plugin: 'konan'
 
 konan.targets = ['macbook', 'linux']
 
-def tensorflowHome = "${System.getProperty("user.home")}/.konan/third-party/tensorflow"
+def konanUserDir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
+def tensorflowHome = "$konanUserDir/third-party/tensorflow"
 
 task downloadTensorflow(type: Exec) {
     workingDir getProjectDir()

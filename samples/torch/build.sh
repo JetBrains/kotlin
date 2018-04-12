@@ -6,7 +6,7 @@ source "$DIR/../konan.sh"
 
 $DIR/downloadTorch.sh
 
-TH_TARGET_DIRECTORY="$HOME/.konan/third-party/torch"
+TH_TARGET_DIRECTORY="$KONAN_USER_DIR/third-party/torch"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in

@@ -2,7 +2,8 @@ apply plugin: 'konan'
 
 konan.targets = ['macbook', 'linux']
 
-def torchHome = "${System.getProperty("user.home")}/.konan/third-party/torch"
+def konanUserDir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
+def torchHome = "$konanUserDir/third-party/torch"
 
 task downloadTorch(type: Exec) {
     workingDir getProjectDir()

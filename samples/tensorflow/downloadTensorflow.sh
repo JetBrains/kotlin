@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-TF_TARGET_DIRECTORY="$HOME/.konan/third-party/tensorflow"
+KONAN_USER_DIR=${KONAN_DATA_DIR:-"$HOME/.konan"}
+TF_TARGET_DIRECTORY="$KONAN_USER_DIR/third-party/tensorflow"
 TF_TYPE="cpu" # Change to "gpu" for GPU support
 
 if [ x$TARGET == x ]; then
