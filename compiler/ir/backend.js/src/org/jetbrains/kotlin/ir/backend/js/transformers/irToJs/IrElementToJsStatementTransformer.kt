@@ -6,13 +6,22 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.ir.backend.js.utils.*
-import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.constructedClass
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
+
+    // TODO: is it right place for this logic? Or should it be implemented as a separate lowering?
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, context: JsGenerationContext): JsStatement {
+        if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
+            return expression.argument.accept(this, context)
+        }
+        return super.visitTypeOperator(expression, context)
+    }
+
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
         return JsBlock(body.statements.map { it.accept(this, context) })
     }
