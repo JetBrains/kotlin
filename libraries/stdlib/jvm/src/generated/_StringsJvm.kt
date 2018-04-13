@@ -1,6 +1,5 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
-@file:kotlin.jvm.JvmVersion
 
 package kotlin.text
 

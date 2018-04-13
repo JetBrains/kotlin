@@ -1,4 +1,3 @@
-@file:kotlin.jvm.JvmVersion
 package test.numbers
 
 import kotlin.test.*

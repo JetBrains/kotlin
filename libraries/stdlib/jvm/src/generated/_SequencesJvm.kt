@@ -1,6 +1,5 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SequencesKt")
-@file:kotlin.jvm.JvmVersion
 
 package kotlin.sequences
 

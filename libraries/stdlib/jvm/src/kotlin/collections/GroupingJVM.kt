@@ -17,7 +17,6 @@ package kotlin.collections
  * @sample samples.collections.Collections.Transformations.groupingByEachCount
  */
 @SinceKotlin("1.1")
-@JvmVersion
 public actual fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int> =
 // fold(0) { acc, e -> acc + 1 } optimized for boxing
     foldTo(destination = mutableMapOf(),
@@ -32,7 +31,6 @@ public actual fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int> =
  * @return a [Map] associating the key of each group with the sum of elements in the group.
  */
 @SinceKotlin("1.X")
-@JvmVersion
 public inline fun <T, K> Grouping<T, K>.eachSumOf(valueSelector: (T) -> Int): Map<K, Int> =
         // fold(0) { acc, e -> acc + valueSelector(e)} optimized for boxing
         foldTo( destination = mutableMapOf(),
@@ -43,7 +41,6 @@ public inline fun <T, K> Grouping<T, K>.eachSumOf(valueSelector: (T) -> Int): Ma
 
 
 
-@JvmVersion
 @PublishedApi
 @kotlin.internal.InlineOnly
 @Suppress("UNCHECKED_CAST") // tricks with erased generics go here, do not repeat on reified platforms

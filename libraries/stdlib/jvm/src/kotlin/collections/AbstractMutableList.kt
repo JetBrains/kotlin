@@ -3,7 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:JvmVersion
 package kotlin.collections
 
 import java.util.AbstractList

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:JvmVersion
 package kotlin.jvm.internal.unsafe
 
 import kotlin.*

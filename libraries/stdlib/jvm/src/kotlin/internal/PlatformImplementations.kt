@@ -1,4 +1,3 @@
-@file:JvmVersion
 package kotlin.internal
 
 import kotlin.*

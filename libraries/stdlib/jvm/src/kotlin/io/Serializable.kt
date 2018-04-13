@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:JvmVersion
 package kotlin.io
 
 // to use in shared code without imports

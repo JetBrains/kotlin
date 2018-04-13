@@ -1,4 +1,3 @@
-@file:JvmVersion
 @file:JvmName("TimersKt")
 package kotlin.concurrent
 

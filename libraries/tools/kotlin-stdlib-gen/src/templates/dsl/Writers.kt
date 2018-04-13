@@ -72,8 +72,6 @@ fun List<MemberBuilder>.writeTo(file: File, platformSource: PlatformSourceFile) 
         }
 
         writer.appendln("@file:kotlin.jvm.JvmName(\"${sourceFile.jvmClassName}\")")
-        if (platform == Platform.JVM)
-            writer.appendln("@file:kotlin.jvm.JvmVersion")
         writer.appendln()
 
         writer.append("package ${sourceFile.packageName ?: "kotlin"}\n\n")

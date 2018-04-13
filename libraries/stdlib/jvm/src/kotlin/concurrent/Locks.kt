@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:JvmVersion
 @file:JvmName("LocksKt")
 package kotlin.concurrent
 

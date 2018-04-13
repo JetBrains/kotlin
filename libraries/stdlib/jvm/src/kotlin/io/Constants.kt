@@ -1,4 +1,3 @@
-@file:JvmVersion
 @file:JvmName("ConstantsKt")
 package kotlin.io
 

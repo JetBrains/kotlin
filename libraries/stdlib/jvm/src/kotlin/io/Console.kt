@@ -1,4 +1,3 @@
-@file:JvmVersion
 @file:JvmName("ConsoleKt")
 
 package kotlin.io

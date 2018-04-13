@@ -1,6 +1,5 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("ExceptionsKt")
-@file:kotlin.jvm.JvmVersion
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 package kotlin
 

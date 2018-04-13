@@ -15,7 +15,6 @@
  */
 
 @file:JvmName("CloseableKt")
-@file:JvmVersion
 package kotlin.io
 
 import java.io.Closeable

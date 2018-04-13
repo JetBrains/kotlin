@@ -22,15 +22,14 @@ sourceSets {
     "test" {}
 }
 
-val copySources by task<Copy> {
+val copySources by task<Sync> {
     val stdlibProjectDir = project(":kotlin-stdlib").projectDir
 
     from(stdlibProjectDir.resolve("runtime"))
         .include("kotlin/TypeAliases.kt",
                  "kotlin/text/TypeAliases.kt")
     from(stdlibProjectDir.resolve("src"))
-        .include("kotlin/collections/TypeAliases.kt",
-                 "kotlin/jvm/JvmVersion.kt")
+        .include("kotlin/collections/TypeAliases.kt")
     from(stdlibProjectDir.resolve("../src"))
         .include("kotlin/util/Standard.kt",
                  "kotlin/internal/Annotations.kt",

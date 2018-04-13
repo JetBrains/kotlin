@@ -1,5 +1,4 @@
 @file:kotlin.jvm.JvmName("TimingKt")
-@file:kotlin.jvm.JvmVersion
 package kotlin.system
 
 /**

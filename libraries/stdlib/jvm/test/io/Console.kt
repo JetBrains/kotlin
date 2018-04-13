@@ -4,7 +4,6 @@
  */
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@file:kotlin.jvm.JvmVersion
 package test.io
 
 import org.junit.Test

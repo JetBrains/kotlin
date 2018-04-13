@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:JvmVersion
 @file:JvmName("CoroutineIntrinsics")
 package kotlin.coroutines.experimental.jvm.internal
 

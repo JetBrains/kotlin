@@ -1,4 +1,3 @@
-@file:kotlin.jvm.JvmVersion
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 @file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")

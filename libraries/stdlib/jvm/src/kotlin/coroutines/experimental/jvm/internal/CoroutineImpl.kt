@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:JvmVersion
 package kotlin.coroutines.experimental.jvm.internal
 
 import java.lang.IllegalStateException

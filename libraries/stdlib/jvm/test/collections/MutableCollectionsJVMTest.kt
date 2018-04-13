@@ -3,7 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:JvmVersion
 package test.collections
 
 import kotlin.test.*

@@ -14,7 +14,6 @@ import kotlin.*
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
-@JvmVersion
 private class ClosedFloatRange (
     start: Float,
     endInclusive: Float
@@ -46,7 +45,6 @@ private class ClosedFloatRange (
  * Numbers are compared with the ends of this range according to IEEE-754.
  * @sample samples.ranges.Ranges.rangeFromFloat
  */
-@JvmVersion
 @SinceKotlin("1.1")
 public operator fun Float.rangeTo(that: Float): ClosedFloatingPointRange<Float> = ClosedFloatRange(this, that)
 

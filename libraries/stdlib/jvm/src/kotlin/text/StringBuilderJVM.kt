@@ -1,4 +1,3 @@
-@file:kotlin.jvm.JvmVersion
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 
@@ -7,7 +6,6 @@ package kotlin.text
 /**
  * Sets the character at the specified [index] to the specified [value].
  */
-@kotlin.jvm.JvmVersion
 @kotlin.internal.InlineOnly
 public inline operator fun StringBuilder.set(index: Int, value: Char): Unit = this.setCharAt(index, value)
 

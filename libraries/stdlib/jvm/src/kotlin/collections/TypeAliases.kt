@@ -1,5 +1,3 @@
-@file:kotlin.jvm.JvmVersion
-
 @file:Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-stdlib-minimal-for-test
 
 package kotlin.collections

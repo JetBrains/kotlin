@@ -1,4 +1,3 @@
-@file:kotlin.jvm.JvmVersion
 @file:Suppress("DEPRECATION", "DEPRECATED_JAVA_ANNOTATION")
 package test.reflection
 

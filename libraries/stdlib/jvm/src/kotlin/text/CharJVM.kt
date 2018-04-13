@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:kotlin.jvm.JvmVersion
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CharsKt")
 

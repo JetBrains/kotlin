@@ -1,5 +1,4 @@
 @file:JvmName("CharsetsKt")
-@file:JvmVersion
 package kotlin.text
 
 import java.nio.charset.*

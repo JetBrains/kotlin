@@ -1,4 +1,3 @@
-@file:kotlin.jvm.JvmVersion
 package test.concurrent
 
 import java.util.*

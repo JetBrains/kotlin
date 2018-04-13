@@ -1,4 +1,3 @@
-@file:kotlin.jvm.JvmVersion
 package test.ranges
 
 import java.lang.Integer.MAX_VALUE as MaxI

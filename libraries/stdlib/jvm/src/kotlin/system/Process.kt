@@ -1,5 +1,4 @@
 @file:kotlin.jvm.JvmName("ProcessKt")
-@file:kotlin.jvm.JvmVersion
 package kotlin.system
 
 import kotlin.*

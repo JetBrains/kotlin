@@ -1,4 +1,3 @@
-@file:kotlin.jvm.JvmVersion
 package test.exceptions
 
 import kotlin.test.*

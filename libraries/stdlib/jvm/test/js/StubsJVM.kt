@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:JvmVersion
 package test.collections.js
 
 public actual fun <V> stringMapOf(vararg pairs: Pair<String, V>): HashMap<String, V> = hashMapOf<String, V>(*pairs)

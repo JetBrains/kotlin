@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:JvmVersion
 @file:JvmMultifileClass
 @file:JvmName("MathKt")
 

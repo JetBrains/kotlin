@@ -18,7 +18,6 @@ package kotlin
  * Note that the returned instance uses itself to synchronize on. Do not synchronize from external code on
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
-@kotlin.jvm.JvmVersion
 public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
 /**
@@ -31,7 +30,6 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl
  * to synchronize on. Do not synchronize from external code on the returned instance as it may cause accidental deadlock.
  * Also this behavior can be changed in the future.
  */
-@kotlin.jvm.JvmVersion
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
     when (mode) {
         LazyThreadSafetyMode.SYNCHRONIZED -> SynchronizedLazyImpl(initializer)
@@ -50,12 +48,10 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  * in this case do not synchronize from external code on the returned instance as it may cause accidental deadlock.
  * Also this behavior can be changed in the future.
  */
-@kotlin.jvm.JvmVersion
 public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer, lock)
 
 
 
-@JvmVersion
 private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
@@ -92,7 +88,6 @@ private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nul
 }
 
 
-@kotlin.jvm.JvmVersion
 private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
     @Volatile private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE

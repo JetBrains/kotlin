@@ -3,7 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:JvmVersion
 package test.text
 
 import test.*
@@ -11,21 +10,18 @@ import kotlin.test.*
 
 class StringNumberConversionJVMTest {
 
-    @JvmVersion
     @Test fun toIntArabicDigits() {
         compareConversion({ it.toInt() }, { it.toIntOrNull() }) {
             assertProduces("٢٣١٩٦٠", 231960)
         }
     }
 
-    @JvmVersion
     @Test fun toLongArabicDigits() {
         compareConversion({ it.toLong() }, { it.toLongOrNull() }) {
             assertProduces("٢٣١٩٦٠٧٧٨٤٥٩", 231960778459)
         }
     }
 
-    @kotlin.jvm.JvmVersion
     @Test fun toFloat() {
         compareConversion(String::toFloat, String::toFloatOrNull) {
             assertProduces("77.0", 77.0f)
@@ -38,7 +34,6 @@ class StringNumberConversionJVMTest {
     }
 
 
-    @kotlin.jvm.JvmVersion
     @Test fun toHexDouble() {
         compareConversion(String::toDouble, String::toDoubleOrNull, ::doubleTotalOrderEquals) {
             assertProduces("0x77p1", (0x77 shl 1).toDouble())
@@ -49,7 +44,6 @@ class StringNumberConversionJVMTest {
     }
 
 
-    @kotlin.jvm.JvmVersion
     @Test fun byteToStringWithRadix() {
         assertEquals("7a", 0x7a.toByte().toString(16))
         assertEquals("-80", Byte.MIN_VALUE.toString(radix = 16))
@@ -60,7 +54,6 @@ class StringNumberConversionJVMTest {
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toByte().toString(radix = 1) }
     }
 
-    @kotlin.jvm.JvmVersion
     @Test fun shortToStringWithRadix() {
         assertEquals("7FFF", 0x7FFF.toShort().toString(radix = 16).toUpperCase())
         assertEquals("-8000", (-0x8000).toShort().toString(radix = 16))
@@ -70,7 +63,6 @@ class StringNumberConversionJVMTest {
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1.toShort().toString(radix = 1) }
     }
 
-    @kotlin.jvm.JvmVersion
     @Test fun intToStringWithRadix() {
         assertEquals("-ff", (-255).toString(radix = 16))
         assertEquals("1100110", 102.toString(radix = 2))
@@ -80,7 +72,6 @@ class StringNumberConversionJVMTest {
 
     }
 
-    @kotlin.jvm.JvmVersion
     @Test fun longToStringWithRadix() {
         assertEquals("7f11223344556677", 0x7F11223344556677.toString(radix = 16))
         assertEquals("hazelnut", 1356099454469L.toString(radix = 36))
@@ -90,7 +81,6 @@ class StringNumberConversionJVMTest {
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { 1L.toString(radix = 1) }
     }
 
-    @kotlin.jvm.JvmVersion
     @Test fun toBigInteger() {
         compareConversion(String::toBigInteger, String::toBigIntegerOrNull) {
             assertProduces("0", java.math.BigInteger.ZERO)
@@ -118,7 +108,6 @@ class StringNumberConversionJVMTest {
         }
     }
 
-    @kotlin.jvm.JvmVersion
     @Test fun toBigDecimal() {
         fun bd(value: String) = java.math.BigDecimal(value)
         compareConversion(String::toBigDecimal, String::toBigDecimalOrNull) {

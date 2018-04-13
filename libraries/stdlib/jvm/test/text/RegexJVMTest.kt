@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:kotlin.jvm.JvmVersion
 package test.text
 
 import kotlin.test.*

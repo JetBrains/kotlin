@@ -16,7 +16,6 @@
 
 @file:kotlin.jvm.JvmName("IntrinsicsKt")
 @file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmVersion
 package kotlin.coroutines.experimental.intrinsics
 import kotlin.coroutines.experimental.*
 
@@ -63,7 +62,6 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
 @SinceKotlin("1.1")
-@kotlin.jvm.JvmVersion
 public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
         completion: Continuation<T>
 ): Continuation<Unit> =
@@ -86,7 +84,6 @@ public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
  */
 @SinceKotlin("1.1")
-@kotlin.jvm.JvmVersion
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
         receiver: R,
         completion: Continuation<T>
@@ -101,7 +98,6 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
 
 // INTERNAL DEFINITIONS
 
-@kotlin.jvm.JvmVersion
 private inline fun <T> buildContinuationByInvokeCall(
         completion: Continuation<T>,
         crossinline block: () -> Any?

@@ -1,4 +1,3 @@
-@file:JvmVersion
 package kotlin.text
 
 import kotlin.*

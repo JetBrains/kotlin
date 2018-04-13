@@ -1,6 +1,5 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
-@file:kotlin.jvm.JvmVersion
 
 package kotlin.collections
 
