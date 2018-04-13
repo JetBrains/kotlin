@@ -194,7 +194,7 @@ public inline fun <T> Collection<T>?.isNullOrEmpty(): Boolean = this == null || 
 public inline fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
 
 /**
- * Returns this List if it's not `null` and the empty list othearwise.
+ * Returns this List if it's not `null` and the empty list otherwise.
  * @sample samples.collections.Collections.Lists.listOrEmpty
  */
 @kotlin.internal.InlineOnly
