@@ -21,10 +21,13 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AntTaskTestGenerated extends AbstractAntTaskTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     @TestMetadata("additionalArguments")
     public void testAdditionalArguments() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/additionalArguments/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/additionalArguments/");
     }
 
     public void testAllFilesPresentInJvm() throws Exception {
@@ -33,145 +36,121 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
 
     @TestMetadata("doNotFailOnError")
     public void testDoNotFailOnError() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/doNotFailOnError/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/doNotFailOnError/");
     }
 
     @TestMetadata("failOnErrorByDefault")
     public void testFailOnErrorByDefault() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/failOnErrorByDefault/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/failOnErrorByDefault/");
     }
 
     @TestMetadata("helloWorld")
     public void testHelloWorld() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/helloWorld/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/helloWorld/");
     }
 
     @TestMetadata("internalMembers")
     public void testInternalMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/internalMembers/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/internalMembers/");
     }
 
     @TestMetadata("jvmClasspath")
     public void testJvmClasspath() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/jvmClasspath/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/jvmClasspath/");
     }
 
     @TestMetadata("kt11995")
     public void testKt11995() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/kt11995/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/kt11995/");
     }
 
     @TestMetadata("languageVersion")
     public void testLanguageVersion() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/languageVersion/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/languageVersion/");
     }
 
     @TestMetadata("mainInFiles")
     public void testMainInFiles() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/mainInFiles/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/mainInFiles/");
     }
 
     @TestMetadata("moduleName")
     public void testModuleName() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/moduleName/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/moduleName/");
     }
 
     @TestMetadata("moduleNameDefault")
     public void testModuleNameDefault() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/moduleNameDefault/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/moduleNameDefault/");
     }
 
     @TestMetadata("moduleNameWithKotlin")
     public void testModuleNameWithKotlin() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/moduleNameWithKotlin/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/moduleNameWithKotlin/");
     }
 
     @TestMetadata("noReflectForJavac")
     public void testNoReflectForJavac() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/noReflectForJavac/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/noReflectForJavac/");
     }
 
     @TestMetadata("noStdlibForJavac")
     public void testNoStdlibForJavac() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/noStdlibForJavac/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/noStdlibForJavac/");
     }
 
     @TestMetadata("overloadResolutionOnCollectionLiteral")
     public void testOverloadResolutionOnCollectionLiteral() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/overloadResolutionOnCollectionLiteral/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/overloadResolutionOnCollectionLiteral/");
     }
 
     @TestMetadata("stdlibForJavacWithNoKotlin")
     public void testStdlibForJavacWithNoKotlin() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/stdlibForJavacWithNoKotlin/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/stdlibForJavacWithNoKotlin/");
     }
 
     @TestMetadata("stdlibJre78AndStdlibJdk78")
     public void testStdlibJre78AndStdlibJdk78() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/stdlibJre78AndStdlibJdk78/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/stdlibJre78AndStdlibJdk78/");
     }
 
     @TestMetadata("suppressWarnings")
     public void testSuppressWarnings() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/suppressWarnings/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/suppressWarnings/");
     }
 
     @TestMetadata("twoStdlibForCollectionLiterals")
     public void testTwoStdlibForCollectionLiterals() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/twoStdlibForCollectionLiterals/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/twoStdlibForCollectionLiterals/");
     }
 
     @TestMetadata("valWithInvoke")
     public void testValWithInvoke() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/valWithInvoke/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/valWithInvoke/");
     }
 
     @TestMetadata("verbose")
     public void testVerbose() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/verbose/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/verbose/");
     }
 
     @TestMetadata("version")
     public void testVersion() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/version/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/version/");
     }
 
     @TestMetadata("withKotlinFork")
     public void testWithKotlinFork() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/withKotlinFork/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/withKotlinFork/");
     }
 
     @TestMetadata("withKotlinNoJavaSources")
     public void testWithKotlinNoJavaSources() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/withKotlinNoJavaSources/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/withKotlinNoJavaSources/");
     }
 
     @TestMetadata("wrongCallForCollectionLiteral")
     public void testWrongCallForCollectionLiteral() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/wrongCallForCollectionLiteral/");
-        doTest(fileName);
+        runTest("compiler/testData/integration/ant/jvm/wrongCallForCollectionLiteral/");
     }
 }

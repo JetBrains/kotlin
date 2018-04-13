@@ -21,19 +21,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ReferenceToJavaWithWrongFileStructureTestGenerated extends AbstractReferenceToJavaWithWrongFileStructureTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInReferenceToJavaWithWrongFileStructure() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/resolve/referenceToJavaWithWrongFileStructure"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("ClassStatics.kt")
     public void testClassStatics() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceToJavaWithWrongFileStructure/ClassStatics.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/referenceToJavaWithWrongFileStructure/ClassStatics.kt");
     }
 
     @TestMetadata("SimpleClass.kt")
     public void testSimpleClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/resolve/referenceToJavaWithWrongFileStructure/SimpleClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/resolve/referenceToJavaWithWrongFileStructure/SimpleClass.kt");
     }
 }

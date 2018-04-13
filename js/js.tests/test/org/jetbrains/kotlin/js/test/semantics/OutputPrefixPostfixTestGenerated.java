@@ -21,31 +21,31 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class OutputPrefixPostfixTestGenerated extends AbstractOutputPrefixPostfixTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInOutputPrefixPostfix() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/outputPrefixPostfix"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
     }
 
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/outputPrefixPostfix/simple.kt");
-        doTest(fileName);
+        runTest("js/js.translator/testData/outputPrefixPostfix/simple.kt");
     }
 
     @TestMetadata("simpleWithPostfix.kt")
     public void testSimpleWithPostfix() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/outputPrefixPostfix/simpleWithPostfix.kt");
-        doTest(fileName);
+        runTest("js/js.translator/testData/outputPrefixPostfix/simpleWithPostfix.kt");
     }
 
     @TestMetadata("simpleWithPrefix.kt")
     public void testSimpleWithPrefix() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefix.kt");
-        doTest(fileName);
+        runTest("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefix.kt");
     }
 
     @TestMetadata("simpleWithPrefixAndPostfix.kt")
     public void testSimpleWithPrefixAndPostfix() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefixAndPostfix.kt");
-        doTest(fileName);
+        runTest("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefixAndPostfix.kt");
     }
 }

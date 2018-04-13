@@ -21,13 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalJsCompilerRunnerWithFriendModulesDisabledTestGenerated extends AbstractIncrementalJsCompilerRunnerWithFriendModulesDisabledTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInFriendsModuleDisabled() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/js/friendsModuleDisabled"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("internalInlineFunctionIsChanged")
     public void testInternalInlineFunctionIsChanged() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/js/friendsModuleDisabled/internalInlineFunctionIsChanged/");
-        doTest(fileName);
+        runTest("jps-plugin/testData/incremental/js/friendsModuleDisabled/internalInlineFunctionIsChanged/");
     }
 }

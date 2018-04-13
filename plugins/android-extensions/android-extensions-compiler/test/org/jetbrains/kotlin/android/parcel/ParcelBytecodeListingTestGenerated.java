@@ -21,97 +21,86 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeListingTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCodegen() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("customDescribeContents.kt")
     public void testCustomDescribeContents() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customDescribeContents.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customDescribeContents.kt");
     }
 
     @TestMetadata("customParcelablesDifferentModule.kt")
     public void testCustomParcelablesDifferentModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesDifferentModule.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesDifferentModule.kt");
     }
 
     @TestMetadata("customParcelablesSameModule.kt")
     public void testCustomParcelablesSameModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesSameModule.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesSameModule.kt");
     }
 
     @TestMetadata("customSimple.kt")
     public void testCustomSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimple.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimple.kt");
     }
 
     @TestMetadata("customSimpleWithNewArray.kt")
     public void testCustomSimpleWithNewArray() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimpleWithNewArray.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimpleWithNewArray.kt");
     }
 
     @TestMetadata("describeContentsFromSuperType.kt")
     public void testDescribeContentsFromSuperType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/describeContentsFromSuperType.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/describeContentsFromSuperType.kt");
     }
 
     @TestMetadata("duplicatingClinit.kt")
     public void testDuplicatingClinit() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/duplicatingClinit.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/duplicatingClinit.kt");
     }
 
     @TestMetadata("IBinderIInterface.kt")
     public void testIBinderIInterface() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/IBinderIInterface.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/IBinderIInterface.kt");
     }
 
     @TestMetadata("listInsideList.kt")
     public void testListInsideList() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/listInsideList.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/listInsideList.kt");
     }
 
     @TestMetadata("nullableNotNullSize.kt")
     public void testNullableNotNullSize() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/nullableNotNullSize.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/nullableNotNullSize.kt");
     }
 
     @TestMetadata("parcelable.kt")
     public void testParcelable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/parcelable.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/parcelable.kt");
     }
 
     @TestMetadata("serializable.kt")
     public void testSerializable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializable.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializable.kt");
     }
 
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/simple.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/simple.kt");
     }
 
     @TestMetadata("simpleList.kt")
     public void testSimpleList() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/simpleList.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/simpleList.kt");
     }
 
     @TestMetadata("size.kt")
     public void testSize() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/size.kt");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/size.kt");
     }
 }

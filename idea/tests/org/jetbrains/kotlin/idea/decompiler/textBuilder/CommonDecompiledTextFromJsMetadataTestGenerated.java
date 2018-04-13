@@ -23,14 +23,16 @@ import java.util.regex.Pattern;
 public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCommonDecompiledTextFromJsMetadataTest {
     @TestMetadata("LocalClassAsTypeWithArgument")
     public void ignoreLocalClassAsTypeWithArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/LocalClassAsTypeWithArgument/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/LocalClassAsTypeWithArgument/");
     }
 
     @TestMetadata("SecondaryConstructors")
     public void ignoreSecondaryConstructors() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SecondaryConstructors/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/SecondaryConstructors/");
+    }
+
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
     }
 
     public void testAllFilesPresentInDecompiledText() throws Exception {
@@ -39,103 +41,346 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
 
     @TestMetadata("AnnotatedEnumEntry")
     public void testAnnotatedEnumEntry() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/AnnotatedEnumEntry/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/AnnotatedEnumEntry/");
     }
 
     @TestMetadata("Annotations")
     public void testAnnotations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Annotations/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/Annotations/");
     }
 
     @TestMetadata("AnnotationsOnPrimaryCtr")
     public void testAnnotationsOnPrimaryCtr() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/AnnotationsOnPrimaryCtr/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/AnnotationsOnPrimaryCtr/");
     }
 
     @TestMetadata("ClassWithClassObject")
     public void testClassWithClassObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/ClassWithClassObject/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/ClassWithClassObject/");
     }
 
     @TestMetadata("ClassWithNamedClassObject")
     public void testClassWithNamedClassObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/ClassWithNamedClassObject/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/ClassWithNamedClassObject/");
     }
 
     @TestMetadata("Const")
     public void testConst() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Const/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/Const/");
     }
 
     @TestMetadata("DependencyOnNestedClasses")
     public void testDependencyOnNestedClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/DependencyOnNestedClasses/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/DependencyOnNestedClasses/");
     }
 
     @TestMetadata("Enum")
     public void testEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Enum/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/Enum/");
     }
 
     @TestMetadata("FunctionTypes")
     public void testFunctionTypes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/FunctionTypes/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/FunctionTypes/");
     }
 
     @TestMetadata("FunctionalTypeWithNamedArguments")
     public void testFunctionalTypeWithNamedArguments() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/FunctionalTypeWithNamedArguments/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/FunctionalTypeWithNamedArguments/");
     }
 
     @TestMetadata("Inherited")
     public void testInherited() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Inherited/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/Inherited/");
     }
 
     @TestMetadata("InnerClasses")
     public void testInnerClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/InnerClasses/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/InnerClasses/");
     }
 
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Modifiers/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/Modifiers/");
     }
 
     @TestMetadata("NestedClasses")
     public void testNestedClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/NestedClasses/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/NestedClasses/");
     }
 
     @TestMetadata("Object")
     public void testObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Object/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/Object/");
     }
 
     @TestMetadata("SimpleClass")
     public void testSimpleClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/SimpleClass/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/SimpleClass/");
     }
 
     @TestMetadata("TypeModifiers")
     public void testTypeModifiers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/TypeModifiers/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledText/TypeModifiers/");
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/AnnotatedEnumEntry")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AnnotatedEnumEntry extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAnnotatedEnumEntry() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/AnnotatedEnumEntry"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/Annotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Annotations extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/Annotations"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/AnnotationsOnPrimaryCtr")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AnnotationsOnPrimaryCtr extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAnnotationsOnPrimaryCtr() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/AnnotationsOnPrimaryCtr"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/ClassWithClassObject")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ClassWithClassObject extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInClassWithClassObject() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/ClassWithClassObject"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/ClassWithNamedClassObject")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ClassWithNamedClassObject extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInClassWithNamedClassObject() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/ClassWithNamedClassObject"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/Const")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Const extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInConst() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/Const"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/DependencyOnNestedClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DependencyOnNestedClasses extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDependencyOnNestedClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/DependencyOnNestedClasses"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/Enum")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Enum extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInEnum() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/Enum"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/FlexibleTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FlexibleTypes extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFlexibleTypes() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/FlexibleTypes"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/FunctionTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunctionTypes extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFunctionTypes() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/FunctionTypes"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/FunctionalTypeWithNamedArguments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FunctionalTypeWithNamedArguments extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFunctionalTypeWithNamedArguments() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/FunctionalTypeWithNamedArguments"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/Inherited")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Inherited extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInherited() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/Inherited"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/InnerClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InnerClasses extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInnerClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/InnerClasses"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/LocalClassAsTypeWithArgument")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LocalClassAsTypeWithArgument extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLocalClassAsTypeWithArgument() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/LocalClassAsTypeWithArgument"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/Modifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Modifiers extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInModifiers() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/Modifiers"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/NestedClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NestedClasses extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInNestedClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/NestedClasses"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/Object")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Object extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInObject() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/Object"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/SecondaryConstructors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SecondaryConstructors extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSecondaryConstructors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/SecondaryConstructors"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/SimpleClass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SimpleClass extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSimpleClass() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/SimpleClass"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledText/TypeModifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeModifiers extends AbstractCommonDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeModifiers() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText/TypeModifiers"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
     }
 }

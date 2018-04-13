@@ -21,19 +21,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KDocHighlightingTestGenerated extends AbstractKDocHighlightingTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInHighlighting() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/highlighting"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("MissingDocumentation.kt")
     public void testMissingDocumentation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/highlighting/MissingDocumentation.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/highlighting/MissingDocumentation.kt");
     }
 
     @TestMetadata("UnresolvedReference.kt")
     public void testUnresolvedReference() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/highlighting/UnresolvedReference.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/highlighting/UnresolvedReference.kt");
     }
 }

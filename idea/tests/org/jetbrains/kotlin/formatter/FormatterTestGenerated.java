@@ -23,10 +23,13 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Formatter extends AbstractFormatterTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("AfterSemiColonInEnumClass.after.kt")
         public void testAfterSemiColonInEnumClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AfterSemiColonInEnumClass.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/AfterSemiColonInEnumClass.after.kt");
         }
 
         public void testAllFilesPresentInFormatter() throws Exception {
@@ -35,964 +38,809 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
 
         @TestMetadata("AnnotationBeforeExpression.after.kt")
         public void testAnnotationBeforeExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AnnotationBeforeExpression.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/AnnotationBeforeExpression.after.kt");
         }
 
         @TestMetadata("AnonymousInitializers.after.kt")
         public void testAnonymousInitializers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AnonymousInitializers.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/AnonymousInitializers.after.kt");
         }
 
         @TestMetadata("AnonymousInitializersLineBreak.after.kt")
         public void testAnonymousInitializersLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AnonymousInitializersLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/AnonymousInitializersLineBreak.after.kt");
         }
 
         @TestMetadata("ArrayAccess.after.kt")
         public void testArrayAccess() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ArrayAccess.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ArrayAccess.after.kt");
         }
 
         @TestMetadata("ArrayLiteral.after.kt")
         public void testArrayLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ArrayLiteral.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ArrayLiteral.after.kt");
         }
 
         @TestMetadata("AssignmentWrap.after.kt")
         public void testAssignmentWrap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AssignmentWrap.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/AssignmentWrap.after.kt");
         }
 
         @TestMetadata("BinaryExpressionAlignmentSpread.after.kt")
         public void testBinaryExpressionAlignmentSpread() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionAlignmentSpread.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/BinaryExpressionAlignmentSpread.after.kt");
         }
 
         @TestMetadata("BinaryExpressions.after.kt")
         public void testBinaryExpressions() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressions.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/BinaryExpressions.after.kt");
         }
 
         @TestMetadata("BinaryExpressionsBoolean.after.kt")
         public void testBinaryExpressionsBoolean() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsBoolean.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/BinaryExpressionsBoolean.after.kt");
         }
 
         @TestMetadata("BinaryExpressionsWithoutAlignment.after.kt")
         public void testBinaryExpressionsWithoutAlignment() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.kt");
         }
 
         @TestMetadata("BlankLinesAfterClassHeader.after.kt")
         public void testBlankLinesAfterClassHeader() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BlankLinesAfterClassHeader.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/BlankLinesAfterClassHeader.after.kt");
         }
 
         @TestMetadata("BlankLinesBeforeRBrace.after.kt")
         public void testBlankLinesBeforeRBrace() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BlankLinesBeforeRBrace.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/BlankLinesBeforeRBrace.after.kt");
         }
 
         @TestMetadata("BlankLinesBeforeRBrace2.after.kt")
         public void testBlankLinesBeforeRBrace2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BlankLinesBeforeRBrace2.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/BlankLinesBeforeRBrace2.after.kt");
         }
 
         @TestMetadata("BlockFor.after.kt")
         public void testBlockFor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BlockFor.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/BlockFor.after.kt");
         }
 
         @TestMetadata("By.after.kt")
         public void testBy() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/By.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/By.after.kt");
         }
 
         @TestMetadata("CallLParenthOnNextLine.after.kt")
         public void testCallLParenthOnNextLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallLParenthOnNextLine.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/CallLParenthOnNextLine.after.kt");
         }
 
         @TestMetadata("CallRParenthOnNextLine.after.kt")
         public void testCallRParenthOnNextLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallRParenthOnNextLine.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/CallRParenthOnNextLine.after.kt");
         }
 
         @TestMetadata("Cast.after.kt")
         public void testCast() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Cast.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/Cast.after.kt");
         }
 
         @TestMetadata("CatchFinallyOnNewLine.after.kt")
         public void testCatchFinallyOnNewLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CatchFinallyOnNewLine.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/CatchFinallyOnNewLine.after.kt");
         }
 
         @TestMetadata("Class.after.kt")
         public void testClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Class.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/Class.after.kt");
         }
 
         @TestMetadata("ClassAnnotationWrapping.after.kt")
         public void testClassAnnotationWrapping() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ClassAnnotationWrapping.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ClassAnnotationWrapping.after.kt");
         }
 
         @TestMetadata("ClassInBody.after.kt")
         public void testClassInBody() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ClassInBody.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ClassInBody.after.kt");
         }
 
         @TestMetadata("ClassLineBreak.after.kt")
         public void testClassLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ClassLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ClassLineBreak.after.kt");
         }
 
         @TestMetadata("ClassTypeParam.after.kt")
         public void testClassTypeParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ClassTypeParam.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ClassTypeParam.after.kt");
         }
 
         @TestMetadata("ColonSpaces.after.kt")
         public void testColonSpaces() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ColonSpaces.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ColonSpaces.after.kt");
         }
 
         @TestMetadata("CommentInFunctionLiteral.after.kt")
         public void testCommentInFunctionLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
         }
 
         @TestMetadata("ContinuationIndentInParameterLists.after.kt")
         public void testContinuationIndentInParameterLists() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentInParameterLists.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ContinuationIndentInParameterLists.after.kt");
         }
 
         @TestMetadata("ContinuationIndentInSupertypeLists.after.kt")
         public void testContinuationIndentInSupertypeLists() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentInSupertypeLists.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ContinuationIndentInSupertypeLists.after.kt");
         }
 
         @TestMetadata("CurlyBraceStringInterpolation.after.kt")
         public void testCurlyBraceStringInterpolation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CurlyBraceStringInterpolation.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/CurlyBraceStringInterpolation.after.kt");
         }
 
         @TestMetadata("DanglingComments.after.kt")
         public void testDanglingComments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DanglingComments.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/DanglingComments.after.kt");
         }
 
         @TestMetadata("DelegationList.after.kt")
         public void testDelegationList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DelegationList.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/DelegationList.after.kt");
         }
 
         @TestMetadata("DoWhileLineBreak.after.kt")
         public void testDoWhileLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DoWhileLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/DoWhileLineBreak.after.kt");
         }
 
         @TestMetadata("DoWhileSpacing.after.kt")
         public void testDoWhileSpacing() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DoWhileSpacing.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/DoWhileSpacing.after.kt");
         }
 
         @TestMetadata("DocComments.after.kt")
         public void testDocComments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DocComments.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/DocComments.after.kt");
         }
 
         @TestMetadata("ElseOnNewLine.after.kt")
         public void testElseOnNewLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ElseOnNewLine.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ElseOnNewLine.after.kt");
         }
 
         @TestMetadata("Elvis.after.kt")
         public void testElvis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Elvis.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/Elvis.after.kt");
         }
 
         @TestMetadata("ElvisIndent.after.kt")
         public void testElvisIndent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ElvisIndent.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ElvisIndent.after.kt");
         }
 
         @TestMetadata("ElvisWrap.after.kt")
         public void testElvisWrap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ElvisWrap.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ElvisWrap.after.kt");
         }
 
         @TestMetadata("EmptyLineAfterObjectDeclaration.after.kt")
         public void testEmptyLineAfterObjectDeclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineAfterObjectDeclaration.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EmptyLineAfterObjectDeclaration.after.kt");
         }
 
         @TestMetadata("EmptyLineAfterPackage.after.kt")
         public void testEmptyLineAfterPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineAfterPackage.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EmptyLineAfterPackage.after.kt");
         }
 
         @TestMetadata("EmptyLineBetweeAbstractFunctions.after.kt")
         public void testEmptyLineBetweeAbstractFunctions() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweeAbstractFunctions.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EmptyLineBetweeAbstractFunctions.after.kt");
         }
 
         @TestMetadata("EmptyLineBetweenClassAndFunction.after.kt")
         public void testEmptyLineBetweenClassAndFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenClassAndFunction.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EmptyLineBetweenClassAndFunction.after.kt");
         }
 
         @TestMetadata("EmptyLineBetweenClasses.after.kt")
         public void testEmptyLineBetweenClasses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenClasses.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EmptyLineBetweenClasses.after.kt");
         }
 
         @TestMetadata("EmptyLineBetweenEnumEntries.after.kt")
         public void testEmptyLineBetweenEnumEntries() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenEnumEntries.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EmptyLineBetweenEnumEntries.after.kt");
         }
 
         @TestMetadata("EmptyLineBetweenFunAndProperty.after.kt")
         public void testEmptyLineBetweenFunAndProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenFunAndProperty.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EmptyLineBetweenFunAndProperty.after.kt");
         }
 
         @TestMetadata("EmptyLineBetweenFunctions.after.kt")
         public void testEmptyLineBetweenFunctions() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenFunctions.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EmptyLineBetweenFunctions.after.kt");
         }
 
         @TestMetadata("EmptyLineBetweenProperties.after.kt")
         public void testEmptyLineBetweenProperties() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenProperties.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EmptyLineBetweenProperties.after.kt");
         }
 
         @TestMetadata("EnumArguments.after.kt")
         public void testEnumArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EnumArguments.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EnumArguments.after.kt");
         }
 
         @TestMetadata("EnumWrapping.after.kt")
         public void testEnumWrapping() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EnumWrapping.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/EnumWrapping.after.kt");
         }
 
         @TestMetadata("ExpressionBodyWrap.after.kt")
         public void testExpressionBodyWrap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ExpressionBodyWrap.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ExpressionBodyWrap.after.kt");
         }
 
         @TestMetadata("ExtendsListWrap.after.kt")
         public void testExtendsListWrap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ExtendsListWrap.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ExtendsListWrap.after.kt");
         }
 
         @TestMetadata("ForLineBreak.after.kt")
         public void testForLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ForLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ForLineBreak.after.kt");
         }
 
         @TestMetadata("ForNoBraces.after.kt")
         public void testForNoBraces() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ForNoBraces.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ForNoBraces.after.kt");
         }
 
         @TestMetadata("ForSpacing.after.kt")
         public void testForSpacing() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ForSpacing.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ForSpacing.after.kt");
         }
 
         @TestMetadata("FormatFirstColumnComments.after.kt")
         public void testFormatFirstColumnComments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FormatFirstColumnComments.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/FormatFirstColumnComments.after.kt");
         }
 
         @TestMetadata("FormatFirstColumnCommentsBeforeDeclaration.after.kt")
         public void testFormatFirstColumnCommentsBeforeDeclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FormatFirstColumnCommentsBeforeDeclaration.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/FormatFirstColumnCommentsBeforeDeclaration.after.kt");
         }
 
         @TestMetadata("FunctionCallParametersAlign.after.kt")
         public void testFunctionCallParametersAlign() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionCallParametersAlign.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/FunctionCallParametersAlign.after.kt");
         }
 
         @TestMetadata("FunctionDefParametersAlign.after.kt")
         public void testFunctionDefParametersAlign() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionDefParametersAlign.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/FunctionDefParametersAlign.after.kt");
         }
 
         @TestMetadata("FunctionExpression.after.kt")
         public void testFunctionExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionExpression.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/FunctionExpression.after.kt");
         }
 
         @TestMetadata("FunctionLineBreak.after.kt")
         public void testFunctionLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/FunctionLineBreak.after.kt");
         }
 
         @TestMetadata("FunctionReferenceOperator.after.kt")
         public void testFunctionReferenceOperator() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionReferenceOperator.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/FunctionReferenceOperator.after.kt");
         }
 
         @TestMetadata("FunctionWithInference.after.kt")
         public void testFunctionWithInference() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionWithInference.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/FunctionWithInference.after.kt");
         }
 
         @TestMetadata("FunctionalType.after.kt")
         public void testFunctionalType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionalType.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/FunctionalType.after.kt");
         }
 
         @TestMetadata("GetterAndSetter.after.kt")
         public void testGetterAndSetter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/GetterAndSetter.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/GetterAndSetter.after.kt");
         }
 
         @TestMetadata("If.after.kt")
         public void testIf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/If.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/If.after.kt");
         }
 
         @TestMetadata("IfClosingParen.after.kt")
         public void testIfClosingParen() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfClosingParen.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/IfClosingParen.after.kt");
         }
 
         @TestMetadata("IfConditionIndent.after.kt")
         public void testIfConditionIndent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfConditionIndent.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/IfConditionIndent.after.kt");
         }
 
         @TestMetadata("IfElseRemoveLineBreak.after.kt")
         public void testIfElseRemoveLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfElseRemoveLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/IfElseRemoveLineBreak.after.kt");
         }
 
         @TestMetadata("IfElseWithLineBreak.after.kt")
         public void testIfElseWithLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfElseWithLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/IfElseWithLineBreak.after.kt");
         }
 
         @TestMetadata("IfElseWithTrickyComments.after.kt")
         public void testIfElseWithTrickyComments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfElseWithTrickyComments.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/IfElseWithTrickyComments.after.kt");
         }
 
         @TestMetadata("IfRParen.after.kt")
         public void testIfRParen() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfRParen.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/IfRParen.after.kt");
         }
 
         @TestMetadata("IfSpacing.after.kt")
         public void testIfSpacing() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfSpacing.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/IfSpacing.after.kt");
         }
 
         @TestMetadata("In.after.kt")
         public void testIn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/In.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/In.after.kt");
         }
 
         @TestMetadata("InfixCall.after.kt")
         public void testInfixCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/InfixCall.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/InfixCall.after.kt");
         }
 
         @TestMetadata("Is.after.kt")
         public void testIs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Is.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/Is.after.kt");
         }
 
         @TestMetadata("KDoc.after.kt")
         public void testKDoc() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KDoc.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/KDoc.after.kt");
         }
 
         @TestMetadata("KT22230.after.kt")
         public void testKT22230() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KT22230.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/KT22230.after.kt");
         }
 
         @TestMetadata("KeepLineBreak.after.kt")
         public void testKeepLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KeepLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/KeepLineBreak.after.kt");
         }
 
         @TestMetadata("LabeledExpression.after.kt")
         public void testLabeledExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LabeledExpression.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/LabeledExpression.after.kt");
         }
 
         @TestMetadata("LambdaArrow.after.kt")
         public void testLambdaArrow() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LambdaArrow.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/LambdaArrow.after.kt");
         }
 
         @TestMetadata("LineBreakBeforeExtendsColon.after.kt")
         public void testLineBreakBeforeExtendsColon() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LineBreakBeforeExtendsColon.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/LineBreakBeforeExtendsColon.after.kt");
         }
 
         @TestMetadata("LineBreakBeforeExtendsColonWrap.after.kt")
         public void testLineBreakBeforeExtendsColonWrap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LineBreakBeforeExtendsColonWrap.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/LineBreakBeforeExtendsColonWrap.after.kt");
         }
 
         @TestMetadata("LocalVariableAnnotationWrap.after.kt")
         public void testLocalVariableAnnotationWrap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LocalVariableAnnotationWrap.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/LocalVariableAnnotationWrap.after.kt");
         }
 
         @TestMetadata("LoopParameterWithExplicitType.after.kt")
         public void testLoopParameterWithExplicitType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LoopParameterWithExplicitType.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/LoopParameterWithExplicitType.after.kt");
         }
 
         @TestMetadata("MethodAnnotationWrapping.after.kt")
         public void testMethodAnnotationWrapping() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodAnnotationWrapping.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/MethodAnnotationWrapping.after.kt");
         }
 
         @TestMetadata("MethodCall.after.kt")
         public void testMethodCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodCall.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/MethodCall.after.kt");
         }
 
         @TestMetadata("MethodLParenthOnNextLine.after.kt")
         public void testMethodLParenthOnNextLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodLParenthOnNextLine.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/MethodLParenthOnNextLine.after.kt");
         }
 
         @TestMetadata("MethodRParenthOnNextLine.after.kt")
         public void testMethodRParenthOnNextLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodRParenthOnNextLine.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/MethodRParenthOnNextLine.after.kt");
         }
 
         @TestMetadata("Multideclaration.after.kt")
         public void testMultideclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Multideclaration.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/Multideclaration.after.kt");
         }
 
         @TestMetadata("MultilineFunctionLiteral.after.kt")
         public void testMultilineFunctionLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MultilineFunctionLiteral.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/MultilineFunctionLiteral.after.kt");
         }
 
         @TestMetadata("MultilineFunctionLiteralWithParams.after.kt")
         public void testMultilineFunctionLiteralWithParams() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MultilineFunctionLiteralWithParams.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/MultilineFunctionLiteralWithParams.after.kt");
         }
 
         @TestMetadata("NewLineForRBrace.after.kt")
         public void testNewLineForRBrace() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/NewLineForRBrace.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/NewLineForRBrace.after.kt");
         }
 
         @TestMetadata("NotIn.after.kt")
         public void testNotIn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/NotIn.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/NotIn.after.kt");
         }
 
         @TestMetadata("NotIs.after.kt")
         public void testNotIs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/NotIs.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/NotIs.after.kt");
         }
 
         @TestMetadata("NullableType.after.kt")
         public void testNullableType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/NullableType.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/NullableType.after.kt");
         }
 
         @TestMetadata("ObjectInBody.after.kt")
         public void testObjectInBody() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ObjectInBody.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ObjectInBody.after.kt");
         }
 
         @TestMetadata("ParameterAnnotationWrap.after.kt")
         public void testParameterAnnotationWrap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ParameterAnnotationWrap.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ParameterAnnotationWrap.after.kt");
         }
 
         @TestMetadata("ParameterDocComments.after.kt")
         public void testParameterDocComments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ParameterDocComments.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ParameterDocComments.after.kt");
         }
 
         @TestMetadata("Parameters.after.kt")
         public void testParameters() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Parameters.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/Parameters.after.kt");
         }
 
         @TestMetadata("PrimaryConstructor.after.kt")
         public void testPrimaryConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PrimaryConstructor.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/PrimaryConstructor.after.kt");
         }
 
         @TestMetadata("PropertyAccessorLineBreak.after.kt")
         public void testPropertyAccessorLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyAccessorLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/PropertyAccessorLineBreak.after.kt");
         }
 
         @TestMetadata("PropertyAccessors.after.kt")
         public void testPropertyAccessors() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyAccessors.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/PropertyAccessors.after.kt");
         }
 
         @TestMetadata("PropertyAnnotationWrap.after.kt")
         public void testPropertyAnnotationWrap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyAnnotationWrap.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/PropertyAnnotationWrap.after.kt");
         }
 
         @TestMetadata("PropertyInitializerLineBreak.after.kt")
         public void testPropertyInitializerLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyInitializerLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/PropertyInitializerLineBreak.after.kt");
         }
 
         @TestMetadata("PropertyTypeParameterList.after.kt")
         public void testPropertyTypeParameterList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyTypeParameterList.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/PropertyTypeParameterList.after.kt");
         }
 
         @TestMetadata("PropertyWithInference.after.kt")
         public void testPropertyWithInference() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/PropertyWithInference.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/PropertyWithInference.after.kt");
         }
 
         @TestMetadata("ReferenceExpressionFunctionLiteral.after.kt")
         public void testReferenceExpressionFunctionLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ReferenceExpressionFunctionLiteral.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ReferenceExpressionFunctionLiteral.after.kt");
         }
 
         @TestMetadata("RemoveSpacesAroundOperations.after.kt")
         public void testRemoveSpacesAroundOperations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/RemoveSpacesAroundOperations.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/RemoveSpacesAroundOperations.after.kt");
         }
 
         @TestMetadata("ReturnExpression.after.kt")
         public void testReturnExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ReturnExpression.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ReturnExpression.after.kt");
         }
 
         @TestMetadata("RightBracketOnNewLine.after.kt")
         public void testRightBracketOnNewLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/RightBracketOnNewLine.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/RightBracketOnNewLine.after.kt");
         }
 
         @TestMetadata("SaveSpacesInDocComments.after.kt")
         public void testSaveSpacesInDocComments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SaveSpacesInDocComments.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SaveSpacesInDocComments.after.kt");
         }
 
         @TestMetadata("Script.after.kts")
         public void testScript() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Script.after.kts");
-            doTest(fileName);
+            runTest("idea/testData/formatter/Script.after.kts");
         }
 
         @TestMetadata("SecondaryConstructors.after.kt")
         public void testSecondaryConstructors() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SecondaryConstructors.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SecondaryConstructors.after.kt");
         }
 
         @TestMetadata("secondaryCtorLineBreak.after.kt")
         public void testSecondaryCtorLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/secondaryCtorLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/secondaryCtorLineBreak.after.kt");
         }
 
         @TestMetadata("Semicolon.after.kt")
         public void testSemicolon() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Semicolon.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/Semicolon.after.kt");
         }
 
         @TestMetadata("SingleLineFunctionLiteral.after.kt")
         public void testSingleLineFunctionLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SingleLineFunctionLiteral.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SingleLineFunctionLiteral.after.kt");
         }
 
         @TestMetadata("SpaceAroundDotInUserReference.after.kt")
         public void testSpaceAroundDotInUserReference() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundDotInUserReference.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceAroundDotInUserReference.after.kt");
         }
 
         @TestMetadata("SpaceAroundExtendColon.after.kt")
         public void testSpaceAroundExtendColon() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColon.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceAroundExtendColon.after.kt");
         }
 
         @TestMetadata("SpaceAroundExtendColonInObjects.after.kt")
         public void testSpaceAroundExtendColonInObjects() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.kt");
         }
 
         @TestMetadata("SpaceAroundExtendColonInSecondaryCtr.after.kt")
         public void testSpaceAroundExtendColonInSecondaryCtr() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInSecondaryCtr.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceAroundExtendColonInSecondaryCtr.after.kt");
         }
 
         @TestMetadata("SpaceBeforeCatchParentheses.after.kt")
         public void testSpaceBeforeCatchParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeCatchParentheses.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeCatchParentheses.after.kt");
         }
 
         @TestMetadata("SpaceBeforeForParentheses.after.kt")
         public void testSpaceBeforeForParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeForParentheses.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeForParentheses.after.kt");
         }
 
         @TestMetadata("SpaceBeforeFunctionLiteral.after.kt")
         public void testSpaceBeforeFunctionLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeFunctionLiteral.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeFunctionLiteral.after.kt");
         }
 
         @TestMetadata("SpaceBeforeIfParentheses.after.kt")
         public void testSpaceBeforeIfParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeIfParentheses.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeIfParentheses.after.kt");
         }
 
         @TestMetadata("SpaceBeforeIndices.after.kt")
         public void testSpaceBeforeIndices() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeIndices.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeIndices.after.kt");
         }
 
         @TestMetadata("SpaceBeforeTypeArgumentList.after.kt")
         public void testSpaceBeforeTypeArgumentList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeTypeArgumentList.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeTypeArgumentList.after.kt");
         }
 
         @TestMetadata("SpaceBeforeWhenParentheses.after.kt")
         public void testSpaceBeforeWhenParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeWhenParentheses.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeWhenParentheses.after.kt");
         }
 
         @TestMetadata("SpaceBeforeWhileParentheses.after.kt")
         public void testSpaceBeforeWhileParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeWhileParentheses.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeWhileParentheses.after.kt");
         }
 
         @TestMetadata("SpacedInsideParans.after.kt")
         public void testSpacedInsideParans() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpacedInsideParans.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpacedInsideParans.after.kt");
         }
 
         @TestMetadata("SpacesAroundOperations.after.kt")
         public void testSpacesAroundOperations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpacesAroundOperations.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpacesAroundOperations.after.kt");
         }
 
         @TestMetadata("SpacesAroundUnaryOperations.after.kt")
         public void testSpacesAroundUnaryOperations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpacesAroundUnaryOperations.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpacesAroundUnaryOperations.after.kt");
         }
 
         @TestMetadata("SpacesInDeclarations.after.kt")
         public void testSpacesInDeclarations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpacesInDeclarations.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpacesInDeclarations.after.kt");
         }
 
         @TestMetadata("SpacesInQualifiedExpressions.after.kt")
         public void testSpacesInQualifiedExpressions() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpacesInQualifiedExpressions.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SpacesInQualifiedExpressions.after.kt");
         }
 
         @TestMetadata("SuperListIndent.after.kt")
         public void testSuperListIndent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SuperListIndent.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/SuperListIndent.after.kt");
         }
 
         @TestMetadata("TryCatchLineBreak.after.kt")
         public void testTryCatchLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/TryCatchLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/TryCatchLineBreak.after.kt");
         }
 
         @TestMetadata("TypeAliasSpacing.after.kt")
         public void testTypeAliasSpacing() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/TypeAliasSpacing.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/TypeAliasSpacing.after.kt");
         }
 
         @TestMetadata("UnnecessarySpacesInParametersLists.after.kt")
         public void testUnnecessarySpacesInParametersLists() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/UnnecessarySpacesInParametersLists.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/UnnecessarySpacesInParametersLists.after.kt");
         }
 
         @TestMetadata("ValVarSpaces.after.kt")
         public void testValVarSpaces() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ValVarSpaces.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/ValVarSpaces.after.kt");
         }
 
         @TestMetadata("When.after.kt")
         public void testWhen() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/When.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/When.after.kt");
         }
 
         @TestMetadata("WhenArrow.after.kt")
         public void testWhenArrow() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhenArrow.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/WhenArrow.after.kt");
         }
 
         @TestMetadata("WhenBlockBlankLines.after.kt")
         public void testWhenBlockBlankLines() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhenBlockBlankLines.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/WhenBlockBlankLines.after.kt");
         }
 
         @TestMetadata("WhenEntryExpr.after.kt")
         public void testWhenEntryExpr() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhenEntryExpr.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/WhenEntryExpr.after.kt");
         }
 
         @TestMetadata("WhenLineBreak.after.kt")
         public void testWhenLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhenLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/WhenLineBreak.after.kt");
         }
 
         @TestMetadata("WhenLinesBeforeLbrace.after.kt")
         public void testWhenLinesBeforeLbrace() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhenLinesBeforeLbrace.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/WhenLinesBeforeLbrace.after.kt");
         }
 
         @TestMetadata("WhereClause.after.kt")
         public void testWhereClause() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhereClause.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/WhereClause.after.kt");
         }
 
         @TestMetadata("WhileLineBreak.after.kt")
         public void testWhileLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhileLineBreak.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/WhileLineBreak.after.kt");
         }
 
         @TestMetadata("WhileOnNewLine.after.kt")
         public void testWhileOnNewLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhileOnNewLine.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/WhileOnNewLine.after.kt");
         }
 
         @TestMetadata("WhileSpacing.after.kt")
         public void testWhileSpacing() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhileSpacing.after.kt");
-            doTest(fileName);
+            runTest("idea/testData/formatter/WhileSpacing.after.kt");
         }
 
         @TestMetadata("idea/testData/formatter/callChain")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CallChain extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInCallChain() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/callChain"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("CallChainWrapping.after.kt")
             public void testCallChainWrapping() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/CallChainWrapping.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/CallChainWrapping.after.kt");
             }
 
             @TestMetadata("ConsecutiveCalls.after.kt")
             public void testConsecutiveCalls() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ConsecutiveCalls.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/ConsecutiveCalls.after.kt");
             }
 
             @TestMetadata("ConsecutiveSafeCallsIndent.after.kt")
             public void testConsecutiveSafeCallsIndent() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ConsecutiveSafeCallsIndent.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/ConsecutiveSafeCallsIndent.after.kt");
             }
 
             @TestMetadata("ContinuationIndentForChainedCalls.after.kt")
             public void testContinuationIndentForChainedCalls() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ContinuationIndentForChainedCalls.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/ContinuationIndentForChainedCalls.after.kt");
             }
 
             @TestMetadata("FunctionLiteralsInChainCalls.after.kt")
             public void testFunctionLiteralsInChainCalls() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/FunctionLiteralsInChainCalls.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/FunctionLiteralsInChainCalls.after.kt");
             }
 
             @TestMetadata("KT15099.after.kt")
             public void testKT15099() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT15099.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/KT15099.after.kt");
             }
 
             @TestMetadata("KT20362.after.kt")
             public void testKT20362() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT20362.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/KT20362.after.kt");
             }
 
             @TestMetadata("KT22071.after.kt")
             public void testKT22071() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT22071.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/KT22071.after.kt");
             }
 
             @TestMetadata("KT22115.after.kt")
             public void testKT22115() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT22115.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/KT22115.after.kt");
             }
 
             @TestMetadata("KT22148.after.kt")
             public void testKT22148() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT22148.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/KT22148.after.kt");
             }
 
             @TestMetadata("KT22346.after.kt")
             public void testKT22346() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/KT22346.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/callChain/KT22346.after.kt");
             }
         }
 
@@ -1000,10 +848,13 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FileAnnotations extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             @TestMetadata("afterComment.after.kt")
             public void testAfterComment() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/afterComment.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/fileAnnotations/afterComment.after.kt");
             }
 
             public void testAllFilesPresentInFileAnnotations() throws Exception {
@@ -1012,32 +863,27 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
 
             @TestMetadata("beforeDeclaration.after.kt")
             public void testBeforeDeclaration() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/beforeDeclaration.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/fileAnnotations/beforeDeclaration.after.kt");
             }
 
             @TestMetadata("beforeImportList.after.kt")
             public void testBeforeImportList() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/beforeImportList.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/fileAnnotations/beforeImportList.after.kt");
             }
 
             @TestMetadata("beforePackage.after.kt")
             public void testBeforePackage() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/beforePackage.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/fileAnnotations/beforePackage.after.kt");
             }
 
             @TestMetadata("inEmptyFile.after.kt")
             public void testInEmptyFile() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/inEmptyFile.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/fileAnnotations/inEmptyFile.after.kt");
             }
 
             @TestMetadata("manyLinesFromFileBegin.after.kt")
             public void testManyLinesFromFileBegin() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/manyLinesFromFileBegin.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/fileAnnotations/manyLinesFromFileBegin.after.kt");
             }
         }
 
@@ -1045,104 +891,92 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ModifierList extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInModifierList() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/modifierList"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("funAnnotationBeforeAnnotation.after.kt")
             public void testFunAnnotationBeforeAnnotation() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationBeforeAnnotation.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funAnnotationBeforeAnnotation.after.kt");
             }
 
             @TestMetadata("funAnnotationBeforeAnnotationEntry.after.kt")
             public void testFunAnnotationBeforeAnnotationEntry() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationBeforeAnnotationEntry.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funAnnotationBeforeAnnotationEntry.after.kt");
             }
 
             @TestMetadata("funAnnotationBeforeModifiers.after.kt")
             public void testFunAnnotationBeforeModifiers() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationBeforeModifiers.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funAnnotationBeforeModifiers.after.kt");
             }
 
             @TestMetadata("funAnnotationEntryBeforeAnnotation.after.kt")
             public void testFunAnnotationEntryBeforeAnnotation() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationEntryBeforeAnnotation.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funAnnotationEntryBeforeAnnotation.after.kt");
             }
 
             @TestMetadata("funAnnotationEntryBeforeAnnotationEntry.after.kt")
             public void testFunAnnotationEntryBeforeAnnotationEntry() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationEntryBeforeAnnotationEntry.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funAnnotationEntryBeforeAnnotationEntry.after.kt");
             }
 
             @TestMetadata("funAnnotationEntryBeforeModifiers.after.kt")
             public void testFunAnnotationEntryBeforeModifiers() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funAnnotationEntryBeforeModifiers.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funAnnotationEntryBeforeModifiers.after.kt");
             }
 
             @TestMetadata("funModifierBeforeAnnotation.after.kt")
             public void testFunModifierBeforeAnnotation() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funModifierBeforeAnnotation.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funModifierBeforeAnnotation.after.kt");
             }
 
             @TestMetadata("funModifierBeforeAnnotationEntry.after.kt")
             public void testFunModifierBeforeAnnotationEntry() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funModifierBeforeAnnotationEntry.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funModifierBeforeAnnotationEntry.after.kt");
             }
 
             @TestMetadata("funModifierBeforeModifiers.after.kt")
             public void testFunModifierBeforeModifiers() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funModifierBeforeModifiers.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funModifierBeforeModifiers.after.kt");
             }
 
             @TestMetadata("funTheOnlyModifier.after.kt")
             public void testFunTheOnlyModifier() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/funTheOnlyModifier.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/funTheOnlyModifier.after.kt");
             }
 
             @TestMetadata("memberFunTheOnlyModifier.after.kt")
             public void testMemberFunTheOnlyModifier() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/memberFunTheOnlyModifier.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/memberFunTheOnlyModifier.after.kt");
             }
 
             @TestMetadata("memberValTheOnlyModifier.after.kt")
             public void testMemberValTheOnlyModifier() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/memberValTheOnlyModifier.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/memberValTheOnlyModifier.after.kt");
             }
 
             @TestMetadata("memberVarTheOnlyModifier.after.kt")
             public void testMemberVarTheOnlyModifier() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/memberVarTheOnlyModifier.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/memberVarTheOnlyModifier.after.kt");
             }
 
             @TestMetadata("secondMemberFunTheOnlyModifier.after.kt")
             public void testSecondMemberFunTheOnlyModifier() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/secondMemberFunTheOnlyModifier.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/secondMemberFunTheOnlyModifier.after.kt");
             }
 
             @TestMetadata("secondMemberValTheOnlyModifier.after.kt")
             public void testSecondMemberValTheOnlyModifier() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/secondMemberValTheOnlyModifier.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/secondMemberValTheOnlyModifier.after.kt");
             }
 
             @TestMetadata("secondMemberVarTheOnlyModifier.after.kt")
             public void testSecondMemberVarTheOnlyModifier() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/modifierList/secondMemberVarTheOnlyModifier.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/modifierList/secondMemberVarTheOnlyModifier.after.kt");
             }
         }
 
@@ -1150,74 +984,67 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ParameterList extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInParameterList() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/parameterList"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ArgumentListChopAsNeeded.after.kt")
             public void testArgumentListChopAsNeeded() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListChopAsNeeded.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/ArgumentListChopAsNeeded.after.kt");
             }
 
             @TestMetadata("ArgumentListDoNotWrap.after.kt")
             public void testArgumentListDoNotWrap() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListDoNotWrap.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/ArgumentListDoNotWrap.after.kt");
             }
 
             @TestMetadata("ArgumentListWrapAlways.after.kt")
             public void testArgumentListWrapAlways() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListWrapAlways.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/ArgumentListWrapAlways.after.kt");
             }
 
             @TestMetadata("ArgumentListWrapAsNeeded.after.kt")
             public void testArgumentListWrapAsNeeded() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListWrapAsNeeded.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/ArgumentListWrapAsNeeded.after.kt");
             }
 
             @TestMetadata("ArgumentListWrapLParen.after.kt")
             public void testArgumentListWrapLParen() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ArgumentListWrapLParen.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/ArgumentListWrapLParen.after.kt");
             }
 
             @TestMetadata("DefaultParameterValues.after.kt")
             public void testDefaultParameterValues() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/DefaultParameterValues.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/DefaultParameterValues.after.kt");
             }
 
             @TestMetadata("KT19727.after.kt")
             public void testKT19727() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/KT19727.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/KT19727.after.kt");
             }
 
             @TestMetadata("ParameterListChopAsNeeded.after.kt")
             public void testParameterListChopAsNeeded() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListChopAsNeeded.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/ParameterListChopAsNeeded.after.kt");
             }
 
             @TestMetadata("ParameterListDoNotWrap.after.kt")
             public void testParameterListDoNotWrap() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListDoNotWrap.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/ParameterListDoNotWrap.after.kt");
             }
 
             @TestMetadata("ParameterListWrapAlways.after.kt")
             public void testParameterListWrapAlways() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListWrapAlways.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/ParameterListWrapAlways.after.kt");
             }
 
             @TestMetadata("ParameterListWrapAsNeeded.after.kt")
             public void testParameterListWrapAsNeeded() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/ParameterListWrapAsNeeded.after.kt");
-                doTest(fileName);
+                runTest("idea/testData/formatter/parameterList/ParameterListWrapAsNeeded.after.kt");
             }
         }
     }
@@ -1226,328 +1053,310 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FormatterInverted extends AbstractFormatterTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestInverted, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInFormatterInverted() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AnonymousInitializersLineBreak.after.inv.kt")
         public void testAnonymousInitializersLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/AnonymousInitializersLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/AnonymousInitializersLineBreak.after.inv.kt");
         }
 
         @TestMetadata("BinaryExpressions.after.inv.kt")
         public void testBinaryExpressions() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressions.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/BinaryExpressions.after.inv.kt");
         }
 
         @TestMetadata("BinaryExpressionsBoolean.after.inv.kt")
         public void testBinaryExpressionsBoolean() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsBoolean.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/BinaryExpressionsBoolean.after.inv.kt");
         }
 
         @TestMetadata("BinaryExpressionsWithoutAlignment.after.inv.kt")
         public void testBinaryExpressionsWithoutAlignment() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.inv.kt");
         }
 
         @TestMetadata("CallLParenthOnNextLine.after.inv.kt")
         public void testCallLParenthOnNextLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallLParenthOnNextLine.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/CallLParenthOnNextLine.after.inv.kt");
         }
 
         @TestMetadata("CallRParenthOnNextLine.after.inv.kt")
         public void testCallRParenthOnNextLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CallRParenthOnNextLine.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/CallRParenthOnNextLine.after.inv.kt");
         }
 
         @TestMetadata("CatchFinallyOnNewLine.after.inv.kt")
         public void testCatchFinallyOnNewLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/CatchFinallyOnNewLine.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/CatchFinallyOnNewLine.after.inv.kt");
         }
 
         @TestMetadata("ClassLineBreak.after.inv.kt")
         public void testClassLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ClassLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/ClassLineBreak.after.inv.kt");
         }
 
         @TestMetadata("ColonSpaces.after.inv.kt")
         public void testColonSpaces() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ColonSpaces.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/ColonSpaces.after.inv.kt");
         }
 
         @TestMetadata("ContinuationIndentForExpressionBodies.after.inv.kt")
         public void testContinuationIndentForExpressionBodies() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ContinuationIndentForExpressionBodies.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/ContinuationIndentForExpressionBodies.after.inv.kt");
         }
 
         @TestMetadata("DelegationList.after.inv.kt")
         public void testDelegationList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DelegationList.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/DelegationList.after.inv.kt");
         }
 
         @TestMetadata("DoWhileLineBreak.after.inv.kt")
         public void testDoWhileLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/DoWhileLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/DoWhileLineBreak.after.inv.kt");
         }
 
         @TestMetadata("ElseOnNewLine.after.inv.kt")
         public void testElseOnNewLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ElseOnNewLine.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/ElseOnNewLine.after.inv.kt");
         }
 
         @TestMetadata("Elvis.after.inv.kt")
         public void testElvis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Elvis.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/Elvis.after.inv.kt");
         }
 
         @TestMetadata("EmptyBlocks.after.inv.kt")
         public void testEmptyBlocks() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyBlocks.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/EmptyBlocks.after.inv.kt");
         }
 
         @TestMetadata("EmptyLineBetweenEnumEntries.after.inv.kt")
         public void testEmptyLineBetweenEnumEntries() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenEnumEntries.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/EmptyLineBetweenEnumEntries.after.inv.kt");
         }
 
         @TestMetadata("ForLineBreak.after.inv.kt")
         public void testForLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ForLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/ForLineBreak.after.inv.kt");
         }
 
         @TestMetadata("FormatFirstColumnComments.after.inv.kt")
         public void testFormatFirstColumnComments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FormatFirstColumnComments.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/FormatFirstColumnComments.after.inv.kt");
         }
 
         @TestMetadata("FormatFirstColumnCommentsBeforeDeclaration.after.inv.kt")
         public void testFormatFirstColumnCommentsBeforeDeclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FormatFirstColumnCommentsBeforeDeclaration.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/FormatFirstColumnCommentsBeforeDeclaration.after.inv.kt");
         }
 
         @TestMetadata("FunctionLineBreak.after.inv.kt")
         public void testFunctionLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/FunctionLineBreak.after.inv.kt");
         }
 
         @TestMetadata("FunctionalType.after.inv.kt")
         public void testFunctionalType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/FunctionalType.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/FunctionalType.after.inv.kt");
         }
 
         @TestMetadata("IfConditionIndent.after.inv.kt")
         public void testIfConditionIndent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfConditionIndent.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/IfConditionIndent.after.inv.kt");
         }
 
         @TestMetadata("IfElseWithTrickyComments.after.inv.kt")
         public void testIfElseWithTrickyComments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/IfElseWithTrickyComments.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/IfElseWithTrickyComments.after.inv.kt");
         }
 
         @TestMetadata("KeepLineBreak.after.inv.kt")
         public void testKeepLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/KeepLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/KeepLineBreak.after.inv.kt");
         }
 
         @TestMetadata("LambdaArrow.after.inv.kt")
         public void testLambdaArrow() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LambdaArrow.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/LambdaArrow.after.inv.kt");
         }
 
         @TestMetadata("MethodLParenthOnNextLine.after.inv.kt")
         public void testMethodLParenthOnNextLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodLParenthOnNextLine.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/MethodLParenthOnNextLine.after.inv.kt");
         }
 
         @TestMetadata("MethodRParenthOnNextLine.after.inv.kt")
         public void testMethodRParenthOnNextLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MethodRParenthOnNextLine.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/MethodRParenthOnNextLine.after.inv.kt");
         }
 
         @TestMetadata("MultilineFunctionLiteralWithParams.after.inv.kt")
         public void testMultilineFunctionLiteralWithParams() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/MultilineFunctionLiteralWithParams.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/MultilineFunctionLiteralWithParams.after.inv.kt");
         }
 
         @TestMetadata("Parameters.after.inv.kt")
         public void testParameters() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/Parameters.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/Parameters.after.inv.kt");
         }
 
         @TestMetadata("RightBracketOnNewLine.after.inv.kt")
         public void testRightBracketOnNewLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/RightBracketOnNewLine.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/RightBracketOnNewLine.after.inv.kt");
         }
 
         @TestMetadata("secondaryCtorLineBreak.after.inv.kt")
         public void testSecondaryCtorLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/secondaryCtorLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/secondaryCtorLineBreak.after.inv.kt");
         }
 
         @TestMetadata("SingleLineFunctionLiteral.after.inv.kt")
         public void testSingleLineFunctionLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SingleLineFunctionLiteral.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SingleLineFunctionLiteral.after.inv.kt");
         }
 
         @TestMetadata("SpaceAroundExtendColon.after.inv.kt")
         public void testSpaceAroundExtendColon() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColon.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpaceAroundExtendColon.after.inv.kt");
         }
 
         @TestMetadata("SpaceAroundExtendColonInObjects.after.inv.kt")
         public void testSpaceAroundExtendColonInObjects() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.inv.kt");
         }
 
         @TestMetadata("SpaceAroundExtendColonInSecondaryCtr.after.inv.kt")
         public void testSpaceAroundExtendColonInSecondaryCtr() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceAroundExtendColonInSecondaryCtr.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpaceAroundExtendColonInSecondaryCtr.after.inv.kt");
         }
 
         @TestMetadata("SpaceBeforeCatchParentheses.after.inv.kt")
         public void testSpaceBeforeCatchParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeCatchParentheses.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeCatchParentheses.after.inv.kt");
         }
 
         @TestMetadata("SpaceBeforeForParentheses.after.inv.kt")
         public void testSpaceBeforeForParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeForParentheses.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeForParentheses.after.inv.kt");
         }
 
         @TestMetadata("SpaceBeforeIfParentheses.after.inv.kt")
         public void testSpaceBeforeIfParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeIfParentheses.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeIfParentheses.after.inv.kt");
         }
 
         @TestMetadata("SpaceBeforeWhenParentheses.after.inv.kt")
         public void testSpaceBeforeWhenParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeWhenParentheses.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeWhenParentheses.after.inv.kt");
         }
 
         @TestMetadata("SpaceBeforeWhileParentheses.after.inv.kt")
         public void testSpaceBeforeWhileParentheses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpaceBeforeWhileParentheses.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpaceBeforeWhileParentheses.after.inv.kt");
         }
 
         @TestMetadata("SpacesAroundOperations.after.inv.kt")
         public void testSpacesAroundOperations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpacesAroundOperations.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpacesAroundOperations.after.inv.kt");
         }
 
         @TestMetadata("SpacesAroundUnaryOperations.after.inv.kt")
         public void testSpacesAroundUnaryOperations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/SpacesAroundUnaryOperations.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/SpacesAroundUnaryOperations.after.inv.kt");
         }
 
         @TestMetadata("TryCatchLineBreak.after.inv.kt")
         public void testTryCatchLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/TryCatchLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/TryCatchLineBreak.after.inv.kt");
         }
 
         @TestMetadata("When.after.inv.kt")
         public void testWhen() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/When.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/When.after.inv.kt");
         }
 
         @TestMetadata("WhenArrow.after.inv.kt")
         public void testWhenArrow() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhenArrow.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/WhenArrow.after.inv.kt");
         }
 
         @TestMetadata("WhenLineBreak.after.inv.kt")
         public void testWhenLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhenLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/WhenLineBreak.after.inv.kt");
         }
 
         @TestMetadata("WhileLineBreak.after.inv.kt")
         public void testWhileLineBreak() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhileLineBreak.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/WhileLineBreak.after.inv.kt");
         }
 
         @TestMetadata("WhileOnNewLine.after.inv.kt")
         public void testWhileOnNewLine() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/WhileOnNewLine.after.inv.kt");
-            doTestInverted(fileName);
+            runTest("idea/testData/formatter/WhileOnNewLine.after.inv.kt");
         }
 
         @TestMetadata("idea/testData/formatter/callChain")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CallChain extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInverted, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInCallChain() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/callChain"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("CallChainWrapping.after.inv.kt")
             public void testCallChainWrapping() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/CallChainWrapping.after.inv.kt");
-                doTestInverted(fileName);
+                runTest("idea/testData/formatter/callChain/CallChainWrapping.after.inv.kt");
             }
 
             @TestMetadata("ConsecutiveSafeCallsIndent.after.inv.kt")
             public void testConsecutiveSafeCallsIndent() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ConsecutiveSafeCallsIndent.after.inv.kt");
-                doTestInverted(fileName);
+                runTest("idea/testData/formatter/callChain/ConsecutiveSafeCallsIndent.after.inv.kt");
             }
 
             @TestMetadata("ContinuationIndentForChainedCalls.after.inv.kt")
             public void testContinuationIndentForChainedCalls() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/ContinuationIndentForChainedCalls.after.inv.kt");
-                doTestInverted(fileName);
+                runTest("idea/testData/formatter/callChain/ContinuationIndentForChainedCalls.after.inv.kt");
             }
 
             @TestMetadata("FunctionLiteralsInChainCalls.after.inv.kt")
             public void testFunctionLiteralsInChainCalls() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/callChain/FunctionLiteralsInChainCalls.after.inv.kt");
-                doTestInverted(fileName);
+                runTest("idea/testData/formatter/callChain/FunctionLiteralsInChainCalls.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/fileAnnotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FileAnnotations extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInverted, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInFileAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/fileAnnotations"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), TargetBackend.ANY, true);
+            }
+        }
+
+        @TestMetadata("idea/testData/formatter/modifierList")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ModifierList extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInverted, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInModifierList() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/modifierList"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), TargetBackend.ANY, true);
             }
         }
 
@@ -1555,14 +1364,17 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ParameterList extends AbstractFormatterTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestInverted, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInParameterList() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/parameterList"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("DefaultParameterValues.after.inv.kt")
             public void testDefaultParameterValues() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/parameterList/DefaultParameterValues.after.inv.kt");
-                doTestInverted(fileName);
+                runTest("idea/testData/formatter/parameterList/DefaultParameterValues.after.inv.kt");
             }
         }
     }

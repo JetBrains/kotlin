@@ -21,16 +21,18 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScriptConfigurationHighlightingTestGenerated extends AbstractScriptConfigurationHighlightingTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     @TestMetadata("acceptedAnnotations")
     public void testAcceptedAnnotations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/acceptedAnnotations/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/acceptedAnnotations/");
     }
 
     @TestMetadata("additionalImports")
     public void testAdditionalImports() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/additionalImports/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/additionalImports/");
     }
 
     public void testAllFilesPresentInHighlighting() throws Exception {
@@ -39,91 +41,76 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
 
     @TestMetadata("asyncResolver")
     public void testAsyncResolver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/asyncResolver/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/asyncResolver/");
     }
 
     @TestMetadata("conflictingModule")
     public void testConflictingModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/conflictingModule/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/conflictingModule/");
     }
 
     @TestMetadata("customBaseClass")
     public void testCustomBaseClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/customBaseClass/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/customBaseClass/");
     }
 
     @TestMetadata("customLibrary")
     public void testCustomLibrary() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/customLibrary/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/customLibrary/");
     }
 
     @TestMetadata("doNotSpeakAboutJava")
     public void testDoNotSpeakAboutJava() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/doNotSpeakAboutJava/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/doNotSpeakAboutJava/");
     }
 
     @TestMetadata("doNotSpeakAboutJavaLegacy")
     public void testDoNotSpeakAboutJavaLegacy() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/doNotSpeakAboutJavaLegacy/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/doNotSpeakAboutJavaLegacy/");
     }
 
     @TestMetadata("emptyAsyncResolver")
     public void testEmptyAsyncResolver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/emptyAsyncResolver/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/emptyAsyncResolver/");
     }
 
     @TestMetadata("errorResolver")
     public void testErrorResolver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/errorResolver/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/errorResolver/");
     }
 
     @TestMetadata("javaNestedClass")
     public void testJavaNestedClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/javaNestedClass/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/javaNestedClass/");
     }
 
     @TestMetadata("multiModule")
     public void testMultiModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/multiModule/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/multiModule/");
     }
 
     @TestMetadata("noResolver")
     public void testNoResolver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/noResolver/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/noResolver/");
     }
 
     @TestMetadata("propertyAccessor")
     public void testPropertyAccessor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/propertyAccessor/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/propertyAccessor/");
     }
 
     @TestMetadata("propertyAccessorFromModule")
     public void testPropertyAccessorFromModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/propertyAccessorFromModule/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/propertyAccessorFromModule/");
     }
 
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/simple/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/simple/");
     }
 
     @TestMetadata("throwingResolver")
     public void testThrowingResolver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/throwingResolver/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/highlighting/throwingResolver/");
     }
 }

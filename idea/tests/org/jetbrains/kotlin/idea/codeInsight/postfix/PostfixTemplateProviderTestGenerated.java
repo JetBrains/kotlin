@@ -21,229 +21,196 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplateProviderTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInPostfix() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/postfix"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("assert.kt")
     public void testAssert() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/assert.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/assert.kt");
     }
 
     @TestMetadata("assertNonTopLevel.kt")
     public void testAssertNonTopLevel() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/assertNonTopLevel.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/assertNonTopLevel.kt");
     }
 
     @TestMetadata("doNotProposeWrappingIncrement.kt")
     public void testDoNotProposeWrappingIncrement() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/doNotProposeWrappingIncrement.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/doNotProposeWrappingIncrement.kt");
     }
 
     @TestMetadata("else.kt")
     public void testElse() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/else.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/else.kt");
     }
 
     @TestMetadata("for.kt")
     public void testFor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/for.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/for.kt");
     }
 
     @TestMetadata("forOnMap.kt")
     public void testForOnMap() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/forOnMap.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/forOnMap.kt");
     }
 
     @TestMetadata("forOnString.kt")
     public void testForOnString() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/forOnString.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/forOnString.kt");
     }
 
     @TestMetadata("if.kt")
     public void testIf() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/if.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/if.kt");
     }
 
     @TestMetadata("iter.kt")
     public void testIter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/iter.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/iter.kt");
     }
 
     @TestMetadata("noParOnLoop.kt")
     public void testNoParOnLoop() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/noParOnLoop.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/noParOnLoop.kt");
     }
 
     @TestMetadata("noReturnForNonStatement.kt")
     public void testNoReturnForNonStatement() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/noReturnForNonStatement.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/noReturnForNonStatement.kt");
     }
 
     @TestMetadata("notBoolean.kt")
     public void testNotBoolean() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/notBoolean.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/notBoolean.kt");
     }
 
     @TestMetadata("notString.kt")
     public void testNotString() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/notString.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/notString.kt");
     }
 
     @TestMetadata("notnull.kt")
     public void testNotnull() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/notnull.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/notnull.kt");
     }
 
     @TestMetadata("null.kt")
     public void testNull() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/null.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/null.kt");
     }
 
     @TestMetadata("par.kt")
     public void testPar() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/par.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/par.kt");
     }
 
     @TestMetadata("parAfterUserType.kt")
     public void testParAfterUserType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/parAfterUserType.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/parAfterUserType.kt");
     }
 
     @TestMetadata("parAssignment.kt")
     public void testParAssignment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/parAssignment.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/parAssignment.kt");
     }
 
     @TestMetadata("return.kt")
     public void testReturn() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/return.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/return.kt");
     }
 
     @TestMetadata("returnFromLoop.kt")
     public void testReturnFromLoop() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/returnFromLoop.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/returnFromLoop.kt");
     }
 
     @TestMetadata("sout.kt")
     public void testSout() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/sout.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/sout.kt");
     }
 
     @TestMetadata("soutInIf.kt")
     public void testSoutInIf() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/soutInIf.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/soutInIf.kt");
     }
 
     @TestMetadata("soutInLoop.kt")
     public void testSoutInLoop() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/soutInLoop.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/soutInLoop.kt");
     }
 
     @TestMetadata("try.kt")
     public void testTry() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/try.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/try.kt");
     }
 
     @TestMetadata("tryInLocalClass.kt")
     public void testTryInLocalClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryInLocalClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/tryInLocalClass.kt");
     }
 
     @TestMetadata("tryOnFor.kt")
     public void testTryOnFor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryOnFor.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/tryOnFor.kt");
     }
 
     @TestMetadata("tryOnImportStatement.kt")
     public void testTryOnImportStatement() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryOnImportStatement.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/tryOnImportStatement.kt");
     }
 
     @TestMetadata("tryOnStatement.kt")
     public void testTryOnStatement() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryOnStatement.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/tryOnStatement.kt");
     }
 
     @TestMetadata("val.kt")
     public void testVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/val.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/val.kt");
     }
 
     @TestMetadata("valAfterReceiver.kt")
     public void testValAfterReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/valAfterReceiver.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/valAfterReceiver.kt");
     }
 
     @TestMetadata("valAfterSelector.kt")
     public void testValAfterSelector() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/valAfterSelector.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/valAfterSelector.kt");
     }
 
     @TestMetadata("valAtLamba.kt")
     public void testValAtLamba() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/valAtLamba.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/valAtLamba.kt");
     }
 
     @TestMetadata("valAtLambaArgumentInCall.kt")
     public void testValAtLambaArgumentInCall() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/valAtLambaArgumentInCall.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/valAtLambaArgumentInCall.kt");
     }
 
     @TestMetadata("var.kt")
     public void testVar() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/var.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/var.kt");
     }
 
     @TestMetadata("when.kt")
     public void testWhen() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/when.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/when.kt");
     }
 
     @TestMetadata("whenExpression.kt")
     public void testWhenExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/whenExpression.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/whenExpression.kt");
     }
 
     @TestMetadata("while.kt")
     public void testWhile() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/while.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/postfix/while.kt");
     }
 }

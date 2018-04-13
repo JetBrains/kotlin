@@ -23,6 +23,10 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Cfg_variables extends AbstractDataFlowTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCfg_variables() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -31,50 +35,47 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Basic extends AbstractDataFlowTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInBasic() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/basic"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ExhaustiveInitialization.kt")
             public void testExhaustiveInitialization() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/ExhaustiveInitialization.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/basic/ExhaustiveInitialization.kt");
             }
 
             @TestMetadata("IfWithUninitialized.kt")
             public void testIfWithUninitialized() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/IfWithUninitialized.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/basic/IfWithUninitialized.kt");
             }
 
             @TestMetadata("InitializedNotDeclared.kt")
             public void testInitializedNotDeclared() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/InitializedNotDeclared.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/basic/InitializedNotDeclared.kt");
             }
 
             @TestMetadata("UsageInFunctionLiteral.kt")
             public void testUsageInFunctionLiteral() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/UsageInFunctionLiteral.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/basic/UsageInFunctionLiteral.kt");
             }
 
             @TestMetadata("UseUninitializedInLambda.kt")
             public void testUseUninitializedInLambda() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/UseUninitializedInLambda.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/basic/UseUninitializedInLambda.kt");
             }
 
             @TestMetadata("VariablesInitialization.kt")
             public void testVariablesInitialization() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/VariablesInitialization.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/basic/VariablesInitialization.kt");
             }
 
             @TestMetadata("VariablesUsage.kt")
             public void testVariablesUsage() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/VariablesUsage.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/basic/VariablesUsage.kt");
             }
         }
 
@@ -82,74 +83,67 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Bugs extends AbstractDataFlowTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInBugs() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/bugs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("doWhileAssignment.kt")
             public void testDoWhileAssignment() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/doWhileAssignment.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/doWhileAssignment.kt");
             }
 
             @TestMetadata("doWhileNotDefined.kt")
             public void testDoWhileNotDefined() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/doWhileNotDefined.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/doWhileNotDefined.kt");
             }
 
             @TestMetadata("initializationInLocalClass.kt")
             public void testInitializationInLocalClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/initializationInLocalClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/initializationInLocalClass.kt");
             }
 
             @TestMetadata("kt10243.kt")
             public void testKt10243() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/kt10243.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/kt10243.kt");
             }
 
             @TestMetadata("kt4764.kt")
             public void testKt4764() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/kt4764.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/kt4764.kt");
             }
 
             @TestMetadata("kt5469.kt")
             public void testKt5469() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/kt5469.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/kt5469.kt");
             }
 
             @TestMetadata("kt9825.kt")
             public void testKt9825() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/kt9825.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/kt9825.kt");
             }
 
             @TestMetadata("localObjectInConstructor.kt")
             public void testLocalObjectInConstructor() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/localObjectInConstructor.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/localObjectInConstructor.kt");
             }
 
             @TestMetadata("referenceToPropertyInitializer.kt")
             public void testReferenceToPropertyInitializer() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/referenceToPropertyInitializer.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/referenceToPropertyInitializer.kt");
             }
 
             @TestMetadata("varInitializationInIf.kt")
             public void testVarInitializationInIf() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/varInitializationInIf.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/varInitializationInIf.kt");
             }
 
             @TestMetadata("varInitializationInIfInCycle.kt")
             public void testVarInitializationInIfInCycle() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/varInitializationInIfInCycle.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/bugs/varInitializationInIfInCycle.kt");
             }
         }
 
@@ -157,80 +151,72 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class LexicalScopes extends AbstractDataFlowTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInLexicalScopes() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/lexicalScopes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("doWhileScope.kt")
             public void testDoWhileScope() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/doWhileScope.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/doWhileScope.kt");
             }
 
             @TestMetadata("forScope.kt")
             public void testForScope() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/forScope.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/forScope.kt");
             }
 
             @TestMetadata("functionLiteralScope.kt")
             public void testFunctionLiteralScope() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/functionLiteralScope.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/functionLiteralScope.kt");
             }
 
             @TestMetadata("ifScope.kt")
             public void testIfScope() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/ifScope.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/ifScope.kt");
             }
 
             @TestMetadata("localClass.kt")
             public void testLocalClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/localClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/localClass.kt");
             }
 
             @TestMetadata("localFunctionScope.kt")
             public void testLocalFunctionScope() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/localFunctionScope.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/localFunctionScope.kt");
             }
 
             @TestMetadata("localFunctionScopeWithoutBody.kt")
             public void testLocalFunctionScopeWithoutBody() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/localFunctionScopeWithoutBody.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/localFunctionScopeWithoutBody.kt");
             }
 
             @TestMetadata("localObject.kt")
             public void testLocalObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/localObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/localObject.kt");
             }
 
             @TestMetadata("objectLiteralScope.kt")
             public void testObjectLiteralScope() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/objectLiteralScope.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/objectLiteralScope.kt");
             }
 
             @TestMetadata("propertyAccessorScope.kt")
             public void testPropertyAccessorScope() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/propertyAccessorScope.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/propertyAccessorScope.kt");
             }
 
             @TestMetadata("tryScope.kt")
             public void testTryScope() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/tryScope.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/tryScope.kt");
             }
 
             @TestMetadata("whileScope.kt")
             public void testWhileScope() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/lexicalScopes/whileScope.kt");
-                doTest(fileName);
+                runTest("compiler/testData/cfg-variables/lexicalScopes/whileScope.kt");
             }
         }
     }
@@ -239,6 +225,10 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CfgVariablesWithStdLib extends AbstractDataFlowTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithStdLib, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCfgVariablesWithStdLib() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfgVariablesWithStdLib"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -247,68 +237,62 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Contracts extends AbstractDataFlowTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTestWithStdLib, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInContracts() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfgVariablesWithStdLib/contracts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("breakContinuesInInlinedLambda.kt")
             public void testBreakContinuesInInlinedLambda() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/breakContinuesInInlinedLambda.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/breakContinuesInInlinedLambda.kt");
             }
 
             @TestMetadata("inlinedLambdaAlwaysThrows.kt")
             public void testInlinedLambdaAlwaysThrows() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/inlinedLambdaAlwaysThrows.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/inlinedLambdaAlwaysThrows.kt");
             }
 
             @TestMetadata("irrelevantUnknownClosure.kt")
             public void testIrrelevantUnknownClosure() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/irrelevantUnknownClosure.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/irrelevantUnknownClosure.kt");
             }
 
             @TestMetadata("nestedTryCatchFinally.kt")
             public void testNestedTryCatchFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/nestedTryCatchFinally.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/nestedTryCatchFinally.kt");
             }
 
             @TestMetadata("nestedTryCatchs.kt")
             public void testNestedTryCatchs() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/nestedTryCatchs.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/nestedTryCatchs.kt");
             }
 
             @TestMetadata("nonReturningInlinedLambda.kt")
             public void testNonReturningInlinedLambda() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/nonReturningInlinedLambda.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/nonReturningInlinedLambda.kt");
             }
 
             @TestMetadata("returnsAndCalls.kt")
             public void testReturnsAndCalls() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/returnsAndCalls.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/returnsAndCalls.kt");
             }
 
             @TestMetadata("throwIfNotCalled.kt")
             public void testThrowIfNotCalled() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/throwIfNotCalled.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/throwIfNotCalled.kt");
             }
 
             @TestMetadata("tryCatch.kt")
             public void testTryCatch() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/tryCatch.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/tryCatch.kt");
             }
 
             @TestMetadata("tryCatchFinally.kt")
             public void testTryCatchFinally() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfgVariablesWithStdLib/contracts/tryCatchFinally.kt");
-                doTestWithStdLib(fileName);
+                runTest("compiler/testData/cfgVariablesWithStdLib/contracts/tryCatchFinally.kt");
             }
         }
     }

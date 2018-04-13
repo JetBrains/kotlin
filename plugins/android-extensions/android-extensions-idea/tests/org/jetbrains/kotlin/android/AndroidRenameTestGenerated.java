@@ -21,67 +21,61 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidRenameTestGenerated extends AbstractAndroidRenameTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInRename() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/rename"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("commonElementId")
     public void testCommonElementId() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/commonElementId/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/commonElementId/");
     }
 
     @TestMetadata("fqNameInAttr")
     public void testFqNameInAttr() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/fqNameInAttr/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/fqNameInAttr/");
     }
 
     @TestMetadata("fqNameInAttrFragment")
     public void testFqNameInAttrFragment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/fqNameInAttrFragment/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/fqNameInAttrFragment/");
     }
 
     @TestMetadata("fqNameInTag")
     public void testFqNameInTag() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/fqNameInTag/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/fqNameInTag/");
     }
 
     @TestMetadata("fqNameInTagFragment")
     public void testFqNameInTagFragment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/fqNameInTagFragment/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/fqNameInTagFragment/");
     }
 
     @TestMetadata("multiFile")
     public void testMultiFile() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/multiFile/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/multiFile/");
     }
 
     @TestMetadata("multiFileFragment")
     public void testMultiFileFragment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/multiFileFragment/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/multiFileFragment/");
     }
 
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/simple/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/simple/");
     }
 
     @TestMetadata("simpleFragment")
     public void testSimpleFragment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/simpleFragment/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/simpleFragment/");
     }
 
     @TestMetadata("simpleView")
     public void testSimpleView() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/simpleView/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/rename/simpleView/");
     }
 }

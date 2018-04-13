@@ -21,25 +21,26 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidResourceFoldingTestGenerated extends AbstractAndroidResourceFoldingTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInFolding() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/folding"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("dimensions.kt")
     public void testDimensions() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/folding/dimensions.kt");
-        doTest(fileName);
+        runTest("idea/testData/android/folding/dimensions.kt");
     }
 
     @TestMetadata("getString.kt")
     public void testGetString() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/folding/getString.kt");
-        doTest(fileName);
+        runTest("idea/testData/android/folding/getString.kt");
     }
 
     @TestMetadata("plurals.kt")
     public void testPlurals() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/folding/plurals.kt");
-        doTest(fileName);
+        runTest("idea/testData/android/folding/plurals.kt");
     }
 }

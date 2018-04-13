@@ -21,31 +21,31 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class Jvm8RuntimeDescriptorLoaderTestGenerated extends AbstractJvm8RuntimeDescriptorLoaderTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCompiledJava() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("InnerClassTypeAnnotation.java")
     public void testInnerClassTypeAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/InnerClassTypeAnnotation.java");
-        doTest(fileName);
+        runTest("compiler/testData/loadJava8/compiledJava/InnerClassTypeAnnotation.java");
     }
 
     @TestMetadata("MapRemove.java")
     public void testMapRemove() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/MapRemove.java");
-        doTest(fileName);
+        runTest("compiler/testData/loadJava8/compiledJava/MapRemove.java");
     }
 
     @TestMetadata("TypeAnnotations.java")
     public void testTypeAnnotations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/TypeAnnotations.java");
-        doTest(fileName);
+        runTest("compiler/testData/loadJava8/compiledJava/TypeAnnotations.java");
     }
 
     @TestMetadata("TypeParameterAnnotations.java")
     public void testTypeParameterAnnotations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava8/compiledJava/TypeParameterAnnotations.java");
-        doTest(fileName);
+        runTest("compiler/testData/loadJava8/compiledJava/TypeParameterAnnotations.java");
     }
 }

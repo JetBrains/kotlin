@@ -23,68 +23,62 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Compiling extends AbstractScratchRunActionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doCompilingTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCompiling() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("for.kts")
         public void testFor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/for.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/for.kts");
         }
 
         @TestMetadata("generics.kts")
         public void testGenerics() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/generics.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/generics.kts");
         }
 
         @TestMetadata("klass.kts")
         public void testKlass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/klass.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/klass.kts");
         }
 
         @TestMetadata("simple.kts")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/simple.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/simple.kts");
         }
 
         @TestMetadata("simpleFun.kts")
         public void testSimpleFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/simpleFun.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/simpleFun.kts");
         }
 
         @TestMetadata("stdlibFun.kts")
         public void testStdlibFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/stdlibFun.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/stdlibFun.kts");
         }
 
         @TestMetadata("unresolved.kts")
         public void testUnresolved() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/unresolved.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/unresolved.kts");
         }
 
         @TestMetadata("userOutput.kts")
         public void testUserOutput() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/userOutput.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/userOutput.kts");
         }
 
         @TestMetadata("var.kts")
         public void testVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/var.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/var.kts");
         }
 
         @TestMetadata("when.kts")
         public void testWhen() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/when.kts");
-            doCompilingTest(fileName);
+            runTest("idea/testData/scratch/when.kts");
         }
     }
 
@@ -92,68 +86,62 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Repl extends AbstractScratchRunActionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doReplTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInRepl() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("for.kts")
         public void testFor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/for.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/for.kts");
         }
 
         @TestMetadata("generics.kts")
         public void testGenerics() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/generics.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/generics.kts");
         }
 
         @TestMetadata("klass.kts")
         public void testKlass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/klass.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/klass.kts");
         }
 
         @TestMetadata("simple.kts")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/simple.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/simple.kts");
         }
 
         @TestMetadata("simpleFun.kts")
         public void testSimpleFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/simpleFun.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/simpleFun.kts");
         }
 
         @TestMetadata("stdlibFun.kts")
         public void testStdlibFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/stdlibFun.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/stdlibFun.kts");
         }
 
         @TestMetadata("unresolved.kts")
         public void testUnresolved() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/unresolved.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/unresolved.kts");
         }
 
         @TestMetadata("userOutput.kts")
         public void testUserOutput() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/userOutput.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/userOutput.kts");
         }
 
         @TestMetadata("var.kts")
         public void testVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/var.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/var.kts");
         }
 
         @TestMetadata("when.kts")
         public void testWhen() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/when.kts");
-            doReplTest(fileName);
+            runTest("idea/testData/scratch/when.kts");
         }
     }
 
@@ -161,20 +149,22 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiFile extends AbstractScratchRunActionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doMultiFileTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInMultiFile() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("inlineFun")
         public void testInlineFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/multiFile/inlineFun/");
-            doMultiFileTest(fileName);
+            runTest("idea/testData/scratch/multiFile/inlineFun/");
         }
 
         @TestMetadata("javaDep")
         public void testJavaDep() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/scratch/multiFile/javaDep/");
-            doMultiFileTest(fileName);
+            runTest("idea/testData/scratch/multiFile/javaDep/");
         }
     }
 }

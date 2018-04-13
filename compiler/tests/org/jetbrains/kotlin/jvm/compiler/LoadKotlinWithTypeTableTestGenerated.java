@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWithTypeTableTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCompiledKotlin() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
@@ -29,118 +33,109 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInAnnotations() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AnnotatedAnnotation.kt")
         public void testAnnotatedAnnotation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/AnnotatedAnnotation.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotatedAnnotation.kt");
         }
 
         @TestMetadata("AnnotatedMethod.kt")
         public void testAnnotatedMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/AnnotatedMethod.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotatedMethod.kt");
         }
 
         @TestMetadata("AnnotationInAnnotationArguments.kt")
         public void testAnnotationInAnnotationArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInAnnotationArguments.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInAnnotationArguments.kt");
         }
 
         @TestMetadata("EnumArgumentWithCustomToString.kt")
         public void testEnumArgumentWithCustomToString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
         }
 
         @TestMetadata("MultiDimensionalArrayMethod.kt")
         public void testMultiDimensionalArrayMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/MultiDimensionalArrayMethod.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/MultiDimensionalArrayMethod.kt");
         }
 
         @TestMetadata("PrimitiveArrayArguments.kt")
         public void testPrimitiveArrayArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/PrimitiveArrayArguments.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/PrimitiveArrayArguments.kt");
         }
 
         @TestMetadata("SimpleAnnotation.kt")
         public void testSimpleAnnotation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/SimpleAnnotation.kt");
         }
 
         @TestMetadata("TargetedAnnotation.kt")
         public void testTargetedAnnotation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/TargetedAnnotation.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/TargetedAnnotation.kt");
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassMembers extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInClassMembers() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassObjectPropertyField.kt")
             public void testClassObjectPropertyField() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/ClassObjectPropertyField.kt");
             }
 
             @TestMetadata("Constructor.kt")
             public void testConstructor() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Constructor.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Constructor.kt");
             }
 
             @TestMetadata("DelegatedProperty.kt")
             public void testDelegatedProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/DelegatedProperty.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/DelegatedProperty.kt");
             }
 
             @TestMetadata("EnumArgument.kt")
             public void testEnumArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumArgument.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumArgument.kt");
             }
 
             @TestMetadata("EnumEntry.kt")
             public void testEnumEntry() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumEntry.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumEntry.kt");
             }
 
             @TestMetadata("Function.kt")
             public void testFunction() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Function.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Function.kt");
             }
 
             @TestMetadata("Getter.kt")
             public void testGetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Getter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Getter.kt");
             }
 
             @TestMetadata("PropertyField.kt")
             public void testPropertyField() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PropertyField.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PropertyField.kt");
             }
 
             @TestMetadata("Setter.kt")
             public void testSetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Setter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Setter.kt");
             }
         }
 
@@ -148,98 +143,87 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Classes extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInClasses() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("AnnotationInClassObject.kt")
             public void testAnnotationInClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/AnnotationInClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/AnnotationInClassObject.kt");
             }
 
             @TestMetadata("ClassInClassObject.kt")
             public void testClassInClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassInClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassInClassObject.kt");
             }
 
             @TestMetadata("ClassObject.kt")
             public void testClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObject.kt");
             }
 
             @TestMetadata("ClassObjectInStaticNestedClass.kt")
             public void testClassObjectInStaticNestedClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObjectInStaticNestedClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassObjectInStaticNestedClass.kt");
             }
 
             @TestMetadata("DataClass.kt")
             public void testDataClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/DataClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/DataClass.kt");
             }
 
             @TestMetadata("Deprecated.kt")
             public void testDeprecated() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/Deprecated.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/Deprecated.kt");
             }
 
             @TestMetadata("DollarsInAnnotationName.kt")
             public void testDollarsInAnnotationName() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/DollarsInAnnotationName.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/DollarsInAnnotationName.kt");
             }
 
             @TestMetadata("EnumArgument.kt")
             public void testEnumArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/EnumArgument.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/EnumArgument.kt");
             }
 
             @TestMetadata("MultipleAnnotations.kt")
             public void testMultipleAnnotations() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/MultipleAnnotations.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/MultipleAnnotations.kt");
             }
 
             @TestMetadata("NestedAnnotation.kt")
             public void testNestedAnnotation() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/NestedAnnotation.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/NestedAnnotation.kt");
             }
 
             @TestMetadata("NestedClass.kt")
             public void testNestedClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/NestedClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/NestedClass.kt");
             }
 
             @TestMetadata("Retention.kt")
             public void testRetention() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/Retention.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/Retention.kt");
             }
 
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/Simple.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/Simple.kt");
             }
 
             @TestMetadata("WithArgument.kt")
             public void testWithArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/WithArgument.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/WithArgument.kt");
             }
 
             @TestMetadata("WithMultipleArguments.kt")
             public void testWithMultipleArguments() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classes/WithMultipleArguments.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classes/WithMultipleArguments.kt");
             }
         }
 
@@ -247,56 +231,52 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PackageMembers extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInPackageMembers() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("DelegatedProperty.kt")
             public void testDelegatedProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/DelegatedProperty.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/DelegatedProperty.kt");
             }
 
             @TestMetadata("EnumArgument.kt")
             public void testEnumArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/EnumArgument.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/EnumArgument.kt");
             }
 
             @TestMetadata("EnumArrayArgument.kt")
             public void testEnumArrayArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/EnumArrayArgument.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/EnumArrayArgument.kt");
             }
 
             @TestMetadata("Function.kt")
             public void testFunction() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Function.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Function.kt");
             }
 
             @TestMetadata("Getter.kt")
             public void testGetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Getter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Getter.kt");
             }
 
             @TestMetadata("PropertyField.kt")
             public void testPropertyField() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/PropertyField.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/PropertyField.kt");
             }
 
             @TestMetadata("Setter.kt")
             public void testSetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Setter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/Setter.kt");
             }
 
             @TestMetadata("StringArrayArgument.kt")
             public void testStringArrayArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/StringArrayArgument.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers/StringArrayArgument.kt");
             }
         }
 
@@ -304,80 +284,72 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Parameters extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInParameters() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("Constructor.kt")
             public void testConstructor() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/Constructor.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/Constructor.kt");
             }
 
             @TestMetadata("EnumConstructor.kt")
             public void testEnumConstructor() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/EnumConstructor.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/EnumConstructor.kt");
             }
 
             @TestMetadata("ExtensionFunction.kt")
             public void testExtensionFunction() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ExtensionFunction.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ExtensionFunction.kt");
             }
 
             @TestMetadata("ExtensionFunctionInClass.kt")
             public void testExtensionFunctionInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ExtensionFunctionInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ExtensionFunctionInClass.kt");
             }
 
             @TestMetadata("ExtensionPropertySetter.kt")
             public void testExtensionPropertySetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ExtensionPropertySetter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ExtensionPropertySetter.kt");
             }
 
             @TestMetadata("FunctionInClass.kt")
             public void testFunctionInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInClass.kt");
             }
 
             @TestMetadata("FunctionInTrait.kt")
             public void testFunctionInTrait() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInTrait.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/FunctionInTrait.kt");
             }
 
             @TestMetadata("InnerClassConstructor.kt")
             public void testInnerClassConstructor() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/InnerClassConstructor.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/InnerClassConstructor.kt");
             }
 
             @TestMetadata("ManyAnnotations.kt")
             public void testManyAnnotations() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ManyAnnotations.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/ManyAnnotations.kt");
             }
 
             @TestMetadata("PropertySetterInClass.kt")
             public void testPropertySetterInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/PropertySetterInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/PropertySetterInClass.kt");
             }
 
             @TestMetadata("TopLevelFunction.kt")
             public void testTopLevelFunction() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/TopLevelFunction.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/TopLevelFunction.kt");
             }
 
             @TestMetadata("TopLevelPropertySetter.kt")
             public void testTopLevelPropertySetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/parameters/TopLevelPropertySetter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/parameters/TopLevelPropertySetter.kt");
             }
         }
 
@@ -385,56 +357,52 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PropertiesWithoutBackingFields extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInPropertiesWithoutBackingFields() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("Class.kt")
             public void testClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/Class.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/Class.kt");
             }
 
             @TestMetadata("ClassObject.kt")
             public void testClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/ClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/ClassObject.kt");
             }
 
             @TestMetadata("ExtensionsWithSameNameClass.kt")
             public void testExtensionsWithSameNameClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNameClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNameClass.kt");
             }
 
             @TestMetadata("ExtensionsWithSameNamePackage.kt")
             public void testExtensionsWithSameNamePackage() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNamePackage.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/ExtensionsWithSameNamePackage.kt");
             }
 
             @TestMetadata("NestedTrait.kt")
             public void testNestedTrait() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/NestedTrait.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/NestedTrait.kt");
             }
 
             @TestMetadata("TopLevel.kt")
             public void testTopLevel() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/TopLevel.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/TopLevel.kt");
             }
 
             @TestMetadata("Trait.kt")
             public void testTrait() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/Trait.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/Trait.kt");
             }
 
             @TestMetadata("TraitClassObject.kt")
             public void testTraitClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/TraitClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields/TraitClassObject.kt");
             }
         }
 
@@ -442,56 +410,52 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Types extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInTypes() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassLiteralArgument.kt")
             public void testClassLiteralArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/ClassLiteralArgument.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/ClassLiteralArgument.kt");
             }
 
             @TestMetadata("ReceiverParameter.kt")
             public void testReceiverParameter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/ReceiverParameter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/ReceiverParameter.kt");
             }
 
             @TestMetadata("SimpleTypeAnnotation.kt")
             public void testSimpleTypeAnnotation() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/SimpleTypeAnnotation.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/SimpleTypeAnnotation.kt");
             }
 
             @TestMetadata("SupertypesAndBounds.kt")
             public void testSupertypesAndBounds() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/SupertypesAndBounds.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/SupertypesAndBounds.kt");
             }
 
             @TestMetadata("TypeAnnotationWithArguments.kt")
             public void testTypeAnnotationWithArguments() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");
             }
 
             @TestMetadata("TypeArgument.kt")
             public void testTypeArgument() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeArgument.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeArgument.kt");
             }
 
             @TestMetadata("TypeParameterAnnotation.kt")
             public void testTypeParameterAnnotation() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotation.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotation.kt");
             }
 
             @TestMetadata("TypeParameterAnnotationWithArguments.kt")
             public void testTypeParameterAnnotationWithArguments() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotationWithArguments.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeParameterAnnotationWithArguments.kt");
             }
         }
 
@@ -499,26 +463,27 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WithUseSiteTarget extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInWithUseSiteTarget() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("DelegateTarget.kt")
             public void testDelegateTarget() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/DelegateTarget.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/DelegateTarget.kt");
             }
 
             @TestMetadata("FieldTarget.kt")
             public void testFieldTarget() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/FieldTarget.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/FieldTarget.kt");
             }
 
             @TestMetadata("ReceiverTarget.kt")
             public void testReceiverTarget() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/ReceiverTarget.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/ReceiverTarget.kt");
             }
         }
     }
@@ -527,262 +492,229 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Class extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInClass() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Class.kt")
         public void testClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/Class.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/Class.kt");
         }
 
         @TestMetadata("ClassInParam.kt")
         public void testClassInParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassInParam.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassInParam.kt");
         }
 
         @TestMetadata("ClassInnerClass.kt")
         public void testClassInnerClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassInnerClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassInnerClass.kt");
         }
 
         @TestMetadata("ClassMemberConflict.kt")
         public void testClassMemberConflict() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassMemberConflict.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassMemberConflict.kt");
         }
 
         @TestMetadata("ClassOutParam.kt")
         public void testClassOutParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassOutParam.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassOutParam.kt");
         }
 
         @TestMetadata("ClassParam.kt")
         public void testClassParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassParam.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParam.kt");
         }
 
         @TestMetadata("ClassParamReferencesParam.kt")
         public void testClassParamReferencesParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassParamReferencesParam.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParamReferencesParam.kt");
         }
 
         @TestMetadata("ClassParamReferencesParam2.kt")
         public void testClassParamReferencesParam2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassParamReferencesParam2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParamReferencesParam2.kt");
         }
 
         @TestMetadata("ClassParamReferencesSelf.kt")
         public void testClassParamReferencesSelf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassParamReferencesSelf.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParamReferencesSelf.kt");
         }
 
         @TestMetadata("ClassParamUpperClassBound.kt")
         public void testClassParamUpperClassBound() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassParamUpperClassBound.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParamUpperClassBound.kt");
         }
 
         @TestMetadata("ClassParamUpperClassInterfaceBound.kt")
         public void testClassParamUpperClassInterfaceBound() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassParamUpperClassInterfaceBound.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParamUpperClassInterfaceBound.kt");
         }
 
         @TestMetadata("ClassParamUpperInterfaceBound.kt")
         public void testClassParamUpperInterfaceBound() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassParamUpperInterfaceBound.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassParamUpperInterfaceBound.kt");
         }
 
         @TestMetadata("ClassTwoParams.kt")
         public void testClassTwoParams() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassTwoParams.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassTwoParams.kt");
         }
 
         @TestMetadata("ClassTwoParams2.kt")
         public void testClassTwoParams2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/ClassTwoParams2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/ClassTwoParams2.kt");
         }
 
         @TestMetadata("EnumWithGenericConstructorParameter.kt")
         public void testEnumWithGenericConstructorParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/EnumWithGenericConstructorParameter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/EnumWithGenericConstructorParameter.kt");
         }
 
         @TestMetadata("EnumWithPrimitiveConstructorParameter.kt")
         public void testEnumWithPrimitiveConstructorParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/EnumWithPrimitiveConstructorParameter.kt");
         }
 
         @TestMetadata("InheritClassSimple.kt")
         public void testInheritClassSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InheritClassSimple.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/InheritClassSimple.kt");
         }
 
         @TestMetadata("InheritClassWithParam.kt")
         public void testInheritClassWithParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InheritClassWithParam.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/InheritClassWithParam.kt");
         }
 
         @TestMetadata("InheritSubstitutedMethod.kt")
         public void testInheritSubstitutedMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InheritSubstitutedMethod.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/InheritSubstitutedMethod.kt");
         }
 
         @TestMetadata("InheritTraitWithFunctionParam.kt")
         public void testInheritTraitWithFunctionParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InheritTraitWithFunctionParam.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/InheritTraitWithFunctionParam.kt");
         }
 
         @TestMetadata("InheritTraitWithParam.kt")
         public void testInheritTraitWithParam() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InheritTraitWithParam.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/InheritTraitWithParam.kt");
         }
 
         @TestMetadata("InnerClassExtendInnerClass.kt")
         public void testInnerClassExtendInnerClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InnerClassExtendInnerClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/InnerClassExtendInnerClass.kt");
         }
 
         @TestMetadata("InnerGenericClass.kt")
         public void testInnerGenericClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InnerGenericClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/InnerGenericClass.kt");
         }
 
         @TestMetadata("InnerTypes.kt")
         public void testInnerTypes() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InnerTypes.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/InnerTypes.kt");
         }
 
         @TestMetadata("NamedObject.kt")
         public void testNamedObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NamedObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObject.kt");
         }
 
         @TestMetadata("NamedObjectInClass.kt")
         public void testNamedObjectInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NamedObjectInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObjectInClass.kt");
         }
 
         @TestMetadata("NamedObjectInClassObject.kt")
         public void testNamedObjectInClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NamedObjectInClassObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObjectInClassObject.kt");
         }
 
         @TestMetadata("NamedObjectInNamedObject.kt")
         public void testNamedObjectInNamedObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NamedObjectInNamedObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObjectInNamedObject.kt");
         }
 
         @TestMetadata("NamedObjectWithAnotherTopLevelProperty.kt")
         public void testNamedObjectWithAnotherTopLevelProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NamedObjectWithAnotherTopLevelProperty.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/NamedObjectWithAnotherTopLevelProperty.kt");
         }
 
         @TestMetadata("NestedClass.kt")
         public void testNestedClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NestedClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/NestedClass.kt");
         }
 
         @TestMetadata("NestedClassExtendNestedClass.kt")
         public void testNestedClassExtendNestedClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NestedClassExtendNestedClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/NestedClassExtendNestedClass.kt");
         }
 
         @TestMetadata("NestedGenericClass.kt")
         public void testNestedGenericClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NestedGenericClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/NestedGenericClass.kt");
         }
 
         @TestMetadata("RecursiveGeneric.kt")
         public void testRecursiveGeneric() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/RecursiveGeneric.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/RecursiveGeneric.kt");
         }
 
         @TestMetadata("SingleAbstractMethod.kt")
         public void testSingleAbstractMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/SingleAbstractMethod.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/SingleAbstractMethod.kt");
         }
 
         @TestMetadata("Trait.kt")
         public void testTrait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/Trait.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/class/Trait.kt");
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/class/javaBean")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaBean extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInJavaBean() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class/javaBean"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("DifferentGetterAndSetter.kt")
             public void testDifferentGetterAndSetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/javaBean/DifferentGetterAndSetter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/DifferentGetterAndSetter.kt");
             }
 
             @TestMetadata("JavaBeanAbstractGetter.kt")
             public void testJavaBeanAbstractGetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanAbstractGetter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanAbstractGetter.kt");
             }
 
             @TestMetadata("JavaBeanVal.kt")
             public void testJavaBeanVal() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanVal.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanVal.kt");
             }
 
             @TestMetadata("JavaBeanVar.kt")
             public void testJavaBeanVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanVar.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanVar.kt");
             }
 
             @TestMetadata("JavaBeanVarOfGenericType.kt")
             public void testJavaBeanVarOfGenericType() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanVarOfGenericType.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/JavaBeanVarOfGenericType.kt");
             }
 
             @TestMetadata("TwoSetters.kt")
             public void testTwoSetters() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/javaBean/TwoSetters.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/class/javaBean/TwoSetters.kt");
             }
         }
     }
@@ -791,38 +723,37 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassFun extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInClassFun() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ClassInParamUsedInFun.kt")
         public void testClassInParamUsedInFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/ClassInParamUsedInFun.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classFun/ClassInParamUsedInFun.kt");
         }
 
         @TestMetadata("ClassParamUsedInFun.kt")
         public void testClassParamUsedInFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/ClassParamUsedInFun.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classFun/ClassParamUsedInFun.kt");
         }
 
         @TestMetadata("FunDelegationToTraitImpl.kt")
         public void testFunDelegationToTraitImpl() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/FunDelegationToTraitImpl.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classFun/FunDelegationToTraitImpl.kt");
         }
 
         @TestMetadata("FunInParamSuper.kt")
         public void testFunInParamSuper() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/FunInParamSuper.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classFun/FunInParamSuper.kt");
         }
 
         @TestMetadata("TraitOpenFun.kt")
         public void testTraitOpenFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/TraitOpenFun.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classFun/TraitOpenFun.kt");
         }
     }
 
@@ -830,86 +761,77 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassObject extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInClassObject() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ClassObjectDeclaresVal.kt")
         public void testClassObjectDeclaresVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectDeclaresVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectDeclaresVal.kt");
         }
 
         @TestMetadata("ClassObjectDeclaresVar.kt")
         public void testClassObjectDeclaresVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectDeclaresVar.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectDeclaresVar.kt");
         }
 
         @TestMetadata("ClassObjectDefaultVisibility.kt")
         public void testClassObjectDefaultVisibility() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectDefaultVisibility.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectDefaultVisibility.kt");
         }
 
         @TestMetadata("ClassObjectExplicitVisibility.kt")
         public void testClassObjectExplicitVisibility() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectExplicitVisibility.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectExplicitVisibility.kt");
         }
 
         @TestMetadata("ClassObjectExtendsTrait.kt")
         public void testClassObjectExtendsTrait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectExtendsTrait.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectExtendsTrait.kt");
         }
 
         @TestMetadata("ClassObjectExtendsTraitWithTP.kt")
         public void testClassObjectExtendsTraitWithTP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectExtendsTraitWithTP.kt");
         }
 
         @TestMetadata("classObjectInClassStaticFields.kt")
         public void testClassObjectInClassStaticFields() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/classObjectInClassStaticFields.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/classObjectInClassStaticFields.kt");
         }
 
         @TestMetadata("classObjectInTraitStaticFields.kt")
         public void testClassObjectInTraitStaticFields() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/classObjectInTraitStaticFields.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/classObjectInTraitStaticFields.kt");
         }
 
         @TestMetadata("ClassObjectPropertyInClass.kt")
         public void testClassObjectPropertyInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectPropertyInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/ClassObjectPropertyInClass.kt");
         }
 
         @TestMetadata("Delegation.kt")
         public void testDelegation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/Delegation.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/Delegation.kt");
         }
 
         @TestMetadata("InnerClassInClassObject.kt")
         public void testInnerClassInClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/InnerClassInClassObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/InnerClassInClassObject.kt");
         }
 
         @TestMetadata("NamedClassObject.kt")
         public void testNamedClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/NamedClassObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/NamedClassObject.kt");
         }
 
         @TestMetadata("SimpleClassObject.kt")
         public void testSimpleClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classObject/SimpleClassObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/classObject/SimpleClassObject.kt");
         }
     }
 
@@ -917,124 +839,114 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInConstructor() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Constructor0.kt")
         public void testConstructor0() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/Constructor0.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/Constructor0.kt");
         }
 
         @TestMetadata("Constructor1.kt")
         public void testConstructor1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/Constructor1.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/Constructor1.kt");
         }
 
         @TestMetadata("Constructor1WithParamDefaultValue.kt")
         public void testConstructor1WithParamDefaultValue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/Constructor1WithParamDefaultValue.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/Constructor1WithParamDefaultValue.kt");
         }
 
         @TestMetadata("Constructor2WithOneParamDefaultValue.kt")
         public void testConstructor2WithOneParamDefaultValue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/Constructor2WithOneParamDefaultValue.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/Constructor2WithOneParamDefaultValue.kt");
         }
 
         @TestMetadata("ConstructorCollectionParameter.kt")
         public void testConstructorCollectionParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorCollectionParameter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorCollectionParameter.kt");
         }
 
         @TestMetadata("ConstructorGenericDeep.kt")
         public void testConstructorGenericDeep() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorGenericDeep.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorGenericDeep.kt");
         }
 
         @TestMetadata("ConstructorGenericSimple.kt")
         public void testConstructorGenericSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorGenericSimple.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorGenericSimple.kt");
         }
 
         @TestMetadata("ConstructorGenericUpperBound.kt")
         public void testConstructorGenericUpperBound() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorGenericUpperBound.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorGenericUpperBound.kt");
         }
 
         @TestMetadata("ConstructorWithTwoDefArgs.kt")
         public void testConstructorWithTwoDefArgs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoDefArgs.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoDefArgs.kt");
         }
 
         @TestMetadata("ConstructorWithTwoTypeParameters.kt")
         public void testConstructorWithTwoTypeParameters() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoTypeParameters.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoTypeParameters.kt");
         }
 
         @TestMetadata("ConstructorWithTwoTypeParametersAndOneIntValueParameter.kt")
         public void testConstructorWithTwoTypeParametersAndOneIntValueParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoTypeParametersAndOneIntValueParameter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoTypeParametersAndOneIntValueParameter.kt");
         }
 
         @TestMetadata("ConstructorWithTwoTypeParametersAndOnePValueParameter.kt")
         public void testConstructorWithTwoTypeParametersAndOnePValueParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoTypeParametersAndOnePValueParameter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTwoTypeParametersAndOnePValueParameter.kt");
         }
 
         @TestMetadata("ConstructorWithTypeParameter.kt")
         public void testConstructorWithTypeParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTypeParameter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTypeParameter.kt");
         }
 
         @TestMetadata("ConstructorWithTypeParametersEAndOnePValueParameter.kt")
         public void testConstructorWithTypeParametersEAndOnePValueParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTypeParametersEAndOnePValueParameter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/ConstructorWithTypeParametersEAndOnePValueParameter.kt");
         }
 
         @TestMetadata("InnerClassConstructorWithDefArgs.kt")
         public void testInnerClassConstructorWithDefArgs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/InnerClassConstructorWithDefArgs.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/InnerClassConstructorWithDefArgs.kt");
         }
 
         @TestMetadata("PrivateConstructor1WithParamDefaultValue.kt")
         public void testPrivateConstructor1WithParamDefaultValue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/PrivateConstructor1WithParamDefaultValue.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/constructor/PrivateConstructor1WithParamDefaultValue.kt");
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/constructor/vararg")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Vararg extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInVararg() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ConstructorNonLastVararg.kt")
             public void testConstructorNonLastVararg() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/vararg/ConstructorNonLastVararg.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/constructor/vararg/ConstructorNonLastVararg.kt");
             }
 
             @TestMetadata("ConstructorVararg.kt")
             public void testConstructorVararg() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/constructor/vararg/ConstructorVararg.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/constructor/vararg/ConstructorVararg.kt");
             }
         }
     }
@@ -1043,14 +955,17 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Coroutines extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCoroutines() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Basic.kt")
         public void testBasic() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/coroutines/Basic.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/coroutines/Basic.kt");
         }
     }
 
@@ -1058,32 +973,32 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DataClass extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInDataClass() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("MixedComponents.kt")
         public void testMixedComponents() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/MixedComponents.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/dataClass/MixedComponents.kt");
         }
 
         @TestMetadata("OneVal.kt")
         public void testOneVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/OneVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/dataClass/OneVal.kt");
         }
 
         @TestMetadata("TwoVals.kt")
         public void testTwoVals() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/TwoVals.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/dataClass/TwoVals.kt");
         }
 
         @TestMetadata("TwoVars.kt")
         public void testTwoVars() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/dataClass/TwoVars.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/dataClass/TwoVars.kt");
         }
     }
 
@@ -1091,44 +1006,42 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Enum extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInEnum() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("enumVisibility.kt")
         public void testEnumVisibility() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/enumVisibility.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/enum/enumVisibility.kt");
         }
 
         @TestMetadata("enumWithConstuctor.kt")
         public void testEnumWithConstuctor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/enumWithConstuctor.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/enum/enumWithConstuctor.kt");
         }
 
         @TestMetadata("enumWithInnerClasses.kt")
         public void testEnumWithInnerClasses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/enumWithInnerClasses.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/enum/enumWithInnerClasses.kt");
         }
 
         @TestMetadata("innerEnum.kt")
         public void testInnerEnum() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/innerEnum.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/enum/innerEnum.kt");
         }
 
         @TestMetadata("innerEnumExistingClassObject.kt")
         public void testInnerEnumExistingClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/innerEnumExistingClassObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/enum/innerEnumExistingClassObject.kt");
         }
 
         @TestMetadata("simpleEnum.kt")
         public void testSimpleEnum() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/enum/simpleEnum.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/enum/simpleEnum.kt");
         }
     }
 
@@ -1136,222 +1049,195 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FromLoadJava extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInFromLoadJava() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ArrayTypeVariance.kt")
         public void testArrayTypeVariance() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ArrayTypeVariance.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ArrayTypeVariance.kt");
         }
 
         @TestMetadata("ClassDoesNotOverrideMethod.kt")
         public void testClassDoesNotOverrideMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassDoesNotOverrideMethod.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassDoesNotOverrideMethod.kt");
         }
 
         @TestMetadata("ClassObject.kt")
         public void testClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassObject.kt");
         }
 
         @TestMetadata("classObjectAnnotation.kt")
         public void testClassObjectAnnotation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/classObjectAnnotation.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/classObjectAnnotation.kt");
         }
 
         @TestMetadata("ClassWithConstVal.kt")
         public void testClassWithConstVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithConstVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithConstVal.kt");
         }
 
         @TestMetadata("ClassWithTypeP.kt")
         public void testClassWithTypeP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypeP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypeP.kt");
         }
 
         @TestMetadata("ClassWithTypePExtendsIterableP.kt")
         public void testClassWithTypePExtendsIterableP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePExtendsIterableP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePExtendsIterableP.kt");
         }
 
         @TestMetadata("ClassWithTypePP.kt")
         public void testClassWithTypePP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePP.kt");
         }
 
         @TestMetadata("ClassWithTypePRefNext.kt")
         public void testClassWithTypePRefNext() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefNext.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefNext.kt");
         }
 
         @TestMetadata("ClassWithTypePRefSelf.kt")
         public void testClassWithTypePRefSelf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefSelf.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefSelf.kt");
         }
 
         @TestMetadata("ClassWithTypePRefSelfAndClass.kt")
         public void testClassWithTypePRefSelfAndClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefSelfAndClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/ClassWithTypePRefSelfAndClass.kt");
         }
 
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/enum.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/enum.kt");
         }
 
         @TestMetadata("FieldAsVar.kt")
         public void testFieldAsVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/FieldAsVar.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/FieldAsVar.kt");
         }
 
         @TestMetadata("FieldOfArrayType.kt")
         public void testFieldOfArrayType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/FieldOfArrayType.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/FieldOfArrayType.kt");
         }
 
         @TestMetadata("FinalFieldAsVal.kt")
         public void testFinalFieldAsVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/FinalFieldAsVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/FinalFieldAsVal.kt");
         }
 
         @TestMetadata("genericFunction.kt")
         public void testGenericFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/genericFunction.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/genericFunction.kt");
         }
 
         @TestMetadata("InheritMethodsDifferentReturnTypes.kt")
         public void testInheritMethodsDifferentReturnTypes() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/InheritMethodsDifferentReturnTypes.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/InheritMethodsDifferentReturnTypes.kt");
         }
 
         @TestMetadata("InheritMethodsDifferentReturnTypesGeneric.kt")
         public void testInheritMethodsDifferentReturnTypesGeneric() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/InheritMethodsDifferentReturnTypesGeneric.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/InheritMethodsDifferentReturnTypesGeneric.kt");
         }
 
         @TestMetadata("InnerClass.kt")
         public void testInnerClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/InnerClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/InnerClass.kt");
         }
 
         @TestMetadata("MethodTypePOneUpperBound.kt")
         public void testMethodTypePOneUpperBound() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodTypePOneUpperBound.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodTypePOneUpperBound.kt");
         }
 
         @TestMetadata("MethodTypePTwoUpperBounds.kt")
         public void testMethodTypePTwoUpperBounds() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodTypePTwoUpperBounds.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodTypePTwoUpperBounds.kt");
         }
 
         @TestMetadata("MethodWithTypeP.kt")
         public void testMethodWithTypeP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodWithTypeP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodWithTypeP.kt");
         }
 
         @TestMetadata("MethodWithTypePP.kt")
         public void testMethodWithTypePP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodWithTypePP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodWithTypePP.kt");
         }
 
         @TestMetadata("MethodWithTypePRefClassP.kt")
         public void testMethodWithTypePRefClassP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodWithTypePRefClassP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethodWithTypePRefClassP.kt");
         }
 
         @TestMetadata("MethosWithPRefTP.kt")
         public void testMethosWithPRefTP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethosWithPRefTP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MethosWithPRefTP.kt");
         }
 
         @TestMetadata("MyException.kt")
         public void testMyException() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MyException.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/MyException.kt");
         }
 
         @TestMetadata("NestedClass.kt")
         public void testNestedClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/NestedClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/NestedClass.kt");
         }
 
         @TestMetadata("objectInClass.kt")
         public void testObjectInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/objectInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/objectInClass.kt");
         }
 
         @TestMetadata("objectMembers.kt")
         public void testObjectMembers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/objectMembers.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/objectMembers.kt");
         }
 
         @TestMetadata("packageLevelObject.kt")
         public void testPackageLevelObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/packageLevelObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/packageLevelObject.kt");
         }
 
         @TestMetadata("RemoveRedundantProjectionKind.kt")
         public void testRemoveRedundantProjectionKind() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/RemoveRedundantProjectionKind.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/RemoveRedundantProjectionKind.kt");
         }
 
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/Simple.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/Simple.kt");
         }
 
         @TestMetadata("TwoFields.kt")
         public void testTwoFields() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/TwoFields.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/TwoFields.kt");
         }
 
         @TestMetadata("UnboundWildcard.kt")
         public void testUnboundWildcard() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/UnboundWildcard.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/UnboundWildcard.kt");
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class KotlinSignature extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             @TestMetadata("AllBoundsInWhen.kt")
             public void testAllBoundsInWhen() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/AllBoundsInWhen.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/AllBoundsInWhen.kt");
             }
 
             public void testAllFilesPresentInKotlinSignature() throws Exception {
@@ -1360,102 +1246,90 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
 
             @TestMetadata("ArrayType.kt")
             public void testArrayType() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ArrayType.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ArrayType.kt");
             }
 
             @TestMetadata("ConstructorWithNewTypeParams.kt")
             public void testConstructorWithNewTypeParams() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithNewTypeParams.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithNewTypeParams.kt");
             }
 
             @TestMetadata("ConstructorWithParentTypeParams.kt")
             public void testConstructorWithParentTypeParams() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithParentTypeParams.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithParentTypeParams.kt");
             }
 
             @TestMetadata("ConstructorWithSeveralParams.kt")
             public void testConstructorWithSeveralParams() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithSeveralParams.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithSeveralParams.kt");
             }
 
             @TestMetadata("ConstructorWithoutParams.kt")
             public void testConstructorWithoutParams() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithoutParams.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/ConstructorWithoutParams.kt");
             }
 
             @TestMetadata("CustomProjectionKind.kt")
             public void testCustomProjectionKind() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/CustomProjectionKind.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/CustomProjectionKind.kt");
             }
 
             @TestMetadata("MethodWithFunctionTypes.kt")
             public void testMethodWithFunctionTypes() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithFunctionTypes.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithFunctionTypes.kt");
             }
 
             @TestMetadata("MethodWithGenerics.kt")
             public void testMethodWithGenerics() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithGenerics.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithGenerics.kt");
             }
 
             @TestMetadata("MethodWithMappedClasses.kt")
             public void testMethodWithMappedClasses() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithMappedClasses.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithMappedClasses.kt");
             }
 
             @TestMetadata("MethodWithTypeParameters.kt")
             public void testMethodWithTypeParameters() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithTypeParameters.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithTypeParameters.kt");
             }
 
             @TestMetadata("MethodWithVararg.kt")
             public void testMethodWithVararg() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithVararg.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/MethodWithVararg.kt");
             }
 
             @TestMetadata("PropertyArrayTypes.kt")
             public void testPropertyArrayTypes() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/PropertyArrayTypes.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/PropertyArrayTypes.kt");
             }
 
             @TestMetadata("PropertyComplexTypes.kt")
             public void testPropertyComplexTypes() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/PropertyComplexTypes.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/PropertyComplexTypes.kt");
             }
 
             @TestMetadata("PropertySimpleType.kt")
             public void testPropertySimpleType() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/PropertySimpleType.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/PropertySimpleType.kt");
             }
 
             @TestMetadata("StarProjection.kt")
             public void testStarProjection() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/StarProjection.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/StarProjection.kt");
             }
 
             @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Error extends AbstractLoadKotlinWithTypeTableTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
                 @TestMetadata("AddingNullability.kt")
                 public void testAddingNullability() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/AddingNullability.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/AddingNullability.kt");
                 }
 
                 public void testAllFilesPresentInError() throws Exception {
@@ -1464,158 +1338,132 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
 
                 @TestMetadata("ConflictingProjectionKind.kt")
                 public void testConflictingProjectionKind() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ConflictingProjectionKind.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ConflictingProjectionKind.kt");
                 }
 
                 @TestMetadata("ExplicitFieldGettersAndSetters.kt")
                 public void testExplicitFieldGettersAndSetters() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ExplicitFieldGettersAndSetters.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ExplicitFieldGettersAndSetters.kt");
                 }
 
                 @TestMetadata("ExtraUpperBound.kt")
                 public void testExtraUpperBound() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ExtraUpperBound.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ExtraUpperBound.kt");
                 }
 
                 @TestMetadata("MissingUpperBound.kt")
                 public void testMissingUpperBound() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/MissingUpperBound.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/MissingUpperBound.kt");
                 }
 
                 @TestMetadata("NoFieldTypeRef.kt")
                 public void testNoFieldTypeRef() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/NoFieldTypeRef.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/NoFieldTypeRef.kt");
                 }
 
                 @TestMetadata("NotVarargReplacedWithVararg.kt")
                 public void testNotVarargReplacedWithVararg() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/NotVarargReplacedWithVararg.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/NotVarargReplacedWithVararg.kt");
                 }
 
                 @TestMetadata("RedundantProjectionKind.kt")
                 public void testRedundantProjectionKind() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/RedundantProjectionKind.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/RedundantProjectionKind.kt");
                 }
 
                 @TestMetadata("ReturnTypeMissing.kt")
                 public void testReturnTypeMissing() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ReturnTypeMissing.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/ReturnTypeMissing.kt");
                 }
 
                 @TestMetadata("SyntaxError.kt")
                 public void testSyntaxError() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/SyntaxError.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/SyntaxError.kt");
                 }
 
                 @TestMetadata("SyntaxErrorInFieldAnnotation.kt")
                 public void testSyntaxErrorInFieldAnnotation() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/SyntaxErrorInFieldAnnotation.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/SyntaxErrorInFieldAnnotation.kt");
                 }
 
                 @TestMetadata("VarargReplacedWithNotVararg.kt")
                 public void testVarargReplacedWithNotVararg() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/VarargReplacedWithNotVararg.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/VarargReplacedWithNotVararg.kt");
                 }
 
                 @TestMetadata("WrongFieldInitializer.kt")
                 public void testWrongFieldInitializer() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongFieldInitializer.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongFieldInitializer.kt");
                 }
 
                 @TestMetadata("WrongFieldMutability.kt")
                 public void testWrongFieldMutability() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongFieldMutability.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongFieldMutability.kt");
                 }
 
                 @TestMetadata("WrongFieldName.kt")
                 public void testWrongFieldName() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongFieldName.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongFieldName.kt");
                 }
 
                 @TestMetadata("WrongMethodName.kt")
                 public void testWrongMethodName() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongMethodName.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongMethodName.kt");
                 }
 
                 @TestMetadata("WrongProjectionKind.kt")
                 public void testWrongProjectionKind() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongProjectionKind.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongProjectionKind.kt");
                 }
 
                 @TestMetadata("WrongReturnTypeStructure.kt")
                 public void testWrongReturnTypeStructure() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongReturnTypeStructure.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongReturnTypeStructure.kt");
                 }
 
                 @TestMetadata("WrongTypeName1.kt")
                 public void testWrongTypeName1() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeName1.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeName1.kt");
                 }
 
                 @TestMetadata("WrongTypeName2.kt")
                 public void testWrongTypeName2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeName2.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeName2.kt");
                 }
 
                 @TestMetadata("WrongTypeName3.kt")
                 public void testWrongTypeName3() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeName3.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeName3.kt");
                 }
 
                 @TestMetadata("WrongTypeParameterBoundStructure1.kt")
                 public void testWrongTypeParameterBoundStructure1() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeParameterBoundStructure1.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeParameterBoundStructure1.kt");
                 }
 
                 @TestMetadata("WrongTypeParameterBoundStructure2.kt")
                 public void testWrongTypeParameterBoundStructure2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeParameterBoundStructure2.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeParameterBoundStructure2.kt");
                 }
 
                 @TestMetadata("WrongTypeParametersCount.kt")
                 public void testWrongTypeParametersCount() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeParametersCount.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongTypeParametersCount.kt");
                 }
 
                 @TestMetadata("WrongValueParameterStructure1.kt")
                 public void testWrongValueParameterStructure1() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongValueParameterStructure1.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongValueParameterStructure1.kt");
                 }
 
                 @TestMetadata("WrongValueParameterStructure2.kt")
                 public void testWrongValueParameterStructure2() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongValueParameterStructure2.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongValueParameterStructure2.kt");
                 }
 
                 @TestMetadata("WrongValueParametersCount.kt")
                 public void testWrongValueParametersCount() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongValueParametersCount.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error/WrongValueParametersCount.kt");
                 }
             }
 
@@ -1623,178 +1471,159 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Propagation extends AbstractLoadKotlinWithTypeTableTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInPropagation() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("PropagateTypeArgumentNullable.kt")
                 public void testPropagateTypeArgumentNullable() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/PropagateTypeArgumentNullable.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/PropagateTypeArgumentNullable.kt");
                 }
 
                 @TestMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Parameter extends AbstractLoadKotlinWithTypeTableTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
                     public void testAllFilesPresentInParameter() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
                     @TestMetadata("ChangeProjectionKind1.kt")
                     public void testChangeProjectionKind1() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind1.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind1.kt");
                     }
 
                     @TestMetadata("ChangeProjectionKind2.kt")
                     public void testChangeProjectionKind2() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind2.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/ChangeProjectionKind2.kt");
                     }
 
                     @TestMetadata("DeeplySubstitutedClassParameter.kt")
                     public void testDeeplySubstitutedClassParameter() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter.kt");
                     }
 
                     @TestMetadata("DeeplySubstitutedClassParameter2.kt")
                     public void testDeeplySubstitutedClassParameter2() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter2.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter2.kt");
                     }
 
                     @TestMetadata("InheritMutability.kt")
                     public void testInheritMutability() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritMutability.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritMutability.kt");
                     }
 
                     @TestMetadata("InheritNotVararg.kt")
                     public void testInheritNotVararg() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVararg.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVararg.kt");
                     }
 
                     @TestMetadata("InheritNotVarargInteger.kt")
                     public void testInheritNotVarargInteger() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVarargInteger.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVarargInteger.kt");
                     }
 
                     @TestMetadata("InheritNotVarargNotNull.kt")
                     public void testInheritNotVarargNotNull() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVarargNotNull.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVarargNotNull.kt");
                     }
 
                     @TestMetadata("InheritNotVarargPrimitive.kt")
                     public void testInheritNotVarargPrimitive() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVarargPrimitive.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNotVarargPrimitive.kt");
                     }
 
                     @TestMetadata("InheritNullability.kt")
                     public void testInheritNullability() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNullability.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritNullability.kt");
                     }
 
                     @TestMetadata("InheritProjectionKind.kt")
                     public void testInheritProjectionKind() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritProjectionKind.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritProjectionKind.kt");
                     }
 
                     @TestMetadata("InheritReadOnliness.kt")
                     public void testInheritReadOnliness() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritReadOnliness.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritReadOnliness.kt");
                     }
 
                     @TestMetadata("InheritVararg.kt")
                     public void testInheritVararg() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVararg.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVararg.kt");
                     }
 
                     @TestMetadata("InheritVarargInteger.kt")
                     public void testInheritVarargInteger() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVarargInteger.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVarargInteger.kt");
                     }
 
                     @TestMetadata("InheritVarargNotNull.kt")
                     public void testInheritVarargNotNull() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.kt");
                     }
 
                     @TestMetadata("InheritVarargPrimitive.kt")
                     public void testInheritVarargPrimitive() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVarargPrimitive.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/InheritVarargPrimitive.kt");
                     }
 
                     @TestMetadata("Kt3302.kt")
                     public void testKt3302() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/Kt3302.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/Kt3302.kt");
                     }
 
                     @TestMetadata("MutableToReadOnly.kt")
                     public void testMutableToReadOnly() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/MutableToReadOnly.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/MutableToReadOnly.kt");
                     }
 
                     @TestMetadata("NotNullToNullable.kt")
                     public void testNotNullToNullable() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/NotNullToNullable.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/NotNullToNullable.kt");
                     }
 
                     @TestMetadata("NullableToNotNull.kt")
                     public void testNullableToNotNull() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/NullableToNotNull.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/NullableToNotNull.kt");
                     }
 
                     @TestMetadata("NullableToNotNullKotlinSignature.kt")
                     public void testNullableToNotNullKotlinSignature() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/NullableToNotNullKotlinSignature.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/NullableToNotNullKotlinSignature.kt");
                     }
 
                     @TestMetadata("OverrideWithErasedParameter.kt")
                     public void testOverrideWithErasedParameter() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/OverrideWithErasedParameter.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/OverrideWithErasedParameter.kt");
                     }
 
                     @TestMetadata("ReadOnlyToMutable.kt")
                     public void testReadOnlyToMutable() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.kt");
                     }
 
                     @TestMetadata("SubclassFromGenericAndNot.kt")
                     public void testSubclassFromGenericAndNot() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/SubclassFromGenericAndNot.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/SubclassFromGenericAndNot.kt");
                     }
 
                     @TestMetadata("SubstitutedClassParameter.kt")
                     public void testSubstitutedClassParameter() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameter.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameter.kt");
                     }
 
                     @TestMetadata("SubstitutedClassParameters.kt")
                     public void testSubstitutedClassParameters() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameters.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter/SubstitutedClassParameters.kt");
                     }
                 }
 
@@ -1802,40 +1631,38 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Return extends AbstractLoadKotlinWithTypeTableTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
                     @TestMetadata("AddNotNullJavaSubtype.kt")
                     public void testAddNotNullJavaSubtype() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNotNullJavaSubtype.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNotNullJavaSubtype.kt");
                     }
 
                     @TestMetadata("AddNotNullSameJavaType.kt")
                     public void testAddNotNullSameJavaType() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNotNullSameJavaType.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNotNullSameJavaType.kt");
                     }
 
                     @TestMetadata("AddNullabilityJavaSubtype.kt")
                     public void testAddNullabilityJavaSubtype() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilityJavaSubtype.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilityJavaSubtype.kt");
                     }
 
                     @TestMetadata("AddNullabilitySameGenericType1.kt")
                     public void testAddNullabilitySameGenericType1() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType1.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType1.kt");
                     }
 
                     @TestMetadata("AddNullabilitySameGenericType2.kt")
                     public void testAddNullabilitySameGenericType2() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType2.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType2.kt");
                     }
 
                     @TestMetadata("AddNullabilitySameJavaType.kt")
                     public void testAddNullabilitySameJavaType() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilitySameJavaType.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/AddNullabilitySameJavaType.kt");
                     }
 
                     public void testAllFilesPresentInReturn() throws Exception {
@@ -1844,170 +1671,142 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
 
                     @TestMetadata("CantMakeImmutableInSubclass.kt")
                     public void testCantMakeImmutableInSubclass() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/CantMakeImmutableInSubclass.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/CantMakeImmutableInSubclass.kt");
                     }
 
                     @TestMetadata("DeeplySubstitutedClassParameter.kt")
                     public void testDeeplySubstitutedClassParameter() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter.kt");
                     }
 
                     @TestMetadata("DeeplySubstitutedClassParameter2.kt")
                     public void testDeeplySubstitutedClassParameter2() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter2.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter2.kt");
                     }
 
                     @TestMetadata("HalfSubstitutedTypeParameters.kt")
                     public void testHalfSubstitutedTypeParameters() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/HalfSubstitutedTypeParameters.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/HalfSubstitutedTypeParameters.kt");
                     }
 
                     @TestMetadata("InheritNullabilityGenericSubclassSimple.kt")
                     public void testInheritNullabilityGenericSubclassSimple() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilityGenericSubclassSimple.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilityGenericSubclassSimple.kt");
                     }
 
                     @TestMetadata("InheritNullabilityJavaSubtype.kt")
                     public void testInheritNullabilityJavaSubtype() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.kt");
                     }
 
                     @TestMetadata("InheritNullabilitySameGenericType.kt")
                     public void testInheritNullabilitySameGenericType() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilitySameGenericType.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilitySameGenericType.kt");
                     }
 
                     @TestMetadata("InheritNullabilitySameJavaType.kt")
                     public void testInheritNullabilitySameJavaType() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilitySameJavaType.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritNullabilitySameJavaType.kt");
                     }
 
                     @TestMetadata("InheritProjectionKind.kt")
                     public void testInheritProjectionKind() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritProjectionKind.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritProjectionKind.kt");
                     }
 
                     @TestMetadata("InheritReadOnlinessOfArgument.kt")
                     public void testInheritReadOnlinessOfArgument() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritReadOnlinessOfArgument.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritReadOnlinessOfArgument.kt");
                     }
 
                     @TestMetadata("InheritReadOnlinessSameClass.kt")
                     public void testInheritReadOnlinessSameClass() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritReadOnlinessSameClass.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritReadOnlinessSameClass.kt");
                     }
 
                     @TestMetadata("InheritReadOnlinessSubclass.kt")
                     public void testInheritReadOnlinessSubclass() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.kt");
                     }
 
                     @TestMetadata("SameProjectionKind.kt")
                     public void testSameProjectionKind() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SameProjectionKind.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SameProjectionKind.kt");
                     }
 
                     @TestMetadata("SubclassFromGenericAndNot.kt")
                     public void testSubclassFromGenericAndNot() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubclassFromGenericAndNot.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubclassFromGenericAndNot.kt");
                     }
 
                     @TestMetadata("SubclassOfCollection.kt")
                     public void testSubclassOfCollection() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubclassOfCollection.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubclassOfCollection.kt");
                     }
 
                     @TestMetadata("SubclassOfMapEntry.kt")
                     public void testSubclassOfMapEntry() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubclassOfMapEntry.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubclassOfMapEntry.kt");
                     }
 
                     @TestMetadata("SubstitutedClassParameter.kt")
                     public void testSubstitutedClassParameter() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubstitutedClassParameter.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubstitutedClassParameter.kt");
                     }
 
                     @TestMetadata("SubstitutedClassParameters.kt")
                     public void testSubstitutedClassParameters() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubstitutedClassParameters.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/SubstitutedClassParameters.kt");
                     }
 
                     @TestMetadata("TwoSuperclassesConflictingProjectionKinds.kt")
                     public void testTwoSuperclassesConflictingProjectionKinds() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.kt");
                     }
 
                     @TestMetadata("TwoSuperclassesInvariantAndCovariantInferMutability.kt")
                     public void testTwoSuperclassesInvariantAndCovariantInferMutability() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferMutability.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferMutability.kt");
                     }
 
                     @TestMetadata("TwoSuperclassesInvariantAndCovariantInferNullability.kt")
                     public void testTwoSuperclassesInvariantAndCovariantInferNullability() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferNullability.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferNullability.kt");
                     }
 
                     @TestMetadata("TwoSuperclassesMutableAndNot.kt")
                     public void testTwoSuperclassesMutableAndNot() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesMutableAndNot.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesMutableAndNot.kt");
                     }
 
                     @TestMetadata("TwoSuperclassesReturnJavaSubtype.kt")
                     public void testTwoSuperclassesReturnJavaSubtype() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnJavaSubtype.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnJavaSubtype.kt");
                     }
 
                     @TestMetadata("TwoSuperclassesReturnSameJavaType.kt")
                     public void testTwoSuperclassesReturnSameJavaType() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnSameJavaType.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesReturnSameJavaType.kt");
                     }
 
                     @TestMetadata("TwoSuperclassesSupplementNotNull.kt")
                     public void testTwoSuperclassesSupplementNotNull() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesSupplementNotNull.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TwoSuperclassesSupplementNotNull.kt");
                     }
 
                     @TestMetadata("TypeParamOfClass.kt")
                     public void testTypeParamOfClass() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TypeParamOfClass.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TypeParamOfClass.kt");
                     }
 
                     @TestMetadata("TypeParamOfClassSubstituted.kt")
                     public void testTypeParamOfClassSubstituted() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TypeParamOfClassSubstituted.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TypeParamOfClassSubstituted.kt");
                     }
 
                     @TestMetadata("TypeParamOfFun.kt")
                     public void testTypeParamOfFun() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TypeParamOfFun.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return/TypeParamOfFun.kt");
                     }
                 }
 
@@ -2015,62 +1814,57 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class TypeParameter extends AbstractLoadKotlinWithTypeTableTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
                     public void testAllFilesPresentInTypeParameter() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
                     @TestMetadata("InheritMutability.kt")
                     public void testInheritMutability() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/InheritMutability.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/InheritMutability.kt");
                     }
 
                     @TestMetadata("InheritNullability.kt")
                     public void testInheritNullability() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/InheritNullability.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/InheritNullability.kt");
                     }
 
                     @TestMetadata("InheritReadOnliness.kt")
                     public void testInheritReadOnliness() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/InheritReadOnliness.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/InheritReadOnliness.kt");
                     }
 
                     @TestMetadata("TwoBounds.kt")
                     public void testTwoBounds() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/TwoBounds.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/TwoBounds.kt");
                     }
 
                     @TestMetadata("TwoSuperclasses.kt")
                     public void testTwoSuperclasses() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/TwoSuperclasses.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/TwoSuperclasses.kt");
                     }
 
                     @TestMetadata("TwoTypeParameters.kt")
                     public void testTwoTypeParameters() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/TwoTypeParameters.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/TwoTypeParameters.kt");
                     }
 
                     @TestMetadata("UseParameterAsUpperBound.kt")
                     public void testUseParameterAsUpperBound() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/UseParameterAsUpperBound.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/UseParameterAsUpperBound.kt");
                     }
 
                     @TestMetadata("UseParameterInUpperBound.kt")
                     public void testUseParameterInUpperBound() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBound.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBound.kt");
                     }
 
                     @TestMetadata("UseParameterInUpperBoundWithKotlinSignature.kt")
                     public void testUseParameterInUpperBoundWithKotlinSignature() throws Exception {
-                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBoundWithKotlinSignature.kt");
-                        doTest(fileName);
+                        runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBoundWithKotlinSignature.kt");
                     }
                 }
             }
@@ -2080,26 +1874,27 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Library extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInLibrary() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("LoadIterable.kt")
             public void testLoadIterable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library/LoadIterable.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library/LoadIterable.kt");
             }
 
             @TestMetadata("LoadIterator.kt")
             public void testLoadIterator() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library/LoadIterator.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library/LoadIterator.kt");
             }
 
             @TestMetadata("Max.kt")
             public void testMax() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library/Max.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library/Max.kt");
             }
         }
 
@@ -2107,14 +1902,17 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Modality extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInModality() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ModalityOfFakeOverrides.kt")
             public void testModalityOfFakeOverrides() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality/ModalityOfFakeOverrides.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality/ModalityOfFakeOverrides.kt");
             }
         }
 
@@ -2122,38 +1920,37 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NotNull extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInNotNull() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("NotNullField.kt")
             public void testNotNullField() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullField.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullField.kt");
             }
 
             @TestMetadata("NotNullIntArray.kt")
             public void testNotNullIntArray() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullIntArray.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullIntArray.kt");
             }
 
             @TestMetadata("NotNullMethod.kt")
             public void testNotNullMethod() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullMethod.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullMethod.kt");
             }
 
             @TestMetadata("NotNullObjectArray.kt")
             public void testNotNullObjectArray() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullObjectArray.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullObjectArray.kt");
             }
 
             @TestMetadata("NotNullParameter.kt")
             public void testNotNullParameter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullParameter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull/NotNullParameter.kt");
             }
         }
     }
@@ -2162,142 +1959,129 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Fun extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInFun() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Assert.kt")
         public void testAssert() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/Assert.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/Assert.kt");
         }
 
         @TestMetadata("DeclaredMemberOverridesDelegated.kt")
         public void testDeclaredMemberOverridesDelegated() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/DeclaredMemberOverridesDelegated.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/DeclaredMemberOverridesDelegated.kt");
         }
 
         @TestMetadata("InfixKeyword.kt")
         public void testInfixKeyword() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/InfixKeyword.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/InfixKeyword.kt");
         }
 
         @TestMetadata("InheritMethodsDifferentReturnTypesAndVisibilities.kt")
         public void testInheritMethodsDifferentReturnTypesAndVisibilities() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/InheritMethodsDifferentReturnTypesAndVisibilities.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/InheritMethodsDifferentReturnTypesAndVisibilities.kt");
         }
 
         @TestMetadata("InheritValAndVar.kt")
         public void testInheritValAndVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/InheritValAndVar.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/InheritValAndVar.kt");
         }
 
         @TestMetadata("InheritValsDifferentTypes.kt")
         public void testInheritValsDifferentTypes() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/InheritValsDifferentTypes.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/InheritValsDifferentTypes.kt");
         }
 
         @TestMetadata("NoSamAdapter.kt")
         public void testNoSamAdapter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/NoSamAdapter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/NoSamAdapter.kt");
         }
 
         @TestMetadata("NoSamConstructor.kt")
         public void testNoSamConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/NoSamConstructor.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/NoSamConstructor.kt");
         }
 
         @TestMetadata("OperatorKeyword.kt")
         public void testOperatorKeyword() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/OperatorKeyword.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/OperatorKeyword.kt");
         }
 
         @TestMetadata("PropagateDeepSubclass.kt")
         public void testPropagateDeepSubclass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/PropagateDeepSubclass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/PropagateDeepSubclass.kt");
         }
 
         @TestMetadata("PropagateSubclassOfComparable.kt")
         public void testPropagateSubclassOfComparable() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/PropagateSubclassOfComparable.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/fun/PropagateSubclassOfComparable.kt");
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GenericWithTypeVariables extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInGenericWithTypeVariables() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("FunGenericParam.kt")
             public void testFunGenericParam() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunGenericParam.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunGenericParam.kt");
             }
 
             @TestMetadata("FunParamParam.kt")
             public void testFunParamParam() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamParam.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamParam.kt");
             }
 
             @TestMetadata("FunParamParamErased.kt")
             public void testFunParamParamErased() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamParamErased.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamParamErased.kt");
             }
 
             @TestMetadata("FunParamReferencesParam.kt")
             public void testFunParamReferencesParam() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamReferencesParam.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamReferencesParam.kt");
             }
 
             @TestMetadata("FunParamTwoUpperBounds.kt")
             public void testFunParamTwoUpperBounds() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamTwoUpperBounds.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamTwoUpperBounds.kt");
             }
 
             @TestMetadata("FunParamUpperClassBound.kt")
             public void testFunParamUpperClassBound() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamUpperClassBound.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamUpperClassBound.kt");
             }
 
             @TestMetadata("FunParamUpperClassInterfaceBound.kt")
             public void testFunParamUpperClassInterfaceBound() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamUpperClassInterfaceBound.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamUpperClassInterfaceBound.kt");
             }
 
             @TestMetadata("FunParamUpperInterfaceBound.kt")
             public void testFunParamUpperInterfaceBound() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamUpperInterfaceBound.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamUpperInterfaceBound.kt");
             }
 
             @TestMetadata("FunParamVaragParam.kt")
             public void testFunParamVaragParam() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamVaragParam.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunParamVaragParam.kt");
             }
 
             @TestMetadata("FunTwoTypeParams.kt")
             public void testFunTwoTypeParams() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunTwoTypeParams.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables/FunTwoTypeParams.kt");
             }
         }
 
@@ -2305,38 +2089,37 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GenericWithoutTypeVariables extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInGenericWithoutTypeVariables() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("FunClassParamNotNull.kt")
             public void testFunClassParamNotNull() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/FunClassParamNotNull.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/FunClassParamNotNull.kt");
             }
 
             @TestMetadata("FunClassParamNullable.kt")
             public void testFunClassParamNullable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/FunClassParamNullable.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/FunClassParamNullable.kt");
             }
 
             @TestMetadata("FunParamNullable.kt")
             public void testFunParamNullable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/FunParamNullable.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/FunParamNullable.kt");
             }
 
             @TestMetadata("ReturnTypeClassParamNotNull.kt")
             public void testReturnTypeClassParamNotNull() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNotNull.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNotNull.kt");
             }
 
             @TestMetadata("ReturnTypeClassParamNullable.kt")
             public void testReturnTypeClassParamNullable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNullable.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables/ReturnTypeClassParamNullable.kt");
             }
         }
 
@@ -2344,104 +2127,92 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NonGeneric extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInNonGeneric() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassFun.kt")
             public void testClassFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFun.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFun.kt");
             }
 
             @TestMetadata("ClassFunGetFoo.kt")
             public void testClassFunGetFoo() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFunGetFoo.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFunGetFoo.kt");
             }
 
             @TestMetadata("ClassFunGetFooSetFoo.kt")
             public void testClassFunGetFooSetFoo() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFunGetFooSetFoo.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFunGetFooSetFoo.kt");
             }
 
             @TestMetadata("ClassFunSetFoo.kt")
             public void testClassFunSetFoo() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFunSetFoo.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ClassFunSetFoo.kt");
             }
 
             @TestMetadata("ExtFun.kt")
             public void testExtFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ExtFun.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ExtFun.kt");
             }
 
             @TestMetadata("ExtFunInClass.kt")
             public void testExtFunInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ExtFunInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ExtFunInClass.kt");
             }
 
             @TestMetadata("FunDefaultArg.kt")
             public void testFunDefaultArg() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunDefaultArg.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunDefaultArg.kt");
             }
 
             @TestMetadata("FunParamNotNull.kt")
             public void testFunParamNotNull() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunParamNotNull.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunParamNotNull.kt");
             }
 
             @TestMetadata("FunVarargInt.kt")
             public void testFunVarargInt() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunVarargInt.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunVarargInt.kt");
             }
 
             @TestMetadata("FunVarargInteger.kt")
             public void testFunVarargInteger() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunVarargInteger.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/FunVarargInteger.kt");
             }
 
             @TestMetadata("ModifierAbstract.kt")
             public void testModifierAbstract() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ModifierAbstract.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ModifierAbstract.kt");
             }
 
             @TestMetadata("ModifierOpen.kt")
             public void testModifierOpen() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ModifierOpen.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ModifierOpen.kt");
             }
 
             @TestMetadata("NsFun.kt")
             public void testNsFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/NsFun.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/NsFun.kt");
             }
 
             @TestMetadata("NsFunGetFoo.kt")
             public void testNsFunGetFoo() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/NsFunGetFoo.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/NsFunGetFoo.kt");
             }
 
             @TestMetadata("ReturnTypeNotNull.kt")
             public void testReturnTypeNotNull() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ReturnTypeNotNull.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ReturnTypeNotNull.kt");
             }
 
             @TestMetadata("ReturnTypeNullable.kt")
             public void testReturnTypeNullable() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ReturnTypeNullable.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric/ReturnTypeNullable.kt");
             }
         }
 
@@ -2449,26 +2220,27 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Vararg extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInVararg() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("nonLastVararg.kt")
             public void testNonLastVararg() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/vararg/nonLastVararg.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/vararg/nonLastVararg.kt");
             }
 
             @TestMetadata("VarargInt.kt")
             public void testVarargInt() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/vararg/VarargInt.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/vararg/VarargInt.kt");
             }
 
             @TestMetadata("VarargString.kt")
             public void testVarargString() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/vararg/VarargString.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/fun/vararg/VarargString.kt");
             }
         }
     }
@@ -2477,14 +2249,17 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Inline extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInInline() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("inlineFunction.kt")
         public void testInlineFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/inline/inlineFunction.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/inline/inlineFunction.kt");
         }
     }
 
@@ -2492,44 +2267,42 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MemberOrder extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInMemberOrder() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("callablesNameClash.kt")
         public void testCallablesNameClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/callablesNameClash.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/callablesNameClash.kt");
         }
 
         @TestMetadata("enumEntries.kt")
         public void testEnumEntries() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/enumEntries.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/enumEntries.kt");
         }
 
         @TestMetadata("extensionMembers.kt")
         public void testExtensionMembers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionMembers.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionMembers.kt");
         }
 
         @TestMetadata("extensionPropertiesNameClash.kt")
         public void testExtensionPropertiesNameClash() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionPropertiesNameClash.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/extensionPropertiesNameClash.kt");
         }
 
         @TestMetadata("innerClasses.kt")
         public void testInnerClasses() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/innerClasses.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/innerClasses.kt");
         }
 
         @TestMetadata("topLevelCallables.kt")
         public void testTopLevelCallables() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/memberOrder/topLevelCallables.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/memberOrder/topLevelCallables.kt");
         }
     }
 
@@ -2537,26 +2310,27 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Nested extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInNested() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nested"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("deepInnerGeneric.kt")
         public void testDeepInnerGeneric() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/nested/deepInnerGeneric.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/nested/deepInnerGeneric.kt");
         }
 
         @TestMetadata("innerClassReferencesOuterTP.kt")
         public void testInnerClassReferencesOuterTP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/nested/innerClassReferencesOuterTP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/nested/innerClassReferencesOuterTP.kt");
         }
 
         @TestMetadata("membersReferenceOuterTP.kt")
         public void testMembersReferenceOuterTP() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/nested/membersReferenceOuterTP.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/nested/membersReferenceOuterTP.kt");
         }
     }
 
@@ -2564,20 +2338,22 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PlatformTypes extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInPlatformTypes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("notnullTypeArgument.kt")
         public void testNotnullTypeArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes/notnullTypeArgument.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/platformTypes/notnullTypeArgument.kt");
         }
 
         @TestMetadata("nullableTypeArgument.kt")
         public void testNullableTypeArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/platformTypes/nullableTypeArgument.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/platformTypes/nullableTypeArgument.kt");
         }
     }
 
@@ -2585,274 +2361,239 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Prop extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInProp() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ClassVal.kt")
         public void testClassVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ClassVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ClassVal.kt");
         }
 
         @TestMetadata("ClassValAbstract.kt")
         public void testClassValAbstract() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ClassValAbstract.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ClassValAbstract.kt");
         }
 
         @TestMetadata("ClassVar.kt")
         public void testClassVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ClassVar.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ClassVar.kt");
         }
 
         @TestMetadata("CollectionSize.kt")
         public void testCollectionSize() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/CollectionSize.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/CollectionSize.kt");
         }
 
         @TestMetadata("Const.kt")
         public void testConst() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/Const.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/Const.kt");
         }
 
         @TestMetadata("Constants.kt")
         public void testConstants() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/Constants.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/Constants.kt");
         }
 
         @TestMetadata("ExtValClass.kt")
         public void testExtValClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtValClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValClass.kt");
         }
 
         @TestMetadata("ExtValInClass.kt")
         public void testExtValInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtValInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValInClass.kt");
         }
 
         @TestMetadata("ExtValInt.kt")
         public void testExtValInt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtValInt.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValInt.kt");
         }
 
         @TestMetadata("ExtValIntCharSequence.kt")
         public void testExtValIntCharSequence() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntCharSequence.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntCharSequence.kt");
         }
 
         @TestMetadata("ExtValIntCharSequenceQ.kt")
         public void testExtValIntCharSequenceQ() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntCharSequenceQ.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntCharSequenceQ.kt");
         }
 
         @TestMetadata("ExtValIntListQOfIntInClass.kt")
         public void testExtValIntListQOfIntInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntListQOfIntInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntListQOfIntInClass.kt");
         }
 
         @TestMetadata("ExtValIntTInClass.kt")
         public void testExtValIntTInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntTInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntTInClass.kt");
         }
 
         @TestMetadata("ExtValIntTQInClass.kt")
         public void testExtValIntTQInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntTQInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValIntTQInClass.kt");
         }
 
         @TestMetadata("ExtValTIntInClass.kt")
         public void testExtValTIntInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtValTIntInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtValTIntInClass.kt");
         }
 
         @TestMetadata("ExtVarClass.kt")
         public void testExtVarClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtVarClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarClass.kt");
         }
 
         @TestMetadata("ExtVarInClass.kt")
         public void testExtVarInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtVarInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarInClass.kt");
         }
 
         @TestMetadata("ExtVarInt.kt")
         public void testExtVarInt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtVarInt.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarInt.kt");
         }
 
         @TestMetadata("ExtVarIntTInClass.kt")
         public void testExtVarIntTInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtVarIntTInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarIntTInClass.kt");
         }
 
         @TestMetadata("ExtVarIntTQInClass.kt")
         public void testExtVarIntTQInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtVarIntTQInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarIntTQInClass.kt");
         }
 
         @TestMetadata("ExtVarMapPQInt.kt")
         public void testExtVarMapPQInt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtVarMapPQInt.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarMapPQInt.kt");
         }
 
         @TestMetadata("ExtVarTIntInClass.kt")
         public void testExtVarTIntInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtVarTIntInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarTIntInClass.kt");
         }
 
         @TestMetadata("ExtVarTQIntInClass.kt")
         public void testExtVarTQIntInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtVarTQIntInClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarTQIntInClass.kt");
         }
 
         @TestMetadata("ExtVarl.kt")
         public void testExtVarl() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/ExtVarl.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/ExtVarl.kt");
         }
 
         @TestMetadata("NsVal.kt")
         public void testNsVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/NsVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/NsVal.kt");
         }
 
         @TestMetadata("NsVar.kt")
         public void testNsVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/NsVar.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/NsVar.kt");
         }
 
         @TestMetadata("OverrideClassVal.kt")
         public void testOverrideClassVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/OverrideClassVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/OverrideClassVal.kt");
         }
 
         @TestMetadata("OverrideTraitVal.kt")
         public void testOverrideTraitVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/OverrideTraitVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/OverrideTraitVal.kt");
         }
 
         @TestMetadata("PropFromSuperclass.kt")
         public void testPropFromSuperclass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/PropFromSuperclass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/PropFromSuperclass.kt");
         }
 
         @TestMetadata("TraitFinalVar.kt")
         public void testTraitFinalVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/TraitFinalVar.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/TraitFinalVar.kt");
         }
 
         @TestMetadata("TraitOpenVal.kt")
         public void testTraitOpenVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/TraitOpenVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/TraitOpenVal.kt");
         }
 
         @TestMetadata("VarDelegationToTraitImpl.kt")
         public void testVarDelegationToTraitImpl() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/VarDelegationToTraitImpl.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/VarDelegationToTraitImpl.kt");
         }
 
         @TestMetadata("VarWithDelegated.kt")
         public void testVarWithDelegated() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/VarWithDelegated.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/prop/VarWithDelegated.kt");
         }
 
         @TestMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultAccessors extends AbstractLoadKotlinWithTypeTableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInDefaultAccessors() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassVal.kt")
             public void testClassVal() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVal.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVal.kt");
             }
 
             @TestMetadata("ClassValParams.kt")
             public void testClassValParams() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassValParams.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassValParams.kt");
             }
 
             @TestMetadata("ClassValWithGet.kt")
             public void testClassValWithGet() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassValWithGet.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassValWithGet.kt");
             }
 
             @TestMetadata("ClassVar.kt")
             public void testClassVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVar.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVar.kt");
             }
 
             @TestMetadata("ClassVarModality.kt")
             public void testClassVarModality() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVarModality.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVarModality.kt");
             }
 
             @TestMetadata("ClassVarParams.kt")
             public void testClassVarParams() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVarParams.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVarParams.kt");
             }
 
             @TestMetadata("ClassVarWithGet.kt")
             public void testClassVarWithGet() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVarWithGet.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVarWithGet.kt");
             }
 
             @TestMetadata("ClassVarWithSet.kt")
             public void testClassVarWithSet() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVarWithSet.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ClassVarWithSet.kt");
             }
 
             @TestMetadata("ExtValLong.kt")
             public void testExtValLong() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ExtValLong.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ExtValLong.kt");
             }
 
             @TestMetadata("ExtVarLong.kt")
             public void testExtVarLong() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ExtVarLong.kt");
-                doTest(fileName);
+                runTest("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ExtVarLong.kt");
             }
         }
     }
@@ -2861,194 +2602,167 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Type extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInType() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/type"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Any.kt")
         public void testAny() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/Any.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/Any.kt");
         }
 
         @TestMetadata("AnyQ.kt")
         public void testAnyQ() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/AnyQ.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/AnyQ.kt");
         }
 
         @TestMetadata("ArrayOfInNumber.kt")
         public void testArrayOfInNumber() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ArrayOfInNumber.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfInNumber.kt");
         }
 
         @TestMetadata("ArrayOfInt.kt")
         public void testArrayOfInt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ArrayOfInt.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfInt.kt");
         }
 
         @TestMetadata("ArrayOfInteger.kt")
         public void testArrayOfInteger() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ArrayOfInteger.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfInteger.kt");
         }
 
         @TestMetadata("ArrayOfOutNumber.kt")
         public void testArrayOfOutNumber() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ArrayOfOutNumber.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfOutNumber.kt");
         }
 
         @TestMetadata("ArrayOfOutT.kt")
         public void testArrayOfOutT() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ArrayOfOutT.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfOutT.kt");
         }
 
         @TestMetadata("ArrayOfString.kt")
         public void testArrayOfString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ArrayOfString.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ArrayOfString.kt");
         }
 
         @TestMetadata("Function1IntString.kt")
         public void testFunction1IntString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/Function1IntString.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/Function1IntString.kt");
         }
 
         @TestMetadata("Int.kt")
         public void testInt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/Int.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/Int.kt");
         }
 
         @TestMetadata("IntArray.kt")
         public void testIntArray() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/IntArray.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/IntArray.kt");
         }
 
         @TestMetadata("IntQ.kt")
         public void testIntQ() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/IntQ.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/IntQ.kt");
         }
 
         @TestMetadata("jlInteger.kt")
         public void testJlInteger() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/jlInteger.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/jlInteger.kt");
         }
 
         @TestMetadata("jlIntegerQ.kt")
         public void testJlIntegerQ() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/jlIntegerQ.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/jlIntegerQ.kt");
         }
 
         @TestMetadata("jlNumber.kt")
         public void testJlNumber() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/jlNumber.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/jlNumber.kt");
         }
 
         @TestMetadata("jlObject.kt")
         public void testJlObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/jlObject.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/jlObject.kt");
         }
 
         @TestMetadata("jlObjectQ.kt")
         public void testJlObjectQ() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/jlObjectQ.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/jlObjectQ.kt");
         }
 
         @TestMetadata("jlString.kt")
         public void testJlString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/jlString.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/jlString.kt");
         }
 
         @TestMetadata("jlStringQ.kt")
         public void testJlStringQ() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/jlStringQ.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/jlStringQ.kt");
         }
 
         @TestMetadata("ListOfAny.kt")
         public void testListOfAny() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ListOfAny.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ListOfAny.kt");
         }
 
         @TestMetadata("ListOfAnyQ.kt")
         public void testListOfAnyQ() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ListOfAnyQ.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ListOfAnyQ.kt");
         }
 
         @TestMetadata("ListOfStar.kt")
         public void testListOfStar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ListOfStar.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ListOfStar.kt");
         }
 
         @TestMetadata("ListOfString.kt")
         public void testListOfString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ListOfString.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ListOfString.kt");
         }
 
         @TestMetadata("ListOfjlString.kt")
         public void testListOfjlString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/ListOfjlString.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/ListOfjlString.kt");
         }
 
         @TestMetadata("Nothing.kt")
         public void testNothing() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/Nothing.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/Nothing.kt");
         }
 
         @TestMetadata("NothingQ.kt")
         public void testNothingQ() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/NothingQ.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/NothingQ.kt");
         }
 
         @TestMetadata("platform.kt")
         public void testPlatform() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/platform.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/platform.kt");
         }
 
         @TestMetadata("String.kt")
         public void testString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/String.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/String.kt");
         }
 
         @TestMetadata("StringQ.kt")
         public void testStringQ() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/StringQ.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/StringQ.kt");
         }
 
         @TestMetadata("SuspendFunction.kt")
         public void testSuspendFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/SuspendFunction.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/SuspendFunction.kt");
         }
 
         @TestMetadata("Unit.kt")
         public void testUnit() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/type/Unit.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/type/Unit.kt");
         }
     }
 
@@ -3056,32 +2770,32 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Typealias extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInTypealias() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Annotations.kt")
         public void testAnnotations() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Annotations.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/typealias/Annotations.kt");
         }
 
         @TestMetadata("Basic.kt")
         public void testBasic() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Basic.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/typealias/Basic.kt");
         }
 
         @TestMetadata("Generic.kt")
         public void testGeneric() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/Generic.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/typealias/Generic.kt");
         }
 
         @TestMetadata("TypeAliasToExtension.kt")
         public void testTypeAliasToExtension() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/typealias/TypeAliasToExtension.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/typealias/TypeAliasToExtension.kt");
         }
     }
 
@@ -3089,74 +2803,67 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Visibility extends AbstractLoadKotlinWithTypeTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInVisibility() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("InternalClass.kt")
         public void testInternalClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/InternalClass.kt");
         }
 
         @TestMetadata("InternalConstructor.kt")
         public void testInternalConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalConstructor.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/InternalConstructor.kt");
         }
 
         @TestMetadata("InternalTopLevelMembers.kt")
         public void testInternalTopLevelMembers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/InternalTopLevelMembers.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/InternalTopLevelMembers.kt");
         }
 
         @TestMetadata("PrivateClass.kt")
         public void testPrivateClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClass.kt");
         }
 
         @TestMetadata("PrivateClassMembers.kt")
         public void testPrivateClassMembers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClassMembers.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClassMembers.kt");
         }
 
         @TestMetadata("PrivateToThis.kt")
         public void testPrivateToThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/PrivateToThis.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateToThis.kt");
         }
 
         @TestMetadata("PrivateTopLevelFun.kt")
         public void testPrivateTopLevelFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelFun.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelFun.kt");
         }
 
         @TestMetadata("PrivateTopLevelVal.kt")
         public void testPrivateTopLevelVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelVal.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelVal.kt");
         }
 
         @TestMetadata("PropertyInConstructor.kt")
         public void testPropertyInConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/PropertyInConstructor.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/PropertyInConstructor.kt");
         }
 
         @TestMetadata("PropertyInConstructorExplicitVisibility.kt")
         public void testPropertyInConstructorExplicitVisibility() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/PropertyInConstructorExplicitVisibility.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/PropertyInConstructorExplicitVisibility.kt");
         }
 
         @TestMetadata("TopLevelVarWithPrivateSetter.kt")
         public void testTopLevelVarWithPrivateSetter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/visibility/TopLevelVarWithPrivateSetter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/loadJava/compiledKotlin/visibility/TopLevelVarWithPrivateSetter.kt");
         }
     }
 }

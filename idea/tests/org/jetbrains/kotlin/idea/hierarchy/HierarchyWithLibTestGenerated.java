@@ -21,19 +21,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class HierarchyWithLibTestGenerated extends AbstractHierarchyWithLibTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInWithLib() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/withLib"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("annotation")
     public void testAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/withLib/annotation/");
-        doTest(fileName);
+        runTest("idea/testData/hierarchy/withLib/annotation/");
     }
 
     @TestMetadata("enum")
     public void testEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/withLib/enum/");
-        doTest(fileName);
+        runTest("idea/testData/hierarchy/withLib/enum/");
     }
 }

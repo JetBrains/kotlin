@@ -21,175 +21,151 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenerateHashCodeAndEqualsActionTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInEqualsWithHashCode() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/equalsWithHashCode"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("annotation.kt")
     public void testAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/annotation.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/annotation.kt");
     }
 
     @TestMetadata("arrays.kt")
     public void testArrays() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/arrays.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/arrays.kt");
     }
 
     @TestMetadata("customAccessors.kt")
     public void testCustomAccessors() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/customAccessors.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/customAccessors.kt");
     }
 
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/dataClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/dataClass.kt");
     }
 
     @TestMetadata("dataClassHasArrayProperty.kt")
     public void testDataClassHasArrayProperty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/dataClassHasArrayProperty.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/dataClassHasArrayProperty.kt");
     }
 
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/enum.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/enum.kt");
     }
 
     @TestMetadata("explicitDefaultAccessors.kt")
     public void testExplicitDefaultAccessors() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/explicitDefaultAccessors.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/explicitDefaultAccessors.kt");
     }
 
     @TestMetadata("genericClass.kt")
     public void testGenericClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/genericClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/genericClass.kt");
     }
 
     @TestMetadata("genericClassWithIsCheck.kt")
     public void testGenericClassWithIsCheck() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/genericClassWithIsCheck.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/genericClassWithIsCheck.kt");
     }
 
     @TestMetadata("interface.kt")
     public void testInterface() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/interface.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/interface.kt");
     }
 
     @TestMetadata("keepQuotes.kt")
     public void testKeepQuotes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/keepQuotes.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/keepQuotes.kt");
     }
 
     @TestMetadata("multipleVars.kt")
     public void testMultipleVars() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVars.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVars.kt");
     }
 
     @TestMetadata("multipleVarsCommon.kt")
     public void testMultipleVarsCommon() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsCommon.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsCommon.kt");
     }
 
     @TestMetadata("multipleVarsJS.kt")
     public void testMultipleVarsJS() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsJS.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsJS.kt");
     }
 
     @TestMetadata("multipleVarsNullable.kt")
     public void testMultipleVarsNullable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsNullable.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsNullable.kt");
     }
 
     @TestMetadata("multipleVarsWithSuperClass.kt")
     public void testMultipleVarsWithSuperClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsWithSuperClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVarsWithSuperClass.kt");
     }
 
     @TestMetadata("nameClash.kt")
     public void testNameClash() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/nameClash.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/nameClash.kt");
     }
 
     @TestMetadata("noVars.kt")
     public void testNoVars() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVars.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/noVars.kt");
     }
 
     @TestMetadata("noVarsCommon.kt")
     public void testNoVarsCommon() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsCommon.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsCommon.kt");
     }
 
     @TestMetadata("noVarsJS.kt")
     public void testNoVarsJS() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsJS.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsJS.kt");
     }
 
     @TestMetadata("noVarsWithSuperClass.kt")
     public void testNoVarsWithSuperClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsWithSuperClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsWithSuperClass.kt");
     }
 
     @TestMetadata("nullableArrays.kt")
     public void testNullableArrays() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/nullableArrays.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/nullableArrays.kt");
     }
 
     @TestMetadata("object.kt")
     public void testObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/object.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/object.kt");
     }
 
     @TestMetadata("singleVar.kt")
     public void testSingleVar() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/singleVar.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/singleVar.kt");
     }
 
     @TestMetadata("singleVarNullable.kt")
     public void testSingleVarNullable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/singleVarNullable.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/singleVarNullable.kt");
     }
 
     @TestMetadata("singleVarWithIsCheck.kt")
     public void testSingleVarWithIsCheck() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/singleVarWithIsCheck.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/singleVarWithIsCheck.kt");
     }
 
     @TestMetadata("singleVarWithJavaSuperClass.kt")
     public void testSingleVarWithJavaSuperClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/singleVarWithJavaSuperClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/singleVarWithJavaSuperClass.kt");
     }
 
     @TestMetadata("singleVarWithSuperClass.kt")
     public void testSingleVarWithSuperClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/singleVarWithSuperClass.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/equalsWithHashCode/singleVarWithSuperClass.kt");
     }
 }

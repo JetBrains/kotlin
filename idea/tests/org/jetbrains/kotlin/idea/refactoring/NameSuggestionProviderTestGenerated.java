@@ -21,13 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class NameSuggestionProviderTestGenerated extends AbstractNameSuggestionProviderTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInNameSuggestionProvider() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/nameSuggestionProvider"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("localVarAsCallArgument.kt")
     public void testLocalVarAsCallArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/nameSuggestionProvider/localVarAsCallArgument.kt");
-        doTest(fileName);
+        runTest("idea/testData/refactoring/nameSuggestionProvider/localVarAsCallArgument.kt");
     }
 }

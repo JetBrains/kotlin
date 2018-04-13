@@ -23,152 +23,132 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CodeFragments extends AbstractCodeFragmentHighlightingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCodeFragments() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("anonymousObject.kt")
         public void testAnonymousObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/anonymousObject.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/anonymousObject.kt");
         }
 
         @TestMetadata("binaryExpression.kt")
         public void testBinaryExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/binaryExpression.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/binaryExpression.kt");
         }
 
         @TestMetadata("blockCodeFragment.kt")
         public void testBlockCodeFragment() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/blockCodeFragment.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/blockCodeFragment.kt");
         }
 
         @TestMetadata("callExpression.kt")
         public void testCallExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/callExpression.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/callExpression.kt");
         }
 
         @TestMetadata("classHeader.kt")
         public void testClassHeader() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/classHeader.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/classHeader.kt");
         }
 
         @TestMetadata("classHeaderWithTypeArguments.kt")
         public void testClassHeaderWithTypeArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/classHeaderWithTypeArguments.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/classHeaderWithTypeArguments.kt");
         }
 
         @TestMetadata("contextElementAsStatement.kt")
         public void testContextElementAsStatement() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/contextElementAsStatement.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/contextElementAsStatement.kt");
         }
 
         @TestMetadata("elementAtIfWithoutBraces.kt")
         public void testElementAtIfWithoutBraces() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/elementAtIfWithoutBraces.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/elementAtIfWithoutBraces.kt");
         }
 
         @TestMetadata("elementAtWhenBranch.kt")
         public void testElementAtWhenBranch() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/elementAtWhenBranch.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/elementAtWhenBranch.kt");
         }
 
         @TestMetadata("localVariables.kt")
         public void testLocalVariables() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/localVariables.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/localVariables.kt");
         }
 
         @TestMetadata("localVariablesOnReturn.kt")
         public void testLocalVariablesOnReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/localVariablesOnReturn.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/localVariablesOnReturn.kt");
         }
 
         @TestMetadata("primaryConstructor.kt")
         public void testPrimaryConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/primaryConstructor.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/primaryConstructor.kt");
         }
 
         @TestMetadata("primaryConstructorLocal.kt")
         public void testPrimaryConstructorLocal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/primaryConstructorLocal.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/primaryConstructorLocal.kt");
         }
 
         @TestMetadata("privateFunArgumentsResolve.kt")
         public void testPrivateFunArgumentsResolve() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/privateFunArgumentsResolve.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/privateFunArgumentsResolve.kt");
         }
 
         @TestMetadata("privateFunTypeArguments.kt")
         public void testPrivateFunTypeArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/privateFunTypeArguments.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/privateFunTypeArguments.kt");
         }
 
         @TestMetadata("privateMember.kt")
         public void testPrivateMember() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/privateMember.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/privateMember.kt");
         }
 
         @TestMetadata("protectedMember.kt")
         public void testProtectedMember() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/protectedMember.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/protectedMember.kt");
         }
 
         @TestMetadata("secondaryConstructor.kt")
         public void testSecondaryConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/secondaryConstructor.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/secondaryConstructor.kt");
         }
 
         @TestMetadata("secondaryConstructorWithoutBraces.kt")
         public void testSecondaryConstructorWithoutBraces() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/secondaryConstructorWithoutBraces.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/secondaryConstructorWithoutBraces.kt");
         }
 
         @TestMetadata("simpleNameExpression.kt")
         public void testSimpleNameExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/simpleNameExpression.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/simpleNameExpression.kt");
         }
 
         @TestMetadata("smartCasts.kt")
         public void testSmartCasts() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/smartCasts.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/smartCasts.kt");
         }
 
         @TestMetadata("startingFromReturn.kt")
         public void testStartingFromReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/startingFromReturn.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/startingFromReturn.kt");
         }
 
         @TestMetadata("withoutBodyFunction.kt")
         public void testWithoutBodyFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/withoutBodyFunction.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/withoutBodyFunction.kt");
         }
 
         @TestMetadata("withoutBodyProperty.kt")
         public void testWithoutBodyProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/withoutBodyProperty.kt");
-            doTest(fileName);
+            runTest("idea/testData/checker/codeFragments/withoutBodyProperty.kt");
         }
     }
 
@@ -176,14 +156,17 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Imports extends AbstractCodeFragmentHighlightingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithImport, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInImports() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/codeFragments/imports"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("hashMap.kt")
         public void testHashMap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/codeFragments/imports/hashMap.kt");
-            doTestWithImport(fileName);
+            runTest("idea/testData/checker/codeFragments/imports/hashMap.kt");
         }
     }
 }

@@ -23,92 +23,82 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinClass extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doClassTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinClass() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("class1.kt")
         public void testClass1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/class1.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/class1.kt");
         }
 
         @TestMetadata("class2.kt")
         public void testClass2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/class2.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/class2.kt");
         }
 
         @TestMetadata("classInString.kt")
         public void testClassInString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/classInString.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/classInString.kt");
         }
 
         @TestMetadata("classWithExternalConstructructorUsage.kt")
         public void testClassWithExternalConstructructorUsage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/classWithExternalConstructructorUsage.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/classWithExternalConstructructorUsage.kt");
         }
 
         @TestMetadata("classWithInternalConstructructorUsage.kt")
         public void testClassWithInternalConstructructorUsage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/classWithInternalConstructructorUsage.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/classWithInternalConstructructorUsage.kt");
         }
 
         @TestMetadata("enumEntry.kt")
         public void testEnumEntry() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/enumEntry.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/enumEntry.kt");
         }
 
         @TestMetadata("localClass1.kt")
         public void testLocalClass1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/localClass1.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/localClass1.kt");
         }
 
         @TestMetadata("localClass2.kt")
         public void testLocalClass2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/localClass2.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/localClass2.kt");
         }
 
         @TestMetadata("nestedClass1.kt")
         public void testNestedClass1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/nestedClass1.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/nestedClass1.kt");
         }
 
         @TestMetadata("nestedClass2.kt")
         public void testNestedClass2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/nestedClass2.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/nestedClass2.kt");
         }
 
         @TestMetadata("noUsages.kt")
         public void testNoUsages() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/noUsages.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/noUsages.kt");
         }
 
         @TestMetadata("trait1.kt")
         public void testTrait1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/trait1.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/trait1.kt");
         }
 
         @TestMetadata("trait2.kt")
         public void testTrait2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/trait2.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/trait2.kt");
         }
 
         @TestMetadata("unsafeImport.kt")
         public void testUnsafeImport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/unsafeImport.kt");
-            doClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClass/unsafeImport.kt");
         }
     }
 
@@ -116,14 +106,17 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinClassWithJava extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doClassTestWithJava, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinClassWithJava() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/kotlinClassWithJava"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classWithDelegationCalls.kt")
         public void testClassWithDelegationCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/kotlinClassWithJava/classWithDelegationCalls.kt");
-            doClassTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/kotlinClassWithJava/classWithDelegationCalls.kt");
         }
     }
 
@@ -131,26 +124,27 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JavaClassWithKotlin extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doJavaClassTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInJavaClassWithKotlin() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ImportJavaClassToKotlin.java")
         public void testImportJavaClassToKotlin() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/ImportJavaClassToKotlin.java");
-            doJavaClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/ImportJavaClassToKotlin.java");
         }
 
         @TestMetadata("javaInterfaceInSuperTypeList.java")
         public void testJavaInterfaceInSuperTypeList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/javaInterfaceInSuperTypeList.java");
-            doJavaClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/javaInterfaceInSuperTypeList.java");
         }
 
         @TestMetadata("javaInterfaceInSuperTypeListLast.java")
         public void testJavaInterfaceInSuperTypeListLast() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/javaInterfaceInSuperTypeListLast.java");
-            doJavaClassTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteClass/javaClassWithKotlin/javaInterfaceInSuperTypeListLast.java");
         }
     }
 
@@ -158,68 +152,62 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinObject extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doObjectTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinObject() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("anonymousObject.kt")
         public void testAnonymousObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/anonymousObject.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/anonymousObject.kt");
         }
 
         @TestMetadata("companionObject.kt")
         public void testCompanionObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/companionObject.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/companionObject.kt");
         }
 
         @TestMetadata("localObject1.kt")
         public void testLocalObject1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/localObject1.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/localObject1.kt");
         }
 
         @TestMetadata("localObject2.kt")
         public void testLocalObject2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/localObject2.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/localObject2.kt");
         }
 
         @TestMetadata("nestedObject1.kt")
         public void testNestedObject1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/nestedObject1.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/nestedObject1.kt");
         }
 
         @TestMetadata("nestedObject2.kt")
         public void testNestedObject2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/nestedObject2.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/nestedObject2.kt");
         }
 
         @TestMetadata("noUsages.kt")
         public void testNoUsages() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/noUsages.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/noUsages.kt");
         }
 
         @TestMetadata("object1.kt")
         public void testObject1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/object1.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/object1.kt");
         }
 
         @TestMetadata("object2.kt")
         public void testObject2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/object2.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/object2.kt");
         }
 
         @TestMetadata("unsafeImport.kt")
         public void testUnsafeImport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/unsafeImport.kt");
-            doObjectTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteObject/kotlinObject/unsafeImport.kt");
         }
     }
 
@@ -227,110 +215,97 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinFunction extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doFunctionTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinFunction() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("fun1.kt")
         public void testFun1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/fun1.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/fun1.kt");
         }
 
         @TestMetadata("fun2.kt")
         public void testFun2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/fun2.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/fun2.kt");
         }
 
         @TestMetadata("funExt1.kt")
         public void testFunExt1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/funExt1.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/funExt1.kt");
         }
 
         @TestMetadata("funExt2.kt")
         public void testFunExt2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/funExt2.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/funExt2.kt");
         }
 
         @TestMetadata("implement1.kt")
         public void testImplement1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/implement1.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/implement1.kt");
         }
 
         @TestMetadata("implement2.kt")
         public void testImplement2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/implement2.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/implement2.kt");
         }
 
         @TestMetadata("localFun1.kt")
         public void testLocalFun1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/localFun1.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/localFun1.kt");
         }
 
         @TestMetadata("localFun2.kt")
         public void testLocalFun2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/localFun2.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/localFun2.kt");
         }
 
         @TestMetadata("localFunExt1.kt")
         public void testLocalFunExt1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/localFunExt1.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/localFunExt1.kt");
         }
 
         @TestMetadata("localFunExt2.kt")
         public void testLocalFunExt2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/localFunExt2.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/localFunExt2.kt");
         }
 
         @TestMetadata("noUsages.kt")
         public void testNoUsages() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/noUsages.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/noUsages.kt");
         }
 
         @TestMetadata("override1.kt")
         public void testOverride1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/override1.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/override1.kt");
         }
 
         @TestMetadata("override2.kt")
         public void testOverride2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/override2.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/override2.kt");
         }
 
         @TestMetadata("overrideAndImplement1.kt")
         public void testOverrideAndImplement1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement1.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement1.kt");
         }
 
         @TestMetadata("overrideAndImplement2.kt")
         public void testOverrideAndImplement2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement2.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement2.kt");
         }
 
         @TestMetadata("overrideAndImplement3.kt")
         public void testOverrideAndImplement3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement3.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/overrideAndImplement3.kt");
         }
 
         @TestMetadata("overrideWithUsages.kt")
         public void testOverrideWithUsages() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/overrideWithUsages.kt");
-            doFunctionTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunction/overrideWithUsages.kt");
         }
     }
 
@@ -338,80 +313,72 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinFunctionWithJava extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doFunctionTestWithJava, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinFunctionWithJava() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("funExt.kt")
         public void testFunExt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/funExt.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/funExt.kt");
         }
 
         @TestMetadata("implement1.kt")
         public void testImplement1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/implement1.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/implement1.kt");
         }
 
         @TestMetadata("implement2.kt")
         public void testImplement2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/implement2.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/implement2.kt");
         }
 
         @TestMetadata("implement3.kt")
         public void testImplement3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/implement3.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/implement3.kt");
         }
 
         @TestMetadata("implement4.kt")
         public void testImplement4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/implement4.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/implement4.kt");
         }
 
         @TestMetadata("override1.kt")
         public void testOverride1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/override1.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/override1.kt");
         }
 
         @TestMetadata("override2.kt")
         public void testOverride2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/override2.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/override2.kt");
         }
 
         @TestMetadata("override3.kt")
         public void testOverride3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/override3.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/override3.kt");
         }
 
         @TestMetadata("overrideAndImplement1.kt")
         public void testOverrideAndImplement1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/overrideAndImplement1.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/overrideAndImplement1.kt");
         }
 
         @TestMetadata("overrideAndImplement2.kt")
         public void testOverrideAndImplement2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/overrideAndImplement2.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/overrideAndImplement2.kt");
         }
 
         @TestMetadata("secondaryConstructor.kt")
         public void testSecondaryConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/secondaryConstructor.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/secondaryConstructor.kt");
         }
 
         @TestMetadata("usageInOverrideToDelete.kt")
         public void testUsageInOverrideToDelete() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/usageInOverrideToDelete.kt");
-            doFunctionTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava/usageInOverrideToDelete.kt");
         }
     }
 
@@ -419,20 +386,22 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JavaFunctionWithKotlin extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doJavaMethodTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInJavaFunctionWithKotlin() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("mixedHierarchy1.kt")
         public void testMixedHierarchy1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin/mixedHierarchy1.kt");
-            doJavaMethodTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin/mixedHierarchy1.kt");
         }
 
         @TestMetadata("mixedHierarchy2.kt")
         public void testMixedHierarchy2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin/mixedHierarchy2.kt");
-            doJavaMethodTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin/mixedHierarchy2.kt");
         }
     }
 
@@ -440,152 +409,132 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinProperty extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doPropertyTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinProperty() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("implement1.kt")
         public void testImplement1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement1.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement1.kt");
         }
 
         @TestMetadata("implement2.kt")
         public void testImplement2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement2.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement2.kt");
         }
 
         @TestMetadata("implement3.kt")
         public void testImplement3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement3.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement3.kt");
         }
 
         @TestMetadata("implement4.kt")
         public void testImplement4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement4.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement4.kt");
         }
 
         @TestMetadata("implement5.kt")
         public void testImplement5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement5.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement5.kt");
         }
 
         @TestMetadata("implement6.kt")
         public void testImplement6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement6.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement6.kt");
         }
 
         @TestMetadata("implement7.kt")
         public void testImplement7() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement7.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement7.kt");
         }
 
         @TestMetadata("implement8.kt")
         public void testImplement8() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement8.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/implement8.kt");
         }
 
         @TestMetadata("localVar.kt")
         public void testLocalVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/localVar.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/localVar.kt");
         }
 
         @TestMetadata("noUsages.kt")
         public void testNoUsages() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/noUsages.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/noUsages.kt");
         }
 
         @TestMetadata("override1.kt")
         public void testOverride1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/override1.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/override1.kt");
         }
 
         @TestMetadata("override2.kt")
         public void testOverride2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/override2.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/override2.kt");
         }
 
         @TestMetadata("override3.kt")
         public void testOverride3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/override3.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/override3.kt");
         }
 
         @TestMetadata("override4.kt")
         public void testOverride4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/override4.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/override4.kt");
         }
 
         @TestMetadata("overrideAndImplement1.kt")
         public void testOverrideAndImplement1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideAndImplement1.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideAndImplement1.kt");
         }
 
         @TestMetadata("overrideAndImplement2.kt")
         public void testOverrideAndImplement2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideAndImplement2.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideAndImplement2.kt");
         }
 
         @TestMetadata("overrideAndImplement3.kt")
         public void testOverrideAndImplement3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideAndImplement3.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideAndImplement3.kt");
         }
 
         @TestMetadata("overrideAndImplement4.kt")
         public void testOverrideAndImplement4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideAndImplement4.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideAndImplement4.kt");
         }
 
         @TestMetadata("overrideWithUsages.kt")
         public void testOverrideWithUsages() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideWithUsages.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/overrideWithUsages.kt");
         }
 
         @TestMetadata("property1.kt")
         public void testProperty1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/property1.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/property1.kt");
         }
 
         @TestMetadata("property2.kt")
         public void testProperty2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/property2.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/property2.kt");
         }
 
         @TestMetadata("propertyExt1.kt")
         public void testPropertyExt1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/propertyExt1.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/propertyExt1.kt");
         }
 
         @TestMetadata("propertyExt2.kt")
         public void testPropertyExt2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/propertyExt2.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/propertyExt2.kt");
         }
 
         @TestMetadata("propertyInLocalObject.kt")
         public void testPropertyInLocalObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/propertyInLocalObject.kt");
-            doPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinProperty/propertyInLocalObject.kt");
         }
     }
 
@@ -593,80 +542,72 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinPropertyWithJava extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doPropertyTestWithJava, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinPropertyWithJava() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("implement1.kt")
         public void testImplement1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/implement1.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/implement1.kt");
         }
 
         @TestMetadata("implement2.kt")
         public void testImplement2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/implement2.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/implement2.kt");
         }
 
         @TestMetadata("implement3.kt")
         public void testImplement3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/implement3.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/implement3.kt");
         }
 
         @TestMetadata("implement4.kt")
         public void testImplement4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/implement4.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/implement4.kt");
         }
 
         @TestMetadata("override1.kt")
         public void testOverride1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/override1.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/override1.kt");
         }
 
         @TestMetadata("override2.kt")
         public void testOverride2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/override2.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/override2.kt");
         }
 
         @TestMetadata("override3.kt")
         public void testOverride3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/override3.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/override3.kt");
         }
 
         @TestMetadata("override4.kt")
         public void testOverride4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/override4.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/override4.kt");
         }
 
         @TestMetadata("overrideAndImplement1.kt")
         public void testOverrideAndImplement1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/overrideAndImplement1.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/overrideAndImplement1.kt");
         }
 
         @TestMetadata("overrideAndImplement2.kt")
         public void testOverrideAndImplement2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/overrideAndImplement2.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/overrideAndImplement2.kt");
         }
 
         @TestMetadata("propertyExt.kt")
         public void testPropertyExt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/propertyExt.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/propertyExt.kt");
         }
 
         @TestMetadata("usageInOverrideToDelete.kt")
         public void testUsageInOverrideToDelete() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/usageInOverrideToDelete.kt");
-            doPropertyTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava/usageInOverrideToDelete.kt");
         }
     }
 
@@ -674,44 +615,42 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JavaPropertyWithKotlin extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doJavaPropertyTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInJavaPropertyWithKotlin() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("middleJava1.kt")
         public void testMiddleJava1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava1.kt");
-            doJavaPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava1.kt");
         }
 
         @TestMetadata("middleJava2.kt")
         public void testMiddleJava2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava2.kt");
-            doJavaPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava2.kt");
         }
 
         @TestMetadata("middleJava3.kt")
         public void testMiddleJava3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava3.kt");
-            doJavaPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava3.kt");
         }
 
         @TestMetadata("middleJava4.kt")
         public void testMiddleJava4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava4.kt");
-            doJavaPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava4.kt");
         }
 
         @TestMetadata("middleJava5.kt")
         public void testMiddleJava5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava5.kt");
-            doJavaPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava5.kt");
         }
 
         @TestMetadata("middleJava6.kt")
         public void testMiddleJava6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava6.kt");
-            doJavaPropertyTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin/middleJava6.kt");
         }
     }
 
@@ -719,20 +658,22 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinTypeAlias extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTypeAliasTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinTypeAlias() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias/simple.kt");
-            doTypeAliasTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias/simple.kt");
         }
 
         @TestMetadata("used.kt")
         public void testUsed() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias/used.kt");
-            doTypeAliasTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeAlias/kotlinTypeAlias/used.kt");
         }
     }
 
@@ -740,104 +681,92 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinTypeParameter extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTypeParameterTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinTypeParameter() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("internalUsages1.kt")
         public void testInternalUsages1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages1.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages1.kt");
         }
 
         @TestMetadata("internalUsages2.kt")
         public void testInternalUsages2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages2.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages2.kt");
         }
 
         @TestMetadata("internalUsages3.kt")
         public void testInternalUsages3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages3.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages3.kt");
         }
 
         @TestMetadata("internalUsages4.kt")
         public void testInternalUsages4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages4.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages4.kt");
         }
 
         @TestMetadata("internalUsages5.kt")
         public void testInternalUsages5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages5.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/internalUsages5.kt");
         }
 
         @TestMetadata("safeUsagesWithConstraint1.kt")
         public void testSafeUsagesWithConstraint1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/safeUsagesWithConstraint1.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/safeUsagesWithConstraint1.kt");
         }
 
         @TestMetadata("safeUsagesWithConstraint2.kt")
         public void testSafeUsagesWithConstraint2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/safeUsagesWithConstraint2.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/safeUsagesWithConstraint2.kt");
         }
 
         @TestMetadata("subclass1.kt")
         public void testSubclass1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subclass1.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subclass1.kt");
         }
 
         @TestMetadata("subclass2.kt")
         public void testSubclass2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subclass2.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subclass2.kt");
         }
 
         @TestMetadata("subst1.kt")
         public void testSubst1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst1.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst1.kt");
         }
 
         @TestMetadata("subst2.kt")
         public void testSubst2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst2.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst2.kt");
         }
 
         @TestMetadata("subst3.kt")
         public void testSubst3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst3.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst3.kt");
         }
 
         @TestMetadata("subst4.kt")
         public void testSubst4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst4.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst4.kt");
         }
 
         @TestMetadata("subst5.kt")
         public void testSubst5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst5.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst5.kt");
         }
 
         @TestMetadata("subst6.kt")
         public void testSubst6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst6.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst6.kt");
         }
 
         @TestMetadata("subst7.kt")
         public void testSubst7() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst7.kt");
-            doTypeParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter/subst7.kt");
         }
     }
 
@@ -845,110 +774,97 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinTypeParameterWithJava extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTypeParameterTestWithJava, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinTypeParameterWithJava() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("internalUsages1.kt")
         public void testInternalUsages1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages1.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages1.kt");
         }
 
         @TestMetadata("internalUsages2.kt")
         public void testInternalUsages2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages2.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages2.kt");
         }
 
         @TestMetadata("internalUsages3.kt")
         public void testInternalUsages3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages3.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages3.kt");
         }
 
         @TestMetadata("internalUsages4.kt")
         public void testInternalUsages4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages4.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages4.kt");
         }
 
         @TestMetadata("internalUsages5.kt")
         public void testInternalUsages5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages5.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/internalUsages5.kt");
         }
 
         @TestMetadata("rawType.kt")
         public void testRawType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/rawType.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/rawType.kt");
         }
 
         @TestMetadata("safeUsagesWithConstraint1.kt")
         public void testSafeUsagesWithConstraint1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/safeUsagesWithConstraint1.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/safeUsagesWithConstraint1.kt");
         }
 
         @TestMetadata("safeUsagesWithConstraint2.kt")
         public void testSafeUsagesWithConstraint2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/safeUsagesWithConstraint2.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/safeUsagesWithConstraint2.kt");
         }
 
         @TestMetadata("subclass1.kt")
         public void testSubclass1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subclass1.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subclass1.kt");
         }
 
         @TestMetadata("subclass2.kt")
         public void testSubclass2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subclass2.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subclass2.kt");
         }
 
         @TestMetadata("subst1.kt")
         public void testSubst1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst1.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst1.kt");
         }
 
         @TestMetadata("subst2.kt")
         public void testSubst2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst2.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst2.kt");
         }
 
         @TestMetadata("subst3.kt")
         public void testSubst3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst3.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst3.kt");
         }
 
         @TestMetadata("subst4.kt")
         public void testSubst4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst4.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst4.kt");
         }
 
         @TestMetadata("subst5.kt")
         public void testSubst5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst5.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst5.kt");
         }
 
         @TestMetadata("subst6.kt")
         public void testSubst6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst6.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst6.kt");
         }
 
         @TestMetadata("subst7.kt")
         public void testSubst7() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst7.kt");
-            doTypeParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava/subst7.kt");
         }
     }
 
@@ -956,200 +872,172 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinValueParameter extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doValueParameterTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinValueParameter() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("dataClassComponent.kt")
         public void testDataClassComponent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/dataClassComponent.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/dataClassComponent.kt");
         }
 
         @TestMetadata("defaultParam1.kt")
         public void testDefaultParam1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/defaultParam1.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/defaultParam1.kt");
         }
 
         @TestMetadata("defaultParam2.kt")
         public void testDefaultParam2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/defaultParam2.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/defaultParam2.kt");
         }
 
         @TestMetadata("extNamedParam1.kt")
         public void testExtNamedParam1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/extNamedParam1.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/extNamedParam1.kt");
         }
 
         @TestMetadata("extNamedParam2.kt")
         public void testExtNamedParam2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/extNamedParam2.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/extNamedParam2.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages1.kt")
         public void testHierarchyWithSafeUsages1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages1.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages1.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages2.kt")
         public void testHierarchyWithSafeUsages2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages2.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages2.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages3.kt")
         public void testHierarchyWithSafeUsages3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages3.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages3.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages4.kt")
         public void testHierarchyWithSafeUsages4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages4.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages4.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages5.kt")
         public void testHierarchyWithSafeUsages5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages5.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithSafeUsages5.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages1.kt")
         public void testHierarchyWithUnsafeUsages1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages1.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages1.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages2.kt")
         public void testHierarchyWithUnsafeUsages2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages2.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages2.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages3.kt")
         public void testHierarchyWithUnsafeUsages3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages3.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages3.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages4.kt")
         public void testHierarchyWithUnsafeUsages4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages4.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages4.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages5.kt")
         public void testHierarchyWithUnsafeUsages5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages5.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages5.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages6.kt")
         public void testHierarchyWithUnsafeUsages6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages6.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages6.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages7.kt")
         public void testHierarchyWithUnsafeUsages7() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages7.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages7.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages8.kt")
         public void testHierarchyWithUnsafeUsages8() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages8.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/hierarchyWithUnsafeUsages8.kt");
         }
 
         @TestMetadata("internalUsage1.kt")
         public void testInternalUsage1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/internalUsage1.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/internalUsage1.kt");
         }
 
         @TestMetadata("internalUsage2.kt")
         public void testInternalUsage2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/internalUsage2.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/internalUsage2.kt");
         }
 
         @TestMetadata("lambdaArg.kt")
         public void testLambdaArg() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/lambdaArg.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/lambdaArg.kt");
         }
 
         @TestMetadata("lambdaArgExt.kt")
         public void testLambdaArgExt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/lambdaArgExt.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/lambdaArgExt.kt");
         }
 
         @TestMetadata("namedParam1.kt")
         public void testNamedParam1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/namedParam1.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/namedParam1.kt");
         }
 
         @TestMetadata("namedParam2.kt")
         public void testNamedParam2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/namedParam2.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/namedParam2.kt");
         }
 
         @TestMetadata("propertyParam1.kt")
         public void testPropertyParam1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/propertyParam1.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/propertyParam1.kt");
         }
 
         @TestMetadata("propertyParam2.kt")
         public void testPropertyParam2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/propertyParam2.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/propertyParam2.kt");
         }
 
         @TestMetadata("safeUsages1.kt")
         public void testSafeUsages1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsages1.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsages1.kt");
         }
 
         @TestMetadata("safeUsages2.kt")
         public void testSafeUsages2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsages2.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsages2.kt");
         }
 
         @TestMetadata("safeUsages3.kt")
         public void testSafeUsages3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsages3.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsages3.kt");
         }
 
         @TestMetadata("safeUsagesExt1.kt")
         public void testSafeUsagesExt1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsagesExt1.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsagesExt1.kt");
         }
 
         @TestMetadata("safeUsagesExt2.kt")
         public void testSafeUsagesExt2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsagesExt2.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/safeUsagesExt2.kt");
         }
 
         @TestMetadata("setter.kt")
         public void testSetter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/setter.kt");
-            doValueParameterTest(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameter/setter.kt");
         }
     }
 
@@ -1157,176 +1045,152 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KotlinValueParameterWithJava extends AbstractSafeDeleteTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doValueParameterTestWithJava, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInKotlinValueParameterWithJava() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("dataClassComponent.kt")
         public void testDataClassComponent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/dataClassComponent.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/dataClassComponent.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages1.kt")
         public void testHierarchyWithSafeUsages1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages1.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages1.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages2.kt")
         public void testHierarchyWithSafeUsages2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages2.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages2.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages3.kt")
         public void testHierarchyWithSafeUsages3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages3.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages3.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages4.kt")
         public void testHierarchyWithSafeUsages4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages4.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages4.kt");
         }
 
         @TestMetadata("hierarchyWithSafeUsages5.kt")
         public void testHierarchyWithSafeUsages5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages5.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithSafeUsages5.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages1.kt")
         public void testHierarchyWithUnsafeUsages1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages1.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages1.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages2.kt")
         public void testHierarchyWithUnsafeUsages2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages2.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages2.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages3.kt")
         public void testHierarchyWithUnsafeUsages3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages3.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages3.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages4.kt")
         public void testHierarchyWithUnsafeUsages4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages4.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages4.kt");
         }
 
         @TestMetadata("hierarchyWithUnsafeUsages5.kt")
         public void testHierarchyWithUnsafeUsages5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages5.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/hierarchyWithUnsafeUsages5.kt");
         }
 
         @TestMetadata("internalUsage1.kt")
         public void testInternalUsage1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/internalUsage1.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/internalUsage1.kt");
         }
 
         @TestMetadata("internalUsage2.kt")
         public void testInternalUsage2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/internalUsage2.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/internalUsage2.kt");
         }
 
         @TestMetadata("lambdaArg.kt")
         public void testLambdaArg() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/lambdaArg.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/lambdaArg.kt");
         }
 
         @TestMetadata("lambdaArgExt.kt")
         public void testLambdaArgExt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/lambdaArgExt.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/lambdaArgExt.kt");
         }
 
         @TestMetadata("mixedHierarchy1.kt")
         public void testMixedHierarchy1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchy1.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchy1.kt");
         }
 
         @TestMetadata("mixedHierarchy2.kt")
         public void testMixedHierarchy2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchy2.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchy2.kt");
         }
 
         @TestMetadata("mixedHierarchy3.kt")
         public void testMixedHierarchy3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchy3.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchy3.kt");
         }
 
         @TestMetadata("mixedHierarchyWithUnsafeUsages1.kt")
         public void testMixedHierarchyWithUnsafeUsages1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchyWithUnsafeUsages1.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchyWithUnsafeUsages1.kt");
         }
 
         @TestMetadata("mixedHierarchyWithUnsafeUsages2.kt")
         public void testMixedHierarchyWithUnsafeUsages2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchyWithUnsafeUsages2.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchyWithUnsafeUsages2.kt");
         }
 
         @TestMetadata("mixedHierarchyWithUnsafeUsages3.kt")
         public void testMixedHierarchyWithUnsafeUsages3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchyWithUnsafeUsages3.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/mixedHierarchyWithUnsafeUsages3.kt");
         }
 
         @TestMetadata("propertyParam1.kt")
         public void testPropertyParam1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/propertyParam1.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/propertyParam1.kt");
         }
 
         @TestMetadata("propertyParam2.kt")
         public void testPropertyParam2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/propertyParam2.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/propertyParam2.kt");
         }
 
         @TestMetadata("safeUsages1.kt")
         public void testSafeUsages1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsages1.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsages1.kt");
         }
 
         @TestMetadata("safeUsages2.kt")
         public void testSafeUsages2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsages2.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsages2.kt");
         }
 
         @TestMetadata("safeUsages3.kt")
         public void testSafeUsages3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsages3.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsages3.kt");
         }
 
         @TestMetadata("safeUsagesExt1.kt")
         public void testSafeUsagesExt1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsagesExt1.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsagesExt1.kt");
         }
 
         @TestMetadata("safeUsagesExt2.kt")
         public void testSafeUsagesExt2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsagesExt2.kt");
-            doValueParameterTestWithJava(fileName);
+            runTest("idea/testData/refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava/safeUsagesExt2.kt");
         }
     }
 }

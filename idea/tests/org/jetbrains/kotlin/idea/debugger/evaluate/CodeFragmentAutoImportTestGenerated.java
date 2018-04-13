@@ -21,13 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CodeFragmentAutoImportTestGenerated extends AbstractCodeFragmentAutoImportTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCodeFragmentAutoImport() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix.special/codeFragmentAutoImport"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("ExtensionFun.kt")
     public void testExtensionFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix.special/codeFragmentAutoImport/ExtensionFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/quickfix.special/codeFragmentAutoImport/ExtensionFun.kt");
     }
 }

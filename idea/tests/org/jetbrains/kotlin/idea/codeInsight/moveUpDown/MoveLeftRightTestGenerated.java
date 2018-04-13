@@ -21,91 +21,81 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class MoveLeftRightTestGenerated extends AbstractMoveLeftRightTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInMoveLeftRight() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/moveLeftRight"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("annotationParams.kt")
     public void testAnnotationParams() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/annotationParams.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/annotationParams.kt");
     }
 
     @TestMetadata("basesList.kt")
     public void testBasesList() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/basesList.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/basesList.kt");
     }
 
     @TestMetadata("callArgs1.kt")
     public void testCallArgs1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/callArgs1.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/callArgs1.kt");
     }
 
     @TestMetadata("callArgs2.kt")
     public void testCallArgs2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/callArgs2.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/callArgs2.kt");
     }
 
     @TestMetadata("callArgs3.kt")
     public void testCallArgs3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/callArgs3.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/callArgs3.kt");
     }
 
     @TestMetadata("callArgs4.kt")
     public void testCallArgs4() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/callArgs4.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/callArgs4.kt");
     }
 
     @TestMetadata("callArgs5.kt")
     public void testCallArgs5() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/callArgs5.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/callArgs5.kt");
     }
 
     @TestMetadata("funParams1.kt")
     public void testFunParams1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/funParams1.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/funParams1.kt");
     }
 
     @TestMetadata("funParams2.kt")
     public void testFunParams2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/funParams2.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/funParams2.kt");
     }
 
     @TestMetadata("funParams3.kt")
     public void testFunParams3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/funParams3.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/funParams3.kt");
     }
 
     @TestMetadata("funParams4.kt")
     public void testFunParams4() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/funParams4.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/funParams4.kt");
     }
 
     @TestMetadata("indexArgs.kt")
     public void testIndexArgs() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/indexArgs.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/indexArgs.kt");
     }
 
     @TestMetadata("lambdaParams.kt")
     public void testLambdaParams() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/lambdaParams.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/lambdaParams.kt");
     }
 
     @TestMetadata("typeArgs.kt")
     public void testTypeArgs() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/moveLeftRight/typeArgs.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/moveLeftRight/typeArgs.kt");
     }
 }

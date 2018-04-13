@@ -21,40 +21,38 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModuleTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     @TestMetadata("abstract")
     public void testAbstract() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/abstract/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/abstract/");
     }
 
     @TestMetadata("addActualToClass")
     public void testAddActualToClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/addActualToClass/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/addActualToClass/");
     }
 
     @TestMetadata("addActualToClassMember")
     public void testAddActualToClassMember() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/addActualToClassMember/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/addActualToClassMember/");
     }
 
     @TestMetadata("addActualToTopLevelMember")
     public void testAddActualToTopLevelMember() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/addActualToTopLevelMember/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/addActualToTopLevelMember/");
     }
 
     @TestMetadata("addOperatorByHeader")
     public void testAddOperatorByHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/addOperatorByHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/addOperatorByHeader/");
     }
 
     @TestMetadata("addOperatorByImpl")
     public void testAddOperatorByImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/addOperatorByImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/addOperatorByImpl/");
     }
 
     public void testAllFilesPresentInMultiModuleQuickFix() throws Exception {
@@ -63,307 +61,256 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
 
     @TestMetadata("annotation")
     public void testAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/annotation/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/annotation/");
     }
 
     @TestMetadata("class")
     public void testClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/class/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/class/");
     }
 
     @TestMetadata("classFunction")
     public void testClassFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/classFunction/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/classFunction/");
     }
 
     @TestMetadata("classOverloadedFunction")
     public void testClassOverloadedFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/classOverloadedFunction/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/classOverloadedFunction/");
     }
 
     @TestMetadata("classSomeProperties")
     public void testClassSomeProperties() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/classSomeProperties/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/classSomeProperties/");
     }
 
     @TestMetadata("companionAbsence")
     public void testCompanionAbsence() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/companionAbsence/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/companionAbsence/");
     }
 
     @TestMetadata("convertActualEnumToSealedClass")
     public void testConvertActualEnumToSealedClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/convertActualEnumToSealedClass/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/convertActualEnumToSealedClass/");
     }
 
     @TestMetadata("convertActualSealedClassToEnum")
     public void testConvertActualSealedClassToEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/convertActualSealedClassToEnum/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/convertActualSealedClassToEnum/");
     }
 
     @TestMetadata("convertExpectEnumToSealedClass")
     public void testConvertExpectEnumToSealedClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/convertExpectEnumToSealedClass/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/convertExpectEnumToSealedClass/");
     }
 
     @TestMetadata("convertExpectSealedClassToEnum")
     public void testConvertExpectSealedClassToEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/convertExpectSealedClassToEnum/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/convertExpectSealedClassToEnum/");
     }
 
     @TestMetadata("createFunInExpectClass")
     public void testCreateFunInExpectClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/createFunInExpectClass/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/createFunInExpectClass/");
     }
 
     @TestMetadata("createValInExpectClass")
     public void testCreateValInExpectClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/createValInExpectClass/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/createValInExpectClass/");
     }
 
     @TestMetadata("createVarInExpectClass")
     public void testCreateVarInExpectClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/createVarInExpectClass/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/createVarInExpectClass/");
     }
 
     @TestMetadata("deprecatedHeader")
     public void testDeprecatedHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/deprecatedHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/deprecatedHeader/");
     }
 
     @TestMetadata("deprecatedHeaderImpl")
     public void testDeprecatedHeaderImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/deprecatedHeaderImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/deprecatedHeaderImpl/");
     }
 
     @TestMetadata("deprecatedImpl")
     public void testDeprecatedImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/deprecatedImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/deprecatedImpl/");
     }
 
     @TestMetadata("deprecatedImplHeader")
     public void testDeprecatedImplHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/deprecatedImplHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/deprecatedImplHeader/");
     }
 
     @TestMetadata("enum")
     public void testEnum() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/enum/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/enum/");
     }
 
     @TestMetadata("function")
     public void testFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/function/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/function/");
     }
 
     @TestMetadata("functionSameFile")
     public void testFunctionSameFile() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/functionSameFile/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/functionSameFile/");
     }
 
     @TestMetadata("functionTypeParameterToReceiverByHeader")
     public void testFunctionTypeParameterToReceiverByHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/functionTypeParameterToReceiverByHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/functionTypeParameterToReceiverByHeader/");
     }
 
     @TestMetadata("functionTypeParameterToReceiverByImpl")
     public void testFunctionTypeParameterToReceiverByImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/functionTypeParameterToReceiverByImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/functionTypeParameterToReceiverByImpl/");
     }
 
     @TestMetadata("functionTypeReceiverToParameterByHeader")
     public void testFunctionTypeReceiverToParameterByHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByHeader/");
     }
 
     @TestMetadata("functionTypeReceiverToParameterByImpl")
     public void testFunctionTypeReceiverToParameterByImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByImpl/");
     }
 
     @TestMetadata("implementMembersInImplClassNonImplInheritor")
     public void testImplementMembersInImplClassNonImplInheritor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/implementMembersInImplClassNonImplInheritor/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/implementMembersInImplClassNonImplInheritor/");
     }
 
     @TestMetadata("interface")
     public void testInterface() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/interface/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/interface/");
     }
 
     @TestMetadata("memberFunParameterToReceiverByHeader")
     public void testMemberFunParameterToReceiverByHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/memberFunParameterToReceiverByHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/memberFunParameterToReceiverByHeader/");
     }
 
     @TestMetadata("memberFunParameterToReceiverByImpl")
     public void testMemberFunParameterToReceiverByImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/memberFunParameterToReceiverByImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/memberFunParameterToReceiverByImpl/");
     }
 
     @TestMetadata("memberFunReceiverToParameterByHeader")
     public void testMemberFunReceiverToParameterByHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/memberFunReceiverToParameterByHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/memberFunReceiverToParameterByHeader/");
     }
 
     @TestMetadata("memberFunReceiverToParameterByImpl")
     public void testMemberFunReceiverToParameterByImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/memberFunReceiverToParameterByImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/memberFunReceiverToParameterByImpl/");
     }
 
     @TestMetadata("memberFunToExtensionByHeader")
     public void testMemberFunToExtensionByHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/memberFunToExtensionByHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/memberFunToExtensionByHeader/");
     }
 
     @TestMetadata("memberFunToExtensionByImpl")
     public void testMemberFunToExtensionByImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/memberFunToExtensionByImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/memberFunToExtensionByImpl/");
     }
 
     @TestMetadata("memberValToExtensionByHeader")
     public void testMemberValToExtensionByHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/memberValToExtensionByHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/memberValToExtensionByHeader/");
     }
 
     @TestMetadata("memberValToExtensionByHeaderWithInapplicableImpl")
     public void testMemberValToExtensionByHeaderWithInapplicableImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/memberValToExtensionByHeaderWithInapplicableImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/memberValToExtensionByHeaderWithInapplicableImpl/");
     }
 
     @TestMetadata("memberValToExtensionByImpl")
     public void testMemberValToExtensionByImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/memberValToExtensionByImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/memberValToExtensionByImpl/");
     }
 
     @TestMetadata("nested")
     public void testNested() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/nested/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/nested/");
     }
 
     @TestMetadata("object")
     public void testObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/object/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/object/");
     }
 
     @TestMetadata("orderHeader")
     public void testOrderHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/orderHeader/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/orderHeader/");
     }
 
     @TestMetadata("orderImpl")
     public void testOrderImpl() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/orderImpl/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/orderImpl/");
     }
 
     @TestMetadata("package")
     public void testPackage() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/package/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/package/");
     }
 
     @TestMetadata("packageIncorrect")
     public void testPackageIncorrect() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/packageIncorrect/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/packageIncorrect/");
     }
 
     @TestMetadata("packageIncorrectEmpty")
     public void testPackageIncorrectEmpty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/packageIncorrectEmpty/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/packageIncorrectEmpty/");
     }
 
     @TestMetadata("primaryConstructor")
     public void testPrimaryConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/primaryConstructor/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/primaryConstructor/");
     }
 
     @TestMetadata("primaryConstructorAbsence")
     public void testPrimaryConstructorAbsence() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/primaryConstructorAbsence/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/primaryConstructorAbsence/");
     }
 
     @TestMetadata("property")
     public void testProperty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/property/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/property/");
     }
 
     @TestMetadata("sealed")
     public void testSealed() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/sealed/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/sealed/");
     }
 
     @TestMetadata("sealedSubclass")
     public void testSealedSubclass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/sealedSubclass/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/sealedSubclass/");
     }
 
     @TestMetadata("secondaryConstructorAbsence")
     public void testSecondaryConstructorAbsence() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/secondaryConstructorAbsence/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/secondaryConstructorAbsence/");
     }
 
     @TestMetadata("withFakeJvm")
     public void testWithFakeJvm() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/withFakeJvm/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/withFakeJvm/");
     }
 
     @TestMetadata("withTest")
     public void testWithTest() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/withTest/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/withTest/");
     }
 
     @TestMetadata("withTestDummy")
     public void testWithTestDummy() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiModuleQuickFix/withTestDummy/");
-        doTest(fileName);
+        runTest("idea/testData/multiModuleQuickFix/withTestDummy/");
     }
 }

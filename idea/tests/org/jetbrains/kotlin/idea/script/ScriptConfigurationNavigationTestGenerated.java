@@ -21,55 +21,51 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScriptConfigurationNavigationTestGenerated extends AbstractScriptConfigurationNavigationTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInNavigation() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/navigation"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("conflictingModule")
     public void testConflictingModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/conflictingModule/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/navigation/conflictingModule/");
     }
 
     @TestMetadata("customBaseClass")
     public void testCustomBaseClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/customBaseClass/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/navigation/customBaseClass/");
     }
 
     @TestMetadata("javaLib")
     public void testJavaLib() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/javaLib/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/navigation/javaLib/");
     }
 
     @TestMetadata("javaLibWithSources")
     public void testJavaLibWithSources() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/javaLibWithSources/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/navigation/javaLibWithSources/");
     }
 
     @TestMetadata("kotlinLib")
     public void testKotlinLib() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/kotlinLib/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/navigation/kotlinLib/");
     }
 
     @TestMetadata("kotlinLibWithSources")
     public void testKotlinLibWithSources() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/kotlinLibWithSources/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/navigation/kotlinLibWithSources/");
     }
 
     @TestMetadata("stdlib")
     public void testStdlib() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/stdlib/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/navigation/stdlib/");
     }
 
     @TestMetadata("stdlibWithSources")
     public void testStdlibWithSources() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/stdlibWithSources/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/navigation/stdlibWithSources/");
     }
 }

@@ -21,28 +21,28 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     @TestMetadata("AbstractMembers.kt")
     public void testAbstractMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/AbstractMembers.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/AbstractMembers.kt");
     }
 
     @TestMetadata("AfterEmptyArgument.kt")
     public void testAfterEmptyArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/AfterEmptyArgument.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/AfterEmptyArgument.kt");
     }
 
     @TestMetadata("AfterExclSign.kt")
     public void testAfterExclSign() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/AfterExclSign.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/AfterExclSign.kt");
     }
 
     @TestMetadata("AfterNamedArgument.kt")
     public void testAfterNamedArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/AfterNamedArgument.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/AfterNamedArgument.kt");
     }
 
     public void testAllFilesPresentInSmart() throws Exception {
@@ -51,582 +51,490 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
     @TestMetadata("AnyExpected.kt")
     public void testAnyExpected() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/AnyExpected.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/AnyExpected.kt");
     }
 
     @TestMetadata("BeforeArgumentWithBinaryOperation.kt")
     public void testBeforeArgumentWithBinaryOperation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/BeforeArgumentWithBinaryOperation.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/BeforeArgumentWithBinaryOperation.kt");
     }
 
     @TestMetadata("BeforeArgumentWithBinaryOperation2.kt")
     public void testBeforeArgumentWithBinaryOperation2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/BeforeArgumentWithBinaryOperation2.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/BeforeArgumentWithBinaryOperation2.kt");
     }
 
     @TestMetadata("BeforeArgumentWithBinaryOperation3.kt")
     public void testBeforeArgumentWithBinaryOperation3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/BeforeArgumentWithBinaryOperation3.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/BeforeArgumentWithBinaryOperation3.kt");
     }
 
     @TestMetadata("BooleanArgumentExpected.kt")
     public void testBooleanArgumentExpected() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/BooleanArgumentExpected.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/BooleanArgumentExpected.kt");
     }
 
     @TestMetadata("BooleanExpected.kt")
     public void testBooleanExpected() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/BooleanExpected.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/BooleanExpected.kt");
     }
 
     @TestMetadata("BooleanOrNullableArgumentExpected.kt")
     public void testBooleanOrNullableArgumentExpected() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/BooleanOrNullableArgumentExpected.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/BooleanOrNullableArgumentExpected.kt");
     }
 
     @TestMetadata("ChainedCall.kt")
     public void testChainedCall() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ChainedCall.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ChainedCall.kt");
     }
 
     @TestMetadata("ClassObjectMembers.kt")
     public void testClassObjectMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ClassObjectMembers.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ClassObjectMembers.kt");
     }
 
     @TestMetadata("ClassObjectMembersForNullable.kt")
     public void testClassObjectMembersForNullable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ClassObjectMembersForNullable.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ClassObjectMembersForNullable.kt");
     }
 
     @TestMetadata("ClassObjectMembersWithPrefix.kt")
     public void testClassObjectMembersWithPrefix() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ClassObjectMembersWithPrefix.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ClassObjectMembersWithPrefix.kt");
     }
 
     @TestMetadata("EA70945.kt")
     public void testEA70945() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/EA70945.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/EA70945.kt");
     }
 
     @TestMetadata("EmptyPrefix.kt")
     public void testEmptyPrefix() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/EmptyPrefix.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/EmptyPrefix.kt");
     }
 
     @TestMetadata("EnumMembers.kt")
     public void testEnumMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/EnumMembers.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/EnumMembers.kt");
     }
 
     @TestMetadata("EqOperator.kt")
     public void testEqOperator() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/EqOperator.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/EqOperator.kt");
     }
 
     @TestMetadata("EqOperatorPlatformType.kt")
     public void testEqOperatorPlatformType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/EqOperatorPlatformType.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/EqOperatorPlatformType.kt");
     }
 
     @TestMetadata("ExtensionFunctionTypeVariables.kt")
     public void testExtensionFunctionTypeVariables() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ExtensionFunctionTypeVariables.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ExtensionFunctionTypeVariables.kt");
     }
 
     @TestMetadata("FilterTo.kt")
     public void testFilterTo() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/FilterTo.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/FilterTo.kt");
     }
 
     @TestMetadata("GetOperator.kt")
     public void testGetOperator() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/GetOperator.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/GetOperator.kt");
     }
 
     @TestMetadata("GroupBySubstitutor.kt")
     public void testGroupBySubstitutor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/GroupBySubstitutor.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/GroupBySubstitutor.kt");
     }
 
     @TestMetadata("HighOrderFunction.kt")
     public void testHighOrderFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/HighOrderFunction.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/HighOrderFunction.kt");
     }
 
     @TestMetadata("IfCondition.kt")
     public void testIfCondition() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/IfCondition.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/IfCondition.kt");
     }
 
     @TestMetadata("ImmediateExtensionMembers.kt")
     public void testImmediateExtensionMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImmediateExtensionMembers.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ImmediateExtensionMembers.kt");
     }
 
     @TestMetadata("ImmediateMembers.kt")
     public void testImmediateMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImmediateMembers.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ImmediateMembers.kt");
     }
 
     @TestMetadata("ImplicitInvoke.kt")
     public void testImplicitInvoke() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitInvoke.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ImplicitInvoke.kt");
     }
 
     @TestMetadata("ImplicitlyTypedFunBody.kt")
     public void testImplicitlyTypedFunBody() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedFunBody.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ImplicitlyTypedFunBody.kt");
     }
 
     @TestMetadata("ImplicitlyTypedOverrideFunBody.kt")
     public void testImplicitlyTypedOverrideFunBody() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedOverrideFunBody.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ImplicitlyTypedOverrideFunBody.kt");
     }
 
     @TestMetadata("ImplicitlyTypedOverrideValInitializer.kt")
     public void testImplicitlyTypedOverrideValInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedOverrideValInitializer.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ImplicitlyTypedOverrideValInitializer.kt");
     }
 
     @TestMetadata("ImplicitlyTypedValInitializer1.kt")
     public void testImplicitlyTypedValInitializer1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializer1.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializer1.kt");
     }
 
     @TestMetadata("ImplicitlyTypedValInitializer2.kt")
     public void testImplicitlyTypedValInitializer2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializer2.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializer2.kt");
     }
 
     @TestMetadata("ImplicitlyTypedValInitializerUnknownType.kt")
     public void testImplicitlyTypedValInitializerUnknownType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializerUnknownType.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ImplicitlyTypedValInitializerUnknownType.kt");
     }
 
     @TestMetadata("InCompanionObject.kt")
     public void testInCompanionObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InCompanionObject.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/InCompanionObject.kt");
     }
 
     @TestMetadata("InNestedClass.kt")
     public void testInNestedClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InNestedClass.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/InNestedClass.kt");
     }
 
     @TestMetadata("InaccessibleConstructor.kt")
     public void testInaccessibleConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InaccessibleConstructor.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/InaccessibleConstructor.kt");
     }
 
     @TestMetadata("InaccessibleDeclarations.kt")
     public void testInaccessibleDeclarations() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InaccessibleDeclarations.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/InaccessibleDeclarations.kt");
     }
 
     @TestMetadata("IndexingOperator.kt")
     public void testIndexingOperator() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/IndexingOperator.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/IndexingOperator.kt");
     }
 
     @TestMetadata("InfixCall.kt")
     public void testInfixCall() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InfixCall.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/InfixCall.kt");
     }
 
     @TestMetadata("InsideIdentifier.kt")
     public void testInsideIdentifier() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InsideIdentifier.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/InsideIdentifier.kt");
     }
 
     @TestMetadata("InvokeFunctionVariable.kt")
     public void testInvokeFunctionVariable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/InvokeFunctionVariable.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/InvokeFunctionVariable.kt");
     }
 
     @TestMetadata("JavaEnumMembers.kt")
     public void testJavaEnumMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/JavaEnumMembers.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/JavaEnumMembers.kt");
     }
 
     @TestMetadata("JavaEnumMembersAfterQualifier.kt")
     public void testJavaEnumMembersAfterQualifier() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/JavaEnumMembersAfterQualifier.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/JavaEnumMembersAfterQualifier.kt");
     }
 
     @TestMetadata("JavaEnumMembersForNullable.kt")
     public void testJavaEnumMembersForNullable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/JavaEnumMembersForNullable.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/JavaEnumMembersForNullable.kt");
     }
 
     @TestMetadata("JavaStaticFields.kt")
     public void testJavaStaticFields() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/JavaStaticFields.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/JavaStaticFields.kt");
     }
 
     @TestMetadata("JavaStaticFieldsForNullable.kt")
     public void testJavaStaticFieldsForNullable() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/JavaStaticFieldsForNullable.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/JavaStaticFieldsForNullable.kt");
     }
 
     @TestMetadata("JavaStaticMethods.kt")
     public void testJavaStaticMethods() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/JavaStaticMethods.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/JavaStaticMethods.kt");
     }
 
     @TestMetadata("kt5873.kt")
     public void testKt5873() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/kt5873.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/kt5873.kt");
     }
 
     @TestMetadata("LambdaValue1.kt")
     public void testLambdaValue1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/LambdaValue1.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/LambdaValue1.kt");
     }
 
     @TestMetadata("LambdaValue2.kt")
     public void testLambdaValue2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/LambdaValue2.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/LambdaValue2.kt");
     }
 
     @TestMetadata("LambdaValue3.kt")
     public void testLambdaValue3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/LambdaValue3.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/LambdaValue3.kt");
     }
 
     @TestMetadata("LambdaValue4.kt")
     public void testLambdaValue4() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/LambdaValue4.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/LambdaValue4.kt");
     }
 
     @TestMetadata("MapTo.kt")
     public void testMapTo() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/MapTo.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/MapTo.kt");
     }
 
     @TestMetadata("MapTo2.kt")
     public void testMapTo2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/MapTo2.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/MapTo2.kt");
     }
 
     @TestMetadata("MethodCallArgument.kt")
     public void testMethodCallArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/MethodCallArgument.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/MethodCallArgument.kt");
     }
 
     @TestMetadata("NamedArgument.kt")
     public void testNamedArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NamedArgument.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/NamedArgument.kt");
     }
 
     @TestMetadata("NoAssertFailsWith.kt")
     public void testNoAssertFailsWith() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NoAssertFailsWith.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/NoAssertFailsWith.kt");
     }
 
     @TestMetadata("NoExtensionMethodFromClassObject.kt")
     public void testNoExtensionMethodFromClassObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NoExtensionMethodFromClassObject.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/NoExtensionMethodFromClassObject.kt");
     }
 
     @TestMetadata("NoNothing.kt")
     public void testNoNothing() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NoNothing.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/NoNothing.kt");
     }
 
     @TestMetadata("NoPrivateOverload.kt")
     public void testNoPrivateOverload() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NoPrivateOverload.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/NoPrivateOverload.kt");
     }
 
     @TestMetadata("NoSillyAssignment.kt")
     public void testNoSillyAssignment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NoSillyAssignment.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/NoSillyAssignment.kt");
     }
 
     @TestMetadata("NotEqOperator.kt")
     public void testNotEqOperator() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NotEqOperator.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/NotEqOperator.kt");
     }
 
     @TestMetadata("NotSillyAssignment.kt")
     public void testNotSillyAssignment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NotSillyAssignment.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/NotSillyAssignment.kt");
     }
 
     @TestMetadata("Null.kt")
     public void testNull() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/Null.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/Null.kt");
     }
 
     @TestMetadata("NullableBooleanExpected.kt")
     public void testNullableBooleanExpected() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NullableBooleanExpected.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/NullableBooleanExpected.kt");
     }
 
     @TestMetadata("Object.kt")
     public void testObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/Object.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/Object.kt");
     }
 
     @TestMetadata("ObjectsFromType.kt")
     public void testObjectsFromType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ObjectsFromType.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ObjectsFromType.kt");
     }
 
     @TestMetadata("OverloadedConstructorArgument.kt")
     public void testOverloadedConstructorArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/OverloadedConstructorArgument.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/OverloadedConstructorArgument.kt");
     }
 
     @TestMetadata("OverloadedMethodCallArgument1.kt")
     public void testOverloadedMethodCallArgument1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/OverloadedMethodCallArgument1.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/OverloadedMethodCallArgument1.kt");
     }
 
     @TestMetadata("OverloadedMethodCallArgument2.kt")
     public void testOverloadedMethodCallArgument2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/OverloadedMethodCallArgument2.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/OverloadedMethodCallArgument2.kt");
     }
 
     @TestMetadata("OverloadedMethodCallArgument3.kt")
     public void testOverloadedMethodCallArgument3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/OverloadedMethodCallArgument3.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/OverloadedMethodCallArgument3.kt");
     }
 
     @TestMetadata("ParameterWithDefaultValue.kt")
     public void testParameterWithDefaultValue() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ParameterWithDefaultValue.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ParameterWithDefaultValue.kt");
     }
 
     @TestMetadata("PreviousArgError.kt")
     public void testPreviousArgError() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/PreviousArgError.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/PreviousArgError.kt");
     }
 
     @TestMetadata("PreviousArgMismatchedType.kt")
     public void testPreviousArgMismatchedType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/PreviousArgMismatchedType.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/PreviousArgMismatchedType.kt");
     }
 
     @TestMetadata("QualifiedOverloadedMethodCallArgument1.kt")
     public void testQualifiedOverloadedMethodCallArgument1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/QualifiedOverloadedMethodCallArgument1.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/QualifiedOverloadedMethodCallArgument1.kt");
     }
 
     @TestMetadata("QualifiedOverloadedMethodCallArgument2.kt")
     public void testQualifiedOverloadedMethodCallArgument2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/QualifiedOverloadedMethodCallArgument2.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/QualifiedOverloadedMethodCallArgument2.kt");
     }
 
     @TestMetadata("SAMConstructorForTypeAlias.kt")
     public void testSAMConstructorForTypeAlias() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SAMConstructorForTypeAlias.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SAMConstructorForTypeAlias.kt");
     }
 
     @TestMetadata("SAMExpected1.kt")
     public void testSAMExpected1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SAMExpected1.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SAMExpected1.kt");
     }
 
     @TestMetadata("SAMExpected2.kt")
     public void testSAMExpected2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SAMExpected2.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SAMExpected2.kt");
     }
 
     @TestMetadata("SealedMembers.kt")
     public void testSealedMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SealedMembers.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SealedMembers.kt");
     }
 
     @TestMetadata("SkipDeclarationsOfType.kt")
     public void testSkipDeclarationsOfType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SkipDeclarationsOfType.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SkipDeclarationsOfType.kt");
     }
 
     @TestMetadata("SkipUnresolvedTypes.kt")
     public void testSkipUnresolvedTypes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SkipUnresolvedTypes.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SkipUnresolvedTypes.kt");
     }
 
     @TestMetadata("SuperConstructorArgument.kt")
     public void testSuperConstructorArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SuperConstructorArgument.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SuperConstructorArgument.kt");
     }
 
     @TestMetadata("SuperConstructorArgumentInClassHeader.kt")
     public void testSuperConstructorArgumentInClassHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SuperConstructorArgumentInClassHeader.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SuperConstructorArgumentInClassHeader.kt");
     }
 
     @TestMetadata("SuperMembers.kt")
     public void testSuperMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SuperMembers.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SuperMembers.kt");
     }
 
     @TestMetadata("SuperMembers2.kt")
     public void testSuperMembers2() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SuperMembers2.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/SuperMembers2.kt");
     }
 
     @TestMetadata("ThisConstructorArgument.kt")
     public void testThisConstructorArgument() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ThisConstructorArgument.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/ThisConstructorArgument.kt");
     }
 
     @TestMetadata("UnresolvedExpectedType.kt")
     public void testUnresolvedExpectedType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/UnresolvedExpectedType.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/UnresolvedExpectedType.kt");
     }
 
     @TestMetadata("VariableAsFunction1.kt")
     public void testVariableAsFunction1() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/VariableAsFunction1.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/VariableAsFunction1.kt");
     }
 
     @TestMetadata("VariableAsFunction3.kt")
     public void testVariableAsFunction3() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/VariableAsFunction3.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/VariableAsFunction3.kt");
     }
 
     @TestMetadata("VariableInitializer.kt")
     public void testVariableInitializer() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/VariableInitializer.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/VariableInitializer.kt");
     }
 
     @TestMetadata("WithPrefix.kt")
     public void testWithPrefix() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/WithPrefix.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/WithPrefix.kt");
     }
 
     @TestMetadata("WithQualifier.kt")
     public void testWithQualifier() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/WithQualifier.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/WithQualifier.kt");
     }
 
     @TestMetadata("WrongNumberOfTypeArguments.kt")
     public void testWrongNumberOfTypeArguments() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/WrongNumberOfTypeArguments.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/WrongNumberOfTypeArguments.kt");
     }
 
     @TestMetadata("WrongReceiver.kt")
     public void testWrongReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/WrongReceiver.kt");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/smart/WrongReceiver.kt");
     }
 
     @TestMetadata("idea/idea-completion/testData/smart/afterAs")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AfterAs extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("1.kt")
         public void test1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/afterAs/1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/afterAs/1.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/afterAs/2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/afterAs/2.kt");
         }
 
         @TestMetadata("3.kt")
         public void test3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/afterAs/3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/afterAs/3.kt");
         }
 
         public void testAllFilesPresentInAfterAs() throws Exception {
@@ -638,16 +546,18 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AnonymousObject extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("1.kt")
         public void test1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/anonymousObject/1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/anonymousObject/1.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/anonymousObject/2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/anonymousObject/2.kt");
         }
 
         public void testAllFilesPresentInAnonymousObject() throws Exception {
@@ -656,20 +566,17 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         @TestMetadata("ForJavaInterface.kt")
         public void testForJavaInterface() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/anonymousObject/ForJavaInterface.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/anonymousObject/ForJavaInterface.kt");
         }
 
         @TestMetadata("UninferredTypeArgs.kt")
         public void testUninferredTypeArgs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/anonymousObject/UninferredTypeArgs.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/anonymousObject/UninferredTypeArgs.kt");
         }
 
         @TestMetadata("WithPrefix.kt")
         public void testWithPrefix() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/anonymousObject/WithPrefix.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/anonymousObject/WithPrefix.kt");
         }
     }
 
@@ -677,10 +584,13 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("AfterDot.kt")
         public void testAfterDot() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/AfterDot.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/AfterDot.kt");
         }
 
         public void testAllFilesPresentInCallableReference() throws Exception {
@@ -689,134 +599,112 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         @TestMetadata("ClassLiteral.kt")
         public void testClassLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ClassLiteral.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/ClassLiteral.kt");
         }
 
         @TestMetadata("ClassLiteralDotJava.kt")
         public void testClassLiteralDotJava() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ClassLiteralDotJava.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/ClassLiteralDotJava.kt");
         }
 
         @TestMetadata("ConcreteJavaClassExpected.kt")
         public void testConcreteJavaClassExpected() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ConcreteJavaClassExpected.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/ConcreteJavaClassExpected.kt");
         }
 
         @TestMetadata("ConcreteKClassExpected.kt")
         public void testConcreteKClassExpected() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ConcreteKClassExpected.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/ConcreteKClassExpected.kt");
         }
 
         @TestMetadata("ConcreteKClassExpectedNoDuplicates.kt")
         public void testConcreteKClassExpectedNoDuplicates() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ConcreteKClassExpectedNoDuplicates.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/ConcreteKClassExpectedNoDuplicates.kt");
         }
 
         @TestMetadata("EmptyQualifier1.kt")
         public void testEmptyQualifier1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/EmptyQualifier1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/EmptyQualifier1.kt");
         }
 
         @TestMetadata("EmptyQualifier2.kt")
         public void testEmptyQualifier2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/EmptyQualifier2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/EmptyQualifier2.kt");
         }
 
         @TestMetadata("EmptyQualifier3.kt")
         public void testEmptyQualifier3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/EmptyQualifier3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/EmptyQualifier3.kt");
         }
 
         @TestMetadata("ExpressionQualifier.kt")
         public void testExpressionQualifier() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/ExpressionQualifier.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/ExpressionQualifier.kt");
         }
 
         @TestMetadata("NoQualifier1.kt")
         public void testNoQualifier1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifier1.kt");
         }
 
         @TestMetadata("NoQualifier10.kt")
         public void testNoQualifier10() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier10.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifier10.kt");
         }
 
         @TestMetadata("NoQualifier12.kt")
         public void testNoQualifier12() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier12.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifier12.kt");
         }
 
         @TestMetadata("NoQualifier2.kt")
         public void testNoQualifier2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifier2.kt");
         }
 
         @TestMetadata("NoQualifier3.kt")
         public void testNoQualifier3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifier3.kt");
         }
 
         @TestMetadata("NoQualifier4.kt")
         public void testNoQualifier4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifier4.kt");
         }
 
         @TestMetadata("NoQualifier7.kt")
         public void testNoQualifier7() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier7.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifier7.kt");
         }
 
         @TestMetadata("NoQualifier9.kt")
         public void testNoQualifier9() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifier9.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifier9.kt");
         }
 
         @TestMetadata("NoQualifierMultipleConstructors.kt")
         public void testNoQualifierMultipleConstructors() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifierMultipleConstructors.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifierMultipleConstructors.kt");
         }
 
         @TestMetadata("NoQualifierPropertyExpected.kt")
         public void testNoQualifierPropertyExpected() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NoQualifierPropertyExpected.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NoQualifierPropertyExpected.kt");
         }
 
         @TestMetadata("NonConcreteKClassExpected.kt")
         public void testNonConcreteKClassExpected() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NonConcreteKClassExpected.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NonConcreteKClassExpected.kt");
         }
 
         @TestMetadata("NonEmptyQualifier1.kt")
         public void testNonEmptyQualifier1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NonEmptyQualifier1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NonEmptyQualifier1.kt");
         }
 
         @TestMetadata("NonEmptyQualifier2.kt")
         public void testNonEmptyQualifier2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/callableReference/NonEmptyQualifier2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/callableReference/NonEmptyQualifier2.kt");
         }
     }
 
@@ -824,116 +712,102 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInConstructor() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/constructor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ConstructorViaTypeAlias.kt")
         public void testConstructorViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorViaTypeAlias.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/ConstructorViaTypeAlias.kt");
         }
 
         @TestMetadata("ConstructorWithTypeParamsPartialSubstitution1ViaTypeAlias.kt")
         public void testConstructorWithTypeParamsPartialSubstitution1ViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsPartialSubstitution1ViaTypeAlias.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsPartialSubstitution1ViaTypeAlias.kt");
         }
 
         @TestMetadata("ConstructorWithTypeParamsPartialSubstitution2ViaTypeAlias.kt")
         public void testConstructorWithTypeParamsPartialSubstitution2ViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsPartialSubstitution2ViaTypeAlias.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsPartialSubstitution2ViaTypeAlias.kt");
         }
 
         @TestMetadata("ConstructorWithTypeParamsSubstitutionViaTypeAlias.kt")
         public void testConstructorWithTypeParamsSubstitutionViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsSubstitutionViaTypeAlias.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsSubstitutionViaTypeAlias.kt");
         }
 
         @TestMetadata("ConstructorWithTypeParamsViaTypeAlias.kt")
         public void testConstructorWithTypeParamsViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsViaTypeAlias.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsViaTypeAlias.kt");
         }
 
         @TestMetadata("GenericJavaClass.kt")
         public void testGenericJavaClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/GenericJavaClass.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/GenericJavaClass.kt");
         }
 
         @TestMetadata("GenericType.kt")
         public void testGenericType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/GenericType.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/GenericType.kt");
         }
 
         @TestMetadata("InnerClass.kt")
         public void testInnerClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/InnerClass.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/InnerClass.kt");
         }
 
         @TestMetadata("JavaClass.kt")
         public void testJavaClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/JavaClass.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/JavaClass.kt");
         }
 
         @TestMetadata("NoConstructorWithQualifier.kt")
         public void testNoConstructorWithQualifier() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/NoConstructorWithQualifier.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/NoConstructorWithQualifier.kt");
         }
 
         @TestMetadata("NoInnerClassInstantiation.kt")
         public void testNoInnerClassInstantiation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/NoInnerClassInstantiation.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/NoInnerClassInstantiation.kt");
         }
 
         @TestMetadata("Nullable.kt")
         public void testNullable() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/Nullable.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/Nullable.kt");
         }
 
         @TestMetadata("PrivateConstructorForAbstract.kt")
         public void testPrivateConstructorForAbstract() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/PrivateConstructorForAbstract.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/PrivateConstructorForAbstract.kt");
         }
 
         @TestMetadata("ProtectedConstructorForAbstract.kt")
         public void testProtectedConstructorForAbstract() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ProtectedConstructorForAbstract.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/ProtectedConstructorForAbstract.kt");
         }
 
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/Simple.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/Simple.kt");
         }
 
         @TestMetadata("StarProjection1.kt")
         public void testStarProjection1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/StarProjection1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/StarProjection1.kt");
         }
 
         @TestMetadata("StarProjection2.kt")
         public void testStarProjection2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/StarProjection2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/StarProjection2.kt");
         }
 
         @TestMetadata("WithParameters.kt")
         public void testWithParameters() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/WithParameters.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/constructor/WithParameters.kt");
         }
     }
 
@@ -941,10 +815,13 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ForLoopRange extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("AfterDot.kt")
         public void testAfterDot() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/forLoopRange/AfterDot.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/forLoopRange/AfterDot.kt");
         }
 
         public void testAllFilesPresentInForLoopRange() throws Exception {
@@ -953,38 +830,32 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         @TestMetadata("ExtensionIteratorMethod.kt")
         public void testExtensionIteratorMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/forLoopRange/ExtensionIteratorMethod.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/forLoopRange/ExtensionIteratorMethod.kt");
         }
 
         @TestMetadata("NoGenericT.kt")
         public void testNoGenericT() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/forLoopRange/NoGenericT.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/forLoopRange/NoGenericT.kt");
         }
 
         @TestMetadata("Nullable.kt")
         public void testNullable() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/forLoopRange/Nullable.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/forLoopRange/Nullable.kt");
         }
 
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/forLoopRange/Simple.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/forLoopRange/Simple.kt");
         }
 
         @TestMetadata("SmartCasts.kt")
         public void testSmartCasts() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/forLoopRange/SmartCasts.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/forLoopRange/SmartCasts.kt");
         }
 
         @TestMetadata("TypedLoopVar.kt")
         public void testTypedLoopVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/forLoopRange/TypedLoopVar.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/forLoopRange/TypedLoopVar.kt");
         }
     }
 
@@ -992,34 +863,33 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FunctionLiterals extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("1.kt")
         public void test1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/1.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/2.kt");
         }
 
         @TestMetadata("3.kt")
         public void test3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/3.kt");
         }
 
         @TestMetadata("4.kt")
         public void test4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/4.kt");
         }
 
         @TestMetadata("5.kt")
         public void test5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/5.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/5.kt");
         }
 
         public void testAllFilesPresentInFunctionLiterals() throws Exception {
@@ -1028,74 +898,62 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         @TestMetadata("ExplicitParameterTypesRequired.kt")
         public void testExplicitParameterTypesRequired() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/ExplicitParameterTypesRequired.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/ExplicitParameterTypesRequired.kt");
         }
 
         @TestMetadata("OutsideCallParenthesis1.kt")
         public void testOutsideCallParenthesis1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis1.kt");
         }
 
         @TestMetadata("OutsideCallParenthesis2.kt")
         public void testOutsideCallParenthesis2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis2.kt");
         }
 
         @TestMetadata("OutsideCallParenthesis3.kt")
         public void testOutsideCallParenthesis3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis3.kt");
         }
 
         @TestMetadata("OutsideCallParenthesis4.kt")
         public void testOutsideCallParenthesis4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis4.kt");
         }
 
         @TestMetadata("OutsideCallParenthesis5.kt")
         public void testOutsideCallParenthesis5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis5.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis5.kt");
         }
 
         @TestMetadata("OutsideCallParenthesis6.kt")
         public void testOutsideCallParenthesis6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis6.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis6.kt");
         }
 
         @TestMetadata("OutsideCallParenthesis7.kt")
         public void testOutsideCallParenthesis7() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis7.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis7.kt");
         }
 
         @TestMetadata("OutsideCallParenthesis8.kt")
         public void testOutsideCallParenthesis8() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis8.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis8.kt");
         }
 
         @TestMetadata("OutsideCallParenthesis9.kt")
         public void testOutsideCallParenthesis9() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis9.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis9.kt");
         }
 
         @TestMetadata("OutsideCallParenthesisAndVararg1.kt")
         public void testOutsideCallParenthesisAndVararg1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesisAndVararg1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesisAndVararg1.kt");
         }
 
         @TestMetadata("OutsideCallParenthesisAndVararg2.kt")
         public void testOutsideCallParenthesisAndVararg2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesisAndVararg2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesisAndVararg2.kt");
         }
     }
 
@@ -1103,44 +961,42 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Generics extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInGenerics() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/generics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("GenericFunction1.kt")
         public void testGenericFunction1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/generics/GenericFunction1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/generics/GenericFunction1.kt");
         }
 
         @TestMetadata("GenericFunction2.kt")
         public void testGenericFunction2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/generics/GenericFunction2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/generics/GenericFunction2.kt");
         }
 
         @TestMetadata("GenericFunction3.kt")
         public void testGenericFunction3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/generics/GenericFunction3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/generics/GenericFunction3.kt");
         }
 
         @TestMetadata("GenericFunction4.kt")
         public void testGenericFunction4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/generics/GenericFunction4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/generics/GenericFunction4.kt");
         }
 
         @TestMetadata("GenericFunction5.kt")
         public void testGenericFunction5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/generics/GenericFunction5.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/generics/GenericFunction5.kt");
         }
 
         @TestMetadata("GenericMethodArgument.kt")
         public void testGenericMethodArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/generics/GenericMethodArgument.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/generics/GenericMethodArgument.kt");
         }
     }
 
@@ -1148,86 +1004,77 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class HeuristicSignatures extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInHeuristicSignatures() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/heuristicSignatures"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Contains.kt")
         public void testContains() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/Contains.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/Contains.kt");
         }
 
         @TestMetadata("ContainsAll.kt")
         public void testContainsAll() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/ContainsAll.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/ContainsAll.kt");
         }
 
         @TestMetadata("ContainsKey.kt")
         public void testContainsKey() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/ContainsKey.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/ContainsKey.kt");
         }
 
         @TestMetadata("ContainsValue.kt")
         public void testContainsValue() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/ContainsValue.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/ContainsValue.kt");
         }
 
         @TestMetadata("Get.kt")
         public void testGet() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/Get.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/Get.kt");
         }
 
         @TestMetadata("GetWithBrackets.kt")
         public void testGetWithBrackets() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/GetWithBrackets.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/GetWithBrackets.kt");
         }
 
         @TestMetadata("InOperator.kt")
         public void testInOperator() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/InOperator.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/InOperator.kt");
         }
 
         @TestMetadata("IndexOf.kt")
         public void testIndexOf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/IndexOf.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/IndexOf.kt");
         }
 
         @TestMetadata("LastIndexOf.kt")
         public void testLastIndexOf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/LastIndexOf.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/LastIndexOf.kt");
         }
 
         @TestMetadata("MapRemove.kt")
         public void testMapRemove() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/MapRemove.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/MapRemove.kt");
         }
 
         @TestMetadata("Remove.kt")
         public void testRemove() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/Remove.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/Remove.kt");
         }
 
         @TestMetadata("RemoveAll.kt")
         public void testRemoveAll() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/RemoveAll.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/RemoveAll.kt");
         }
 
         @TestMetadata("RetainAll.kt")
         public void testRetainAll() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/heuristicSignatures/RetainAll.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/heuristicSignatures/RetainAll.kt");
         }
     }
 
@@ -1235,28 +1082,28 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class IfValue extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("1.kt")
         public void test1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ifValue/1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/ifValue/1.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ifValue/2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/ifValue/2.kt");
         }
 
         @TestMetadata("3.kt")
         public void test3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ifValue/3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/ifValue/3.kt");
         }
 
         @TestMetadata("4.kt")
         public void test4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ifValue/4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/ifValue/4.kt");
         }
 
         public void testAllFilesPresentInIfValue() throws Exception {
@@ -1265,14 +1112,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         @TestMetadata("InBlock1.kt")
         public void testInBlock1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ifValue/InBlock1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/ifValue/InBlock1.kt");
         }
 
         @TestMetadata("InBlock2.kt")
         public void testInBlock2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ifValue/InBlock2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/ifValue/InBlock2.kt");
         }
     }
 
@@ -1280,40 +1125,38 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InElvisOperator extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("1.kt")
         public void test1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inElvisOperator/1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inElvisOperator/1.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inElvisOperator/2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inElvisOperator/2.kt");
         }
 
         @TestMetadata("3.kt")
         public void test3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inElvisOperator/3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inElvisOperator/3.kt");
         }
 
         @TestMetadata("4.kt")
         public void test4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inElvisOperator/4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inElvisOperator/4.kt");
         }
 
         @TestMetadata("5.kt")
         public void test5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inElvisOperator/5.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inElvisOperator/5.kt");
         }
 
         @TestMetadata("6.kt")
         public void test6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inElvisOperator/6.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inElvisOperator/6.kt");
         }
 
         public void testAllFilesPresentInInElvisOperator() throws Exception {
@@ -1325,68 +1168,62 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InOperator extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInInOperator() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/inOperator"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ExtensionContains.kt")
         public void testExtensionContains() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/ExtensionContains.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/ExtensionContains.kt");
         }
 
         @TestMetadata("FilterByArgumentType.kt")
         public void testFilterByArgumentType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/FilterByArgumentType.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/FilterByArgumentType.kt");
         }
 
         @TestMetadata("GenericMethod.kt")
         public void testGenericMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/GenericMethod.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/GenericMethod.kt");
         }
 
         @TestMetadata("GenericMethod2.kt")
         public void testGenericMethod2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/GenericMethod2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/GenericMethod2.kt");
         }
 
         @TestMetadata("GenericMethod3.kt")
         public void testGenericMethod3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/GenericMethod3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/GenericMethod3.kt");
         }
 
         @TestMetadata("NonBooleanContains.kt")
         public void testNonBooleanContains() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/NonBooleanContains.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/NonBooleanContains.kt");
         }
 
         @TestMetadata("NotIn.kt")
         public void testNotIn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/NotIn.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/NotIn.kt");
         }
 
         @TestMetadata("Nullable.kt")
         public void testNullable() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/Nullable.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/Nullable.kt");
         }
 
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/Simple.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/Simple.kt");
         }
 
         @TestMetadata("SmartCasts.kt")
         public void testSmartCasts() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inOperator/SmartCasts.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inOperator/SmartCasts.kt");
         }
     }
 
@@ -1394,22 +1231,23 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Inheritors extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("1.kt")
         public void test1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inheritors/1.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inheritors/2.kt");
         }
 
         @TestMetadata("3.kt")
         public void test3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inheritors/3.kt");
         }
 
         public void testAllFilesPresentInInheritors() throws Exception {
@@ -1418,38 +1256,32 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         @TestMetadata("GenericClass1.kt")
         public void testGenericClass1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inheritors/GenericClass1.kt");
         }
 
         @TestMetadata("GenericClass2.kt")
         public void testGenericClass2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inheritors/GenericClass2.kt");
         }
 
         @TestMetadata("GenericClass3.kt")
         public void testGenericClass3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inheritors/GenericClass3.kt");
         }
 
         @TestMetadata("GenericClass4.kt")
         public void testGenericClass4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inheritors/GenericClass4.kt");
         }
 
         @TestMetadata("GenericClass5.kt")
         public void testGenericClass5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass5.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inheritors/GenericClass5.kt");
         }
 
         @TestMetadata("GenericClass6.kt")
         public void testGenericClass6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass6.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/inheritors/GenericClass6.kt");
         }
     }
 
@@ -1457,44 +1289,42 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LambdaSignature extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInLambdaSignature() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ExplicitParameterTypesRequired.kt")
         public void testExplicitParameterTypesRequired() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/ExplicitParameterTypesRequired.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/lambdaSignature/ExplicitParameterTypesRequired.kt");
         }
 
         @TestMetadata("Map.kt")
         public void testMap() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/Map.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/lambdaSignature/Map.kt");
         }
 
         @TestMetadata("MultipleParameters.kt")
         public void testMultipleParameters() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/MultipleParameters.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/lambdaSignature/MultipleParameters.kt");
         }
 
         @TestMetadata("NotAfterComma.kt")
         public void testNotAfterComma() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/NotAfterComma.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/lambdaSignature/NotAfterComma.kt");
         }
 
         @TestMetadata("NotInBody.kt")
         public void testNotInBody() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/NotInBody.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/lambdaSignature/NotInBody.kt");
         }
 
         @TestMetadata("SingleParameter.kt")
         public void testSingleParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/SingleParameter.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/lambdaSignature/SingleParameter.kt");
         }
     }
 
@@ -1502,70 +1332,63 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultipleArgsItem extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("1.kt")
         public void test1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/1.kt");
         }
 
         @TestMetadata("10.kt")
         public void test10() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/10.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/10.kt");
         }
 
         @TestMetadata("11.kt")
         public void test11() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/11.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/11.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/2.kt");
         }
 
         @TestMetadata("3.kt")
         public void test3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/3.kt");
         }
 
         @TestMetadata("4.kt")
         public void test4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/4.kt");
         }
 
         @TestMetadata("5.kt")
         public void test5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/5.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/5.kt");
         }
 
         @TestMetadata("6.kt")
         public void test6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/6.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/6.kt");
         }
 
         @TestMetadata("7.kt")
         public void test7() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/7.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/7.kt");
         }
 
         @TestMetadata("8.kt")
         public void test8() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/8.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/8.kt");
         }
 
         @TestMetadata("9.kt")
         public void test9() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/9.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/9.kt");
         }
 
         public void testAllFilesPresentInMultipleArgsItem() throws Exception {
@@ -1574,14 +1397,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         @TestMetadata("CallWithBrackets.kt")
         public void testCallWithBrackets() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/CallWithBrackets.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/CallWithBrackets.kt");
         }
 
         @TestMetadata("notFirstArgument.kt")
         public void testNotFirstArgument() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/multipleArgsItem/notFirstArgument.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/multipleArgsItem/notFirstArgument.kt");
         }
     }
 
@@ -1589,152 +1410,132 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PropertyDelegate extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInPropertyDelegate() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/propertyDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ConflictingSubstitutors.kt")
         public void testConflictingSubstitutors() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ConflictingSubstitutors.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ConflictingSubstitutors.kt");
         }
 
         @TestMetadata("DelegatesDot.kt")
         public void testDelegatesDot() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/DelegatesDot.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/DelegatesDot.kt");
         }
 
         @TestMetadata("DelegatesDotExplicitPropertyType.kt")
         public void testDelegatesDotExplicitPropertyType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/DelegatesDotExplicitPropertyType.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/DelegatesDotExplicitPropertyType.kt");
         }
 
         @TestMetadata("ExplicitValType.kt")
         public void testExplicitValType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExplicitValType.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ExplicitValType.kt");
         }
 
         @TestMetadata("ExplicitVarType.kt")
         public void testExplicitVarType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExplicitVarType.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ExplicitVarType.kt");
         }
 
         @TestMetadata("ExtensionSubstitution1.kt")
         public void testExtensionSubstitution1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution1.kt");
         }
 
         @TestMetadata("ExtensionSubstitution2.kt")
         public void testExtensionSubstitution2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution2.kt");
         }
 
         @TestMetadata("ExtensionSubstitution3.kt")
         public void testExtensionSubstitution3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution3.kt");
         }
 
         @TestMetadata("ExtensionSubstitution4.kt")
         public void testExtensionSubstitution4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ExtensionSubstitution4.kt");
         }
 
         @TestMetadata("ExtensionVal.kt")
         public void testExtensionVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionVal.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ExtensionVal.kt");
         }
 
         @TestMetadata("ExtensionVar.kt")
         public void testExtensionVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ExtensionVar.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ExtensionVar.kt");
         }
 
         @TestMetadata("GenericOperator.kt")
         public void testGenericOperator() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/GenericOperator.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/GenericOperator.kt");
         }
 
         @TestMetadata("GenericVal.kt")
         public void testGenericVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/GenericVal.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/GenericVal.kt");
         }
 
         @TestMetadata("GenericVar.kt")
         public void testGenericVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/GenericVar.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/GenericVar.kt");
         }
 
         @TestMetadata("NonConflictingSubstitutors.kt")
         public void testNonConflictingSubstitutors() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/NonConflictingSubstitutors.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/NonConflictingSubstitutors.kt");
         }
 
         @TestMetadata("Order.kt")
         public void testOrder() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/Order.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/Order.kt");
         }
 
         @TestMetadata("OverrideVal.kt")
         public void testOverrideVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/OverrideVal.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/OverrideVal.kt");
         }
 
         @TestMetadata("TopLevelVal.kt")
         public void testTopLevelVal() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/TopLevelVal.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/TopLevelVal.kt");
         }
 
         @TestMetadata("ValInClass.kt")
         public void testValInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInClass.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ValInClass.kt");
         }
 
         @TestMetadata("ValInGenericClass1.kt")
         public void testValInGenericClass1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass1.kt");
         }
 
         @TestMetadata("ValInGenericClass2.kt")
         public void testValInGenericClass2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass2.kt");
         }
 
         @TestMetadata("ValInGenericClass3.kt")
         public void testValInGenericClass3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/ValInGenericClass3.kt");
         }
 
         @TestMetadata("VarInClass.kt")
         public void testVarInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/VarInClass.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/VarInClass.kt");
         }
 
         @TestMetadata("VarInGenericClass.kt")
         public void testVarInGenericClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/propertyDelegate/VarInGenericClass.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/propertyDelegate/VarInGenericClass.kt");
         }
     }
 
@@ -1742,68 +1543,62 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SmartCasts extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInSmartCasts() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/smartCasts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AutoNotNullThisType.kt")
         public void testAutoNotNullThisType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/AutoNotNullThisType.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/AutoNotNullThisType.kt");
         }
 
         @TestMetadata("AutoNotNullType.kt")
         public void testAutoNotNullType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/AutoNotNullType.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/AutoNotNullType.kt");
         }
 
         @TestMetadata("AutoNotNullType2.kt")
         public void testAutoNotNullType2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/AutoNotNullType2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/AutoNotNullType2.kt");
         }
 
         @TestMetadata("AutoNotNullTypeForConstructorParameter.kt")
         public void testAutoNotNullTypeForConstructorParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/AutoNotNullTypeForConstructorParameter.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/AutoNotNullTypeForConstructorParameter.kt");
         }
 
         @TestMetadata("AutoNotNullTypeWithQualifier.kt")
         public void testAutoNotNullTypeWithQualifier() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/AutoNotNullTypeWithQualifier.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/AutoNotNullTypeWithQualifier.kt");
         }
 
         @TestMetadata("CheckCorrectThis.kt")
         public void testCheckCorrectThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/CheckCorrectThis.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/CheckCorrectThis.kt");
         }
 
         @TestMetadata("SmartCastThisType1.kt")
         public void testSmartCastThisType1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/SmartCastThisType1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/SmartCastThisType1.kt");
         }
 
         @TestMetadata("SmartCastThisType2.kt")
         public void testSmartCastThisType2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/SmartCastThisType2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/SmartCastThisType2.kt");
         }
 
         @TestMetadata("SmartCastType.kt")
         public void testSmartCastType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/SmartCastType.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/SmartCastType.kt");
         }
 
         @TestMetadata("SmartCastTypeWithQualifier.kt")
         public void testSmartCastTypeWithQualifier() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/smartCasts/SmartCastTypeWithQualifier.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/smartCasts/SmartCastTypeWithQualifier.kt");
         }
     }
 
@@ -1811,56 +1606,52 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class This extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInThis() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/this"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("NoQualifiedThisOfAnonymousObject.kt")
         public void testNoQualifiedThisOfAnonymousObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/this/NoQualifiedThisOfAnonymousObject.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/this/NoQualifiedThisOfAnonymousObject.kt");
         }
 
         @TestMetadata("NullableThis.kt")
         public void testNullableThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/this/NullableThis.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/this/NullableThis.kt");
         }
 
         @TestMetadata("QualifiedThis.kt")
         public void testQualifiedThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/this/QualifiedThis.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/this/QualifiedThis.kt");
         }
 
         @TestMetadata("QualifiedThisOfExtensionFunction.kt")
         public void testQualifiedThisOfExtensionFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/this/QualifiedThisOfExtensionFunction.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/this/QualifiedThisOfExtensionFunction.kt");
         }
 
         @TestMetadata("QualifiedThisOfExtensionLambda1.kt")
         public void testQualifiedThisOfExtensionLambda1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/this/QualifiedThisOfExtensionLambda1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/this/QualifiedThisOfExtensionLambda1.kt");
         }
 
         @TestMetadata("QualifiedThisOfExtensionLambda2.kt")
         public void testQualifiedThisOfExtensionLambda2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/this/QualifiedThisOfExtensionLambda2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/this/QualifiedThisOfExtensionLambda2.kt");
         }
 
         @TestMetadata("QualifiedThisOfExtensionLambda3.kt")
         public void testQualifiedThisOfExtensionLambda3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/this/QualifiedThisOfExtensionLambda3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/this/QualifiedThisOfExtensionLambda3.kt");
         }
 
         @TestMetadata("This.kt")
         public void testThis() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/this/This.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/this/This.kt");
         }
     }
 
@@ -1868,34 +1659,33 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Vararg extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("1.kt")
         public void test1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/vararg/1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/vararg/1.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/vararg/2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/vararg/2.kt");
         }
 
         @TestMetadata("3.kt")
         public void test3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/vararg/3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/vararg/3.kt");
         }
 
         @TestMetadata("4.kt")
         public void test4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/vararg/4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/vararg/4.kt");
         }
 
         @TestMetadata("AfterStar.kt")
         public void testAfterStar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/vararg/AfterStar.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/vararg/AfterStar.kt");
         }
 
         public void testAllFilesPresentInVararg() throws Exception {
@@ -1904,14 +1694,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         @TestMetadata("NamedArgumentAfterStar.kt")
         public void testNamedArgumentAfterStar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/vararg/NamedArgumentAfterStar.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/vararg/NamedArgumentAfterStar.kt");
         }
 
         @TestMetadata("SecondVararg.kt")
         public void testSecondVararg() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/vararg/SecondVararg.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/vararg/SecondVararg.kt");
         }
     }
 
@@ -1919,58 +1707,53 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WhenEntry extends AbstractJvmSmartCompletionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("1.kt")
         public void test1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/1.kt");
         }
 
         @TestMetadata("2.kt")
         public void test2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/2.kt");
         }
 
         @TestMetadata("3.kt")
         public void test3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/3.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/3.kt");
         }
 
         @TestMetadata("4.kt")
         public void test4() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/4.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/4.kt");
         }
 
         @TestMetadata("5.kt")
         public void test5() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/5.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/5.kt");
         }
 
         @TestMetadata("6.kt")
         public void test6() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/6.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/6.kt");
         }
 
         @TestMetadata("7.kt")
         public void test7() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/7.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/7.kt");
         }
 
         @TestMetadata("8.kt")
         public void test8() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/8.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/8.kt");
         }
 
         @TestMetadata("9.kt")
         public void test9() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/9.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/9.kt");
         }
 
         public void testAllFilesPresentInWhenEntry() throws Exception {
@@ -1979,20 +1762,17 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
 
         @TestMetadata("WhenWithNoSubject1.kt")
         public void testWhenWithNoSubject1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/WhenWithNoSubject1.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/WhenWithNoSubject1.kt");
         }
 
         @TestMetadata("WhenWithNoSubject2.kt")
         public void testWhenWithNoSubject2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/WhenWithNoSubject2.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/WhenWithNoSubject2.kt");
         }
 
         @TestMetadata("WhenWithSubjectTrueFalse.kt")
         public void testWhenWithSubjectTrueFalse() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/whenEntry/WhenWithSubjectTrueFalse.kt");
-            doTest(fileName);
+            runTest("idea/idea-completion/testData/smart/whenEntry/WhenWithSubjectTrueFalse.kt");
         }
     }
 }

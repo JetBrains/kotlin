@@ -23,80 +23,72 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Tests extends AbstractJavacFieldResolutionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInTests() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AsteriskStaticImportsAmbiguity.kt")
         public void testAsteriskStaticImportsAmbiguity() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/AsteriskStaticImportsAmbiguity.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/AsteriskStaticImportsAmbiguity.kt");
         }
 
         @TestMetadata("BinaryInitializers.kt")
         public void testBinaryInitializers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/BinaryInitializers.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/BinaryInitializers.kt");
         }
 
         @TestMetadata("ConstantByFqName.kt")
         public void testConstantByFqName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantByFqName.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/ConstantByFqName.kt");
         }
 
         @TestMetadata("ConstantValues.kt")
         public void testConstantValues() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantValues.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/ConstantValues.kt");
         }
 
         @TestMetadata("ConstantValuesFromKtFile.kt")
         public void testConstantValuesFromKtFile() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantValuesFromKtFile.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/ConstantValuesFromKtFile.kt");
         }
 
         @TestMetadata("FieldFromOuterClass.kt")
         public void testFieldFromOuterClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/FieldFromOuterClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/FieldFromOuterClass.kt");
         }
 
         @TestMetadata("InheritedField.kt")
         public void testInheritedField() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/InheritedField.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/InheritedField.kt");
         }
 
         @TestMetadata("MultipleOuters.kt")
         public void testMultipleOuters() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/MultipleOuters.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/MultipleOuters.kt");
         }
 
         @TestMetadata("ResolutionPriority.kt")
         public void testResolutionPriority() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ResolutionPriority.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/ResolutionPriority.kt");
         }
 
         @TestMetadata("SameFieldInSupertypes.kt")
         public void testSameFieldInSupertypes() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/SameFieldInSupertypes.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/SameFieldInSupertypes.kt");
         }
 
         @TestMetadata("StaticImport.kt")
         public void testStaticImport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/StaticImport.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/StaticImport.kt");
         }
 
         @TestMetadata("StaticImportsAmbiguity.kt")
         public void testStaticImportsAmbiguity() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/StaticImportsAmbiguity.kt");
-            doTest(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/StaticImportsAmbiguity.kt");
         }
     }
 
@@ -104,80 +96,72 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TestsWithoutJavac extends AbstractJavacFieldResolutionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithoutJavacWrapper, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInTestsWithoutJavac() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AsteriskStaticImportsAmbiguity.kt")
         public void testAsteriskStaticImportsAmbiguity() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/AsteriskStaticImportsAmbiguity.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/AsteriskStaticImportsAmbiguity.kt");
         }
 
         @TestMetadata("BinaryInitializers.kt")
         public void testBinaryInitializers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/BinaryInitializers.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/BinaryInitializers.kt");
         }
 
         @TestMetadata("ConstantByFqName.kt")
         public void testConstantByFqName() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantByFqName.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/ConstantByFqName.kt");
         }
 
         @TestMetadata("ConstantValues.kt")
         public void testConstantValues() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantValues.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/ConstantValues.kt");
         }
 
         @TestMetadata("ConstantValuesFromKtFile.kt")
         public void testConstantValuesFromKtFile() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ConstantValuesFromKtFile.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/ConstantValuesFromKtFile.kt");
         }
 
         @TestMetadata("FieldFromOuterClass.kt")
         public void testFieldFromOuterClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/FieldFromOuterClass.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/FieldFromOuterClass.kt");
         }
 
         @TestMetadata("InheritedField.kt")
         public void testInheritedField() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/InheritedField.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/InheritedField.kt");
         }
 
         @TestMetadata("MultipleOuters.kt")
         public void testMultipleOuters() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/MultipleOuters.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/MultipleOuters.kt");
         }
 
         @TestMetadata("ResolutionPriority.kt")
         public void testResolutionPriority() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/ResolutionPriority.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/ResolutionPriority.kt");
         }
 
         @TestMetadata("SameFieldInSupertypes.kt")
         public void testSameFieldInSupertypes() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/SameFieldInSupertypes.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/SameFieldInSupertypes.kt");
         }
 
         @TestMetadata("StaticImport.kt")
         public void testStaticImport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/StaticImport.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/StaticImport.kt");
         }
 
         @TestMetadata("StaticImportsAmbiguity.kt")
         public void testStaticImportsAmbiguity() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/javac/fieldsResolution/tests/StaticImportsAmbiguity.kt");
-            doTestWithoutJavacWrapper(fileName);
+            runTest("compiler/testData/javac/fieldsResolution/tests/StaticImportsAmbiguity.kt");
         }
     }
 }

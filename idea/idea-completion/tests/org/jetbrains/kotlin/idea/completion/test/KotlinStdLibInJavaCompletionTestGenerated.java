@@ -21,13 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinStdLibInJavaCompletionTestGenerated extends AbstractKotlinStdLibInJavaCompletionTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInStdlib() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/injava/stdlib"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("List.java")
     public void testList() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/injava/stdlib/List.java");
-        doTest(fileName);
+        runTest("idea/idea-completion/testData/injava/stdlib/List.java");
     }
 }

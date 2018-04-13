@@ -23,182 +23,157 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Type extends AbstractHierarchyTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTypeClassHierarchyTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInType() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/type"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("CaretAtAnnotation")
         public void testCaretAtAnnotation() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtAnnotation/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtAnnotation/");
         }
 
         @TestMetadata("CaretAtConstructor")
         public void testCaretAtConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtConstructor/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtConstructor/");
         }
 
         @TestMetadata("CaretAtFabricMethod")
         public void testCaretAtFabricMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtFabricMethod/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtFabricMethod/");
         }
 
         @TestMetadata("CaretAtImport")
         public void testCaretAtImport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtImport/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtImport/");
         }
 
         @TestMetadata("CaretAtJavaType")
         public void testCaretAtJavaType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtJavaType/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtJavaType/");
         }
 
         @TestMetadata("CaretAtModifierList")
         public void testCaretAtModifierList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtModifierList/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtModifierList/");
         }
 
         @TestMetadata("CaretAtReceiverExtFun")
         public void testCaretAtReceiverExtFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtReceiverExtFun/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtReceiverExtFun/");
         }
 
         @TestMetadata("CaretAtSuperCall")
         public void testCaretAtSuperCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtSuperCall/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtSuperCall/");
         }
 
         @TestMetadata("CaretAtSuperTypeCallEntry")
         public void testCaretAtSuperTypeCallEntry() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtSuperTypeCallEntry/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtSuperTypeCallEntry/");
         }
 
         @TestMetadata("CaretAtSupertypesList")
         public void testCaretAtSupertypesList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtSupertypesList/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtSupertypesList/");
         }
 
         @TestMetadata("CaretAtTypeReference")
         public void testCaretAtTypeReference() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretAtTypeReference/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretAtTypeReference/");
         }
 
         @TestMetadata("CaretInClassBody")
         public void testCaretInClassBody() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/CaretInClassBody/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/CaretInClassBody/");
         }
 
         @TestMetadata("ClassFromClass")
         public void testClassFromClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/ClassFromClass/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/ClassFromClass/");
         }
 
         @TestMetadata("ClassFromObject")
         public void testClassFromObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/ClassFromObject/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/ClassFromObject/");
         }
 
         @TestMetadata("ClassInClassObject")
         public void testClassInClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/ClassInClassObject/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/ClassInClassObject/");
         }
 
         @TestMetadata("ClassInPackage")
         public void testClassInPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/ClassInPackage/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/ClassInPackage/");
         }
 
         @TestMetadata("InnerClass")
         public void testInnerClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/InnerClass/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/InnerClass/");
         }
 
         @TestMetadata("JKJHierarchy")
         public void testJKJHierarchy() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/JKJHierarchy/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/JKJHierarchy/");
         }
 
         @TestMetadata("JavaFromKotlin")
         public void testJavaFromKotlin() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/JavaFromKotlin/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/JavaFromKotlin/");
         }
 
         @TestMetadata("JavaFromKotlinByRef")
         public void testJavaFromKotlinByRef() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/JavaFromKotlinByRef/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/JavaFromKotlinByRef/");
         }
 
         @TestMetadata("JavaFromKotlinForKotlinClass")
         public void testJavaFromKotlinForKotlinClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/JavaFromKotlinForKotlinClass/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/JavaFromKotlinForKotlinClass/");
         }
 
         @TestMetadata("JavaStyleClassLiteralInvalidCode")
         public void testJavaStyleClassLiteralInvalidCode() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/JavaStyleClassLiteralInvalidCode/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/JavaStyleClassLiteralInvalidCode/");
         }
 
         @TestMetadata("JetInt")
         public void testJetInt() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/JetInt/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/JetInt/");
         }
 
         @TestMetadata("KJKHierarchy")
         public void testKJKHierarchy() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/KJKHierarchy/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/KJKHierarchy/");
         }
 
         @TestMetadata("KotlinFromJava")
         public void testKotlinFromJava() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/KotlinFromJava/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/KotlinFromJava/");
         }
 
         @TestMetadata("KotlinFromJavaByRef")
         public void testKotlinFromJavaByRef() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/KotlinFromJavaByRef/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/KotlinFromJavaByRef/");
         }
 
         @TestMetadata("KotlinFromKotlinByRef")
         public void testKotlinFromKotlinByRef() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/KotlinFromKotlinByRef/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/KotlinFromKotlinByRef/");
         }
 
         @TestMetadata("Object")
         public void testObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/Object/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/Object/");
         }
 
         @TestMetadata("TwoChildren")
         public void testTwoChildren() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/type/TwoChildren/");
-            doTypeClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/type/TwoChildren/");
         }
     }
 
@@ -206,32 +181,32 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Super extends AbstractHierarchyTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doSuperClassHierarchyTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInSuper() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/super"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("JetList")
         public void testJetList() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/super/JetList/");
-            doSuperClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/super/JetList/");
         }
 
         @TestMetadata("MultiTypeAlias")
         public void testMultiTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/super/MultiTypeAlias/");
-            doSuperClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/super/MultiTypeAlias/");
         }
 
         @TestMetadata("TwoTraits")
         public void testTwoTraits() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/super/TwoTraits/");
-            doSuperClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/super/TwoTraits/");
         }
 
         @TestMetadata("TypeAlias")
         public void testTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/super/TypeAlias/");
-            doSuperClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/super/TypeAlias/");
         }
     }
 
@@ -239,92 +214,82 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Sub extends AbstractHierarchyTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doSubClassHierarchyTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInSub() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/sub"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("AllFromClass")
         public void testAllFromClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/AllFromClass/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/AllFromClass/");
         }
 
         @TestMetadata("AllFromTrait")
         public void testAllFromTrait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/AllFromTrait/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/AllFromTrait/");
         }
 
         @TestMetadata("ClassFromClass")
         public void testClassFromClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ClassFromClass/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/ClassFromClass/");
         }
 
         @TestMetadata("ClassFromTrait")
         public void testClassFromTrait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ClassFromTrait/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/ClassFromTrait/");
         }
 
         @TestMetadata("ConstructorCallCaretAfter")
         public void testConstructorCallCaretAfter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ConstructorCallCaretAfter/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/ConstructorCallCaretAfter/");
         }
 
         @TestMetadata("ConstructorCallCaretBefore")
         public void testConstructorCallCaretBefore() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ConstructorCallCaretBefore/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/ConstructorCallCaretBefore/");
         }
 
         @TestMetadata("MultiTypeAlias")
         public void testMultiTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/MultiTypeAlias/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/MultiTypeAlias/");
         }
 
         @TestMetadata("ObjectFromClass")
         public void testObjectFromClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ObjectFromClass/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/ObjectFromClass/");
         }
 
         @TestMetadata("ObjectFromTrait")
         public void testObjectFromTrait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ObjectFromTrait/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/ObjectFromTrait/");
         }
 
         @TestMetadata("SecondaryConstructorCallCaretAfter")
         public void testSecondaryConstructorCallCaretAfter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/SecondaryConstructorCallCaretAfter/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/SecondaryConstructorCallCaretAfter/");
         }
 
         @TestMetadata("SecondaryConstructorCallCaretBefore")
         public void testSecondaryConstructorCallCaretBefore() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/SecondaryConstructorCallCaretBefore/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/SecondaryConstructorCallCaretBefore/");
         }
 
         @TestMetadata("TraitFromClass")
         public void testTraitFromClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/TraitFromClass/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/TraitFromClass/");
         }
 
         @TestMetadata("TraitFromTrait")
         public void testTraitFromTrait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/TraitFromTrait/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/TraitFromTrait/");
         }
 
         @TestMetadata("TypeAlias")
         public void testTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/TypeAlias/");
-            doSubClassHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/class/sub/TypeAlias/");
         }
     }
 
@@ -332,134 +297,117 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Callers extends AbstractHierarchyTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doCallerHierarchyTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCallers() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callers"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("callInsideAnonymousFun")
         public void testCallInsideAnonymousFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/callInsideAnonymousFun/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/callInsideAnonymousFun/");
         }
 
         @TestMetadata("callInsideLambda")
         public void testCallInsideLambda() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/callInsideLambda/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/callInsideLambda/");
         }
 
         @TestMetadata("kotlinClass")
         public void testKotlinClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinClass/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinClass/");
         }
 
         @TestMetadata("kotlinFunction")
         public void testKotlinFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinFunction/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinFunction/");
         }
 
         @TestMetadata("kotlinFunctionNonCallUsages")
         public void testKotlinFunctionNonCallUsages() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinFunctionNonCallUsages/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinFunctionNonCallUsages/");
         }
 
         @TestMetadata("kotlinInterface")
         public void testKotlinInterface() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinInterface/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinInterface/");
         }
 
         @TestMetadata("kotlinLocalClass")
         public void testKotlinLocalClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinLocalClass/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinLocalClass/");
         }
 
         @TestMetadata("kotlinLocalFunction")
         public void testKotlinLocalFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinLocalFunction/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinLocalFunction/");
         }
 
         @TestMetadata("kotlinLocalFunctionWithNonLocalCallers")
         public void testKotlinLocalFunctionWithNonLocalCallers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinLocalFunctionWithNonLocalCallers/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinLocalFunctionWithNonLocalCallers/");
         }
 
         @TestMetadata("kotlinNestedClass")
         public void testKotlinNestedClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinNestedClass/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinNestedClass/");
         }
 
         @TestMetadata("kotlinNestedInnerClass")
         public void testKotlinNestedInnerClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinNestedInnerClass/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinNestedInnerClass/");
         }
 
         @TestMetadata("kotlinPackageFunction")
         public void testKotlinPackageFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinPackageFunction/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinPackageFunction/");
         }
 
         @TestMetadata("kotlinPackageProperty")
         public void testKotlinPackageProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinPackageProperty/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinPackageProperty/");
         }
 
         @TestMetadata("kotlinPrimaryConstructorImplicitCalls")
         public void testKotlinPrimaryConstructorImplicitCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinPrimaryConstructorImplicitCalls/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinPrimaryConstructorImplicitCalls/");
         }
 
         @TestMetadata("kotlinPrivateClass")
         public void testKotlinPrivateClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinPrivateClass/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinPrivateClass/");
         }
 
         @TestMetadata("kotlinPrivateFunction")
         public void testKotlinPrivateFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinPrivateFunction/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinPrivateFunction/");
         }
 
         @TestMetadata("kotlinPrivateProperty")
         public void testKotlinPrivateProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinPrivateProperty/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinPrivateProperty/");
         }
 
         @TestMetadata("kotlinProperty")
         public void testKotlinProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinProperty/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinProperty/");
         }
 
         @TestMetadata("kotlinSecondaryConstructor")
         public void testKotlinSecondaryConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinSecondaryConstructor/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinSecondaryConstructor/");
         }
 
         @TestMetadata("kotlinSecondaryConstructorImplicitCalls")
         public void testKotlinSecondaryConstructorImplicitCalls() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinSecondaryConstructorImplicitCalls/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinSecondaryConstructorImplicitCalls/");
         }
 
         @TestMetadata("kotlinUnresolvedFunction")
         public void testKotlinUnresolvedFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinUnresolvedFunction/");
-            doCallerHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callers/kotlinUnresolvedFunction/");
         }
     }
 
@@ -467,14 +415,17 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallersJava extends AbstractHierarchyTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doCallerJavaHierarchyTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCallersJava() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callersJava"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("javaMethod")
         public void testJavaMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callersJava/javaMethod/");
-            doCallerJavaHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callersJava/javaMethod/");
         }
     }
 
@@ -482,86 +433,77 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Callees extends AbstractHierarchyTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doCalleeHierarchyTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCallees() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callees"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("kotlinAnonymousObject")
         public void testKotlinAnonymousObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinAnonymousObject/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinAnonymousObject/");
         }
 
         @TestMetadata("kotlinClass")
         public void testKotlinClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinClass/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinClass/");
         }
 
         @TestMetadata("kotlinClassObject")
         public void testKotlinClassObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinClassObject/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinClassObject/");
         }
 
         @TestMetadata("kotlinEnumClass")
         public void testKotlinEnumClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinEnumClass/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinEnumClass/");
         }
 
         @TestMetadata("kotlinFunction")
         public void testKotlinFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinFunction/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinFunction/");
         }
 
         @TestMetadata("kotlinInterface")
         public void testKotlinInterface() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinInterface/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinInterface/");
         }
 
         @TestMetadata("kotlinLocalClass")
         public void testKotlinLocalClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinLocalClass/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinLocalClass/");
         }
 
         @TestMetadata("kotlinLocalFunction")
         public void testKotlinLocalFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinLocalFunction/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinLocalFunction/");
         }
 
         @TestMetadata("kotlinNestedClass")
         public void testKotlinNestedClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinNestedClass/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinNestedClass/");
         }
 
         @TestMetadata("kotlinObject")
         public void testKotlinObject() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinObject/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinObject/");
         }
 
         @TestMetadata("kotlinPackageFunction")
         public void testKotlinPackageFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinPackageFunction/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinPackageFunction/");
         }
 
         @TestMetadata("kotlinPackageProperty")
         public void testKotlinPackageProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinPackageProperty/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinPackageProperty/");
         }
 
         @TestMetadata("kotlinProperty")
         public void testKotlinProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinProperty/");
-            doCalleeHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/calls/callees/kotlinProperty/");
         }
     }
 
@@ -569,50 +511,47 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Overrides extends AbstractHierarchyTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doOverrideHierarchyTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInOverrides() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/overrides"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
         @TestMetadata("kotlinBuiltInMemberFunction")
         public void testKotlinBuiltInMemberFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinBuiltInMemberFunction/");
-            doOverrideHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/overrides/kotlinBuiltInMemberFunction/");
         }
 
         @TestMetadata("kotlinFunctionInClass")
         public void testKotlinFunctionInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinFunctionInClass/");
-            doOverrideHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/overrides/kotlinFunctionInClass/");
         }
 
         @TestMetadata("kotlinFunctionInTrait")
         public void testKotlinFunctionInTrait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinFunctionInTrait/");
-            doOverrideHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/overrides/kotlinFunctionInTrait/");
         }
 
         @TestMetadata("kotlinPropertyInClass")
         public void testKotlinPropertyInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinPropertyInClass/");
-            doOverrideHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/overrides/kotlinPropertyInClass/");
         }
 
         @TestMetadata("kotlinPropertyInTrait")
         public void testKotlinPropertyInTrait() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinPropertyInTrait/");
-            doOverrideHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/overrides/kotlinPropertyInTrait/");
         }
 
         @TestMetadata("kotlinTopLevelFunction")
         public void testKotlinTopLevelFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinTopLevelFunction/");
-            doOverrideHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/overrides/kotlinTopLevelFunction/");
         }
 
         @TestMetadata("kotlinVarParameter")
         public void testKotlinVarParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/kotlinVarParameter/");
-            doOverrideHierarchyTest(fileName);
+            runTest("idea/testData/hierarchy/overrides/kotlinVarParameter/");
         }
     }
 }

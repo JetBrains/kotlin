@@ -21,13 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinCoverageOutputFilesTestGenerated extends AbstractKotlinCoverageOutputFilesTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInOutputFiles() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/coverage/outputFiles"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("NotInlinedLambda.kt")
     public void testNotInlinedLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/coverage/outputFiles/NotInlinedLambda.kt");
-        doTest(fileName);
+        runTest("idea/testData/coverage/outputFiles/NotInlinedLambda.kt");
     }
 }
