@@ -10,10 +10,12 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.lower.IntrinsicifyBuiltinOperationsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.FunctionInlining
 import org.jetbrains.kotlin.ir.backend.js.lower.SecondaryCtorLowering
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -44,6 +46,10 @@ fun compile(
     )
 
     ExternalDependenciesGenerator(psi2IrContext.symbolTable, psi2IrContext.irBuiltIns).generateUnboundSymbolsAsDependencies(moduleFragment)
+
+    println(moduleFragment.dump())
+    FunctionInlining(context).inline(moduleFragment)
+    println(moduleFragment.dump())
 
     moduleFragment.files.forEach { context.lower(it) }
     val transformer = SecondaryCtorLowering.CallsiteRedirectionTransformer(context)

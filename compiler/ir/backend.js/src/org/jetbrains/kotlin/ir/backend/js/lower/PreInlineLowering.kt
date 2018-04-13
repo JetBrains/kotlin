@@ -18,27 +18,27 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
  * This pass runs before inlining and performs the following additional transformations over some operations:
  *     - Assertion call removal.
  */
-internal class PreInlineLowering(val context: Context) : FileLoweringPass {
-
-    private val symbols get() = context.ir.symbols
-
-    private val asserts = symbols.asserts
-    private val enableAssertions = context.config.configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
-
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
-
-            override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid(this)
-
-                // Replace assert() call with an empty composite if assertions are not enabled.
-                if (!enableAssertions && expression.symbol in asserts) {
-                    assert(expression.type.isUnit())
-                    return IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type)
-                }
-
-                return expression
-            }
-        })
-    }
-}
+//internal class PreInlineLowering(val context: Context) : FileLoweringPass {
+//
+//    private val symbols get() = context.ir.symbols
+//
+//    private val asserts = symbols.asserts
+//    private val enableAssertions = context.config.configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
+//
+//    override fun lower(irFile: IrFile) {
+//        irFile.transformChildrenVoid(object : IrBuildingTransformer(context) {
+//
+//            override fun visitCall(expression: IrCall): IrExpression {
+//                expression.transformChildrenVoid(this)
+//
+//                // Replace assert() call with an empty composite if assertions are not enabled.
+//                if (!enableAssertions && expression.symbol in asserts) {
+//                    assert(expression.type.isUnit())
+//                    return IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type)
+//                }
+//
+//                return expression
+//            }
+//        })
+//    }
+//}
