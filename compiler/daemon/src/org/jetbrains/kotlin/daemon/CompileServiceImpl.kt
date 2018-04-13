@@ -49,9 +49,9 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapte
 import org.jetbrains.kotlin.daemon.report.RemoteICReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
-import org.jetbrains.kotlin.parsing.util.classesFqNames
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream

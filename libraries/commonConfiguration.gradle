@@ -217,15 +217,3 @@ ext.configurePublishing = { Project project ->
     }
 
 }
-
-ext.createPreprocessorTask = { Project project, def name, def sourceDir, def targetDir, def profile = "JS" ->
-    return project.tasks.create("preprocessSources$name", JavaExec) {
-//        dependsOn(rootProject.prepareBootstrap)
-        inputs.dir(sourceDir)
-        outputs.dir(targetDir)
-        classpath = rootProject.configurations.bootstrapCompile
-//        classpath = project.files(bootstrapCompilerFile)
-        main = "org.jetbrains.kotlin.preprocessor.PreprocessorCLI"
-        args = [sourceDir, targetDir, profile]
-    }
-}

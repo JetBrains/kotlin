@@ -19,6 +19,7 @@
 
 package kotlin.collections
 
+import kotlin.*
 import kotlin.comparisons.compareValues
 
 internal object EmptyIterator : ListIterator<Nothing> {

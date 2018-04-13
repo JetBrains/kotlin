@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.CollectionStub
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeCheckerImpl
@@ -309,8 +310,16 @@ class CollectionStubMethodGenerator(
     }
 
     private fun createSyntheticSubclass(): Pair<MutableClassDescriptor, List<TypeParameterDescriptor>> {
-        val child = MutableClassDescriptor(descriptor.containingDeclaration, ClassKind.CLASS, /* isInner = */ false,
-                /* isExternal */ false, Name.special("<synthetic inheritor of ${descriptor.name}>"), descriptor.source)
+        val child = MutableClassDescriptor(
+            descriptor.containingDeclaration,
+            ClassKind.CLASS,
+            /* isInner = */ false,
+            /* isExternal */ false,
+            Name.special("<synthetic inheritor of ${descriptor.name}>"),
+            descriptor.source,
+            LockBasedStorageManager.NO_LOCKS
+        )
+
         child.modality = Modality.FINAL
         child.visibility = Visibilities.PUBLIC
         val typeParameters = descriptor.typeConstructor.parameters

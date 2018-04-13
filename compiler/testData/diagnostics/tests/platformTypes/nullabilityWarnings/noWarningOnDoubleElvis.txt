@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ T> nullable(): T?
+public fun take(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun test(): kotlin.Unit

@@ -4,33 +4,33 @@ package kotlin
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-public fun Double.isNaN(): Boolean = this != this
+public actual fun Double.isNaN(): Boolean = this != this
 
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-public fun Float.isNaN(): Boolean = this != this
+public actual fun Float.isNaN(): Boolean = this != this
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-public fun Double.isInfinite(): Boolean = this == Double.POSITIVE_INFINITY || this == Double.NEGATIVE_INFINITY
+public actual fun Double.isInfinite(): Boolean = this == Double.POSITIVE_INFINITY || this == Double.NEGATIVE_INFINITY
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-public fun Float.isInfinite(): Boolean = this == Float.POSITIVE_INFINITY || this == Float.NEGATIVE_INFINITY
+public actual fun Float.isInfinite(): Boolean = this == Float.POSITIVE_INFINITY || this == Float.NEGATIVE_INFINITY
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-public fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-public fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]
@@ -38,7 +38,7 @@ public fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
  */
 @SinceKotlin("1.2")
 @library("doubleToBits")
-public fun Double.toBits(): Long = definedExternally
+public actual fun Double.toBits(): Long = definedExternally
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]
@@ -47,14 +47,14 @@ public fun Double.toBits(): Long = definedExternally
  */
 @SinceKotlin("1.2")
 @library("doubleToRawBits")
-public fun Double.toRawBits(): Long = definedExternally
+public actual fun Double.toRawBits(): Long = definedExternally
 
 /**
  * Returns the [Double] value corresponding to a given bit representation.
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
-public inline fun Double.Companion.fromBits(bits: Long): Double = js("Kotlin").doubleFromBits(bits).unsafeCast<Double>()
+public actual inline fun Double.Companion.fromBits(bits: Long): Double = js("Kotlin").doubleFromBits(bits).unsafeCast<Double>()
 
 /**
  * Returns a bit representation of the specified floating-point value as [Int]
@@ -65,7 +65,7 @@ public inline fun Double.Companion.fromBits(bits: Long): Double = js("Kotlin").d
  */
 @SinceKotlin("1.2")
 @library("floatToBits")
-public fun Float.toBits(): Int = definedExternally
+public actual fun Float.toBits(): Int = definedExternally
 
 /**
  * Returns a bit representation of the specified floating-point value as [Int]
@@ -77,11 +77,11 @@ public fun Float.toBits(): Int = definedExternally
  */
 @SinceKotlin("1.2")
 @library("floatToRawBits")
-public fun Float.toRawBits(): Int = definedExternally
+public actual fun Float.toRawBits(): Int = definedExternally
 
 /**
  * Returns the [Float] value corresponding to a given bit representation.
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
-public inline fun Float.Companion.fromBits(bits: Int): Float = js("Kotlin").floatFromBits(bits).unsafeCast<Float>()
+public actual inline fun Float.Companion.fromBits(bits: Int): Float = js("Kotlin").floatFromBits(bits).unsafeCast<Float>()

@@ -17,4 +17,4 @@
 package kotlin.io
 
 // temporary for shared code, until we have an annotation like JvmSerializable
-internal interface Serializable
+internal actual interface Serializable

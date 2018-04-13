@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 
 class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSettings: LanguageVersionSettings) {
@@ -49,7 +50,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSetti
             classKind: ClassKind = ClassKind.CLASS
     ): ClassDescriptor =
             MutableClassDescriptor(packageFragment, classKind, /* isInner = */ false, /* isExternal = */ false,
-                                   Name.identifier(name), SourceElement.NO_SOURCE).apply {
+                                   Name.identifier(name), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS).apply {
                 modality = Modality.FINAL
                 visibility = Visibilities.PUBLIC
                 setTypeParameterDescriptors(emptyList())

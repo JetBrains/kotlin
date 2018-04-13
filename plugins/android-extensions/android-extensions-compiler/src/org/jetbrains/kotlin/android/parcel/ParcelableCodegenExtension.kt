@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -288,7 +289,7 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
 
         val creatorClass = ClassDescriptorImpl(
                 parcelableClass, Name.identifier("Creator"), Modality.FINAL, ClassKind.CLASS, emptyList(),
-                parcelableClass.source, false)
+                parcelableClass.source, false, LockBasedStorageManager.NO_LOCKS)
 
         creatorClass.initialize(
                 MemberScope.Empty, emptySet(),

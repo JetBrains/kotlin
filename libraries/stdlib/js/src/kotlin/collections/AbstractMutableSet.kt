@@ -20,7 +20,7 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the set. The set is invariant on its element type.
  */
-public abstract class AbstractMutableSet<E> protected constructor() : AbstractMutableCollection<E>(), MutableSet<E> {
+public actual abstract class AbstractMutableSet<E> protected actual constructor() : AbstractMutableCollection<E>(), MutableSet<E> {
 
     /**
      * Compares this set with another set instance with the unordered structural equality.

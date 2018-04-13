@@ -24,6 +24,8 @@ sourceSets {
         kotlin {
             srcDir 'test'
             if(!System.properties.'idea.active') {
+                srcDir '../jvm/test'
+                srcDir '../common/test'
                 srcDir '../test'
                 srcDir '../jdk7/test'
             }
@@ -67,7 +69,7 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
 }
 
 compileJava9Sources(project, 'kotlin.stdlib.jdk8')
