@@ -2,7 +2,11 @@ FILE: typeParameterVsNested.kt
     public? abstract interface Some {
     }
     <T : Some> public? abstract class My {
+        public? constructor(): super<kotlin.Any>()
+
         public? final inner class T {
+            public? constructor(): super<kotlin.Any>()
+
         }
 
         public? abstract property x(val): T
@@ -17,6 +21,8 @@ FILE: typeParameterVsNested.kt
             public? get(): test.My.T
 
         public? final class Some : T {
+            public? constructor(): super<T>()
+
         }
 
     }

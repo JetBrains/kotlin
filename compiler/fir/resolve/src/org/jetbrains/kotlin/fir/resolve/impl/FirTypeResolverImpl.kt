@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 class FirTypeResolverImpl : FirTypeResolver {
@@ -56,7 +57,9 @@ class FirTypeResolverImpl : FirTypeResolver {
         }
     }
 
-    private val implicitUnitTypeSymbols = mutableMapOf<FirSession, ConeSymbol>()
+    private data class NameInSession(val session: FirSession, val name: Name)
+
+    private val implicitBuiltinTypeSymbols = mutableMapOf<NameInSession, ConeSymbol>()
 
     override fun resolveToSymbol(
         type: FirType,
@@ -91,14 +94,17 @@ class FirTypeResolverImpl : FirTypeResolver {
                 // TODO: Imports
                 resolvedSymbol ?: qualifierResolver.resolveSymbol(type.qualifier)
             }
-            is FirImplicitUnitType -> implicitUnitTypeSymbols[type.session] ?: run {
-                var resolvedSymbol: ConeSymbol? = null
-                scope.processClassifiersByName(KotlinBuiltIns.FQ_NAMES.unit.shortName(), position) {
-                    resolvedSymbol = (it as ConeClassLikeSymbol)
-                    resolvedSymbol == null
+            is FirImplicitBuiltinType -> {
+                val nameInSession = NameInSession(type.session, type.name)
+                implicitBuiltinTypeSymbols[nameInSession] ?: run {
+                    var resolvedSymbol: ConeSymbol? = null
+                    scope.processClassifiersByName(type.name, position) {
+                        resolvedSymbol = (it as ConeClassLikeSymbol)
+                        resolvedSymbol == null
+                    }
+                    implicitBuiltinTypeSymbols[nameInSession] = resolvedSymbol!!
+                    resolvedSymbol
                 }
-                implicitUnitTypeSymbols[type.session] = resolvedSymbol!!
-                resolvedSymbol
             }
             else -> null
         }
@@ -129,7 +135,7 @@ class FirTypeResolverImpl : FirTypeResolver {
                     type.returnType.coneTypeUnsafe()
                 )
             }
-            is FirImplicitUnitType -> {
+            is FirImplicitBuiltinType -> {
                 resolveToSymbol(type, scope, position)!!.toConeKotlinType(emptyList())!!
             }
             is FirDynamicType, is FirImplicitType, is FirDelegatedType -> {

@@ -5,6 +5,8 @@ FILE: genericFunctions.kt
         STUB
     }
     public? abstract class Summator {
+        public? constructor(): super<kotlin.Any>()
+
         <T> public? abstract function plus(first: T, second: T): T
 
     }

@@ -2,16 +2,22 @@ FILE: enums2.kt
     public? abstract interface Some {
     }
     public? final object O1 : Some {
+        public? constructor(): super<kotlin.Any>()
+
     }
     public? final object O2 : Some {
+        public? constructor(): super<kotlin.Any>()
+
     }
     public? final enum class SomeEnum {
-        public? constructor(x: Some)
+        public? constructor(x: Some): super<kotlin.Enum>()
 
         public? final? property x(val): Some
             public? get(): Some
 
         public? final enum entry FIRST : SomeEnum {
+            public? constructor(): super<SomeEnum>()
+
             public? open? override function check(y: Some): Boolean {
                 STUB
             }
@@ -19,6 +25,8 @@ FILE: enums2.kt
         }
 
         public? final enum entry SECOND : SomeEnum {
+            public? constructor(): super<SomeEnum>()
+
             public? open? override function check(y: Some): Boolean {
                 STUB
             }

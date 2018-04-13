@@ -7,6 +7,8 @@ FILE: simpleClass.kt
 
     }
     public? final class SomeClass : R|SomeInterface| {
+        public? constructor(): super<R|kotlin/Any|>()
+
         private final? property baz(val): R|error: Not supported: FirImplicitTypeImpl| = STUB
             public? get(): R|error: Not supported: FirImplicitTypeImpl|
 

@@ -1,6 +1,8 @@
 FILE: Annotations.kt
     @FILE:R|annotations/Simple|()
     @R|annotations/WithInt|(STUB) public? abstract class First {
+        public? constructor(): super<R|kotlin/Any|>()
+
         @R|annotations/Simple|() public? abstract function foo(@R|annotations/WithString|(STUB) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|
 
         @R|annotations/Complex|(STUB, STUB) public? abstract property v(val): R|kotlin/String|
@@ -8,7 +10,7 @@ FILE: Annotations.kt
 
     }
     @R|annotations/WithString|(STUB) public? final class Second : @R|annotations/WithInt|(STUB) R|test/First| {
-        public? constructor(y: R|kotlin/Char|): super()
+        public? constructor(y: R|kotlin/Char|): super<@R|annotations/WithInt|(STUB) R|test/First|>()
 
         public? final? property y(val): R|kotlin/Char|
             public? get(): R|kotlin/Char|
@@ -21,7 +23,7 @@ FILE: Annotations.kt
                 STUB
             }
 
-        @R|annotations/WithString|(STUB) public? constructor(): this()
+        @R|annotations/WithString|(STUB) public? constructor(): this<R|error: Not implemented yet|>()
 
     }
     @R|annotations/WithInt|(STUB) @R|annotations/WithInt|(STUB) public? final typealias Third = @R|annotations/Simple|() R|test/Second|

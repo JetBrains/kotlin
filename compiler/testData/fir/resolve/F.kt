@@ -1,4 +1,4 @@
 open class A
 
 
-class B : A
+class B : A()

@@ -1,4 +1,4 @@
 package a
 import b.MyClass
 
-class YourClass : MyClass
+class YourClass : MyClass()

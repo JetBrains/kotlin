@@ -5,6 +5,8 @@ FILE: genericFunctions.kt
         STUB
     }
     public? abstract class Summator {
+        public? constructor(): super<R|Any|>()
+
         <T> public? abstract function plus(first: R|T|, second: R|T|): R|T|
 
     }
