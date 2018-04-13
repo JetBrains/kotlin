@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBody
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -206,7 +207,7 @@ class RawFirBuilder(val session: FirSession) {
             }
         }
 
-        private fun KtClassOrObject.extractSuperTypeListEntriesTo(container: FirClassImpl) {
+        private fun KtClassOrObject.extractSuperTypeListEntriesTo(container: FirClassImpl): FirType? {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
             var delegatedSuperType: FirType? = null
             for (superTypeListEntry in superTypeListEntries) {
@@ -228,15 +229,21 @@ class RawFirBuilder(val session: FirSession) {
                     }
                 }
             }
+            if (this is KtClass && this.isInterface()) return delegatedSuperType
+
             fun isEnum() = this is KtClass && this.isEnum()
-            if (this is KtClass && this.isInterface()) return
-            if (!this.hasPrimaryConstructor()) return
+            // TODO: in case we have no primary constructor,
+            // it may be not possible to determine delegated super type right here
+            delegatedSuperType = delegatedSuperType ?: (if (isEnum()) implicitEnumType else implicitAnyType)
+            if (!this.hasPrimaryConstructor()) return delegatedSuperType
+
             val firPrimaryConstructor = primaryConstructor.toFirConstructor(
                 superTypeCallEntry,
-                delegatedSuperType = delegatedSuperType ?: (if (isEnum()) implicitEnumType else implicitAnyType),
+                delegatedSuperType,
                 owner = this
             )
             container.declarations += firPrimaryConstructor
+            return delegatedSuperType
         }
 
         private fun KtPrimaryConstructor?.toFirConstructor(
@@ -288,6 +295,11 @@ class RawFirBuilder(val session: FirSession) {
             return firFile
         }
 
+        private fun KtClassOrObject.toDelegatedSelfType(): FirType =
+            FirUserTypeImpl(session, this, isNullable = false).apply {
+                qualifier.add(FirQualifierPartImpl(nameAsSafeName))
+            }
+
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit): FirElement {
             return withChildClassName(enumEntry.nameAsSafeName) {
                 val firEnumEntry = FirEnumEntryImpl(
@@ -297,9 +309,17 @@ class RawFirBuilder(val session: FirSession) {
                     enumEntry.nameAsSafeName
                 )
                 enumEntry.extractAnnotationsTo(firEnumEntry)
-                enumEntry.extractSuperTypeListEntriesTo(firEnumEntry)
+                val delegatedSuperType = enumEntry.extractSuperTypeListEntriesTo(firEnumEntry)
+                val delegatedSelfType = enumEntry.toDelegatedSelfType()
                 for (declaration in enumEntry.declarations) {
-                    firEnumEntry.declarations += declaration.convert<FirDeclaration>()
+                    firEnumEntry.declarations += when (declaration) {
+                        is KtSecondaryConstructor -> declaration.toFirConstructor(
+                            delegatedSuperType,
+                            delegatedSelfType,
+                            hasPrimaryConstructor = true
+                        )
+                        else -> declaration.convert<FirDeclaration>()
+                    }
                 }
                 firEnumEntry
             }
@@ -345,15 +365,23 @@ class RawFirBuilder(val session: FirSession) {
                 )
                 classOrObject.extractAnnotationsTo(firClass)
                 classOrObject.extractTypeParametersTo(firClass)
-                classOrObject.extractSuperTypeListEntriesTo(firClass)
+                val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(firClass)
                 classOrObject.primaryConstructor?.valueParameters?.forEach {
                     if (it.hasValOrVar()) {
                         firClass.declarations += it.toFirProperty()
                     }
                 }
 
+                val delegatedSelfType = classOrObject.toDelegatedSelfType()
                 for (declaration in classOrObject.declarations) {
-                    firClass.declarations += declaration.convert<FirDeclaration>()
+                    firClass.declarations += when (declaration) {
+                        is KtSecondaryConstructor -> declaration.toFirConstructor(
+                            delegatedSuperType,
+                            delegatedSelfType,
+                            classOrObject.primaryConstructor != null
+                        )
+                        else -> declaration.convert<FirDeclaration>()
+                    }
                 }
 
                 firClass
@@ -413,25 +441,38 @@ class RawFirBuilder(val session: FirSession) {
             return firFunction
         }
 
-        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit): FirElement {
+        private fun KtSecondaryConstructor.toFirConstructor(
+            delegatedSuperType: FirType?,
+            delegatedSelfType: FirType,
+            hasPrimaryConstructor: Boolean
+        ): FirConstructor {
             val firConstructor = FirConstructorImpl(
                 session,
-                constructor,
-                constructor.visibility,
-                constructor.getDelegationCall().convert(),
-                constructor.buildFirBody()
+                this,
+                visibility,
+                getDelegationCall().convert(delegatedSuperType, delegatedSelfType, hasPrimaryConstructor),
+                buildFirBody()
             )
-            constructor.extractAnnotationsTo(firConstructor)
-            constructor.extractValueParametersTo(firConstructor)
+            extractAnnotationsTo(firConstructor)
+            extractValueParametersTo(firConstructor)
             return firConstructor
         }
 
-        override fun visitConstructorDelegationCall(call: KtConstructorDelegationCall, data: Unit): FirElement {
+        private fun KtConstructorDelegationCall.convert(
+            delegatedSuperType: FirType?,
+            delegatedSelfType: FirType,
+            hasPrimaryConstructor: Boolean
+        ): FirDelegatedConstructorCall {
+            val isThis = isCallToThis || (isImplicit && hasPrimaryConstructor)
+            val delegatedType = when {
+                isThis -> delegatedSelfType
+                else -> delegatedSuperType ?: FirErrorTypeImpl(session, this, "No super type")
+            }
             val firConstructorCall = FirDelegatedConstructorCallImpl(
                 session,
-                call,
-                FirErrorTypeImpl(session, call, "Not implemented yet"),
-                call.isCallToThis || call.isImplicit
+                this,
+                delegatedType,
+                isThis
             )
             // TODO: arguments are not needed for light classes, but will be needed later
             // call.extractArgumentsTo(firConstructorCall)
@@ -512,6 +553,7 @@ class RawFirBuilder(val session: FirSession) {
                         typeReference,
                         isNullable,
                         unwrappedElement.receiverTypeReference.convertSafe(),
+                        // TODO: probably implicit type should not be here
                         unwrappedElement.returnTypeReference.toFirOrImplicitType()
                     )
                     for (valueParameter in unwrappedElement.parameters) {
