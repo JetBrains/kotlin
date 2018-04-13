@@ -29,6 +29,14 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             .reduce { left, right -> JsBinaryOperation(JsBinaryOperator.COMMA, left, right) }
     }
 
+    override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsExpression {
+        return JsBinaryOperation(JsBinaryOperator.COMMA, JsStringLiteral("<return>"), expression.value.accept(IrElementToJsExpressionTransformer(), context))
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, context: JsGenerationContext): JsExpression {
+        return expression.argument.accept(IrElementToJsExpressionTransformer(), context)
+    }
+
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression {
         return body.expression.accept(this, context)
     }
