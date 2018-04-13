@@ -16,7 +16,7 @@ FILE: simpleClass.kt
         }
 
         public? open? override property bar(var): Boolean
-            public? get(): <implicit> {
+            public? get(): Boolean {
                 STUB
             }
             public? set(value: Boolean): kotlin.Unit {
