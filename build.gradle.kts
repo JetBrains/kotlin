@@ -178,7 +178,6 @@ extra["nativePlatformVariants"] =
 extra["compilerModules"] = arrayOf(
         ":compiler:util",
         ":compiler:container",
-        ":compiler:conditional-preprocessor",
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:psi",
