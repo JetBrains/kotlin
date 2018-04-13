@@ -22,6 +22,10 @@ You may use the Gradle plugin to build _Kotlin/Native_ projects. To use it you n
 
     apply plugin: 'konan'
 
+The Kotlin/Native plugin depends on `org.jetbrains.kotlin:kotlin-gradle-plugin`. So if a build contains both these
+plugins as buildscript dependencies, it's recommended to **declare them in the same `build.gradle`** to avoid issues with
+plugin classpath.
+
 The plugin downloads the compiler during its first run. You may specify a version of the compiler using `konan.version`
 project property:
 
