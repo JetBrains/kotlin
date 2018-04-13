@@ -113,6 +113,7 @@ class IntrinsicifyBuiltinOperationsLowering(private val context: JsIrBackendCont
     }
 }
 
+// TODO extract to common place?
 private fun irCall(call: IrCall, newSymbol: IrFunctionSymbol, dispatchReceiverAsFirstArgument: Boolean = false): IrCall =
     call.run {
         IrCallImpl(
@@ -129,6 +130,7 @@ private fun irCall(call: IrCall, newSymbol: IrFunctionSymbol, dispatchReceiverAs
         }
     }
 
+// TODO extract to common place?
 private fun IrCall.copyTypeAndValueArgumentsFrom(call: IrCall, dispatchReceiverAsFirstArgument: Boolean = false) {
     copyTypeArgumentsFrom(call)
 
