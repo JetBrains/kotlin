@@ -193,11 +193,11 @@ class RawFirBuilder(val session: FirSession) {
         }
 
         private fun KtDeclarationWithBody.extractValueParametersTo(
-            container: FirAbstractFunction,
+            container: FirFunction,
             defaultType: FirType? = null
         ) {
             for (valueParameter in valueParameters) {
-                container.valueParameters += valueParameter.toFirValueParameter(defaultType)
+                (container.valueParameters as MutableList<FirValueParameter>) += valueParameter.toFirValueParameter(defaultType)
             }
         }
 
@@ -207,7 +207,9 @@ class RawFirBuilder(val session: FirSession) {
             }
         }
 
-        private fun KtClassOrObject.extractSuperTypeListEntriesTo(container: FirClassImpl): FirType? {
+        private fun KtClassOrObject.extractSuperTypeListEntriesTo(
+            container: FirClassImpl, delegatedSelfType: FirType
+        ): FirType? {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
             var delegatedSuperType: FirType? = null
             for (superTypeListEntry in superTypeListEntries) {
@@ -240,6 +242,7 @@ class RawFirBuilder(val session: FirSession) {
             val firPrimaryConstructor = primaryConstructor.toFirConstructor(
                 superTypeCallEntry,
                 delegatedSuperType,
+                delegatedSelfType,
                 owner = this
             )
             container.declarations += firPrimaryConstructor
@@ -249,6 +252,7 @@ class RawFirBuilder(val session: FirSession) {
         private fun KtPrimaryConstructor?.toFirConstructor(
             superTypeCallEntry: KtSuperTypeCallEntry?,
             delegatedSuperType: FirType,
+            delegatedSelfType: FirType,
             owner: KtClassOrObject
         ): FirConstructor {
             val constructorCallee = superTypeCallEntry?.calleeExpression
@@ -265,6 +269,8 @@ class RawFirBuilder(val session: FirSession) {
                 session,
                 this ?: owner,
                 this?.visibility ?: Visibilities.UNKNOWN,
+                this?.platformStatus ?: FirMemberPlatformStatus.DEFAULT,
+                delegatedSelfType,
                 firDelegatedCall
             )
             this?.extractAnnotationsTo(firConstructor)
@@ -309,8 +315,8 @@ class RawFirBuilder(val session: FirSession) {
                     enumEntry.nameAsSafeName
                 )
                 enumEntry.extractAnnotationsTo(firEnumEntry)
-                val delegatedSuperType = enumEntry.extractSuperTypeListEntriesTo(firEnumEntry)
                 val delegatedSelfType = enumEntry.toDelegatedSelfType()
+                val delegatedSuperType = enumEntry.extractSuperTypeListEntriesTo(firEnumEntry, delegatedSelfType)
                 for (declaration in enumEntry.declarations) {
                     firEnumEntry.declarations += when (declaration) {
                         is KtSecondaryConstructor -> declaration.toFirConstructor(
@@ -365,14 +371,14 @@ class RawFirBuilder(val session: FirSession) {
                 )
                 classOrObject.extractAnnotationsTo(firClass)
                 classOrObject.extractTypeParametersTo(firClass)
-                val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(firClass)
+                val delegatedSelfType = classOrObject.toDelegatedSelfType()
+                val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(firClass, delegatedSelfType)
                 classOrObject.primaryConstructor?.valueParameters?.forEach {
                     if (it.hasValOrVar()) {
                         firClass.declarations += it.toFirProperty()
                     }
                 }
 
-                val delegatedSelfType = classOrObject.toDelegatedSelfType()
                 for (declaration in classOrObject.declarations) {
                     firClass.declarations += when (declaration) {
                         is KtSecondaryConstructor -> declaration.toFirConstructor(
@@ -450,6 +456,8 @@ class RawFirBuilder(val session: FirSession) {
                 session,
                 this,
                 visibility,
+                platformStatus,
+                delegatedSelfType,
                 getDelegationCall().convert(delegatedSuperType, delegatedSelfType, hasPrimaryConstructor),
                 buildFirBody()
             )
