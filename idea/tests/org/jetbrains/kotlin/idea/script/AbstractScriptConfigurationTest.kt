@@ -90,8 +90,8 @@ private const val configureConflictingModule = "// CONFLICTING_MODULE"
 
 private fun String.splitOrEmpty(delimeters: String) = split(delimeters).takeIf { it.size > 1 } ?: emptyList()
 internal val switches = listOf(
-        useDefaultTemplate,
-        configureConflictingModule
+    useDefaultTemplate,
+    configureConflictingModule
 )
 
 abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
@@ -181,11 +181,11 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         val libClasses = libSrcDir?.let { compileLibToDir(it) }
 
         return mapOf(
-                "runtime-classes" to ForTestCompileRuntime.runtimeJarForTests(),
-                "runtime-source" to File("libraries/stdlib/src"),
-                "lib-classes" to libClasses,
-                "lib-source" to libSrcDir,
-                "template-classes" to templateOutDir
+            "runtime-classes" to ForTestCompileRuntime.runtimeJarForTests(),
+            "runtime-source" to File("libraries/stdlib/src"),
+            "lib-classes" to libClasses,
+            "lib-source" to libSrcDir,
+            "template-classes" to templateOutDir
         )
     }
 
@@ -221,8 +221,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         val javaSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.java$"), srcDir)
         if (javaSourceFiles.isNotEmpty()) {
             KotlinTestUtils.compileJavaFiles(
-                    javaSourceFiles,
-                    listOf("-cp", StringUtil.join(listOf(*classpath, outDir), File.pathSeparator), "-d", outDir.path)
+                javaSourceFiles,
+                listOf("-cp", StringUtil.join(listOf(*classpath, outDir), File.pathSeparator), "-d", outDir.path)
             )
         }
         return outDir
@@ -231,16 +231,15 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     private fun registerScriptTemplateProvider(environment: Environment) {
         val provider = if (environment[useDefaultTemplate] == true) {
             FromTextTemplateProvider(environment)
-        }
-        else {
+        } else {
             CustomScriptTemplateProvider(environment)
         }
 
         PlatformTestUtil.registerExtension(
-                Extensions.getArea(project),
-                ScriptDefinitionContributor.EP_NAME,
-                provider,
-                testRootDisposable
+            Extensions.getArea(project),
+            ScriptDefinitionContributor.EP_NAME,
+            provider,
+            testRootDisposable
         )
         ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitions()
     }
