@@ -38,7 +38,7 @@ typealias KotlinExpression = String
  * For this identifier constructs the string to be parsed by Kotlin as `SimpleName`
  * defined [here](https://kotlinlang.org/docs/reference/grammar.html#SimpleName).
  */
-fun String.asSimpleName(): String = if (this in kotlinKeywords) {
+fun String.asSimpleName(): String = if (this in kotlinKeywords || this.contains("$")) {
     "`$this`"
 } else {
     this
