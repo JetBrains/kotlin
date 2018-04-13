@@ -1749,6 +1749,42 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("removeUnusedParameterWithTypeParameter.kt")
+        public void testRemoveUnusedParameterWithTypeParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeUnusedParameterWithTypeParameter2.kt")
+        public void testRemoveUnusedParameterWithTypeParameter2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeUnusedParameterWithTypeParameter3.kt")
+        public void testRemoveUnusedParameterWithTypeParameter3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeUnusedParameterWithTypeParameter4.kt")
+        public void testRemoveUnusedParameterWithTypeParameter4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeUnusedParameterWithTypeParameter5.kt")
+        public void testRemoveUnusedParameterWithTypeParameter5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeUnusedParameterWithTypeParameter6.kt")
+        public void testRemoveUnusedParameterWithTypeParameter6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedParameterWithTypeParameter6.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("removeUnusedPrimaryConstructorParameter.kt")
         public void testRemoveUnusedPrimaryConstructorParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/changeSignature/removeUnusedPrimaryConstructorParameter.kt");
