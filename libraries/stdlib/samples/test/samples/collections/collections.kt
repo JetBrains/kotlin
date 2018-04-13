@@ -53,13 +53,13 @@ class Collections {
 
         @Sample
         fun collectionIsNullOrEmpty() {
-            val nullCollection: Collection<Any>? = null
-            assertTrue(nullCollection.isNullOrEmpty())
+            val nullList: List<Any>? = null
+            assertTrue(nullList.isNullOrEmpty())
 
-            val emptyCollection: Collection<Any>? = listOf()
-            assertTrue(emptyCollection.isNullOrEmpty())
+            val empty: List<Any>? = emptyList<Any>()
+            assertTrue(empty.isNullOrEmpty())
 
-            val collection: Collection<Char>? = listOf('a', 'b', 'c')
+            val collection: List<Char>? = listOf('a', 'b', 'c')
             assertFalse(collection.isNullOrEmpty())
         }
 
