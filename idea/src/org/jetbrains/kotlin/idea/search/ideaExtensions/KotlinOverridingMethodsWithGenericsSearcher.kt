@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, OverridingMethodsSearch.SearchParameters> {
-    override fun execute(p: OverridingMethodsSearch.SearchParameters, consumer: Processor<PsiMethod>): Boolean {
+    override fun execute(p: OverridingMethodsSearch.SearchParameters, consumer: Processor<in PsiMethod>): Boolean {
         val method = p.method
         if (method !is KtLightMethod) return true
 

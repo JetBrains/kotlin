@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 
 class KotlinConstructorDelegationCallReferenceSearcher : QueryExecutorBase<PsiReference, SearchParameters>(true) {
-    override fun processQuery(queryParameters: SearchParameters, consumer: Processor<PsiReference>) {
+    override fun processQuery(queryParameters: SearchParameters, consumer: Processor<in PsiReference>) {
         val method = queryParameters.method
         if (!method.isConstructor) return
 

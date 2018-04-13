@@ -36,7 +36,7 @@ import org.jetbrains.uast.convertOpt
 class InvokeOperatorReferenceSearcher(
         targetFunction: PsiElement,
         searchScope: SearchScope,
-        consumer: Processor<PsiReference>,
+        consumer: Processor<in PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtCallExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = emptyList()) {

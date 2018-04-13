@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
-    override fun processQuery(p: MethodReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
+    override fun processQuery(p: MethodReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
         val method = p.method
         val isConstructor = p.project.runReadActionInSmartMode { method.isConstructor }
         if (isConstructor) {
@@ -79,7 +79,7 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
                                             aClass: PsiClass,
                                             strictSignatureSearch: Boolean): MethodTextOccurrenceProcessor {
         return object: MethodTextOccurrenceProcessor(aClass, strictSignatureSearch, *methods) {
-            override fun processInexactReference(ref: PsiReference, refElement: PsiElement?, method: PsiMethod, consumer: Processor<PsiReference>): Boolean {
+            override fun processInexactReference(ref: PsiReference, refElement: PsiElement?, method: PsiMethod, consumer: Processor<in PsiReference>): Boolean {
                 val isGetter = JvmAbi.isGetterName(method.name)
 
                 fun isWrongAccessorReference(): Boolean {

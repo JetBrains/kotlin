@@ -66,13 +66,13 @@ class KotlinReferencesSearchParameters(
     : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer)
 
 class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
-    override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
+    override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
         val processor = QueryProcessor(queryParameters, consumer)
         runReadAction { processor.processInReadAction() }
         processor.executeLongRunningTasks()
     }
 
-    private class QueryProcessor(val queryParameters: ReferencesSearch.SearchParameters, val consumer: Processor<PsiReference>) {
+    private class QueryProcessor(val queryParameters: ReferencesSearch.SearchParameters, val consumer: Processor<in PsiReference>) {
 
         private val kotlinOptions = (queryParameters as? KotlinReferencesSearchParameters)?.kotlinOptions
                                     ?: KotlinReferencesSearchOptions.Empty

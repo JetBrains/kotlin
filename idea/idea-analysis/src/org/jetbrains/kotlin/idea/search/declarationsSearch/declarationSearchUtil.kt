@@ -40,7 +40,7 @@ abstract class DeclarationsSearch<T: PsiElement, R: DeclarationSearchRequest<T>>
     init {
         registerExecutor(
                 object : QueryExecutorBase<T, R>(true) {
-                    override fun processQuery(queryParameters: R, consumer: Processor<T>) {
+                    override fun processQuery(queryParameters: R, consumer: Processor<in T>) {
                         doSearch(queryParameters, consumer)
                     }
                 }
@@ -51,7 +51,7 @@ abstract class DeclarationsSearch<T: PsiElement, R: DeclarationSearchRequest<T>>
         super.registerExecutor(executor)
     }
 
-    protected abstract fun doSearch(request: R, consumer: Processor<T>)
+    protected abstract fun doSearch(request: R, consumer: Processor<in T>)
     protected open fun isApplicable(request: R): Boolean = true
 
     fun search(request: R): Query<T> = if (isApplicable(request)) createUniqueResultsQuery(request) else EmptyQuery.getEmptyQuery<T>()
@@ -94,7 +94,7 @@ interface HierarchyTraverser<T> {
     }
 }
 
-fun <T: PsiElement> Processor<T>.consumeHierarchy(request: SearchRequestWithElement<T>, traverser: HierarchyTraverser<T>) {
+fun <T: PsiElement> Processor<in T>.consumeHierarchy(request: SearchRequestWithElement<T>, traverser: HierarchyTraverser<T>) {
     traverser.forEach(request.originalElement) { element ->
         if (element in request.searchScope) {
             process(element)
@@ -105,13 +105,13 @@ fun <T: PsiElement> Processor<T>.consumeHierarchy(request: SearchRequestWithElem
 abstract class HierarchySearch<T: PsiElement>(
         protected val traverser: HierarchyTraverser<T>
 ): DeclarationsSearch<T, HierarchySearchRequest<T>>() {
-    protected open fun doSearchAll(request: HierarchySearchRequest<T>, consumer: Processor<T>) {
+    protected open fun doSearchAll(request: HierarchySearchRequest<T>, consumer: Processor<in T>) {
         consumer.consumeHierarchy(request, traverser)
     }
 
-    protected abstract fun doSearchDirect(request: HierarchySearchRequest<T>, consumer: Processor<T>)
+    protected abstract fun doSearchDirect(request: HierarchySearchRequest<T>, consumer: Processor<in T>)
 
-    override fun doSearch(request: HierarchySearchRequest<T>, consumer: Processor<T>) {
+    override fun doSearch(request: HierarchySearchRequest<T>, consumer: Processor<in T>) {
         if (request.searchDeeply) {
             doSearchAll(request, consumer)
         }

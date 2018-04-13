@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 class IteratorOperatorReferenceSearcher(
         targetFunction: PsiElement,
         searchScope: SearchScope,
-        consumer: Processor<PsiReference>,
+        consumer: Processor<in PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtForExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("in")) {

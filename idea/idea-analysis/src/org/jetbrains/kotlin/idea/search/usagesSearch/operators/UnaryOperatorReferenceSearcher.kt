@@ -33,7 +33,7 @@ class UnaryOperatorReferenceSearcher(
         targetFunction: PsiElement,
         private val operationToken: KtSingleValueToken,
         searchScope: SearchScope,
-        consumer: Processor<PsiReference>,
+        consumer: Processor<in PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtUnaryExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf(operationToken.value)) {

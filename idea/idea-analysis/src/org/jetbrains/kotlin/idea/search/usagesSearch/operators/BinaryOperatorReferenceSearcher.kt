@@ -33,7 +33,7 @@ class BinaryOperatorReferenceSearcher(
         targetFunction: PsiElement,
         private val operationTokens: List<KtSingleValueToken>,
         searchScope: SearchScope,
-        consumer: Processor<PsiReference>,
+        consumer: Processor<in PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtBinaryExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = operationTokens.map { it.value }) {

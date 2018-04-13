@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 class PropertyDelegationOperatorReferenceSearcher(
         targetFunction: PsiElement,
         searchScope: SearchScope,
-        consumer: Processor<PsiReference>,
+        consumer: Processor<in PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtPropertyDelegate>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("by")) {

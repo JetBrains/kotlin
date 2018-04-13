@@ -97,7 +97,7 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
     override fun isApplicable(request: HierarchySearchRequest<PsiMethod>): Boolean =
             runReadAction { request.originalElement.isOverridableElement() }
 
-    override fun doSearchDirect(request: HierarchySearchRequest<PsiMethod>, consumer: Processor<PsiMethod>) {
+    override fun doSearchDirect(request: HierarchySearchRequest<PsiMethod>, consumer: Processor<in PsiMethod>) {
         searchDirectOverriders(request.originalElement).forEach { method -> consumer.process(method) }
     }
 }

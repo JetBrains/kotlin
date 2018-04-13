@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasByExpansionShortNameIn
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 open class KotlinDirectInheritorsSearcher : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
-    override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<PsiClass>) {
+    override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<in PsiClass>) {
         val baseClass = queryParameters.classToProcess
 
         val name = baseClass.name ?: return

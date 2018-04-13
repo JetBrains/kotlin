@@ -38,7 +38,7 @@ class KotlinRequestResultProcessor(
 ) : RequestResultProcessor(unwrappedElement, originalElement, filter, options) {
     private val referenceService = PsiReferenceService.getService()
 
-    override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
+    override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<in PsiReference>): Boolean {
         val references = if (element is KtDestructuringDeclaration)
             element.entries.flatMap { referenceService.getReferences(it, PsiReferenceService.Hints.NO_HINTS) }
         else

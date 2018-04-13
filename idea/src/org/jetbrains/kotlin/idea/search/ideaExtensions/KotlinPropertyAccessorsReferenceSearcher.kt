@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.synthetic.canBePropertyAccessor
 
 class KotlinPropertyAccessorsReferenceSearcher : QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters>(true) {
-    override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
+    override fun processQuery(queryParameters: MethodReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
         val method = queryParameters.method
         val onlyKotlinFiles = queryParameters.effectiveSearchScope.restrictToKotlinSources()
         if (onlyKotlinFiles == GlobalSearchScope.EMPTY_SCOPE) return

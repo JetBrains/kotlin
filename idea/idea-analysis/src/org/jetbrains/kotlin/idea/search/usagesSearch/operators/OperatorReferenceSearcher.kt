@@ -56,7 +56,7 @@ import java.util.*
 abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         protected val targetDeclaration: PsiElement,
         private val searchScope: SearchScope,
-        private val consumer: Processor<PsiReference>,
+        private val consumer: Processor<in PsiReference>,
         private val optimizer: SearchRequestCollector,
         private val options: KotlinReferencesSearchOptions,
         private val wordsToSearch: List<String>
@@ -93,7 +93,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         fun create(
                 declaration: PsiElement,
                 searchScope: SearchScope,
-                consumer: Processor<PsiReference>,
+                consumer: Processor<in PsiReference>,
                 optimizer: SearchRequestCollector,
                 options: KotlinReferencesSearchOptions
         ): OperatorReferenceSearcher<*>? {
@@ -108,7 +108,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         private fun createInReadAction(
                 declaration: PsiElement,
                 searchScope: SearchScope,
-                consumer: Processor<PsiReference>,
+                consumer: Processor<in PsiReference>,
                 optimizer: SearchRequestCollector,
                 options: KotlinReferencesSearchOptions
         ): OperatorReferenceSearcher<*>? {
@@ -134,7 +134,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         private fun createInReadAction(
                 declaration: PsiElement,
                 name: Name,
-                consumer: Processor<PsiReference>,
+                consumer: Processor<in PsiReference>,
                 optimizer: SearchRequestCollector,
                 options: KotlinReferencesSearchOptions,
                 searchScope: SearchScope

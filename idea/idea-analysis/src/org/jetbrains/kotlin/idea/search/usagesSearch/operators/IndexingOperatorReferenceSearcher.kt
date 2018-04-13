@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 class IndexingOperatorReferenceSearcher(
         targetFunction: PsiElement,
         searchScope: SearchScope,
-        consumer: Processor<PsiReference>,
+        consumer: Processor<in PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions,
         private val isSet: Boolean

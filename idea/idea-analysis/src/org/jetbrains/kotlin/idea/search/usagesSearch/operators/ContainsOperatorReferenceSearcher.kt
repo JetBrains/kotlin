@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 class ContainsOperatorReferenceSearcher(
         targetFunction: PsiElement,
         searchScope: SearchScope,
-        consumer: Processor<PsiReference>,
+        consumer: Processor<in PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtOperationReferenceExpression>(targetFunction, searchScope, consumer, optimizer, options, wordsToSearch = listOf("in")) {

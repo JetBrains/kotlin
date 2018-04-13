@@ -33,7 +33,7 @@ class DestructuringDeclarationReferenceSearcher(
         targetDeclaration: PsiElement,
         private val componentIndex: Int,
         searchScope: SearchScope,
-        consumer: Processor<PsiReference>,
+        consumer: Processor<in PsiReference>,
         optimizer: SearchRequestCollector,
         options: KotlinReferencesSearchOptions
 ) : OperatorReferenceSearcher<KtDestructuringDeclaration>(targetDeclaration, searchScope, consumer, optimizer, options, wordsToSearch = listOf("(")) {

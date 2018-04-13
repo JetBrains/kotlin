@@ -34,7 +34,7 @@ data class KotlinTodoOccurrence(private val _file: PsiFile, private val _textRan
 }
 
 class KotlinTodoSearcher : QueryExecutorBase<IndexPatternOccurrence, IndexPatternSearch.SearchParameters>(true) {
-    override fun processQuery(queryParameters: IndexPatternSearch.SearchParameters, consumer: Processor<IndexPatternOccurrence>) {
+    override fun processQuery(queryParameters: IndexPatternSearch.SearchParameters, consumer: Processor<in IndexPatternOccurrence>) {
         var pattern = queryParameters.pattern
         if (pattern != null && !pattern.patternString.contains("TODO", true)) return
         if (pattern == null) {

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 
 class AndroidExtensionsReferenceSearchExecutor : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
-    override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
+    override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
         val elementToSearch = queryParameters.elementToSearch as? XmlAttributeValue ?: return
         val scopeElements = (queryParameters.effectiveSearchScope as? LocalSearchScope)?.scope ?: return
         val referenceName = elementToSearch.value?.substringAfterLast("/") ?: return
