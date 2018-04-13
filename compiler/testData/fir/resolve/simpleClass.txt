@@ -16,7 +16,7 @@ FILE: simpleClass.kt
         }
 
         public? open? override property bar(var): R|kotlin/Boolean|
-            public? get(): R|error: Not supported: FirImplicitTypeImpl| {
+            public? get(): R|kotlin/Boolean| {
                 STUB
             }
             public? set(value: R|kotlin/Boolean|): R|kotlin/Unit| {

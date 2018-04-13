@@ -19,7 +19,7 @@ FILE: Annotations.kt
         }
 
         public? open? override property v(val): R|kotlin/String|
-            @R|annotations/Simple|() public? get(): R|error: Not supported: FirImplicitTypeImpl| {
+            @R|annotations/Simple|() public? get(): R|kotlin/String| {
                 STUB
             }
 
