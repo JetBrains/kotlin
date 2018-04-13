@@ -16,6 +16,7 @@
 
 package kotlin.collections
 
+import kotlin.*
 import kotlin.coroutines.experimental.buildIterator
 
 internal fun checkWindowSizeStep(size: Int, step: Int) {

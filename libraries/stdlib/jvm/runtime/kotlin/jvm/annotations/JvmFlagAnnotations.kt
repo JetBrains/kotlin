@@ -22,10 +22,11 @@ import kotlin.annotation.AnnotationTarget.*
  * Marks the JVM backing field of the annotated property as `volatile`, meaning that writes to this field
  * are immediately made visible to other threads.
  */
+@Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-runtime
 @Target(FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class Volatile
+public actual annotation class Volatile
 
 /**
  * Marks the JVM backing field of the annotated property as `transient`, meaning that it is not

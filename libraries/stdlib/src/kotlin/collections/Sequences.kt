@@ -3,6 +3,8 @@
 
 package kotlin.sequences
 
+import kotlin.*
+
 /**
  * Given an [iterator] function constructs a [Sequence] that returns values through the [Iterator]
  * provided by that function.

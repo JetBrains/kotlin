@@ -85,6 +85,8 @@ fun List<MemberBuilder>.writeTo(file: File, platformSource: PlatformSourceFile) 
                 writer.appendln("import withType")
             }
         }
+        writer.appendln("import kotlin.*")
+        writer.appendln("import kotlin.text.*")
         writer.appendln("import kotlin.comparisons.*")
 
         if (sourceFile == SourceFile.Sequences) {

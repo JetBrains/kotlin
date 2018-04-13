@@ -31,102 +31,102 @@ public open class MyException : Exception {
 // TODO: remove primary constructors, make all secondary KT-22055
 
 @Suppress("USELESS_ELVIS_RIGHT_IS_NULL")
-public open class Error(message: String?, cause: Throwable?) : Throwable(message, cause ?: null) {
-    constructor() : this(null, null) {
+public actual open class Error actual constructor(message: String?, cause: Throwable?) : Throwable(message, cause ?: null) {
+    actual constructor() : this(null, null) {
         Error::class.js.asDynamic().call(this, null, null)
     }
 
-    constructor(message: String?) : this(message, null) {
+    actual constructor(message: String?) : this(message, null) {
         Error::class.js.asDynamic().call(this, message, null)
     }
 
-    constructor(cause: Throwable?) : this(undefined, cause) {
+    actual constructor(cause: Throwable?) : this(undefined, cause) {
         Error::class.js.asDynamic().call(this, undefined, cause)
     }
 }
 
 @Suppress("USELESS_ELVIS_RIGHT_IS_NULL")
-public open class Exception(message: String?, cause: Throwable?) : Throwable(message, cause ?: null) {
-    constructor() : this(null, null) {
+public actual open class Exception actual constructor(message: String?, cause: Throwable?) : Throwable(message, cause ?: null) {
+    actual constructor() : this(null, null) {
         Exception::class.js.asDynamic().call(this, null, null)
     }
 
-    constructor(message: String?) : this(message, null) {
+    actual constructor(message: String?) : this(message, null) {
         Exception::class.js.asDynamic().call(this, message, null)
     }
 
-    constructor(cause: Throwable?) : this(undefined, cause) {
+    actual constructor(cause: Throwable?) : this(undefined, cause) {
         Exception::class.js.asDynamic().call(this, undefined, cause)
     }
 }
 
-public open class RuntimeException(message: String?, cause: Throwable?) : Exception(message, cause) {
-    constructor() : this(null, null)
+public actual open class RuntimeException actual constructor(message: String?, cause: Throwable?) : Exception(message, cause) {
+    actual constructor() : this(null, null)
+    actual constructor(message: String?) : this(message, null)
+    actual constructor(cause: Throwable?) : this(undefined, cause)
+}
+
+public actual open class IllegalArgumentException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    actual constructor() : this(null, null)
+    actual constructor(message: String?) : this(message, null)
+    actual constructor(cause: Throwable?) : this(undefined, cause)
+}
+
+public actual open class IllegalStateException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    actual constructor() : this(null, null)
+    actual constructor(message: String?) : this(message, null)
+    actual constructor(cause: Throwable?) : this(undefined, cause)
+}
+
+public actual open class IndexOutOfBoundsException actual constructor(message: String?) : RuntimeException(message) {
+    actual constructor() : this(null)
+}
+
+public actual open class ConcurrentModificationException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    actual constructor() : this(null, null)
+    actual constructor(message: String?) : this(message, null)
+    actual constructor(cause: Throwable?) : this(undefined, cause)
+}
+
+public actual open class UnsupportedOperationException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    actual constructor() : this(null, null)
+    actual constructor(message: String?) : this(message, null)
+    actual constructor(cause: Throwable?) : this(undefined, cause)
+}
+
+
+public actual open class NumberFormatException actual constructor(message: String?) : IllegalArgumentException(message) {
+    actual constructor() : this(null)
+}
+
+
+public actual open class NullPointerException actual constructor(message: String?) : RuntimeException(message) {
+    actual constructor() : this(null)
+}
+
+public actual open class ClassCastException actual constructor(message: String?) : RuntimeException(message) {
+    actual constructor() : this(null)
+}
+
+public actual open class AssertionError private constructor(message: String?, cause: Throwable?) : Error(message, cause) {
+    actual constructor() : this(null)
     constructor(message: String?) : this(message, null)
-    constructor(cause: Throwable?) : this(undefined, cause)
+    actual constructor(message: Any?) : this(message.toString(), message as? Throwable)
 }
 
-public open class IllegalArgumentException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    constructor() : this(null, null)
-    constructor(message: String?) : this(message, null)
-    constructor(cause: Throwable?) : this(undefined, cause)
-}
-
-public open class IllegalStateException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    constructor() : this(null, null)
-    constructor(message: String?) : this(message, null)
-    constructor(cause: Throwable?) : this(undefined, cause)
-}
-
-public open class IndexOutOfBoundsException(message: String?) : RuntimeException(message) {
-    constructor() : this(null)
-}
-
-public open class ConcurrentModificationException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    constructor() : this(null, null)
-    constructor(message: String?) : this(message, null)
-    constructor(cause: Throwable?) : this(undefined, cause)
-}
-
-public open class UnsupportedOperationException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    constructor() : this(null, null)
-    constructor(message: String?) : this(message, null)
-    constructor(cause: Throwable?) : this(undefined, cause)
+public actual open class NoSuchElementException actual constructor(message: String?) : RuntimeException(message) {
+    actual constructor() : this(null)
 }
 
 
-public open class NumberFormatException(message: String?) : IllegalArgumentException(message) {
-    constructor() : this(null)
+public actual open class NoWhenBranchMatchedException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    actual constructor() : this(null, null)
+    actual constructor(message: String?) : this(message, null)
+    actual constructor(cause: Throwable?) : this(undefined, cause)
 }
 
-
-public open class NullPointerException(message: String?) : RuntimeException(message) {
-    constructor() : this(null)
-}
-
-public open class ClassCastException(message: String?) : RuntimeException(message) {
-    constructor() : this(null)
-}
-
-public open class AssertionError private constructor(message: String?, cause: Throwable?) : Error(message, cause) {
-    constructor() : this(null)
-    constructor(message: String?) : this(message, null)
-    constructor(message: Any?) : this(message.toString(), message as? Throwable)
-}
-
-public open class NoSuchElementException(message: String?) : RuntimeException(message) {
-    constructor() : this(null)
-}
-
-
-public open class NoWhenBranchMatchedException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    constructor() : this(null, null)
-    constructor(message: String?) : this(message, null)
-    constructor(cause: Throwable?) : this(undefined, cause)
-}
-
-public open class UninitializedPropertyAccessException(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
-    constructor() : this(null, null)
-    constructor(message: String?) : this(message, null)
-    constructor(cause: Throwable?) : this(undefined, cause)
+public actual open class UninitializedPropertyAccessException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
+    actual constructor() : this(null, null)
+    actual constructor(message: String?) : this(message, null)
+    actual constructor(cause: Throwable?) : this(undefined, cause)
 }

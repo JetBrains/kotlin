@@ -21,10 +21,10 @@ import kotlin.math.floor
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
 @kotlin.internal.InlineOnly
-public inline fun <T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
+public actual inline fun <T> Array<out T>?.orEmpty(): Array<out T> = this ?: emptyArray<T>()
 
 @kotlin.internal.InlineOnly
-public inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
+public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
 @JsName("copyToArray")
 @PublishedApi
@@ -36,7 +36,7 @@ internal fun <T> copyToArray(collection: Collection<T>): Array<T> {
 }
 
 @JsName("copyToArrayImpl")
-internal fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
+internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
     val array = emptyArray<Any?>()
     val iterator = collection.iterator()
     while (iterator.hasNext())
@@ -45,7 +45,7 @@ internal fun copyToArrayImpl(collection: Collection<*>): Array<Any?> {
 }
 
 @JsName("copyToExistingArrayImpl")
-internal fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> {
+internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> {
     if (array.size < collection.size)
         return copyToArrayImpl(collection).unsafeCast<Array<T>>()
 
@@ -86,7 +86,7 @@ public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
  * Each element in the list gets replaced with the [value].
  */
 @SinceKotlin("1.2")
-public fun <T> MutableList<T>.fill(value: T): Unit {
+public actual fun <T> MutableList<T>.fill(value: T): Unit {
     for (index in 0..lastIndex) {
         this[index] = value
     }
@@ -98,7 +98,7 @@ public fun <T> MutableList<T>.fill(value: T): Unit {
  * See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
  */
 @SinceKotlin("1.2")
-public fun <T> MutableList<T>.shuffle(): Unit {
+public actual fun <T> MutableList<T>.shuffle(): Unit {
     for (i in lastIndex downTo 1) {
         val j = rand(i + 1)
         val copy = this[i]
@@ -112,19 +112,19 @@ private fun rand(upperBound: Int) = floor(kotlin.js.Math.random() * upperBound).
  * Returns a new list with the elements of this list randomly shuffled.
  */
 @SinceKotlin("1.2")
-public fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
+public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
 
 /**
  * Sorts elements in the list in-place according to their natural sort order.
  */
-public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
+public actual fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
     collectionsSort(this, naturalOrder())
 }
 
 /**
  * Sorts elements in the list in-place according to the order specified with [comparator].
  */
-public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
+public actual fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
     collectionsSort(this, comparator)
 }
 
@@ -140,16 +140,20 @@ private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in 
     }
 }
 
-internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
+internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> {
     return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
 }
 
 // no singleton map implementation in js, return map as is
-internal inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = this
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = this
 
-internal inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = this.toMutableMap()
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = this.toMutableMap()
 
-internal inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
+
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
         if (isVarargs)
         // no need to copy vararg array in JS
             this

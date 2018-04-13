@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("MathKt")
+
+
 package kotlin.math
 
 

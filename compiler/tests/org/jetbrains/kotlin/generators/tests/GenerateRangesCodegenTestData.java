@@ -37,7 +37,7 @@ public class GenerateRangesCodegenTestData {
     private static final File AS_EXPRESSION_DIR = new File(TEST_DATA_DIR, "expression");
     private static final File[] SOURCE_TEST_FILES = {
             new File("libraries/stdlib/test/ranges/RangeIterationTest.kt"),
-            new File("libraries/stdlib/test/ranges/RangeIterationJVMTest.kt")
+            new File("libraries/stdlib/jvm/test/ranges/RangeIterationJVMTest.kt")
     };
 
     private static final Pattern TEST_FUN_PATTERN = Pattern.compile("@Test fun (\\w+)\\(\\) \\{.+?}", Pattern.DOTALL);

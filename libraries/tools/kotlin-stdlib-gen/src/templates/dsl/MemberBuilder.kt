@@ -49,7 +49,7 @@ class MemberBuilder(
 
     val f get() = family
 
-    private val legacyMode = true
+    private val legacyMode = false
     var hasPlatformSpecializations: Boolean = legacyMode
         private set
 

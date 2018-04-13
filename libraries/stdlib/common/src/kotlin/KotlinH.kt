@@ -25,6 +25,8 @@ expect interface Comparator<T> {
     fun compare(a: T, b: T): Int
 }
 
+// TODO: Satisfied with SAM-constructor for Comparator interface in JVM
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T>
 
 // From kotlin.kt
@@ -85,8 +87,9 @@ public expect fun Float.Companion.fromBits(bits: Int): Float
 
 // From concurrent.kt
 
-@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
-public typealias Volatile = kotlin.jvm.Volatile
+// TODO: promote to error? Otherwise it gets to JVM part
+//@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
+//public typealias Volatile = kotlin.jvm.Volatile
 
 public expect inline fun <R> synchronized(lock: Any, block: () -> R): R
 

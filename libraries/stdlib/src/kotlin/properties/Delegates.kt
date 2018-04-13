@@ -1,5 +1,6 @@
 package kotlin.properties
 
+import kotlin.*
 import kotlin.reflect.KProperty
 
 /**

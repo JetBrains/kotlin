@@ -37,14 +37,14 @@ fun main(args: Array<String>) {
     }
 
     val commonDir = baseDir.resolveExistingDir("libraries/stdlib/common/src/generated")
-    val jvmDir = baseDir.resolveExistingDir("libraries/stdlib/src/generated")
-    val jsDir = baseDir.resolveExistingDir("js/js.libraries/src/core/generated")
+    val jvmDir = baseDir.resolveExistingDir("libraries/stdlib/jvm/src/generated")
+    val jsDir = baseDir.resolveExistingDir("libraries/stdlib/js/src/generated")
 
     templateGroups.groupByFileAndWrite { (platform, source) ->
         //        File("build/out/$platform/$source.kt")
         when (platform) {
             Platform.Common -> commonDir.resolve("_${source.name.capitalize()}.kt")
-            Platform.JVM -> jvmDir.resolve("_${source.name.capitalize()}.kt")
+            Platform.JVM -> jvmDir.resolve("_${source.name.capitalize()}Jvm.kt")
             Platform.JS -> jsDir.resolve("_${source.name.capitalize()}Js.kt")
             Platform.Native -> error("Native is unsupported yet")
         }
