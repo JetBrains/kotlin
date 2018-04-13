@@ -140,6 +140,10 @@ private const val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<out K, V>.isNotEmpty(): Boolean = !isEmpty()
 
+/** Returns `true` if this map is null or empty. */
+@kotlin.internal.InlineOnly
+public inline fun <K, V> Map<out K, V>?.isNullOrEmpty(): Boolean = this == null || isEmpty()
+
 /**
  * Returns the [Map] if its not `null`, or the empty [Map] otherwise.
  */
