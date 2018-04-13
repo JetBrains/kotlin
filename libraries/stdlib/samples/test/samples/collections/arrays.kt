@@ -32,6 +32,18 @@ class Arrays {
             val array: Array<Char>? = arrayOf('a', 'b', 'c')
             assertPrints(array.orEmpty().contentToString(), "[a, b, c]")
         }
+
+        @Sample
+        fun arrayIsNullOrEmpty() {
+            val nullArray: Array<Any>? = null
+            assertTrue(nullArray.isNullOrEmpty())
+
+            val emptyArray = emptyArray<Any>()
+            assertTrue(emptyArray.isNullOrEmpty())
+
+            val array = arrayOf('a', 'b', 'c')
+            assertFalse(array.isNullOrEmpty())
+        }
     }
 
     class Transformations {
