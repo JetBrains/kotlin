@@ -1,0 +1,4 @@
+// "Remove parameter 'x'" "true"
+class Foo<caret>
+
+val foo = Foo()

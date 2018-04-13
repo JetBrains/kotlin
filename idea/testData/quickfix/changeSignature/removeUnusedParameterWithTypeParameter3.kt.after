@@ -1,0 +1,6 @@
+// "Remove parameter 'x'" "true"
+fun <Y> foo(<caret>y: Y) {}
+
+fun test() {
+    foo(y = 2)
+}
