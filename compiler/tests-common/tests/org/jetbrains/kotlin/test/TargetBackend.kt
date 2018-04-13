@@ -5,20 +5,14 @@
 
 package org.jetbrains.kotlin.test
 
-import java.io.File
-
 enum class TargetBackend(
-    private val compatibleWithTargetBackend: TargetBackend? = null,
-    // if whitelist === null it will not be used in test generator (will work as usual)
-    // if path to testData file starts with or equals to any entry from whitelist it will be processed as usual
-    // otherwise a testData file will be treated as ignored
-    val whitelist: List<File>? = null
+    private val compatibleWithTargetBackend: TargetBackend? = null
 ) {
     ANY,
     JVM,
     JVM_IR(JVM),
     JS,
-    JS_IR(JS, JS_IR_BACKEND_TEST_WHITELIST);
+    JS_IR(JS);
 
     val compatibleWith get() = compatibleWithTargetBackend ?: ANY
 }
