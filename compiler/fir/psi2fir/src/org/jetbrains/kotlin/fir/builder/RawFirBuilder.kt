@@ -37,6 +37,10 @@ class RawFirBuilder(val session: FirSession) {
 
     private val implicitUnitType = FirImplicitUnitType(session, null)
 
+    private val implicitAnyType = FirImplicitAnyType(session, null)
+
+    private val implicitEnumType = FirImplicitEnumType(session, null)
+
     fun buildFirFile(file: KtFile): FirFile {
         return file.accept(Visitor(), Unit) as FirFile
     }
@@ -204,13 +208,15 @@ class RawFirBuilder(val session: FirSession) {
 
         private fun KtClassOrObject.extractSuperTypeListEntriesTo(container: FirClassImpl) {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
+            var delegatedSuperType: FirType? = null
             for (superTypeListEntry in superTypeListEntries) {
                 when (superTypeListEntry) {
                     is KtSuperTypeEntry -> {
                         container.superTypes += superTypeListEntry.typeReference.toFirOrErrorType()
                     }
                     is KtSuperTypeCallEntry -> {
-                        container.superTypes += superTypeListEntry.calleeExpression.typeReference.toFirOrErrorType()
+                        delegatedSuperType = superTypeListEntry.calleeExpression.typeReference.toFirOrErrorType()
+                        container.superTypes += delegatedSuperType
                         superTypeCallEntry = superTypeListEntry
                     }
                     is KtDelegatedSuperTypeEntry -> {
@@ -222,31 +228,40 @@ class RawFirBuilder(val session: FirSession) {
                     }
                 }
             }
-            val firPrimaryConstructor = primaryConstructor?.toFirConstructor(superTypeCallEntry) ?: return
+            fun isEnum() = this is KtClass && this.isEnum()
+            if (this is KtClass && this.isInterface()) return
+            if (!this.hasPrimaryConstructor()) return
+            val firPrimaryConstructor = primaryConstructor.toFirConstructor(
+                superTypeCallEntry,
+                delegatedSuperType = delegatedSuperType ?: (if (isEnum()) implicitEnumType else implicitAnyType),
+                owner = this
+            )
             container.declarations += firPrimaryConstructor
         }
 
-        private fun KtPrimaryConstructor.toFirConstructor(superTypeCallEntry: KtSuperTypeCallEntry?): FirConstructor {
+        private fun KtPrimaryConstructor?.toFirConstructor(
+            superTypeCallEntry: KtSuperTypeCallEntry?,
+            delegatedSuperType: FirType,
+            owner: KtClassOrObject
+        ): FirConstructor {
             val constructorCallee = superTypeCallEntry?.calleeExpression
-            val firDelegatedCall = constructorCallee?.let {
-                FirDelegatedConstructorCallImpl(
-                    session,
-                    constructorCallee,
-                    FirErrorTypeImpl(session, constructorCallee, "Not implemented yet"),
-                    isThis = false
-                ).apply {
-                    // TODO: arguments are not needed for light classes, but will be needed later
-                    //superTypeCallEntry.extractArgumentsTo(this)
-                }
+            val firDelegatedCall = FirDelegatedConstructorCallImpl(
+                session,
+                constructorCallee ?: (this ?: owner),
+                delegatedSuperType,
+                isThis = false
+            ).apply {
+                // TODO: arguments are not needed for light classes, but will be needed later
+                //superTypeCallEntry.extractArgumentsTo(this)
             }
             val firConstructor = FirPrimaryConstructorImpl(
                 session,
-                this,
-                visibility,
+                this ?: owner,
+                this?.visibility ?: Visibilities.UNKNOWN,
                 firDelegatedCall
             )
-            extractAnnotationsTo(firConstructor)
-            extractValueParametersTo(firConstructor)
+            this?.extractAnnotationsTo(firConstructor)
+            this?.extractValueParametersTo(firConstructor)
             return firConstructor
         }
 

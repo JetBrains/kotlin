@@ -7,6 +7,8 @@ FILE: simpleClass.kt
 
     }
     public? final class SomeClass : SomeInterface {
+        public? constructor(): super<kotlin.Any>()
+
         private final? property baz(val): <implicit> = STUB
             public? get(): <implicit>
 
@@ -26,4 +28,6 @@ FILE: simpleClass.kt
 
     }
     public? final inline class InlineClass {
+        public? constructor(): super<kotlin.Any>()
+
     }
