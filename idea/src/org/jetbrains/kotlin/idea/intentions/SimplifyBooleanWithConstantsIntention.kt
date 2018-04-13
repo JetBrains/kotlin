@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.*
 import org.jetbrains.kotlin.types.isFlexible
 
 class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention::class)
@@ -154,12 +155,12 @@ class SimplifyBooleanWithConstantsIntention :
     private fun simplifyExpression(expression: KtExpression) = expression.replaced(toSimplifiedExpression(expression))
 
     private fun KtExpression?.hasBooleanType(): Boolean {
-        val type = this?.getType(this.analyze()) ?: return false
+        val type = this?.getType(this.analyze(PARTIAL)) ?: return false
         return KotlinBuiltIns.isBoolean(type) && !type.isFlexible()
     }
 
     private fun KtExpression.canBeReducedToBooleanConstant(constant: Boolean? = null): Boolean {
-        return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, this.analyze(), constant)
+        return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, this.analyze(PARTIAL), constant)
     }
 
     private fun KtExpression.canBeReducedToTrue() = canBeReducedToBooleanConstant(true)
