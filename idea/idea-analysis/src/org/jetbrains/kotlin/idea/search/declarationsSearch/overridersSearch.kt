@@ -21,6 +21,7 @@ import com.intellij.util.Query
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
@@ -97,7 +98,7 @@ object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMethodOve
     override fun isApplicable(request: HierarchySearchRequest<PsiMethod>): Boolean =
             runReadAction { request.originalElement.isOverridableElement() }
 
-    override fun doSearchDirect(request: HierarchySearchRequest<PsiMethod>, consumer: Processor<PsiMethod>) {
+    override fun doSearchDirect(request: HierarchySearchRequest<PsiMethod>, consumer: ExecutorProcessor<PsiMethod>) {
         searchDirectOverriders(request.originalElement).forEach { method -> consumer.process(method) }
     }
 }
