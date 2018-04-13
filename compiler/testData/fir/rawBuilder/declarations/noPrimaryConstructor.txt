@@ -3,9 +3,9 @@ FILE: noPrimaryConstructor.kt
         public? final? property x(val): String
             public? get(): String
 
-        public? constructor(x: String): this<<ERROR TYPE: Not implemented yet>>() {
+        public? constructor(x: String): super<kotlin.Any>() {
         }
 
-        public? constructor(): this<<ERROR TYPE: Not implemented yet>>()
+        public? constructor(): this<NoPrimary>()
 
     }
