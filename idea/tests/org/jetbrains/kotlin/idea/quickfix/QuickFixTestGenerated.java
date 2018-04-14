@@ -11668,6 +11668,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/variables/unusedVariableWithInitializer.kt");
         }
 
+        @TestMetadata("unusedVariableWithInitializerAndComment.kt")
+        public void testUnusedVariableWithInitializerAndComment() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithInitializerAndComment.kt");
+        }
+
         @TestMetadata("unusedVariableWithNullInitializer.kt")
         public void testUnusedVariableWithNullInitializer() throws Exception {
             runTest("idea/testData/quickfix/variables/unusedVariableWithNullInitializer.kt");
