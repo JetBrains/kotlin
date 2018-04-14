@@ -222,8 +222,29 @@ class ValueParameterPredicate : AbstractPredicate() {
     }
 }
 
-class FunctionPredicate : AbstractPredicate() {
-    private var bodyPredicate: CodeBlockPredicate? = null
+open class ClassPredicate : ScopePredicate() {
+
+    override val visitor: Visitor
+        get() = TODO("not implemented")
+
+    fun propertyDefinition(init: PropertyPredicate.() -> Unit): PropertyPredicate {
+        val predicate = PropertyPredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
+    }
+}
+
+class ObjectPredicate : ClassPredicate()
+
+class InterfacePredicate : ClassPredicate()
+
+class PropertyPredicate : AbstractPredicate() {
+    override val visitor: Visitor
+        get() = TODO("not implemented")
+}
+
+open class FunctionDeclarationPredicate: AbstractPredicate() {
     private val parameterPredicates = mutableListOf<ValueParameterPredicate>()
 
     var name: String? = null
@@ -248,11 +269,10 @@ class FunctionPredicate : AbstractPredicate() {
     override val visitor: Visitor
         get() = MyVisitor()
 
-    inner class MyVisitor : Visitor {
+    open inner class MyVisitor(protected val finalClass: Boolean = true) : Visitor {
         override fun visitElement(element: IrElement, data: Unit): VisitorData = falseVisitorData()
 
         override fun visitFunction(declaration: IrFunction, data: Unit): VisitorData {
-            var result = true
             // definition
             if (numberOfArguments != null && declaration.valueParameters.size != numberOfArguments ||
                 visibility != null && Visibilities.compare(declaration.visibility, visibility!!) != 0 ||
@@ -279,15 +299,10 @@ class FunctionPredicate : AbstractPredicate() {
                     return falseVisitorData()
                 }
             }
-
-            // body
-            if (bodyPredicate != null && declaration.body != null) {
-                result = bodyPredicate?.checkIrNode(declaration.body!!)!!.first
-            }
-            if (result) {
+            if (finalClass) {
                 info()
             }
-            return result to Unit
+            return true to Unit
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): VisitorData {
@@ -297,11 +312,38 @@ class FunctionPredicate : AbstractPredicate() {
             return visitFunction(declaration, data)
         }
     }
+}
+
+class FunctionPredicate : FunctionDeclarationPredicate() {
+    private var bodyPredicate: CodeBlockPredicate? = null
+
+    override val visitor: Visitor
+        get() = MyVisitor()
 
     fun body(init: CodeBlockPredicate.() -> Unit): CodeBlockPredicate {
         bodyPredicate = CodeBlockPredicate()
         bodyPredicate?.init()
         return bodyPredicate!!
+    }
+
+    inner class MyVisitor : FunctionDeclarationPredicate.MyVisitor(false) {
+        override fun visitFunction(declaration: IrFunction, data: Unit): VisitorData {
+            val (res, map) = super.visitFunction(declaration, data)
+            if (!res) {
+                return false to Unit
+            }
+            // body
+            var result = true
+            if (bodyPredicate != null && declaration.body != null) {
+                val (res2, map2) = bodyPredicate?.checkIrNode(declaration.body!!)!!
+                result = res2
+            }
+            if (result) {
+                info()
+                return true to Unit
+            }
+            return falseVisitorData()
+        }
     }
 }
 
