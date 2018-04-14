@@ -12207,6 +12207,8 @@ public inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<C
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <T, R> Array<out T>.zip(other: Array<out R>): List<Pair<T, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12214,6 +12216,8 @@ public infix fun <T, R> Array<out T>.zip(other: Array<out R>): List<Pair<T, R>> 
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> ByteArray.zip(other: Array<out R>): List<Pair<Byte, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12221,6 +12225,8 @@ public infix fun <R> ByteArray.zip(other: Array<out R>): List<Pair<Byte, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> ShortArray.zip(other: Array<out R>): List<Pair<Short, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12228,6 +12234,8 @@ public infix fun <R> ShortArray.zip(other: Array<out R>): List<Pair<Short, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> IntArray.zip(other: Array<out R>): List<Pair<Int, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12235,6 +12243,8 @@ public infix fun <R> IntArray.zip(other: Array<out R>): List<Pair<Int, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> LongArray.zip(other: Array<out R>): List<Pair<Long, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12242,6 +12252,8 @@ public infix fun <R> LongArray.zip(other: Array<out R>): List<Pair<Long, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> FloatArray.zip(other: Array<out R>): List<Pair<Float, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12249,6 +12261,8 @@ public infix fun <R> FloatArray.zip(other: Array<out R>): List<Pair<Float, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> DoubleArray.zip(other: Array<out R>): List<Pair<Double, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12256,6 +12270,8 @@ public infix fun <R> DoubleArray.zip(other: Array<out R>): List<Pair<Double, R>>
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> BooleanArray.zip(other: Array<out R>): List<Pair<Boolean, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12263,6 +12279,8 @@ public infix fun <R> BooleanArray.zip(other: Array<out R>): List<Pair<Boolean, R
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> CharArray.zip(other: Array<out R>): List<Pair<Char, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12270,6 +12288,8 @@ public infix fun <R> CharArray.zip(other: Array<out R>): List<Pair<Char, R>> {
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12282,6 +12302,8 @@ public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a:
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12294,6 +12316,8 @@ public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte,
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Short, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12306,6 +12330,8 @@ public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Shor
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12318,6 +12344,8 @@ public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12330,6 +12358,8 @@ public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long,
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Float, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12342,6 +12372,8 @@ public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Floa
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Double, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12354,6 +12386,8 @@ public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Dou
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Boolean, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12366,6 +12400,8 @@ public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Bo
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (a: Char, b: R) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12378,6 +12414,8 @@ public inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (a: Char,
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12385,6 +12423,8 @@ public infix fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> ByteArray.zip(other: Iterable<R>): List<Pair<Byte, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12392,6 +12432,8 @@ public infix fun <R> ByteArray.zip(other: Iterable<R>): List<Pair<Byte, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12399,6 +12441,8 @@ public infix fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> IntArray.zip(other: Iterable<R>): List<Pair<Int, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12406,6 +12450,8 @@ public infix fun <R> IntArray.zip(other: Iterable<R>): List<Pair<Int, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> LongArray.zip(other: Iterable<R>): List<Pair<Long, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12413,6 +12459,8 @@ public infix fun <R> LongArray.zip(other: Iterable<R>): List<Pair<Long, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> FloatArray.zip(other: Iterable<R>): List<Pair<Float, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12420,6 +12468,8 @@ public infix fun <R> FloatArray.zip(other: Iterable<R>): List<Pair<Float, R>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> DoubleArray.zip(other: Iterable<R>): List<Pair<Double, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12427,6 +12477,8 @@ public infix fun <R> DoubleArray.zip(other: Iterable<R>): List<Pair<Double, R>> 
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> BooleanArray.zip(other: Iterable<R>): List<Pair<Boolean, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12434,6 +12486,8 @@ public infix fun <R> BooleanArray.zip(other: Iterable<R>): List<Pair<Boolean, R>
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12441,6 +12495,8 @@ public infix fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V> {
     val arraySize = size
@@ -12455,6 +12511,8 @@ public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (a: 
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (a: Byte, b: R) -> V): List<V> {
     val arraySize = size
@@ -12469,6 +12527,8 @@ public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (a: Byte, 
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (a: Short, b: R) -> V): List<V> {
     val arraySize = size
@@ -12483,6 +12543,8 @@ public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (a: Short
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (a: Int, b: R) -> V): List<V> {
     val arraySize = size
@@ -12497,6 +12559,8 @@ public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (a: Int, b:
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (a: Long, b: R) -> V): List<V> {
     val arraySize = size
@@ -12511,6 +12575,8 @@ public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (a: Long, 
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (a: Float, b: R) -> V): List<V> {
     val arraySize = size
@@ -12525,6 +12591,8 @@ public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (a: Float
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (a: Double, b: R) -> V): List<V> {
     val arraySize = size
@@ -12539,6 +12607,8 @@ public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (a: Doub
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (a: Boolean, b: R) -> V): List<V> {
     val arraySize = size
@@ -12553,6 +12623,8 @@ public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (a: Boo
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (a: Char, b: R) -> V): List<V> {
     val arraySize = size
@@ -12567,6 +12639,8 @@ public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (a: Char, 
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun ByteArray.zip(other: ByteArray): List<Pair<Byte, Byte>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12574,6 +12648,8 @@ public infix fun ByteArray.zip(other: ByteArray): List<Pair<Byte, Byte>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun ShortArray.zip(other: ShortArray): List<Pair<Short, Short>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12581,6 +12657,8 @@ public infix fun ShortArray.zip(other: ShortArray): List<Pair<Short, Short>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun IntArray.zip(other: IntArray): List<Pair<Int, Int>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12588,6 +12666,8 @@ public infix fun IntArray.zip(other: IntArray): List<Pair<Int, Int>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun LongArray.zip(other: LongArray): List<Pair<Long, Long>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12595,6 +12675,8 @@ public infix fun LongArray.zip(other: LongArray): List<Pair<Long, Long>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun FloatArray.zip(other: FloatArray): List<Pair<Float, Float>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12602,6 +12684,8 @@ public infix fun FloatArray.zip(other: FloatArray): List<Pair<Float, Float>> {
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun DoubleArray.zip(other: DoubleArray): List<Pair<Double, Double>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12609,6 +12693,8 @@ public infix fun DoubleArray.zip(other: DoubleArray): List<Pair<Double, Double>>
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun BooleanArray.zip(other: BooleanArray): List<Pair<Boolean, Boolean>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12616,6 +12702,8 @@ public infix fun BooleanArray.zip(other: BooleanArray): List<Pair<Boolean, Boole
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun CharArray.zip(other: CharArray): List<Pair<Char, Char>> {
     return zip(other) { t1, t2 -> t1 to t2 }
@@ -12623,6 +12711,8 @@ public infix fun CharArray.zip(other: CharArray): List<Pair<Char, Char>> {
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: Byte) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12635,6 +12725,8 @@ public inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: By
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b: Short) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12647,6 +12739,8 @@ public inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b:
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12659,6 +12753,8 @@ public inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) 
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Long) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12671,6 +12767,8 @@ public inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Lo
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b: Float) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12683,6 +12781,8 @@ public inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b:
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double, b: Double) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12695,6 +12795,8 @@ public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double,
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boolean, b: Boolean) -> V): List<V> {
     val size = minOf(size, other.size)
@@ -12707,6 +12809,8 @@ public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boole
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Char) -> V): List<V> {
     val size = minOf(size, other.size)

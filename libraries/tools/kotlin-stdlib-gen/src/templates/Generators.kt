@@ -1005,6 +1005,8 @@ object Generators : TemplateGroupBase() {
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+
+            @sample samples.collections.Iterables.Operations.zipIterableWithTransform
             """
         }
         typeParam("R")
@@ -1042,6 +1044,8 @@ object Generators : TemplateGroupBase() {
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+
+            @sample samples.collections.Iterables.Operations.zipIterableWithTransform
             """
         }
         typeParam("R")
@@ -1079,6 +1083,8 @@ object Generators : TemplateGroupBase() {
         doc {
             """
             Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+
+            @sample samples.collections.Iterables.Operations.zipIterableWithTransform
             """
         }
         typeParam("V")
@@ -1147,6 +1153,8 @@ object Generators : TemplateGroupBase() {
         doc {
             """
             Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+
+            @sample samples.collections.Iterables.Operations.zipIterable
             """
         }
         typeParam("R")
@@ -1182,6 +1190,8 @@ object Generators : TemplateGroupBase() {
         doc {
             """
             Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+
+            @sample samples.collections.Iterables.Operations.zipIterable
             """
         }
         typeParam("R")
@@ -1200,6 +1210,8 @@ object Generators : TemplateGroupBase() {
         doc {
             """
             Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+
+            @sample samples.collections.Iterables.Operations.zipIterable
             """
         }
         returns("List<Pair<T, T>>")
