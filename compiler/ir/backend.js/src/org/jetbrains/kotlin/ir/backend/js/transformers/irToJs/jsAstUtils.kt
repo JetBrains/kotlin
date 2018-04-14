@@ -65,9 +65,11 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
 fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGenerationContext): List<JsExpression> {
     val transformer = IrElementToJsExpressionTransformer()
-    // TODO: map to?
-    return (0 until expression.valueArgumentsCount).map {
+    val size = expression.valueArgumentsCount
+
+    return (0 until size).mapTo(ArrayList(size)) {
         val argument = expression.getValueArgument(it)
-        argument?.accept(transformer, context) ?: JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
+        val result = argument?.accept(transformer, context) ?: JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
+        result
     }
 }
