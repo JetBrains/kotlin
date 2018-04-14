@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 
-val IrFunctionSymbol.parameterCount get() = descriptor.valueParameters.size
-
 val IrFunctionSymbol.kind get() = descriptor.kind
 
 val IrFunctionSymbol.modality get() = descriptor.modality
