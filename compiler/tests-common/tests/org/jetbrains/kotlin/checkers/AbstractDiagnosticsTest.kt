@@ -510,7 +510,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             file.packageFqName.pathSegments().firstOrNull() ?: SpecialNames.ROOT_PACKAGE
         }
 
-    private fun createModules(
+    protected fun createModules(
         groupedByModule: Map<TestModule?, List<TestFile>>,
         storageManager: StorageManager
     ): MutableMap<TestModule?, ModuleDescriptorImpl> {
@@ -621,7 +621,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     }
 
     companion object {
-        private val HASH_SANITIZER = fun(s: String): String = s.replace("@(\\d)+".toRegex(), "")
+        internal val HASH_SANITIZER = fun(s: String): String = s.replace("@(\\d)+".toRegex(), "")
 
         private val MODULE_FILES = ModuleDescriptor.Capability<List<KtFile>>("")
     }

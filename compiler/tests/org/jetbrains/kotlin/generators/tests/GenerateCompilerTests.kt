@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.jvm.analyzer.AbstractIrAnalyzerTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
@@ -33,9 +34,7 @@ import org.jetbrains.kotlin.codegen.ir.AbstractIrCompileKotlinAgainstInlineKotli
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
-import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
-import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
-import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
@@ -195,6 +194,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrSourceRangesTestCase> {
             model("ir/sourceRanges")
+        }
+
+        testClass<AbstractIrAnalyzerTest> {
+            model("cli/jvm/analyzer")
         }
 
         testClass<AbstractBytecodeListingTest> {
