@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.cli.jvm.analyzer.scope
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.keysToMap
 
 
@@ -144,7 +144,33 @@ class CodeBlockPredicate : ScopePredicate() {
 }
 
 class VariablePredicate : AbstractPredicate() {
+    private var typePredicate: TypePredicate? = null
+    var type: TypePredicate?
+        get() = typePredicate
+        set(value) {
+            typePredicate = value
+        }
+
     var message: String? = null
+
+    private var _isVar: Boolean? = null
+    var isVar: Boolean?
+        get() = _isVar
+        set(value) {
+            _isVal = null
+            _isVar = value
+        }
+
+    private var _isVal: Boolean? = null
+    var isVal: Boolean?
+        get() = _isVal
+        set(value) {
+            _isVar = null
+            _isVal = value
+        }
+
+    var isConst: Boolean? = null
+    var isLateinit: Boolean? = null
 
     override val visitor: Visitor
         get() = MyVisitor()
@@ -153,6 +179,15 @@ class VariablePredicate : AbstractPredicate() {
         override fun visitElement(element: IrElement, data: Unit): VisitorData = falseVisitorData()
 
         override fun visitVariable(declaration: IrVariable, data: Unit): VisitorData {
+            if (isVar != null && declaration.isVar != isVar ||
+                isVal != null && declaration.isVar == isVal ||
+                isConst != null && declaration.isConst != isConst ||
+                isLateinit != null && declaration.isLateinit != isLateinit ||
+                typePredicate != null && typePredicate!!.checkType(declaration.type)
+            ) {
+                return falseVisitorData()
+            }
+
             info()
             var s = "variable ${declaration.name}"
             if (message != null) {
@@ -164,10 +199,51 @@ class VariablePredicate : AbstractPredicate() {
     }
 }
 
+class ValueParameterPredicate : AbstractPredicate() {
+    override val visitor: Visitor
+        get() = MyVisitor()
+
+    private var typePredicate: TypePredicate? = null
+    var type: TypePredicate?
+        get() = typePredicate
+        set(value) {
+            typePredicate = value
+        }
+
+    inner class MyVisitor : Visitor {
+        override fun visitElement(element: IrElement, data: Unit): VisitorData = falseVisitorData()
+
+        override fun visitValueParameter(declaration: IrValueParameter, data: Unit): VisitorData {
+            if (typePredicate != null && typePredicate!!.checkType(declaration.type)) {
+                return falseVisitorData()
+            }
+            return true to Unit
+        }
+    }
+}
+
 class FunctionPredicate : AbstractPredicate() {
-    private var body: CodeBlockPredicate? = null
+    private var bodyPredicate: CodeBlockPredicate? = null
+    private val parameterPredicates = mutableListOf<ValueParameterPredicate>()
 
     var name: String? = null
+    var numberOfArguments: Int? = null
+    var visibility: Visibility? = null
+    var isInline: Boolean? = null
+
+    private var returnTypePredicate: TypePredicate? = null
+    var returnType: TypePredicate?
+        get() = returnTypePredicate
+        set(value) {
+            returnTypePredicate = value
+        }
+
+    fun argument(init: ValueParameterPredicate.() -> Unit): ValueParameterPredicate {
+        val predicate = ValueParameterPredicate()
+        predicate.init()
+        parameterPredicates += predicate
+        return predicate
+    }
 
     override val visitor: Visitor
         get() = MyVisitor()
@@ -175,25 +251,66 @@ class FunctionPredicate : AbstractPredicate() {
     inner class MyVisitor : Visitor {
         override fun visitElement(element: IrElement, data: Unit): VisitorData = falseVisitorData()
 
-        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): VisitorData {
-            if (name != null && declaration.name.identifier != name) {
+        override fun visitFunction(declaration: IrFunction, data: Unit): VisitorData {
+            var result = true
+            // definition
+            if (numberOfArguments != null && declaration.valueParameters.size != numberOfArguments ||
+                visibility != null && Visibilities.compare(declaration.visibility, visibility!!) != 0 ||
+                isInline != null && declaration.isInline != isInline ||
+                returnTypePredicate != null && !returnTypePredicate!!.checkType(declaration.returnType)
+            ) {
                 return falseVisitorData()
             }
-            var result = true
-            if (body != null && declaration.body != null) {
-                result = body?.checkIrNode(declaration.body!!)!!.first
+
+            val checkedArguments = mutableMapOf<IrValueParameter, Boolean>()
+            for (parameterPredicate in parameterPredicates) {
+                var found = false
+                for (parameter in declaration.valueParameters) {
+                    if (checkedArguments.getOrDefault(parameter, false)) {
+                        continue
+                    }
+                    val (res, map) = parameterPredicate.checkIrNode(parameter)
+                    if (res) {
+                        checkedArguments[parameter] = true
+                        found = true
+                    }
+                }
+                if (!found) {
+                    return falseVisitorData()
+                }
+            }
+
+            // body
+            if (bodyPredicate != null && declaration.body != null) {
+                result = bodyPredicate?.checkIrNode(declaration.body!!)!!.first
             }
             if (result) {
                 info()
             }
             return result to Unit
         }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Unit): VisitorData {
+            if (name != null && declaration.name.identifier != name) {
+                return falseVisitorData()
+            }
+            return visitFunction(declaration, data)
+        }
     }
 
     fun body(init: CodeBlockPredicate.() -> Unit): CodeBlockPredicate {
-        body = CodeBlockPredicate()
-        body?.init()
-        return body!!
+        bodyPredicate = CodeBlockPredicate()
+        bodyPredicate?.init()
+        return bodyPredicate!!
+    }
+}
+
+class TypePredicate(val typeName: String) {
+    fun checkType(type: KotlinType): Boolean {
+        return type.toString() == typeName
+//        val declarationType = type.toString().split(" ").getOrNull(2) ?: return false
+//        val declarationType = type.toString().split(" ").getOrNull(2) ?: return false
+//        return typeName == declarationType
     }
 }
 

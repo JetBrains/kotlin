@@ -1,32 +1,38 @@
 package aaa.bbb
 
-//class A {}
+class A {}
+
+fun foo(x: Int, y: A): Int {
+    return 0
+}
+
+fun baz(x: Int, y: A, z: Int): Int {
+    return 0
+}
+
+//fun bar(): Int {
+//    foo()
 //
-fun foo() {}
-
-fun bar(): Int {
-    foo()
-
-    while(true) {
-
-    }
-
-    while (true) {
-        val whileA = 1
-        if (true) {
-            val whileThen = 1
-        } else {
-            val whileElse = 1
-        }
-    }
-
-    for (x in 0..10) {
-        val forA = x
-        foo()
-        if (true) {
-            val forIf = x
-        }
-    }
+//    while(true) {
+//
+//    }
+//
+//    while (true) {
+//        val whileA = 1
+//        if (true) {
+//            val whileThen = 1
+//        } else {
+//            val whileElse = 1
+//        }
+//    }
+//
+//    for (x in 0..10) {
+//        val forA = x
+//        foo()
+//        if (true) {
+//            val forIf = x
+//        }
+//    }
 //
 //    if (true) {
 //        foo()
@@ -39,7 +45,7 @@ fun bar(): Int {
 //    if (true) {
 //        val thenNoElse = 10
 //    }
-}
+//}
 
 //fun baz() {
 //    var b = 0

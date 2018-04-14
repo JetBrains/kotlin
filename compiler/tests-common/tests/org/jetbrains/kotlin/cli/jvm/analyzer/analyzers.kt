@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.cli.jvm.analyzer
 
+import org.jetbrains.kotlin.cli.jvm.analyzer.scope.TypePredicate
 import org.jetbrains.kotlin.cli.jvm.analyzer.scope.analyzer
 
 val analyzers = listOf(
+    functionDefinitionAnalyzer(),
     functionCallAnalyzer(),
     functionCallAnalyzer2(),
     analyzerWhile(),
@@ -17,6 +19,17 @@ val analyzers = listOf(
     analyzerIf2(),
     functionNameAnalyzer()
 )
+
+fun functionDefinitionAnalyzer() = analyzer("func parameters") {
+    function {
+        numberOfArguments = 2
+        argument { type = TypePredicate("Int") }
+        argument { type = TypePredicate("A") }
+        returnType = TypePredicate("Int")
+
+        info = { println("foo founded") }
+    }
+}
 
 fun functionCallAnalyzer() = analyzer("call foo") {
     val foo = function {
