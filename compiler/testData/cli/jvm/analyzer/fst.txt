@@ -1,4 +1,0 @@
-package
-
-public fun bar(): kotlin.Int
-public fun foo(/*0*/ x: kotlin.Int): kotlin.Int

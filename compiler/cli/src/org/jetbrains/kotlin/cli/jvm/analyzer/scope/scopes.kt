@@ -69,6 +69,13 @@ abstract class ScopePredicate : AbstractPredicate() {
         innerPredicates += predicate
         return predicate
     }
+
+    fun variableDefinition(init: VariablePredicate.() -> Unit): VariablePredicate {
+        val predicate = VariablePredicate()
+        predicate.init()
+        innerPredicates += predicate
+        return predicate
+    }
 }
 
 class CodeBlockPredicate : ScopePredicate() {
@@ -126,15 +133,8 @@ class CodeBlockPredicate : ScopePredicate() {
         innerPredicates += predicate
         return predicate
     }
-
-    fun variableDefinition(init: VariablePredicate.() -> Unit): VariablePredicate {
-        val predicate = VariablePredicate()
-        predicate.init()
-        innerPredicates += predicate
-        return predicate
-    }
     
-    fun functionCall(func: FunctionPredicate, init: FunctionCallPredicate.() -> Unit): FunctionCallPredicate {
+    fun functionCall(func: FunctionPredicate, init: FunctionCallPredicate.() -> Unit = {}): FunctionCallPredicate {
         val predicate = FunctionCallPredicate(func)
         predicate.init()
         innerPredicates += predicate
@@ -348,6 +348,13 @@ class FunctionPredicate : FunctionDeclarationPredicate() {
 }
 
 class TypePredicate(val typeName: String) {
+    companion object {
+        val Int = TypePredicate("Int")
+        val Double = TypePredicate("Double")
+        val Boolean = TypePredicate("Booolean")
+        val String = TypePredicate("String")
+    }
+
     fun checkType(type: KotlinType): Boolean {
         return type.toString() == typeName
 //        val declarationType = type.toString().split(" ").getOrNull(2) ?: return false

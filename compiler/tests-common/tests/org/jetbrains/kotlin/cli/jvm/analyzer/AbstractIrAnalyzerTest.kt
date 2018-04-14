@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.analyzer
 
+import junit.framework.TestCase
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestWithStdLib
 import org.jetbrains.kotlin.checkers.LazyOperationsLog
@@ -76,10 +77,11 @@ abstract class AbstractIrAnalyzerTest : AbstractDiagnosticsTestWithStdLib() {
             moduleBindings[testModule] = result.bindingContext
         }
 
-        extractStructuresForModules(groupedByModule, modules, moduleBindings)
+        extractStructuresForModules(testDataFile.nameWithoutExtension, groupedByModule, modules, moduleBindings)
     }
 
     private fun extractStructuresForModules(
+        filename: String,
         moduleFiles: Map<TestModule?, List<TestFile>>,
         moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
         moduleBindings: Map<TestModule?, BindingContext>
@@ -90,20 +92,25 @@ abstract class AbstractIrAnalyzerTest : AbstractDiagnosticsTestWithStdLib() {
             val moduleBindingContext = moduleBindings[module] ?: continue
             val irModule = AbstractIrGeneratorTestCase.generateIrModule(ktFiles, moduleDescriptor, moduleBindingContext, true)
 
-            checkOneSource(irModule, moduleDescriptor, moduleBindingContext)
+            checkOneSource(filename, irModule, moduleDescriptor, moduleBindingContext)
         }
     }
 
     private fun checkOneSource(
+        filename: String,
         irModule: IrModuleFragment,
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext
     ) {
-        for (analyzer in analyzers) {
+        val data = analyzers.get(filename)
+        if (data != null) {
+            val (analyzer, expected) = data
             println("------------${analyzer.title}------------")
             analyzer.execute(irModule, moduleDescriptor, bindingContext)
             println("------------")
             println()
+        } else {
+            TestCase.fail("analyzer \"$filename\" not founded")
         }
     }
 

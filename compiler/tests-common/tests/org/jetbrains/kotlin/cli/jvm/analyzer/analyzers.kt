@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.cli.jvm.analyzer
 import org.jetbrains.kotlin.cli.jvm.analyzer.scope.TypePredicate
 import org.jetbrains.kotlin.cli.jvm.analyzer.scope.analyzer
 
-val analyzers = listOf(
-    functionDefinitionAnalyzer(),
-    functionCallAnalyzer(),
-    functionCallAnalyzer2(),
-    analyzerWhile(),
-    analyzerFor1(),
-    analyzerFor2(),
-    analyzerIf1(),
-    analyzerIf2(),
-    functionNameAnalyzer()
-)
 
-fun functionDefinitionAnalyzer() = analyzer("func parameters") {
+val analyzers = listOf(
+    functionDefinition(),
+    ifThenElse(),
+    functionName(),
+    functionCall(),
+    forLoop(),
+    variableType(),
+    whileLoop()
+).map { it.first.title to it }.toMap()
+
+
+fun functionDefinition() = analyzer("functionDefinition") {
     function {
         numberOfArguments = 2
         argument { type = TypePredicate("Int") }
@@ -29,119 +29,54 @@ fun functionDefinitionAnalyzer() = analyzer("func parameters") {
 
         info = { println("foo founded") }
     }
-}
+} to true
 
-fun functionCallAnalyzer() = analyzer("call foo") {
-    val foo = function {
-        name = "foo"
-        info = { println("Welcome to foo") }
-    }
 
-    function {
-        body {
-            functionCall(foo) {}
+fun ifThenElse() = analyzer("ifThenElse") {
+    function { body {
+        ifCondition {
+            thenBranch {
+                variableDefinition { type = TypePredicate.Int }
+            }
+            elseBranch {
+                variableDefinition { type = TypePredicate.Int }
+            }
         }
-    }
-}
+    } }
+} to true
 
-fun functionCallAnalyzer2() = analyzer("call baz") {
-    val baz = function {
-        name = "baz"
-    }
 
-    function {
-        body {
-            functionCall(baz) {}
-        }
-    }
-}
-
-fun functionNameAnalyzer() = analyzer("function name") {
+fun functionName() = analyzer("functionName") {
     function {
         name = "foo"
-        info = { println("$name founded") }
     }
-}
+} to true
 
-fun analyzerWhile() = analyzer("while") {
-    function {
-        body {
-            whileLoop {
-                body {
-                    variableDefinition {
-                        message = "while"
-                    }
-                }
-            }
-        }
-    }
-}
 
-fun analyzerFor1() = analyzer("for recursive true") {
-    function {
-        body {
-            forLoop {
-                body{
-                    recursiveSearch = true
-                    variableDefinition {
-                        message = "for"
-                    }
-                }
-            }
-        }
-    }
-}
+fun functionCall() = analyzer("functionCall") {
+    val foo = function { name = "foo" }
+    function { body {
+        functionCall(foo)
+    } }
+} to true
 
-fun analyzerFor2() = analyzer("for recursive false") {
-    function {
-        body {
-            forLoop {
-                body{
-                    recursiveSearch = false
-                    variableDefinition {
-                        message = "for"
-                    }
-                }
-            }
-        }
-    }
-}
 
-fun analyzerIf1() = analyzer("if then else") {
-    function {
-        body {
-            ifCondition {
-                thenBranch {
-                    variableDefinition {
-                        message = "then"
-                    }
-                }
-                elseBranch {
-                    variableDefinition {
-                        message = "else"
-                    }
-                }
-            }
-        }
-    }
-}
+fun forLoop() = analyzer("forLoop") {
+    function { body {
+        forLoop { body {
+            variableDefinition { type = TypePredicate.Int }
+        } }
+    } }
+} to true
 
-fun analyzerIf2() = analyzer("if then else no rec") {
-    function {
-        body {
-            recursiveSearch = false
-            ifCondition {
-                thenBranch {
-                    variableDefinition {
-                        message = "then"
-                    }
-                }
-                elseBranch {
-                    variableDefinition {
-                        message = "else"
-                    }
-                }
-            }
-        }
-    }
-}
+
+fun variableType() = analyzer("variableType") {
+    variableDefinition { type = TypePredicate.Int }
+} to true
+
+
+fun whileLoop() = analyzer("whileLoop") {
+    function { body {
+        variableDefinition { type = TypePredicate.Int }
+    } }
+} to true

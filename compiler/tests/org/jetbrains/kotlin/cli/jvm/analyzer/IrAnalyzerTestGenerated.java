@@ -25,9 +25,45 @@ public class IrAnalyzerTestGenerated extends AbstractIrAnalyzerTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm/analyzer"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
-    @TestMetadata("fst.kt")
-    public void testFst() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/analyzer/fst.kt");
+    @TestMetadata("forLoop.kt")
+    public void testForLoop() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/analyzer/forLoop.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("functionCall.kt")
+    public void testFunctionCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/analyzer/functionCall.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("functionDefinition.kt")
+    public void testFunctionDefinition() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/analyzer/functionDefinition.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("functionName.kt")
+    public void testFunctionName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/analyzer/functionName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ifThenElse.kt")
+    public void testIfThenElse() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/analyzer/ifThenElse.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("variableType.kt")
+    public void testVariableType() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/analyzer/variableType.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("whileLoop.kt")
+    public void testWhileLoop() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/analyzer/whileLoop.kt");
         doTest(fileName);
     }
 }
