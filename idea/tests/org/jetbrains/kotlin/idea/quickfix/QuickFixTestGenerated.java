@@ -12582,6 +12582,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unusedVariableWithInitializerAndComment.kt")
+        public void testUnusedVariableWithInitializerAndComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/unusedVariableWithInitializerAndComment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedVariableWithNullInitializer.kt")
         public void testUnusedVariableWithNullInitializer() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/unusedVariableWithNullInitializer.kt");
