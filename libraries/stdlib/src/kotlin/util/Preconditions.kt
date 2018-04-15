@@ -129,4 +129,13 @@ public inline fun <T:Any> checkNotNull(value: T?, lazyMessage: () -> Any): T {
  * @sample samples.misc.Preconditions.failWithError
  */
 @kotlin.internal.InlineOnly
+@Deprecated("Use illegalState(message) instead", ReplaceWith("illegalState(message)"), DeprecationLevel.WARNING)
 public inline fun error(message: Any): Nothing = throw IllegalStateException(message.toString())
+
+/**
+ * Throws an [IllegalStateException] with the given [message].
+ *
+ * @sample samples.misc.Preconditions.failWithError
+ */
+@kotlin.internal.InlineOnly
+public inline fun illegalState(message: Any): Nothing = throw IllegalStateException(message.toString())

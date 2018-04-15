@@ -10,7 +10,7 @@ class Preconditions {
     fun failWithError() {
         val name: String? = null
 
-        assertFailsWith<IllegalStateException> { val nonNullName = name ?: error("Name is missing") }
+        assertFailsWith<IllegalStateException> { val nonNullName = name ?: illegalState("Name is missing") }
     }
 
     @Sample
