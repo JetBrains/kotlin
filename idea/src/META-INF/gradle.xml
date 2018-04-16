@@ -19,6 +19,9 @@
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleModelFacade"
                         interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleFrameworkSupport"
+                        interface="org.jetbrains.kotlin.gradle.kdsl.frameworkSupport.GradleFrameworkSupportProvider" />
     </extensionPoints>
 
     <extensions defaultExtensionNs="com.intellij">
