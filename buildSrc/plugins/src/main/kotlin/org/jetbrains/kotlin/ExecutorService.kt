@@ -42,6 +42,9 @@ interface ExecutorService {
     fun execute(action: Action<in ExecSpec>): ExecResult?
 }
 
+/**
+ * Creates an ExecutorService depending on a test target -Ptest_target
+ */
 fun create(project: Project): ExecutorService {
     val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
     val testTarget = platformManager.targetManager(project.findProperty("testTarget") as String?).target
@@ -86,6 +89,39 @@ fun create(project: Project): ExecutorService {
         }
     }
 }
+
+data class ProcessOutput(val stdOut: String, val stdErr: String, val exitCode: Int)
+
+/**
+ * Runs process using a given executor.
+ *
+ * @param executor a method that is able to run a given executable, e.g. ExecutorService::execute
+ * @param executable a process executable to be run
+ * @param args arguments for a process
+ */
+fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
+               executable: String, args: List<String>) : ProcessOutput {
+    val outStream = ByteArrayOutputStream()
+    val errStream = ByteArrayOutputStream()
+
+    val execResult = executor(Action {
+        it.executable = executable
+        it.args = args.toList()
+        it.standardOutput = outStream
+        it.errorOutput = errStream
+        it.isIgnoreExitValue = true
+    })
+
+    checkNotNull(execResult)
+
+    val stdOut = outStream.toString("UTF-8")
+    val stdErr = errStream.toString("UTF-8")
+
+    return ProcessOutput(stdOut, stdErr, execResult!!.exitValue)
+}
+
+fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
+               executable: String, vararg args: String) = runProcess(executor, executable, args.toList())
 
 /**
  * Executes a given action with iPhone Simulator.

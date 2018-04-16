@@ -75,7 +75,7 @@ allprojects {
     sourceSets {
         // backend.native/tests
         testOutputLocal {
-           output.dir(rootProject.file("$testOutputRoot/local"))
+            output.dir(rootProject.file("$testOutputRoot/local"))
         }
 
         // backend.native/tests/external
@@ -86,6 +86,11 @@ allprojects {
         // backend.native/tests/stdlib_external
         testOutputStdlib {
             output.dir(rootProject.file("$testOutputRoot/stdlib"))
+        }
+
+        // backend.native/tests/framework
+        testOutputFramework {
+            output.dir(rootProject.file("$testOutputRoot/framework"))
         }
     }
 }
@@ -152,6 +157,9 @@ def tasksOf(Closure<Task> filter) {
 run {
     def tasks = tasksOf { it instanceof KonanTest && it.inDevelopersRun }
     dependsOn(tasks)
+
+    // Add framework tests
+    dependsOn(project.tasks.withType(FrameworkTest))
 }
 
 // Collect results in one json.
@@ -2643,6 +2651,41 @@ task produce_dynamic(type: DynamicKonanTest) {
                 "enum100 = 100\n" +
                 "object = 42\n" +
                 "topLevel = 777 3\n"
+}
+
+/**
+ * Get sourceSet's output path as a string
+ */
+static String outputPath(SourceSet set) {
+    return set.output.getDirs().getSingleFile().toString()
+}
+
+if (isMac() && project.testTarget != 'wasm32') {
+    def target = project.testTarget ?: 'host'
+
+    task testValuesFramework(type: FrameworkTest) {
+        frameworkName = 'Values'
+        konanArtifacts {
+            framework(frameworkName, targets: [ target ]) {
+                srcDir 'framework/values'
+                baseDir outputPath(sourceSets.testOutputFramework) + "/$frameworkName"
+            }
+        }
+        swiftSources = ['framework/values/values.swift']
+        dependsOn "compileKonan${frameworkName}"
+    }
+
+    task testStdlibFramework(type: FrameworkTest) {
+        frameworkName = 'Stdlib'
+        konanArtifacts {
+            framework(frameworkName, targets: [ target ]) {
+                srcDir 'framework/stdlib'
+                baseDir outputPath(sourceSets.testOutputFramework) + "/$frameworkName"
+            }
+        }
+        swiftSources = ['framework/stdlib/stdlib.swift']
+        dependsOn "compileKonan${frameworkName}"
+    }
 }
 
 task buildKonanStdlibTests(type: BuildKonanTest) {
