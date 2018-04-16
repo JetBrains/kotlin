@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKKtProperty : JKField {
+interface JKKtProperty : JKUniverseDeclaration, JKField {
     val initializer: JKExpression
     val getter: JKBlock
     val setter: JKBlock
 }
 
-interface JKKtFunction : JKMethod {
+interface JKKtFunction : JKUniverseDeclaration, JKMethod {
     val block: JKBlock
 }
 
-interface JKKtConstructor : JKDeclaration
+interface JKKtConstructor : JKUniverseDeclaration
 
 interface JKKtPrimaryConstructor : JKKtConstructor
 

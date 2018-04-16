@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.j2k.tree.JKElement
 import org.jetbrains.kotlin.j2k.tree.prettyDebugPrintTree
 
 class NewJavaToKotlinConverter(
-        private val project: Project,
-        private val settings: ConverterSettings
+    private val project: Project,
+    private val settings: ConverterSettings
 ) {
 
     private fun List<JKElement>.prettyPrintTrees() = buildString {

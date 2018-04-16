@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKElement
-import org.jetbrains.kotlin.j2k.tree.prettyDebugPrintTree
+import org.jetbrains.kotlin.j2k.tree.JKUniverseClass
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.utils.Printer
 
@@ -41,14 +41,14 @@ class NewCodeBuilder {
             printer.print("/* !!! Hit visitElement for element type: ${element::class} !!! */")
         }
 
-        override fun visitClass(klass: JKClass, data: Unit) {
-            printer.print(classKindString(klass.classKind))
+        override fun visitUniverseClass(universeClass: JKUniverseClass, data: Unit) {
+            printer.print(classKindString(universeClass.classKind))
             builder.append(" ")
-            printer.print(klass.name.name)
-            if (klass.declarations.isNotEmpty()) {
+            printer.print(universeClass.name.name)
+            if (universeClass.declarations.isNotEmpty()) {
                 printer.println("{")
                 printer.pushIndent()
-                klass.declarations.forEach { it.accept(this, data) }
+                universeClass.declarations.forEach { it.accept(this, data) }
                 printer.popIndent()
                 printer.println("}")
             }

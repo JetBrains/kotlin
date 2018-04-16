@@ -19,36 +19,16 @@ package org.jetbrains.kotlin.j2k.tree
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 
-
-interface JKElement {
-    var parent: JKElement?
-
+interface JKElement : JKTreeElement {
     fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
 
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
 }
 
-interface JKDeclaration : JKElement, JKReferenceTarget
+interface JKUniverseDeclaration : JKElement, JKDeclaration
 
-interface JKClass : JKDeclaration, JKModifierListOwner {
-    val name: JKNameIdentifier
-    var declarations: List<JKDeclaration>
-    var classKind: ClassKind
-
-    enum class ClassKind {
-        ABSTRACT, ANNOTATION, CLASS, ENUM, INTERFACE
-    }
-}
-
-interface JKMethod : JKDeclaration, JKModifierListOwner {
-    val name: JKNameIdentifier
-    var valueArguments: List<JKValueArgument>
-    val returnType: JKType
-}
-
-interface JKField : JKDeclaration, JKModifierListOwner {
-    val type: JKType
-    val name: JKNameIdentifier
+interface JKUniverseClass : JKUniverseDeclaration, JKClass {
+    override var declarations: List<JKUniverseDeclaration>
 }
 
 interface JKModifier : JKElement

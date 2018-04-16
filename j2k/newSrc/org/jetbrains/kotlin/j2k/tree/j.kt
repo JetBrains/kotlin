@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-interface JKJavaField : JKField {
+interface JKJavaField : JKUniverseDeclaration, JKField {
     val initializer: JKExpression
 }
 
-interface JKJavaMethod : JKMethod {
+interface JKJavaMethod : JKUniverseDeclaration, JKMethod {
     val block: JKBlock
 }
 
