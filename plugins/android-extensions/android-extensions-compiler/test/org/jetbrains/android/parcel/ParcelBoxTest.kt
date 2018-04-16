@@ -55,6 +55,7 @@ class ParcelBoxTest : AbstractParcelBoxTest() {
     fun testCustomSerializerBoxing() = doTest("customSerializerBoxing")
     fun testKt20717() = doTest("kt20717")
     fun testEnumObject() = doTest("enumObject")
+    fun testIntArray() = doTest("intArray")
 }
 
 class ParcelBoxTestWithSerializableLikeExtension : AbstractParcelBoxTest() {
