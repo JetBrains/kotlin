@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_WITHOUT_CHECK: JS
+// DONT_RUN_GENERATED_CODE: JS
 
 fun escapeChar(c : Char) : String? = when (c) {
     '\\' -> "\\\\"

@@ -1,4 +1,0 @@
-// TODO Remove this restriction when secondary constructors will be supported in js backend.
-// See KT-7798 JS: add support for secondary constructors
-// https://youtrack.jetbrains.com/issue/KT-7798
-// IGNORE_BACKEND_WITHOUT_CHECK: JS

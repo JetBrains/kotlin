@@ -6,7 +6,7 @@
 // See KT-11258 Incorrect resolution sequence for Java field
 
 // TODO: enable this test on JVM, see KT-16616
-// IGNORE_BACKEND_WITHOUT_CHECK: JVM
+// IGNORE_BACKEND: JVM
 
 import java.util.*
 
