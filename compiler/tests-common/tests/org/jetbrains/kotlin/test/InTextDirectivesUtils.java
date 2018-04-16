@@ -233,12 +233,13 @@ public final class InTextDirectivesUtils {
         return ignoredBackends.contains(targetBackend.name());
     }
 
-    public static boolean isIgnoredTargetWithoutCheck(TargetBackend targetBackend, File file) {
-        return isIgnoredTargetByPrefix(targetBackend, file, "// IGNORE_BACKEND_WITHOUT_CHECK: ");
+    public static boolean dontRunGeneratedCode(TargetBackend targetBackend, File file) {
+        List<String> backends = findListWithPrefixes(textWithDirectives(file), "// DONT_RUN_GENERATED_CODE: ");
+        return backends.contains(targetBackend.name());
     }
 
     // Whether the target test is supposed to pass successfully on targetBackend
     public static boolean isPassingTarget(TargetBackend targetBackend, File file) {
-        return isCompatibleTarget(targetBackend, file) && !isIgnoredTarget(targetBackend, file) && !isIgnoredTargetWithoutCheck(targetBackend, file);
+        return isCompatibleTarget(targetBackend, file) && !isIgnoredTarget(targetBackend, file);
     }
 }

@@ -19,7 +19,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTargetWithoutCheck;
 
 public class SimpleTestMethodModel implements TestMethodModel {
 
@@ -96,8 +95,7 @@ public class SimpleTestMethodModel implements TestMethodModel {
             unescapedName = relativePath + "-" + StringsKt.capitalize(extractedName);
         }
 
-        boolean ignored = isIgnoredTargetWithoutCheck(targetBackend, file) ||
-                          skipIgnored && isIgnoredTarget(targetBackend, file);
+        boolean ignored = skipIgnored && isIgnoredTarget(targetBackend, file);
         return (ignored ? "ignore" : "test") + StringsKt.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
     }
 

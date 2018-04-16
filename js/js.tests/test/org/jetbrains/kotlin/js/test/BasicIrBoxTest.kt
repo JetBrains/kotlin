@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
 abstract class BasicIrBoxTest(
@@ -18,7 +19,15 @@ abstract class BasicIrBoxTest(
     pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
     generateSourceMap: Boolean = false,
     generateNodeJsRunner: Boolean = false
-) : BasicBoxTest(pathToTestDir, testGroupOutputDirPrefix, pathToRootOutputDir, true, generateSourceMap, generateNodeJsRunner) {
+) : BasicBoxTest(
+    pathToTestDir,
+    testGroupOutputDirPrefix,
+    pathToRootOutputDir = pathToRootOutputDir,
+    typedArraysEnabled = true,
+    generateSourceMap = generateSourceMap,
+    generateNodeJsRunner = generateNodeJsRunner,
+    targetBackend = TargetBackend.JS_IR
+) {
 
     override var skipMinification = true
 
