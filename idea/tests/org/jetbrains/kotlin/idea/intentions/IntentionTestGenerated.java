@@ -9687,6 +9687,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("notBlock.kt")
+        public void testNotBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/notBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notBlock2.kt")
+        public void testNotBlock2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/notBlock2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notBlock3.kt")
+        public void testNotBlock3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/notBlock3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notIn.kt")
         public void testNotIn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/notIn.kt");

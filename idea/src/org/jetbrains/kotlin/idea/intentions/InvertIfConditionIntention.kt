@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.unblockDocument
+import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -89,7 +90,21 @@ class InvertIfConditionIntention : SelfTargetingIntention<KtIfExpression>(KtIfEx
         else
             thenBranch
 
-        return ifExpression.replaced(psiFactory.createIf(newCondition, newThen, newElse))
+        var thenSpace = " "
+        var elseSpace = " "
+        if (ifExpression.condition?.getLineNumber(false) != thenBranch.getLineNumber()
+            || ifExpression.elseKeyword?.getLineNumber() != elseBranch.getLineNumber()
+        ) {
+            if (newThen !is KtBlockExpression) thenSpace = "\n"
+            if (newElse !is KtBlockExpression) elseSpace = "\n"
+        }
+        val newIf = if (newElse == null) {
+            psiFactory.createExpressionByPattern("if ($0)$thenSpace$1", newCondition, newThen)
+        } else {
+            psiFactory.createExpressionByPattern("if ($0)$thenSpace$1${thenSpace}else$elseSpace$2", newCondition, newThen, newElse)
+        } as KtIfExpression
+
+        return ifExpression.replaced(newIf)
     }
 
     private fun handleSpecialCases(ifExpression: KtIfExpression, newCondition: KtExpression): KtIfExpression? {
