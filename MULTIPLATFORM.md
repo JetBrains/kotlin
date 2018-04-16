@@ -300,20 +300,27 @@ building the framework to Gradle.
 
 To do this, make the following steps:
 
-1. Create a new Xcode project using `iosApp` as a root directory for it.
+1. Create a new Xcode project in the root directory of our project (the `application` directory in the
+[section 1](#1-preparing-a-workspace)). Name it `iosApp` so Xcode will create the project in the directory we created
+in the section 1.
 2. Add a new framework in the project. Go `File` -> `New` -> `Target` -> `Cocoa Touch Framework`. Specify the same
 framework name as in `greeting/ios/build.gradle`: `Greeting`.
-3. Choose the new framework in the `Project Navigator` and open `Build Settings` tab. Here we need to add a new build
-setting specifying what Gradle task will be executed to build the framework for one or another platform. Create this
-build setting in the `User-defined` section, name it `KONAN_TASK` and specify the following values for it depending on
-the platform:
-    * For any iOS simulator (both debug and release): `compileKonan<framework name>Ios_x64`
-    * For any iOS device (both debug and release): `compileKonan<framework name>Ios_arm64`
+3. Choose the new framework in the `Project Navigator` and open the `Build Settings` tab. Here we need to add a new build
+setting specifying what Gradle task will be executed to build the framework for one or another platform. Fortunately,
+Xcode allows us to set different values for the same build setting depending on the platform. Create a new build
+setting in the `User-defined` section and name it `KONAN_TASK`. Then specify the following values of it for different
+platforms (for both `Debug` and `Release` modes):
+
+    |Platform               |Value                                  |
+    |-----------------------|---------------------------------------|
+    |`Any iOS simulator SDK`|`compileKonan<framework name>Ios_x64`  |
+    |`Any iOS SDK`          |`compileKonan<framework name>Ios_arm64`|
 
     Replace `<framework name>` with the name you specified in the library's `ios/build.gradle`. Use camel case, e.g.
     for our `greeting` library these tasks will be named `compileKonanGreetingIos_x64` and
     `compileKonanGreetingIos_arm64`.
-4. Select the `Build phases` tab and remove all default phases except `Target Dependencies`.
+4. Ensure that the framework is still selected in the `Project Navigator` and open the `Build phases` tab. Remove all
+default phases except `Target Dependencies`.
 5. Add a new `Run Script` build phase and put the following line into the script field:
 
     ```
