@@ -26,6 +26,7 @@
 #import <Foundation/NSMethodSignature.h>
 #import <Foundation/NSError.h>
 #import <Foundation/NSException.h>
+#import <Foundation/NSDecimalNumber.h>
 #import <Foundation/NSDictionary.h>
 #import <objc/runtime.h>
 #import <objc/objc-exception.h>
@@ -348,13 +349,17 @@ static void initializeClass(Class clazz) {
 
 }
 
+static ALWAYS_INLINE OBJ_GETTER(convertUnmappedObjCObject, id obj) {
+  const TypeInfo* typeInfo = getOrCreateTypeInfo(object_getClass(obj));
+  RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retain(obj));
+}
+
 @interface NSObject (NSObjectToKotlin) <ConvertibleToKotlin>
 @end;
 
 @implementation NSObject (NSObjectToKotlin)
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
-  const TypeInfo* typeInfo = getOrCreateTypeInfo(object_getClass(self));
-  RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retain(self));
+  RETURN_RESULT_OF(convertUnmappedObjCObject, self);
 }
 
 -(void)releaseAsAssociatedObject {
@@ -419,8 +424,18 @@ static Class __NSCFBooleanClass = nullptr;
     case 'f': RETURN_RESULT_OF(Kotlin_boxFloat, self.floatValue);
     case 'd': RETURN_RESULT_OF(Kotlin_boxDouble, self.doubleValue);
 
-    default:  return [super toKotlin:OBJ_RESULT];
+    default:  RETURN_RESULT_OF(convertUnmappedObjCObject, self);
   }
+}
+@end;
+
+@interface NSDecimalNumber (NSDecimalNumberToKotlin) <ConvertibleToKotlin>
+@end;
+
+@implementation NSDecimalNumber (NSDecimalNumberToKotlin)
+// Overrides [NSNumber toKotlin:] implementation.
+-(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
+  RETURN_RESULT_OF(convertUnmappedObjCObject, self);
 }
 @end;
 
