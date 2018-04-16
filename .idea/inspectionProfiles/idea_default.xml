@@ -281,6 +281,7 @@
           <Problem reference="com.intellij.testFramework.PlatformTestCase#createModuleAt" reason="Not static anymore in 181 after 7dacf096c47d2125e17031c71a037b63ab00ec53" />
           <Problem reference="com.intellij.testFramework.PlatformTestCase#doCreateRealModuleIn" reason="Not static anymore in 181 after 7dacf096c47d2125e17031c71a037b63ab00ec53" />
           <Problem reference="com.intellij.openapi.progress.ProgressManager#getProgressIndicator" reason="Nullable in 181. Temporary use progressIndicatorNullable instead." />
+          <Problem reference="com.intellij.testFramework.fixtures.CodeInsightTestFixture#getProjectDisposable" reason="Method was introduced in 173 and absent in 172. Use getProjectDisposableEx instead. (95eaf81e0ea497f8c69263c11fd3202d28a7a1b2)" />
         </list>
       </option>
     </inspection_tool>
