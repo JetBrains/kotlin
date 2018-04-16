@@ -113,7 +113,7 @@ interface ParcelSerializer {
 
                 asmType.sort == Type.ARRAY -> {
                     val elementType = type.builtIns.getArrayElementType(type)
-                    val elementSerializer = get(elementType, typeMapper.mapTypeSafe(elementType, forceBoxed = false), context, strict = strict())
+                    val elementSerializer = get(elementType, typeMapper.mapTypeSafe(elementType, forceBoxed = true), context, strict = strict())
 
                     wrapToNullAwareIfNeeded(type, ArrayParcelSerializer(asmType, elementSerializer))
                 }
