@@ -97,6 +97,8 @@
 - [`KT-23271`](https://youtrack.jetbrains.com/issue/KT-23271) Warn about using kotlin-stdlib-jre* libs in `dependencyManagement` section in Maven with `eap` and `dev` Kotlin versions
 - [`KT-20672`](https://youtrack.jetbrains.com/issue/KT-20672) IDE can't resolve references to elements from files with `@JvmPackageName`
 - [`KT-23546`](https://youtrack.jetbrains.com/issue/KT-23546) Variable name auto-completion popup gets in the way
+- [`KT-23546`](https://youtrack.jetbrains.com/issue/KT-23546) Do not show duplicated names in variables completion list
+- [`KT-19120`](https://youtrack.jetbrains.com/issue/KT-19120) Use script compiler options on script dependencies in the IDE as well
 
 ### IDE. Gradle. Script
 
@@ -199,6 +201,10 @@
 - [`KT-22864`](https://youtrack.jetbrains.com/issue/KT-22864) Allow multiple expectedBy configuration dependencies in Gradle
 - [`KT-22895`](https://youtrack.jetbrains.com/issue/KT-22895) 'kotlin-runtime' library is missing in the compiler classpath sometimes
 - [`KT-23085`](https://youtrack.jetbrains.com/issue/KT-23085) Use proper names for the Gradle task inputs/outputs added at runtime
+- [`KT-23694`](https://youtrack.jetbrains.com/issue/KT-23694) Fix parallel build in Kotlin IC – invalid KotlinCoreEnvironment disposal
+
+### Tools. Android
+- Android Extensions: Support fragments from kotlinx package;
 
 ### Tools. Incremental Compile
 
