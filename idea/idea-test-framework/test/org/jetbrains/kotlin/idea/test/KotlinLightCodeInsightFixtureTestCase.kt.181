@@ -186,22 +186,22 @@ fun configureCompilerOptions(fileText: String, project: Project, module: Module)
     val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// JVM_TARGET: ")
     val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// COMPILER_ARGUMENTS: ")
 
-    if (version != null) {
-        configureLanguageAndApiVersion(project, module, version)
-    }
+    if (version != null || jvmTarget != null || options != null) {
+        configureLanguageAndApiVersion(project, module, version ?: LanguageVersion.LATEST_STABLE.versionString)
 
-    val facetSettings = KotlinFacet.get(module)!!.configuration.settings
+        val facetSettings = KotlinFacet.get(module)!!.configuration.settings
 
-    if (jvmTarget != null) {
-        (facetSettings.compilerArguments as K2JVMCompilerArguments).jvmTarget = jvmTarget
-    }
-
-    if (options != null) {
-        val compilerSettings = facetSettings.compilerSettings ?: CompilerSettings().also {
-            facetSettings.compilerSettings = it
+        if (jvmTarget != null) {
+            (facetSettings.compilerArguments as K2JVMCompilerArguments).jvmTarget = jvmTarget
         }
-        compilerSettings.additionalArguments = options
-        facetSettings.updateMergedArguments()
+
+        if (options != null) {
+            val compilerSettings = facetSettings.compilerSettings ?: CompilerSettings().also {
+                facetSettings.compilerSettings = it
+            }
+            compilerSettings.additionalArguments = options
+            facetSettings.updateMergedArguments()
+        }
     }
 }
 
