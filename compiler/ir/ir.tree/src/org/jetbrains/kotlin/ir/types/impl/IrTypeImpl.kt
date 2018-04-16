@@ -26,17 +26,16 @@ class IrTypeImpl(
         annotations: List<IrCall>
     ) : this(classifier, hasQuestionMark, arguments, annotations, Variance.INVARIANT)
 
+    constructor(
+        other: IrType,
+        variance: Variance
+    ) : this(other.classifier, other.hasQuestionMark, other.arguments, other.annotations, variance)
+
     override val type: IrType get() = this
 }
 
 fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
-    if (type !is IrTypeImpl || type.variance != variance)
-        IrTypeImpl(
-            type.classifier,
-            type.hasQuestionMark,
-            type.arguments,
-            type.annotations,
-            variance
-        )
-    else
+    if (type is IrTypeImpl && type.variance == variance)
         type
+    else
+        IrTypeImpl(type, variance)

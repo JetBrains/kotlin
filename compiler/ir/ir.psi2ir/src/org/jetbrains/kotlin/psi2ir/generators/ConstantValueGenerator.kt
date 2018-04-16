@@ -6,20 +6,28 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi2ir.transformations.AnnotationGenerator
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class ConstantValueGenerator(
-    private val context: GeneratorContext,
-    private val annotationGenerator: AnnotationGenerator? = null
+    private val moduleDescriptor: ModuleDescriptor,
+    private val symbolTable: SymbolTable,
+    private val annotationGenerator: AnnotationGenerator?
 ) {
+
+    constructor(
+        context: GeneratorContext,
+        annotationGenerator: AnnotationGenerator? = null
+    ) : this(context.moduleDescriptor, context.symbolTable, annotationGenerator)
 
     fun generateConstantValueAsExpression(
         startOffset: Int,
@@ -27,7 +35,7 @@ class ConstantValueGenerator(
         constantValue: ConstantValue<*>,
         varargElementType: KotlinType? = null
     ): IrExpression {
-        val constantType = constantValue.getType(context.moduleDescriptor)
+        val constantType = constantValue.getType(moduleDescriptor)
 
         return when (constantValue) {
             is StringValue -> IrConstImpl.string(startOffset, endOffset, constantType, constantValue.value)
@@ -63,7 +71,7 @@ class ConstantValueGenerator(
                 IrGetEnumValueImpl(
                     startOffset, endOffset,
                     constantType,
-                    context.symbolTable.referenceEnumEntry(enumEntryDescriptor)
+                    symbolTable.referenceEnumEntry(enumEntryDescriptor)
                 )
             }
 
