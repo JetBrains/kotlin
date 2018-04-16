@@ -21,16 +21,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCommonDecompiledTextFromJsMetadataTest {
-    @TestMetadata("LocalClassAsTypeWithArgument")
-    public void ignoreLocalClassAsTypeWithArgument() throws Exception {
-        runTest("idea/testData/decompiler/decompiledText/LocalClassAsTypeWithArgument/");
-    }
-
-    @TestMetadata("SecondaryConstructors")
-    public void ignoreSecondaryConstructors() throws Exception {
-        runTest("idea/testData/decompiler/decompiledText/SecondaryConstructors/");
-    }
-
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
     }
@@ -99,6 +89,11 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         runTest("idea/testData/decompiler/decompiledText/InnerClasses/");
     }
 
+    @TestMetadata("LocalClassAsTypeWithArgument")
+    public void testLocalClassAsTypeWithArgument() throws Exception {
+        runTest("idea/testData/decompiler/decompiledText/LocalClassAsTypeWithArgument/");
+    }
+
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
         runTest("idea/testData/decompiler/decompiledText/Modifiers/");
@@ -112,6 +107,11 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
     @TestMetadata("Object")
     public void testObject() throws Exception {
         runTest("idea/testData/decompiler/decompiledText/Object/");
+    }
+
+    @TestMetadata("SecondaryConstructors")
+    public void testSecondaryConstructors() throws Exception {
+        runTest("idea/testData/decompiler/decompiledText/SecondaryConstructors/");
     }
 
     @TestMetadata("SimpleClass")
