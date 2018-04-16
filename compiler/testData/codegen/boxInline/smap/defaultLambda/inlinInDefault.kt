@@ -89,24 +89,30 @@ Kotlin
 _2Kt
 + 2 Standard.kt
 kotlin/StandardKt__StandardKt
-+ 3 1.kt
-test/_1Kt
++ 3 ContractBuilder.kt
+kotlin/internal/contracts/ContractBuilderKt
 + 4 1.kt
+test/_1Kt
++ 5 1.kt
 test/_1Kt$lParams$1
 *L
 1#1,10:1
-34#2,4:11
-31#3,5:15
-29#3:21
-32#4:20
+34#2:11
+37#2:13
+43#3:12
+31#4,5:14
+29#4:20
+32#5:19
 *E
 *S KotlinDebug
 *F
 + 1 2.kt
 _2Kt
 *L
-5#1,4:11
-5#1,5:15
-5#1:21
+5#1:11
+5#1:13
+5#1:12
+5#1,5:14
 5#1:20
+5#1:19
 *E
