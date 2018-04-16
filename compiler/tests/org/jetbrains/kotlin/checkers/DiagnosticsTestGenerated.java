@@ -21469,6 +21469,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("smartCastOfNullableExpressionWithExpectedType.kt")
+                public void testSmartCastOfNullableExpressionWithExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/castchecks/smartCastOfNullableExpressionWithExpectedType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("variables.kt")
                 public void testVariables() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/castchecks/variables.kt");
