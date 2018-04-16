@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1128
 // FILE: a.kt
 inline fun foo(f: () -> String): () -> String {

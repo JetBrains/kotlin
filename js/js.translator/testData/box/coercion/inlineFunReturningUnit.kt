@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1108
 inline fun foo(i : Int) = if (i % 2 == 0) {} else i
 

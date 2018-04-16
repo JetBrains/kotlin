@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1115
 // KT-4207 Closure this doesn't work in JS backend
 

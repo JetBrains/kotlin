@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // SKIP_MINIFICATION
 fun foo(): Char = '1'
 

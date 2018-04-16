@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1118
 // LANGUAGE_VERSION: 1.1
 import kotlin.reflect.KClass

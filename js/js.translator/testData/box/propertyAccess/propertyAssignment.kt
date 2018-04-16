@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1118
 // See https://youtrack.jetbrains.com/issue/KT-10785
 package foo

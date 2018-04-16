@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1110
 fun box(): String {
     return if (apply(5) { arg: Int -> arg + 13 } == 18) "OK" else "fail"

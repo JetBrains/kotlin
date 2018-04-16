@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1110
 fun box(): String {
     val r1 = trueFun() > falseFun()

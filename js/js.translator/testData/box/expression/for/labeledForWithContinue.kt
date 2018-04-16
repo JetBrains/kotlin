@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1114
 // http://youtrack.jetbrains.com/issue/KT-5257
 // JS: for with continue with label fails on runtime

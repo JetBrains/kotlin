@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1112
 // see KT-7683
 // WhenTranslator must recognize KtWhenConditionInRange and produce faster code when matched expression is Int

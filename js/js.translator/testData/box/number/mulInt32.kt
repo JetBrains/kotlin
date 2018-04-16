@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1384
 fun imul32(a: Int, b: Int): Int = js("Kotlin").imulEmulated(a, b)
 

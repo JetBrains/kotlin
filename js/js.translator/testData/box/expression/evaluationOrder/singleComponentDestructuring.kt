@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1132
 // CHECK_VARS_COUNT: function=test count=2
 var log = ""

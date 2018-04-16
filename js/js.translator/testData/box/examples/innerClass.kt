@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1116
 class Outer(val foo: StringBuilder) {
     inner class Inner() {
