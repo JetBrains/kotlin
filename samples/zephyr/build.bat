@@ -6,7 +6,7 @@ set ZEPHYR_BASE=%userprofile%\zephyr
 set TOOLCHAIN=gcc-arm-none-eabi-7-2017-q4-major-win32
 
 set DIR=%~dp0
-if "%KONAN_DATA_DIR%"=="" (set KONAN_DATA_DIR="%HOME%\.konan")
+if "%KONAN_DATA_DIR%"=="" (set KONAN_DATA_DIR=%userprofile%\.konan)
 set KONAN_DEPS=%KONAN_DATA_DIR%/dependencies
 set GCC_ARM=%KONAN_DEPS%/%TOOLCHAIN%
 set ZEPHYR_TOOLCHAIN_VARIANT=gccarmemb
