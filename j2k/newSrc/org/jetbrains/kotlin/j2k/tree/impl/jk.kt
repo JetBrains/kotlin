@@ -20,34 +20,35 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKReference.JKReferenceType
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class JKChild<T : JKElement>(var value: T) {
-    operator fun getValue(thisRef: JKElement, property: KProperty<*>): T {
+class JKChild<T : JKTreeElement>(var value: T) : ReadWriteProperty<JKTreeElement, T> {
+    override operator fun getValue(thisRef: JKTreeElement, property: KProperty<*>): T {
         return value
     }
 
-    operator fun setValue(thisRef: JKElement, property: KProperty<*>, v: T) {
-        value.parent = null
-        v.parent = thisRef
-        value = v
+    override operator fun setValue(thisRef: JKTreeElement, property: KProperty<*>, value: T) {
+        this.value.parent = null
+        value.parent = thisRef
+        this.value = value
     }
 }
 
-class JKListChild<T : JKElement>(var value: List<T>) {
-    operator fun getValue(thisRef: JKElement, property: KProperty<*>): List<T> {
+class JKListChild<T : JKTreeElement>(var value: List<T>) : ReadWriteProperty<JKTreeElement, List<T>> {
+    override operator fun getValue(thisRef: JKTreeElement, property: KProperty<*>): List<T> {
         return value
     }
 
-    operator fun setValue(thisRef: JKElement, property: KProperty<*>, v: List<T>) {
-        value.forEach { it.parent = null }
-        v.forEach { it.parent = thisRef }
-        value = v
+    override operator fun setValue(thisRef: JKTreeElement, property: KProperty<*>, value: List<T>) {
+        this.value.forEach { it.parent = null }
+        value.forEach { it.parent = thisRef }
+        this.value = value
     }
 }
 
 abstract class JKElementBase : JKElement {
-    override var parent: JKElement? = null
+    override var parent: JKTreeElement? = null
 
     fun <D : JKElement> D.setParent(p: JKElement): D {
         parent = p
@@ -60,14 +61,15 @@ abstract class JKElementBase : JKElement {
 }
 
 
-class JKClassImpl(modifierList: JKModifierList, override val name: JKNameIdentifier, override var classKind: JKClass.ClassKind) : JKClass,
+class JKClassImpl(modifierList: JKModifierList, override val name: JKNameIdentifier, override var classKind: JKClass.ClassKind) :
+    JKUniverseClass,
     JKElementBase() {
     override var modifierList by JKChild(modifierList)
     override val valid: Boolean = true
 
-    override var declarations by JKListChild(emptyList<JKDeclaration>())
+    override var declarations by JKListChild(emptyList<JKUniverseDeclaration>())
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitUniverseClass(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {
         modifierList.accept(visitor, data)
@@ -204,7 +206,8 @@ class JKFieldReferenceImpl(override val target: JKField, override val referenceT
     }
 }
 
-class JKClassReferenceImpl(override val target: JKClass, override val referenceType: JKReferenceType) : JKClassReference, JKElementBase() {
+class JKClassReferenceImpl(override val target: JKClass, override val referenceType: JKReferenceType) : JKClassReference,
+    JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassReference(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {

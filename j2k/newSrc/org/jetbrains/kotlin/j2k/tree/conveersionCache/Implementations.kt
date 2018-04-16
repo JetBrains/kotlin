@@ -17,19 +17,26 @@
 package org.jetbrains.kotlin.j2k.tree.conveersionCache
 
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKElementBase
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKModifierListImpl
 
+abstract class JKMultiverseElementBase : JKTreeElement {
+    override var parent: JKTreeElement? = null
 
-class JKMultiverseField(override var name: JKNameIdentifier) : JKField, JKElementBase() {
+    fun <D : JKElement> D.setParent(p: JKElement): D {
+        parent = p
+        return this
+    }
+}
+
+class JKMultiverseField(override var name: JKNameIdentifier) : JKField, JKMultiverseElementBase() {
     override var modifierList: JKModifierList = JKModifierListImpl()
     override var type: JKType = JKJavaPrimitiveTypeImpl.BOOLEAN //TODO
     override val valid: Boolean
         get() = true
 }
 
-class JKMultiverseMethod(override var name: JKNameIdentifier) : JKMethod, JKElementBase() {
+class JKMultiverseMethod(override var name: JKNameIdentifier) : JKMethod, JKMultiverseElementBase() {
     override val returnType: JKType
         get() = TODO("not implemented")
     override var modifierList: JKModifierList = JKModifierListImpl()
@@ -41,8 +48,7 @@ class JKMultiverseMethod(override var name: JKNameIdentifier) : JKMethod, JKElem
 class JKMultiverseClass(
     override var name: JKNameIdentifier, override var declarations: List<JKDeclaration>,
     override var classKind: JKClass.ClassKind, override var modifierList: JKModifierList
-) : JKClass, JKElementBase() {
-    override var parent: JKElement? = null
+) : JKClass, JKMultiverseElementBase() {
     override val valid: Boolean
         get() = true
 }

@@ -40,7 +40,8 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
 
     override fun resolveClassReference(identifier: String): JKClass {
         return universe[identifier] ?: multiverse[identifier] ?: run {
-            val clazz = JKMultiverseClass(JKNameIdentifierImpl(identifier), mutableListOf(), JKClass.ClassKind.CLASS, JKModifierListImpl())
+            val clazz =
+                JKMultiverseClass(JKNameIdentifierImpl(identifier), mutableListOf(), JKClass.ClassKind.CLASS, JKModifierListImpl())
             multiverse[identifier] = clazz
             clazz
         }
@@ -244,7 +245,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
     }
 
     private inner class DeclarationMapper(val expressionTreeMapper: ExpressionTreeMapper) {
-        fun PsiClass.toJK(): JKClass {
+        fun PsiClass.toJK(): JKUniverseClass {
             val classKind: JKClass.ClassKind = when {
                 isAnnotationType -> JKClass.ClassKind.ANNOTATION
                 isEnum -> JKClass.ClassKind.ENUM
@@ -253,7 +254,7 @@ class JavaToJKTreeBuilder : ReferenceTargetProvider {
             }
             return JKClassImpl(with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), classKind).apply {
                 declarations =
-                        children.mapNotNull { ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKDeclaration }
+                        children.mapNotNull { ElementVisitor(this@DeclarationMapper).apply { it.accept(this) }.resultElement as? JKUniverseDeclaration }
             }
         }
 

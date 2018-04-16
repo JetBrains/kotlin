@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKElement
 import org.jetbrains.kotlin.j2k.tree.JKJavaField
 import org.jetbrains.kotlin.j2k.tree.JKJavaMethod
+import org.jetbrains.kotlin.j2k.tree.JKUniverseClass
 import org.jetbrains.kotlin.j2k.tree.impl.JKBlockImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
@@ -30,9 +30,9 @@ class JavaFieldToKotlinPropertyConversion : TransformerBasedConversion() {
         element.acceptChildren(this, null)
     }
 
-    override fun visitClass(klass: JKClass) {
+    override fun visitUniverseClass(universeClass: JKUniverseClass) {
         somethingChanged = true
-        klass.declarations = klass.declarations.map {
+        universeClass.declarations = universeClass.declarations.map {
             if (it is JKJavaField) JKKtPropertyImpl(
                 it.modifierList,
                 it.type,
@@ -50,9 +50,9 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
         element.acceptChildren(this, null)
     }
 
-    override fun visitClass(klass: JKClass) {
+    override fun visitUniverseClass(universeClass: JKUniverseClass) {
         somethingChanged = true
-        klass.declarations = klass.declarations.map {
+        universeClass.declarations = universeClass.declarations.map {
             if (it is JKJavaMethod) JKKtFunctionImpl(
                 JKJavaPrimitiveTypeImpl.BOOLEAN,
                 it.name,

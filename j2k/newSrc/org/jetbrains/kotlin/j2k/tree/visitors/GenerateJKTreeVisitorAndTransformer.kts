@@ -129,7 +129,7 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
         appendln("}")
     })
 
-    File(JK_OUT_ROOT, "$transformerName.kt").writeText(buildString {
+    /*File(JK_OUT_ROOT, "$transformerName.kt").writeText(buildString {
         appendln(pkg)
         appendln()
         appendln("import org.jetbrains.kotlin.j2k.tree.*")
@@ -179,7 +179,7 @@ fun genVisitors(commonData: List<InterfaceData>, uncommonData: List<InterfaceDat
         }
         appendln()
         appendln("}")
-    })
+    })*/
 }
 
 genVisitors(JK_COMMON_FILE.interfaceNames(), JK_JAVA_FILE.interfaceNames() + JK_KT_FILE.interfaceNames(), "JKVisitor", "JKTransformer")
