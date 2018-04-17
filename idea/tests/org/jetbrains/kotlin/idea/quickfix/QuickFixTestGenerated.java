@@ -3084,6 +3084,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/notExactArgument.kt");
                 }
 
+                @TestMetadata("nullableReceiver.kt")
+                public void testNullableReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/nullableReceiver.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("objectMemberFunNoReceiver.kt")
                 public void testObjectMemberFunNoReceiver() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/call/objectMemberFunNoReceiver.kt");
@@ -4597,6 +4603,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("nonAbstractInInterface.kt")
                 public void testNonAbstractInInterface() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createVariable/property/nonAbstractInInterface.kt");
+                }
+
+                @TestMetadata("nullableReceiver.kt")
+                public void testNullableReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/nullableReceiver.kt");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("objectMemberValNoReceiver.kt")
