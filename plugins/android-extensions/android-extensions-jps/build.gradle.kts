@@ -8,7 +8,7 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":jps-plugin"))
     compile(project(":plugins:android-extensions-compiler"))
-    compileOnly(intellijDep()) { includeJars("openapi", "jps-builders", "jps-model", "jdom") }
+    compileOnly(intellijDep()) { includeJars("openapi", "platform-api", "platform-impl", "jps-builders", "jps-model", "jdom") }
     compileOnly(intellijPluginDep("android")) { includeJars("jps/android-jps-plugin") }
     compile(intellijPluginDep("android")) { includeJars("jps/android-jps-plugin") }
 
@@ -17,7 +17,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))
-    testCompileOnly(intellijDep()) { includeJars("openapi", "jps-builders") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "platform-api", "platform-impl", "jps-builders") }
     testCompileOnly(intellijDep("jps-build-test")) { includeJars("jps-build-test") }
     testCompileOnly(intellijDep()) { includeJars("jps-model") }
 

@@ -14,7 +14,7 @@ dependencies {
 
     compile(project(":js:js.frontend"))
 
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "external-system-rt", "forms_rt", "java-api", "java-impl", "extensions", "jdom", "util") }
+    compileOnly(intellijDep()) { includeJars("openapi", "platform-api", "platform-impl", "idea", "external-system-rt", "forms_rt", "java-api", "java-impl", "extensions", "jdom", "util") }
     compileOnly(intellijPluginDep("gradle")) { includeJars("gradle-api", "gradle", rootProject = rootProject) }
     compileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
     compileOnly(intellijPluginDep("junit")) { includeJars("idea-junit") }

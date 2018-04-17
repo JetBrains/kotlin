@@ -23,7 +23,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(intellijDep()) { includeJars("idea", "idea_rt", "openapi", "log4j", "jdom", "jps-model") }
+    testCompile(intellijDep()) { includeJars("idea", "idea_rt", "openapi", "platform-api", "platform-impl", "log4j", "jdom", "jps-model") }
     testRuntime(projectDist(":kotlin-reflect"))
 }
 

@@ -11,7 +11,7 @@ dependencies {
     compile(project(":compiler:backend"))
     compile(projectTests(":compiler:tests-common"))
     compile(commonDep("junit:junit"))
-    compileOnly(intellijDep()) { includeJars("openapi") }
+    compileOnly(intellijDep()) { includeJars("openapi", "platform-api", "platform-impl") }
 
     testCompile(project(":compiler:incremental-compilation-impl"))
     testCompile(project(":core:descriptors"))
@@ -19,7 +19,7 @@ dependencies {
     testCompile(project(":compiler:frontend.java"))
     testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
-    testCompile(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "groovy-all", "jps-builders", rootProject = rootProject) }
+    testCompile(intellijDep()) { includeJars("openapi", "platform-api", "platform-impl", "idea", "idea_rt", "groovy-all", "jps-builders", rootProject = rootProject) }
     testCompile(intellijDep("jps-standalone")) { includeJars("jps-model") }
     testCompile(intellijDep("jps-build-test"))
 }

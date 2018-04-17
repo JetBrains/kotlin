@@ -20,7 +20,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(protobufFull())
     testCompile(projectDist(":kotlin-stdlib"))
-    testCompileOnly(intellijDep()) { includeJars("openapi") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "platform-api", "platform-impl") }
 
     testRuntime(projectDist(":kotlin-reflect"))
 }

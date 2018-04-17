@@ -21,7 +21,7 @@ dependencies {
     compile(androidDxJar())
 
     compileOnly(project(":kotlin-android-extensions-runtime"))
-    compileOnly(intellijDep()) { includeJars("openapi", "java-api", "java-impl", "idea", "extensions", "util", "guava", "android-base-common", rootProject = rootProject) }
+    compileOnly(intellijDep()) { includeJars("openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "extensions", "util", "guava", "android-base-common", rootProject = rootProject) }
     compileOnly(intellijPluginDep("android")) {
         includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
     }
