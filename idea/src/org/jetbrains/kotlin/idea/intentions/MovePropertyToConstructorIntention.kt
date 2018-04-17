@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -77,7 +78,7 @@ class MovePropertyToConstructorIntention :
 
         val propertyAnnotationsText = element.modifierList?.annotationEntries?.joinToString(separator = " ") {
             if (it.isApplicableToConstructorParameter()) {
-                it.getTextWithUseSiteIfMissing("property")
+                it.getTextWithUseSiteIfMissing(AnnotationUseSiteTarget.FIELD.renderName)
             } else {
                 it.text
             }
