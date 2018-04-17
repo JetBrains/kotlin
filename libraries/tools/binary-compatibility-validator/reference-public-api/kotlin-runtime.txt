@@ -507,7 +507,7 @@ public final class kotlin/jvm/internal/FloatSpreadBuilder : kotlin/jvm/internal/
 	public final fun toArray ()[F
 }
 
-public abstract interface class kotlin/jvm/internal/FunctionBase : java/io/Serializable, kotlin/Function {
+public abstract interface class kotlin/jvm/internal/FunctionBase : kotlin/Function {
 	public abstract fun getArity ()I
 }
 
@@ -630,7 +630,7 @@ public class kotlin/jvm/internal/Intrinsics {
 	public static fun throwUninitializedPropertyAccessException (Ljava/lang/String;)V
 }
 
-public abstract class kotlin/jvm/internal/Lambda : kotlin/jvm/internal/FunctionBase {
+public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/jvm/internal/FunctionBase {
 	public fun <init> (I)V
 	public fun getArity ()I
 	public fun toString ()Ljava/lang/String;
