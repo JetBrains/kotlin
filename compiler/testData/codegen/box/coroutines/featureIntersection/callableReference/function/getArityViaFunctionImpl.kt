@@ -18,7 +18,7 @@ suspend fun builder(c: suspend () -> Unit) {
 }
 
 fun test(f: Function<*>, arity: Int) {
-    assertEquals(arity, (f as FunctionBase).getArity())
+    assertEquals(arity, (f as FunctionBase).arity)
 }
 
 suspend fun foo(s: String, i: Int) {}
