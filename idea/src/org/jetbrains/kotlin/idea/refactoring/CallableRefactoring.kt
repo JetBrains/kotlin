@@ -84,7 +84,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
         }
         val message = KotlinBundle.message("x.overrides.y.in.class.list",
                                            DescriptorRenderer.COMPACT.render(callableFromEditor),
-                                           callableFromEditor.containingDeclaration.name.asString(), superString,
+                                           superString,
                                            "refactor")
         val title = IdeBundle.message("title.warning")!!
         val icon = Messages.getQuestionIcon()
