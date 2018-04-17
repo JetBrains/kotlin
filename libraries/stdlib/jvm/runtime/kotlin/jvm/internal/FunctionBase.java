@@ -7,8 +7,6 @@ package kotlin.jvm.internal;
 
 import kotlin.Function;
 
-import java.io.Serializable;
-
-public interface FunctionBase extends Function, Serializable {
+public interface FunctionBase extends Function {
     int getArity();
 }
