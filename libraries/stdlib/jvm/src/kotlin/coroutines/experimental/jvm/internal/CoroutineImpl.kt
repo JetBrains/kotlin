@@ -18,7 +18,7 @@ abstract class CoroutineImpl(
     arity: Int,
     @JvmField
     protected var completion: Continuation<Any?>?
-) : Lambda(arity), Continuation<Any?> {
+) : Lambda<Any?>(arity), Continuation<Any?> {
 
     // label == -1 when coroutine cannot be started (it is just a factory object) or has already finished execution
     // label == 0 in initial part of the coroutine

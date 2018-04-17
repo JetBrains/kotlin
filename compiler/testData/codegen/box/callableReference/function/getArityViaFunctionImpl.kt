@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 import kotlin.jvm.internal.FunctionBase
 
 fun test(f: Function<*>, arity: Int) {
-    assertEquals(arity, (f as FunctionBase).getArity())
+    assertEquals(arity, (f as FunctionBase).arity)
 }
 
 fun foo(s: String, i: Int) {}

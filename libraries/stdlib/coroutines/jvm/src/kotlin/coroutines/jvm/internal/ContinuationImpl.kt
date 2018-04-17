@@ -128,12 +128,10 @@ internal object CompletedContinuation : Continuation<Any?> {
 @SinceKotlin("1.3")
 // Restricted suspension lambdas inherit from this class
 internal abstract class RestrictedSuspendLambda(
-    private val arity: Int,
+    public override val arity: Int,
     completion: Continuation<Any?>?
-) : RestrictedContinuationImpl(completion), FunctionBase {
+) : RestrictedContinuationImpl(completion), FunctionBase<Any?> {
     constructor(arity: Int) : this(arity, null)
-
-    public override fun getArity(): Int = arity
 
     public override fun toString(): String =
         if (completion == null)
@@ -145,12 +143,10 @@ internal abstract class RestrictedSuspendLambda(
 @SinceKotlin("1.3")
 // Suspension lambdas inherit from this class
 internal abstract class SuspendLambda(
-    private val arity: Int,
+    public override val arity: Int,
     completion: Continuation<Any?>?
-) : ContinuationImpl(completion), FunctionBase {
+) : ContinuationImpl(completion), FunctionBase<Any?> {
     constructor(arity: Int) : this(arity, null)
-
-    public override fun getArity(): Int = arity
 
     public override fun toString(): String =
         if (completion == null)
