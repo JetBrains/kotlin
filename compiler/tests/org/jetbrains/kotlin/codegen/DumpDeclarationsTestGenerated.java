@@ -51,8 +51,7 @@ public class DumpDeclarationsTestGenerated extends AbstractDumpDeclarationsTest 
 
     @TestMetadata("intermediateAbstractSuspendFunction.kt")
     public void testIntermediateAbstractSuspendFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/intermediateAbstractSuspendFunction.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/intermediateAbstractSuspendFunction.kt");
     }
 
     @TestMetadata("localClasses.kt")

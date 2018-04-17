@@ -2166,38 +2166,37 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MainFunctionReturnUnit extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInMainFunctionReturnUnit() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/mainFunctionReturnUnit"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("notMain.kt")
         public void testNotMain() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notMain.kt");
-            doTest(fileName);
+            runTest("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notMain.kt");
         }
 
         @TestMetadata("notUnit1.kt")
         public void testNotUnit1() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notUnit1.kt");
-            doTest(fileName);
+            runTest("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notUnit1.kt");
         }
 
         @TestMetadata("notUnit2.kt")
         public void testNotUnit2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notUnit2.kt");
-            doTest(fileName);
+            runTest("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notUnit2.kt");
         }
 
         @TestMetadata("notUnit3.kt")
         public void testNotUnit3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notUnit3.kt");
-            doTest(fileName);
+            runTest("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notUnit3.kt");
         }
 
         @TestMetadata("unit.kt")
         public void testUnit() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/unit.kt");
-            doTest(fileName);
+            runTest("idea/testData/inspectionsLocal/mainFunctionReturnUnit/unit.kt");
         }
     }
 
@@ -3667,20 +3666,17 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
         @TestMetadata("putLambdaHasLabeledReturn.kt")
         public void testPutLambdaHasLabeledReturn() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replacePutWithAssignment/putLambdaHasLabeledReturn.kt");
-            doTest(fileName);
+            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/putLambdaHasLabeledReturn.kt");
         }
 
         @TestMetadata("putLambdaHasLabeledReturn2.kt")
         public void testPutLambdaHasLabeledReturn2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replacePutWithAssignment/putLambdaHasLabeledReturn2.kt");
-            doTest(fileName);
+            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/putLambdaHasLabeledReturn2.kt");
         }
 
         @TestMetadata("putLambdaHasLabeledReturn3.kt")
         public void testPutLambdaHasLabeledReturn3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/replacePutWithAssignment/putLambdaHasLabeledReturn3.kt");
-            doTest(fileName);
+            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/putLambdaHasLabeledReturn3.kt");
         }
 
         @TestMetadata("putOnParameter.kt")
