@@ -51,7 +51,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             if (single != null) {
                 val calleeExpression = single.calleeExpression ?: return
                 val problemDescriptor = holder.manager.createProblemDescriptor(
-                    calleeExpression,
+                    single.getQualifiedExpressionForSelectorOrThis(),
                     single.typeArgumentList ?: calleeExpression,
                     "Redundant SAM-constructor",
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
