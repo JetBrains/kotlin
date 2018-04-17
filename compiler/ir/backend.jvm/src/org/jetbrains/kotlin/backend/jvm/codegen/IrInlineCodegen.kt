@@ -52,7 +52,7 @@ class IrInlineCodegen(
         if (valueParameterDescriptor?.let { isInlineParameter(it) } == true && isInlineIrExpression(argumentExpression)) {
             val irReference: IrFunctionReference =
                 (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
-            rememberClosure(irReference, parameterType, valueParameterDescriptor!!) as IrExpressionLambda
+            rememberClosure(irReference, parameterType, valueParameterDescriptor) as IrExpressionLambda
         } else {
             putValueOnStack(argumentExpression, parameterType, valueParameterDescriptor?.index ?: -1)
         }
@@ -68,14 +68,14 @@ class IrInlineCodegen(
         putArgumentOrCapturedToLocalVal(JvmKotlinType(value.type, value.kotlinType), value, -1, parameterIndex, ValueKind.CAPTURED)
     }
 
-    fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamindex: Int) {
+    private fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamindex: Int) {
         val onStack = codegen.gen(argumentExpression, valueType, BlockInfo.create())
         putArgumentOrCapturedToLocalVal(
             JvmKotlinType(onStack.type, onStack.kotlinType), onStack, capturedParamindex, capturedParamindex, ValueKind.CAPTURED
         )
     }
 
-    fun putValueOnStack(argumentExpression: IrExpression, valueType: Type, paramIndex: Int) {
+    private fun putValueOnStack(argumentExpression: IrExpression, valueType: Type, paramIndex: Int) {
         val onStack = codegen.gen(argumentExpression, valueType, BlockInfo.create())
         putArgumentOrCapturedToLocalVal(JvmKotlinType(onStack.type, onStack.kotlinType), onStack, -1, paramIndex, ValueKind.CAPTURED)
     }
@@ -98,7 +98,7 @@ class IrInlineCodegen(
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
             closureInfo.lambda = lambda
-            expressionMap.put(closureInfo.index, lambda)
+            expressionMap[closureInfo.index] = lambda
         }
     }
 }
