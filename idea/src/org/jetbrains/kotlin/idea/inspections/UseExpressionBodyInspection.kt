@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : AbstractKotlinInspection() {
 
-    constructor(): this(convertEmptyToUnit = true)
+    constructor() : this(convertEmptyToUnit = true)
 
     private data class Status(val toHighlight: PsiElement?, val subject: String, val highlightType: ProblemHighlightType)
 
@@ -46,7 +46,8 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         val value = valueStatement.getValue()
         if (value.anyDescendantOfType<KtReturnExpression>(
                 canGoInside = { it !is KtFunctionLiteral && it !is KtNamedFunction && it !is KtPropertyAccessor }
-        )) return null
+            )
+        ) return null
 
         val toHighlight = valueStatement.toHighlight()
         return when {
@@ -58,39 +59,39 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
     }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
-            declarationVisitor(fun(declaration) {
-                declaration as? KtDeclarationWithBody ?: return
-                val (toHighlightElement, suffix, highlightType) = statusFor(declaration) ?: return
-                // Change range to start with left brace
-                val hasHighlighting = highlightType != INFORMATION
+        declarationVisitor(fun(declaration) {
+            declaration as? KtDeclarationWithBody ?: return
+            val (toHighlightElement, suffix, highlightType) = statusFor(declaration) ?: return
+            // Change range to start with left brace
+            val hasHighlighting = highlightType != INFORMATION
 
-                fun defaultLevel(): HighlightDisplayLevel {
-                    val project = declaration.project
-                    val inspectionProfileManager = ProjectInspectionProfileManager.getInstance(project)
-                    val inspectionProfile = inspectionProfileManager.currentProfile
-                    val state = inspectionProfile.getToolDefaultState("UseExpressionBody", project)
-                    return state.level
+            fun defaultLevel(): HighlightDisplayLevel {
+                val project = declaration.project
+                val inspectionProfileManager = ProjectInspectionProfileManager.getInstance(project)
+                val inspectionProfile = inspectionProfileManager.currentProfile
+                val state = inspectionProfile.getToolDefaultState("UseExpressionBody", project)
+                return state.level
+            }
+
+            val toHighlightRange = toHighlightElement?.textRange?.let {
+                if (hasHighlighting && defaultLevel() != HighlightDisplayLevel.DO_NOT_SHOW) {
+                    it
+                } else {
+                    // Extend range to [left brace..end of highlight element]
+                    val offset = (declaration.blockExpression()?.lBrace?.startOffset ?: it.startOffset) - it.startOffset
+                    it.shiftRight(offset).grown(-offset)
                 }
+            }
 
-                val toHighlightRange = toHighlightElement?.textRange?.let {
-                    if (hasHighlighting && defaultLevel() != HighlightDisplayLevel.DO_NOT_SHOW) {
-                        it
-                    } else {
-                        // Extend range to [left brace..end of highlight element]
-                        val offset = (declaration.blockExpression()?.lBrace?.startOffset ?: it.startOffset) - it.startOffset
-                        it.shiftRight(offset).grown(-offset)
-                    }
-                }
-
-                holder.registerProblemWithoutOfflineInformation(
-                        declaration,
-                        "Use expression body instead of $suffix",
-                        isOnTheFly,
-                        highlightType,
-                        toHighlightRange?.shiftRight(-declaration.startOffset),
-                        ConvertToExpressionBodyFix()
-                )
-            })
+            holder.registerProblemWithoutOfflineInformation(
+                declaration,
+                "Use expression body instead of $suffix",
+                isOnTheFly,
+                highlightType,
+                toHighlightRange?.shiftRight(-declaration.startOffset),
+                ConvertToExpressionBodyFix()
+            )
+        })
 
     private fun KtDeclarationWithBody.findValueStatement(): KtExpression? {
         val body = blockExpression() ?: return null
