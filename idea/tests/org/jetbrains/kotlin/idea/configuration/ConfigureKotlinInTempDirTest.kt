@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.ApplicationImpl
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -26,28 +25,9 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.junit.Assert
-import java.io.File
 import java.io.IOException
 
-open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
-    @Throws(IOException::class)
-    override fun getIprFile(): File {
-        val tempDir = FileUtil.generateRandomTemporaryPath()
-        FileUtil.createTempDirectory("temp", null)
-
-        FileUtil.copyDir(File(projectRoot), tempDir)
-
-        val projectRoot = tempDir.path
-
-        val projectFilePath = projectRoot + "/projectFile.ipr"
-        if (!File(projectFilePath).exists()) {
-            val dotIdeaPath = projectRoot + "/.idea"
-            Assert.assertTrue("Project file or '.idea' dir should exists in " + projectRoot, File(dotIdeaPath).exists())
-            return File(projectRoot)
-        }
-        return File(projectFilePath)
-    }
-
+open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest() {
     @Throws(IOException::class)
     fun testNoKotlincExistsNoSettingsRuntime10() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
