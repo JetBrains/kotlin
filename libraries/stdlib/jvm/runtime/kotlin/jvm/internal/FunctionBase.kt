@@ -3,10 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.jvm.internal;
+package kotlin.jvm.internal
 
-import kotlin.Function;
-
-public interface FunctionBase extends Function {
-    int getArity();
+interface FunctionBase<out R> : Function<R> {
+    val arity: Int
 }
