@@ -37,10 +37,10 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class IrSourceCompilerForInline(
-        override val state: GenerationState,
-        override val callElement: IrMemberAccessExpression,
-        private val codegen: ExpressionCodegen
-        ): SourceCompilerForInline {
+    override val state: GenerationState,
+    override val callElement: IrMemberAccessExpression,
+    private val codegen: ExpressionCodegen
+) : SourceCompilerForInline {
 
 
     //TODO
@@ -81,7 +81,12 @@ class IrSourceCompilerForInline(
         return SMAP(/*TODO*/listOf(FileMapping("TODO", "TODO").also { it.id = 1; it.addRangeMapping(RangeMapping(1, 1, 1)) }))
     }
 
-    override fun doCreateMethodNodeFromSource(callableDescriptor: FunctionDescriptor, jvmSignature: JvmMethodSignature, callDefault: Boolean, asmMethod: Method): SMAPAndMethodNode {
+    override fun doCreateMethodNodeFromSource(
+        callableDescriptor: FunctionDescriptor,
+        jvmSignature: JvmMethodSignature,
+        callDefault: Boolean,
+        asmMethod: Method
+    ): SMAPAndMethodNode {
         assert(callableDescriptor == callElement.descriptor.original)
         val owner = (callElement as IrCall).symbol.owner as IrFunction
         //ExpressionCodegen()
@@ -89,10 +94,12 @@ class IrSourceCompilerForInline(
         var maxCalcAdapter: MethodVisitor? = null
         val functionCodegen = object : FunctionCodegen(owner, codegen.classCodegen) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
-                node = MethodNode(API,
-                                  flags,
-                                  signature.asmMethod.name, signature.asmMethod.descriptor,
-                                  signature.genericsSignature, null)
+                node = MethodNode(
+                    API,
+                    flags,
+                    signature.asmMethod.name, signature.asmMethod.descriptor,
+                    signature.genericsSignature, null
+                )
                 maxCalcAdapter = wrapWithMaxLocalCalc(node!!)
                 return maxCalcAdapter!!
             }
@@ -104,7 +111,11 @@ class IrSourceCompilerForInline(
         return SMAPAndMethodNode(node!!, SMAP(/*TODO*/listOf(FileMapping.SKIP)))
     }
 
-    override fun generateAndInsertFinallyBlocks(intoNode: MethodNode, insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>, offsetForFinallyLocalVar: Int) {
+    override fun generateAndInsertFinallyBlocks(
+        intoNode: MethodNode,
+        insertPoints: List<MethodInliner.PointForExternalFinallyBlocks>,
+        offsetForFinallyLocalVar: Int
+    ) {
         //TODO("not implemented")
     }
 
