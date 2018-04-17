@@ -43,10 +43,9 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 
-
 class MovePropertyToConstructorIntention :
-        SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Move to constructor"),
-        LocalQuickFix {
+    SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Move to constructor"),
+    LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val property = descriptor.psiElement as? KtProperty ?: return
@@ -54,18 +53,18 @@ class MovePropertyToConstructorIntention :
     }
 
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
-        fun KtProperty.isDeclaredInClass() : Boolean {
+        fun KtProperty.isDeclaredInClass(): Boolean {
             val parent = getStrictParentOfType<KtClassOrObject>()
             return parent is KtClass && !parent.isInterface()
         }
 
         return !element.isLocal
-               && !element.hasDelegate()
-               && element.getter == null
-               && element.setter == null
-               && !element.hasModifier(LATEINIT_KEYWORD)
-               && (element.isDeclaredInClass())
-               && (element.initializer?.isValidInConstructor() ?: true)
+                && !element.hasDelegate()
+                && element.getter == null
+                && element.setter == null
+                && !element.hasModifier(LATEINIT_KEYWORD)
+                && (element.isDeclaredInClass())
+                && (element.initializer?.isValidInConstructor() ?: true)
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
@@ -79,15 +78,14 @@ class MovePropertyToConstructorIntention :
         val propertyAnnotationsText = element.modifierList?.annotationEntries?.joinToString(separator = " ") {
             if (it.isApplicableToConstructorParameter()) {
                 it.getTextWithUseSiteIfMissing("property")
-            }
-            else {
+            } else {
                 it.text
             }
         }
 
         if (constructorParameter != null) {
             val parameterAnnotationsText =
-                    constructorParameter.modifierList?.annotationEntries?.joinToString(separator = " ") { it.text }
+                constructorParameter.modifierList?.annotationEntries?.joinToString(separator = " ") { it.text }
 
             val parameterText = buildString {
                 element.modifierList?.getModifiersText()?.let(this::append)
@@ -103,10 +101,9 @@ class MovePropertyToConstructorIntention :
             constructorParameter.replace(factory.createParameter(parameterText)).apply {
                 commentSaver.restore(this)
             }
-        }
-        else {
-            val typeText = element.typeReference?.text ?:
-                           (element.resolveToDescriptorIfAny() as? PropertyDescriptor)?.type?.render() ?: return
+        } else {
+            val typeText =
+                element.typeReference?.text ?: (element.resolveToDescriptorIfAny() as? PropertyDescriptor)?.type?.render() ?: return
             val parameterText = buildString {
                 element.modifierList?.getModifiersText()?.let(this::append)
                 propertyAnnotationsText?.takeIf(String::isNotBlank)?.let { appendWithSpaceBefore(it) }
@@ -139,19 +136,19 @@ class MovePropertyToConstructorIntention :
     }
 
     private fun KtAnnotationEntry.getTextWithUseSiteIfMissing(useSite: String) =
-            if (useSiteTarget == null)
-                "@$useSite:${typeReference?.text.orEmpty()}${valueArgumentList?.text.orEmpty()}"
-            else
-                text
+        if (useSiteTarget == null)
+            "@$useSite:${typeReference?.text.orEmpty()}${valueArgumentList?.text.orEmpty()}"
+        else
+            text
 
     private fun KotlinType.render() = IdeDescriptorRenderers.SOURCE_CODE.renderType(this)
 
     private fun KtModifierList.getModifiersText() = getModifiers().joinToString(separator = " ") { it.text }
 
     private fun KtModifierList.getModifiers(): List<PsiElement> =
-            node.getChildren(null).filter { it.elementType is KtModifierKeywordToken }.map { it.psi }
+        node.getChildren(null).filter { it.elementType is KtModifierKeywordToken }.map { it.psi }
 
-    private fun StringBuilder.appendWithSpaceBefore(str: String) = append(" " + str)
+    private fun StringBuilder.appendWithSpaceBefore(str: String) = append(" $str")
 
     private fun KtExpression.isValidInConstructor(): Boolean {
         val containingClass = getStrictParentOfType<KtClass>() ?: return false
