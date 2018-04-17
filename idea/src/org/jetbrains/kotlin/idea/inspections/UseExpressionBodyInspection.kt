@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
@@ -12,6 +13,7 @@ import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -61,11 +63,19 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
                 val (toHighlightElement, suffix, highlightType) = statusFor(declaration) ?: return
                 // Change range to start with left brace
                 val hasHighlighting = highlightType != INFORMATION
+
+                fun defaultLevel(): HighlightDisplayLevel {
+                    val project = declaration.project
+                    val inspectionProfileManager = ProjectInspectionProfileManager.getInstance(project)
+                    val inspectionProfile = inspectionProfileManager.currentProfile
+                    val state = inspectionProfile.getToolDefaultState("UseExpressionBody", project)
+                    return state.level
+                }
+
                 val toHighlightRange = toHighlightElement?.textRange?.let {
-                    if (hasHighlighting) {
+                    if (hasHighlighting && defaultLevel() != HighlightDisplayLevel.DO_NOT_SHOW) {
                         it
-                    }
-                    else {
+                    } else {
                         // Extend range to [left brace..end of highlight element]
                         val offset = (declaration.blockExpression()?.lBrace?.startOffset ?: it.startOffset) - it.startOffset
                         it.shiftRight(offset).grown(-offset)
