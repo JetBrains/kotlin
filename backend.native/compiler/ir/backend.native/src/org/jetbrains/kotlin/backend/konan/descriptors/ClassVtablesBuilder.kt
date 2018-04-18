@@ -87,9 +87,20 @@ internal class OverriddenFunctionDescriptor(
 }
 
 internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val context: Context) {
+    private val DEBUG = 0
+
+    private inline fun DEBUG_OUTPUT(severity: Int, block: () -> Unit) {
+        if (DEBUG > severity) block()
+    }
+
     val vtableEntries: List<OverriddenFunctionDescriptor> by lazy {
 
         assert(!classDescriptor.isInterface)
+
+        DEBUG_OUTPUT(0) {
+            println()
+            println("BUILDING vTable for ${classDescriptor.descriptor}")
+        }
 
         val superVtableEntries = if (classDescriptor.isSpecialClassWithNoSupertypes()) {
             emptyList()
@@ -101,12 +112,31 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
         val methods = classDescriptor.sortedOverridableOrOverridingMethods
         val newVtableSlots = mutableListOf<OverriddenFunctionDescriptor>()
 
+        DEBUG_OUTPUT(0) {
+            println()
+            println("SUPER vTable:")
+            superVtableEntries.forEach { println("    ${it.overriddenDescriptor.descriptor} -> ${it.descriptor.descriptor}") }
+
+            println()
+            println("METHODS:")
+            methods.forEach { println("    ${it.descriptor}") }
+
+            println()
+            println("BUILDING INHERITED vTable")
+        }
+
         val inheritedVtableSlots = superVtableEntries.map { superMethod ->
             val overridingMethod = methods.singleOrNull { it.overrides(superMethod.descriptor) }
             if (overridingMethod == null) {
+
+                DEBUG_OUTPUT(0) { println("Taking super ${superMethod.overriddenDescriptor.descriptor} -> ${superMethod.descriptor.descriptor}") }
+
                 superMethod
             } else {
                 newVtableSlots.add(OverriddenFunctionDescriptor(overridingMethod, superMethod.descriptor))
+
+                DEBUG_OUTPUT(0) { println("Taking overridden ${superMethod.overriddenDescriptor.descriptor} -> ${overridingMethod.descriptor}") }
+
                 OverriddenFunctionDescriptor(overridingMethod, superMethod.overriddenDescriptor)
             }
         }
@@ -120,6 +150,16 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
                 .filterNot { inheritedVtableSlotsSet.contains(it.descriptor to it.bridgeDirections) }
                 .distinctBy { it.descriptor to it.bridgeDirections }
                 .filter { it.descriptor.isOverridable }
+
+        DEBUG_OUTPUT(0) {
+            println()
+            println("INHERITED vTable slots:")
+            inheritedVtableSlots.forEach { println("    ${it.overriddenDescriptor.descriptor} -> ${it.descriptor.descriptor}") }
+
+            println()
+            println("MY OWN vTable slots:")
+            filteredNewVtableSlots.forEach { println("    ${it.overriddenDescriptor.descriptor} -> ${it.descriptor.descriptor}") }
+        }
 
         inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenDescriptor.functionName.localHash.value }
     }
