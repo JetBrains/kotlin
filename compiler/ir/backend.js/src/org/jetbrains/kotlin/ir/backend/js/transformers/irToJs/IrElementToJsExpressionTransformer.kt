@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.kind
 import org.jetbrains.kotlin.ir.backend.js.utils.name
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
@@ -35,7 +38,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitFunctionReference(expression: IrFunctionReference, context: JsGenerationContext): JsExpression {
         val irFunction = expression.symbol.owner as IrFunction
-        return irFunction.accept(IrFunctionToJsTransformer(), context)
+        return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
     }
 
     override fun <T> visitConst(expression: IrConst<T>, context: JsGenerationContext): JsExpression {
@@ -123,10 +126,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
         if (dispatchReceiver != null && dispatchReceiver.type.isFunctionTypeOrSubtype && symbol.name == OperatorNameConventions.INVOKE) {
             return JsInvocation(jsDispatchReceiver!!, arguments)
-        }
-
-        context.staticContext.intrinsics[symbol]?.let {
-            return it(expression, arguments)
         }
 
         return if (symbol is IrConstructorSymbol) {

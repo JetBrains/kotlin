@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
 class IrFileToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
     override fun visitFile(declaration: IrFile, context: JsGenerationContext): JsStatement {
-        val fileContext = context.newDeclaration(JsDeclarationScope(context.currentScope, "scope for file ${declaration.name}"))
+        val fileContext = context.newDeclaration(JsDeclarationScope(context.currentScope, "scope for file ${declaration.name}"), null, declaration)
         val block = fileContext.currentBlock
 
         declaration.declarations.forEach {

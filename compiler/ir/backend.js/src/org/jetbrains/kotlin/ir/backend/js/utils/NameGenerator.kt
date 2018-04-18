@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.backend.ast.JsName
-import org.jetbrains.kotlin.js.backend.ast.JsScope
 
 interface NameGenerator {
-    fun getNameForSymbol(symbol: IrSymbol, scope: JsScope): JsName
+    fun getNameForSymbol(symbol: IrSymbol, context: JsGenerationContext): JsName
 }

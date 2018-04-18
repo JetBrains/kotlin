@@ -5,18 +5,21 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class JsGenerationContext {
-    fun newDeclaration(scope: JsScope, func: IrFunction? = null): JsGenerationContext {
-        return JsGenerationContext(this, JsBlock(), scope, func)
+    fun newDeclaration(scope: JsScope, func: IrFunction? = null, file: IrFile? = null): JsGenerationContext {
+        return JsGenerationContext(this, JsBlock(), scope, func, file)
     }
 
     val currentBlock: JsBlock
     val currentScope: JsScope
+    val currentFile: IrFile?
     val currentFunction: IrFunction?
     val parent: JsGenerationContext?
     val staticContext: JsStaticContext
@@ -30,16 +33,21 @@ class JsGenerationContext {
         this.currentScope = rootScope
         this.currentBlock = program.globalBlock
         this.currentFunction = null
+        this.currentFile = null
     }
 
-    constructor(parent: JsGenerationContext, block: JsBlock, scope: JsScope, func: IrFunction?) {
+    constructor(parent: JsGenerationContext, block: JsBlock, scope: JsScope, func: IrFunction?, file: IrFile? = null) {
         this.parent = parent
         this.program = parent.program
         this.staticContext = parent.staticContext
         this.currentBlock = block
         this.currentScope = scope
         this.currentFunction = func
+        this.currentFile = file ?: parent.currentFile
     }
 
-    fun getNameForSymbol(symbol: IrSymbol): JsName = staticContext.getNameForSymbol(symbol)
+    fun getNameForSymbol(symbol: IrSymbol): JsName = staticContext.getNameForSymbol(symbol, this)
+
+    val currentPackage: PackageFragmentDescriptor
+        get() = currentFile!!.packageFragmentDescriptor
 }
