@@ -53,7 +53,31 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
 
         classBlock.statements += generateClassMetadata()
+        irClass.onlyIf({ kind == ClassKind.OBJECT }) { classBlock.statements += maybeGenerateObjectInstance() }
         return classBlock
+    }
+
+    private fun maybeGenerateObjectInstance(): List<JsStatement> {
+        val instanceVarName = "${className.ident}_instance"
+        val getInstanceFunName = "${className.ident}_getInstance"
+        val jsVarNode = context.currentScope.declareName(instanceVarName)
+        val varStmt = JsVars(JsVars.JsVar(jsVarNode, JsNullLiteral()))
+        val function = generateGetInstanceFunction(jsVarNode, getInstanceFunName)
+        return listOf(varStmt, function.makeStmt())
+    }
+
+    private fun generateGetInstanceFunction(instanceVar: JsName, instanceFunName: String): JsFunction {
+        val functionBody = JsBlock()
+        val func = JsFunction(JsFunctionScope(context.currentScope, "getInstance for ${irClass.name} object"), functionBody, "getInstance")
+        func.name = context.currentScope.declareName(instanceFunName)
+
+        functionBody.statements += JsIf(
+            JsBinaryOperation(JsBinaryOperator.REF_EQ, instanceVar.makeRef(), JsNullLiteral()),
+            jsAssignment(instanceVar.makeRef(), JsNew(classNameRef)).makeStmt()
+        )
+        functionBody.statements += JsReturn(instanceVar.makeRef())
+
+        return func
     }
 
     private fun maybeGeneratePrimaryConstructor() {

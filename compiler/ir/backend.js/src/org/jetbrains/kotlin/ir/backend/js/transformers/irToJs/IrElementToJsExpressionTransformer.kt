@@ -73,9 +73,18 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression =
         context.getNameForSymbol(expression.symbol).makeRef()
 
-    override fun visitGetObjectValue(expression: IrGetObjectValue, data: JsGenerationContext): JsExpression {
-        TODO()
+    override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.kind) {
+        ClassKind.OBJECT -> {
+            if (expression.type.isUnit()) JsNullLiteral()
+            else {
+                val className = context.getNameForSymbol(expression.symbol)
+                val getInstanceName = className.ident + "_getInstance"
+                JsInvocation(JsNameRef(getInstanceName))
+            }
+        }
+        else -> TODO()
     }
+
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
         val fieldName = context.getNameForSymbol(expression.symbol)
