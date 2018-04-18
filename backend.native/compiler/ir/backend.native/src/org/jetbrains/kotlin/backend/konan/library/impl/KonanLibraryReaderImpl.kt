@@ -60,10 +60,11 @@ class LibraryReaderImpl(var libraryFile: File, val currentAbiVersion: Int,
         get() = manifestProperties.propertyString("unique_name")!!
 
     override val bitcodePaths: List<String>
-        get() = (realFiles.kotlinDir.listFiles + realFiles.nativeDir.listFiles).map{it.absolutePath}
+        get() = (realFiles.kotlinDir.listFilesOrEmpty + realFiles.nativeDir.listFilesOrEmpty)
+                .map { it.absolutePath }
 
     override val includedPaths: List<String>
-        get() = (realFiles.includedDir.listFiles).map{it.absolutePath}
+        get() = (realFiles.includedDir.listFilesOrEmpty).map { it.absolutePath }
 
     override val linkerOpts: List<String>
         get() = manifestProperties.propertyList("linkerOpts", target!!.visibleName)
