@@ -49,86 +49,34 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
     abstract suspend fun clientHandshake(input: ByteReadChannelWrapper, output: ByteWriteChannelWrapper, log: Logger): Boolean
 
     override fun close() {
-        try {
-            runBlockingWithTimeout {
-                sendNoReplyMessage(Server.EndConnectionMessage())
-            }
-        } catch (e: Throwable) {
-            log.info(e.message)
-        } finally {
-            socket?.close()
-        }
+//        try {
+//            runBlockingWithTimeout {
+//                sendNoReplyMessage(Server.EndConnectionMessage())
+//            }
+//        } catch (e: Throwable) {
+//            log.info(e.message)
+//        } finally {
+//            socket?.close()
+//        }
+        socket?.close()
     }
 
     public class MessageReply<T : Any>(val messageId: Int, val reply: T?) : Serializable
 
     private interface ActorQuery
-    private class ExpectReplyQuery(val messageId: Int, val result: CompletableDeferred<MessageReply<*>>) : ActorQuery
-    private class ReceiveReplyQuery() : ActorQuery
-    private class SendMessageQuery(val message: Server.AnyMessage<*>, val messageId: CompletableDeferred<Int>) : ActorQuery
-    private class SendNoreplyMessageQuery(val message: Server.AnyMessage<*>) : ActorQuery
+    private data class ExpectReplyQuery(val messageId: Int, val result: CompletableDeferred<MessageReply<*>>) : ActorQuery
+    private class ReceiveReplyQuery : ActorQuery
+    private data class SendMessageQuery(val message: Server.AnyMessage<*>, val messageId: CompletableDeferred<Int>) : ActorQuery
+    private data class SendNoreplyMessageQuery(val message: Server.AnyMessage<*>) : ActorQuery
+
+//    @kotlin.jvm.Transient
+//    private lateinit var intermediateActor: SendChannel<ReceiveReplyQuery>
 
     @kotlin.jvm.Transient
-    private val intermediateActor: SendChannel<ReceiveReplyQuery> = actor(capacity = Channel.UNLIMITED) {
-        consumeEach { query ->
-            println("[${log.name}] : intermediateActor received $query")
-            actor.send(query)
-            println("[${log.name}] : query sent to actor!")
-        }
-    }
-
-    @kotlin.jvm.Transient
-    private val actor = actor<ActorQuery>(capacity = Channel.UNLIMITED) {
-        val receivedMessages = hashMapOf<Int, ArrayList<MessageReply<*>>>()
-        val expectedMessages = hashMapOf<Int, ArrayList<ExpectReplyQuery>>()
-        var firstFreeMessageId = 0
-        consumeEach { query ->
-            when (query) {
-                is SendMessageQuery -> {
-                    val id = firstFreeMessageId++
-                    println("[${log.name}, ${this@DefaultAuthorizableClient}] : sending message : ${query.message} (predicted id = ${id})")
-                    query.messageId.complete(id)
-                    output.writeObject(query.message.withId(id))
-                }
-                is SendNoreplyMessageQuery -> {
-                    println("[${log.name}] : sending noreply : ${query.message}")
-                    output.writeObject(query.message.withId(-1))
-                }
-                is ExpectReplyQuery -> {
-                    println("[${log.name}] : expect message with id = ${query.messageId}")
-                    receivedMessages.popBackFrom(key = query.messageId)?.also { oldReply ->
-                        query.result.complete(oldReply)
-                    } ?: expectedMessages.pushBackTo(key = query.messageId, value = query).also {
-                        println("[${log.name}] : intermediateActor.send(ReceiveReplyQuery())")
-                        intermediateActor.send(ReceiveReplyQuery())
-                    }
-                }
-                is ReceiveReplyQuery -> {
-                    println("[${log.name}] : got ReceiveReplyQuery")
-                    val replyAny = try {
-                        input.nextObject()
-                    } catch (e: Throwable) {
-                        println("input.nextObject() - failed!")
-                    }
-                    if (replyAny !is MessageReply<*>) {
-                        println("replyAny as MessageReply<*> - failed!")
-                    } else {
-                        println("[${log.name}] : received reply ${replyAny.reply} (id = ${replyAny.messageId})")
-                        val reply = replyAny as MessageReply<*>
-                        expectedMessages.popBackFrom(key = reply.messageId)?.also { expectedMsg ->
-                            expectedMsg.result.complete(reply)
-                        } ?: receivedMessages.pushBackTo(key = reply.messageId, value = reply).also {
-                            println("[${log.name}] : intermediateActor.send(ReceiveReplyQuery())")
-                            intermediateActor.send(ReceiveReplyQuery())
-                        }
-                    }
-                }
-            }
-        }
-    }
+    private lateinit var actor: SendChannel<ActorQuery>
 
     override fun sendMessage(msg: Server.AnyMessage<out ServerType>) = runBlocking {
-        println("send message : $msg")
+        log.info("send message : $msg")
         val id = CompletableDeferred<Int>()
         actor.send(SendMessageQuery(msg, id))
         val idVal = id.await()
@@ -137,6 +85,9 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
     }
 
     override fun sendNoReplyMessage(msg: Server.AnyMessage<out ServerType>) = runBlocking {
+        log.info("sendNoReplyMessage $msg")
+        log.info("actor: $actor")
+        log.info("closed 4 send : ${actor.isClosedForSend}")
         actor.send(SendNoreplyMessageQuery(msg))
     }
 
@@ -147,6 +98,65 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
     }
 
     override fun connectToServer() {
+//        intermediateActor = actor(capacity = Channel.UNLIMITED) {
+//            consumeEach { query ->
+//                log.info("[${log.name}] : intermediateActor received $query")
+//                actor.send(query)
+//                log.info("[${log.name}] : query sent to actor!")
+//            }
+//        }
+        actor = actor(capacity = 2) {
+            val receivedMessages = hashMapOf<Int, MessageReply<*>>()
+            val expectedMessages = hashMapOf<Int, ExpectReplyQuery>()
+            var firstFreeMessageId = 0
+            fun receiveReply() {
+                log.info("[${log.name}] : got ReceiveReplyQuery")
+                val replyAny = runBlocking { input.nextObject() } // TODO : support exception!!!
+                if (replyAny !is MessageReply<*>) {
+                    log.info("replyAny as MessageReply<*> - failed!")
+                } else {
+                    val reply = replyAny
+                    log.info("[${log.name}] : received reply ${replyAny.reply} (id = ${replyAny.messageId})}")
+                    expectedMessages[reply.messageId]?.also { expectedMsg ->
+                        expectedMsg.result.complete(reply)
+                    } ?: receivedMessages.put(reply.messageId, reply).also {
+                        log.info("[${log.name}] : intermediateActor.send(ReceiveReplyQuery())")
+                        receiveReply()
+                    }
+                }
+            }
+            for (query in channel) {
+                when (query) {
+                    is SendMessageQuery -> {
+                        val id = firstFreeMessageId++
+                        log.info("[${log.name}, ${this@DefaultAuthorizableClient}] : sending message : ${query.message} (predicted id = ${id})")
+                        query.messageId.complete(id)
+                        output.writeObject(query.message.withId(id)) // TODO : support exception!!!
+                    }
+                    is SendNoreplyMessageQuery -> {
+                        log.info("[${log.name}] : sending noreply : ${query.message}")
+                        output.writeObject(query.message.withId(-1))
+                    }
+                    is ExpectReplyQuery -> {
+                        log.info("[${log.name}] : expect message with id = ${query.messageId}")
+                        receivedMessages[query.messageId]?.also { reply ->
+                            query.result.complete(reply)
+                        } ?: expectedMessages.put(query.messageId, query).also {
+                            log.info("[${log.name}] : intermediateActor.send(ReceiveReplyQuery())")
+                            receiveReply()
+                            //intermediateActor.send(ReceiveReplyQuery())
+                        }
+                    }
+                    is ReceiveReplyQuery -> {
+                        receiveReply()
+                    }
+                }
+            }
+//            consumeEach { query ->
+//
+//            }
+        }
+
         runBlocking {
             log.info("connectToServer (port = $serverPort | host = $serverHost)")
             try {
@@ -160,7 +170,7 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
                 throw e
             }
             log.info("connected (port = $serverPort, serv =$serverPort)")
-            socket!!.openIO(log).also {
+            socket?.openIO(log)?.also {
                 log.info("OK serv.openIO() |port=$serverPort|")
                 input = it.input
                 output = it.output
@@ -209,23 +219,4 @@ class DefaultClientRMIWrapper<ServerType : ServerBase> : Client<ServerType> {
 
     override fun <T> readMessage(id: Int) = throw UnsupportedOperationException("readMessage is not supported for RMI wrappers")
     override fun close() {}
-}
-
-internal fun <K, T> MutableMap<K, ArrayList<T>>.popBackFrom(key: K): T? =
-    if (key !in this) null
-    else {
-        val arr = this[key]!!
-        if (arr.isEmpty())
-            null
-        else
-            arr.removeAt(arr.lastIndex).also {
-                if (arr.isEmpty()) {
-                    this.remove(key)
-                }
-            }
-    }
-
-internal fun <K, T> MutableMap<K, ArrayList<T>>.pushBackTo(key: K, value: T) {
-    this.putIfAbsent(key, arrayListOf())
-    this[key]!!.add(value)
 }

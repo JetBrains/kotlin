@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.daemon.experimental.integration
 
 import junit.framework.TestCase
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.AbstractCliTest
@@ -685,7 +686,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     private val PARALLEL_THREADS_TO_COMPILE = 10
-    private val PARALLEL_WAIT_TIMEOUT_S = 200L
+    private val PARALLEL_WAIT_TIMEOUT_S = 60L
 
     fun testParallelCompilationOnDaemon() {
 
@@ -789,13 +790,16 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     ) { logFile ->
                         logFiles[threadNo] = logFile
                         val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
+                        println("-1      I'm working in thread ${Thread.currentThread().name}")
                         val compileServiceSession =
                             KotlinCompilerClient.connectAndLease(
                                 compilerId, flagFile, daemonJVMOptions, daemonOptions,
                                 DaemonReportingTargets(out = PrintStream(outStreams[threadNo])), autostart = true,
                                 leaseSession = true
                             )
-                        daemonInfos[threadNo] = runBlocking {
+                        println("0      I'm working in thread ${Thread.currentThread().name}")
+                        daemonInfos[threadNo] = runBlocking(Unconfined) {
+                            println("1      I'm working in thread ${Thread.currentThread().name}")
                             compileServiceSession?.compileService?.getDaemonInfo() to compileServiceSession?.sessionId
                         }
 
@@ -806,7 +810,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                             ParallelStartParams.performCompilation -> {
                                 val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
                                 KotlinCompilerClient.compile(
-                                    compileServiceSession!!.compileService,
+                                    compileServiceSession.compileService,
                                     compileServiceSession.sessionId,
                                     CompileService.TargetPlatform.JVM,
                                     arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),

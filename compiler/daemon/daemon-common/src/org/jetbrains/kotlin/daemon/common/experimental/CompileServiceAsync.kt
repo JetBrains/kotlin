@@ -42,7 +42,7 @@ interface CompileServiceAsync {
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
-        compilationResults: CompilationResultsClientSide?
+        compilationResults: CompilationResultsClientSide
     ): CompileService.CallResult<Int>
 
     suspend fun clearJarCache()

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.CompileServiceImpl
 import org.jetbrains.kotlin.daemon.CompilerSelector
 import org.jetbrains.kotlin.daemon.client.experimental.BasicCompilerServicesWithResultsFacadeServerServerSide
+import org.jetbrains.kotlin.daemon.client.experimental.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
@@ -332,16 +333,18 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
             val outStream = ByteArrayOutputStream()
             val msgCollector = PrintingMessageCollector(PrintStream(outStream), MessageRenderer.WITHOUT_PATHS, true)
             val codes = (0 until 10).toMutableList()
+            val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
+                msgCollector,
+                { _, _ -> },
+                findCallbackServerSocket()
+            )
+            val serverRun = services.runServer()
+            val servicesClient = services.clientSide
+            val compResultsClient = KotlinCompilerClient.createCompResults().clientSide
             fun runThread(i: Int) {
                 thread {
                     val jar = tmpdir.absolutePath + File.separator + "hello.$i.jar"
                     val code = runBlocking {
-                        val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
-                            msgCollector,
-                            { _, _ -> },
-                            findCallbackServerSocket()
-                        )
-                        val serverRun = services.runServer()
                         daemon.compile(
                             CompileService.NO_SESSION,
                             arrayOf(
@@ -362,8 +365,8 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                                 ReportSeverity.INFO.code,
                                 emptyArray()
                             ),
-                            services.clientSide,
-                            null
+                            servicesClient,
+                            compResultsClient
                         )
                     }.get().also { println("CODE = $it") }
                     codes[i] = code

@@ -87,7 +87,7 @@ open class CompilerCallbackServicesFacadeServerSide(
 
     fun compilationCanceledStatus_checkCanceled(): Void? {
         try {
-            compilationCanceledStatus!!.checkCanceled()
+            compilationCanceledStatus?.checkCanceled()
             return null
         }
         catch (e: Exception) {

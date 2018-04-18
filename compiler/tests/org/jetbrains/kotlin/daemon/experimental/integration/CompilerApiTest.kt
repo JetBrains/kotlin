@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.daemon.experimental.integration
 
 import com.intellij.openapi.application.ApplicationManager
 import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -29,6 +30,8 @@ import java.net.URLClassLoader
 import java.util.logging.LogManager
 import java.util.logging.Logger
 
+private val logFiles = arrayListOf<String>()
+
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
     private val compilerLibDir = getCompilerLib()
@@ -37,6 +40,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         println("creating logFile")
         val newLogFile = createTempFile("kotlin-daemon-experimental-test.", ".log")
         println("logFile created (${newLogFile.loggerCompatiblePath})")
+        logFiles.add(newLogFile.loggerCompatiblePath)
         return newLogFile
     }
 
@@ -194,11 +198,13 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
     }
 
     private fun terminate(daemonOptions: DaemonOptions) {
+        println("\n\nkillall -9 Console && open ${logFiles.joinToString(" ")}\n\n")
         log.info("in finally")
-        runBlocking {
-            log.info("in runBlocking")
-            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
-        }
+//        runBlocking {
+//            log.info("in runBlocking")
+//            delay(1000L)
+//            KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+//        }
 //        currentLogFile.delete()
 //        externalLogFile.delete()
     }

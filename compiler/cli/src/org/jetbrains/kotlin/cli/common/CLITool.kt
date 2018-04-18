@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common
 
+import jdk.nashorn.internal.runtime.regexp.joni.Config.log
 import org.fusesource.jansi.AnsiConsole
 import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
@@ -79,7 +80,9 @@ abstract class CLITool<A : CommonToolArguments> {
     }
 
     fun exec(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
+        println("exec $messageCollector $services $arguments")
         printVersionIfNeeded(messageCollector, arguments)
+        println("printVersionIfNeeded - OK")
 
         val fixedMessageCollector = if (arguments.suppressWarnings && !arguments.allWarningsAsErrors) {
             FilteringMessageCollector(messageCollector, Predicate.isEqual(CompilerMessageSeverity.WARNING))
@@ -87,8 +90,12 @@ abstract class CLITool<A : CommonToolArguments> {
         else {
             messageCollector
         }
+        println("val fixedMessageCollector := *** - OK")
 
         reportArgumentParseProblems(fixedMessageCollector, arguments.errors)
+        println("reportArgumentParseProblems - OK")
+        messageCollector.report(CompilerMessageSeverity.INFO, "abacaba")
+        println("abacaba report - OK")
         return execImpl(fixedMessageCollector, services, arguments)
     }
 

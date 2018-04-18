@@ -19,7 +19,7 @@ interface CompilerServicesFacadeBaseServerSide : CompilerServicesFacadeBaseAsync
     ) : Server.Message<CompilerServicesFacadeBaseServerSide>() {
 
         override suspend fun processImpl(server: CompilerServicesFacadeBaseServerSide, sendReply: (Any?) -> Unit) {
-            println("reporting_-_-_-_-")
+            log.info("reporting_-_-_-_-")
             server.report(category, severity, message, attachment)
         }
 
