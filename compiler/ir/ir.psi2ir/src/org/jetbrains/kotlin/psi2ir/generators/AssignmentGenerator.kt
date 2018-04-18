@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.psi2ir.unwrappedSetMethod
@@ -76,7 +76,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, origin)
 
         return irAssignmentReceiver.assign { irLValue ->
-            irBlock(ktExpression.startOffset, ktExpression.endOffset, origin, irLValue.type) {
+            irBlock(ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin, irLValue.type) {
                 val opCall = statementGenerator.pregenerateCall(opResolvedCall)
                 opCall.setExplicitReceiverValue(irLValue)
                 val irOpCall = CallGenerator(statementGenerator).generateCall(ktExpression, opCall, origin)
@@ -92,7 +92,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, origin)
 
         return irAssignmentReceiver.assign { irLValue ->
-            irBlock(ktExpression.startOffset, ktExpression.endOffset, origin, irLValue.type) {
+            irBlock(ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin, irLValue.type) {
                 val temporary = irTemporary(irLValue.load())
                 val opCall = statementGenerator.pregenerateCall(opResolvedCall)
                 opCall.setExplicitReceiverValue(
@@ -116,7 +116,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         return when (descriptor) {
             is SyntheticFieldDescriptor -> {
                 val receiverValue =
-                    statementGenerator.generateBackingFieldReceiver(ktLeft.startOffset, ktLeft.endOffset, resolvedCall, descriptor)
+                    statementGenerator.generateBackingFieldReceiver(ktLeft.startOffsetSkippingComments, ktLeft.endOffset, resolvedCall, descriptor)
                 createBackingFieldLValue(ktLeft, descriptor.propertyDescriptor, receiverValue, origin)
             }
             is LocalVariableDescriptor ->
@@ -124,7 +124,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 if (descriptor.isDelegated)
                     DelegatedLocalPropertyLValue(
                         context,
-                        ktLeft.startOffset, ktLeft.endOffset,
+                        ktLeft.startOffsetSkippingComments, ktLeft.endOffset,
                         descriptor.type.toIrType(),
                         descriptor.getter?.let { context.symbolTable.referenceDeclaredFunction(it) },
                         descriptor.setter?.let { context.symbolTable.referenceDeclaredFunction(it) },
@@ -148,7 +148,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     ) =
         VariableLValue(
             context,
-            ktExpression.startOffset, ktExpression.endOffset,
+            ktExpression.startOffsetSkippingComments, ktExpression.endOffset,
             context.symbolTable.referenceValue(descriptor),
             descriptor.type.toIrType(),
             origin
@@ -162,7 +162,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     ): BackingFieldLValue =
         BackingFieldLValue(
             context,
-            ktExpression.startOffset, ktExpression.endOffset,
+            ktExpression.startOffsetSkippingComments, ktExpression.endOffset,
             descriptor.type.toIrType(),
             context.symbolTable.referenceField(descriptor),
             receiverValue, origin
@@ -179,7 +179,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             val thisAsReceiverParameter = thisClass.thisAsReceiverParameter
             val thisType = thisAsReceiverParameter.type.toIrType()
             val irThis = IrGetValueImpl(
-                ktLeft.startOffset, ktLeft.endOffset,
+                ktLeft.startOffsetSkippingComments, ktLeft.endOffset,
                 thisType,
                 context.symbolTable.referenceValueParameter(thisAsReceiverParameter)
             )
@@ -222,7 +222,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             AccessorPropertyLValue(
                 context,
                 scope,
-                ktExpression.startOffset, ktExpression.endOffset, origin,
+                ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
                 propertyIrType,
                 getterSymbol,
                 getterDescriptor,
@@ -236,7 +236,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             FieldPropertyLValue(
                 context,
                 scope,
-                ktExpression.startOffset, ktExpression.endOffset, origin,
+                ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
                 context.symbolTable.referenceField(descriptor),
                 propertyIrType,
                 propertyReceiver,
@@ -275,7 +275,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         return ArrayAccessAssignmentReceiver(
             irArray, irIndexExpressions, indexedGetCall, indexedSetCall,
             CallGenerator(statementGenerator),
-            ktLeft.startOffset, ktLeft.endOffset, origin
+            ktLeft.startOffsetSkippingComments, ktLeft.endOffset, origin
         )
     }
 

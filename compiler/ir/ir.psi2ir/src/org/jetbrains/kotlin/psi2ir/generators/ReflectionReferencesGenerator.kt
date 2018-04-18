@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -41,7 +41,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         return if (lhs is DoubleColonLHS.Expression && !lhs.isObjectQualifier) {
             IrGetClassImpl(
-                ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
+                ktClassLiteral.startOffsetSkippingComments, ktClassLiteral.endOffset, resultType,
                 ktArgument.genExpr()
             )
         } else {
@@ -49,7 +49,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             val typeClass = typeConstructorDeclaration
                     ?: throw AssertionError("Unexpected type constructor for ${lhs.type}: $typeConstructorDeclaration")
             IrClassReferenceImpl(
-                ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
+                ktClassLiteral.startOffsetSkippingComments, ktClassLiteral.endOffset, resultType,
                 context.symbolTable.referenceClassifier(typeClass), lhs.type.toIrType()
             )
         }
@@ -62,7 +62,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val descriptorImportedFromObject = resultingDescriptor as? ImportedFromObjectCallableDescriptor<*>
         val referencedDescriptor = descriptorImportedFromObject?.callableFromObject ?: resultingDescriptor
 
-        val startOffset = ktCallableReference.startOffset
+        val startOffset = ktCallableReference.startOffsetSkippingComments
         val endOffset = ktCallableReference.endOffset
 
         return statementGenerator.generateCallReceiver(

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -260,7 +260,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
 }
 
 fun CallGenerator.generateCall(ktElement: KtElement, call: CallBuilder, origin: IrStatementOrigin? = null) =
-    generateCall(ktElement.startOffset, ktElement.endOffset, call, origin)
+    generateCall(ktElement.startOffsetSkippingComments, ktElement.endOffset, call, origin)
 
 fun CallGenerator.generateCall(irExpression: IrExpression, call: CallBuilder, origin: IrStatementOrigin? = null) =
     generateCall(irExpression.startOffset, irExpression.endOffset, call, origin)

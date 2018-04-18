@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 
 class LocalClassGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateObjectLiteral(ktObjectLiteral: KtObjectLiteralExpression): IrStatement {
-        val startOffset = ktObjectLiteral.startOffset
+        val startOffset = ktObjectLiteral.startOffsetSkippingComments
         val endOffset = ktObjectLiteral.endOffset
         val objectLiteralType = getInferredTypeWithImplicitCastsOrFail(ktObjectLiteral).toIrType()
         val irBlock = IrBlockImpl(startOffset, endOffset, objectLiteralType, IrStatementOrigin.OBJECT_LITERAL)
