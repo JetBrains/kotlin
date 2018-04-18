@@ -24,12 +24,10 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.core.moveCaret
+import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -39,8 +37,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 
 class MoveDeclarationToSeparateFileIntention :
     SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Move declaration to separate file"),
@@ -51,11 +48,9 @@ class MoveDeclarationToSeparateFileIntention :
         if (element.hasModifier(KtTokens.PRIVATE_KEYWORD)) return null
         if (element.containingKtFile.declarations.size == 1) return null
 
-        if (element.resolveToDescriptorIfAny()?.sealedSubclasses?.isNotEmpty() == true) return null
-        if (element.superTypeListEntries.any {
-                val superType = it.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, it.typeReference]
-                (superType?.constructor?.declarationDescriptor as? ClassDescriptor)?.modality == Modality.SEALED
-            }) return null
+        val descriptor = element.resolveToDescriptorIfAny() ?: return null
+        if (descriptor.sealedSubclasses.isNotEmpty()) return null
+        if (descriptor.getSuperClassNotAny()?.modality == Modality.SEALED) return null
 
         val keyword = when (element) {
             is KtClass -> element.getClassOrInterfaceKeyword()
