@@ -43,7 +43,7 @@ val pluginXml by tasks.creating {
             .matching { include(pluginXmlPath) }
             .singleFile
             .readText()
-            .replace(placeholderRegex, "")
+            .replace(placeholderRegex, "<depends>com.intellij.modules.cidr.lang</depends>")
             .replace(excludeRegex, "")
             .replace(versionRegex, "<version>$pluginFullVersionNumber</version>")
             .also { pluginXmlText ->
