@@ -389,7 +389,6 @@ tasks {
         }
     }
 
-    // TODO: copied from TeamCityBuild.xml (with ultimate-related modification), consider removing after migrating from it
     "cleanupArtifacts" {
         doLast {
             delete(ideaPluginDir)
