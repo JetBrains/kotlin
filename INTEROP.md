@@ -17,6 +17,9 @@ everything needed to interact with an external library.
 types, function and constants into the Kotlin world. Generated stubs can be
 imported into an IDE for purposes of code completion and navigation.
 
+ Interoperability with Swift/Objective-C is provided too and covered by the
+separate document [OBJC_INTEROP.md](OBJC_INTEROP.md).
+
 ## Simple example ##
 
 Build the dependencies and the compiler (see `README.md`).
