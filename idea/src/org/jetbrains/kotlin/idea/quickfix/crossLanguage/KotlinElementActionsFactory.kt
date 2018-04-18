@@ -25,6 +25,7 @@ import com.intellij.lang.jvm.JvmModifiersOwner
 import com.intellij.lang.jvm.actions.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import com.intellij.psi.codeStyle.SuggestedNameInfo
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
@@ -163,7 +164,7 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
 
     private inline fun <reified T : KtElement> JvmElement.toKtElement() = sourceElement?.unwrapped as? T
 
-    private fun fakeParametersExpressions(parameters: ExpectedParameters, project: Project): Array<PsiExpression>? =
+    private fun fakeParametersExpressions(parameters: List<Pair<SuggestedNameInfo, List<ExpectedType>>>, project: Project): Array<PsiExpression>? =
             when {
                 parameters.isEmpty() -> emptyArray()
                 else -> JavaPsiFacade
@@ -395,5 +396,5 @@ class KotlinElementActionsFactory : JvmElementActionsFactory() {
     }
 }
 
-private fun JvmPsiConversionHelper.asPsiType(param: ExpectedParameter): PsiType? =
+private fun JvmPsiConversionHelper.asPsiType(param: Pair<SuggestedNameInfo, List<ExpectedType>>): PsiType? =
     param.second.firstOrNull()?.theType?.let { convertType(it) }
