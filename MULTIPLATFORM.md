@@ -119,7 +119,7 @@ We need to add buildscript dependencies to be able to use Kotlin plugins for Gra
         // Specify all the plugins used as dependencies
         dependencies {
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-            classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.7-dev-1407"
+            classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.7-dev-1613"
 
         }
     }
@@ -319,12 +319,17 @@ platforms (for both `Debug` and `Release` modes):
     Replace `<framework name>` with the name you specified in the library's `ios/build.gradle`. Use camel case, e.g.
     for our `greeting` library these tasks will be named `compileKonanGreetingIos_x64` and
     `compileKonanGreetingIos_arm64`.
-4. Ensure that the framework is still selected in the `Project Navigator` and open the `Build phases` tab. Remove all
+4. Add one more build setting for the framework to manage optimizations performed by the Kotlin/Native compiler. Name
+it `KONAN_ENABLE_OPTIMIZATIONS ` and set its value to `YES` for the `Release` mode and to `NO` for the `Debug` mode.
+5. Ensure that the framework is still selected in the `Project Navigator` and open the `Build phases` tab. Remove all
 default phases except `Target Dependencies`.
-5. Add a new `Run Script` build phase and put the following line into the script field:
+6. Add a new `Run Script` build phase and put the following code into the script field:
 
     ```
-    "$SRCROOT/../gradlew" -p "$SRCROOT/../greeting/ios" "$KONAN_TASK" --no-daemon -Pkonan.useEnvironmentVariables=true
+    "$SRCROOT/../gradlew" -p "$SRCROOT" "$KONAN_TASK"          \
+    -Pkonan.configuration.build.dir="$CONFIGURATION_BUILD_DIR" \
+    -Pkonan.debugging.symbols="$DEBUGGING_SYMBOLS"             \
+    -Pkonan.optimizations.enable="$KONAN_ENABLE_OPTIMIZATIONS"
     ```
 
     This script executes the Gradle build to compile the multiplatform library into a framework. Let's examine this
@@ -333,13 +338,12 @@ default phases except `Target Dependencies`.
     use a local Gradle installation you need to invoke it instead of the wrapper.
     * `-p "$SRCROOT/../greeting/ios"` - specify a path to the Gradle subproject containing the framework.
     * `"$KONAN_TASK"` - specify a Gradle task to execute. The build setting created above is used here.
-    * `--no-daemon` - disable the [Gradle daemon](https://docs.gradle.org/current/userguide/gradle_daemon.html). This
-    setting allows us to workaround [this issue](https://github.com/gradle/gradle/issues/3468) related to a build
-    environment in Java 9. If you have Java 8 or earlier you may omit this flag.
-    * `-Pkonan.useEnvironmentVariables=true` - enable passing build parameters from Xcode to the Kotlin/Native Gradle
-    plugin via environment variables.
+    * `-Pkonan.configuration.build.dir="$CONFIGURATION_BUILD_DIR"` - specify a directory provided by Xcode as an output one.
+    * `-Pkonan.debugging.symbols="$DEBUGGING_SYMBOLS"` - allow Xcode to enable debugging symbols generation.
+    * `-Pkonan.optimizations.enable="$KONAN_ENABLE_OPTIMIZATIONS"` - disable/enable optimizations. The build setting
+    created above is used here.
 
-6. Add Kotlin sources into the framework: run `File` -> `Add files to "iosApp"...` and choose a directory with
+7. Add Kotlin sources into the framework: run `File` -> `Add files to "iosApp"...` and choose a directory with
 Kotlin sources (`greeting/ios/src` in this sample). Choose the framework created as a target to add these sources to.
 Do this for the common code of the library too.
 
