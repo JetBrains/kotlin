@@ -2320,6 +2320,45 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MainFunctionReturnUnit extends AbstractLocalInspectionTest {
+        public void testAllFilesPresentInMainFunctionReturnUnit() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/mainFunctionReturnUnit"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("notMain.kt")
+        public void testNotMain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notMain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notUnit1.kt")
+        public void testNotUnit1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notUnit1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notUnit2.kt")
+        public void testNotUnit2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notUnit2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notUnit3.kt")
+        public void testNotUnit3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/notUnit3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unit.kt")
+        public void testUnit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/mainFunctionReturnUnit/unit.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/mayBeConstant")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
