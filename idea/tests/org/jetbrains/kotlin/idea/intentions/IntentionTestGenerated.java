@@ -11824,6 +11824,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/moveDeclarationToSeparateFile")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MoveDeclarationToSeparateFile extends AbstractIntentionTest {
+        public void testAllFilesPresentInMoveDeclarationToSeparateFile() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveDeclarationToSeparateFile"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("extendSealed.kt")
+        public void testExtendSealed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveDeclarationToSeparateFile/extendSealed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealed.kt")
+        public void testSealed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/moveDeclarationToSeparateFile/sealed.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/moveLambdaInsideParentheses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
