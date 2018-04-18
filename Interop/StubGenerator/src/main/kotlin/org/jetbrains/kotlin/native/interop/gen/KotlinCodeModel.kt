@@ -185,6 +185,7 @@ object KotlinTypes {
     val objCObject by InteropClassifier
     val objCObjectMeta by InteropClassifier
     val objCClass by InteropClassifier
+    val objCClassOf by InteropClassifier
 
     val cValuesRef by InteropClassifier
 
@@ -313,4 +314,8 @@ abstract class KotlinFile(
         }
     }.sorted()
 
+}
+
+data class KotlinParameter(val name: String, val type: KotlinType) {
+    fun render(scope: KotlinScope) = "${name.asSimpleName()}: ${type.render(scope)}"
 }

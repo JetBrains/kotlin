@@ -835,12 +835,15 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             else -> error(cursor.kind)
         }
 
-        return ObjCMethod(selector, encoding, parameters, returnType,
+        return ObjCMethod(
+                selector, encoding, parameters, returnType,
                 isClass = isClass,
                 nsConsumesSelf = hasAttribute(cursor, NS_CONSUMES_SELF),
                 nsReturnsRetained = hasAttribute(cursor, NS_RETURNS_RETAINED),
                 isOptional = (clang_Cursor_isObjCOptional(cursor) != 0),
-                isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0))
+                isInit = (clang_Cursor_isObjCInitMethod(cursor) != 0),
+                isDesginatedInitializer = hasAttribute(cursor, OBJC_DESGINATED_INITIALIZER)
+        )
     }
 
     // TODO: unavailable declarations should be imported as deprecated.
@@ -867,6 +870,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
     private val NS_CONSUMED = "ns_consumed"
     private val NS_CONSUMES_SELF = "ns_consumes_self"
     private val NS_RETURNS_RETAINED = "ns_returns_retained"
+    private val OBJC_DESGINATED_INITIALIZER = "objc_designated_initializer"
 
     private fun hasAttribute(cursor: CValue<CXCursor>, name: String): Boolean {
         var result = false

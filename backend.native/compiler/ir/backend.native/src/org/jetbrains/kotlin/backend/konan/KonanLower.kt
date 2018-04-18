@@ -91,7 +91,7 @@ internal class KonanLower(val context: Context) {
 
         irModule.patchDeclarationParents()
 
-        validateIrModule(context, irModule)
+//        validateIrModule(context, irModule) // Temporarily disabled until moving to new IR finished.
     }
 
     private fun lowerFile(irFile: IrFile) {

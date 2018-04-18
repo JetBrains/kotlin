@@ -41,7 +41,6 @@ internal val IrField.isDelegate get() = @Suppress("DEPRECATION") this.descriptor
 internal fun IrFunction.getObjCMethodInfo() = this.descriptor.getObjCMethodInfo()
 internal fun IrClass.isExternalObjCClass() = this.descriptor.isExternalObjCClass()
 internal fun IrClass.isKotlinObjCClass() = this.descriptor.isKotlinObjCClass()
-internal fun IrConstructor.getObjCInitMethod() = this.descriptor.getObjCInitMethod()
 internal fun IrFunction.getExternalObjCMethodInfo() = this.descriptor.getExternalObjCMethodInfo()
 internal fun IrFunction.isObjCClassMethod() = this.descriptor.isObjCClassMethod()
 internal fun IrFunction.canObjCClassMethodBeCalledVirtually(overridden: IrFunction) =

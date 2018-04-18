@@ -20,16 +20,25 @@ package kotlinx.cinterop
 
 interface ObjCObject
 interface ObjCClass : ObjCObject
+interface ObjCClassOf<T : ObjCObject> : ObjCClass // TODO: T should be added to ObjCClass and all meta-classes instead.
 typealias ObjCObjectMeta = ObjCClass
 
 @ExportTypeInfo("theForeignObjCObjectTypeInfo")
 internal open class ForeignObjCObject
 
-abstract class ObjCObjectBase protected constructor() : ObjCObject
+abstract class ObjCObjectBase protected constructor() : ObjCObject {
+    @Target(AnnotationTarget.CONSTRUCTOR)
+    @Retention(AnnotationRetention.SOURCE)
+    annotation class OverrideInit
+}
 abstract class ObjCObjectBaseMeta protected constructor() : ObjCObjectBase(), ObjCObjectMeta {}
 
 fun optional(): Nothing = throw RuntimeException("Do not call me!!!")
 
+@Deprecated(
+        "Add @OverrideInit to constructor to make it override Objective-C initializer",
+        level = DeprecationLevel.WARNING
+)
 @konan.internal.Intrinsic
 external fun <T : ObjCObjectBase> T.initBy(constructorCall: T): T
 
@@ -95,7 +104,11 @@ annotation class ObjCBridge(val selector: String, val encoding: String, val imp:
 
 @Target(AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
-annotation class ObjCConstructor(val initSelector: String)
+annotation class ObjCConstructor(val initSelector: String, val designated: Boolean)
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+annotation class ObjCFactory(val bridge: String)
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)

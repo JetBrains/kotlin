@@ -162,6 +162,8 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val objCObject = packageScope.getContributedClass("ObjCObject")
 
+    val objCObjectBase = packageScope.getContributedClass("ObjCObjectBase")
+
     val allocObjCObject = packageScope.getContributedFunctions("allocObjCObject").single()
 
     val getObjCClass = packageScope.getContributedFunctions("getObjCClass").single()
@@ -182,6 +184,8 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     val objCAction = packageScope.getContributedClass("ObjCAction")
 
     val objCOutlet = packageScope.getContributedClass("ObjCOutlet")
+
+    val objCOverrideInit = objCObjectBase.unsubstitutedMemberScope.getContributedClass("OverrideInit")
 
     val objCMethodImp = packageScope.getContributedClass("ObjCMethodImp")
 

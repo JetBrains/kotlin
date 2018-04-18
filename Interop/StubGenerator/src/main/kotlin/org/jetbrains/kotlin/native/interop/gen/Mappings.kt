@@ -73,7 +73,7 @@ private val PrimitiveType.bridgedType: BridgedType
         }
     }
 
-private val ObjCPointer.isNullable: Boolean
+internal val ObjCPointer.isNullable: Boolean
     get() = this.nullability != ObjCPointer.Nullability.NonNull
 
 /**

@@ -503,7 +503,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return
         }
 
-        if (declaration.descriptor.getObjCInitMethod() != null) {
+        if (declaration.isObjCConstructor()) {
             // Do not generate any ctors for external Objective-C classes.
             return
         }

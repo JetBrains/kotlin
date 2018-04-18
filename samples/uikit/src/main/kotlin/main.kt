@@ -13,10 +13,11 @@ fun main(args: Array<String>) {
     }
 }
 
-class AppDelegate : UIResponder(), UIApplicationDelegateProtocol {
-    companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta {}
+class AppDelegate : UIResponder, UIApplicationDelegateProtocol {
 
-    override fun init() = initBy(AppDelegate())
+    @OverrideInit constructor() : super()
+
+    companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta {}
 
     private var _window: UIWindow? = null
     override fun window() = _window
@@ -26,8 +27,7 @@ class AppDelegate : UIResponder(), UIApplicationDelegateProtocol {
 @ExportObjCClass
 class ViewController : UIViewController {
 
-    constructor(aDecoder: NSCoder) : super(aDecoder)
-    override fun initWithCoder(aDecoder: NSCoder) = initBy(ViewController(aDecoder))
+    @OverrideInit constructor(coder: NSCoder) : super(coder)
 
     @ObjCOutlet
     lateinit var label: UILabel

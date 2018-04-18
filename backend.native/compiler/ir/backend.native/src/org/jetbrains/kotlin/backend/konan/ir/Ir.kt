@@ -119,6 +119,8 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val interopObjCObjectSuperInitCheck =
             symbolTable.referenceSimpleFunction(context.interopBuiltIns.objCObjectSuperInitCheck)
 
+    val interopObjCObjectInitBy = symbolTable.referenceSimpleFunction(context.interopBuiltIns.objCObjectInitBy)
+
     val interopObjCObjectRawValueGetter =
             symbolTable.referenceSimpleFunction(context.interopBuiltIns.objCObjectRawPtr)
 

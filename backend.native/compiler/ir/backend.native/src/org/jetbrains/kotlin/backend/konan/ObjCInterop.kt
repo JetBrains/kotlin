@@ -16,12 +16,21 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.annotations
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.getExternalObjCMethodInfo
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.isReal
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
+import org.jetbrains.kotlin.resolve.constants.BooleanValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -32,6 +41,8 @@ private val objCObjectFqName = interopPackageName.child(Name.identifier("ObjCObj
 private val objCClassFqName = interopPackageName.child(Name.identifier("ObjCClass"))
 internal val externalObjCClassFqName = interopPackageName.child(Name.identifier("ExternalObjCClass"))
 private val objCMethodFqName = interopPackageName.child(Name.identifier("ObjCMethod"))
+private val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
+private val objCFactoryFqName = interopPackageName.child(Name.identifier("ObjCFactory"))
 private val objCBridgeFqName = interopPackageName.child(Name.identifier("ObjCBridge"))
 
 fun ClassDescriptor.isObjCClass(): Boolean =
@@ -62,8 +73,7 @@ fun FunctionDescriptor.canObjCClassMethodBeCalledVirtually(overriddenDescriptor:
 
 fun ClassDescriptor.isKotlinObjCClass(): Boolean = this.isObjCClass() && !this.isExternalObjCClass()
 
-data class ObjCMethodInfo(val descriptor: FunctionDescriptor,
-                          val bridge: FunctionDescriptor,
+data class ObjCMethodInfo(val bridge: FunctionDescriptor,
                           val selector: String,
                           val encoding: String,
                           val imp: String)
@@ -75,19 +85,22 @@ private fun FunctionDescriptor.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
     assert (this.kind.isReal)
 
     val methodAnnotation = this.annotations.findAnnotation(objCMethodFqName) ?: return null
-    val packageFragment = this.parents.filterIsInstance<PackageFragmentDescriptor>().single()
+    val packageFragment = this.findPackage()
 
     val bridgeName = methodAnnotation.getStringValue("bridge")
 
+    return objCMethodInfoByBridge(packageFragment, bridgeName)
+}
+
+private fun objCMethodInfoByBridge(packageFragment: PackageFragmentDescriptor, bridgeName: String): ObjCMethodInfo {
     val bridge = packageFragment.getMemberScope()
             .getContributedFunctions(Name.identifier(bridgeName), NoLookupLocation.FROM_BACKEND)
             .single()
 
     val bridgeAnnotation = bridge.getBridgeAnnotation()!!
     return ObjCMethodInfo(
-            descriptor = this,
             bridge = bridge,
-            selector = methodAnnotation.getStringValue("selector"),
+            selector = bridgeAnnotation.getStringValue("selector"),
             encoding = bridgeAnnotation.getStringValue("encoding"),
             imp = bridgeAnnotation.getStringValue("imp")
     )
@@ -111,6 +124,14 @@ private fun FunctionDescriptor.getObjCMethodInfo(onlyExternal: Boolean): ObjCMet
 fun FunctionDescriptor.getExternalObjCMethodInfo(): ObjCMethodInfo? = this.getObjCMethodInfo(onlyExternal = true)
 
 fun FunctionDescriptor.getObjCMethodInfo(): ObjCMethodInfo? = this.getObjCMethodInfo(onlyExternal = false)
+
+fun IrFunction.isObjCBridgeBased(): Boolean {
+    assert(this.isReal)
+
+    return this.annotations.hasAnnotation(objCMethodFqName) ||
+            this.annotations.hasAnnotation(objCFactoryFqName) ||
+            this.annotations.hasAnnotation(objCConstructorFqName)
+}
 
 /**
  * Describes method overriding rules for Objective-C methods.
@@ -171,13 +192,38 @@ class ObjCOverridabilityCondition : ExternalOverridabilityCondition {
 
 }
 
+fun ConstructorDescriptor.objCConstructorIsDesignated(): Boolean {
+    val annotation = this.annotations.findAnnotation(objCConstructorFqName)!!
+    val value = annotation.allValueArguments[Name.identifier("designated")]!!
+
+    return (value as BooleanValue).value
+}
+
 fun ConstructorDescriptor.getObjCInitMethod(): FunctionDescriptor? {
-    return this.annotations.findAnnotation(FqName("kotlinx.cinterop.ObjCConstructor"))?.let {
+    return this.annotations.findAnnotation(objCConstructorFqName)?.let {
         val initSelector = it.getStringValue("initSelector")
         this.constructedClass.unsubstitutedMemberScope.getContributedDescriptors().asSequence()
                 .filterIsInstance<FunctionDescriptor>()
                 .single { it.getExternalObjCMethodInfo()?.selector == initSelector }
     }
+}
+
+fun IrConstructor.isObjCConstructor(): Boolean = this.annotations.hasAnnotation(objCConstructorFqName)
+
+fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
+    return this.annotations.findAnnotation(objCConstructorFqName)?.let {
+        val initSelector = it.getStringValue("initSelector")
+        this.constructedClass.declarations.asSequence()
+                .filterIsInstance<IrSimpleFunction>()
+                .single { it.getExternalObjCMethodInfo()?.selector == initSelector }
+    }
+}
+
+fun FunctionDescriptor.getObjCFactoryInitMethodInfo(): ObjCMethodInfo? {
+    val factoryAnnotation = this.annotations.findAnnotation(objCFactoryFqName) ?: return null
+    val bridgeName = factoryAnnotation.getStringValue("bridge")
+
+    return objCMethodInfoByBridge(this.findPackage(), bridgeName)
 }
 
 fun inferObjCSelector(descriptor: FunctionDescriptor): String = if (descriptor.valueParameters.isEmpty()) {
