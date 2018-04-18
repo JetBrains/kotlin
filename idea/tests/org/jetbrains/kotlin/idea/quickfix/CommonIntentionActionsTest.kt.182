@@ -204,6 +204,50 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         )
     }
 
+    fun testAddJavaAnnotationValue() {
+
+        myFixture.addFileToProject(
+            "pkg/myannotation/JavaAnnotation.java", """
+            package pkg.myannotation
+
+            public @interface JavaAnnotation {
+                String value();
+                int param() default 0;
+            }
+        """.trimIndent()
+        )
+
+        myFixture.configureByText(
+            "foo.kt", """class Foo {
+                        |   fun bar(){}
+                        |   fun baz(){}
+                        |}""".trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("bar", KtModifierListOwner::class.java).toLightElements().single() as PsiMethod,
+                annotationRequest("pkg.myannotation.JavaAnnotation", stringAttribute("value", "foo"), intAttribute("param", 2))
+            ).single()
+        )
+        myFixture.launchAction(
+            createAddAnnotationActions(
+                myFixture.findElementByText("baz", KtModifierListOwner::class.java).toLightElements().single() as PsiMethod,
+                annotationRequest("pkg.myannotation.JavaAnnotation", intAttribute("param", 2), stringAttribute("value", "foo"))
+            ).single()
+        )
+        myFixture.checkResult(
+            """import pkg.myannotation.JavaAnnotation
+                |
+                |class Foo {
+                |   @JavaAnnotation("foo", param = 2)
+                |   fun bar(){}
+                |   @JavaAnnotation(param = 2, value = "foo")
+                |   fun baz(){}
+                |}""".trim().trimMargin(), true
+        )
+    }
+
     fun testDontMakePublicPublic() {
         myFixture.configureByText(
             "foo.kt", """class Foo {
