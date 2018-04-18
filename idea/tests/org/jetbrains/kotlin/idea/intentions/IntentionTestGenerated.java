@@ -10048,6 +10048,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/joinArgumentList")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JoinArgumentList extends AbstractIntentionTest {
+        public void testAllFilesPresentInJoinArgumentList() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/joinArgumentList"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("hasLineBreakBeforeFirstArg.kt")
+        public void testHasLineBreakBeforeFirstArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinArgumentList/hasLineBreakBeforeFirstArg.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasLineBreaks.kt")
+        public void testHasLineBreaks() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinArgumentList/hasLineBreaks.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noArg.kt")
+        public void testNoArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinArgumentList/noArg.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noLineBreak.kt")
+        public void testNoLineBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinArgumentList/noLineBreak.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("oneArg.kt")
+        public void testOneArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinArgumentList/oneArg.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/joinDeclarationAndAssignment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -10197,6 +10236,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("varReassignment.kt")
         public void testVarReassignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/varReassignment.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/joinParameterList")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JoinParameterList extends AbstractIntentionTest {
+        public void testAllFilesPresentInJoinParameterList() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/joinParameterList"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("hasLineBreakBeforeFirstParam.kt")
+        public void testHasLineBreakBeforeFirstParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinParameterList/hasLineBreakBeforeFirstParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasLineBreaks.kt")
+        public void testHasLineBreaks() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinParameterList/hasLineBreaks.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noLineBreak.kt")
+        public void testNoLineBreak() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinParameterList/noLineBreak.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noParam.kt")
+        public void testNoParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinParameterList/noParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("oneParam.kt")
+        public void testOneParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinParameterList/oneParam.kt");
             doTest(fileName);
         }
     }

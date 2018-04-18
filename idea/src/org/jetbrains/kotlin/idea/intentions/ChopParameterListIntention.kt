@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement>(
-        private val listClass: Class<TList>,
-        private val elementClass: Class<TElement>,
-        text: String
+    private val listClass: Class<TList>,
+    private val elementClass: Class<TElement>,
+    text: String
 ) : SelfTargetingOffsetIndependentIntention<TList>(listClass, text), LowPriorityAction {
 
     override fun isApplicableTo(element: TList): Boolean {
@@ -41,20 +41,20 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
         return true
     }
 
-    override fun applyTo(list: TList, editor: Editor?) {
-        val project = list.project
+    override fun applyTo(element: TList, editor: Editor?) {
+        val project = element.project
         val document = editor!!.document
-        val startOffset = list.startOffset
+        val startOffset = element.startOffset
 
-        val elements = list.elements()
+        val elements = element.elements()
         if (!hasLineBreakAfter(elements.last())) {
-            val rpar = list.allChildren.lastOrNull { it.node.elementType == KtTokens.RPAR }
+            val rpar = element.allChildren.lastOrNull { it.node.elementType == KtTokens.RPAR }
             rpar?.startOffset?.let { document.insertString(it, "\n") }
         }
 
-        for (element in elements.asReversed()) {
-            if (!hasLineBreakBefore(element)) {
-                document.insertString(element.startOffset, "\n")
+        for (e in elements.asReversed()) {
+            if (!hasLineBreakBefore(e)) {
+                document.insertString(e.startOffset, "\n")
             }
         }
 
@@ -65,35 +65,43 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
         CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, newList.textRange)
     }
 
-    private fun hasLineBreakAfter(element: TElement): Boolean {
-        return element
-                .siblings(withItself = false)
-                .takeWhile { !elementClass.isInstance(it) }
-                .any { it is PsiWhiteSpace && it.textContains('\n') }
+    protected fun hasLineBreakAfter(element: TElement): Boolean {
+        return nextBreak(element) != null
     }
 
-    private fun hasLineBreakBefore(element: TElement): Boolean {
+    protected fun nextBreak(element: TElement): PsiWhiteSpace? {
         return element
-                .siblings(withItself = false, forward = false)
-                .takeWhile { !elementClass.isInstance(it) }
-                .any { it is PsiWhiteSpace && it.textContains('\n') }
+            .siblings(withItself = false)
+            .takeWhile { !elementClass.isInstance(it) }
+            .firstOrNull { it is PsiWhiteSpace && it.textContains('\n') } as? PsiWhiteSpace
     }
 
-    private fun TList.elements(): List<TElement> {
+    protected fun hasLineBreakBefore(element: TElement): Boolean {
+        return prevBreak(element) != null
+    }
+
+    protected fun prevBreak(element: TElement): PsiWhiteSpace? {
+        return element
+            .siblings(withItself = false, forward = false)
+            .takeWhile { !elementClass.isInstance(it) }
+            .firstOrNull { it is PsiWhiteSpace && it.textContains('\n') } as? PsiWhiteSpace
+    }
+
+    protected fun TList.elements(): List<TElement> {
         return allChildren
-                .filter { elementClass.isInstance(it) }
-                .map {
-                    @Suppress("UNCHECKED_CAST")
-                    it as TElement
-                }
-                .toList()
+            .filter { elementClass.isInstance(it) }
+            .map {
+                @Suppress("UNCHECKED_CAST")
+                it as TElement
+            }
+            .toList()
     }
 }
 
 class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, KtParameter>(
-        KtParameterList::class.java,
-        KtParameter::class.java,
-        "Put parameters on separate lines"
+    KtParameterList::class.java,
+    KtParameter::class.java,
+    "Put parameters on separate lines"
 ) {
     override fun isApplicableTo(element: KtParameterList): Boolean {
         if (element.parent is KtFunctionLiteral) return false
@@ -102,7 +110,7 @@ class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, Kt
 }
 
 class ChopArgumentListIntention : AbstractChopListIntention<KtValueArgumentList, KtValueArgument>(
-        KtValueArgumentList::class.java,
-        KtValueArgument::class.java,
-        "Put arguments on separate lines"
+    KtValueArgumentList::class.java,
+    KtValueArgument::class.java,
+    "Put arguments on separate lines"
 )
