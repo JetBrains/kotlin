@@ -491,7 +491,7 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                     newValueParameters,
                     oldDescriptor.returnType,
                     Modality.FINAL,
-                    Visibilities.LOCAL
+                    Visibilities.PRIVATE
             )
 
             oldDescriptor.extensionReceiverParameter?.let {

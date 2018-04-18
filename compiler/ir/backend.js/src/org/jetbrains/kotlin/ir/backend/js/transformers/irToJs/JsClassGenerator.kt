@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.backend.common.onlyIf
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.utils.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.js.backend.ast.*
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
@@ -31,7 +37,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     declaration.symbol.modality != Modality.ABSTRACT
                 ) {
                     classBlock.statements += declaration.accept(transformer, context).let {
-                        if (declaration.visibility == Visibilities.LOCAL) {
+                        if (declaration.isStatic) {
                             it.makeStmt()
                         } else {
                             val memberName = context.getNameForSymbol(declaration.symbol)

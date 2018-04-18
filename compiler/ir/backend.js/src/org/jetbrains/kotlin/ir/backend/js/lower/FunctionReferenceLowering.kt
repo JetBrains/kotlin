@@ -5,44 +5,44 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.backend.common.lower.copyAsValueParameter
+import org.jetbrains.kotlin.backend.common.runOnFilePostfix
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.backend.js.descriptors.JsSymbolBuilder
+import org.jetbrains.kotlin.ir.backend.js.descriptors.initialize
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass {
+// TODO replace with DeclarationContainerLowerPass && do flatTransform
+class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass, DeclarationContainerLoweringPass {
+
+    val lambdas = mutableMapOf<IrDeclaration, KotlinType>()
+    val oldToNewDeclarationMap = mutableMapOf<IrSymbolOwner, IrFunction>()
+
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(FunctionReferenceCollector())
-        irFile.transformChildrenVoid(LambdaFunctionVisitor())
+        runOnFilePostfix(irFile)
         irFile.transformChildrenVoid(FunctionReferenceVisitor())
-        lambdaImpls.forEach { it.transformChildrenVoid(FunctionReferenceVisitor()) }
     }
 
-    val lambdas = mutableMapOf<IrFunction, KotlinType>()
-    val oldToNewDeclMap = mutableMapOf<IrSymbolOwner, IrFunction>()
-    val lambdaImpls = mutableListOf<IrFunction>()
-
     inner class FunctionReferenceCollector : IrElementVisitorVoid {
+
         override fun visitFunctionReference(expression: IrFunctionReference) {
             lambdas[expression.symbol.owner as IrFunction] = expression.type
         }
@@ -50,11 +50,23 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
+
+    }
+
+    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
+        irDeclarationContainer.declarations.transformFlat { d ->
+            if (d is IrFunction) {
+                lambdas[d]?.let {
+                    lowerKFunctionReference(d, it)
+                }
+            } else null
+        }
     }
 
     inner class FunctionReferenceVisitor : IrElementTransformerVoid() {
+
         override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-            val newTarget = oldToNewDeclMap[expression.symbol.owner]
+            val newTarget = oldToNewDeclarationMap[expression.symbol.owner]
 
             return if (newTarget != null) IrCallImpl(expression.startOffset, expression.endOffset, newTarget.symbol).apply {
                 copyTypeArgumentsFrom(expression)
@@ -67,112 +79,90 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
                 }
             } else expression
         }
-
     }
 
-    inner class LambdaFunctionVisitor : IrElementTransformerVoid() {
-        override fun visitFunction(declaration: IrFunction): IrStatement {
-            if (declaration !in lambdas.keys) return declaration
+    private fun lowerKFunctionReference(declaration: IrFunction, functionType: KotlinType): List<IrFunction> {
+        // transform
+        // x = Foo::bar ->
+        // x = Foo_bar_referenceGet(c1: closure$C1, c2: closure$C2) {
+        //   return function Foo_bar_closure(p0: Foo, p1: T2, p2: T3) {
+        //      return p0.foo(c1, c2, p1, p2)
+        //   }
+        // }
 
-            // transform
-            // foo$lambda(a: A, b: B, c: closure$C, d: closure$D) { /*body*/ } ===>
-            // foo$lambda(c: closure$C, d: closure$D) {
-            //     var $funcRef = function(a: A, b: B) { /*body*/ }
-            //     return $funcRef
-            // }
+        // KFunctionN<T1, T2, ..., TN, TReturn>, arguments.size = N + 1
 
-            val functionType = lambdas[declaration]!!
+        val closureParams = functionType.arguments.dropLast(1) // drop return type
+        var kFunctionValueParamsCount = closureParams.size
+        if (declaration.dispatchReceiverParameter != null) kFunctionValueParamsCount--
+        if (declaration.extensionReceiverParameter != null) kFunctionValueParamsCount--
 
-            // FunctionN<T1, T2, ..., TN, TReturn>, arguments.size = N + 1
+        assert(kFunctionValueParamsCount >= 0)
 
-            val lambdaParamCount =
-                if (declaration.extensionReceiverParameter == null) functionType.arguments.size - 1 else functionType.arguments.size - 2
+        val getterValueParameters = declaration.valueParameters.drop(kFunctionValueParamsCount)
+        val getterName = "${declaration.descriptor.name}_KreferenceGet"
 
-            assert(lambdaParamCount >= 0)
+        val refGetSymbol =
+            JsSymbolBuilder.buildSimpleFunction(declaration.descriptor.containingDeclaration, getterName).apply {
+                initialize(
+                    valueParameters = getterValueParameters.mapIndexed { i, p -> p.descriptor.copyAsValueParameter(this.descriptor, i) },
+                    type = functionType
+                )
+            }
 
-            val descriptor = SimpleFunctionDescriptorImpl.create(
-                declaration.descriptor.containingDeclaration,
-                Annotations.EMPTY,
-                Name.identifier("${declaration.descriptor.name}_impl"),
-                declaration.descriptor.kind,
-                declaration.descriptor.source
-            )
-            descriptor.initialize(
-                null,
-                declaration.descriptor.dispatchReceiverParameter,
-//                declaration.descriptor.typeParameters,
-                emptyList(),
-                declaration.descriptor.valueParameters.drop(declaration.valueParameters.size - lambdaParamCount).mapIndexed { index, valueParameterDescriptor ->
-                    valueParameterDescriptor.copy(descriptor, valueParameterDescriptor.name, index)
-                },
-                declaration.descriptor.returnType,
-                declaration.descriptor.modality,
-                declaration.descriptor.visibility
-            )
+        val refGetFunction = JsIrBuilder.buildFunction(refGetSymbol).apply {
+            getterValueParameters.mapIndexed { i, p ->
+                valueParameters += IrValueParameterImpl(p.startOffset, p.endOffset, p.origin, refGetSymbol.descriptor.valueParameters[i])
+            }
+        }
 
-            val symbol = IrSimpleFunctionSymbolImpl(descriptor)
-            val func = IrFunctionImpl(declaration.startOffset, declaration.endOffset, declaration.origin, symbol).apply {
-                dispatchReceiverParameter = declaration.dispatchReceiverParameter
-                extensionReceiverParameter = declaration.extensionReceiverParameter
-                declaration.valueParameters.drop(declaration.valueParameters.size - lambdaParamCount).forEachIndexed { index, param ->
-                    valueParameters += IrValueParameterImpl(
-                        param.startOffset,
-                        param.endOffset,
-                        param.origin,
-                        descriptor.valueParameters[index]
-                    )
+        val closureName = "${declaration.descriptor.name}_KreferenceClosure"
+        val refClosureSymbol = JsSymbolBuilder.buildSimpleFunction(declaration.descriptor.containingDeclaration, closureName)
+
+        // the params which are passed to closure
+        val closureParamSymbols = closureParams.mapIndexed { index, p ->
+            JsSymbolBuilder.buildValueParameter(refClosureSymbol, index, p.type)
+        }
+
+        val closureParamDescriptors = closureParamSymbols.map { it.descriptor as ValueParameterDescriptor }
+
+        refClosureSymbol.initialize(valueParameters = closureParamDescriptors, type = declaration.returnType)
+
+        JsIrBuilder.buildFunction(refClosureSymbol).apply {
+            closureParamSymbols.forEach { valueParameters += JsIrBuilder.buildValueParameter(it) }
+
+            val irClosureCall = JsIrBuilder.buildCall(declaration.symbol).apply {
+                var p = 0
+                if (declaration.dispatchReceiverParameter != null) {
+                    dispatchReceiver = JsIrBuilder.buildGetValue(closureParamSymbols[p++])
+                }
+                if (declaration.extensionReceiverParameter != null) {
+                    extensionReceiver = JsIrBuilder.buildGetValue(closureParamSymbols[p++])
+                }
+
+                var j = 0
+                refGetFunction.valueParameters.forEach { v ->
+                    putValueArgument(j++, JsIrBuilder.buildGetValue(v.symbol))
+                }
+
+                closureParamSymbols.drop(p).forEach { v ->
+                    putValueArgument(j++, JsIrBuilder.buildGetValue(v))
                 }
             }
 
-            val newDeclDescriptor = SimpleFunctionDescriptorImpl.create(
-                declaration.descriptor.containingDeclaration,
-                declaration.descriptor.annotations,
-                declaration.descriptor.name,
-                declaration.descriptor.kind,
-                declaration.descriptor.source
-            ).initialize(
-                null,
-                declaration.descriptor.dispatchReceiverParameter,
-//                declaration.descriptor.typeParameters,
-                emptyList(),
-                declaration.descriptor.valueParameters.dropLast(lambdaParamCount),
-                functionType,
-                declaration.descriptor.modality,
-                declaration.descriptor.visibility
-            )
-            val newDeclSymbol = IrSimpleFunctionSymbolImpl(newDeclDescriptor)
+            val irClosureReturn = JsIrBuilder.buildReturn(refClosureSymbol, irClosureCall)
 
-            val funcReference = IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, functionType, symbol, descriptor, null, null)
-            val varDescriptor = IrTemporaryVariableDescriptorImpl(newDeclDescriptor, Name.identifier("\$funRef"), functionType)
-            val closureStmt = IrVariableImpl(
-                declaration.startOffset,
-                declaration.endOffset,
-                JsLoweredDeclarationOrigin.JS_LAMBDA_CREATION,
-                varDescriptor,
-                funcReference
-            )
-            val returnStmt = IrReturnImpl(
-                declaration.startOffset,
-                declaration.endOffset,
-                symbol,
-                IrGetValueImpl(declaration.startOffset, declaration.endOffset, IrVariableSymbolImpl(varDescriptor))
-            )
-
-            val oldBody = declaration.body
-
-            val newBody = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(closureStmt, returnStmt))
-            func.body = oldBody
-
-            lambdaImpls += func
-
-            val newDeclaration = IrFunctionImpl(declaration.startOffset, declaration.endOffset, declaration.origin, newDeclSymbol).apply {
-                body = newBody
-                valueParameters += declaration.valueParameters.dropLast(lambdaParamCount)
-            }
-
-            oldToNewDeclMap[declaration] = newDeclaration
-
-            return newDeclaration
+            body = JsIrBuilder.buildBlockBody(listOf(irClosureReturn))
         }
+
+        refGetFunction.apply {
+            val irClosureReference = JsIrBuilder.buildFunctionReference(functionType, refClosureSymbol)
+            val irGetterReturn = JsIrBuilder.buildReturn(refGetSymbol, irClosureReference)
+            body = JsIrBuilder.buildBlockBody(listOf(irGetterReturn))
+        }
+
+        oldToNewDeclarationMap[declaration] = refGetFunction
+
+        return listOf(declaration, refGetFunction)
     }
 }

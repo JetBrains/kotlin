@@ -71,3 +71,5 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
         result
     }
 }
+
+val IrFunction.isStatic: Boolean get() = this.dispatchReceiverParameter == null
