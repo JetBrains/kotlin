@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+fun test() {
+    val map = mutableMapOf<String, () -> Unit>()
+    map[""] = {
+        listOf(1).forEach {
+            return@forEach
+        }
+    }
+}
