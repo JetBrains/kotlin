@@ -186,4 +186,6 @@ private val IrClass.sortedOverridableOrOverridingMethods: List<SimpleFunctionDes
     get() =
         this.simpleFunctions()
                 .filter { it.isOverridable || it.overriddenSymbols.isNotEmpty() }
+                // TODO: extract method .isBridge()
+                .filterNot { it.name.asString().contains("<bridge-") }
                 .sortedBy { it.functionName.localHash.value }

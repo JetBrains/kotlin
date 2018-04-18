@@ -958,6 +958,12 @@ task bridges_linkTest(type: LinkKonanTest) {
     lib = "codegen/bridges/linkTest_lib.kt"
 }
 
+task bridges_linkTest2(type: LinkKonanTest) {
+    goldValue = "true\n"
+    source = "codegen/bridges/linkTest2_main.kt"
+    lib = "codegen/bridges/linkTest2_lib.kt"
+}
+
 task bridges_special(type: RunKonanTest) {
     goldValue = "Ok\n"
     source = "codegen/bridges/special.kt"

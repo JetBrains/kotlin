@@ -89,7 +89,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
         val irFunction = overriddenFunctionDescriptor.descriptor
         val descriptor = irFunction.descriptor
         assert(overriddenFunctionDescriptor.needBridge,
-                { "Function $descriptor is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor}" })
+                { "Function $descriptor is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor.descriptor}" })
         val bridgeDirections = overriddenFunctionDescriptor.bridgeDirections
         return bridgesDescriptors.getOrPut(irFunction to bridgeDirections) {
             val newDescriptor = SimpleFunctionDescriptorImpl.create(
