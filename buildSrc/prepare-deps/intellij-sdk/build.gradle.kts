@@ -46,7 +46,11 @@ val studioOs by lazy {
 repositories {
     if (androidStudioRelease != null) {
         ivy {
-            artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$studioOs.zip")
+            artifactPattern("https://dl.bintray.com/kotlin/as/[artifact]-[revision]-linux.zip")
+            credentials {
+                username = System.getenv("AS_BINTRAY_USER_NAME")
+                password = System.getenv("AS_BINTRAY_API_KEY")
+            }
         }
     }
     maven { setUrl("$intellijRepo/$intellijReleaseType") }
@@ -112,7 +116,7 @@ fun Task.configureExtractFromConfigurationTask(sourceConfig: Configuration,
 
 fun removePathPrefix(path: String): String {
     if (androidStudioRelease == null) return path
-    val slashes = if (studioOs == "mac") 2 else 1
+    val slashes = 1
     var result = path
     repeat(slashes) {
         result = result.substringAfter('/')
