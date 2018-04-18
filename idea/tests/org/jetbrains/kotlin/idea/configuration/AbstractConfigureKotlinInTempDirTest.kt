@@ -10,7 +10,7 @@ import org.junit.Assert
 import java.io.File
 import java.io.IOException
 
-open class AbstractConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
+abstract class AbstractConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
     @Throws(IOException::class)
     override fun getIprFile(): File {
         val tempDir = FileUtil.generateRandomTemporaryPath()
