@@ -55,9 +55,11 @@ interface Server<out T : ServerBase> : ServerBase {
         }
         log.info("   client verified ($client)")
         clients[client] = ClientInfo(client, input, output)
+        log.info("   ($client)client in clients($clients)")
         var finalState = Server.State.WORKING
         loop@
         while (true) {
+            log.info("   reading message from ($client)")
             val message = input.nextObject()
             if (message !is Server.AnyMessage<*>) {
                 log.info("contrafact message")
@@ -91,9 +93,13 @@ interface Server<out T : ServerBase> : ServerBase {
     }
 
     abstract class Message<ServerType : ServerBase> : AnyMessage<ServerType>() {
-        suspend fun process(server: ServerType, output: ByteWriteChannelWrapper) = processImpl(server, {
-            runBlocking { output.writeObject(DefaultAuthorizableClient.MessageReply(messageId!!, it)) }
-        })
+        suspend fun process(server: ServerType, output: ByteWriteChannelWrapper) {
+            async {
+                processImpl(server, {
+                    async { output.writeObject(DefaultAuthorizableClient.MessageReply(messageId ?: -1, it)) }
+                })
+            }
+        }
 
         abstract suspend fun processImpl(server: ServerType, sendReply: (Any?) -> Unit)
     }

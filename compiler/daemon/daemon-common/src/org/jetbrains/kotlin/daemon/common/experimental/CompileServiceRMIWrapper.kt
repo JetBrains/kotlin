@@ -5,18 +5,21 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 import java.io.File
+import java.io.Serializable
 import java.rmi.NoSuchObjectException
 import java.rmi.server.UnicastRemoteObject
 import java.util.*
 import java.util.logging.Logger
 
-class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptions: DaemonOptions, compilerId: CompilerId) : CompileService {
+class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptions: DaemonOptions, compilerId: CompilerId) :
+    CompileService {
 
     val log = Logger.getLogger("CompileServiceRMIWrapper")
 
@@ -103,7 +106,11 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
             compilerArguments,
             compilationOptions,
             servicesFacade.toClient(),
-            compilationResults?.toClient()
+            compilationResults?.toClient() ?: object : CompilationResultsClientSide,
+                Client<CompilationResultsServerSide> by DefaultClientRMIWrapper() {
+                override suspend fun add(compilationResultCategory: Int, value: Serializable) {}
+            }
+
         )
     }
 

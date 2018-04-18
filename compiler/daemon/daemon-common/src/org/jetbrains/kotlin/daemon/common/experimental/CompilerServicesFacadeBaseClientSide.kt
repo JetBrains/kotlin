@@ -15,7 +15,12 @@ class CompilerServicesFacadeBaseClientSideImpl(val serverPort: Int) :
     CompilerServicesFacadeBaseClientSide,
     Client<CompilerServicesFacadeBaseServerSide> by DefaultClient(serverPort) {
 
+    init {
+        log.info("CompilerServicesFacadeBaseClientSideImpl on $serverPort - inited")
+    }
+
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
+        log.info("client $serverPort - fun report")
         sendNoReplyMessage(
             CompilerServicesFacadeBaseServerSide.ReportMessage(
                 category, severity, message, attachment

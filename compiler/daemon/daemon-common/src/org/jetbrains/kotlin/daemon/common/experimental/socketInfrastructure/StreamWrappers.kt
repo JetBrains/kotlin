@@ -5,6 +5,7 @@ import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import kotlinx.coroutines.experimental.CompletableDeferred
 import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.actor
 import kotlinx.coroutines.experimental.channels.consumeEach
@@ -48,7 +49,7 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
             null
         }
 
-    private val readActor = actor<ReadQuery>(capacity = Channel.UNLIMITED) {
+    private val readActor = actor<ReadQuery>(Unconfined, capacity = Channel.UNLIMITED) {
         consumeEach { message ->
             if (!readChannel.isClosedForRead) {
                 readLength(readChannel)?.let { messageLength ->
@@ -157,7 +158,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
         }
     }
 
-    private val writeActor = actor<WriteActorQuery>(capacity = Channel.UNLIMITED) {
+    private val writeActor = actor<WriteActorQuery>(Unconfined, capacity = Channel.UNLIMITED) {
         consumeEach { message ->
             if (!writeChannel.isClosedForWrite) {
                 when (message) {
@@ -192,10 +193,6 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
             )
         )
     }
-
-//    suspend fun printBytes(bytes: ByteArray) {
-//        writeActor.send(ByteData(bytes))
-//    }
 
     private suspend fun printObjectImpl(obj: Any?) =
         ByteArrayOutputStream().use { bos ->

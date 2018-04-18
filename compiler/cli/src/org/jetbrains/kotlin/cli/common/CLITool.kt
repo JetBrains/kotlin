@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common
 
+import jdk.nashorn.internal.runtime.regexp.joni.Config.log
 import org.fusesource.jansi.AnsiConsole
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
