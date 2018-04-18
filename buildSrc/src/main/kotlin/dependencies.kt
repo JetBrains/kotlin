@@ -112,6 +112,14 @@ fun AbstractCopyTask.fromEmbeddedComponents() {
     if (this is ShadowJar) {
         from(embeddedComponents)
     } else {
-        embeddedComponents.forEach { from(if (it.isDirectory) it else project.zipTree(it)) }
+        dependsOn(embeddedComponents)
+        from {
+            embeddedComponents.map { file ->
+                if (file.isDirectory)
+                    project.files(file)
+                else
+                    project.zipTree(file)
+            }
+        }
     }
 }
