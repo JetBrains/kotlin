@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 abstract class AbstractJoinListIntention<TList : KtElement, TElement : KtElement>(
     listClass: Class<TList>,
@@ -21,9 +23,14 @@ abstract class AbstractJoinListIntention<TList : KtElement, TElement : KtElement
     }
 
     override fun applyTo(element: TList, editor: Editor?) {
+        val document = editor!!.document
         val elements = element.elements()
-        prevBreak(elements.first())?.delete()
-        elements.forEach { nextBreak(it)?.delete() }
+
+        nextBreak(elements.last())?.let { document.deleteString(it.startOffset, it.endOffset) }
+        elements.dropLast(1).asReversed().forEach {
+            nextBreak(it)?.let { document.replaceString(it.startOffset, it.endOffset, " ") }
+        }
+        prevBreak(elements.first())?.let { document.deleteString(it.startOffset, it.endOffset) }
     }
 
 }
