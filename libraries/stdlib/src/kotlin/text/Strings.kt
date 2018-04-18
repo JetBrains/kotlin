@@ -83,7 +83,7 @@ public inline fun String.trimStart(predicate: (Char) -> Boolean): String
 public inline fun CharSequence.trimEnd(predicate: (Char) -> Boolean): CharSequence {
     for (index in this.indices.reversed())
         if (!predicate(this[index]))
-            return substring(0, index + 1)
+            return subSequence(0, index + 1)
 
     return ""
 }
