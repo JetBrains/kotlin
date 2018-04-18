@@ -403,8 +403,67 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         """.trim().trimMargin(), true)
     }
 
+    fun testAddStringVarField() {
+        myFixture.configureByText(
+            "foo.kt", """
+        |class Foo<caret> {
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin()
+        )
+        myFixture.launchAction(
+            createFieldActions(
+                myFixture.atCaret(),
+                FieldRequest(project, emptyList(), "java.util.Date", "baz")
+            ).findWithText("Add 'var' property 'baz' to 'Foo'")
+        )
+        myFixture.checkResult(
+            """
+        |import java.util.Date
+        |
+        |class Foo {
+        |    @JvmField
+        |    var baz: Date = TODO("initialize me")
+        |
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin(), true
+        )
+    }
+
+    fun testAddLateInitStringVarField() {
+        myFixture.configureByText(
+            "foo.kt", """
+        |class Foo<caret> {
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin()
+        )
+
+        myFixture.launchAction(
+            createFieldActions(
+                myFixture.atCaret(),
+                FieldRequest(project, listOf(JvmModifier.PRIVATE), "java.lang.String", "baz")
+            ).findWithText("Add 'lateinit var' property 'baz' to 'Foo'")
+        )
+        myFixture.checkResult(
+            """
+        |class Foo {
+        |    private lateinit var baz: String
+        |
+        |    fun bar() {}
+        |}
+        """.trim().trimMargin(), true
+        )
+    }
+
+
+
     private fun createPropertyActions(atCaret: JvmClass, property: MemberRequest.Property): List<IntentionAction> =
         com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddPropertyActions(atCaret, property) }
+
+    private fun createFieldActions(atCaret: JvmClass, fieldRequest: CreateFieldRequest): List<IntentionAction> =
+        com.intellij.lang.jvm.actions.EP_NAME.extensions.flatMap { it.createAddFieldActions(atCaret, fieldRequest) }
 
     fun testAddStringValProperty() {
         myFixture.configureByText("foo.kt", """
@@ -452,5 +511,28 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
     private fun List<IntentionAction>.findWithText(text: String): IntentionAction =
             this.firstOrNull { it.text == text } ?:
             Assert.fail("intention with text '$text' was not found, only ${this.joinToString { "\"${it.text}\"" }} available") as Nothing
+
+    class FieldRequest(
+        private val project: Project,
+        val modifiers: List<JvmModifier>,
+        val type: String,
+        val name: String
+    ) : CreateFieldRequest {
+        override fun getTargetSubstitutor(): JvmSubstitutor = PsiJvmSubstitutor(project, PsiSubstitutor.EMPTY)
+
+        override fun getModifiers(): Collection<JvmModifier> = modifiers
+
+        override fun isConstant(): Boolean = false
+
+        override fun getFieldType(): List<ExpectedType> =
+            com.intellij.lang.jvm.actions.expectedTypes(PsiType.getTypeByName(type, project, project.allScope()))
+
+        override fun getFieldName(): String = name
+
+        override fun isValid(): Boolean = true
+    }
+
+
 }
+
 
