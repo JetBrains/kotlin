@@ -58,10 +58,11 @@ fun JsIrBackendContext.lower(file: IrFile) {
     DefaultArgumentStubGenerator(this).runOnFilePostfix(file)
     SharedVariablesLowering(this).runOnFilePostfix(file)
     LocalDeclarationsLowering(this).runOnFilePostfix(file)
+    InnerClassesLowering(this).runOnFilePostfix(file)
+    InnerClassConstructorCallsLowering(this).runOnFilePostfix(file)
     PropertiesLowering().lower(file)
     InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).runOnFilePostfix(file)
     SecondaryCtorLowering(this).lower(file)
     IntrinsicifyCallsLowering(this).lower(file)
     FunctionReferenceLowering(this).lower(file)
-
 }
