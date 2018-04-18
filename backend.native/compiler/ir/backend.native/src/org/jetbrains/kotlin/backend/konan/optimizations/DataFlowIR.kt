@@ -483,16 +483,11 @@ internal object DataFlowIR {
                            Type.Public(name.localHash.value, isFinal, isAbstract, module, symbolTableIndex, takeName { name })
                        else
                            Type.Private(privateTypeIndex++, isFinal, isAbstract, module, symbolTableIndex, takeName { name })
-            if (!descriptor.isInterface) {
+            if (!isAbstract) {
                 val vtableBuilder = context.getVtableBuilder(descriptor)
-                type.vtable += vtableBuilder.vtableEntries.map { mapFunction(it.getImplementation(context)) }
-                if (!isAbstract) {
-                    vtableBuilder.methodTableEntries.forEach {
-                        type.itable.put(
-                                it.overriddenDescriptor.functionName.localHash.value,
-                                mapFunction(it.getImplementation(context))
-                        )
-                    }
+                type.vtable += vtableBuilder.vtableEntries.map { mapFunction(it.getImplementation(context)!!) }
+                vtableBuilder.methodTableEntries.forEach {
+                    type.itable[it.overriddenDescriptor.functionName.localHash.value] = mapFunction(it.getImplementation(context)!!)
                 }
             }
             classMap.put(descriptor, type)

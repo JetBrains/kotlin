@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 
@@ -49,15 +50,19 @@ internal class OverriddenFunctionDescriptor(
                 && descriptor.target.overrides(overriddenDescriptor)
                 && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()
 
-    fun getImplementation(context: Context): SimpleFunctionDescriptor {
+    fun getImplementation(context: Context): SimpleFunctionDescriptor? {
         val target = descriptor.target
-        if (!needBridge) return target
-        val bridgeOwner = if (inheritsBridge) {
-            target // Bridge is inherited from superclass.
-        } else {
-            descriptor
+        val implementation = if (!needBridge)
+            target
+        else {
+            val bridgeOwner = if (inheritsBridge) {
+                target // Bridge is inherited from superclass.
+            } else {
+                descriptor
+            }
+            context.specialDeclarationsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
         }
-        return context.specialDeclarationsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
+        return if (implementation.modality == Modality.ABSTRACT) null else implementation
     }
 
     override fun toString(): String {

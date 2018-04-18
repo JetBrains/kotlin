@@ -200,7 +200,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         // TODO: compile-time resolution limits binary compatibility
         val vtableEntries = context.getVtableBuilder(classDesc).vtableEntries.map {
             val implementation = it.implementation
-            if (implementation.isExternalObjCClassMethod() || implementation.modality == Modality.ABSTRACT) {
+            if (implementation == null || implementation.isExternalObjCClassMethod()) {
                 NullPointer(int8Type)
             } else {
                 implementation.entryPointAddress
@@ -220,11 +220,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
             // TODO: compile-time resolution limits binary compatibility
             val implementation = it.implementation
-            val methodEntryPoint = if (implementation.modality == Modality.ABSTRACT) {
-                null
-            } else {
-                implementation.entryPointAddress
-            }
+            val methodEntryPoint = implementation?.entryPointAddress
             MethodTableRecord(nameSignature, methodEntryPoint)
         }.sortedBy { it.nameSignature.value }
     }

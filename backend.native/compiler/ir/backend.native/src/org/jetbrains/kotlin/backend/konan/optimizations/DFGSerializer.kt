@@ -1178,9 +1178,11 @@ internal object DFGSerializer {
             allTypes.forEach {
                 println(it)
                 println("    SUPER TYPES:")
-                it.superTypes.forEach {
-                    println("        $it")
-                }
+                it.superTypes.forEach { println("        $it") }
+                println("    VTABLE:")
+                it.vtable.forEach { println("        $it") }
+                println("    ITABLE:")
+                it.itable.forEach { t, u -> println("        $t: $u") }
             }
 
             functions.forEach {
