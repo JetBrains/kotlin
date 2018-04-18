@@ -111,7 +111,7 @@ private fun StaticData.getArrayListClass(): ClassDescriptor {
  * @param array value for `array: Array<E>` field.
  * @param length value for `length: Int` field.
  */
-internal fun StaticData.createArrayList(elementType: TypeProjection, array: ConstPointer, length: Int): ConstPointer {
+internal fun StaticData.createArrayList(array: ConstPointer, length: Int): ConstPointer {
     val arrayListClass = context.ir.symbols.arrayList.owner
 
     val arrayListFqName = arrayListClass.fqNameSafe

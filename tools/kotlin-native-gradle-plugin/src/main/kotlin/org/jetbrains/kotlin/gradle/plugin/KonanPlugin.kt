@@ -261,7 +261,7 @@ open class KonanSoftwareComponent(val project: ProjectInternal?): SoftwareCompon
     private val variants = mutableSetOf<SoftwareComponent>()
     override fun getName() = "main"
 
-    override fun getVariants(): Set<out SoftwareComponent> = variants
+    override fun getVariants(): Set<SoftwareComponent> = variants
 
     fun addVariant(component: SoftwareComponent) = variants.add(component)
 }

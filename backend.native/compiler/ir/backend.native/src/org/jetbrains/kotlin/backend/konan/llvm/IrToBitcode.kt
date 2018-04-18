@@ -2194,15 +2194,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 val length = varargExpression.elements.size
                 // TODO: store length in `vararg` itself when more abstract types will be used for values.
 
-                // `elementType` is type argument of function return type:
-                val elementType = callee.descriptor.returnType!!.arguments.single()
-
                 val array = constPointer(vararg)
                 // Note: dirty hack here: `vararg` has type `Array<out E>`, but `createArrayList` expects `Array<E>`;
                 // however `vararg` is immutable, and in current implementation it has type `Array<E>`,
                 // so let's ignore this mismatch currently for simplicity.
 
-                return context.llvm.staticData.createArrayList(elementType, array, length).llvm
+                return context.llvm.staticData.createArrayList(array, length).llvm
             }
 
             else -> TODO(callee.descriptor.original.toString())

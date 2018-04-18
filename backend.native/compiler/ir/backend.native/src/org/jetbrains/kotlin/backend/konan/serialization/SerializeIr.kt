@@ -722,7 +722,7 @@ internal class IrDeserializer(val context: Context,
     private fun deserializeTypeArguments(proto: KonanIr.TypeArguments): List<KotlinType> {
         context.log{"### deserializeTypeArguments"}
         val result = mutableListOf<KotlinType>()
-        proto.typeArgumentList.forEachIndexed { index, type ->
+        proto.typeArgumentList.forEach { type ->
             val kotlinType = deserializeKotlinType(type)
             result.add(kotlinType)
             context.log{"$kotlinType"}
@@ -829,8 +829,6 @@ internal class IrDeserializer(val context: Context,
             deserializeDescriptor(proto.`super`) as ClassDescriptor
         } else null
 
-        val typeArgs = deserializeTypeArguments(proto.memberAccess.typeArguments)
-
         val call: IrCall = when (proto.kind) {
             KonanIr.IrCall.Primitive.NOT_PRIMITIVE ->
                 // TODO: implement the last three args here.
@@ -856,8 +854,8 @@ internal class IrDeserializer(val context: Context,
             else -> TODO()
         }
 
-        deserializeTypeArguments(proto.typeArguments).forEachIndexed { index, type ->
-            callable.putTypeArgument(index, type)
+        deserializeTypeArguments(proto.typeArguments).forEachIndexed { index, argType ->
+            callable.putTypeArgument(index, argType)
         }
         return callable
     }
@@ -875,13 +873,6 @@ internal class IrDeserializer(val context: Context,
         val descriptor = deserializeDescriptor(proto.descriptor) as ClassConstructorDescriptor
         val call = IrDelegatingConstructorCallImpl(start, end, IrConstructorSymbolImpl(descriptor.original), descriptor, proto.memberAccess.typeArguments.typeArgumentCount)
 
-        deserializeMemberAccessCommon(call, proto.memberAccess)
-        return call
-    }
-
-    fun deserializeEnumConstructorCall(proto: KonanIr.IrEnumConstructorCall, start: Int, end: Int): IrEnumConstructorCall {
-        val descriptor = deserializeDescriptor(proto.descriptor) as ClassConstructorDescriptor
-        val call = IrEnumConstructorCallImpl(start, end, IrConstructorSymbolImpl(descriptor), null)
         deserializeMemberAccessCommon(call, proto.memberAccess)
         return call
     }
