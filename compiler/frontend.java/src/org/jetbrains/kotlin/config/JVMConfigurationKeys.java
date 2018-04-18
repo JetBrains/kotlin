@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.load.java.JavaClassesTracker;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
+import org.jetbrains.kotlin.script.ScriptDefinitionsSource;
 
 import java.io.File;
 import java.util.List;
@@ -48,6 +49,9 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<KotlinScriptDefinition>> SCRIPT_DEFINITIONS =
             CompilerConfigurationKey.create("script definitions");
+
+    public static final CompilerConfigurationKey<List<ScriptDefinitionsSource>> SCRIPT_DEFINITIONS_SOURCES =
+            CompilerConfigurationKey.create("script definitions sources");
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_STANDARD_SCRIPT_DEFINITION =
             CompilerConfigurationKey.create("Disable standard kotlin script support");

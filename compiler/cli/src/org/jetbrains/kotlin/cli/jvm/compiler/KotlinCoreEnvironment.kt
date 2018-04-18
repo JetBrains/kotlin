@@ -209,6 +209,9 @@ class KotlinCoreEnvironment private constructor(
 
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
         if (scriptDefinitionProvider != null) {
+            scriptDefinitionProvider.setScriptDefinitionsSources(
+                configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
+            )
             scriptDefinitionProvider.setScriptDefinitions(
                     configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
 
