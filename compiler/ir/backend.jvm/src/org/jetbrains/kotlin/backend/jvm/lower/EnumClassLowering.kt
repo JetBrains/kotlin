@@ -181,7 +181,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         }
 
         private fun createFieldForEnumEntry(enumEntry: IrEnumEntry): IrField {
-            val fieldPropertyDescriptor = context.specialDescriptorsFactory.getFieldDescriptorForEnumEntry(enumEntry.descriptor)
+            val fieldPropertyDescriptor = context.descriptorsFactory.getFieldDescriptorForEnumEntry(enumEntry.descriptor)
 
             enumEntriesByField[fieldPropertyDescriptor] = enumEntry.descriptor
             enumEntryFields.add(fieldPropertyDescriptor)

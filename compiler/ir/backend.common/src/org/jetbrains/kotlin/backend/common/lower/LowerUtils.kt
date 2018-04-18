@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -57,6 +54,20 @@ class DeclarationIrBuilder(
         startOffset,
         endOffset
 )
+
+abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
+    protected abstract fun remapVariable(value: ValueDescriptor): ValueDescriptor?
+
+    override fun visitGetValue(expression: IrGetValue): IrExpression =
+        remapVariable(expression.descriptor)?.let {
+            IrGetValueImpl(expression.startOffset, expression.endOffset, it, expression.origin)
+        } ?: expression
+}
+
+class VariableRemapper(val mapping: Map<ValueDescriptor, ValueDescriptor>) : AbstractVariableRemapper() {
+    override fun remapVariable(value: ValueDescriptor): ValueDescriptor? =
+        mapping[value]
+}
 
 fun BackendContext.createIrBuilder(symbol: IrSymbol,
                                    startOffset: Int = UNDEFINED_OFFSET,

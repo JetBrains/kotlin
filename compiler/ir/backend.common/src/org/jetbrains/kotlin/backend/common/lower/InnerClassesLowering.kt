@@ -1,31 +1,22 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.dump
@@ -35,7 +26,9 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.util.*
 
-class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
+class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
+    object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
+
     override fun lower(irClass: IrClass) {
         InnerClassTransformer(irClass).lowerInnerClass()
     }
@@ -57,12 +50,12 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
         }
 
         private fun createOuterThisField() {
-            outerThisFieldDescriptor = context.specialDescriptorsFactory.getOuterThisFieldDescriptor(irClass.descriptor)
+            outerThisFieldDescriptor = context.descriptorsFactory.getOuterThisFieldDescriptor(irClass.descriptor)
 
             irClass.declarations.add(IrFieldImpl(
-                    irClass.startOffset, irClass.endOffset,
-                    JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS,
-                    outerThisFieldDescriptor
+                irClass.startOffset, irClass.endOffset,
+                FIELD_FOR_OUTER_THIS,
+                outerThisFieldDescriptor
             ))
         }
 
@@ -80,7 +73,7 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
             val startOffset = irConstructor.startOffset
             val endOffset = irConstructor.endOffset
 
-            val newDescriptor = context.specialDescriptorsFactory.getInnerClassConstructorWithOuterThisParameter(oldDescriptor)
+            val newDescriptor = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(oldDescriptor)
             val outerThisValueParameter = newDescriptor.valueParameters[0]
 
             oldDescriptor.valueParameters.forEach { oldValueParameter ->
@@ -116,7 +109,17 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
                     irConstructor.origin, // TODO special origin for lowered inner class constructors?
                     newDescriptor,
                     blockBody
-            )
+            ).apply {
+                newDescriptor.valueParameters.forEachIndexed { i, desc ->
+                    val valueParameter = if (i == 0) {
+                        IrValueParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, FIELD_FOR_OUTER_THIS, desc, null)
+                    } else {
+                        val origParam = irConstructor.valueParameters[i - 1]
+                        IrValueParameterImpl(origParam.startOffset, origParam.endOffset, origParam.origin, desc, origParam.defaultValue)
+                    }
+                    valueParameters.add(valueParameter)
+                }
+            }
         }
 
         private fun lowerConstructorParameterUsages() {
@@ -153,7 +156,7 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
                             return expression
                         }
 
-                        val outerThisField = context.specialDescriptorsFactory.getOuterThisFieldDescriptor(innerClass)
+                        val outerThisField = context.descriptorsFactory.getOuterThisFieldDescriptor(innerClass)
                         irThis = IrGetFieldImpl(startOffset, endOffset, outerThisField, irThis, origin)
 
                         val outer = classDescriptor.containingDeclaration
@@ -178,7 +181,7 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
     }
 }
 
-class InnerClassConstructorCallsLowering(val context: JvmBackendContext) : BodyLoweringPass {
+class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
@@ -188,7 +191,7 @@ class InnerClassConstructorCallsLowering(val context: JvmBackendContext) : BodyL
                 val callee = expression.descriptor as? ClassConstructorDescriptor ?: return expression
                 if (!callee.constructedClass.isInner) return expression
 
-                val newCallee = context.specialDescriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee)
+                val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee)
                 val newCall = IrCallImpl(
                         expression.startOffset, expression.endOffset, newCallee,
                         null, // TODO type arguments map
@@ -210,7 +213,7 @@ class InnerClassConstructorCallsLowering(val context: JvmBackendContext) : BodyL
                 val callee = expression.descriptor
                 if (!callee.constructedClass.isInner) return expression
 
-                val newCallee = context.specialDescriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee)
+                val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee)
                 val newCall = IrDelegatingConstructorCallImpl(
                         expression.startOffset, expression.endOffset, newCallee,
                         null // TODO type arguments map

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
+import org.jetbrains.kotlin.backend.common.descriptors.DescriptorsFactory
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
@@ -33,15 +34,15 @@ import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
-class SpecialDescriptorsFactory(
+class JvmSpecialDescriptorsFactory(
         private val psiSourceManager: PsiSourceManager,
         private val builtIns: KotlinBuiltIns
-) {
+) : DescriptorsFactory {
     private val singletonFieldDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
     private val outerThisDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
     private val innerClassConstructors = HashMap<ClassConstructorDescriptor, ClassConstructorDescriptor>()
 
-    fun getFieldDescriptorForEnumEntry(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor =
+    override fun getFieldDescriptorForEnumEntry(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor =
             singletonFieldDescriptors.getOrPut(enumEntryDescriptor) {
                 createEnumEntryFieldDescriptor(enumEntryDescriptor)
             }
@@ -59,7 +60,7 @@ class SpecialDescriptorsFactory(
         )
     }
 
-    fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
+    override fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
             if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
             else outerThisDescriptors.getOrPut(innerClassDescriptor) {
                 val outerClassDescriptor = DescriptorUtils.getContainingClass(innerClassDescriptor) ?:
@@ -71,7 +72,7 @@ class SpecialDescriptorsFactory(
                 )
             }
 
-    fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: ClassConstructorDescriptor): ClassConstructorDescriptor {
+    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: ClassConstructorDescriptor): ClassConstructorDescriptor {
         val innerClass = innerClassConstructor.containingDeclaration
         assert(innerClass.isInner) { "Class is not inner: $innerClass" }
 
@@ -118,7 +119,7 @@ class SpecialDescriptorsFactory(
         )
     }
 
-    fun getFieldDescriptorForObjectInstance(objectDescriptor: ClassDescriptor): PropertyDescriptor =
+    override fun getFieldDescriptorForObjectInstance(objectDescriptor: ClassDescriptor): PropertyDescriptor =
             singletonFieldDescriptors.getOrPut(objectDescriptor) {
                 createObjectInstanceFieldDescriptor(objectDescriptor)
             }
