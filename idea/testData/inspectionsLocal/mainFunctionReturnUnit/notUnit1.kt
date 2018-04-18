@@ -1,3 +1,3 @@
 // FIX: Add explicit Unit return type
 // DISABLE-ERRORS
-<caret>fun main(args: Array<String>) = 1
+fun <caret>main(args: Array<String>) = 1

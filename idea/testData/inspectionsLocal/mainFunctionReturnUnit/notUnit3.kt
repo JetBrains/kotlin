@@ -1,4 +1,4 @@
 // DISABLE-ERRORS
-<caret>fun main(args: Array<String>): Int {
+fun <caret>main(args: Array<String>): Int {
     return 1
 }

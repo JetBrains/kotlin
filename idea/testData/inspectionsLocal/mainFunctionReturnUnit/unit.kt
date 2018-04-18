@@ -1,2 +1,2 @@
 // PROBLEM: none
-<caret>fun main(args: Array<String>) {}
+fun <caret>main(args: Array<String>) {}

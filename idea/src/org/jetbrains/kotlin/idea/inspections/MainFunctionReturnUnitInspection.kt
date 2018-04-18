@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.namedFunctionVisitor
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class MainFunctionReturnUnitInspection : AbstractKotlinInspection() {
@@ -31,24 +33,11 @@ class MainFunctionReturnUnitInspection : AbstractKotlinInspection() {
             if (!MainFunctionDetector.isMain(descriptor, checkReturnType = false)) return
             if (MainFunctionDetector.isMainReturnType(descriptor)) return
 
-            val funKeyword = function.funKeyword ?: return
-            val valueParameterList = function.valueParameterList ?: return
-            val typeReference = function.typeReference
-            val start = function.startOffset
-            val highlightRange = TextRange(
-                funKeyword.startOffset - start,
-                if (typeReference != null) typeReference.endOffset - start else valueParameterList.endOffset - start
-            )
-
             holder.registerProblem(
-                holder.manager.createProblemDescriptor(
-                    function,
-                    highlightRange,
-                    "main should return Unit",
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                    isOnTheFly,
-                    ChangeMainFunctionReturnTypeToUnitFix(function.typeReference != null)
-                )
+                function.nameIdentifier ?: function,
+                "main should return Unit",
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                ChangeMainFunctionReturnTypeToUnitFix(function.typeReference != null)
             )
         })
     }
@@ -60,7 +49,11 @@ private class ChangeMainFunctionReturnTypeToUnitFix(private val hasExplicitRetur
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        val function = descriptor.psiElement as? KtNamedFunction ?: return
-        function.setType(KotlinBuiltIns.FQ_NAMES.unit.asString())
+        val function = descriptor.psiElement.getNonStrictParentOfType<KtNamedFunction>() ?: return
+        if (function.hasBlockBody()) {
+            function.typeReference = null
+        } else {
+            function.setType(KotlinBuiltIns.FQ_NAMES.unit.asString())
+        }
     }
 }
