@@ -323,11 +323,33 @@ private val ObjCClassOrProtocol.superTypes: Sequence<ObjCClassOrProtocol>
 private fun ObjCClassOrProtocol.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.methods.asSequence().filter { it.isClass == isClass }
 
+private fun Sequence<ObjCMethod>.inheritedTo(container: ObjCClassOrProtocol, isMeta: Boolean): Sequence<ObjCMethod> {
+    // Note: Objective-C initializers act as usual methods and thus are inherited by subclasses.
+    // Swift considers all super initializers to be available (unless otherwise specified explicitly),
+    // but seems to consider them as non-designated if class declares its own ones.
+    // Simulate the similar behaviour:
+    return if (!isMeta && container.declaredMethods(isMeta).any { it.isDesginatedInitializer }) {
+        this.map {
+            if (it.isDesginatedInitializer) {
+                it.copy(isDesginatedInitializer = false)
+            } else {
+                it
+            }
+        }
+    } else {
+        this
+    }
+
+    // TODO: exclude methods that are marked as unavailable in [container].
+}
+
 private fun ObjCClassOrProtocol.inheritedMethods(isClass: Boolean): Sequence<ObjCMethod> =
-        this.superTypes.flatMap { it.declaredMethods(isClass) }.distinctBy { it.selector }
+        this.immediateSuperTypes.flatMap { it.methodsWithInherited(isClass) }
+                .distinctBy { it.selector }
+                .inheritedTo(this, isClass)
 
 private fun ObjCClassOrProtocol.methodsWithInherited(isClass: Boolean): Sequence<ObjCMethod> =
-        this.selfAndSuperTypes.flatMap { it.declaredMethods(isClass) }.distinctBy { it.selector }
+        (this.declaredMethods(isClass) + this.inheritedMethods(isClass)).distinctBy { it.selector }
 
 private fun ObjCMethod.isOverride(container: ObjCClassOrProtocol): Boolean =
         container.superTypes.any { superType -> superType.methods.any(this::replaces) }
@@ -364,7 +386,7 @@ abstract class ObjCContainerStub(stubGenerator: StubGenerator,
         // Add methods inherited from multiple supertypes that must be defined according to Kotlin rules:
         methods += container.immediateSuperTypes
                 .flatMap { superType ->
-                    val methodsWithInherited = superType.methodsWithInherited(isMeta)
+                    val methodsWithInherited = superType.methodsWithInherited(isMeta).inheritedTo(container, isMeta)
                     // Select only those which are represented as non-abstract in Kotlin:
                     when (superType) {
                         is ObjCClass -> methodsWithInherited
