@@ -132,6 +132,33 @@ class MethodOrderTest: CodegenTestCase() {
         )
     }
 
+    fun testBridgeOrder() {
+        doTest(
+            """
+                interface IrElement
+                class IrClassContext
+
+                interface IrElementVisitor<out R, in D> {
+                    fun visitElement(element: IrElement, data: D): R
+                }
+
+                interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
+                    override fun visitElement(element: IrElement, data: D): IrElement =
+                            element.also { throw RuntimeException() }
+                }
+
+                abstract class ClassLowerWithContext : IrElementTransformer<IrClassContext?>
+            """,
+            "ClassLowerWithContext",
+            listOf(
+                "<init>()V",
+                "visitElement(LIrElement;LIrClassContext;)LIrElement;",
+                "visitElement(LIrElement;Ljava/lang/Object;)Ljava/lang/Object;",
+                "visitElement(LIrElement;Ljava/lang/Object;)LIrElement;"
+            )
+        )
+    }
+
     private fun doTest(sourceText: String, classSuffix: String, expectedOrder: List<String>) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY)
         myFiles = CodegenTestFiles.create("file.kt", sourceText, myEnvironment!!.project)
