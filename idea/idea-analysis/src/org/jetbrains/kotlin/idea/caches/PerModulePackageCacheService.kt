@@ -11,11 +11,13 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.InvalidVirtualFileAccessException
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -237,9 +239,8 @@ class PerModulePackageCacheService(private val project: Project) {
         if (pendingVFileChanges.size + pendingKtFileChanges.size >= FULL_DROP_THRESHOLD) {
             onTooComplexChange()
         } else {
-
-            pendingVFileChanges.forEach { event ->
-                val vfile = event.file ?: return@forEach
+            pendingVFileChanges.processPending { event ->
+                val vfile = event.file ?: return@processPending
                 // When VirtualFile !isValid (deleted for example), it impossible to use getModuleInfoByVirtualFile
                 // For directory we must check both is it in some sourceRoot, and is it contains some sourceRoot
                 if (vfile.isDirectory || !vfile.isValid) {
@@ -256,18 +257,32 @@ class PerModulePackageCacheService(private val project: Project) {
                         invalidateCacheForModuleSourceInfo(it)
                     }
                 }
+
                 implicitPackagePrefixCache.update(event)
             }
-            pendingVFileChanges.clear()
 
-            pendingKtFileChanges.forEach { file ->
+            pendingKtFileChanges.processPending { file ->
                 if (file.virtualFile != null && file.virtualFile !in projectScope) {
-                    return@forEach
+                    return@processPending
                 }
                 (file.getNullableModuleInfo() as? ModuleSourceInfo)?.let { invalidateCacheForModuleSourceInfo(it) }
                 implicitPackagePrefixCache.update(file)
             }
-            pendingKtFileChanges.clear()
+        }
+    }
+
+    private inline fun <T> MutableCollection<T>.processPending(crossinline body: (T) -> Unit) {
+        this.removeIf { value ->
+            try {
+                body(value)
+            } catch (pce: ProcessCanceledException) {
+                throw pce
+            } catch (exc: Exception) {
+                // Log and proceed. Otherwise pending object processing won't be cleared and exception will be thrown forever.
+                LOG.error(exc)
+            }
+
+            return@removeIf true
         }
     }
 
