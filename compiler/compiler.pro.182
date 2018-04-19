@@ -201,6 +201,10 @@ messages/**)
     *** SKIP_FRAMES;
 }
 
+-keepclassmembers class com.intellij.openapi.project.Project {
+    ** getBasePath();
+}
+
 # for kotlin-android-extensions in maven
 -keep class com.intellij.openapi.module.ModuleServiceManager { public *; }
 
