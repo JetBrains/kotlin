@@ -83,9 +83,11 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         exported: Boolean = false
     ): Module = this.apply { ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported) }
 
-    protected fun Module.addLibrary(jar: File,
-                                    name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME,
-                                    kind: PersistentLibraryKind<*>? = null) {
+    fun Module.addLibrary(
+        jar: File,
+        name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME,
+        kind: PersistentLibraryKind<*>? = null
+    ) {
         ConfigLibraryUtil.addLibrary(NewLibraryEditor().apply {
             this.name = name
             addRoot(VfsUtil.getUrlForLibraryRoot(jar), OrderRootType.CLASSES)
