@@ -1559,6 +1559,8 @@ public fun <T, R> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows:
 /**
  * Returns a sequence of pairs built from elements of both sequences with same indexes.
  * Resulting sequence has length of shortest input sequence.
+ * 
+ * @sample samples.collections.Sequences.Transformations.zip
  *
  * The operation is _intermediate_ and _stateless_.
  */
@@ -1568,6 +1570,8 @@ public infix fun <T, R> Sequence<T>.zip(other: Sequence<R>): Sequence<Pair<T, R>
 
 /**
  * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
+ * 
+ * @sample samples.collections.Sequences.Transformations.zipWithTransform
  *
  * The operation is _intermediate_ and _stateless_.
  */

@@ -1108,6 +1108,8 @@ object Generators : TemplateGroupBase() {
         doc {
             """
             Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
+
+            @sample samples.collections.Sequences.Transformations.zipWithTransform
             """
         }
         sequenceClassification(intermediate, stateless)
@@ -1127,6 +1129,8 @@ object Generators : TemplateGroupBase() {
         doc {
             """
             Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
+
+            @sample samples.text.Strings.zipWithTransform
             """
         }
         typeParam("V")
@@ -1173,6 +1177,8 @@ object Generators : TemplateGroupBase() {
         doc {
             """
             Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
+
+            @sample samples.text.Strings.zip
             """
         }
         returns("List<Pair<Char, Char>>")
@@ -1230,6 +1236,8 @@ object Generators : TemplateGroupBase() {
             """
             Returns a sequence of pairs built from elements of both sequences with same indexes.
             Resulting sequence has length of shortest input sequence.
+
+            @sample samples.collections.Sequences.Transformations.zip
             """
         }
         sequenceClassification(intermediate, stateless)

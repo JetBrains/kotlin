@@ -1313,6 +1313,8 @@ public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWi
 
 /**
  * Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
+ * 
+ * @sample samples.text.Strings.zip
  */
 public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
     return zip(other) { c1, c2 -> c1 to c2 }
@@ -1320,6 +1322,8 @@ public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
 
 /**
  * Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
+ * 
+ * @sample samples.text.Strings.zipWithTransform
  */
 public inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char, b: Char) -> V): List<V> {
     val length = minOf(this.length, other.length)
