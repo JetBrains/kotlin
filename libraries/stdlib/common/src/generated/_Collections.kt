@@ -2107,7 +2107,7 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (a: 
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- *
+ * 
  * @sample samples.collections.Iterables.Operations.zipIterable
  */
 public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
@@ -2116,7 +2116,7 @@ public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- *
+ * 
  * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
 public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V> {
