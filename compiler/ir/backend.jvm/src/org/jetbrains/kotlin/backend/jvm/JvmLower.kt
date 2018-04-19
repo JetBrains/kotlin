@@ -35,7 +35,7 @@ class JvmLower(val context: JvmBackendContext) {
         PropertiesLowering().lower(irFile)
 
         //Should be before interface lowering
-        DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
+        DefaultArgumentStubGenerator(context, false).runOnFilePostfix(irFile)
         StaticDefaultFunctionLowering(context.state).runOnFilePostfix(irFile)
 
         InterfaceLowering(context.state).runOnFilePostfix(irFile)

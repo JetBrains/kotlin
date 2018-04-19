@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-open class DefaultArgumentStubGenerator constructor(val context: CommonBackendContext): DeclarationContainerLoweringPass {
+open class DefaultArgumentStubGenerator constructor(val context: CommonBackendContext, private val skipInlineMethods: Boolean = true): DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)
@@ -71,7 +71,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
     private fun lower(irFunction: IrFunction): List<IrFunction> {
         val functionDescriptor = irFunction.descriptor
 
-        if (!functionDescriptor.needsDefaultArgumentsLowering)
+        if (!functionDescriptor.needsDefaultArgumentsLowering(skipInlineMethods))
             return listOf(irFunction)
 
         val bodies = functionDescriptor.valueParameters
@@ -225,14 +225,14 @@ private fun nullConst(expression: IrElement, type: KotlinType): IrExpression? {
     }
 }
 
-class DefaultParameterInjector constructor(val context: CommonBackendContext): BodyLoweringPass {
+class DefaultParameterInjector constructor(val context: CommonBackendContext, private val skipInline: Boolean = true): BodyLoweringPass {
     override fun lower(irBody: IrBody) {
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                 super.visitDelegatingConstructorCall(expression)
                 val descriptor = expression.descriptor
-                if (!descriptor.needsDefaultArgumentsLowering)
+                if (!descriptor.needsDefaultArgumentsLowering(skipInline))
                     return expression
                 val argumentsCount = argumentCount(expression)
                 if (argumentsCount == descriptor.valueParameters.size)
@@ -257,7 +257,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                 super.visitCall(expression)
                 val functionDescriptor = expression.descriptor
 
-                if (!functionDescriptor.needsDefaultArgumentsLowering)
+                if (!functionDescriptor.needsDefaultArgumentsLowering(skipInline))
                     return expression
 
                 val argumentsCount = argumentCount(expression)
@@ -292,7 +292,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
             private fun parametersForCall(expression: IrMemberAccessExpression): Pair<IrFunctionSymbol, List<Pair<ValueParameterDescriptor, IrExpression?>>> {
                 val descriptor = expression.descriptor as FunctionDescriptor
                 val keyDescriptor = if (DescriptorUtils.isOverride(descriptor))
-                    DescriptorUtils.getAllOverriddenDescriptors(descriptor).first { it.needsDefaultArgumentsLowering }
+                    DescriptorUtils.getAllOverriddenDescriptors(descriptor).first { it.needsDefaultArgumentsLowering(skipInline) }
                 else
                     descriptor.original
                 val realFunction = keyDescriptor.generateDefaultsFunction(context)
@@ -344,8 +344,8 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 }
 
-private val CallableMemberDescriptor.needsDefaultArgumentsLowering
-    get() = valueParameters.any { it.hasDefaultValue() } && !(this is FunctionDescriptor && isInline)
+private fun CallableMemberDescriptor.needsDefaultArgumentsLowering(skipInlineMethods: Boolean) =
+    valueParameters.any { it.hasDefaultValue() } && !(this is FunctionDescriptor && isInline && skipInlineMethods)
 
 private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendContext): IrFunction {
     return context.ir.defaultParameterDeclarationsCache.getOrPut(this) {
