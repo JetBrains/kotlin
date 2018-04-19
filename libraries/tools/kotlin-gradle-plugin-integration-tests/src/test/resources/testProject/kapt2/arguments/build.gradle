@@ -44,4 +44,6 @@ kapt {
     javacOptions {
         option("-Xlint:all")
     }
+
+    annotationProcessor("example.ExampleAnnotationProcessor")
 }

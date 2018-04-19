@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
@@ -27,9 +28,11 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
 import org.apache.log4j.Logger
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.psi.KtFile
@@ -179,19 +182,48 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     }
 }
 
-fun configureLanguageVersion(fileText: String, project: Project, module: Module) {
+fun configureCompilerOptions(fileText: String, project: Project, module: Module) {
     val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// LANGUAGE_VERSION: ")
-    if (version != null) {
-        val accessToken = WriteAction.start()
-        try {
-            val modelsProvider = IdeModifiableModelsProviderImpl(project)
-            val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
-            facet.configureFacet(version, LanguageFeature.State.DISABLED, null, modelsProvider)
-            modelsProvider.commit()
+    val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// JVM_TARGET: ")
+    val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// COMPILER_ARGUMENTS: ")
+
+    if (version != null || jvmTarget != null || options != null) {
+        configureLanguageAndApiVersion(project, module, version ?: LanguageVersion.LATEST_STABLE.versionString)
+
+        val facetSettings = KotlinFacet.get(module)!!.configuration.settings
+
+        if (jvmTarget != null) {
+            (facetSettings.compilerArguments as K2JVMCompilerArguments).jvmTarget = jvmTarget
         }
-        finally {
-            accessToken.finish()
+
+        if (options != null) {
+            val compilerSettings = facetSettings.compilerSettings ?: CompilerSettings().also {
+                facetSettings.compilerSettings = it
+            }
+            compilerSettings.additionalArguments = options
+            facetSettings.updateMergedArguments()
         }
+    }
+}
+
+fun configureLanguageAndApiVersion(
+    project: Project,
+    module: Module,
+    languageVersion: String,
+    apiVersion: String? = null
+) {
+    val accessToken = WriteAction.start()
+    try {
+        val modelsProvider = IdeModifiableModelsProviderImpl(project)
+        val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
+        facet.configureFacet(languageVersion, LanguageFeature.State.DISABLED, null, modelsProvider)
+        if (apiVersion != null) {
+            facet.configuration.settings.apiLevel = LanguageVersion.fromVersionString(apiVersion)
+        }
+        modelsProvider.commit()
+    }
+    finally {
+        accessToken.finish()
     }
 }
 
@@ -201,3 +233,6 @@ fun Project.allKotlinFiles(): List<KtFile> {
         .map { PsiManager.getInstance(this).findFile(it) }
         .filterIsInstance<KtFile>()
 }
+
+fun Project.findFileWithCaret() =
+    allKotlinFiles().single { "<caret>" in VfsUtilCore.loadText(it.virtualFile) }

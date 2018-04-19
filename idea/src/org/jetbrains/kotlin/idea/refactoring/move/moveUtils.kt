@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -191,7 +191,8 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
         return null
     }
 
-    val bindingContext = analyzeFully()
+    @Suppress("DEPRECATION")
+    val bindingContext = analyzeWithAllCompilerChecks().bindingContext
     forEachDescendantOfType<KtReferenceExpression> { refExpr ->
         if (refExpr !is KtSimpleNameExpression || refExpr.parent is KtThisExpression) return@forEachDescendantOfType
 

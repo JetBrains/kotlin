@@ -27,6 +27,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceVariable"), Pattern.compile("^(.+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("AnonymousType.kt")
+        public void testAnonymousType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/AnonymousType.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("ArrayAccessExpr.kt")
         public void testArrayAccessExpr() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/ArrayAccessExpr.kt");
@@ -932,6 +938,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             @TestMetadata("extractFromPublicInlineFun.kt")
             public void testExtractFromPublicInlineFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractFromPublicInlineFun.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("extractSuspend.kt")
+            public void testExtractSuspend() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extractSuspend.kt");
                 doExtractFunctionTest(fileName);
             }
 

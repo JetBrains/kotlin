@@ -25,22 +25,25 @@ internal annotation class JvmOverloads
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-internal annotation class JvmName(public val name: String)
+@Suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-19507
+internal actual annotation class JvmName(public actual val name: String)
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-internal annotation class JvmMultifileClass
+@Suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-19507
+internal actual annotation class JvmMultifileClass
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-internal annotation class JvmField
+@Suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-19507
+internal actual annotation class JvmField
 
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class Volatile
+public actual annotation class Volatile
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.SOURCE)

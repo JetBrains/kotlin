@@ -178,23 +178,22 @@ class FunctionReader(
         override fun toString() = text.substring(offset)
     }
 
+    private val emptyFunctionWrapper = FunctionWithWrapper(JsFunction(object : JsScope("") {}, ""), null)
+
     private val functionCache = object : SLRUCache<CallableDescriptor, FunctionWithWrapper>(50, 50) {
         override fun createValue(descriptor: CallableDescriptor): FunctionWithWrapper =
-                readFunction(descriptor).sure { "Could not read function: $descriptor" }
+            readFunction(descriptor) ?: emptyFunctionWrapper
     }
 
-    operator fun contains(descriptor: CallableDescriptor): Boolean {
-        val moduleName = getModuleName(descriptor)
-        val currentModuleName = config.moduleId
-        return currentModuleName != moduleName && moduleName in moduleNameToInfo.keys()
+    operator fun get(descriptor: CallableDescriptor): FunctionWithWrapper? {
+        val existed = functionCache.get(descriptor)
+        return if (existed == emptyFunctionWrapper) null else existed
     }
-
-    operator fun get(descriptor: CallableDescriptor): FunctionWithWrapper = functionCache.get(descriptor)
 
     private fun readFunction(descriptor: CallableDescriptor): FunctionWithWrapper? {
-        if (descriptor !in this) return null
-
         val moduleName = getModuleName(descriptor)
+
+        if (moduleName !in moduleNameToInfo.keys()) return null
 
         for (info in moduleNameToInfo[moduleName]) {
             val function = readFunctionFromSource(descriptor, info)

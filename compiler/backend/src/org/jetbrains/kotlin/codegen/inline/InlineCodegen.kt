@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -460,6 +460,7 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                 state: GenerationState,
                 sourceCompilerForInline: SourceCompilerForInline
         ): SMAPAndMethodNode {
+            val languageVersionSettings = state.languageVersionSettings
             when {
                 isSpecialEnumMethod(functionDescriptor) -> {
                     val node = createSpecialEnumMethodBody(
@@ -469,25 +470,29 @@ abstract class InlineCodegen<out T: BaseExpressionCodegen>(
                     )
                     return SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1))
                 }
-                functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() ->
+                functionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm(languageVersionSettings) ->
                     return SMAPAndMethodNode(
-                            createMethodNodeForSuspendCoroutineOrReturn(functionDescriptor, state.typeMapper),
-                            SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                        createMethodNodeForSuspendCoroutineOrReturn(functionDescriptor, state.typeMapper, languageVersionSettings),
+                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
                     )
-                functionDescriptor.isBuiltInIntercepted() ->
+                functionDescriptor.isBuiltInIntercepted(languageVersionSettings) ->
                     return SMAPAndMethodNode(
-                            createMethodNodeForIntercepted(functionDescriptor, state.typeMapper),
-                            SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                        createMethodNodeForIntercepted(functionDescriptor, state.typeMapper, languageVersionSettings),
+                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
                     )
-                functionDescriptor.isBuiltInCoroutineContext() ->
+                functionDescriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
                     return SMAPAndMethodNode(
-                            createMethodNodeForCoroutineContext(functionDescriptor),
-                            SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                        createMethodNodeForCoroutineContext(functionDescriptor, languageVersionSettings),
+                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
                     )
-                functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm() ->
+                functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings) ->
                     return SMAPAndMethodNode(
-                            createMethodNodeForSuspendCoroutineUninterceptedOrReturn(functionDescriptor, state.typeMapper),
-                            SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
+                        createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
+                            functionDescriptor,
+                            state.typeMapper,
+                            languageVersionSettings
+                        ),
+                        SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1)
                     )
             }
 

@@ -2,7 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Kotlin annotations for Android"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String

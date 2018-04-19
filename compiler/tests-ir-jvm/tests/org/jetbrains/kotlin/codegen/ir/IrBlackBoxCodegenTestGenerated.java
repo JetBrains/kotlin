@@ -1127,6 +1127,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("bridgeInInterface.kt")
+        public void testBridgeInInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/bridgeInInterface.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("bridgeInInterfaceWithProperties.kt")
+        public void testBridgeInInterfaceWithProperties() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/bridgeInInterfaceWithProperties.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("complexMultiInheritance.kt")
         public void testComplexMultiInheritance() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/complexMultiInheritance.kt");
@@ -5930,6 +5942,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("kt21605.kt")
+        public void testKt21605() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/kt21605.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lastExpressionIsLoop.kt")
         public void testLastExpressionIsLoop() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
@@ -6277,6 +6295,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("delegate.kt")
+            public void testDelegate() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/delegate.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("destructuringInLambdas.kt")
             public void testDestructuringInLambdas() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/destructuringInLambdas.kt");
@@ -6319,10 +6343,91 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
-            @TestMetadata("tailrec.kt")
-            public void testTailrec() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec.kt");
-                doTest(fileName);
+            @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Tailrec extends AbstractIrBlackBoxCodegenTest {
+                public void testAllFilesPresentInTailrec() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("controlFlowIf.kt")
+                public void testControlFlowIf() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowIf.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("controlFlowWhen.kt")
+                public void testControlFlowWhen() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowWhen.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extention.kt")
+                public void testExtention() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/extention.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("infixCall.kt")
+                public void testInfixCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("infixRecursiveCall.kt")
+                public void testInfixRecursiveCall() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixRecursiveCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("realIteratorFoldl.kt")
+                public void testRealIteratorFoldl() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realIteratorFoldl.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("realStringEscape.kt")
+                public void testRealStringEscape() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringEscape.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("realStringRepeat.kt")
+                public void testRealStringRepeat() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringRepeat.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("returnInParentheses.kt")
+                public void testReturnInParentheses() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/returnInParentheses.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("sum.kt")
+                public void testSum() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/sum.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("tailCallInBlockInParentheses.kt")
+                public void testTailCallInBlockInParentheses() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInBlockInParentheses.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("tailCallInParentheses.kt")
+                public void testTailCallInParentheses() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInParentheses.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("whenWithIs.kt")
+                public void testWhenWithIs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/whenWithIs.kt");
+                    doTest(fileName);
+                }
             }
         }
 
@@ -6452,6 +6557,99 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LocalFunctions extends AbstractIrBlackBoxCodegenTest {
+            public void testAllFilesPresentInLocalFunctions() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/anonymous")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Anonymous extends AbstractIrBlackBoxCodegenTest {
+                @TestMetadata("simple.kt")
+                public void ignoreSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt");
+                    doTest(fileName);
+                }
+
+                public void testAllFilesPresentInAnonymous() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/anonymous"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Named extends AbstractIrBlackBoxCodegenTest {
+                public void testAllFilesPresentInNamed() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/named"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("capturedParameters.kt")
+                public void testCapturedParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedParameters.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("capturedVariables.kt")
+                public void testCapturedVariables() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedVariables.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extension.kt")
+                public void testExtension() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/extension.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("infix.kt")
+                public void testInfix() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/infix.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("insideLambda.kt")
+                public void testInsideLambda() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/insideLambda.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nestedLocals.kt")
+                public void testNestedLocals() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/nestedLocals.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/simple.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleSuspensionPoint.kt")
+                public void testSimpleSuspensionPoint() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/simpleSuspensionPoint.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("stateMachine.kt")
+                public void testStateMachine() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/stateMachine.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("withArguments.kt")
+                public void testWithArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named/withArguments.kt");
+                    doTest(fileName);
+                }
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/coroutines/multiModule")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -6510,6 +6708,21 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multiModule/simple.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/coroutines/redundantLocalsElimination")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RedundantLocalsElimination extends AbstractIrBlackBoxCodegenTest {
+            public void testAllFilesPresentInRedundantLocalsElimination() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/redundantLocalsElimination"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("ktor_receivedMessage.kt")
+            public void testKtor_receivedMessage() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/redundantLocalsElimination/ktor_receivedMessage.kt");
                 doTest(fileName);
             }
         }
@@ -6726,6 +6939,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("unreachable.kt")
             public void testUnreachable() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unreachable.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenUnit.kt")
+            public void testWhenUnit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/whenUnit.kt");
                 doTest(fileName);
             }
         }
@@ -7008,6 +7227,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("intarray.kt")
             public void testIntarray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/equals/intarray.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("null.kt")
+            public void testNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/equals/null.kt");
                 doTest(fileName);
             }
 
@@ -11135,6 +11360,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("javaObjectType.kt")
+        public void testJavaObjectType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/javaObjectType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaPrimitiveType.kt")
+        public void testJavaPrimitiveType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/javaPrimitiveType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt10131.kt")
         public void testKt10131() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/kt10131.kt");
@@ -13337,9 +13574,21 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("compoundAssignmentToObjectFromCall.kt")
+        public void testCompoundAssignmentToObjectFromCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/compoundAssignmentToObjectFromCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compoundAssignmentToPropertyImportedFromObject.kt")
         public void testCompoundAssignmentToPropertyImportedFromObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/compoundAssignmentToPropertyImportedFromObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("compoundAssignmentToPropertyWithQualifier.kt")
+        public void testCompoundAssignmentToPropertyWithQualifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/compoundAssignmentToPropertyWithQualifier.kt");
             doTest(fileName);
         }
 
@@ -13958,6 +14207,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("privateTopLevelPropAndVarInInner.kt")
         public void testPrivateTopLevelPropAndVarInInner() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/package/privateTopLevelPropAndVarInInner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("referenceWithTheSameNameAsPackage.kt")
+        public void testReferenceWithTheSameNameAsPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/package/referenceWithTheSameNameAsPackage.kt");
             doTest(fileName);
         }
     }
@@ -19297,6 +19552,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("nestedIntersection.kt")
         public void testNestedIntersection() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/nestedIntersection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noAssertionsWhenNullableTypeParameterReplacedWithIntersectionType.kt")
+        public void testNoAssertionsWhenNullableTypeParameterReplacedWithIntersectionType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/noAssertionsWhenNullableTypeParameterReplacedWithIntersectionType.kt");
             doTest(fileName);
         }
 

@@ -1176,6 +1176,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doCustomTest(fileName);
         }
 
+        @TestMetadata("finallyBlock.kt")
+        public void testFinallyBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/finallyBlock.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("funLiteral.kt")
         public void testFunLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/funLiteral.kt");
@@ -1215,6 +1221,18 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("inlineInObjectSameFileDex.kt")
         public void testInlineInObjectSameFileDex() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/inlineInObjectSameFileDex.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("inlineOnlyLambdas.kt")
+        public void testInlineOnlyLambdas() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/inlineOnlyLambdas.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("inlineOnlyLambdasStepping.kt")
+        public void testInlineOnlyLambdasStepping() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/inlineOnlyLambdasStepping.kt");
             doCustomTest(fileName);
         }
 

@@ -19,18 +19,25 @@ abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpressi
     }
 
     override fun replace(newElement: PsiElement): PsiElement {
-        return replaceExpression(this, newElement, { super.replace(it) })
+        return replaceExpression(this, newElement) { super.replace(it) }
     }
 
     companion object {
-        fun replaceExpression(expression: KtExpression, newElement: PsiElement, rawReplaceHandler: (PsiElement) -> PsiElement): PsiElement {
+        fun replaceExpression(
+            expression: KtExpression,
+            newElement: PsiElement,
+            reformat: Boolean = true,
+            rawReplaceHandler: (PsiElement) -> PsiElement
+        ): PsiElement {
             val parent = expression.parent
 
             if (newElement is KtExpression) {
                 when (parent) {
                     is KtExpression, is KtValueArgument -> {
                         if (KtPsiUtil.areParenthesesNecessary(newElement, expression, parent as KtElement)) {
-                            return rawReplaceHandler(KtPsiFactory(expression).createExpressionByPattern("($0)", newElement))
+                            return rawReplaceHandler(
+                                KtPsiFactory(expression).createExpressionByPattern("($0)", newElement, reformat = reformat)
+                            )
                         }
                     }
                     is KtSimpleNameStringTemplateEntry -> {

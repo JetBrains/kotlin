@@ -249,6 +249,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL '<get-g2>() on String: String' type=kotlin.String origin=GET_PROPERTY
+                <`0>: String
                 $this: GET_OBJECT 'C' type=C
                 $receiver: CONST String type=kotlin.String value=8
               arg1: CONST String type=kotlin.String value=8
@@ -270,6 +271,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL '<get-fromClass>() on String: String' type=kotlin.String origin=GET_PROPERTY
+                <`0>: String
                 $this: GET_OBJECT 'C' type=C
                 $receiver: CONST String type=kotlin.String value=10
               arg1: CONST String type=kotlin.String value=10

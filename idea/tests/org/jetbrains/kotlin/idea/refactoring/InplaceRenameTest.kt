@@ -170,6 +170,10 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestMemberInplaceRename("LocalClassB")
     }
 
+    fun testBacktickedWithAccessors() {
+        doTestMemberInplaceRename("`object`")
+    }
+
     private fun doTestImplicitLambdaParameter(newName: String) {
         configureByFile(getTestName(false) + ".kt")
 

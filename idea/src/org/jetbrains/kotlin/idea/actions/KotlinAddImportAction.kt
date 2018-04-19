@@ -140,6 +140,10 @@ class KotlinAddImportAction internal constructor(
         return true
     }
 
+    fun isUnambiguous(): Boolean {
+        return variants.size == 1
+    }
+
     override fun execute(): Boolean {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         if (!element.isValid) return false

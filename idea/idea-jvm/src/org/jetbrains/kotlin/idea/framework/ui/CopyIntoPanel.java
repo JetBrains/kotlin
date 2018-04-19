@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.idea.framework.ui;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.util.EventDispatcher;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.util.UiUtilKt;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -46,12 +47,13 @@ public class CopyIntoPanel {
         copyIntoField.addBrowseFolderListener(
                 "Copy Into...", "Choose folder where files will be copied", project,
                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
-        copyIntoField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(DocumentEvent e) {
-                updateComponents();
-            }
-        });
+        UiUtilKt.onTextChange(
+                copyIntoField.getTextField(),
+                (DocumentEvent e) -> {
+                    updateComponents();
+                    return Unit.INSTANCE;
+                }
+        );
 
         if (labelText != null) {
             String text = labelText.replace("&", "");

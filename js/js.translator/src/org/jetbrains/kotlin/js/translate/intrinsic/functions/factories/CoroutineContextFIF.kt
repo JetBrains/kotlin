@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
 object CoroutineContextFIF : FunctionIntrinsicFactory {
-    override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
-        if (!descriptor.isBuiltInCoroutineContext()) return null
+    override fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {
+        if (!descriptor.isBuiltInCoroutineContext(context.languageVersionSettings)) return null
         return Intrinsic
     }
 

@@ -36,6 +36,19 @@ object TopDownAnalyzerFacadeForJS {
         files: Collection<KtFile>,
         config: JsConfig
     ): JsAnalysisResult {
+        val configuration = config.configuration
+
+        // The hack to avoid adding lookups for builtins:
+        // save current lookup tracker and temporarily provide dummy version instead.
+        val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER)
+        configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, LookupTracker.DO_NOTHING)
+
+        config.init()
+
+        // The second part of hack to avoid adding lookups for builtins:
+        // restore previous lookup tracker.
+        lookupTracker?.let { configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it) }
+
         return analyzeFiles(files, config.project, config.configuration, config.moduleDescriptors, config.friendModuleDescriptors)
     }
 
@@ -50,17 +63,12 @@ object TopDownAnalyzerFacadeForJS {
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
         val context = ContextForNewModule(ProjectContext(project), Name.special("<$moduleName>"), JsPlatform.builtIns, null)
 
-        // a hack to avoid adding lookups for builtins
-        val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER)
-        configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, LookupTracker.DO_NOTHING)
-
         context.module.setDependencies(
             listOf(context.module) +
                     moduleDescriptors.map { it.data } +
                     listOf(JsPlatform.builtIns.builtInsModule),
             friendModuleDescriptors.map { it.data }.toSet()
         )
-        lookupTracker?.let { configuration.put(CommonConfigurationKeys.LOOKUP_TRACKER, it) }
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 

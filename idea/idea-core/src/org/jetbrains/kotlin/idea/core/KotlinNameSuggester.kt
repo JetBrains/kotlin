@@ -228,7 +228,7 @@ object KotlinNameSuggester {
     }
 
     private fun MutableCollection<String>.addCamelNames(name: String, validator: (String) -> Boolean, startLowerCase: Boolean = true) {
-        if (name === "") return
+        if (name === "" || !name.unquote().isIdentifier()) return
         var s = extractIdentifiers(name)
 
         for (prefix in ACCESSOR_PREFIXES) {

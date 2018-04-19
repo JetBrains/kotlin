@@ -16,6 +16,6 @@ class SimpleChild : SimpleParent() {
     override fun foo(n: Int) {}
 }
 
-// REF: [common] (in test.ExpectedChildChild).foo(Int)
-// REF: [jvm] (in test.ExpectedChild).foo(Int)
-// REF: [jvm] (in test.ExpectedChildChildJvm).foo(Int)
+// REF: [testModule_Common] (in test.ExpectedChildChild).foo(Int)
+// REF: [testModule_JVM] (in test.ExpectedChild).foo(Int)
+// REF: [testModule_JVM] (in test.ExpectedChildChildJvm).foo(Int)

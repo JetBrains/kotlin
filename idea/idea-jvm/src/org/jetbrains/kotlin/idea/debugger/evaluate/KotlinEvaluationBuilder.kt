@@ -529,7 +529,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
                 val filesToAnalyze = if (contextFile == null) listOf(this) else listOf(this, contextFile)
                 val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(filesToAnalyze)
-                val analysisResult = resolutionFacade.analyzeFullyAndGetResult(filesToAnalyze)
+                val analysisResult = resolutionFacade.analyzeWithAllCompilerChecks(filesToAnalyze)
 
                 if (analysisResult.isError()) {
                     exception(analysisResult.error)

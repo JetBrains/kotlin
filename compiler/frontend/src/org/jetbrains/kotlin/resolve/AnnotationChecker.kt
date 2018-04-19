@@ -250,7 +250,7 @@ class AnnotationChecker(
             }
         }
 
-        private object TargetLists {
+        object TargetLists {
             val T_CLASSIFIER = targetList(CLASS)
             val T_TYPEALIAS = targetList(TYPEALIAS)
 

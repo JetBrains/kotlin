@@ -4,8 +4,8 @@ import org.gradle.jvm.tasks.Jar
 
 description = "Kotlin IDEA Ultimate plugin"
 
-apply {
-    plugin("kotlin")
+plugins {
+    kotlin("jvm")
 }
 
 val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.resourcesDir

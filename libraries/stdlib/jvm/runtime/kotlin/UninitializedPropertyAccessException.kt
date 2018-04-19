@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
+@file:Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-runtime
+
 package kotlin
 
-public class UninitializedPropertyAccessException : RuntimeException {
-    constructor()
+public actual class UninitializedPropertyAccessException : RuntimeException {
+    actual constructor()
 
-    constructor(message: String?) : super(message)
+    actual constructor(message: String?) : super(message)
 
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
+    actual constructor(message: String?, cause: Throwable?) : super(message, cause)
 
-    constructor(cause: Throwable?) : super(cause)
+    actual constructor(cause: Throwable?) : super(cause)
 }

@@ -24,25 +24,36 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.ex.PathUtilEx
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.caches.project.SdkInfo
+import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptTemplatesProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
+import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
+import kotlin.script.experimental.api.ScriptingEnvironment
+import kotlin.script.experimental.api.ScriptingEnvironmentProperties
+import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionProvider {
+class ScriptDefinitionsManager(private val project: Project) : ScriptDefinitionProvider {
     private val lock = ReentrantReadWriteLock()
     private var definitionsByContributor = mutableMapOf<ScriptDefinitionContributor, List<KotlinScriptDefinition>>()
     private var definitions: List<KotlinScriptDefinition> = emptyList()
@@ -89,9 +100,9 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     private fun getContributors(): List<ScriptDefinitionContributor> {
         @Suppress("DEPRECATION")
         val fromDeprecatedEP = Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.toList()
-                .map(::ScriptTemplatesProviderAdapter)
+            .map(::ScriptTemplatesProviderAdapter)
         val fromNewEp = Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.toList()
-        return fromDeprecatedEP + fromNewEp
+        return fromNewEp.dropLast(1) + fromDeprecatedEP + fromNewEp.last()
     }
 
     fun reloadScriptDefinitions() = lock.write {
@@ -112,8 +123,7 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> {
         return try {
             getDefinitions()
-        }
-        catch (t: Throwable) {
+        } catch (t: Throwable) {
             // TODO: review exception handling
             // possibly log, see KT-19276
             emptyList()
@@ -121,7 +131,8 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
     }
 
     companion object {
-        fun getInstance(project: Project): ScriptDefinitionsManager = ServiceManager.getService(project, ScriptDefinitionProvider::class.java) as ScriptDefinitionsManager
+        fun getInstance(project: Project): ScriptDefinitionsManager =
+            ServiceManager.getService(project, ScriptDefinitionProvider::class.java) as ScriptDefinitionsManager
     }
 }
 
@@ -129,31 +140,58 @@ class ScriptDefinitionsManager(private val project: Project): ScriptDefinitionPr
 private val LOG = Logger.getInstance("ScriptTemplatesProviders")
 
 fun loadDefinitionsFromTemplates(
-        templateClassNames: List<String>,
-        templateClasspath: List<File>,
-        environment: Environment = emptyMap(),
-        // TODO: need to provide a way to specify this in compiler/repl .. etc
-        /*
-         * Allows to specify additional jars needed for DependenciesResolver (and not script template).
-         * Script template dependencies naturally become (part of) dependencies of the script which is not always desired for resolver dependencies.
-         * i.e. gradle resolver may depend on some jars that 'built.gradle.kts' files should not depend on.
-         */
-        additionalResolverClasspath: List<File> = emptyList()
-): List<KotlinScriptDefinitionFromAnnotatedTemplate> = try {
+    templateClassNames: List<String>,
+    templateClasspath: List<File>,
+    environment: Environment = emptyMap(),
+    // TODO: need to provide a way to specify this in compiler/repl .. etc
+    /*
+     * Allows to specify additional jars needed for DependenciesResolver (and not script template).
+     * Script template dependencies naturally become (part of) dependencies of the script which is not always desired for resolver dependencies.
+     * i.e. gradle resolver may depend on some jars that 'built.gradle.kts' files should not depend on.
+     */
+    additionalResolverClasspath: List<File> = emptyList()
+): List<KotlinScriptDefinition> = try {
     val classpath = templateClasspath + additionalResolverClasspath
     LOG.info("[kts] loading script definitions $templateClassNames using cp: ${classpath.joinToString(File.pathSeparator)}")
     val baseLoader = ScriptDefinitionContributor::class.java.classLoader
     val loader = if (classpath.isEmpty()) baseLoader else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseLoader)
 
-    templateClassNames.map {
-        KotlinScriptDefinitionFromAnnotatedTemplate(
-                loader.loadClass(it).kotlin,
-                environment,
-                templateClasspath
-        )
+    templateClassNames.mapNotNull {
+        try {
+            val template = loader.loadClass(it).kotlin
+            when {
+                template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>() != null ||
+                        template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() != null -> {
+                    KotlinScriptDefinitionFromAnnotatedTemplate(
+                        template,
+                        environment,
+                        templateClasspath
+                    )
+                }
+                template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
+                    KotlinScriptDefinitionAdapterFromNewAPI(
+                        ScriptDefinitionFromAnnotatedBaseClass(ScriptingEnvironment(ScriptingEnvironmentProperties.baseClass to template))
+                    )
+                }
+                else -> {
+                    LOG.error("[kts] cannot find a valid script definition annotation on the class $template")
+                    null
+                }
+            }
+        } catch (e: ClassNotFoundException) {
+            // Assuming that direct ClassNotFoundException is the result of versions mismatch and missing subsystems, e.g. gradle
+            // so, it only results in warning, while other errors are severe misconfigurations, resulting it user-visible error
+            LOG.warn("[kts] cannot load script definition class $it", e)
+            null
+        } catch (e: NoClassDefFoundError) {
+            LOG.error("[kts] cannot load script definition class $it", e)
+            null
+        } catch (e: InvocationTargetException) {
+            LOG.error("[kts] cannot load script definition class $it", e)
+            null
+        }
     }
-}
-catch (ex: Throwable) {
+} catch (ex: Throwable) {
     // TODO: review exception handling
     emptyList()
 }
@@ -165,10 +203,10 @@ interface ScriptDefinitionContributor {
 
     companion object {
         val EP_NAME: ExtensionPointName<ScriptDefinitionContributor> =
-                ExtensionPointName.create<ScriptDefinitionContributor>("org.jetbrains.kotlin.scriptDefinitionContributor")
+            ExtensionPointName.create<ScriptDefinitionContributor>("org.jetbrains.kotlin.scriptDefinitionContributor")
 
         inline fun <reified T> find(project: Project) =
-                Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.filterIsInstance<T>().firstOrNull()
+            Extensions.getArea(project).getExtensionPoint(ScriptDefinitionContributor.EP_NAME).extensions.filterIsInstance<T>().firstOrNull()
     }
 
 }
@@ -186,26 +224,37 @@ class StandardIdeScriptDefinition(project: Project) : KotlinScriptDefinition(Scr
 
 class BundledKotlinScriptDependenciesResolver(private val project: Project) : DependenciesResolver {
     override fun resolve(
-            scriptContents: ScriptContents,
-            environment: Environment
+        scriptContents: ScriptContents,
+        environment: Environment
     ): DependenciesResolver.ResolveResult {
-        val javaHome = getScriptSDK(project)
+        val virtualFile = scriptContents.file?.let { VfsUtil.findFileByIoFile(it, true) }
+
+        val javaHome = getScriptSDK(project, virtualFile)
         val dependencies = ScriptDependencies(
-                javaHome = javaHome?.let(::File),
-                classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
-                    listOf(
-                            reflectPath,
-                            stdlibPath,
-                            scriptRuntimePath
-                    )
-                }
+            javaHome = javaHome?.let(::File),
+            classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
+                listOf(
+                    reflectPath,
+                    stdlibPath,
+                    scriptRuntimePath
+                )
+            }
         )
         return dependencies.asSuccess()
     }
 
-    private fun getScriptSDK(project: Project): String? {
-        val jdk = ProjectJdkTable.getInstance().allJdks.firstOrNull { sdk -> sdk.sdkType is JavaSdk } ?: PathUtilEx.getAnyJdk(project)
+    private fun getScriptSDK(project: Project, virtualFile: VirtualFile?): String? {
+        if (virtualFile != null) {
+            val dependentModuleSourceInfo = getScriptRelatedModuleInfo(project, virtualFile)
+            val sdk = dependentModuleSourceInfo?.dependencies()?.filterIsInstance<SdkInfo>()?.singleOrNull()?.sdk
+            if (sdk != null) {
+                return sdk.homePath
+            }
+        }
+
+        val jdk = ProjectRootManager.getInstance(project).projectSdk
+                ?: ProjectJdkTable.getInstance().allJdks.firstOrNull { sdk -> sdk.sdkType is JavaSdk }
+                ?: PathUtilEx.getAnyJdk(project)
         return jdk?.homePath
     }
 }
-

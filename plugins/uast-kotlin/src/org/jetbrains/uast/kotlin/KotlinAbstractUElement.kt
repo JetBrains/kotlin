@@ -167,6 +167,17 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         }
     }
 
+    if (result is UMethod
+        && result !is KotlinConstructorUMethod // no sense to wrap super calls with `return`
+        && element is UExpression
+        && element !is UBlockExpression
+        && element !is UTypeReferenceExpression // when element is a type in extension methods
+    ) {
+        return KotlinUBlockExpression.KotlinLazyUBlockExpression(result, { block ->
+            listOf(KotlinUImplicitReturnExpression(block).apply { returnExpression = element })
+        }).expressions.single()
+    }
+
     return result
 }
 

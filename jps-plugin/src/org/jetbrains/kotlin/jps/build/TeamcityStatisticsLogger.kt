@@ -47,8 +47,7 @@ class TeamcityStatisticsLogger {
             val escChar = escapedChar(c)
             if (escChar == 0.toChar()) {
                 escaped.append(c)
-            }
-            else {
+            } else {
                 escaped.append('|').append(escChar)
             }
         }
@@ -65,8 +64,8 @@ class TeamcityStatisticsLogger {
 
     private fun printPerChunkStatistics(moduleChunk: ModuleChunk, timeToCompileNs: Long) {
         printStatisticMessage(
-                "${KotlinBuilder.KOTLIN_BUILDER_NAME} for ${moduleChunk.presentableShortName} compilation time, ms",
-                timeToCompileNs.nanosToMillis().toString()
+            "${KotlinBuilder.KOTLIN_BUILDER_NAME} for ${moduleChunk.presentableShortName} compilation time, ms",
+            timeToCompileNs.nanosToMillis().toString()
         )
     }
 
@@ -74,8 +73,8 @@ class TeamcityStatisticsLogger {
         if (!isOnTeamcity) return
 
         printStatisticMessage(
-                "${KotlinBuilder.KOTLIN_BUILDER_NAME} total compilation time, ms",
-                totalTime.get().nanosToMillis().toString()
+            "${KotlinBuilder.KOTLIN_BUILDER_NAME} total compilation time, ms",
+            totalTime.get().nanosToMillis().toString()
         )
     }
 

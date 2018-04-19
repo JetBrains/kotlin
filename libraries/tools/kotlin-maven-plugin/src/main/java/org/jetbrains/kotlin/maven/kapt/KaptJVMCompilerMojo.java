@@ -110,20 +110,26 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
         String sourceSetName = getSourceSetName();
         File sourcesDirectory = getGeneratedSourcesDirectory(project, sourceSetName);
+        File kotlinSourcesDirectory = getGeneratedKotlinSourcesDirectory(project, sourceSetName);
         File classesDirectory = getGeneratedClassesDirectory(project, sourceSetName);
         File stubsDirectory = getStubsDirectory(project, sourceSetName);
 
         addKaptSourcesDirectory(sourcesDirectory.getPath());
+        addKaptSourcesDirectory(kotlinSourcesDirectory.getPath());
 
         mkdirsSafe(classesDirectory);
         mkdirsSafe(stubsDirectory);
+        mkdirsSafe(kotlinSourcesDirectory);
 
         options.add(new KaptOption("sources", sourcesDirectory.getAbsolutePath()));
         options.add(new KaptOption("classes", classesDirectory.getAbsolutePath()));
         options.add(new KaptOption("stubs", stubsDirectory.getAbsolutePath()));
 
         options.add(new KaptOption("javacArguments", encodeOptionList(parseOptionList(javacOptions))));
-        options.add(new KaptOption("apoptions", encodeOptionList(parseOptionList(annotationProcessorArgs))));
+
+        Map<String, String> allApOptions = parseOptionList(annotationProcessorArgs);
+        allApOptions.put("kapt.kotlin.generated", kotlinSourcesDirectory.getAbsolutePath());
+        options.add(new KaptOption("apoptions", encodeOptionList(allApOptions)));
 
         return options;
     }
@@ -141,6 +147,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
         String sourceSetName = getSourceSetName();
         recreateDirectorySafe(getGeneratedSourcesDirectory(project, sourceSetName));
         recreateDirectorySafe(getStubsDirectory(project, sourceSetName));
+        recreateDirectorySafe(getGeneratedKotlinSourcesDirectory(project, sourceSetName));
 
         return super.execCompiler(compiler, messageCollector, arguments, sourceRoots);
     }
@@ -148,10 +155,15 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Override
     protected List<String> getSourceFilePaths() {
         File generatedSourcesDirectory = getGeneratedSourcesDirectory(project, getSourceSetName());
+        File generatedKotlinSourcesDirectory = getGeneratedKotlinSourcesDirectory(project, getSourceSetName());
 
         return super.getSourceFilePaths()
                 .stream()
-                .filter(path -> !new File(path).equals(generatedSourcesDirectory))
+                .filter(path -> {
+                    File pathFile = new File(path);
+                    return !pathFile.equals(generatedSourcesDirectory)
+                            && !pathFile.equals(generatedKotlinSourcesDirectory);
+                })
                 .collect(Collectors.toList());
     }
 

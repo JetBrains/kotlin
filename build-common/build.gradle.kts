@@ -1,8 +1,10 @@
 
 description = "Kotlin Build Common"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compileOnly(project(":core:util.runtime"))

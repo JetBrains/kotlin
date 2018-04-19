@@ -1,17 +1,24 @@
+// !API_VERSION: 1.3
+// !ENABLE_JVM_DEFAULT
 // JVM_TARGET: 1.8
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
 // WITH_RUNTIME
 // IGNORE_BACKEND: JS
 
 interface Z {
+
+    @JvmDefault
     private fun privateFun() = { "OK" }
 
+    @JvmDefault
     fun callPrivateFun() = privateFun()
 
+    @JvmDefault
     fun publicFun() = { "OK" }
 
+    @JvmDefault
     fun funWithDefaultArgs(s: () -> Unit = {}): () -> Unit
 
+    @JvmDefault
     val property: () -> Unit
         get() = {}
 

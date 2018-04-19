@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.Coroutines
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
@@ -19,3 +22,6 @@ sourceSets {
     "test" {}
 }
 
+kotlin {
+    experimental.coroutines = Coroutines.ENABLE
+}

@@ -58,7 +58,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File runtimeSourcesJarForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-runtime-sources.jar"));
+        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-sources.jar"));
     }
 
     @NotNull

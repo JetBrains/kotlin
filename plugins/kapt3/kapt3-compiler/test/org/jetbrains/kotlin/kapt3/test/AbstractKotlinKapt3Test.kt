@@ -23,7 +23,7 @@ import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
-import junit.framework.TestCase
+import junit.framework.ComparisonFailure
 import org.jetbrains.kotlin.checkers.CheckerTestUtil
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -33,13 +33,9 @@ import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
-import org.jetbrains.kotlin.kapt3.KaptContext
-import org.jetbrains.kotlin.kapt3.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaLog
-import org.jetbrains.kotlin.kapt3.parseJavaFiles
-import org.jetbrains.kotlin.kapt3.prettyPrint
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.psi.KtFile
@@ -50,18 +46,29 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.PrintStream
 import java.nio.file.Files
 import java.util.*
 import com.sun.tools.javac.util.List as JavacList
 
+
 abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     companion object {
-        val FILE_SEPARATOR = "\n\n////////////////////\n\n"
-        val messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+        const val FILE_SEPARATOR = "\n\n////////////////////\n\n"
+        val ERR_BYTE_STREAM = ByteArrayOutputStream()
+        private val ERR_PRINT_STREAM = PrintStream(ERR_BYTE_STREAM)
+
+        val messageCollector = PrintingMessageCollector(ERR_PRINT_STREAM, MessageRenderer.PLAIN_FULL_PATHS, false)
     }
 
     private val tempFiles = mutableListOf<File>()
+
+    override fun tearDown() {
+        ERR_BYTE_STREAM.reset()
+        super.tearDown()
+    }
 
     private fun createTempFile(prefix: String, suffix: String, text: String): File {
         return File.createTempFile(prefix, suffix).apply {
@@ -108,18 +115,18 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val logger = KaptLogger(isVerbose = true, messageCollector = messageCollector)
 
         val javacOptions = wholeFile.getOptionValues("JAVAC_OPTION")
-                .map { opt ->
-                    val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
-                    key to value
-                }.toMap()
+            .map { opt ->
+                val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
+                key to value
+            }.toMap()
 
         val kaptContext = KaptContext(logger, generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
-                                      classBuilderFactory.origins, generationState, mapDiagnosticLocations = true,
+            classBuilderFactory.origins, generationState, mapDiagnosticLocations = true,
                                       processorOptions = emptyMap(), javacOptions = javacOptions)
 
         val javaFiles = files
-                .filter { it.name.toLowerCase().endsWith(".java") }
-                .map { createTempFile(it.name.substringBeforeLast('.'), ".java", it.content) }
+            .filter { it.name.toLowerCase().endsWith(".java") }
+            .map { createTempFile(it.name.substringBeforeLast('.'), ".java", it.content) }
 
         try {
             check(kaptContext, javaFiles, txtFile, wholeFile)
@@ -134,10 +141,10 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     }
 
     protected fun convert(
-            kaptContext: KaptContext<GenerationState>,
-            javaFiles: List<File>,
-            generateNonExistentClass: Boolean,
-            correctErrorTypes: Boolean
+        kaptContext: KaptContext<GenerationState>,
+        javaFiles: List<File>,
+        generateNonExistentClass: Boolean,
+        correctErrorTypes: Boolean
     ): JavacList<JCCompilationUnit> {
         val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass, correctErrorTypes)
 
@@ -181,9 +188,9 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     protected fun File.getOptionValues(name: String) = getRawOptionValues(name).map { it.drop("// ".length + name.length).trim() }
 
     protected abstract fun check(
-            kaptContext: KaptContext<GenerationState>,
-            javaFiles: List<File>,
-            txtFile: File,
+        kaptContext: KaptContext<GenerationState>,
+        javaFiles: List<File>,
+        txtFile: File,
             wholeFile: File)
 }
 
@@ -225,44 +232,46 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
         if (validate) kaptContext.compiler.enterTrees(convertedFiles)
 
         val actualRaw = convertedFiles
-                .sortedBy { it.sourceFile.name }
-                .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context) }
+            .sortedBy { it.sourceFile.name }
+            .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context) }
 
         val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))
-                .trimTrailingWhitespacesAndAddNewlineAtEOF()
-                .let { removeMetadataAnnotationContents(it) }
+            .trimTrailingWhitespacesAndAddNewlineAtEOF()
+            .let { removeMetadataAnnotationContents(it) }
 
         if (kaptContext.compiler.shouldStop(CompileStates.CompileState.ENTER)) {
             val log = Log.instance(kaptContext.context) as KaptJavaLog
 
             val actualErrors = log.reportedDiagnostics
-                    .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }
-                    .map {
-                        // Unfortunately, we can't use the file name as it can contain temporary prefix
-                        val name = it.source?.name?.substringAfterLast("/") ?: ""
-                        val kind = when (name.substringAfterLast(".").toLowerCase()) {
-                            "kt" -> "kotlin"
-                            "java" -> "java"
-                            else -> "other"
-                        }
-
-                        val javaLocation = "($kind:${it.lineNumber}:${it.columnNumber}) "
-                        javaLocation + it.getMessage(Locale.US).lines().first()
+                .filter { it.type == JCDiagnostic.DiagnosticType.ERROR }
+                .map {
+                    // Unfortunately, we can't use the file name as it can contain temporary prefix
+                    val name = it.source?.name?.substringAfterLast("/") ?: ""
+                    val kind = when (name.substringAfterLast(".").toLowerCase()) {
+                        "kt" -> "kotlin"
+                        "java" -> "java"
+                        else -> "other"
                     }
-                    .map { "// " + EXPECTED_ERROR + it }
-                    .sorted()
+
+                    val javaLocation = "($kind:${it.lineNumber}:${it.columnNumber}) "
+                    javaLocation + it.getMessage(Locale.US).lines().first()
+                }
+                .map { "// " + EXPECTED_ERROR + it }
+                .sorted()
 
             log.flush()
 
             val lineSeparator = System.getProperty("line.separator")
-            System.err.println(actualErrors.joinToString(lineSeparator))
+            val actualErrorsStr = actualErrors.joinToString(lineSeparator)
 
             if (expectedErrors.isEmpty()) {
-                error("There were errors during analysis. See errors above. Stubs:\n\n$actual")
+                error("There were errors during analysis:\n$actualErrorsStr\n\nStubs:\n\n$actual")
             } else {
-                TestCase.assertEquals("Expected error matching failed",
-                                      expectedErrors.joinToString(lineSeparator),
-                                      actualErrors.joinToString(lineSeparator))
+                val expectedErrorsStr = expectedErrors.joinToString(lineSeparator)
+                if (expectedErrorsStr != actualErrorsStr) {
+                    System.err.println(ERR_BYTE_STREAM.toString("UTF8"))
+                    throw ComparisonFailure("Expected error matching failed", expectedErrorsStr, actualErrorsStr)
+                }
             }
         }
         KotlinTestUtils.assertEqualsToFile(txtFile, actual)
@@ -275,10 +284,11 @@ abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
             kaptContext.doAnnotationProcessing(emptyList(), listOf(JavaKaptContextTest.simpleProcessor()),
-                                               compileClasspath = PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
-                                               annotationProcessingClasspath = emptyList(), annotationProcessors = "",
-                                               sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
-                                               additionalSources = compilationUnits, withJdk = true)
+                compileClasspath = PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
+                annotationProcessingClasspath = emptyList(),
+                sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
+                additionalSources = compilationUnits, withJdk = true
+            )
 
             val javaFiles = sourceOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
             val actualRaw = javaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }

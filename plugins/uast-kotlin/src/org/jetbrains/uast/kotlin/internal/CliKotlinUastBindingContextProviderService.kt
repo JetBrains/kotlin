@@ -39,8 +39,10 @@ class UastAnalysisHandlerExtension : AnalysisHandlerExtension {
         if (typeMapper != null) return typeMapper
         val bindingContext = context ?: return null
 
-        val typeMapper = KotlinTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES,
-                                          IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, false, false)
+        val typeMapper = KotlinTypeMapper(
+            bindingContext, ClassBuilderMode.LIGHT_CLASSES,
+            IncompatibleClassTracker.DoNothing, JvmAbi.DEFAULT_MODULE_NAME, false, KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT
+        )
         this.typeMapper = typeMapper
         return typeMapper
     }

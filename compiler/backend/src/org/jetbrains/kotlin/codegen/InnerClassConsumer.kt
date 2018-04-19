@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.*
 
 interface InnerClassConsumer {
@@ -38,7 +39,7 @@ interface InnerClassConsumer {
                 val classDescriptorImpl = ClassDescriptorImpl(
                         descriptor, Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
                         Modality.FINAL, ClassKind.CLASS, Collections.emptyList(), SourceElement.NO_SOURCE,
-                        /* isExternal = */ false)
+                        /* isExternal = */ false, LockBasedStorageManager.NO_LOCKS)
 
                 classDescriptorImpl.initialize(MemberScope.Empty, emptySet(), null)
                 return classDescriptorImpl

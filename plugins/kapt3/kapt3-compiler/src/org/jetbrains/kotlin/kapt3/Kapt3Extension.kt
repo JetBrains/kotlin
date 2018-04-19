@@ -23,6 +23,7 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.Pretty
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
+import com.sun.tools.javac.util.Convert
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import java.io.File
+import java.io.IOException
 import java.io.StringWriter
 import java.io.Writer
 import java.net.URLClassLoader
@@ -67,7 +69,7 @@ class ClasspathBasedKapt3Extension(
         incrementalDataOutputDir: File?,
         options: Map<String, String>,
         javacOptions: Map<String, String>,
-        annotationProcessors: String,
+        annotationProcessorFqNames: List<String>,
         aptMode: AptMode,
         val useLightAnalysis: Boolean,
         correctErrorTypes: Boolean,
@@ -76,7 +78,7 @@ class ClasspathBasedKapt3Extension(
         logger: KaptLogger,
         compilerConfiguration: CompilerConfiguration
 ) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
-                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, javacOptions, annotationProcessors,
+                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, javacOptions, annotationProcessorFqNames,
                            aptMode, pluginInitializedTime, logger, correctErrorTypes, mapDiagnosticLocations, compilerConfiguration) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
@@ -103,7 +105,14 @@ class ClasspathBasedKapt3Extension(
         val classpath = annotationProcessingClasspath + compileClasspath
         val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray())
         this.annotationProcessingClassLoader = classLoader
-        val processors = ServiceLoader.load(Processor::class.java, classLoader).toList()
+
+        val processors = if (annotationProcessorFqNames.isNotEmpty()) {
+            logger.info("Annotation processor class names are set, skip AP discovery")
+            annotationProcessorFqNames.mapNotNull { tryLoadProcessor(it, classLoader) }
+        } else {
+            logger.info("Need to discovery annotation processors in the AP classpath")
+            ServiceLoader.load(Processor::class.java, classLoader).toList()
+        }
 
         if (processors.isEmpty()) {
             logger.info("No annotation processors available, aborting")
@@ -112,6 +121,28 @@ class ClasspathBasedKapt3Extension(
         }
 
         return processors
+    }
+
+    private fun tryLoadProcessor(fqName: String, classLoader: ClassLoader): Processor? {
+        val annotationProcessorClass = try {
+            Class.forName(fqName, true, classLoader)
+        } catch (e: Throwable) {
+            logger.warn("Can't find annotation processor class $fqName: ${e.message}")
+            return null
+        }
+
+        try {
+            val annotationProcessorInstance = annotationProcessorClass.newInstance()
+            if (annotationProcessorInstance !is Processor) {
+                logger.warn("$fqName is not an instance of 'Processor'")
+                return null
+            }
+
+            return annotationProcessorInstance
+        } catch (e: Throwable) {
+            logger.warn("Can't load annotation processor class $fqName: ${e.message}")
+            return null
+        }
     }
 }
 
@@ -125,7 +156,7 @@ abstract class AbstractKapt3Extension(
         val incrementalDataOutputDir: File?,
         val options: Map<String, String>,
         val javacOptions: Map<String, String>,
-        val annotationProcessors: String,
+        val annotationProcessorFqNames: List<String>,
         val aptMode: AptMode,
         val pluginInitializedTime: Long,
         val logger: KaptLogger,
@@ -224,8 +255,7 @@ abstract class AbstractKapt3Extension(
 
         val (annotationProcessingTime) = measureTimeMillis {
             kaptContext.doAnnotationProcessing(
-                    javaSourceFiles, processors, compileClasspath, annotationProcessingClasspath,
-                    annotationProcessors, sourcesOutputDir, classFilesOutputDir)
+                javaSourceFiles, processors, compileClasspath, annotationProcessingClasspath, sourcesOutputDir, classFilesOutputDir)
         }
 
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
@@ -339,9 +369,13 @@ internal fun JCTree.prettyPrint(context: Context): String {
     return StringWriter().apply { PrettyWithWorkarounds(context, this, false).printStat(this@prettyPrint) }.toString()
 }
 
-private class PrettyWithWorkarounds(private val context: Context, out: Writer?, sourceOutput: Boolean) : Pretty(out, sourceOutput) {
+private class PrettyWithWorkarounds(private val context: Context, val out: Writer, sourceOutput: Boolean) : Pretty(out, sourceOutput) {
     companion object {
-        private val ENUM = Flags.ENUM.toLong()
+        private const val ENUM = Flags.ENUM.toLong()
+    }
+
+    override fun print(s: Any) {
+        out.write(s.toString())
     }
 
     override fun visitVarDef(tree: JCTree.JCVariableDecl) {

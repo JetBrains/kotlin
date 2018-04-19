@@ -24,5 +24,5 @@ class C<R>() {
     operator fun <T> setValue(t: Any?, p: KProperty<*>, x: T) = Unit
 }
 
-var c1: Int by <!NI;DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, NI;TYPE_MISMATCH!>C()<!>
+var c1: Int by C()
 var c2: Int by <!NI;DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, NI;TYPE_MISMATCH, OI;DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH!>C<Number>()<!>

@@ -148,28 +148,54 @@ class ResolvedCollectionLiteralAtom(
     }
 }
 
-class CallResolutionResult(
-    val type: Type,
-    val resultCallAtom: ResolvedCallAtom?,
+sealed class CallResolutionResult(
+    resultCallAtom: ResolvedCallAtom?,
     val diagnostics: List<KotlinCallDiagnostic>,
-    val constraintSystem: ConstraintStorage,
-    val allCandidates: Collection<KotlinResolutionCandidate>? = null
+    val constraintSystem: ConstraintStorage
 ) : ResolvedAtom() {
-    override val atom: ResolutionAtom? get() = null
-
-    enum class Type {
-        COMPLETED, // resultSubstitutor possible create use constraintSystem
-        PARTIAL,
-        ERROR, // if resultCallAtom == null it means that there is errors NoneCandidates or ManyCandidates
-        ALL_CANDIDATES // allCandidates != null
-    }
-
     init {
         setAnalyzedResults(listOfNotNull(resultCallAtom))
     }
 
-    override fun toString() = "$type, resultCallAtom = $resultCallAtom, (${diagnostics.joinToString()})"
+    final override fun setAnalyzedResults(subResolvedAtoms: List<ResolvedAtom>) {
+        super.setAnalyzedResults(subResolvedAtoms)
+    }
+
+    override val atom: ResolutionAtom? get() = null
+
+    override fun toString() = "diagnostics: (${diagnostics.joinToString()})"
 }
+
+open class SingleCallResolutionResult(
+    val resultCallAtom: ResolvedCallAtom,
+    diagnostics: List<KotlinCallDiagnostic>,
+    constraintSystem: ConstraintStorage
+) : CallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
+
+class PartialCallResolutionResult(
+    resultCallAtom: ResolvedCallAtom,
+    diagnostics: List<KotlinCallDiagnostic>,
+    constraintSystem: ConstraintStorage
+) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
+
+class CompletedCallResolutionResult(
+    resultCallAtom: ResolvedCallAtom,
+    diagnostics: List<KotlinCallDiagnostic>,
+    constraintSystem: ConstraintStorage
+) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
+
+class ErrorCallResolutionResult(
+    resultCallAtom: ResolvedCallAtom,
+    diagnostics: List<KotlinCallDiagnostic>,
+    constraintSystem: ConstraintStorage
+) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
+
+class AllCandidatesResolutionResult(
+    val allCandidates: Collection<KotlinResolutionCandidate>
+) : CallResolutionResult(null, emptyList(), ConstraintStorage.Empty)
+
+fun CallResolutionResult.resultCallAtom(): ResolvedCallAtom? =
+    if (this is SingleCallResolutionResult) resultCallAtom else null
 
 val ResolvedCallAtom.freshReturnType: UnwrappedType?
     get() {

@@ -18,6 +18,7 @@
 @file:kotlin.jvm.JvmName("SequenceBuilderKt")
 package kotlin.coroutines.experimental
 
+import kotlin.*
 import kotlin.coroutines.experimental.intrinsics.*
 
 /**

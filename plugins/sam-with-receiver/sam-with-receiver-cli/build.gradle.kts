@@ -1,8 +1,10 @@
 
 description = "Kotlin SamWithReceiver Compiler Plugin"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
@@ -42,7 +44,4 @@ ideaPlugin {
 projectTest {
     dependsOn(":kotlin-stdlib:jvm-minimal-for-test:dist")
     workingDir = rootDir
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }

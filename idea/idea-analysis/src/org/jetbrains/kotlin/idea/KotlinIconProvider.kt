@@ -25,7 +25,11 @@ import com.intellij.ui.RowIcon
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.idea.KotlinIcons.ACTUAL
+import org.jetbrains.kotlin.idea.KotlinIcons.EXPECT
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.util.hasMatchingExpected
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -42,7 +46,7 @@ class KotlinIconProvider : IconProvider(), DumbAware {
         val result = psiElement.getBaseIcon()
         if (flags and Iconable.ICON_FLAG_VISIBILITY > 0 && result != null && (psiElement is KtModifierListOwner && psiElement !is KtClassInitializer)) {
             val list = psiElement.modifierList
-            return createRowIcon(result, getVisibilityIcon(list))
+            return createRowIcon(result.addExpectActualMarker(psiElement), getVisibilityIcon(list))
         }
         return result
     }
@@ -126,5 +130,18 @@ class KotlinIconProvider : IconProvider(), DumbAware {
             is KtTypeAlias -> KotlinIcons.TYPE_ALIAS
             else -> null
         }
+    }
+}
+
+private fun Icon.addExpectActualMarker(element: PsiElement): Icon {
+    val declaration = (element as? KtNamedDeclaration) ?: return this
+    val additionalIcon = when {
+        declaration.isExpectDeclaration() -> EXPECT
+        declaration.hasMatchingExpected() -> ACTUAL
+        else -> return this
+    }
+    return RowIcon(2).apply {
+        setIcon(this@addExpectActualMarker, 0)
+        setIcon(additionalIcon, 1)
     }
 }

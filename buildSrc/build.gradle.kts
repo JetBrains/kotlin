@@ -28,6 +28,20 @@ apply {
 
 plugins {
     `kotlin-dsl`
+    `java-gradle-plugin`
+}
+
+gradlePlugin {
+    (plugins) {
+        "jps-compatible-base" {
+            id = "jps-compatible-base"
+            implementationClass = "org.jetbrains.kotlin.pill.JpsCompatibleBasePlugin"
+        }
+        "jps-compatible" {
+            id = "jps-compatible"
+            implementationClass = "org.jetbrains.kotlin.pill.JpsCompatiblePlugin"
+        }
+    }
 }
 
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {

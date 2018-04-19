@@ -17,10 +17,10 @@
 package kotlin
 
 
-public interface Comparator<T> {
-    @JsName("compare") fun compare(a: T, b: T): Int
+public actual interface Comparator<T> {
+    @JsName("compare") actual fun compare(a: T, b: T): Int
 }
 
-public inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T> = object : Comparator<T> {
+public actual inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T> = object : Comparator<T> {
     override fun compare(a: T, b: T): Int = comparison(a, b)
 }

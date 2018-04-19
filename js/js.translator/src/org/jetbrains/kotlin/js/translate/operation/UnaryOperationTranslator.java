@@ -54,7 +54,7 @@ public final class UnaryOperationTranslator {
         if (operationToken == KtTokens.EXCLEXCL) {
             KtExpression baseExpression = getBaseExpression(expression);
             JsExpression translatedExpression = translateAsExpression(baseExpression, context);
-            return sure(translatedExpression, context);
+            return sure(baseExpression, translatedExpression, context);
         }
 
         if (operationToken == KtTokens.MINUS) {

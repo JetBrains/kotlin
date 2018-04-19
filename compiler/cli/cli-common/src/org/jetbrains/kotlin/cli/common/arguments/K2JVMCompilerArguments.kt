@@ -228,6 +228,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var noExceptionOnExplicitEqualsForBoxedNull by FreezableVar(false)
 
+    @Argument(value = "-Xenable-jvm-default", description = "Allow to use '@JvmDefault' for JVM default method support")
+    var enableJvmDefault: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
+    var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
+
     // Paths to output directories for friend modules.
     var friendPaths: Array<String>? by FreezableVar(null)
 
@@ -237,6 +243,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations
         )
+        result[AnalysisFlag.enableJvmDefault] = enableJvmDefault
         return result
     }
 

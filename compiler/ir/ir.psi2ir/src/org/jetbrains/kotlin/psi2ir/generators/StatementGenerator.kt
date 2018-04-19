@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.lang.AssertionError
@@ -205,35 +205,12 @@ class StatementGenerator(
                     ?: error("KtConstantExpression was not evaluated: ${expression.text}")
         )
 
-    fun generateConstantExpression(expression: KtExpression, constant: CompileTimeConstant<*>): IrExpression {
-        val constantValue = constant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))
-        val constantType = constantValue.getType(context.moduleDescriptor)
-
-        return when (constantValue) {
-            is StringValue ->
-                IrConstImpl.string(expression.startOffset, expression.endOffset, constantType, constantValue.value)
-            is IntValue ->
-                IrConstImpl.int(expression.startOffset, expression.endOffset, constantType, constantValue.value)
-            is NullValue ->
-                IrConstImpl.constNull(expression.startOffset, expression.endOffset, constantType)
-            is BooleanValue ->
-                IrConstImpl.boolean(expression.startOffset, expression.endOffset, constantType, constantValue.value)
-            is LongValue ->
-                IrConstImpl.long(expression.startOffset, expression.endOffset, constantType, constantValue.value)
-            is DoubleValue ->
-                IrConstImpl.double(expression.startOffset, expression.endOffset, constantType, constantValue.value)
-            is FloatValue ->
-                IrConstImpl.float(expression.startOffset, expression.endOffset, constantType, constantValue.value)
-            is CharValue ->
-                IrConstImpl.char(expression.startOffset, expression.endOffset, constantType, constantValue.value)
-            is ByteValue ->
-                IrConstImpl.byte(expression.startOffset, expression.endOffset, constantType, constantValue.value)
-            is ShortValue ->
-                IrConstImpl.short(expression.startOffset, expression.endOffset, constantType, constantValue.value)
-            else ->
-                TODO("handle other literal types: $constantType")
-        }
-    }
+    fun generateConstantExpression(expression: KtExpression, constant: CompileTimeConstant<*>): IrExpression =
+        ConstantValueGenerator(context).generateConstantValueAsExpression(
+            expression.startOffset,
+            expression.endOffset,
+            constant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))
+        )
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrStatement {
         val entries = expression.entries

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.hint.HintManager
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.template.*
 import com.intellij.openapi.application.ApplicationManager
@@ -53,8 +54,6 @@ class SpecifyTypeExplicitlyIntention :
         if (element is KtConstructor<*>) return null
         if (element.typeReference != null) return null
 
-        if (getTypeForDeclaration(element).isError) return null
-
         if (element is KtNamedFunction && element.hasBlockBody()) return null
 
         text = if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly"
@@ -70,6 +69,13 @@ class SpecifyTypeExplicitlyIntention :
 
     override fun applyTo(element: KtCallableDeclaration, editor: Editor?) {
         val type = getTypeForDeclaration(element)
+        if (type.isError) {
+            if (editor != null) {
+                HintManager.getInstance().showErrorHint(editor, "Cannot infer type for this declaration")
+            }
+            return
+        }
+
         addTypeAnnotation(editor, element, type)
     }
 

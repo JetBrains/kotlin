@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,17 +13,14 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
-import org.jetbrains.kotlin.coroutines.isSuspendLambda
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -56,6 +53,7 @@ abstract class AbstractCoroutineCodegen(
         outerExpressionCodegen.parentCodegen, classBuilder
 ) {
     protected val classDescriptor = closureContext.contextDescriptor
+    protected val languageVersionSettings = outerExpressionCodegen.state.languageVersionSettings
 
     protected val doResumeDescriptor =
             SimpleFunctionDescriptorImpl.create(
@@ -88,7 +86,7 @@ abstract class AbstractCoroutineCodegen(
 
     override fun generateConstructor(): Method {
         val args = calculateConstructorParameters(typeMapper, closure, asmType)
-        val argTypes = args.map { it.fieldType }.plus(CONTINUATION_ASM_TYPE).toTypedArray()
+        val argTypes = args.map { it.fieldType }.plus(languageVersionSettings.continuationAsmType()).toTypedArray()
 
         val constructor = Method("<init>", Type.VOID_TYPE, argTypes)
         val mv = v.newMethod(
@@ -107,9 +105,9 @@ abstract class AbstractCoroutineCodegen(
             iv.load(argTypes.map { it.size }.sum(), AsmTypes.OBJECT_TYPE)
 
             val superClassConstructorDescriptor = Type.getMethodDescriptor(
-                    Type.VOID_TYPE,
-                    Type.INT_TYPE,
-                    CONTINUATION_ASM_TYPE
+                Type.VOID_TYPE,
+                Type.INT_TYPE,
+                languageVersionSettings.continuationAsmType()
             )
             iv.invokespecial(superClassAsmType.internalName, "<init>", superClassConstructorDescriptor, false)
 
@@ -145,7 +143,10 @@ class CoroutineCodegenForLambda private constructor(
         funDescriptor.createCustomCopy {
             setName(Name.identifier(SUSPEND_FUNCTION_CREATE_METHOD_NAME))
             setReturnType(
-                    funDescriptor.module.getContinuationOfTypeOrAny(builtIns.unitType)
+                funDescriptor.module.getContinuationOfTypeOrAny(
+                    builtIns.unitType,
+                    state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+                )
             )
             // 'create' method should not inherit initial descriptor for suspend function from original descriptor
             putUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION, null)
@@ -208,8 +209,8 @@ class CoroutineCodegenForLambda private constructor(
                 v.thisName,
                 createCoroutineDescriptor.name.identifier,
                 Type.getMethodDescriptor(
-                        CONTINUATION_ASM_TYPE,
-                        *parameterTypes.toTypedArray()
+                    languageVersionSettings.continuationAsmType(),
+                    *parameterTypes.toTypedArray()
                 ),
                 false
         )
@@ -310,7 +311,8 @@ class CoroutineCodegenForLambda private constructor(
                             lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
                             shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                             containingClassInternalName = v.thisName,
-                            isForNamedFunction = false
+                            isForNamedFunction = false,
+                            languageVersionSettings = languageVersionSettings
                         )
                     }
 
@@ -330,14 +332,18 @@ class CoroutineCodegenForLambda private constructor(
                 declaration: KtElement,
                 classBuilder: ClassBuilder
         ): ClosureCodegen? {
-            if (declaration !is KtFunctionLiteral || !originalSuspendLambdaDescriptor.isSuspendLambda) return null
+            if (!originalSuspendLambdaDescriptor.isSuspendLambdaOrLocalFunction()) return null
 
             return CoroutineCodegenForLambda(
                     expressionCodegen,
                     declaration,
                     expressionCodegen.context.intoCoroutineClosure(
-                            getOrCreateJvmSuspendFunctionView(originalSuspendLambdaDescriptor, expressionCodegen.state.bindingContext),
-                            originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
+                        getOrCreateJvmSuspendFunctionView(
+                            originalSuspendLambdaDescriptor,
+                            expressionCodegen.state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+                            expressionCodegen.state.bindingContext
+                        ),
+                        originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     classBuilder,
                     originalSuspendLambdaDescriptor,
@@ -355,6 +361,14 @@ class CoroutineCodegenForNamedFunction private constructor(
         classBuilder: ClassBuilder,
         originalSuspendFunctionDescriptor: FunctionDescriptor
 ) : AbstractCoroutineCodegen(outerExpressionCodegen, element, closureContext, classBuilder) {
+    private val labelFieldStackValue = StackValue.field(
+        FieldInfo.createForHiddenField(
+            outerExpressionCodegen.state.languageVersionSettings.coroutineImplAsmType(),
+            Type.INT_TYPE,
+            COROUTINE_LABEL_FIELD_NAME
+        ),
+        StackValue.LOCAL_0
+    )
     private val suspendFunctionJvmView =
             bindingContext[CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, originalSuspendFunctionDescriptor]!!
 
@@ -396,13 +410,13 @@ class CoroutineCodegenForNamedFunction private constructor(
                                 StackValue.LOCAL_0
                         ).store(StackValue.local(2, AsmTypes.JAVA_THROWABLE_TYPE), codegen.v)
 
-                        LABEL_FIELD_STACK_VALUE.store(
-                                StackValue.operation(Type.INT_TYPE) {
-                                    LABEL_FIELD_STACK_VALUE.put(Type.INT_TYPE, it)
-                                    it.iconst(1 shl 31)
-                                    it.or(Type.INT_TYPE)
-                                },
-                                codegen.v
+                        labelFieldStackValue.store(
+                            StackValue.operation(Type.INT_TYPE) {
+                                labelFieldStackValue.put(Type.INT_TYPE, it)
+                                it.iconst(1 shl 31)
+                                it.or(Type.INT_TYPE)
+                            },
+                            codegen.v
                         )
 
                         val captureThisType = closure.captureThis?.let(typeMapper::mapType)
@@ -453,7 +467,7 @@ class CoroutineCodegenForNamedFunction private constructor(
         )
 
         mv.visitCode()
-        LABEL_FIELD_STACK_VALUE.put(Type.INT_TYPE, InstructionAdapter(mv))
+        labelFieldStackValue.put(Type.INT_TYPE, InstructionAdapter(mv))
         mv.visitInsn(Opcodes.IRETURN)
         mv.visitEnd()
     }
@@ -469,7 +483,7 @@ class CoroutineCodegenForNamedFunction private constructor(
         )
 
         mv.visitCode()
-        LABEL_FIELD_STACK_VALUE.store(StackValue.local(1, Type.INT_TYPE), InstructionAdapter(mv))
+        labelFieldStackValue.store(StackValue.local(1, Type.INT_TYPE), InstructionAdapter(mv))
         mv.visitInsn(Opcodes.RETURN)
         mv.visitEnd()
     }
@@ -481,14 +495,7 @@ class CoroutineCodegenForNamedFunction private constructor(
             AsmUtil.writeAnnotationData(av, serializer, functionProto)
         }
     }
-
     companion object {
-        private val LABEL_FIELD_STACK_VALUE =
-                StackValue.field(
-                        FieldInfo.createForHiddenField(COROUTINE_IMPL_ASM_TYPE, Type.INT_TYPE, COROUTINE_LABEL_FIELD_NAME),
-                        StackValue.LOCAL_0
-                )
-
         fun create(
                 cv: ClassBuilder,
                 expressionCodegen: ExpressionCodegen,

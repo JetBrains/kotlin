@@ -1,6 +1,8 @@
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testRuntime(intellijDep())
@@ -8,7 +10,7 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":jps-plugin"))
     compile(project(":plugins:android-extensions-compiler"))
-    compileOnly(intellijDep()) { includeJars("openapi", "jps-builders") }
+    compileOnly(intellijDep()) { includeJars("openapi", "jps-builders", "jps-model", "jdom") }
     compileOnly(intellijPluginDep("android")) { includeJars("jps/android-jps-plugin") }
     compile(intellijPluginDep("android")) { includeJars("jps/android-jps-plugin") }
 
@@ -34,9 +36,6 @@ sourceSets {
 projectTest {
     workingDir = rootDir
     useAndroidSdk()
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }
 
 testsJar {}

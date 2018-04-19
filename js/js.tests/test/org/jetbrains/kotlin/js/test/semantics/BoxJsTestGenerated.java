@@ -8095,6 +8095,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("primCtorDelegation1.kt")
+        public void testPrimCtorDelegation1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/primCtorDelegation1.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertiesAsParametersInitialized.kt")
         public void testPropertiesAsParametersInitialized() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/propertiesAsParametersInitialized.kt");
@@ -8104,6 +8110,30 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("propertyAccess.kt")
         public void testPropertyAccess() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/propertyAccess.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secCtorDelegation1.kt")
+        public void testSecCtorDelegation1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/secCtorDelegation1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secCtorDelegation2.kt")
+        public void testSecCtorDelegation2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/secCtorDelegation2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secCtorDelegation3.kt")
+        public void testSecCtorDelegation3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/secCtorDelegation3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secCtorDelegation4.kt")
+        public void testSecCtorDelegation4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/simple/secCtorDelegation4.kt");
             doTest(fileName);
         }
 

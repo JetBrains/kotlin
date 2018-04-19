@@ -43,4 +43,20 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant visibility modifier</problem_class>
     <description>Redundant visibility modifier</description>
   </problem>
+  <problem>
+    <file>redundantVisibilityModifier.kt</file>
+    <line>40</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/redundantVisibilityModifier.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant visibility modifier</problem_class>
+    <description>Redundant visibility modifier</description>
+  </problem>
+  <problem>
+    <file>redundantVisibilityModifier.kt</file>
+    <line>46</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/redundantVisibilityModifier.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant visibility modifier</problem_class>
+    <description>Redundant visibility modifier</description>
+  </problem>
 </problems>

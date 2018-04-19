@@ -149,7 +149,9 @@ fun MutableCollection<JdkId>.discoverJdksOnUnix(project: Project) {
 
 private val windowsConventionalJdkRegistryPaths = listOf(
         "SOFTWARE\\JavaSoft\\Java Development Kit",
-        "SOFTWARE\\Wow6432Node\\JavaSoft\\Java Development Kit")
+        "SOFTWARE\\Wow6432Node\\JavaSoft\\Java Development Kit",
+        "SOFTWARE\\JavaSoft\\JDK",
+        "SOFTWARE\\Wow6432Node\\JavaSoft\\JDK")
 
 fun MutableCollection<JdkId>.discoverJdksOnWindows(project: Project) {
     val registry = Native.get(WindowsRegistry::class.java)

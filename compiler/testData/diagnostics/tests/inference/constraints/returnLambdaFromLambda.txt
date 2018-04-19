@@ -1,0 +1,4 @@
+package
+
+public inline fun </*0*/ R> myRun(/*0*/ block: () -> R): R
+public fun testLambda(): kotlin.Unit

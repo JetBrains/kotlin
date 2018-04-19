@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
@@ -66,7 +68,6 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceWithDefaultsMember;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
@@ -74,6 +75,7 @@ import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarg
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -86,10 +88,12 @@ public class FunctionCodegen {
     private final ClassBuilder v;
     private final MemberCodegen<?> memberCodegen;
 
-    private final Function1<DeclarationDescriptor, Boolean> IS_PURE_INTERFACE_CHECKER = new Function1<DeclarationDescriptor, Boolean>() {
+    private final Function1<CallableMemberDescriptor, Boolean> DECLARATION_AND_DEFINITION_CHECKER = new Function1<CallableMemberDescriptor, Boolean>() {
         @Override
-        public Boolean invoke(DeclarationDescriptor descriptor) {
-            return JvmCodegenUtil.isInterfaceWithoutDefaults(descriptor, state);
+        public Boolean invoke(CallableMemberDescriptor descriptor) {
+            return !isInterface(descriptor.getContainingDeclaration()) ||
+                   (state.getTarget() != JvmTarget.JVM_1_6 &&
+                   hasJvmDefaultAnnotation(descriptor));
         }
     };
 
@@ -158,7 +162,8 @@ public class FunctionCodegen {
             @NotNull FunctionGenerationStrategy strategy
     ) {
         if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(descriptor)) {
-            generateMethod(origin, CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, bindingContext), strategy);
+            generateMethod(origin, CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, state.getLanguageVersionSettings()
+                    .supportsFeature(LanguageFeature.ReleaseCoroutines), bindingContext), strategy);
             return;
         }
 
@@ -173,11 +178,7 @@ public class FunctionCodegen {
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
-        if (isInterface(containingDeclaration) &&
-            functionDescriptor.getVisibility() == Visibilities.PRIVATE &&
-            !processInterfaceMember(functionDescriptor, contextKind, state)) {
-            return;
-        }
+        if (isInterface(containingDeclaration) && !processInterfaceMethod(functionDescriptor, contextKind, false)) return;
 
         boolean hasSpecialBridge = hasSpecialBridgeMethod(functionDescriptor);
         JvmMethodGenericSignature jvmSignature = strategy.mapMethodSignature(functionDescriptor, typeMapper, contextKind, hasSpecialBridge);
@@ -218,10 +219,6 @@ public class FunctionCodegen {
 
         if (contextKind != OwnerKind.ERASED_INLINE_CLASS) {
             generateBridges(functionDescriptor);
-        }
-
-        if (isJvm8InterfaceWithDefaultsMember(functionDescriptor, state) && contextKind != OwnerKind.DEFAULT_IMPLS && state.getGenerateDefaultImplsForJvm8()) {
-            generateDelegateForDefaultImpl(functionDescriptor, origin.getElement());
         }
 
         boolean staticInCompanionObject = CodegenUtilKt.isJvmStaticInCompanionObject(functionDescriptor);
@@ -376,7 +373,7 @@ public class FunctionCodegen {
             boolean staticInCompanionObject
     ) {
         OwnerKind contextKind = methodContext.getContextKind();
-        if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind, state)) {
+        if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind)) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
@@ -597,18 +594,6 @@ public class FunctionCodegen {
             generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (MultifileClassFacadeContext) context.getParentContext());
             methodEnd = new Label();
         }
-        else if (OwnerKind.DEFAULT_IMPLS == context.getContextKind() && isJvm8InterfaceWithDefaultsMember(functionDescriptor, parentCodegen.state)) {
-            int flags = AsmUtil.getMethodAsmFlags(functionDescriptor, OwnerKind.DEFAULT_IMPLS, context.getState());
-            assert (flags & Opcodes.ACC_ABSTRACT) == 0 : "Interface method with body should be non-abstract" + functionDescriptor;
-            Type type = typeMapper.mapOwner(functionDescriptor);
-            Method asmMethod = typeMapper.mapAsmMethod(functionDescriptor, OwnerKind.DEFAULT_IMPLS);
-            generateDelegateToStaticMethodBody(
-                    true, mv,
-                    new Method(asmMethod.getName() + JvmAbi.DEFAULT_IMPLS_DELEGATE_SUFFIX, asmMethod.getDescriptor()),
-                    type.getInternalName()
-            );
-            methodEnd = new Label();
-        }
         else {
             FrameMap frameMap = createFrameMap(
                     parentCodegen.state, signature, functionDescriptor.getExtensionReceiverParameter(),
@@ -642,7 +627,11 @@ public class FunctionCodegen {
         Type thisType = getThisTypeForFunction(functionDescriptor, context, typeMapper);
 
         if (functionDescriptor instanceof AnonymousFunctionDescriptor && functionDescriptor.isSuspend()) {
-            functionDescriptor = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(functionDescriptor, typeMapper.getBindingContext());
+            functionDescriptor = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                    functionDescriptor,
+                    parentCodegen.state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines),
+                    typeMapper.getBindingContext()
+            );
         }
         generateLocalVariableTable(
                 mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind(), typeMapper,
@@ -959,14 +948,14 @@ public class FunctionCodegen {
     private boolean hasSpecialBridgeMethod(@NotNull FunctionDescriptor descriptor) {
         if (SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor) == null) return false;
         return !BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
-                descriptor, typeMapper::mapAsmMethod, IS_PURE_INTERFACE_CHECKER
+                descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER
         ).isEmpty();
     }
 
     public void generateBridges(@NotNull FunctionDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.DEFAULT_IMPLS) return;
-        if (IS_PURE_INTERFACE_CHECKER.invoke(descriptor.getContainingDeclaration())) return;
+        if (!DECLARATION_AND_DEFINITION_CHECKER.invoke(descriptor)) return;
 
         // equals(Any?), hashCode(), toString() never need bridges
         if (isMethodOfAny(descriptor)) return;
@@ -976,7 +965,7 @@ public class FunctionCodegen {
         Set<Bridge<Method>> bridgesToGenerate;
         if (!isSpecial) {
             bridgesToGenerate =
-                    ImplKt.generateBridgesForFunctionDescriptor(descriptor, typeMapper::mapAsmMethod, IS_PURE_INTERFACE_CHECKER);
+                    ImplKt.generateBridgesForFunctionDescriptor(descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER);
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
                 boolean isSpecialBridge =
@@ -989,7 +978,7 @@ public class FunctionCodegen {
         }
         else {
             Set<BridgeForBuiltinSpecial<Method>> specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
-                    descriptor, typeMapper::mapAsmMethod, IS_PURE_INTERFACE_CHECKER
+                    descriptor, typeMapper::mapAsmMethod, DECLARATION_AND_DEFINITION_CHECKER
             );
 
             if (!specials.isEmpty()) {
@@ -1001,7 +990,7 @@ public class FunctionCodegen {
                 }
             }
 
-            if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION, state)) {
+            if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION)) {
                 CallableDescriptor overridden = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor);
                 assert overridden != null;
 
@@ -1073,7 +1062,8 @@ public class FunctionCodegen {
     ) {
         DeclarationDescriptor contextClass = owner.getContextDescriptor().getContainingDeclaration();
 
-        if (isInterface(contextClass) && !processInterface(contextClass, kind, state)) {
+        if (isInterface(contextClass) &&
+            !processInterfaceMethod(functionDescriptor, kind, true)) {
             return;
         }
 
@@ -1330,7 +1320,7 @@ public class FunctionCodegen {
             iv.invokespecial(parentInternalName, delegateTo.getName(), delegateTo.getDescriptor(), false);
         }
         else {
-            if (isJvm8InterfaceWithDefaultsMember(descriptor, state)) {
+            if (hasJvmDefaultAnnotation(descriptor)) {
                 iv.invokeinterface(v.getThisName(), delegateTo.getName(), delegateTo.getDescriptor());
             }
             else {
@@ -1489,20 +1479,23 @@ public class FunctionCodegen {
         );
     }
 
-    public static boolean processInterfaceMember(
-            @NotNull CallableMemberDescriptor function,
+    public static boolean processInterfaceMethod(
+            @NotNull CallableMemberDescriptor memberDescriptor,
             @NotNull OwnerKind kind,
-            @NotNull GenerationState state
+            boolean isDefaultOrSynthetic
     ) {
-        return processInterface(function.getContainingDeclaration(), kind, state);
-    }
+        DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
+        assert isInterface(containingDeclaration) : "'processInterfaceMethod' method should be called only for interfaces, but: " +
+                                                    containingDeclaration;
 
-    public static boolean processInterface(
-            @NotNull DeclarationDescriptor contextClass,
-            @NotNull OwnerKind kind,
-            @NotNull GenerationState state
-    ) {
-        assert isInterface(contextClass) : "'processInterface' method should be called only for interfaces, but: " + contextClass;
-        return JvmCodegenUtil.isJvm8InterfaceWithDefaults(contextClass, state) ? kind != OwnerKind.DEFAULT_IMPLS : kind == OwnerKind.DEFAULT_IMPLS;
+        if (hasJvmDefaultAnnotation(memberDescriptor)) {
+           return kind != OwnerKind.DEFAULT_IMPLS;
+        } else {
+            switch (kind) {
+                case DEFAULT_IMPLS: return true;
+                case IMPLEMENTATION: return !Visibilities.isPrivate(memberDescriptor.getVisibility()) && !isDefaultOrSynthetic;
+                default: return false;
+            }
+        }
     }
 }

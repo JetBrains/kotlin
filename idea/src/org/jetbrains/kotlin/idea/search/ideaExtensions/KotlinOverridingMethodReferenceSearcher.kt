@@ -24,8 +24,8 @@ import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.TypeConversionUtil
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -38,10 +38,9 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.utils.ifEmpty
 
 class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
-    override fun processQuery(p: MethodReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
+    override fun processQuery(p: MethodReferencesSearch.SearchParameters, consumer: ExecutorProcessor<PsiReference>) {
         val method = p.method
         val isConstructor = p.project.runReadActionInSmartMode { method.isConstructor }
         if (isConstructor) {
@@ -79,7 +78,7 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
                                             aClass: PsiClass,
                                             strictSignatureSearch: Boolean): MethodTextOccurrenceProcessor {
         return object: MethodTextOccurrenceProcessor(aClass, strictSignatureSearch, *methods) {
-            override fun processInexactReference(ref: PsiReference, refElement: PsiElement?, method: PsiMethod, consumer: Processor<PsiReference>): Boolean {
+            override fun processInexactReference(ref: PsiReference, refElement: PsiElement?, method: PsiMethod, consumer: ExecutorProcessor<PsiReference>): Boolean {
                 val isGetter = JvmAbi.isGetterName(method.name)
 
                 fun isWrongAccessorReference(): Boolean {

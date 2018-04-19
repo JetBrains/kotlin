@@ -4,8 +4,10 @@
  */
 
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 
 jvmTarget = "1.6"

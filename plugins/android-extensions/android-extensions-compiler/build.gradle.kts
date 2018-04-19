@@ -1,12 +1,12 @@
 
 description = "Kotlin Android Extensions Compiler"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 val robolectricClasspath by configurations.creating
-
-containsEmbeddedComponents()
 
 dependencies {
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
@@ -32,6 +32,7 @@ dependencies {
     testRuntime(intellijPluginDep("junit")) { includeJars("idea-junit", "resources_en") }
 
     robolectricClasspath(commonDep("org.robolectric", "robolectric"))
+    robolectricClasspath(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 
     embeddedComponents(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 }

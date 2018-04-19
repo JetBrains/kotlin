@@ -69,6 +69,7 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertContains("example.JavaTest PASSED")
             assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
             assertNotContains("warning: The following options were not recognized by any processor")
+            assertContains("Need to discovery annotation processors in the AP classpath")
         }
 
         project.build("build") {
@@ -135,6 +136,7 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
             assertFileExists(javaClassesDir() + "example/TestClassCustomized.class")
+            assertContains("Annotation processor class names are set, skip AP discovery")
         }
     }
 

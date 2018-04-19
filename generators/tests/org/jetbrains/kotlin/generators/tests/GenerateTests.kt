@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeCompiledLightClassTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeLightClassTest
+import org.jetbrains.kotlin.idea.caches.resolve.AbstractMultiModuleLineMarkerTest
 import org.jetbrains.kotlin.idea.codeInsight.*
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionTest
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractGenerateHashCodeAndEqualsActionTest
@@ -113,6 +114,7 @@ import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProje
 import org.jetbrains.kotlin.idea.navigation.*
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
+import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiModuleTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
 import org.jetbrains.kotlin.idea.refactoring.AbstractNameSuggestionProviderTest
 import org.jetbrains.kotlin.idea.refactoring.copy.AbstractCopyTest
@@ -548,6 +550,10 @@ fun main(args: Array<String>) {
             model("codeInsight/lineMarker")
         }
 
+        testClass<AbstractMultiModuleLineMarkerTest> {
+            model("multiModuleLineMarker", extension = null, recursive = false)
+        }
+
         testClass<AbstractShortenRefsTest> {
             model("shortenRefs", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
@@ -635,6 +641,22 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMultiFileHighlightingTest> {
             model("multiFileHighlighting", recursive = false)
+        }
+
+        testClass<AbstractQuickFixMultiModuleTest> {
+            model("multiModuleQuickFix", recursive = false, extension = null)
+        }
+
+        testClass<AbstractKotlinGotoImplementationMultiModuleTest> {
+            model("navigation/implementations/multiModule", recursive = false, extension = null)
+        }
+
+        testClass<AbstractKotlinGotoRelatedSymbolMultiModuleTest> {
+            model("navigation/relatedSymbols/multiModule", recursive = false, extension = null)
+        }
+
+        testClass<AbstractKotlinGotoSuperMultiModuleTest> {
+            model("navigation/gotoSuper/multiModule", recursive = false, extension = null)
         }
 
         testClass<AbstractExtractionTest> {
@@ -859,6 +881,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractCompletionIncrementalResolveTest> {
             model("incrementalResolve")
+        }
+
+        testClass<AbstractMultiPlatformCompletionTest> {
+            model("multiPlatform", recursive = false, extension = null)
         }
     }
 

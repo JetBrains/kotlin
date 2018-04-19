@@ -20,6 +20,7 @@
 
 package kotlin.text
 
+import kotlin.*
 import kotlin.comparisons.*
 import kotlin.internal.contracts.*
 

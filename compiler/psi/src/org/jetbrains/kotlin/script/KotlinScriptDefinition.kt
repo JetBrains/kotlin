@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtScript
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 open class KotlinScriptDefinition(val template: KClass<out Any>) : UserDataHolderBase() {
@@ -49,6 +51,11 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) : UserDataHolde
 
     @Deprecated("temporary workaround for missing functionality, will be replaced by the new API soon")
     open val additionalCompilerArguments: Iterable<String>? = null
+
+    open val scriptExpectedLocations: List<ScriptExpectedLocation> =
+        listOf(ScriptExpectedLocation.SourcesOnly, ScriptExpectedLocation.TestsOnly)
+
+    open val implicitReceivers: List<KType> get() = emptyList()
 }
 
 object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)

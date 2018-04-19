@@ -1,4 +1,5 @@
 $TESTDATA_DIR$/simple.kt
+-Xdisable-default-scripting-plugin
 -classpath
 not/existing/path
 -d

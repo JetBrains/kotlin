@@ -63,6 +63,8 @@ dependencies {
     proguardLibraryJars(projectDist(":kotlin-stdlib"))
     proguardLibraryJars(projectDist(":kotlin-script-runtime"))
     proguardLibraryJars(projectDist(":kotlin-reflect"))
+    proguardLibraryJars(projectDist(":kotlin-scripting-common"))
+    proguardLibraryJars(projectDist(":kotlin-scripting-jvm"))
 
     compile(project(":kotlin-stdlib"))
     compile(project(":kotlin-script-runtime"))
@@ -106,7 +108,7 @@ val proguard by task<ProGuardTask> {
         System.setProperty("kotlin-compiler-jar", outputJar.canonicalPath)
     }
 
-    libraryjars(proguardLibraryJars)
+    libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
     printconfiguration("$buildDir/compiler.pro.dump")
 }
 

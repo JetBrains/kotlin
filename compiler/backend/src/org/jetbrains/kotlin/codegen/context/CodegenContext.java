@@ -27,6 +27,8 @@ import java.util.*;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
+import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.isCallableMemberWithJvmDefaultAnnotation;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -414,7 +416,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @NotNull D descriptor,
             @Nullable ClassDescriptor superCallTarget,
             @NotNull GenerationState state) {
-        if (superCallTarget != null && !isNonDefaultInterfaceMember(descriptor, state)) {
+        if (superCallTarget != null && !isNonDefaultInterfaceMember(descriptor)) {
             CodegenContext afterInline = getFirstCrossInlineOrNonInlineContext();
             CodegenContext c = afterInline.findParentContextWithDescriptor(superCallTarget);
             assert c != null : "Couldn't find a context for a super-call: " + descriptor;
@@ -569,10 +571,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         CodegenContext properContext = getFirstCrossInlineOrNonInlineContext();
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
         boolean isInliningContext = properContext.isInlineMethodContext();
+        boolean sameJvmDefault = hasJvmDefaultAnnotation(descriptor) ==
+                                 isCallableMemberWithJvmDefaultAnnotation(properContext.contextDescriptor) ||
+                                 properContext.contextDescriptor instanceof AccessorForCallableDescriptor;
         if (!isInliningContext && (
                 !properContext.hasThisDescriptor() ||
-                enclosing == properContext.getThisDescriptor() ||
-                enclosing == properContext.getClassOrPackageParentContext().getContextDescriptor())) {
+                ((enclosing == properContext.getThisDescriptor()) && sameJvmDefault) ||
+                ((enclosing == properContext.getClassOrPackageParentContext().getContextDescriptor()) && sameJvmDefault))) {
             return descriptor;
         }
         return (D) properContext.accessibleDescriptorIfNeeded(descriptor, superCallTarget, isInliningContext);
@@ -623,6 +628,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         if (descriptorContext == null) {
             return descriptor;
         }
+
+        if (hasJvmDefaultAnnotation(descriptor) && descriptorContext instanceof DefaultImplsClassContext) {
+            descriptorContext = ((DefaultImplsClassContext) descriptorContext).getInterfaceContext();
+        }
+
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             int propertyAccessFlag = getVisibilityAccessFlag(descriptor);

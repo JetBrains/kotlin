@@ -34,6 +34,7 @@ dependencies {
 
 val jar: Jar by tasks
 jar.apply {
+    dependsOn(fatJarContents)
     from(compile.filter { it.extension == "jar" }.map { zipTree(it) })
     from(fatJarContents.map { zipTree(it) })
     from(fatJarContentsStripServices.map { zipTree(it) }) { exclude("META-INF/services/**") }

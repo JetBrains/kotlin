@@ -25,6 +25,36 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("idea/testData/quickfix/addAnnotationTarget")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddAnnotationTarget extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInAddAnnotationTarget() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addAnnotationTarget"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("withJava.before.Main.kt")
+        public void testWithJava() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addAnnotationTarget/withJava.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/addJvmDefault")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddJvmDefault extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInAddJvmDefault() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addJvmDefault"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("javaDefaultOverride.before.Main.kt")
+        public void testJavaDefaultOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addJvmDefault/javaDefaultOverride.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addStarProjections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

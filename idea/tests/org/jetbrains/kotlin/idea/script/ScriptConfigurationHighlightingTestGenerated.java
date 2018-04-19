@@ -91,9 +91,27 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         doTest(fileName);
     }
 
+    @TestMetadata("multiModule")
+    public void testMultiModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/multiModule/");
+        doTest(fileName);
+    }
+
     @TestMetadata("noResolver")
     public void testNoResolver() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/noResolver/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyAccessor")
+    public void testPropertyAccessor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/propertyAccessor/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("propertyAccessorFromModule")
+    public void testPropertyAccessorFromModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/highlighting/propertyAccessorFromModule/");
         doTest(fileName);
     }
 

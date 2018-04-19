@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 
 open class KnownPackageFragmentDescriptor(moduleDescriptor: ModuleDescriptor, fqName: FqName) :
@@ -44,7 +45,7 @@ open class KnownClassDescriptor(
     fun initialize(declaredTypeParameters: List<TypeParameterDescriptor>, supertypes: List<KotlinType>) {
         this.declaredTypeParameters = declaredTypeParameters
         this.supertypes = supertypes
-        this.typeConstructor = ClassTypeConstructorImpl(this, declaredTypeParameters, supertypes)
+        this.typeConstructor = ClassTypeConstructorImpl(this, declaredTypeParameters, supertypes, LockBasedStorageManager.NO_LOCKS)
         this.defaultType = TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
     }
 

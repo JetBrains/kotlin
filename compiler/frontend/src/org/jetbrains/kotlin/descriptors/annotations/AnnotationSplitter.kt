@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -135,7 +135,6 @@ class AnnotationSplitter(
         override fun findAnnotation(fqName: FqName) = annotations.findAnnotation(fqName)
         override fun getUseSiteTargetedAnnotations() = annotations.getUseSiteTargetedAnnotations()
         override fun getAllAnnotations() = annotations.getAllAnnotations()
-        override fun findExternalAnnotation(fqName: FqName) = annotations.findExternalAnnotation(fqName)
         override fun iterator() = annotations.iterator()
         override fun toString() = annotations.toString()
     }

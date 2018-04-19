@@ -26,7 +26,7 @@ interface IrSymbolOwner : IrElement {
     val symbol: IrSymbol
 }
 
-interface IrDeclaration : IrStatement {
+interface IrDeclaration : IrStatement, IrAnnotationContainer {
     val descriptor: DeclarationDescriptor
     val declarationKind: IrDeclarationKind
     val origin: IrDeclarationOrigin

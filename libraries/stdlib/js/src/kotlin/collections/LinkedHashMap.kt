@@ -27,7 +27,7 @@ import kotlin.collections.MutableMap.MutableEntry
  *
  * The insertion order is preserved by maintaining a doubly-linked list of all of its entries.
  */
-public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
+public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
 
     /**
      * The entry we use includes next/prev pointers for a doubly-linked circular
@@ -169,7 +169,7 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
     /**
      * Constructs an empty [LinkedHashMap] instance.
      */
-    constructor() : super()  {
+    actual constructor() : super()  {
         map = HashMap<K, ChainEntry<K, V>>()
     }
 
@@ -186,19 +186,21 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    constructor(initialCapacity: Int, loadFactor: Float = 0f) : super(initialCapacity, loadFactor) {
+    actual constructor(initialCapacity: Int, loadFactor: Float) : super(initialCapacity, loadFactor) {
         map = HashMap<K, ChainEntry<K, V>>()
     }
+
+    actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 
     /**
      * Constructs an instance of [LinkedHashMap] filled with the contents of the specified [original] map.
      */
-    constructor(original: Map<out K, V>) {
+    actual constructor(original: Map<out K, V>) {
         map = HashMap<K, ChainEntry<K, V>>()
         this.putAll(original)
     }
 
-    override fun clear() {
+    actual override fun clear() {
         map.clear()
         head = null
     }
@@ -208,9 +210,10 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
 //        return LinkedHashMap(this)
 //    }
 
-    override fun containsKey(key: K): Boolean = map.containsKey(key)
 
-    override fun containsValue(value: V): Boolean {
+    actual override fun containsKey(key: K): Boolean = map.containsKey(key)
+
+    actual override fun containsValue(value: V): Boolean {
         var node: ChainEntry<K, V> = head ?: return false
         do {
             if (node.value == value) {
@@ -224,9 +227,9 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
 
     override fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
 
-    override operator fun get(key: K): V? = map.get(key)?.value
+    actual override operator fun get(key: K): V? = map.get(key)?.value
 
-    override fun put(key: K, value: V): V? {
+    actual override fun put(key: K, value: V): V? {
         val old = map.get(key)
         if (old == null) {
             val newEntry = ChainEntry(key, value)
@@ -239,7 +242,7 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
         }
     }
 
-    override fun remove(key: K): V? {
+    actual override fun remove(key: K): V? {
         val entry = map.remove(key)
         if (entry != null) {
             entry.remove()
@@ -248,7 +251,7 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
         return null
     }
 
-    override val size: Int get() = map.size
+    actual override val size: Int get() = map.size
 
 }
 

@@ -1,14 +1,17 @@
+// !API_VERSION: 1.3
+// !ENABLE_JVM_DEFAULT
 // JVM_TARGET: 1.8
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
-
+// WITH_RUNTIME
 
 interface Test {
+    @JvmDefault
     fun test(): String {
         return "OK"
     }
 }
 
 interface Test2 : Test {
+    @JvmDefault
     override fun test(): String {
         return super.test()
     }

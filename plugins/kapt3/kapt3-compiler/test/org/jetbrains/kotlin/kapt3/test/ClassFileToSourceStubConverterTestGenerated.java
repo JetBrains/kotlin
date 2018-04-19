@@ -67,6 +67,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         doTest(fileName);
     }
 
+    @TestMetadata("cyrillicClassName.kt")
+    public void testCyrillicClassName() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/cyrillicClassName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/dataClass.kt");
@@ -334,6 +340,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("propertyAnnotations.kt")
     public void testPropertyAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/propertyAnnotations.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("repeatableAnnotations.kt")
+    public void testRepeatableAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/kapt3-compiler/testData/converter/repeatableAnnotations.kt");
         doTest(fileName);
     }
 

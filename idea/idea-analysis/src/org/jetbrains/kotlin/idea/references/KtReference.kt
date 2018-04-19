@@ -78,7 +78,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T) : PsiPolyVariantRe
             class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
 
             private fun resolveToPsiElements(ref: AbstractKtReference<KtElement>): Collection<PsiElement> {
-                val bindingContext = ref.expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
+                val bindingContext = ref.expression.analyze(BodyResolveMode.PARTIAL)
                 return resolveToPsiElements(ref, bindingContext, ref.getTargetDescriptors(bindingContext))
             }
 

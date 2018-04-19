@@ -1,0 +1,3 @@
+// FIX: Add explicit Unit return type
+// DISABLE-ERRORS
+fun main(args: Array<String>): Unit = 1

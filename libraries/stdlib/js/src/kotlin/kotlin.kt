@@ -53,20 +53,20 @@ public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = definedExter
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  */
-public fun <T> lazy(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public actual fun <T> lazy(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [mode] parameter is ignored. */
-public fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [lock] parameter is ignored.
  */
-public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 
 internal fun fillFrom(src: dynamic, dst: dynamic): dynamic {

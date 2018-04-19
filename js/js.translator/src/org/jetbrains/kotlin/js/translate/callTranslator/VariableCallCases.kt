@@ -195,7 +195,7 @@ object SuperPropertyAccessCase : VariableAccessCase() {
 private val VariableAccessInfo.additionalArguments: List<JsExpression> get() = value?.let { listOf(it) }.orEmpty()
 
 fun VariableAccessInfo.translateVariableAccess(): JsExpression {
-    val intrinsic = DelegatePropertyAccessIntrinsic.intrinsic(this)
+    val intrinsic = DelegatePropertyAccessIntrinsic.intrinsic(this, context)
 
     return when {
         intrinsic != null ->

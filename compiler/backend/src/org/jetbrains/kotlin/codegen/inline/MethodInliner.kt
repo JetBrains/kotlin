@@ -1,15 +1,16 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.backend.jvm.codegen.IrExpressionLambda
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClosureCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
+import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
@@ -49,11 +50,12 @@ class MethodInliner(
         private val shouldPreprocessApiVersionCalls: Boolean = false
 ) {
     private val typeMapper = inliningContext.state.typeMapper
+    private val languageVersionSettings = inliningContext.state.languageVersionSettings
     private val invokeCalls = ArrayList<InvokeCall>()
     //keeps order
     private val transformations = ArrayList<TransformationInfo>()
     //current state
-    private val currentTypeMapping = HashMap<String, String>()
+    private val currentTypeMapping = HashMap<String, String?>()
     private val result = InlineResult.create()
     private var lambdasFinallyBlocks: Int = 0
 
@@ -291,7 +293,7 @@ class MethodInliner(
                         }
 
                         val isContinuationCreate = isContinuation && oldInfo != null && resultNode.name == "create" &&
-                                resultNode.desc.startsWith("(" + CONTINUATION_ASM_TYPE.descriptor)
+                                resultNode.desc.endsWith(")" + languageVersionSettings.continuationAsmType().descriptor)
 
                         for (capturedParamDesc in info.allRecapturedParameters) {
                             if (capturedParamDesc.fieldName == THIS && isContinuationCreate) {
@@ -368,7 +370,14 @@ class MethodInliner(
         )
 
         val transformationVisitor = object : MethodVisitor(API, transformedNode) {
-            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && inlineOnlySmapSkipper == null
+            /*
+                Ignore simple @InlineOnly functions such as 'error()' or 'assert()' without lambda parameters,
+                as we likely to want to have a line number from the call site in a stack trace.
+             */
+            private val GENERATE_LINE_NUMBERS = GENERATE_SMAP && (inlineOnlySmapSkipper == null || run {
+                val callableDescriptor = inliningContext.root.sourceCompilerForInline.callableDescriptor
+                callableDescriptor != null && callableDescriptor.valueParameters.any { it.type.isFunctionType }
+            })
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
@@ -400,7 +409,7 @@ class MethodInliner(
             }
 
             override fun visitLineNumber(line: Int, start: Label) {
-                if (isInliningLambda || GENERATE_DEBUG_INFO) {
+                if (isInliningLambda || GENERATE_LINE_NUMBERS) {
                     super.visitLineNumber(line, start)
                 }
             }
@@ -428,7 +437,7 @@ class MethodInliner(
             override fun visitLocalVariable(
                     name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
             ) {
-                if (isInliningLambda || GENERATE_DEBUG_INFO) {
+                if (isInliningLambda || (GENERATE_SMAP && inlineOnlySmapSkipper == null)) {
                     val varSuffix = if (inliningContext.isRoot && !isFakeLocalVariableForInline(name)) INLINE_FUN_VAR_SUFFIX else ""
                     val varName = if (!varSuffix.isEmpty() && name == "this") name + "_" else name
                     super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index))
@@ -652,7 +661,7 @@ class MethodInliner(
         // We can't have suspending constructors.
         assert(invoke.opcode != Opcodes.INVOKESPECIAL)
         if (Type.getReturnType(invoke.desc) != OBJECT_TYPE) return false
-        return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == CONTINUATION_ASM_TYPE }
+        return Type.getArgumentTypes(invoke.desc).let { it.isNotEmpty() && it.last() == languageVersionSettings.continuationAsmType() }
     }
 
     private fun preprocessNodeBeforeInline(node: MethodNode, labelOwner: LabelOwner) {

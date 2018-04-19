@@ -1,14 +1,11 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.FAKE_CONTINUATION_CLASS_DESCRIPTOR
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
-import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.ClassId
@@ -43,12 +40,10 @@ interface TypeMappingConfiguration<out T : Any> {
     fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): T?
     fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String?
     fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor)
+    fun releaseCoroutines(): Boolean
 }
 
 const val NON_EXISTENT_CLASS_NAME = "error/NonExistentClass"
-
-private val CONTINUATION_INTERNAL_NAME =
-    JvmClassName.byClassId(ClassId.topLevel(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)).internalName
 
 fun <T : Any> mapType(
     kotlinType: KotlinType,
@@ -60,7 +55,7 @@ fun <T : Any> mapType(
 ): T {
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
-            transformSuspendFunctionToRuntimeFunctionType(kotlinType),
+            transformSuspendFunctionToRuntimeFunctionType(kotlinType, typeMappingConfiguration.releaseCoroutines()),
             factory, mode, typeMappingConfiguration, descriptorTypeWriter,
             writeGenericType
         )
@@ -178,12 +173,24 @@ fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
             && descriptor !is PropertyGetterDescriptor
 }
 
-private fun <T : Any> mapBuiltInType(type: KotlinType, typeFactory: JvmTypeFactory<T>, mode: TypeMappingMode): T? {
+private fun continuationInternalName(releaseCoroutines: Boolean): String {
+    val fqName =
+        if (releaseCoroutines) DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+        else DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+    return JvmClassName.byClassId(ClassId.topLevel(fqName)).internalName
+}
+
+private fun <T : Any> mapBuiltInType(
+    type: KotlinType,
+    typeFactory: JvmTypeFactory<T>,
+    mode: TypeMappingMode
+): T? {
     val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
-    if (descriptor === FAKE_CONTINUATION_CLASS_DESCRIPTOR) {
-
-        return typeFactory.createObjectType(CONTINUATION_INTERNAL_NAME)
+    if (descriptor === FAKE_CONTINUATION_CLASS_DESCRIPTOR_EXPERIMENTAL) {
+        return typeFactory.createObjectType(continuationInternalName(false))
+    } else if (descriptor == FAKE_CONTINUATION_CLASS_DESCRIPTOR_RELEASE) {
+        return typeFactory.createObjectType(continuationInternalName(true))
     }
 
     val primitiveType = KotlinBuiltIns.getPrimitiveType(descriptor)

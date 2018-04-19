@@ -1,0 +1,7 @@
+fun foo(
+    <spot>param1: String,
+    param2: Int,
+    param3: Any</spot>
+) {
+    bar()
+}

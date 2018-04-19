@@ -525,7 +525,7 @@ message Expression {
     isNegated => this expression should be negated
     isIsNullPredicate => this expression is IsNullPredicate with 'variableName' as argument
   */
-  optional int32 flags = 1;
+  optional int32 flags = 1 [default = 0];
 
   // stored as index in valueParameters list of owner-function in 1-indexation
   // Index '0' is reserved for extension receiver

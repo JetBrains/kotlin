@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.config;
 
-import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -87,7 +86,9 @@ public class JsConfig {
             @Nullable List<JsModuleDescriptor<KotlinJavaScriptLibraryParts>> metadataCache,
             @Nullable Set<String> librariesToSkip) {
         this.project = project;
-        this.configuration = configuration;
+        this.configuration = configuration.copy();
+        CommonConfigurationKeysKt.setLanguageVersionSettings(this.configuration, new ReleaseCoroutinesDisabledLanguageVersionSettings(
+                CommonConfigurationKeysKt.getLanguageVersionSettings(this.configuration)));
         this.metadataCache = metadataCache;
         this.librariesToSkip = librariesToSkip;
     }
@@ -203,6 +204,8 @@ public class JsConfig {
                 continue;
             }
 
+            Set<String> moduleNames = new LinkedHashSet<>();
+
             for (KotlinJavascriptMetadata metadata : metadataList) {
                 if (!metadata.getVersion().isCompatible() && !skipMetadataVersionCheck) {
                     report.error("File '" + path + "' was compiled with an incompatible version of Kotlin. " +
@@ -210,9 +213,18 @@ public class JsConfig {
                                  ", expected version is " + JsMetadataVersion.INSTANCE);
                     return true;
                 }
-                if (!modules.add(metadata.getModuleName())) {
-                    report.warning("Module \"" + metadata.getModuleName() + "\" is defined in more than one file");
+
+                moduleNames.add(metadata.getModuleName());
+            }
+
+            for (String moduleName : moduleNames) {
+                if (!modules.add(moduleName)) {
+                    report.warning("Module \"" + moduleName + "\" is defined in more than one file");
                 }
+            }
+
+            if (modules.contains(getModuleId())) {
+                report.warning("Module \"" + getModuleId() + "\" depends on module with the same name");
             }
 
             Set<String> friendLibsSet = new HashSet<>(getFriends());
@@ -229,9 +241,12 @@ public class JsConfig {
     @NotNull
     public List<JsModuleDescriptor<ModuleDescriptorImpl>> getModuleDescriptors() {
         init();
-        if (moduleDescriptors != null) return moduleDescriptors;
+        return moduleDescriptors;
+    }
 
-        moduleDescriptors = new SmartList<>();
+    @NotNull
+    private List<JsModuleDescriptor<ModuleDescriptorImpl>> createModuleDescriptors() {
+        List<JsModuleDescriptor<ModuleDescriptorImpl>> moduleDescriptors = new SmartList<>();
         List<ModuleDescriptorImpl> kotlinModuleDescriptors = new ArrayList<>();
         for (KotlinJavascriptMetadata metadataEntry : metadata) {
             JsModuleDescriptor<ModuleDescriptorImpl> descriptor = createModuleDescriptor(metadataEntry);
@@ -274,9 +289,12 @@ public class JsConfig {
     @NotNull
     public List<JsModuleDescriptor<ModuleDescriptorImpl>> getFriendModuleDescriptors() {
         init();
-        if (friendModuleDescriptors != null) return friendModuleDescriptors;
+        return friendModuleDescriptors;
+    }
 
-        friendModuleDescriptors = new SmartList<>();
+    @NotNull
+    private List<JsModuleDescriptor<ModuleDescriptorImpl>> createFriendModuleDescriptors() {
+        List<JsModuleDescriptor<ModuleDescriptorImpl>> friendModuleDescriptors = new SmartList<>();
         for (KotlinJavascriptMetadata metadataEntry : friends) {
             JsModuleDescriptor<ModuleDescriptorImpl> descriptor = createModuleDescriptor(metadataEntry);
             friendModuleDescriptors.add(descriptor);
@@ -287,7 +305,7 @@ public class JsConfig {
         return friendModuleDescriptors;
     }
 
-    private void init() {
+    public void init() {
         if (!initialized) {
             JsConfig.Reporter reporter = new Reporter() {
                 @Override
@@ -297,6 +315,14 @@ public class JsConfig {
             };
 
             checkLibFilesAndReportErrors(reporter);
+        }
+
+        if (moduleDescriptors == null) {
+            moduleDescriptors = createModuleDescriptors();
+        }
+
+        if (friendModuleDescriptors == null) {
+            friendModuleDescriptors = createFriendModuleDescriptors();
         }
     }
 

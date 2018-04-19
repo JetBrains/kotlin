@@ -1,4 +1,0 @@
-@deprecated("Use newFun instead")
-fun oldFun(): Int {
-    return newFun(null)
-}

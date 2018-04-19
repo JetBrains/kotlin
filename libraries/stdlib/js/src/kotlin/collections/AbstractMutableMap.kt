@@ -28,7 +28,7 @@ package kotlin.collections
  * @param K the type of map keys. The map is invariant on its key type.
  * @param V the type of map values. The map is invariant on its value type.
  */
-public abstract class AbstractMutableMap<K, V> protected constructor() : AbstractMap<K, V>(), MutableMap<K, V> {
+public actual abstract class AbstractMutableMap<K, V> protected actual constructor() : AbstractMap<K, V>(), MutableMap<K, V> {
 
     /**
      * A mutable [Map.Entry] shared by several [Map] implementations.
@@ -90,7 +90,7 @@ public abstract class AbstractMutableMap<K, V> protected constructor() : Abstrac
         return _keys!!
     }
 
-    abstract override fun put(key: K, value: V): V?
+    actual abstract override fun put(key: K, value: V): V?
 
     override fun putAll(from: Map<out K, V>) {
         for ((key, value) in from) {

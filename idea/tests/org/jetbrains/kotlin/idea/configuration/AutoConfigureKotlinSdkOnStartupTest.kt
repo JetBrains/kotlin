@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.junit.Assert
 
 // Do not add new tests here since application is initialized only once
-class AutoConfigureKotlinSdkOnStartupTest : ConfigureKotlinInTempDirTest() {
+class AutoConfigureKotlinSdkOnStartupTest : AbstractConfigureKotlinInTempDirTest() {
     fun testKotlinSdkAdded() {
         Assert.assertTrue(ProjectJdkTable.getInstance().allJdks.any { it.sdkType is KotlinSdkType })
     }

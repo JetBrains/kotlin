@@ -330,7 +330,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common,
                     MODULE_FILES to files
                 )
-            ) { _, _ ->
+            ) { _ ->
                 // TODO
                 PackagePartProvider.Empty
             }

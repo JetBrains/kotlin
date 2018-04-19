@@ -31230,7 +31230,7 @@ public final class DebugProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *isNegated =&gt; this expression should be negated
@@ -31239,7 +31239,7 @@ public final class DebugProtoBuf {
      */
     boolean hasFlags();
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *isNegated =&gt; this expression should be negated
@@ -31673,7 +31673,7 @@ public final class DebugProtoBuf {
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *isNegated =&gt; this expression should be negated
@@ -31684,7 +31684,7 @@ public final class DebugProtoBuf {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 flags = 1;</code>
+     * <code>optional int32 flags = 1 [default = 0];</code>
      *
      * <pre>
      *isNegated =&gt; this expression should be negated
@@ -32365,7 +32365,7 @@ public final class DebugProtoBuf {
 
       private int flags_ ;
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *isNegated =&gt; this expression should be negated
@@ -32376,7 +32376,7 @@ public final class DebugProtoBuf {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *isNegated =&gt; this expression should be negated
@@ -32387,7 +32387,7 @@ public final class DebugProtoBuf {
         return flags_;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *isNegated =&gt; this expression should be negated
@@ -32401,7 +32401,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 flags = 1;</code>
+       * <code>optional int32 flags = 1 [default = 0];</code>
        *
        * <pre>
        *isNegated =&gt; this expression should be negated
@@ -33700,24 +33700,24 @@ public final class DebugProtoBuf {
       "\024\n\020RETURNS_CONSTANT\020\000\022\t\n\005CALLS\020\001\022\024\n\020RETU" +
       "RNS_NOT_NULL\020\002\"G\n\016InvocationKind\022\020\n\014AT_M" +
       "OST_ONCE\020\000\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\rAT_LEAST" +
-      "_ONCE\020\002\"\234\003\n\nExpression\022\r\n\005flags\030\001 \001(\005\022!\n",
-      "\031value_parameter_reference\030\002 \001(\005\022O\n\016cons" +
-      "tant_value\030\003 \001(\01627.org.jetbrains.kotlin." +
-      "metadata.Expression.ConstantValue\022=\n\020is_" +
-      "instance_type\030\004 \001(\0132#.org.jetbrains.kotl" +
-      "in.metadata.Type\022\033\n\023is_instance_type_id\030" +
-      "\005 \001(\005\022?\n\014and_argument\030\006 \003(\0132).org.jetbra" +
-      "ins.kotlin.metadata.Expression\022>\n\013or_arg" +
-      "ument\030\007 \003(\0132).org.jetbrains.kotlin.metad" +
-      "ata.Expression\".\n\rConstantValue\022\010\n\004TRUE\020" +
-      "\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002*9\n\010Modality\022\t\n\005FI",
-      "NAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020" +
-      "\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE" +
-      "\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE" +
-      "_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013D" +
-      "ECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEG" +
-      "ATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProtoBu" +
-      "f"
+      "_ONCE\020\002\"\237\003\n\nExpression\022\020\n\005flags\030\001 \001(\005:\0010",
+      "\022!\n\031value_parameter_reference\030\002 \001(\005\022O\n\016c" +
+      "onstant_value\030\003 \001(\01627.org.jetbrains.kotl" +
+      "in.metadata.Expression.ConstantValue\022=\n\020" +
+      "is_instance_type\030\004 \001(\0132#.org.jetbrains.k" +
+      "otlin.metadata.Type\022\033\n\023is_instance_type_" +
+      "id\030\005 \001(\005\022?\n\014and_argument\030\006 \003(\0132).org.jet" +
+      "brains.kotlin.metadata.Expression\022>\n\013or_" +
+      "argument\030\007 \003(\0132).org.jetbrains.kotlin.me" +
+      "tadata.Expression\".\n\rConstantValue\022\010\n\004TR" +
+      "UE\020\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002*9\n\010Modality\022\t\n",
+      "\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEAL" +
+      "ED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIV" +
+      "ATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIV" +
+      "ATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberKind\022\017" +
+      "\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDE" +
+      "LEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\017B\rDebugProt" +
+      "oBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

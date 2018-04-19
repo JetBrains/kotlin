@@ -59,7 +59,11 @@ class DebuggerClassNameProvider(
                 KtFunctionLiteral::class.java,
                 KtAnonymousInitializer::class.java)
 
-        internal fun getRelevantElement(element: PsiElement): PsiElement? {
+        internal fun getRelevantElement(element: PsiElement?): PsiElement? {
+            if (element == null) {
+                return null
+            }
+
             for (elementType in CLASS_ELEMENT_TYPES) {
                 if (elementType.isInstance(element)) {
                     return element
@@ -194,7 +198,7 @@ class DebuggerClassNameProvider(
                         val typeForAnonymousClass = asmTypeForAnonymousClassOrNull(typeMapper.bindingContext, element)
 
                         if (typeForAnonymousClass == null) {
-                            val parentText = element.relevantParentInReadAction?.text ?: "<parent was null>"
+                            val parentText = runReadAction { getRelevantElement(element.parent)?.text } ?: "<parent was null>"
                             LOG.error("Can not get type for ${element.text}, parent: $parentText")
                             classNamesOfContainingDeclaration
                         } else {

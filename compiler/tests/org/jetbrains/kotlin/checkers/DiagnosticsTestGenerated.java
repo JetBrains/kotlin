@@ -4796,6 +4796,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("commonSupertypeForCyclicAndUsualTypes.kt")
+            public void testCommonSupertypeForCyclicAndUsualTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/commonSupertypeForCyclicAndUsualTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("commonSupertypeForCyclicTypes.kt")
+            public void testCommonSupertypeForCyclicTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/commonSupertypeForCyclicTypes.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("cyclicHierarchy.kt")
             public void testCyclicHierarchy() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cyclicHierarchy/cyclicHierarchy.kt");
@@ -6223,6 +6235,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/inference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("delegateExpressionAsLambda.kt")
+                public void testDelegateExpressionAsLambda() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/delegateExpressionAsLambda.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("differentDelegatedExpressions.kt")
                 public void testDifferentDelegatedExpressions() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/differentDelegatedExpressions.kt");
@@ -6274,6 +6292,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("noExpectedTypeForSupertypeConstraint.kt")
                 public void testNoExpectedTypeForSupertypeConstraint() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/noExpectedTypeForSupertypeConstraint.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("resultTypeOfLambdaForConventionMethods.kt")
+                public void testResultTypeOfLambdaForConventionMethods() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegatedProperty/inference/resultTypeOfLambdaForConventionMethods.kt");
                     doTest(fileName);
                 }
 
@@ -10891,6 +10915,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("returnLambdaFromLambda.kt")
+                public void testReturnLambdaFromLambda() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/returnLambdaFromLambda.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("subtypeConstraintOnNullableType.kt")
                 public void testSubtypeConstraintOnNullableType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/constraints/subtypeConstraintOnNullableType.kt");
@@ -13670,6 +13700,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("kt828.kt")
             public void testKt828() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/library/kt828.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/localClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LocalClasses extends AbstractDiagnosticsTest {
+            public void testAllFilesPresentInLocalClasses() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/localClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("localAnnotationClass.kt")
+            public void testLocalAnnotationClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/localClasses/localAnnotationClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localAnnotationClassError.kt")
+            public void testLocalAnnotationClassError() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/localClasses/localAnnotationClassError.kt");
                 doTest(fileName);
             }
         }
@@ -16849,6 +16900,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("multiDeclaration.kt")
                 public void testMultiDeclaration() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/multiDeclaration.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noWarningOnDoubleElvis.kt")
+                public void testNoWarningOnDoubleElvis() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/nullabilityWarnings/noWarningOnDoubleElvis.kt");
                     doTest(fileName);
                 }
 
@@ -21409,6 +21466,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("insideCall.kt")
                 public void testInsideCall() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/castchecks/insideCall.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("smartCastOfNullableExpressionWithExpectedType.kt")
+                public void testSmartCastOfNullableExpressionWithExpectedType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/castchecks/smartCastOfNullableExpressionWithExpectedType.kt");
                     doTest(fileName);
                 }
 

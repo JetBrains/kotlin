@@ -2,14 +2,14 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 description = "Kotlin Daemon Client"
 
-apply { plugin("kotlin") }
-apply { plugin("jps-compatible") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
 val nativePlatformVariants: List<String> by rootProject.extra
-
-containsEmbeddedComponents()
 
 dependencies {
     compileOnly(project(":compiler:util"))

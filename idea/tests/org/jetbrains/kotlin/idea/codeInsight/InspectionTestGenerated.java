@@ -39,12 +39,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("deprecatedCallableAddReplaceWith/inspectionData/inspections.test")
-        public void testDeprecatedCallableAddReplaceWith_inspectionData_Inspections_test() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
         @TestMetadata("destructuringInLambda/inspectionData/inspections.test")
         public void testDestructuringInLambda_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/destructuringInLambda/inspectionData/inspections.test");
@@ -276,6 +270,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("publicApiImplicitType/inspectionData/inspections.test")
+        public void testPublicApiImplicitType_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/publicApiImplicitType/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("recursivePropertyAccessor/inspectionData/inspections.test")
         public void testRecursivePropertyAccessor_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/recursivePropertyAccessor/inspectionData/inspections.test");
@@ -369,6 +369,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("replaceRangeToWithUntil/inspectionData/inspections.test")
         public void testReplaceRangeToWithUntil_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/replaceRangeToWithUntil/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedSubClassCanBeObject/inspectionData/inspections.test")
+        public void testSealedSubClassCanBeObject_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/sealedSubClassCanBeObject/inspectionData/inspections.test");
             doTest(fileName);
         }
 
@@ -498,6 +504,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test")
         public void testConventionNameCalls_replaceGetOrSet_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/conventionNameCalls/replaceGetOrSet/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deprecatedCallableAddReplaceWith/inspectionData/inspections.test")
+        public void testDeprecatedCallableAddReplaceWith_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/inspectionData/inspections.test");
             doTest(fileName);
         }
 

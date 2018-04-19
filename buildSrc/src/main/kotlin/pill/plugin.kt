@@ -10,6 +10,12 @@ import shadow.org.jdom2.output.Format
 import shadow.org.jdom2.output.XMLOutputter
 import java.io.File
 
+class JpsCompatibleBasePlugin : Plugin<Project> {
+    override fun apply(project: Project) {
+        project.configurations.create(EmbeddedComponents.CONFIGURATION_NAME)
+    }
+}
+
 class JpsCompatiblePlugin : Plugin<Project> {
     companion object {
         private const val JPS_LIBRARY_PATH = "jpsLibraryPath"
@@ -64,12 +70,15 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     override fun apply(project: Project) {
+        project.plugins.apply(JpsCompatibleBasePlugin::class.java)
         // 'jpsTest' does not require the 'tests-jar' artifact
         project.configurations.create("jpsTest")
 
         if (project == project.rootProject) {
             project.tasks.create("pill") {
                 doLast { pill(project) }
+                TaskUtils.useAndroidSdk(this)
+                TaskUtils.useAndroidJar(this)
             }
 
             project.tasks.create("unpill") {
@@ -188,17 +197,32 @@ class JpsCompatiblePlugin : Plugin<Project> {
         junitConfiguration.apply {
             getOrCreateChild("option", "name" to "WORKING_DIRECTORY").setAttribute("value", "file://\$PROJECT_DIR\$")
             getOrCreateChild("option", "name" to "VM_PARAMETERS").also { vmParams ->
-                val ideaHomePathOptionKey = "-Didea.home.path="
-                val ideaHomePathOption = ideaHomePathOptionKey + platformDirProjectRelative
-
-                val existingOptions = vmParams.getAttributeValue("value", "")
+                var options = vmParams.getAttributeValue("value", "")
                     .split(' ')
                     .map { it.trim() }
-                    .filter { it.isNotEmpty() && !it.startsWith(ideaHomePathOptionKey) }
+                    .filter { it.isNotEmpty() }
 
-                val newOptions = existingOptions.joinToString(" ") + " " + ideaHomePathOption
+                fun addOrReplaceOptionValue(name: String, value: Any) {
+                    options = options.filter { !it.startsWith("-D$name=") } + listOf("-D$name=$value")
+                }
 
-                vmParams.setAttribute("value", newOptions)
+                val robolectricClasspath = project.rootProject
+                    .project(":plugins:android-extensions-compiler")
+                    .configurations.getByName("robolectricClasspath")
+                    .files.joinToString(File.pathSeparator)
+
+                val androidJarPath = project.configurations.getByName("androidJar").singleFile
+                val androidSdkPath = project.configurations.getByName("androidSdk").singleFile
+
+                addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
+                addOrReplaceOptionValue("ideaSdk.androidPlugin.path", platformDirProjectRelative + "/plugins/android/lib")
+                addOrReplaceOptionValue("robolectric.classpath", robolectricClasspath)
+                addOrReplaceOptionValue("use.pill", "true")
+
+                addOrReplaceOptionValue("android.sdk", "\$PROJECT_DIR\$/" + androidSdkPath.toRelativeString(projectDir))
+                addOrReplaceOptionValue("android.jar", "\$PROJECT_DIR\$/" + androidJarPath.toRelativeString(projectDir))
+
+                vmParams.setAttribute("value", options.joinToString(" "))
             }
         }
 

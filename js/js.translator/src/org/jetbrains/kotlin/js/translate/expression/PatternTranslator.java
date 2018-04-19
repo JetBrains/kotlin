@@ -200,7 +200,13 @@ public final class PatternTranslator extends AbstractTranslator {
         }
 
         if (isArray(type)) {
-            return namer().isArray();
+            if (ArrayFIF.typedArraysEnabled(context().getConfig())) {
+                return namer().isArray();
+            }
+            else {
+                return Namer.IS_ARRAY_FUN_REF;
+            }
+
         }
 
         if (TypePredicatesKt.getCHAR_SEQUENCE().test(type)) return namer().isCharSequence();
@@ -238,10 +244,12 @@ public final class PatternTranslator extends AbstractTranslator {
             return namer().isTypeOf(new JsStringLiteral("number"));
         }
 
-        if (KotlinBuiltIns.isPrimitiveArray(type)) {
-            PrimitiveType arrayType = KotlinBuiltIns.getPrimitiveArrayElementType(type);
-            assert arrayType != null;
-            return namer().isPrimitiveArray(arrayType);
+        if (ArrayFIF.typedArraysEnabled(context().getConfig())) {
+            if (KotlinBuiltIns.isPrimitiveArray(type)) {
+                PrimitiveType arrayType = KotlinBuiltIns.getPrimitiveArrayElementType(type);
+                assert arrayType != null;
+                return namer().isPrimitiveArray(arrayType);
+            }
         }
 
         return null;
@@ -280,13 +288,13 @@ public final class PatternTranslator extends AbstractTranslator {
         EqualityType matchEquality = equalityType(subjectType);
         EqualityType patternEquality = equalityType(patternType);
 
-        JsExpression expressionToMatchAgainst = translateExpressionForExpressionPattern(patternExpression);
+        JsExpression expressionToMatchAgainst = TranslationUtils.coerce(context(), translateExpressionForExpressionPattern(patternExpression), subjectType);
 
         if (matchEquality == EqualityType.PRIMITIVE && patternEquality == EqualityType.PRIMITIVE) {
             return equality(expressionToMatch, expressionToMatchAgainst);
         }
         else if (expressionToMatchAgainst instanceof JsNullLiteral) {
-            return TranslationUtils.nullCheck(expressionToMatch, false);
+            return TranslationUtils.nullCheck(subjectExpression, expressionToMatch, context(), false);
         }
         else {
             return TopLevelFIF.KOTLIN_EQUALS.apply(expressionToMatch, Collections.singletonList(expressionToMatchAgainst), context());

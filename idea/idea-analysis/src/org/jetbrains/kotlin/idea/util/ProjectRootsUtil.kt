@@ -10,6 +10,7 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
@@ -65,7 +66,7 @@ object ProjectRootsUtil {
         if (!includeLibraryClasses && !includeLibrarySource) return false
 
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
-        val fileType = file.fileType
+        val fileType = FileTypeManager.getInstance().getFileTypeByFileName(file.name)
         val canContainClassFiles = fileType == ArchiveFileType.INSTANCE || file.isDirectory
         val isBinary = fileType.isKotlinBinary()
 

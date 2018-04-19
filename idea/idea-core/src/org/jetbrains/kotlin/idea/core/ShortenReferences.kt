@@ -173,7 +173,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             // step 2: analyze collected elements with resolve and decide which can be shortened now and which need descriptors to be imported before shortening
             val allElementsToAnalyze = visitors.flatMap { it.getElementsToAnalyze().map { it.element } }
-            val bindingContext = file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL)
+            val bindingContext = file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL_WITH_CFA)
             processors.forEach { it.analyzeCollectedElements(bindingContext) }
 
             // step 3: shorten elements that can be shortened right now
