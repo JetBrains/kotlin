@@ -1,3 +1,4 @@
-class <error descr="[ACTUAL_MISSING] Declaration must be marked with 'actual'">My</error>
+class My
+fun bar() {}
 
 actual fun foo(my: My) {}
