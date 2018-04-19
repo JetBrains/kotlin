@@ -62,7 +62,7 @@ class PSICallResolver(
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
     private val dataFlowValueFactory: DataFlowValueFactory
 ) {
-    private val GIVEN_CANDIDATES_NAME = Name.special("<given candidates>")
+    private val givenCandidatesName = Name.special("<given candidates>")
 
     val defaultResolutionKinds = setOf(
         NewResolutionOldInference.ResolutionKind.Function,
@@ -110,7 +110,7 @@ class PSICallResolver(
         val dispatchReceiver = resolutionCandidates.firstNotNullResult { it.dispatchReceiver }
 
         val kotlinCall =
-            toKotlinCall(context, KotlinCallKind.FUNCTION, context.call, GIVEN_CANDIDATES_NAME, tracingStrategy, dispatchReceiver)
+            toKotlinCall(context, KotlinCallKind.FUNCTION, context.call, givenCandidatesName, tracingStrategy, dispatchReceiver)
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
