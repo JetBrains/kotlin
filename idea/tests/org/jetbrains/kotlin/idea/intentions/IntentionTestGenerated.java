@@ -4595,6 +4595,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConvertBlockCommentToLineComment extends AbstractIntentionTest {
+        @TestMetadata("afterStatement.kt")
+        public void testAfterStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBlockCommentToLineComment/afterStatement.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInConvertBlockCommentToLineComment() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertBlockCommentToLineComment"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
@@ -4611,9 +4617,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("enmdOflineComment.kt")
-        public void testEnmdOflineComment() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBlockCommentToLineComment/enmdOflineComment.kt");
+        @TestMetadata("docComment.kt")
+        public void testDocComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBlockCommentToLineComment/docComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("endOflineComment.kt")
+        public void testEndOflineComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBlockCommentToLineComment/endOflineComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("newLinesBetweenCommentAndDeclaration.kt")
+        public void testNewLinesBetweenCommentAndDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertBlockCommentToLineComment/newLinesBetweenCommentAndDeclaration.kt");
             doTest(fileName);
         }
 
@@ -5700,6 +5718,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("includeBlockComment2.kt")
         public void testIncludeBlockComment2() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLineCommentToBlockComment/includeBlockComment2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("newLinesBetweenCommentAndDeclaration.kt")
+        public void testNewLinesBetweenCommentAndDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLineCommentToBlockComment/newLinesBetweenCommentAndDeclaration.kt");
             doTest(fileName);
         }
 

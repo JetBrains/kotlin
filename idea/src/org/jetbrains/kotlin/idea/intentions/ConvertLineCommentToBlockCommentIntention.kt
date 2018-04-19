@@ -28,7 +28,7 @@ class ConvertLineCommentToBlockCommentIntention : SelfTargetingIntention<PsiComm
             firstComment = firstComment.prevComment() ?: break
         }
 
-        val indent = (firstComment.prevSibling as? PsiWhiteSpace)?.text?.reversed()?.takeWhile { it == ' ' } ?: ""
+        val indent = (firstComment.prevSibling as? PsiWhiteSpace)?.text?.reversed()?.takeWhile { it == ' ' || it == '\t' } ?: ""
 
         val comments = mutableListOf(firstComment)
         var nextComment = firstComment
