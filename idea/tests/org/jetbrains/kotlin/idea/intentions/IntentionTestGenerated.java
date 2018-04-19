@@ -8387,6 +8387,45 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/indentRawString")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IndentRawString extends AbstractIntentionTest {
+        public void testAllFilesPresentInIndentRawString() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/indentRawString"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("hasIndent.kt")
+        public void testHasIndent() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/hasIndent.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notRawString.kt")
+        public void testNotRawString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/notRawString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("receiver.kt")
+        public void testReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/receiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singleLine.kt")
+        public void testSingleLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/indentRawString/singleLine.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/infixCallToOrdinary")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
