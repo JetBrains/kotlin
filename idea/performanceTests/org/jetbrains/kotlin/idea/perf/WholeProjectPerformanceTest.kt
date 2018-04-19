@@ -9,21 +9,14 @@ import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationEx
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
-import com.intellij.psi.search.FileTypeIndex
-import com.intellij.psi.search.ProjectScope
-import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 
-abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase() {
+abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProjectFileProvider {
 
     private val rootProjectFile: File = File("../perfTestProject").absoluteFile
     private val statsFile: File = File("build/stats.csv").absoluteFile
@@ -42,8 +35,6 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase() {
     data class PerFileTestResult(val perProcess: Map<String, Long>, val totalNs: Long, val errors: List<Throwable>)
 
     protected abstract fun doTest(file: VirtualFile): PerFileTestResult
-
-    abstract fun provideFiles(): Collection<VirtualFile>
 
     fun testWholeProjectPerformance() {
 
@@ -67,7 +58,7 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase() {
             }
 
             tcSuite("TotalPerFile") {
-                val files = provideFiles()
+                val files = provideFiles(project)
 
                 files.forEach {
                     val filePath = File(it.path).relativeTo(tmp).path.replace(File.separatorChar, '/')

@@ -19,8 +19,6 @@ import kotlin.system.measureNanoTime
 
 abstract class WholeProjectInspectionTest : WholeProjectPerformanceTest() {
 
-    abstract override fun provideFiles(): Collection<VirtualFile>
-
     class ExceptionWhileInspection(inspectionId: String, cause: Throwable) : RuntimeException(inspectionId, cause)
 
     private lateinit var profileTools: List<Tools>

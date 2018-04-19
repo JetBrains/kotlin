@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.perf
 import com.intellij.codeInspection.ex.Tools
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 
 class WholeProjectJavaInspectionTest : WholeProjectInspectionTest() {
 
-    override fun provideFiles(): Collection<VirtualFile> {
+    override fun provideFiles(project: Project): Collection<VirtualFile> {
         val scope = object : DelegatingGlobalSearchScope(ProjectScope.getContentScope(project)) {
             val index = ProjectFileIndex.getInstance(myProject)
             override fun contains(file: VirtualFile): Boolean {
