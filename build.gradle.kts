@@ -119,6 +119,7 @@ extra["JDK_10"] = jdkPathIfFound("10")
 
 rootProject.apply {
     from(rootProject.file("versions.gradle.kts"))
+    from(rootProject.file("report.gradle.kts"))
 }
 
 extra["versions.protobuf-java"] = "2.6.1"
@@ -664,5 +665,3 @@ tasks.create("findShadowJarsInClasspath").doLast {
         project.checkConfig("testCompileClasspath")
     }
 }
-
-BuildTimeReporter.configure(gradle)

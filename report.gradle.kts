@@ -10,7 +10,9 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskState
 import java.util.HashMap
 
-class BuildTimeReporter(
+BuildTimeReporter.configure(gradle)
+
+private class BuildTimeReporter(
     private val kotlinCompileClass: Class<*>,
     private val javaCompileClass: Class<*>,
     private val jarClass: Class<*>,
