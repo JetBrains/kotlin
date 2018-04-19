@@ -27,27 +27,37 @@ class AllKotlinLightClassTest : WholeProjectPerformanceTest(), WholeProjectKotli
 
         val errors = mutableListOf<Throwable>()
 
-        val result = measureNanoTime {
-            try {
-                // Build light class by PsiFile
-                psiFile.acceptRecursively(object : KtVisitorVoid() {
-                    override fun visitClassOrObject(classOrObject: KtClassOrObject) {
-                        if (classOrObject.containingDeclarationForPseudocode != null) return
-                        val lightClass = classOrObject.toLightClass() as? KtLightClassForSourceDeclaration ?: return
-                        Arrays.hashCode(lightClass.superTypes)
-                        Arrays.hashCode(lightClass.fields)
-                        Arrays.hashCode(lightClass.methods)
-                        lightClass.hashCode()
-                    }
-                })
+        fun buildAllLightClasses(name: String, predicate: (KtClassOrObject) -> Boolean) {
+            val result = measureNanoTime {
+                try {
+                    // Build light class by PsiFile
+                    psiFile.acceptRecursively(object : KtVisitorVoid() {
+                        override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+                            if (!predicate(classOrObject)) return
+                            val lightClass = classOrObject.toLightClass() as? KtLightClassForSourceDeclaration ?: return
+                            Arrays.hashCode(lightClass.superTypes)
+                            Arrays.hashCode(lightClass.fields)
+                            Arrays.hashCode(lightClass.methods)
+                            lightClass.hashCode()
+                        }
+                    })
 
-            } catch (t: Throwable) {
-                t.printStackTrace()
-                errors += t
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                    errors += t
+                }
             }
+            results[name] = result
+            totalNs += result
         }
-        results["LightClasses_Top"] = result
-        totalNs += result
+
+        buildAllLightClasses("LightClasses_Top") {
+            it.containingDeclarationForPseudocode == null
+        }
+
+        buildAllLightClasses("LightClasses_Members") {
+            !it.isLocal && it.containingDeclarationForPseudocode is KtClassOrObject
+        }
 
         return PerFileTestResult(results, totalNs, errors)
     }
