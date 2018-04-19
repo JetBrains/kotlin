@@ -50,15 +50,21 @@ class SyntheticClassOrObjectDescriptor(
     val syntheticDeclaration: KtPureClassOrObject = SyntheticDeclaration(parentClassOrObject, name.asString())
 
     private val thisDescriptor: SyntheticClassOrObjectDescriptor get() = this // code readability
-    var typeParameters: List<TypeParameterDescriptor> = emptyList()
 
+    private lateinit var typeParameters: List<TypeParameterDescriptor>
     private val typeConstructor = SyntheticTypeConstructor(c.storageManager)
     private val resolutionScopesSupport = ClassResolutionScopesSupport(thisDescriptor, c.storageManager, c.languageVersionSettings, { outerScope })
     private val syntheticSupertypes =
         mutableListOf<KotlinType>().apply { c.syntheticResolveExtension.addSyntheticSupertypes(thisDescriptor, this) }
     private val unsubstitutedMemberScope =
         LazyClassMemberScope(c, SyntheticClassMemberDeclarationProvider(syntheticDeclaration), this, c.trace)
-    private val _unsubstitutedPrimaryConstructor by lazy { createUnsubstitutedPrimaryConstructor(constructorVisibility) }
+    private val _unsubstitutedPrimaryConstructor =
+        c.storageManager.createLazyValue { createUnsubstitutedPrimaryConstructor(constructorVisibility) }
+
+    @JvmOverloads
+    fun initialize(typeParameters: List<TypeParameterDescriptor> = emptyList()) {
+        this.typeParameters = typeParameters
+    }
 
     override val annotations: Annotations get() = Annotations.EMPTY
 
@@ -74,8 +80,8 @@ class SyntheticClassOrObjectDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptorWithResolutionScopes? = null
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
-    override fun getUnsubstitutedPrimaryConstructor() = _unsubstitutedPrimaryConstructor
-    override fun getConstructors() = listOf(_unsubstitutedPrimaryConstructor)
+    override fun getUnsubstitutedPrimaryConstructor() = _unsubstitutedPrimaryConstructor()
+    override fun getConstructors() = listOf(_unsubstitutedPrimaryConstructor())
     override fun getDeclaredTypeParameters() = typeParameters
     override fun getStaticScope() = MemberScope.Empty
     override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
