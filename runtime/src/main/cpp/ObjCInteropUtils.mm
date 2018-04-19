@@ -153,7 +153,7 @@ KRef Kotlin_Interop_unwrapKotlinObjectHolder(id holder) {
   return [((KotlinObjectHolder*)holder) ref];
 }
 
-KBoolean Kotlin_Interop_DoesObjectConformToProtocol(id obj, void* prot, BOOL isMeta) {
+KBoolean Kotlin_Interop_DoesObjectConformToProtocol(id obj, void* prot, KBoolean isMeta) {
   BOOL objectIsClass = class_isMetaClass(object_getClass(obj));
   if ((isMeta && !objectIsClass) || (!isMeta && objectIsClass)) return false;
   // TODO: handle root classes properly.
