@@ -2358,6 +2358,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/branched/ifThenToElvis/nullCheckWithSelectorCallChain.kt");
             }
 
+            @TestMetadata("nullableResultWithImplicitReceiver.kt")
+            public void testNullableResultWithImplicitReceiver() throws Exception {
+                runTest("idea/testData/intentions/branched/ifThenToElvis/nullableResultWithImplicitReceiver.kt");
+            }
+
             @TestMetadata("nullableThen.kt")
             public void testNullableThen() throws Exception {
                 runTest("idea/testData/intentions/branched/ifThenToElvis/nullableThen.kt");

@@ -46,14 +46,19 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
     "Replace 'if' expression with elvis expression"
 ) {
 
-    private fun IfThenToSelectData.clausesReplaceableByElvis(): Boolean {
-        if (baseClause == null || negatedClause == null || negatedClause.isNullOrBlockExpression()) return false
-        if (negatedClause is KtThrowExpression && negatedClause.throwsNullPointerExceptionWithNoArguments()) return false
-
-        return receiverExpression is KtThisExpression && hasImplicitReceiver() ||
-                baseClause.evaluatesTo(receiverExpression) ||
-                baseClause.hasFirstReceiverOf(receiverExpression) && !baseClause.hasNullableType(context)
-    }
+    private fun IfThenToSelectData.clausesReplaceableByElvis(): Boolean =
+        when {
+            baseClause == null || negatedClause == null || negatedClause.isNullOrBlockExpression() ->
+                false
+            negatedClause is KtThrowExpression && negatedClause.throwsNullPointerExceptionWithNoArguments() ->
+                false
+            baseClause.evaluatesTo(receiverExpression) ->
+                true
+            receiverExpression is KtThisExpression && hasImplicitReceiver() || baseClause.hasFirstReceiverOf(receiverExpression) ->
+                !baseClause.hasNullableType(context)
+            else ->
+                false
+        }
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
         val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
