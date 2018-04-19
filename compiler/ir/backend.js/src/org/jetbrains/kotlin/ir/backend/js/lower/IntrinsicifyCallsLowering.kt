@@ -52,6 +52,10 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 op(type, OperatorNameConventions.REM, context.intrinsics.jsMod)
             }
 
+            context.irBuiltIns.string.let {
+                op(it, OperatorNameConventions.PLUS, context.intrinsics.jsPlus)
+            }
+
             context.irBuiltIns.int.let {
                 op(it, "shl", context.intrinsics.jsBitShiftL)
                 op(it, "shr", context.intrinsics.jsBitShiftR)
