@@ -1,9 +1,10 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.COROUTINE_SUSPENDED
+import COROUTINES_PACKAGE.intrinsics.suspendCoroutineOrReturn
 
 class MyTest {
     suspend fun act(value: String): String = suspendCoroutineOrReturn {

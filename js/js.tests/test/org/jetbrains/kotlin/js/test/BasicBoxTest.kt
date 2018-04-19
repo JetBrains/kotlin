@@ -90,16 +90,24 @@ abstract class BasicBoxTest(
         doTest(filePath, "OK", MainCallParameters.noCall())
     }
 
-    fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters) {
+    fun doTestWithCoroutinesPackageReplacement(filePath: String, packageName: String) {
+        if (packageName == "kotlin.coroutines") return // TODO: Support JS in kotlin-stdlib-coroutines
+        doTest(filePath, "OK", MainCallParameters.noCall(), packageName)
+    }
+
+    fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, packageName: String = "") {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
-        val fileContent = KotlinTestUtils.doLoadFile(file)
+        var fileContent = KotlinTestUtils.doLoadFile(file)
+        if (packageName.isNotEmpty()) {
+            fileContent = fileContent.replace("COROUTINES_PACKAGE", packageName)
+        }
 
         val outputPrefixFile = getOutputPrefixFile(filePath)
         val outputPostfixFile = getOutputPostfixFile(filePath)
 
         TestFileFactoryImpl().use { testFactory ->
-            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true)
+            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true, "")
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .map { it.name to it }.toMap()

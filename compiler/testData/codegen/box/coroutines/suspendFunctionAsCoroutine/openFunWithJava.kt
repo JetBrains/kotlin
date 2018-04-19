@@ -1,10 +1,11 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 // FILE: main.kt
 // TARGET_BACKEND: JVM
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 
 
@@ -34,7 +35,7 @@ fun box(): String {
 }
 
 // FILE: JavaClass.java
-import kotlin.coroutines.experimental.*;
+import COROUTINES_PACKAGE.*;
 public class JavaClass {
     public static String foo() {
         final String[] res = new String[1];

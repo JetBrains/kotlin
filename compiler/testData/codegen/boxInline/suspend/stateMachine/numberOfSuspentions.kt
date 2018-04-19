@@ -1,4 +1,5 @@
 // FILE: inlined.kt
+// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
 
@@ -12,9 +13,10 @@ suspend inline fun crossinlineMe2(crossinline c: suspend () -> Unit) {
 }
 
 // FILE: inlineSite.kt
+// COMMON_COROUTINES_TEST
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 var result = "FAIL"
 var i = 0

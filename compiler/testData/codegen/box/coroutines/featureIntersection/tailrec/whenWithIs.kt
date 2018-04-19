@@ -1,8 +1,9 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 // DONT_RUN_GENERATED_CODE: JS
 import helpers.*
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 
 tailrec suspend fun withWhen(counter : Int, d : Any) : Int =
     if (counter == 0) {

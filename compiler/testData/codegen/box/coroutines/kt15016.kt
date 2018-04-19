@@ -1,10 +1,11 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
 
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
-import kotlin.coroutines.experimental.startCoroutine
+import COROUTINES_PACKAGE.intrinsics.COROUTINE_SUSPENDED
+import COROUTINES_PACKAGE.intrinsics.suspendCoroutineOrReturn
+import COROUTINES_PACKAGE.startCoroutine
 
 class Bar(val x: Any)
 inline fun Any.map(transform: (Any) -> Any) {

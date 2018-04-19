@@ -25,11 +25,11 @@ public class SimpleTestMethodModel implements TestMethodModel {
     @NotNull
     private final File rootDir;
     @NotNull
-    private final File file;
+    protected final File file;
     @NotNull
     private final Pattern filenamePattern;
     @NotNull
-    private final TargetBackend targetBackend;
+    protected final TargetBackend targetBackend;
 
     private final boolean skipIgnored;
 

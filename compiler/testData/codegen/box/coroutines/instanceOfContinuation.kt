@@ -1,10 +1,11 @@
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
 // WITH_REFLECT
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 class Controller {
     suspend fun runInstanceOf(): Boolean = suspendCoroutineOrReturn { x ->

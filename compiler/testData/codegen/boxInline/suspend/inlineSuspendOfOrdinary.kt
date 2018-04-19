@@ -1,8 +1,9 @@
 // FILE: test.kt
+// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
 
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 
 // Block is allowed to be called inside the body of owner inline function
 // suspend calls possible inside lambda matching to the parameter
@@ -30,8 +31,9 @@ inline fun transform(crossinline c: suspend () -> Unit) {
 }
 
 // FILE: box.kt
+// COMMON_COROUTINES_TEST
 
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 
 suspend fun calculate() = "OK"
 

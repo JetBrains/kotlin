@@ -2,9 +2,10 @@
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
 // CHECK_NEW_COUNT: function=suspendHere count=0
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
     x.resume(v)

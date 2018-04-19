@@ -568,6 +568,9 @@ public class KotlinTestUtils {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
         }
 
+        if (configurationKind.getWithCoroutines()) {
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.coroutinesJarForTests());
+        }
         if (configurationKind.getWithRuntime()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.scriptRuntimeJarForTests());
@@ -709,13 +712,13 @@ public class KotlinTestUtils {
     }
 
     @NotNull
-    public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
-        return createTestFiles(testFileName, expectedText, factory, false);
+    public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory, String coroutinesPackage) {
+        return createTestFiles(testFileName, expectedText, factory, false, coroutinesPackage);
     }
 
     @NotNull
     public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory,
-            boolean preserveLocations) {
+            boolean preserveLocations, String coroutinesPackage) {
         Map<String, String> directives = parseDirectives(expectedText);
 
         List<F> testFiles = Lists.newArrayList();
@@ -768,10 +771,13 @@ public class KotlinTestUtils {
 
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
             M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList()) : null;
+            if (coroutinesPackage.isEmpty()) {
+                coroutinesPackage = "kotlin.coroutines.experimental";
+            }
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",
                                              "package helpers\n" +
-                                             "import kotlin.coroutines.experimental.*\n" +
+                                             "import " + coroutinesPackage + ".*\n" +
                                              "fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {\n" +
                                              "    override val context = EmptyCoroutineContext\n" +
                                              "    override fun resumeWithException(exception: Throwable) {\n" +
@@ -862,7 +868,7 @@ public class KotlinTestUtils {
                 int firstLineEnd = text.indexOf('\n');
                 return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
             }
-        });
+        }, "");
 
         Assert.assertTrue("Exactly two files expected: ", files.size() == 2);
 

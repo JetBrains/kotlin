@@ -1,6 +1,7 @@
 // WITH_RUNTIME
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+// COMMON_COROUTINES_TEST
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 var p: Int = 5846814
 private suspend fun withoutInline() {

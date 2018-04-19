@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers
@@ -99,7 +88,14 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             val oldModule = modules[testModule]!!
 
-            val languageVersionSettings = loadLanguageVersionSettings(testFilesInModule)
+            val languageVersionSettings =
+                if (coroutinesPackage.isNotEmpty())
+                    CompilerTestLanguageVersionSettings(
+                        DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
+                        if (coroutinesPackage.contains("experimental")) ApiVersion.KOTLIN_1_2 else ApiVersion.KOTLIN_1_3,
+                        if (coroutinesPackage.contains("experimental")) LanguageVersion.KOTLIN_1_2 else LanguageVersion.KOTLIN_1_3
+                    )
+                else loadLanguageVersionSettings(testFilesInModule)
             val moduleContext = context.withProject(project).withModule(oldModule)
 
             val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
@@ -141,7 +137,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         var exceptionFromDescriptorValidation: Throwable? = null
         try {
             val expectedFile = getExpectedDescriptorFile(testDataFile, files)
-            validateAndCompareDescriptorWithFile(expectedFile, files, modules)
+            validateAndCompareDescriptorWithFile(expectedFile, files, modules, coroutinesPackage)
         } catch (e: Throwable) {
             exceptionFromDescriptorValidation = e
         }
@@ -175,7 +171,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             exceptionFromDynamicCallDescriptorsValidation = e
         }
 
-        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.toString())
+        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.toString()) { s ->
+            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
+        }
 
         assertTrue("Diagnostics mismatch. See the output above", ok)
 
@@ -395,7 +393,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun validateAndCompareDescriptorWithFile(
         expectedFile: File,
         testFiles: List<TestFile>,
-        modules: Map<TestModule?, ModuleDescriptorImpl>
+        modules: Map<TestModule?, ModuleDescriptorImpl>,
+        coroutinesPackage: String
     ) {
         if (skipDescriptorsValidation()) return
         if (testFiles.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SKIP_TXT") }) {
@@ -456,7 +455,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     "Such tests are hard to maintain, take long time to execute and are subject to sudden unreviewed changes anyway."
         }
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText)
+        KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText) { s ->
+            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
+        }
     }
 
 
