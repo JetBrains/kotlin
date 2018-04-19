@@ -507,7 +507,7 @@ class ExpressionCodegen(
             val elementKotlinType = classCodegen.context.builtIns.getArrayElementType(outType.toKotlinType()!!)
             for ((i, element) in expression.elements.withIndex()) {
                 mv.dup()
-                StackValue.constant(i, Type.INT_TYPE).put(Type.INT_TYPE, mv)
+                StackValue.constant(i).put(Type.INT_TYPE, mv)
                 val rightSide = gen(element, elementType, data)
                 StackValue
                     .arrayElement(

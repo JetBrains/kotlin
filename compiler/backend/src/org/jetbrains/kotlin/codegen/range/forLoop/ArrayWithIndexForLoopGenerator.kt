@@ -47,8 +47,7 @@ class ArrayWithIndexForLoopGenerator(
         v.arraylength()
         v.store(arrayLengthVar, Type.INT_TYPE)
 
-        StackValue.local(indexVar, indexType)
-            .store(StackValue.constant(0, Type.INT_TYPE), v)
+        StackValue.local(indexVar, indexType).store(StackValue.constant(0), v)
     }
 
     override fun checkPreCondition(loopExit: Label) {

@@ -2937,7 +2937,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     v.dup();
                     StackValue rightSide = gen(arguments.get(i).getArgumentExpression());
                     StackValue
-                            .arrayElement(elementType, elementKotlinType, StackValue.onStack(type, outType), StackValue.constant(i, Type.INT_TYPE))
+                            .arrayElement(elementType, elementKotlinType, StackValue.onStack(type, outType), StackValue.constant(i))
                             .store(rightSide, v);
                 }
                 return Unit.INSTANCE;
