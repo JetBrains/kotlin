@@ -1004,7 +1004,9 @@ object Generators : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+            Returns a list of values built from the elements of `this` ${f.collection} and the [other] collection with the same index
+            using the provided [transform] function applied to each pair of elements.
+            The returned list has length of the shortest collection.
 
             @sample samples.collections.Iterables.Operations.zipIterableWithTransform
             """
@@ -1043,7 +1045,9 @@ object Generators : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+            Returns a list of values built from the elements of `this` ${f.collection} and the [other] array with the same index
+            using the provided [transform] function applied to each pair of elements.
+            The returned list has length of the shortest collection.
 
             @sample samples.collections.Iterables.Operations.zipIterableWithTransform
             """
@@ -1082,7 +1086,9 @@ object Generators : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+            Returns a list of values built from the elements of `this` array and the [other] array with the same index
+            using the provided [transform] function applied to each pair of elements.
+            The returned list has length of the shortest array.
 
             @sample samples.collections.Iterables.Operations.zipIterableWithTransform
             """
@@ -1107,7 +1113,9 @@ object Generators : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
+            Returns a sequence of values built from the elements of `this` sequence and the [other] sequence with the same index
+            using the provided [transform] function applied to each pair of elements.
+            The resulting sequence ends as soon as the shortest input sequence ends.
 
             @sample samples.collections.Sequences.Transformations.zipWithTransform
             """
@@ -1128,7 +1136,9 @@ object Generators : TemplateGroupBase() {
     } builder {
         doc {
             """
-            Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
+            Returns a list of values built from the characters of `this` and the [other] char sequences with the same index
+            using the provided [transform] function applied to each pair of characters.
+            The returned list has length of the shortest char sequence.
 
             @sample samples.text.Strings.zipWithTransform
             """
@@ -1156,7 +1166,8 @@ object Generators : TemplateGroupBase() {
         infix(true)
         doc {
             """
-            Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+            Returns a list of pairs built from the elements of `this` collection and [other] ${f.collection} with the same index.
+            The returned list has length of the shortest collection.
 
             @sample samples.collections.Iterables.Operations.zipIterable
             """
@@ -1176,7 +1187,8 @@ object Generators : TemplateGroupBase() {
         infix(true)
         doc {
             """
-            Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
+            Returns a list of pairs built from the characters of `this` and the [other] char sequences with the same index
+            The returned list has length of the shortest char sequence.
 
             @sample samples.text.Strings.zip
             """
@@ -1195,7 +1207,8 @@ object Generators : TemplateGroupBase() {
         infix(true)
         doc {
             """
-            Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+            Returns a list of pairs built from the elements of `this` ${f.collection} and the [other] array with the same index.
+            The returned list has length of the shortest collection.
 
             @sample samples.collections.Iterables.Operations.zipIterable
             """
@@ -1215,7 +1228,8 @@ object Generators : TemplateGroupBase() {
         infix(true)
         doc {
             """
-            Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+            Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
+            The returned list has length of the shortest collection.
 
             @sample samples.collections.Iterables.Operations.zipIterable
             """
@@ -1234,8 +1248,8 @@ object Generators : TemplateGroupBase() {
         infix(true)
         doc {
             """
-            Returns a sequence of pairs built from elements of both sequences with same indexes.
-            Resulting sequence has length of shortest input sequence.
+            Returns a sequence of values built from the elements of `this` sequence and the [other] sequence with the same index.
+            The resulting sequence ends as soon as the shortest input sequence ends.
 
             @sample samples.collections.Sequences.Transformations.zip
             """

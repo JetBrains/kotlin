@@ -2085,7 +2085,8 @@ public fun <T, R> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows:
 }
 
 /**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * Returns a list of pairs built from the elements of `this` collection and the [other] array with the same index.
+ * The returned list has length of the shortest collection.
  * 
  * @sample samples.collections.Iterables.Operations.zipIterable
  */
@@ -2094,7 +2095,9 @@ public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
 }
 
 /**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * Returns a list of values built from the elements of `this` collection and the [other] array with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
  * 
  * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
@@ -2110,7 +2113,8 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (a: 
 }
 
 /**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ * Returns a list of pairs built from the elements of `this` collection and [other] collection with the same index.
+ * The returned list has length of the shortest collection.
  * 
  * @sample samples.collections.Iterables.Operations.zipIterable
  */
@@ -2119,7 +2123,9 @@ public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 }
 
 /**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ * Returns a list of values built from the elements of `this` collection and the [other] collection with the same index
+ * using the provided [transform] function applied to each pair of elements.
+ * The returned list has length of the shortest collection.
  * 
  * @sample samples.collections.Iterables.Operations.zipIterableWithTransform
  */
