@@ -1,13 +1,15 @@
+package foo
+
 actual class <error>My</error> {
 
     actual fun foo() = 42
 }
 
-actual class Your {
+actual class <error>Your</error> {
 
     actual fun foo() = 13
 
-    <error>actual fun bar(arg: Int)</error> = arg
+    actual fun <error>bar</error>(arg: Int) = arg
 
 }
 
