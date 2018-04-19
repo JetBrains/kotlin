@@ -26,9 +26,12 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Label
@@ -88,11 +91,30 @@ class IrSourceCompilerForInline(
         asmMethod: Method
     ): SMAPAndMethodNode {
         assert(callableDescriptor == callElement.descriptor.original)
-        val owner = (callElement as IrCall).symbol.owner as IrFunction
+        val irFunction = ((callElement as IrCall).symbol.owner as IrFunction).let { irFunction ->
+            if (!callDefault) irFunction
+            else {
+                /*TODO: get rid of hack*/
+                val parent = irFunction.parent
+                val irClass = if (parent is IrFile) parent.declarations.filterIsInstance<IrClass>().single {
+                    //find class for package part
+                    it.thisReceiver == null
+                }
+                else parent as IrClass
+
+                irClass.declarations.filterIsInstance<IrFunction>().single {
+                    it.descriptor.name.asString() == jvmSignature.asmMethod.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX &&
+                            state.typeMapper.mapSignatureSkipGeneric(callableDescriptor).asmMethod.descriptor.startsWith(
+                                jvmSignature.asmMethod.descriptor.substringBeforeLast(')')
+                            )
+                }
+            }
+        }
+
         //ExpressionCodegen()
         var node: MethodNode? = null
         var maxCalcAdapter: MethodVisitor? = null
-        val functionCodegen = object : FunctionCodegen(owner, codegen.classCodegen) {
+        val functionCodegen = object : FunctionCodegen(irFunction, codegen.classCodegen) {
             override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
                 node = MethodNode(
                     API,
