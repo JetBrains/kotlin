@@ -28,11 +28,11 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.editor.fixers.endLine
+import org.jetbrains.kotlin.idea.editor.fixers.startLine
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -41,49 +41,22 @@ import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 
 class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
 
-    private val collectionFactoryFunctions: Set<FqName> =
+    private val collectionFactoryFunctionsNames: Set<String> =
         setOf(
-            FqName("kotlin.arrayOf"),
-            FqName("kotlin.booleanArrayOf"),
-            FqName("kotlin.byteArrayOf"),
-            FqName("kotlin.charArrayOf"),
-            FqName("kotlin.doubleArrayOf"),
-            FqName("kotlin.floatArrayOf"),
-            FqName("kotlin.intArrayOf"),
-            FqName("kotlin.longArrayOf"),
-            FqName("kotlin.shortArrayOf"),
-            FqName("kotlin.kotlin_builtins.arrayOf"),
-            FqName("kotlin.kotlin_builtins.booleanArrayOf"),
-            FqName("kotlin.kotlin_builtins.byteArrayOf"),
-            FqName("kotlin.kotlin_builtins.charArrayOf"),
-            FqName("kotlin.kotlin_builtins.doubleArrayOf"),
-            FqName("kotlin.kotlin_builtins.floatArrayOf"),
-            FqName("kotlin.kotlin_builtins.intArrayOf"),
-            FqName("kotlin.kotlin_builtins.longArrayOf"),
-            FqName("kotlin.kotlin_builtins.shortArrayOf"),
-            FqName("kotlin.collections.arrayListOf"),
-            FqName("kotlin.collections.hashMapOf"),
-            FqName("kotlin.collections.hashSetOf"),
-            FqName("kotlin.collections.linkedMapOf"),
-            FqName("kotlin.collections.linkedSetOf"),
-            FqName("kotlin.collections.linkedStringMapOf"),
-            FqName("kotlin.collections.linkedStringSetOf"),
-            FqName("kotlin.collections.listOf"),
-            FqName("kotlin.collections.listOfNotNull"),
-            FqName("kotlin.collections.mapOf"),
-            FqName("kotlin.collections.mutableListOf"),
-            FqName("kotlin.collections.mutableMapOf"),
-            FqName("kotlin.collections.mutableSetOf"),
-            FqName("kotlin.collections.setOf"),
-            FqName("kotlin.collections.sortedMapOf"),
-            FqName("kotlin.collections.sortedSetOf"),
-            FqName("kotlin.collections.stringMapOf"),
-            FqName("kotlin.collections.stringSetOf")
+            "arrayOf", "booleanArrayOf", "byteArrayOf", "charArrayOf", "doubleArrayOf",
+            "floatArrayOf", "intArrayOf", "longArrayOf", "shortArrayOf", "arrayListOf",
+            "hashMapOf", "hashSetOf",
+            "linkedMapOf", "linkedSetOf", "linkedStringMapOf", "linkedStringSetOf",
+            "listOf", "listOfNotNull",
+            "mapOf",
+            "mutableListOf", "mutableMapOf", "mutableSetOf",
+            "setOf",
+            "sortedMapOf", "sortedSetOf",
+            "stringMapOf", "stringSetOf"
         )
 
     override fun buildLanguageFoldRegions(
@@ -111,7 +84,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     }
 
     private fun appendDescriptors(node: ASTNode, document: Document, descriptors: MutableList<FoldingDescriptor>) {
-        if (needFolding(node)) {
+        if (needFolding(node, document)) {
             val textRange = getRangeToFold(node)
             val relativeRange = textRange.shiftRight(-node.textRange.startOffset)
             val foldRegionText = node.chars.subSequence(relativeRange.startOffset, relativeRange.endOffset)
@@ -127,7 +100,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         }
     }
 
-    private fun needFolding(node: ASTNode): Boolean {
+    private fun needFolding(node: ASTNode, document: Document): Boolean {
         val type = node.elementType
         val parentType = node.treeParent?.elementType
 
@@ -135,37 +108,26 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
                 (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
                 type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC ||
                 type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR ||
-                node.shouldFoldCollection()
+                node.shouldFoldCollection(document)
     }
 
-    private fun ASTNode.shouldFoldCollection(): Boolean = with((psi as? KtCallExpression)?.referenceExpression()) {
-        if (this == null || DumbService.isDumb(project)) {
+    private fun ASTNode.shouldFoldCollection(document: Document): Boolean {
+        val call = psi as? KtCallExpression ?: return false
+        if (DumbService.isDumb(call.project)) return false
+
+        if (call.valueArguments.size < 2) return false
+
+        // Similar check will be done latter, but we still use it here to avoid unnecessary resolve.
+        if (call.startLine(document) == call.endLine(document)) return false
+
+        val reference = call.referenceExpression() ?: return false
+        if (reference.mainReference.resolvesByNames.any { name -> name.isSpecial || name.identifier !in collectionFactoryFunctionsNames }) {
             return false
         }
 
-        fun KtReference.targets(bindingContext: BindingContext): Collection<DeclarationDescriptor> =
-            bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? KtReferenceExpression]?.let { listOf(it) }
-                    ?: resolveToDescriptors(bindingContext)
-
-        for (reference in references) {
-            if (reference !is KtReference) continue
-
-            val names = reference.resolvesByNames
-            val bindingContext = analyze()
-            val targets = reference.targets(bindingContext)
-
-            for (target in targets) {
-                val importableDescriptor = target.getImportableDescriptor()
-                if (importableDescriptor.name !in names) continue // resolved via alias
-
-                val importableFqName = target.importableFqName ?: continue
-                if (target !is PackageViewDescriptor && importableFqName in collectionFactoryFunctions) {
-                    return true
-                }
-            }
-        }
-
-        return false
+        // Do all possible psi checks before actual resolve
+        val functionDescriptor = reference.resolveMainReferenceToDescriptors().singleOrNull() as? FunctionDescriptor ?: return false
+        return functionDescriptor.valueParameters.size == 1 && functionDescriptor.valueParameters.first().isVararg
     }
 
     private fun getRangeToFold(node: ASTNode): TextRange {
