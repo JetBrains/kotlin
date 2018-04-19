@@ -70,7 +70,7 @@ class NewResolutionOldInference(
     private val coroutineInferenceSupport: CoroutineInferenceSupport,
     private val deprecationResolver: DeprecationResolver
 ) {
-    sealed class ResolutionKind<D : CallableDescriptor>(val kotlinCallKind: KotlinCallKind = KotlinCallKind.UNSUPPORTED) {
+    sealed class ResolutionKind {
         abstract internal fun createTowerProcessor(
             outer: NewResolutionOldInference,
             name: Name,
@@ -80,7 +80,7 @@ class NewResolutionOldInference(
             context: BasicCallResolutionContext
         ): ScopeTowerProcessor<MyCandidate>
 
-        object Function : ResolutionKind<FunctionDescriptor>(KotlinCallKind.FUNCTION) {
+        object Function : ResolutionKind() {
             override fun createTowerProcessor(
                 outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                 scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
@@ -96,7 +96,7 @@ class NewResolutionOldInference(
             }
         }
 
-        object Variable : ResolutionKind<VariableDescriptor>(KotlinCallKind.VARIABLE) {
+        object Variable : ResolutionKind() {
             override fun createTowerProcessor(
                 outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                 scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
@@ -106,7 +106,7 @@ class NewResolutionOldInference(
             }
         }
 
-        object CallableReference : ResolutionKind<CallableDescriptor>() {
+        object CallableReference : ResolutionKind() {
             override fun createTowerProcessor(
                 outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                 scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
@@ -120,7 +120,7 @@ class NewResolutionOldInference(
             }
         }
 
-        object Invoke : ResolutionKind<FunctionDescriptor>() {
+        object Invoke : ResolutionKind() {
             override fun createTowerProcessor(
                 outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                 scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
@@ -142,7 +142,7 @@ class NewResolutionOldInference(
 
         }
 
-        class GivenCandidates<D : CallableDescriptor> : ResolutionKind<D>() {
+        class GivenCandidates : ResolutionKind() {
             override fun createTowerProcessor(
                 outer: NewResolutionOldInference, name: Name, tracing: TracingStrategy,
                 scopeTower: ImplicitScopeTower, explicitReceiver: DetailedReceiver?, context: BasicCallResolutionContext
@@ -155,7 +155,7 @@ class NewResolutionOldInference(
     fun <D : CallableDescriptor> runResolution(
         context: BasicCallResolutionContext,
         name: Name,
-        kind: ResolutionKind<D>,
+        kind: ResolutionKind,
         tracing: TracingStrategy
     ): OverloadResolutionResultsImpl<D> {
         val explicitReceiver = context.call.explicitReceiver
@@ -349,7 +349,7 @@ class NewResolutionOldInference(
     private fun reportAdditionalDiagnosticIfNoCandidates(
         context: BasicCallResolutionContext,
         name: Name,
-        kind: ResolutionKind<*>,
+        kind: ResolutionKind,
         scopeTower: ImplicitScopeTower,
         detailedReceiver: DetailedReceiver?
     ): Boolean {

@@ -64,16 +64,21 @@ class PSICallResolver(
 ) {
     private val GIVEN_CANDIDATES_NAME = Name.special("<given candidates>")
 
+    val defaultResolutionKinds = setOf(
+        NewResolutionOldInference.ResolutionKind.Function,
+        NewResolutionOldInference.ResolutionKind.Variable
+    )
+
     fun <D : CallableDescriptor> runResolutionAndInference(
         context: BasicCallResolutionContext,
         name: Name,
-        resolutionKind: NewResolutionOldInference.ResolutionKind<D>,
+        resolutionKind: NewResolutionOldInference.ResolutionKind,
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
         val refinedName = refineNameForRemOperator(isBinaryRemOperator, name)
 
-        val kotlinCall = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, refinedName, tracingStrategy)
+        val kotlinCall = toKotlinCall(context, resolutionKind.toKotlinCallKind(), context.call, refinedName, tracingStrategy)
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
@@ -89,7 +94,7 @@ class PSICallResolver(
             result = resolveToDeprecatedMod(name, context, resolutionKind, tracingStrategy, scopeTower, resolutionCallbacks, expectedType)
         }
 
-        if (result.isEmpty() && reportAdditionalDiagnosticIfNoCandidates(context, scopeTower, resolutionKind.kotlinCallKind, kotlinCall)) {
+        if (result.isEmpty() && reportAdditionalDiagnosticIfNoCandidates(context, scopeTower, resolutionKind, kotlinCall)) {
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
@@ -124,17 +129,17 @@ class PSICallResolver(
 
     }
 
-    private fun <D : CallableDescriptor> resolveToDeprecatedMod(
+    private fun resolveToDeprecatedMod(
         remOperatorName: Name,
         context: BasicCallResolutionContext,
-        resolutionKind: NewResolutionOldInference.ResolutionKind<D>,
+        resolutionKind: NewResolutionOldInference.ResolutionKind,
         tracingStrategy: TracingStrategy,
         scopeTower: ImplicitScopeTower,
         resolutionCallbacks: KotlinResolutionCallbacksImpl,
         expectedType: UnwrappedType?
     ): CallResolutionResult {
         val deprecatedName = OperatorConventions.REM_TO_MOD_OPERATION_NAMES[remOperatorName]!!
-        val callWithDeprecatedName = toKotlinCall(context, resolutionKind.kotlinCallKind, context.call, deprecatedName, tracingStrategy)
+        val callWithDeprecatedName = toKotlinCall(context, resolutionKind.toKotlinCallKind(), context.call, deprecatedName, tracingStrategy)
         val refinedProviderForInvokeFactory = FactoryProviderForInvoke(context, scopeTower, callWithDeprecatedName)
         return kotlinCallResolver.resolveCall(
             scopeTower, resolutionCallbacks, callWithDeprecatedName, expectedType,
@@ -298,7 +303,7 @@ class PSICallResolver(
     private fun reportAdditionalDiagnosticIfNoCandidates(
         context: BasicCallResolutionContext,
         scopeTower: ImplicitScopeTower,
-        kind: KotlinCallKind,
+        kind: NewResolutionOldInference.ResolutionKind,
         kotlinCall: KotlinCall
     ): Boolean {
         val reference = context.call.calleeExpression as? KtReferenceExpression ?: return false
@@ -446,6 +451,15 @@ class PSICallResolver(
         }
     }
 
+    private fun NewResolutionOldInference.ResolutionKind.toKotlinCallKind(): KotlinCallKind {
+        return when (this) {
+            is NewResolutionOldInference.ResolutionKind.Function -> KotlinCallKind.FUNCTION
+            is NewResolutionOldInference.ResolutionKind.Variable -> KotlinCallKind.VARIABLE
+            is NewResolutionOldInference.ResolutionKind.Invoke -> KotlinCallKind.UNSUPPORTED
+            is NewResolutionOldInference.ResolutionKind.CallableReference -> KotlinCallKind.UNSUPPORTED
+            is NewResolutionOldInference.ResolutionKind.GivenCandidates -> KotlinCallKind.UNSUPPORTED
+        }
+    }
 
     private fun toKotlinCall(
         context: BasicCallResolutionContext,
@@ -496,8 +510,8 @@ class PSICallResolver(
         astExternalArgument?.setResultDataFlowInfoIfRelevant(resultDataFlowInfo)
 
         return PSIKotlinCallImpl(
-            kotlinCallKind, oldCall, tracingStrategy, resolvedExplicitReceiver, name, resolvedTypeArguments, resolvedArgumentsInParenthesis,
-            astExternalArgument, context.dataFlowInfo, resultDataFlowInfo, context.dataFlowInfoForArguments
+            kotlinCallKind, oldCall, tracingStrategy, resolvedExplicitReceiver, name, resolvedTypeArguments,
+            resolvedArgumentsInParenthesis, astExternalArgument, context.dataFlowInfo, resultDataFlowInfo, context.dataFlowInfoForArguments
         )
     }
 

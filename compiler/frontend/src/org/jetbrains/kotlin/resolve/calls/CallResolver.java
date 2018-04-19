@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallKind;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
@@ -190,7 +189,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull KtReferenceExpression referenceExpression,
-            @NotNull NewResolutionOldInference.ResolutionKind<D> kind
+            @NotNull NewResolutionOldInference.ResolutionKind kind
     ) {
         TracingStrategy tracing = TracingStrategyImpl.create(referenceExpression, context.call);
         return computeTasksAndResolveCall(context, name, tracing, kind);
@@ -201,7 +200,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull TracingStrategy tracing,
-            @NotNull NewResolutionOldInference.ResolutionKind<D> kind
+            @NotNull NewResolutionOldInference.ResolutionKind kind
     ) {
         return callResolvePerfCounter.<OverloadResolutionResults<D>>time(() -> {
             ResolutionTask<D> resolutionTask = new ResolutionTask<>(kind, name, null);
@@ -227,7 +226,7 @@ public class CallResolver {
     ) {
         return callResolvePerfCounter.<OverloadResolutionResults<D>>time(() -> {
             ResolutionTask<D> resolutionTask = new ResolutionTask<>(
-                    new NewResolutionOldInference.ResolutionKind.GivenCandidates<>(), null, candidates
+                    new NewResolutionOldInference.ResolutionKind.GivenCandidates(), null, candidates
             );
             return doResolveCallOrGetCachedResults(context, resolutionTask, tracing);
         });
@@ -553,7 +552,7 @@ public class CallResolver {
             Set<ResolutionCandidate<FunctionDescriptor>> candidates = Collections.singleton(candidate);
 
             ResolutionTask<FunctionDescriptor> resolutionTask = new ResolutionTask<>(
-                    new NewResolutionOldInference.ResolutionKind.GivenCandidates<>(), null, candidates
+                    new NewResolutionOldInference.ResolutionKind.GivenCandidates(), null, candidates
             );
 
             return doResolveCallOrGetCachedResults(basicCallResolutionContext, resolutionTask, tracing);
@@ -569,12 +568,13 @@ public class CallResolver {
         tracing.bindCall(context.trace, call);
 
         boolean newInferenceEnabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference);
-        if (newInferenceEnabled && (resolutionTask.resolutionKind.getKotlinCallKind() != KotlinCallKind.UNSUPPORTED)) {
+        NewResolutionOldInference.ResolutionKind resolutionKind = resolutionTask.resolutionKind;
+        if (newInferenceEnabled && PSICallResolver.getDefaultResolutionKinds().contains(resolutionKind)) {
             assert resolutionTask.name != null;
-            return PSICallResolver.runResolutionAndInference(context, resolutionTask.name, resolutionTask.resolutionKind, tracing);
+            return PSICallResolver.runResolutionAndInference(context, resolutionTask.name, resolutionKind, tracing);
         }
 
-        if (newInferenceEnabled && resolutionTask.resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
+        if (newInferenceEnabled && resolutionKind instanceof NewResolutionOldInference.ResolutionKind.GivenCandidates) {
             assert resolutionTask.givenCandidates != null;
             return PSICallResolver.runResolutionAndInferenceForGivenCandidates(context, resolutionTask.givenCandidates, tracing);
         }
@@ -693,10 +693,10 @@ public class CallResolver {
         final Collection<ResolutionCandidate<D>> givenCandidates;
 
         @NotNull
-        final NewResolutionOldInference.ResolutionKind<D> resolutionKind;
+        final NewResolutionOldInference.ResolutionKind resolutionKind;
 
         private ResolutionTask(
-                @NotNull NewResolutionOldInference.ResolutionKind<D> kind,
+                @NotNull NewResolutionOldInference.ResolutionKind kind,
                 @Nullable Name name,
                 @Nullable Collection<ResolutionCandidate<D>> candidates
         ) {
