@@ -23,6 +23,7 @@ class SimpleNameGenerator : NameGenerator {
 
     private fun getNameForDescriptor(descriptor: DeclarationDescriptor, context: JsGenerationContext): JsName =
         nameCache.getOrPut(descriptor) {
+            var nameDeclarator: (String) -> JsName = context.currentScope::declareName
             val nameBuilder = StringBuilder()
             when (descriptor) {
                 is ReceiverParameterDescriptor -> {
@@ -71,6 +72,7 @@ class SimpleNameGenerator : NameGenerator {
                 }
                 is LocalVariableDescriptor -> {
                     nameBuilder.append(descriptor.name.identifier)
+                    nameDeclarator = context.currentScope::declareFreshName
                 }
                 is CallableDescriptor -> {
                     nameBuilder.append(descriptor.name.asString())
@@ -79,7 +81,7 @@ class SimpleNameGenerator : NameGenerator {
                 }
 
             }
-            context.currentScope.declareName(sanitizeName(nameBuilder.toString()))
+            nameDeclarator(sanitizeName(nameBuilder.toString()))
         }
 
     private fun sanitizeName(name: String): String {

@@ -37,18 +37,18 @@ fun prototypeOf(classNameRef: JsExpression) = JsNameRef(Namer.PROTOTYPE_NAME, cl
 fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
     val functionScope = JsFunctionScope(context.currentScope, "scope for ${name ?: "annon"}")
     val functionContext = context.newDeclaration(functionScope, declaration)
+    val functionParams = declaration.valueParameters.map { functionContext.getNameForSymbol(it.symbol) }
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
     val function = JsFunction(functionScope, body, "member function ${name ?: "annon"}")
 
     function.name = name
 
-    fun JsFunction.addParameter(parameterName: String) {
-        val parameter = function.scope.declareName(parameterName)
+    fun JsFunction.addParameter(parameter: JsName) {
         parameters.add(JsParameter(parameter))
     }
 
-    declaration.extensionReceiverParameter?.let { function.addParameter(context.getNameForSymbol(it.symbol).ident) }
-    declaration.valueParameters.forEach { function.addParameter(context.getNameForSymbol(it.symbol).ident) }
+    declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForSymbol(it.symbol)) }
+    functionParams.forEach { function.addParameter(it) }
 
     return function
 }
