@@ -43,7 +43,7 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
         KonanPhases.list()
     }
 
-    if (config.kotlinSourceRoots.isEmpty()) return
+    if (konanConfig.infoArgsOnly) return
 
     val context = Context(konanConfig)
 

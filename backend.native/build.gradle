@@ -256,3 +256,16 @@ protobuf {
         artifact = "com.google.protobuf:protoc:${protobufVersion}"
     }
 }
+
+task debugCompiler(type: JavaExec) {
+    dependsOn ':dist'
+    main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+    classpath = project.fileTree("${distDir.canonicalPath}/konan/lib/") {
+        include '*.jar'
+    }
+    jvmArgs "-Dkonan.home=${distDir.canonicalPath}",
+            "-Djava.library.path=${distDir.canonicalPath}/konan/nativelib"
+    enableAssertions = true
+    args = findProperty("konan.debug.args").toString().tokenize() ?: []
+}
+

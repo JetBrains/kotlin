@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.TempFiles
@@ -47,6 +48,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val platformManager = PlatformManager(distribution)
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
     internal val target = targetManager.target
+
+    val linkOnly: Boolean =
+            configuration.kotlinSourceRoots.isEmpty() && libraryNames.isNotEmpty() && produce.isNativeBinary
+
+    val infoArgsOnly = configuration.kotlinSourceRoots.isEmpty() && !linkOnly
 
     init {
         if (!platformManager.isEnabled(target)) {
