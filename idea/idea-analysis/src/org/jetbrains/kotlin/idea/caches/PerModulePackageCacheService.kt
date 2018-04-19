@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.caches
 import com.intellij.ProjectTopics
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -159,7 +160,12 @@ class ImplicitPackagePrefixCache(private val project: Project) {
         when (event) {
             is VFileCreateEvent -> checkNewFileInSourceRoot(event.file)
             is VFileDeleteEvent -> checkDeletedFileInSourceRoot(event.file)
-            is VFileCopyEvent -> checkNewFileInSourceRoot(event.newParent.findChild(event.newChildName))
+            is VFileCopyEvent -> {
+                val newParent = event.newParent
+                if (newParent.isValid) {
+                    checkNewFileInSourceRoot(newParent.findChild(event.newChildName))
+                }
+            }
             is VFileMoveEvent -> {
                 checkNewFileInSourceRoot(event.file)
                 if (event.oldParent.getSourceRoot(project) == event.oldParent) {
@@ -293,6 +299,7 @@ class PerModulePackageCacheService(private val project: Project) {
 
     companion object {
         const val FULL_DROP_THRESHOLD = 1000
+        private val LOG = Logger.getInstance(this::class.java)
 
         fun getInstance(project: Project): PerModulePackageCacheService =
             ServiceManager.getService(project, PerModulePackageCacheService::class.java)
