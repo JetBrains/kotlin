@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import java.util.*
 import kotlin.system.measureNanoTime
 
 class AllKotlinLightClassTest : WholeProjectPerformanceTest(), WholeProjectKotlinFileProvider {
@@ -20,7 +22,7 @@ class AllKotlinLightClassTest : WholeProjectPerformanceTest(), WholeProjectKotli
         var totalNs = 0L
 
         val psiFile = file.toPsiFile(project) ?: run {
-            return PerFileTestResult(results, totalNs, listOf(AssertionError("PsiFile not found for $file")))
+            return WholeProjectPerformanceTest.PerFileTestResult(results, totalNs, listOf(AssertionError("PsiFile not found for $file")))
         }
 
         val errors = mutableListOf<Throwable>()
@@ -31,7 +33,10 @@ class AllKotlinLightClassTest : WholeProjectPerformanceTest(), WholeProjectKotli
                 psiFile.acceptRecursively(object : KtVisitorVoid() {
                     override fun visitClassOrObject(classOrObject: KtClassOrObject) {
                         if (classOrObject.containingDeclarationForPseudocode != null) return
-                        val lightClass = classOrObject.toLightClass() ?: return
+                        val lightClass = classOrObject.toLightClass() as? KtLightClassForSourceDeclaration ?: return
+                        Arrays.hashCode(lightClass.superTypes)
+                        Arrays.hashCode(lightClass.fields)
+                        Arrays.hashCode(lightClass.methods)
                         lightClass.hashCode()
                     }
                 })
