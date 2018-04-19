@@ -203,6 +203,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
                 arguments.jdkHome = configuration?.getChild("jdkHome")?.text
                 arguments.jvmTarget = configuration?.getChild("jvmTarget")?.text ?:
                         mavenProject.properties["kotlin.compiler.jvmTarget"]?.toString()
+                arguments.javaParameters = configuration?.getChild("javaParameters")?.text?.toBoolean() ?: false
             }
             is K2JSCompilerArguments -> {
                 arguments.sourceMap = configuration?.getChild("sourceMap")?.text?.trim()?.toBoolean() ?: false
