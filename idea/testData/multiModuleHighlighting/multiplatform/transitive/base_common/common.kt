@@ -1,0 +1,1 @@
+expect fun <error descr="[NO_ACTUAL_FOR_EXPECT] Expected function 'foo' has no actual declaration in module base_JVM for JVM">foo</error>(): Int

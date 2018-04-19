@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeCompiledLightClassTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeLightClassTest
+import org.jetbrains.kotlin.idea.caches.resolve.AbstractMultiModuleHighlightingTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractMultiModuleLineMarkerTest
 import org.jetbrains.kotlin.idea.codeInsight.*
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionTest
@@ -641,6 +642,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMultiFileHighlightingTest> {
             model("multiFileHighlighting", recursive = false)
+        }
+
+        testClass<AbstractMultiModuleHighlightingTest> {
+            model("multiModuleHighlighting/multiplatform/", recursive = false, extension = null)
         }
 
         testClass<AbstractQuickFixMultiModuleTest> {
