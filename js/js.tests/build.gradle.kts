@@ -60,6 +60,7 @@ val testDistProjects = listOf(
 
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
