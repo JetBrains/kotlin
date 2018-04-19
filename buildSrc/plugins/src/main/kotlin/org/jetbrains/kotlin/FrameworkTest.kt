@@ -1,6 +1,10 @@
 package org.jetbrains.kotlin
 
+import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
@@ -32,6 +36,21 @@ open class FrameworkTest : DefaultTask() {
                 .getByName("testOutputFramework") as SourceSet).output.dirs.singleFile.absolutePath
                 ?: throw RuntimeException("Empty sourceSet")
     }
+
+    override fun configure(config: Closure<*>): Task {
+        super.configure(config)
+        val target = project.testTarget().name
+
+        // set crossdist build dependency if custom konan.home wasn't set
+        if (!(project.property("useCustomDist") as Boolean)) {
+            setRootDependency("${target}CrossDist", "${target}CrossDistRuntime", "commonDistRuntime", "distCompiler")
+        }
+        check(::frameworkName.isInitialized, { "Framework name should be set" })
+        dependsOn(project.tasks.getByName("compileKonan$frameworkName"))
+        return this
+    }
+
+    private fun setRootDependency(vararg s: String) = s.forEach { dependsOn(project.rootProject.tasks.getByName(it)) }
 
     @TaskAction
     fun run() {

@@ -80,7 +80,7 @@ abstract class KonanTest extends JavaExec {
             if (project.testTarget) {
                 // if a test_target property is set then tests should depend on a crossDist
                 // otherwise runtime components would not be build for a target
-                dependsOn(project.rootProject.tasks['crossDist'])
+                dependsOn(project.rootProject.tasks["${target}CrossDist"])
             }
         }
     }
@@ -326,6 +326,10 @@ class BuildKonanTest extends ExtKonanTest {
 
     public List<String> compileList
     public List<String> excludeList
+
+    BuildKonanTest() {
+        super()
+    }
 
     @Override
     List<String> buildCompileList() {
