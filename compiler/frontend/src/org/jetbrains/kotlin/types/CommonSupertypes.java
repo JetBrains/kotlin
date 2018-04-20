@@ -100,7 +100,7 @@ public class CommonSupertypes {
     @NotNull
     private static SimpleType commonSuperTypeForInflexible(@NotNull Collection<SimpleType> types, int recursionDepth, int maxDepth) {
         assert !types.isEmpty();
-        Collection<SimpleType> typeSet = new HashSet<>(types);
+        Collection<SimpleType> typeSet = new LinkedHashSet<>(types);
 
         // If any of the types is nullable, the result must be nullable
         // This also removed Nothing and Nothing? because they are subtypes of everything else
@@ -132,7 +132,7 @@ public class CommonSupertypes {
         // constructor of the supertype -> all of its instantiations occurring as supertypes
         Map<TypeConstructor, Set<SimpleType>> commonSupertypes = computeCommonRawSupertypes(typeSet);
         while (commonSupertypes.size() > 1) {
-            Set<SimpleType> merge = new HashSet<>();
+            Set<SimpleType> merge = new LinkedHashSet<>();
             for (Set<SimpleType> supertypes : commonSupertypes.values()) {
                 merge.addAll(supertypes);
             }
@@ -244,7 +244,7 @@ public class CommonSupertypes {
         List<TypeParameterDescriptor> parameters = constructor.getParameters();
         List<TypeProjection> newProjections = new ArrayList<>(parameters.size());
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
-            Set<TypeProjection> typeProjections = new HashSet<>();
+            Set<TypeProjection> typeProjections = new LinkedHashSet<>();
             for (KotlinType type : types) {
                 typeProjections.add(type.getArguments().get(parameterDescriptor.getIndex()));
             }
@@ -287,8 +287,8 @@ public class CommonSupertypes {
             return TypeUtils.makeStarProjection(parameterDescriptor);
         }
 
-        Set<KotlinType> ins = new HashSet<>();
-        Set<KotlinType> outs = new HashSet<>();
+        Set<KotlinType> ins = new LinkedHashSet<>();
+        Set<KotlinType> outs = new LinkedHashSet<>();
 
         Variance variance = parameterDescriptor.getVariance();
         switch (variance) {
