@@ -6139,7 +6139,7 @@ public expect fun CharArray.sort(): Unit
 /**
  * Sorts the array in-place according to the natural order of its elements.
  */
-public expect fun <T: Comparable<T>> Array<out T>.sort(): Unit
+public expect fun <T : Comparable<T>> Array<out T>.sort(): Unit
 
 /**
  * Sorts the array in-place according to the order specified by the given [comparator].
@@ -11304,7 +11304,7 @@ public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public inline fun <S, T: S> Array<out T>.reduce(operation: (acc: S, T) -> S): S {
+public inline fun <S, T : S> Array<out T>.reduce(operation: (acc: S, T) -> S): S {
     if (isEmpty())
         throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator: S = this[0]
@@ -11424,7 +11424,7 @@ public inline fun CharArray.reduce(operation: (acc: Char, Char) -> Char): Char {
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
+public inline fun <S, T : S> Array<out T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
     if (isEmpty())
         throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator: S = this[0]
@@ -11565,7 +11565,7 @@ public inline fun CharArray.reduceIndexed(operation: (index: Int, acc: Char, Cha
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public inline fun <S, T: S> Array<out T>.reduceRight(operation: (T, acc: S) -> S): S {
+public inline fun <S, T : S> Array<out T>.reduceRight(operation: (T, acc: S) -> S): S {
     var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator: S = get(index--)
@@ -11685,7 +11685,7 @@ public inline fun CharArray.reduceRight(operation: (Char, acc: Char) -> Char): C
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
+public inline fun <S, T : S> Array<out T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
     var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty array can't be reduced.")
     var accumulator: S = get(index--)

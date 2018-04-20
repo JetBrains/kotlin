@@ -40,7 +40,7 @@ public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(desti
  *
  * The operation is _terminal_.
  */
-public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): java.util.SortedSet<T> {
+public fun <T : Comparable<T>> Sequence<T>.toSortedSet(): java.util.SortedSet<T> {
     return toCollection(java.util.TreeSet<T>())
 }
 

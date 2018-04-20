@@ -879,7 +879,7 @@ public actual fun CharArray.sort(): Unit {
 /**
  * Sorts the array in-place according to the natural order of its elements.
  */
-public actual fun <T: Comparable<T>> Array<out T>.sort(): Unit {
+public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
     if (size > 1)
         sort { a: T, b: T -> a.compareTo(b) }
 }

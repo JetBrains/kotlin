@@ -707,7 +707,7 @@ public infix fun Short.until(to: Short): IntRange {
  * 
  * @sample samples.comparisons.ComparableOps.coerceAtLeastComparable
  */
-public fun <T: Comparable<T>> T.coerceAtLeast(minimumValue: T): T {
+public fun <T : Comparable<T>> T.coerceAtLeast(minimumValue: T): T {
     return if (this < minimumValue) minimumValue else this
 }
 
@@ -784,7 +784,7 @@ public fun Double.coerceAtLeast(minimumValue: Double): Double {
  * 
  * @sample samples.comparisons.ComparableOps.coerceAtMostComparable
  */
-public fun <T: Comparable<T>> T.coerceAtMost(maximumValue: T): T {
+public fun <T : Comparable<T>> T.coerceAtMost(maximumValue: T): T {
     return if (this > maximumValue) maximumValue else this
 }
 
@@ -861,7 +861,7 @@ public fun Double.coerceAtMost(maximumValue: Double): Double {
  * 
  * @sample samples.comparisons.ComparableOps.coerceInComparable
  */
-public fun <T: Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T {
+public fun <T : Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T {
     if (minimumValue !== null && maximumValue !== null) {
         if (minimumValue > maximumValue) throw IllegalArgumentException("Cannot coerce value to an empty range: maximum $maximumValue is less than minimum $minimumValue.")
         if (this < minimumValue) return minimumValue
@@ -966,7 +966,7 @@ public fun Double.coerceIn(minimumValue: Double, maximumValue: Double): Double {
  * @sample samples.comparisons.ComparableOps.coerceInFloatingPointRange
  */
 @SinceKotlin("1.1")
-public fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T {
+public fun <T : Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T {
     if (range.isEmpty()) throw IllegalArgumentException("Cannot coerce value to an empty range: $range.")
     return when {
         // this < start equiv to this <= start && !(this >= start)
@@ -984,7 +984,7 @@ public fun <T: Comparable<T>> T.coerceIn(range: ClosedFloatingPointRange<T>): T 
  * 
  * @sample samples.comparisons.ComparableOps.coerceInComparable
  */
-public fun <T: Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
+public fun <T : Comparable<T>> T.coerceIn(range: ClosedRange<T>): T {
     if (range is ClosedFloatingPointRange) {
         return this.coerceIn<T>(range)
     }

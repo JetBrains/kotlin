@@ -1264,7 +1264,7 @@ public fun <T> Sequence<T>.onEach(action: (T) -> Unit): Sequence<T> {
  *
  * The operation is _terminal_.
  */
-public inline fun <S, T: S> Sequence<T>.reduce(operation: (acc: S, T) -> S): S {
+public inline fun <S, T : S> Sequence<T>.reduce(operation: (acc: S, T) -> S): S {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty sequence can't be reduced.")
     var accumulator: S = iterator.next()
@@ -1282,7 +1282,7 @@ public inline fun <S, T: S> Sequence<T>.reduce(operation: (acc: S, T) -> S): S {
  *
  * The operation is _terminal_.
  */
-public inline fun <S, T: S> Sequence<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
+public inline fun <S, T : S> Sequence<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty sequence can't be reduced.")
     var index = 1

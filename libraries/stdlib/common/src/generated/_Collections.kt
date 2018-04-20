@@ -1698,7 +1698,7 @@ public inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C {
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public inline fun <S, T: S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S {
+public inline fun <S, T : S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty collection can't be reduced.")
     var accumulator: S = iterator.next()
@@ -1714,7 +1714,7 @@ public inline fun <S, T: S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S {
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
+public inline fun <S, T : S> Iterable<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty collection can't be reduced.")
     var index = 1
@@ -1728,7 +1728,7 @@ public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (index: Int, ac
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public inline fun <S, T: S> List<T>.reduceRight(operation: (T, acc: S) -> S): S {
+public inline fun <S, T : S> List<T>.reduceRight(operation: (T, acc: S) -> S): S {
     val iterator = listIterator(size)
     if (!iterator.hasPrevious())
         throw UnsupportedOperationException("Empty list can't be reduced.")
@@ -1745,7 +1745,7 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, acc: S) -> S): S 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
+public inline fun <S, T : S> List<T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
     val iterator = listIterator(size)
     if (!iterator.hasPrevious())
         throw UnsupportedOperationException("Empty list can't be reduced.")

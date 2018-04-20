@@ -625,7 +625,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         typeParam("S")
-        typeParam("T: S")
+        typeParam("T : S")
         returns("S")
         body {
             """
@@ -698,7 +698,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         typeParam("S")
-        typeParam("T: S")
+        typeParam("T : S")
         returns("S")
         body {
             """
@@ -759,7 +759,7 @@ object Aggregates : TemplateGroupBase() {
 
         doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
         typeParam("S")
-        typeParam("T: S")
+        typeParam("T : S")
         returns("S")
         body {
             """
@@ -815,7 +815,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
         typeParam("S")
-        typeParam("T: S")
+        typeParam("T : S")
         returns("S")
         body {
             """

@@ -1212,7 +1212,7 @@ public actual fun CharArray.sort(): Unit {
  * Sorts the array in-place according to the natural order of its elements.
  */
 @kotlin.internal.InlineOnly
-public actual inline fun <T: Comparable<T>> Array<out T>.sort(): Unit {
+public actual inline fun <T : Comparable<T>> Array<out T>.sort(): Unit {
     @Suppress("UNCHECKED_CAST")
     (this as Array<Any?>).sort()
 }
@@ -1387,7 +1387,7 @@ public actual fun CharArray.toTypedArray(): Array<Char> {
 /**
  * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-public fun <T: Comparable<T>> Array<out T>.toSortedSet(): java.util.SortedSet<T> {
+public fun <T : Comparable<T>> Array<out T>.toSortedSet(): java.util.SortedSet<T> {
     return toCollection(java.util.TreeSet<T>())
 }
 

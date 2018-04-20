@@ -99,7 +99,7 @@ object Snapshots : TemplateGroupBase() {
         include(CharSequences)
         platforms(Platform.JVM)
     } builder {
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc { "Returns a [SortedSet][java.util.SortedSet] of all ${f.element.pluralize()}." }
         returns("java.util.SortedSet<T>")
         body { "return toCollection(java.util.TreeSet<T>())" }

@@ -496,7 +496,7 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfPrimitives, PrimitiveType.numericPrimitives + PrimitiveType.Char)
         include(ArraysOfObjects)
     } builder {
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc { "Sorts the array in-place according to the natural order of its elements." }
         specialFor(ArraysOfPrimitives) {
             doc { "Sorts the array in-place." }

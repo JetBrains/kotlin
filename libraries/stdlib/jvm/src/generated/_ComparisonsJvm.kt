@@ -18,7 +18,7 @@ import kotlin.comparisons.*
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
-public actual fun <T: Comparable<T>> maxOf(a: T, b: T): T {
+public actual fun <T : Comparable<T>> maxOf(a: T, b: T): T {
     return if (a >= b) a else b
 }
 
@@ -80,7 +80,7 @@ public actual inline fun maxOf(a: Double, b: Double): Double {
  * Returns the greater of three values.
  */
 @SinceKotlin("1.1")
-public actual fun <T: Comparable<T>> maxOf(a: T, b: T, c: T): T {
+public actual fun <T : Comparable<T>> maxOf(a: T, b: T, c: T): T {
     return maxOf(a, maxOf(b, c))
 }
 
@@ -143,7 +143,7 @@ public actual inline fun maxOf(a: Double, b: Double, c: Double): Double {
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
-public actual fun <T: Comparable<T>> minOf(a: T, b: T): T {
+public actual fun <T : Comparable<T>> minOf(a: T, b: T): T {
     return if (a <= b) a else b
 }
 
@@ -205,7 +205,7 @@ public actual inline fun minOf(a: Double, b: Double): Double {
  * Returns the smaller of three values.
  */
 @SinceKotlin("1.1")
-public actual fun <T: Comparable<T>> minOf(a: T, b: T, c: T): T {
+public actual fun <T : Comparable<T>> minOf(a: T, b: T, c: T): T {
     return minOf(a, minOf(b, c))
 }
 

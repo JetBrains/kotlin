@@ -39,7 +39,7 @@ public actual fun <T> MutableList<T>.reverse(): Unit {
 /**
  * Returns a [SortedSet][java.util.SortedSet] of all elements.
  */
-public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): java.util.SortedSet<T> {
+public fun <T : Comparable<T>> Iterable<T>.toSortedSet(): java.util.SortedSet<T> {
     return toCollection(java.util.TreeSet<T>())
 }
 

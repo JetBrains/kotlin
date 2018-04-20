@@ -30,7 +30,7 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Ranges)
         returns("SELF")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc {
             """
             Ensures that this value is not less than the specified [minimumValue].
@@ -52,7 +52,7 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Ranges)
         returns("SELF")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc {
             """
             Ensures that this value is not greater than the specified [maximumValue].
@@ -74,7 +74,7 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Ranges)
         returns("SELF")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc {
             """
             Ensures that this value lies in the specified [range].
@@ -117,7 +117,7 @@ object ComparableOps : TemplateGroupBase() {
         sourceFile(SourceFile.Ranges)
         since("1.1")
         returns("SELF")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         doc {
             """
             Ensures that this value lies in the specified [range].
@@ -147,7 +147,7 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
         doc {
@@ -191,7 +191,7 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
         specialFor(Primitives) { inlineOnly() }
@@ -261,7 +261,7 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
         doc {
@@ -305,7 +305,7 @@ object ComparableOps : TemplateGroupBase() {
     } builder {
         sourceFile(SourceFile.Comparisons)
         since("1.1")
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("T")
         receiver("")
         specialFor(Primitives) { inlineOnly() }
@@ -377,7 +377,7 @@ object ComparableOps : TemplateGroupBase() {
         sourceFile(SourceFile.Ranges)
 
         specialFor(Generic) { signature("coerceIn(minimumValue: SELF?, maximumValue: SELF?)", notForSorting = true) }
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("SELF")
         doc {
             """
