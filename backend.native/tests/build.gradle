@@ -362,6 +362,16 @@ task function_defaults_from_fake_override(type: RunKonanTest) {
     source = "codegen/function/defaultsFromFakeOverride.kt"
 }
 
+task function_defaults_with_vararg1(type: RunKonanTest) {
+    goldValue = "Hello , Correct!\nHello World, Correct!\n , Correct!\n"
+    source = "codegen/function/defaultsWithVarArg1.kt"
+}
+
+task function_defaults_with_vararg2(type: RunKonanTest) {
+    goldValue = "1\n2\n42\n"
+    source = "codegen/function/defaultsWithVarArg2.kt"
+}
+
 task sum_3const(type: RunKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }

@@ -45,9 +45,9 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
@@ -311,8 +311,8 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                         maskValues[maskIndex] = maskValues[maskIndex] or (1 shl (i % 32))
                     }
                     val valueParameterDescriptor = realDescriptor.valueParameters[i]
-                    val pair = valueParameterDescriptor to (valueArgument ?: nullConst(expression, valueParameterDescriptor.type))
-                    return@mapIndexed pair
+                    val defaultValueArgument = if (valueParameterDescriptor.isVararg) null else nullConst(expression, valueParameterDescriptor.type)
+                    valueParameterDescriptor to (valueArgument ?: defaultValueArgument)
                 })
                 maskValues.forEachIndexed { i, maskValue ->
                     params += maskParameterDescriptor(realFunction, i) to IrConstImpl.int(
