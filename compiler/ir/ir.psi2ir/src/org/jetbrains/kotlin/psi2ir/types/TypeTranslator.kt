@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.transformations.AnnotationGenerator
 import org.jetbrains.kotlin.psi2ir.transformations.ScopedTypeParametersResolver
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 
 class TypeTranslator(
     moduleDescriptor: ModuleDescriptor,
@@ -53,32 +54,35 @@ class TypeTranslator(
     fun translateType(ktType: KotlinType): IrType =
         translateType(ktType, Variance.INVARIANT).type
 
-    private fun translateType(ktType: KotlinType, variance: Variance): IrTypeProjection {
+    private fun translateType(ktType0: KotlinType, variance: Variance): IrTypeProjection {
+        // TODO "old" JVM BE does this for reified type arguments. Is it ok for arbitrary subexpressions?
+        val ktTypeUpper = approximateCapturedTypes(ktType0).upper
+
         when {
-            ktType.isError -> return IrErrorTypeImpl(translateTypeAnnotations(ktType.annotations), variance)
-            ktType.isFlexible() -> return translateType(ktType.upperIfFlexible(), variance)
-            ktType.isDynamic() -> return IrDynamicTypeImpl(translateTypeAnnotations(ktType.annotations), variance)
+            ktTypeUpper.isError -> return IrErrorTypeImpl(translateTypeAnnotations(ktTypeUpper.annotations), variance)
+            ktTypeUpper.isFlexible() -> return translateType(ktTypeUpper.upperIfFlexible(), variance)
+            ktTypeUpper.isDynamic() -> return IrDynamicTypeImpl(translateTypeAnnotations(ktTypeUpper.annotations), variance)
         }
 
-        val ktTypeConstructor = ktType.constructor
-        val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor ?: throw AssertionError("No descriptor for type $ktType")
+        val ktTypeConstructor = ktTypeUpper.constructor
+        val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor ?: throw AssertionError("No descriptor for type $ktTypeUpper")
 
         return when (ktTypeDescriptor) {
             is TypeParameterDescriptor ->
                 IrSimpleTypeImpl(
                     resolveTypeParameter(ktTypeDescriptor),
-                    ktType.isMarkedNullable,
+                    ktTypeUpper.isMarkedNullable,
                     emptyList(),
-                    translateTypeAnnotations(ktType.annotations),
+                    translateTypeAnnotations(ktTypeUpper.annotations),
                     variance
                 )
 
             is ClassDescriptor ->
                 IrSimpleTypeImpl(
                     symbolTable.referenceClass(ktTypeDescriptor),
-                    ktType.isMarkedNullable,
-                    translateTypeArguments(ktType.arguments),
-                    translateTypeAnnotations(ktType.annotations),
+                    ktTypeUpper.isMarkedNullable,
+                    translateTypeArguments(ktTypeUpper.arguments),
+                    translateTypeAnnotations(ktTypeUpper.annotations),
                     variance
                 )
 
