@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.pill.PillExtension
 import proguard.gradle.ProGuardTask
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
@@ -12,12 +13,17 @@ import java.io.DataOutputStream
 
 description = "Kotlin Full Reflection Library"
 
-plugins { java }
+plugins {
+    java
+    id("pill-configurable")
+}
 
 callGroovy("configureJavaOnlyJvm6Project", this)
 publish()
 
-val jpsLibraryPath by extra(rootProject.extra["distLibDir"])
+pill {
+    importAsLibrary = true
+}
 
 val core = "$rootDir/core"
 val annotationsSrc = "$buildDir/annotations"

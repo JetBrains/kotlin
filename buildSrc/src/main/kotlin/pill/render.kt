@@ -98,7 +98,6 @@ private fun renderModule(project: PProject, module: PModule) = PFile(
                         "name" to dependency.name,
                         "level" to "project"
                     )
-                    else -> error("Unsupported dependency type: $dependency")
                 }
 
                 if (dependency is PDependency.Module && orderRoot.isProductionOnTestDependency) {

@@ -33,9 +33,9 @@ plugins {
 
 gradlePlugin {
     (plugins) {
-        "jps-compatible-base" {
-            id = "jps-compatible-base"
-            implementationClass = "org.jetbrains.kotlin.pill.JpsCompatibleBasePlugin"
+        "pill-configurable" {
+            id = "pill-configurable"
+            implementationClass = "org.jetbrains.kotlin.pill.PillConfigurablePlugin"
         }
         "jps-compatible" {
             id = "jps-compatible"
