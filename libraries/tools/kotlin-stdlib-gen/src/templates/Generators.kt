@@ -631,10 +631,9 @@ object Generators : TemplateGroupBase() {
             @param step the number of elements to move the window forward by on an each step, by default 1
             @param partialWindows controls whether or not to keep partial windows in the end if any,
             by default `false` which means partial windows won't be preserved
-
-            @sample samples.collections.Sequences.Transformations.averageWindows
             """
         }
+        sample("samples.collections.Sequences.Transformations.averageWindows")
 
         typeParam("R")
         returns("List<R>")
@@ -711,10 +710,9 @@ object Generators : TemplateGroupBase() {
             @param step the number of elements to move the window forward by on an each step, by default 1
             @param partialWindows controls whether or not to keep partial windows in the end if any,
             by default `false` which means partial windows won't be preserved
-
-            @sample samples.collections.Sequences.Transformations.takeWindows
             """
         }
+        sample("samples.collections.Sequences.Transformations.takeWindows")
 
         body {
             """
@@ -765,10 +763,9 @@ object Generators : TemplateGroupBase() {
             @param step the number of elements to move the window forward by on an each step, by default 1
             @param partialWindows controls whether or not to keep partial windows in the end if any,
             by default `false` which means partial windows won't be preserved
-
-            @sample samples.collections.Sequences.Transformations.averageWindows
             """
         }
+        sample("samples.collections.Sequences.Transformations.averageWindows")
         typeParam("R")
         returns("Sequence<R>")
 
@@ -798,10 +795,9 @@ object Generators : TemplateGroupBase() {
             @param step the number of elements to move the window forward by on an each step, by default 1
             @param partialWindows controls whether or not to keep partial windows in the end if any,
             by default `false` which means partial windows won't be preserved
-
-            @sample samples.collections.Sequences.Transformations.takeWindows
             """
         }
+        sample("samples.collections.Sequences.Transformations.takeWindows")
         returns("Sequence<String>")
 
         body(CharSequences) { "return windowedSequence(size, step, partialWindows) { it.toString() }" }
@@ -823,10 +819,9 @@ object Generators : TemplateGroupBase() {
             The last ${f.viewResult} may have less ${f.element.pluralize()} than the given [size].
 
             @param size the number of elements to take in each ${f.viewResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
-
-            @sample samples.text.Strings.chunkedTransform
             """
         }
+        sample("samples.text.Strings.chunkedTransform")
 
         typeParam("R")
         returns("List<R>")
@@ -851,10 +846,9 @@ object Generators : TemplateGroupBase() {
             The last ${f.snapshotResult} in the resulting ${f.mapResult} may have less ${f.element.pluralize()} than the given [size].
 
             @param size the number of elements to take in each ${f.snapshotResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
-
-            @sample samples.collections.Collections.Transformations.chunked
             """
         }
+        sample("samples.collections.Collections.Transformations.chunked")
         specialFor(Iterables) { returns("List<List<T>>") }
         specialFor(Sequences) { returns("Sequence<List<T>>") }
         specialFor(CharSequences) { returns("List<String>") }
@@ -880,10 +874,9 @@ object Generators : TemplateGroupBase() {
             The last ${f.viewResult} may have less ${f.element.pluralize()} than the given [size].
 
             @param size the number of elements to take in each ${f.viewResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
-
-            @sample samples.text.Strings.chunkedTransformToSequence
             """
         }
+        sample("samples.text.Strings.chunkedTransformToSequence")
 
         typeParam("R")
         returns("Sequence<R>")
@@ -906,10 +899,9 @@ object Generators : TemplateGroupBase() {
             The last ${f.snapshotResult} in the resulting sequence may have less ${f.element.pluralize()} than the given [size].
 
             @param size the number of elements to take in each ${f.snapshotResult}, must be positive and can be greater than the number of elements in this ${f.collection}.
-
-            @sample samples.collections.Collections.Transformations.chunked
             """
         }
+        sample("samples.collections.Collections.Transformations.chunked")
         returns("Sequence<String>")
 
         body(CharSequences) { "return chunkedSequence(size) { it.toString() }" }
@@ -926,10 +918,9 @@ object Generators : TemplateGroupBase() {
             to an each pair of two adjacent ${f.element.pluralize()} in this ${f.collection}.
 
             The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
-
-            @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
             """
         }
+        sample("samples.collections.Collections.Transformations.zipWithNextToFindDeltas")
         returns("List<R>")
         inline()
         body {
@@ -988,10 +979,9 @@ object Generators : TemplateGroupBase() {
             Returns a ${f.mapResult} of pairs of each two adjacent ${f.element.pluralize()} in this ${f.collection}.
 
             The returned ${f.mapResult} is empty if this ${f.collection} contains less than two ${f.element.pluralize()}.
-
-            @sample samples.collections.Collections.Transformations.zipWithNext
             """
         }
+        sample("samples.collections.Collections.Transformations.zipWithNext")
         sequenceClassification(intermediate, stateless)
         specialFor(Sequences) { returns("Sequence<Pair<T, T>>") }
         body {
@@ -1007,10 +997,9 @@ object Generators : TemplateGroupBase() {
             Returns a list of values built from the elements of `this` ${f.collection} and the [other] collection with the same index
             using the provided [transform] function applied to each pair of elements.
             The returned list has length of the shortest collection.
-
-            @sample samples.collections.Iterables.Operations.zipIterableWithTransform
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterableWithTransform")
         typeParam("R")
         typeParam("V")
         returns("List<V>")
@@ -1048,10 +1037,9 @@ object Generators : TemplateGroupBase() {
             Returns a list of values built from the elements of `this` ${f.collection} and the [other] array with the same index
             using the provided [transform] function applied to each pair of elements.
             The returned list has length of the shortest collection.
-
-            @sample samples.collections.Iterables.Operations.zipIterableWithTransform
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterableWithTransform")
         typeParam("R")
         typeParam("V")
         returns("List<V>")
@@ -1089,10 +1077,9 @@ object Generators : TemplateGroupBase() {
             Returns a list of values built from the elements of `this` array and the [other] array with the same index
             using the provided [transform] function applied to each pair of elements.
             The returned list has length of the shortest array.
-
-            @sample samples.collections.Iterables.Operations.zipIterableWithTransform
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterableWithTransform")
         typeParam("V")
         returns("List<V>")
         inline()
@@ -1116,10 +1103,9 @@ object Generators : TemplateGroupBase() {
             Returns a sequence of values built from the elements of `this` sequence and the [other] sequence with the same index
             using the provided [transform] function applied to each pair of elements.
             The resulting sequence ends as soon as the shortest input sequence ends.
-
-            @sample samples.collections.Sequences.Transformations.zipWithTransform
             """
         }
+        sample("samples.collections.Sequences.Transformations.zipWithTransform")
         sequenceClassification(intermediate, stateless)
         typeParam("R")
         typeParam("V")
@@ -1139,10 +1125,9 @@ object Generators : TemplateGroupBase() {
             Returns a list of values built from the characters of `this` and the [other] char sequences with the same index
             using the provided [transform] function applied to each pair of characters.
             The returned list has length of the shortest char sequence.
-
-            @sample samples.text.Strings.zipWithTransform
             """
         }
+        sample("samples.text.Strings.zipWithTransform")
         typeParam("V")
         returns("List<V>")
         inline()
@@ -1168,10 +1153,9 @@ object Generators : TemplateGroupBase() {
             """
             Returns a list of pairs built from the elements of `this` collection and [other] ${f.collection} with the same index.
             The returned list has length of the shortest collection.
-
-            @sample samples.collections.Iterables.Operations.zipIterable
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterable")
         typeParam("R")
         returns("List<Pair<T, R>>")
         body {
@@ -1189,10 +1173,9 @@ object Generators : TemplateGroupBase() {
             """
             Returns a list of pairs built from the characters of `this` and the [other] char sequences with the same index
             The returned list has length of the shortest char sequence.
-
-            @sample samples.text.Strings.zip
             """
         }
+        sample("samples.text.Strings.zip")
         returns("List<Pair<Char, Char>>")
         body {
             """
@@ -1209,10 +1192,9 @@ object Generators : TemplateGroupBase() {
             """
             Returns a list of pairs built from the elements of `this` ${f.collection} and the [other] array with the same index.
             The returned list has length of the shortest collection.
-
-            @sample samples.collections.Iterables.Operations.zipIterable
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterable")
         typeParam("R")
         returns("List<Pair<T, R>>")
         body {
@@ -1230,10 +1212,9 @@ object Generators : TemplateGroupBase() {
             """
             Returns a list of pairs built from the elements of `this` array and the [other] array with the same index.
             The returned list has length of the shortest collection.
-
-            @sample samples.collections.Iterables.Operations.zipIterable
             """
         }
+        sample("samples.collections.Iterables.Operations.zipIterable")
         returns("List<Pair<T, T>>")
         body {
             """
@@ -1250,10 +1231,9 @@ object Generators : TemplateGroupBase() {
             """
             Returns a sequence of values built from the elements of `this` sequence and the [other] sequence with the same index.
             The resulting sequence ends as soon as the shortest input sequence ends.
-
-            @sample samples.collections.Sequences.Transformations.zip
             """
         }
+        sample("samples.collections.Sequences.Transformations.zip")
         sequenceClassification(intermediate, stateless)
         typeParam("R")
         returns("Sequence<Pair<T, R>>")

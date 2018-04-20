@@ -332,6 +332,8 @@ public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns a sequence containing all elements except first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  *
  * The operation is _intermediate_ and _stateless_.
  */
@@ -346,6 +348,8 @@ public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
 
 /**
  * Returns a sequence containing all elements except first elements that satisfy the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  *
  * The operation is _intermediate_ and _stateless_.
  */
@@ -459,6 +463,8 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destinat
 
 /**
  * Returns a sequence containing first [n] elements.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  *
  * The operation is _intermediate_ and _stateless_.
  */
@@ -473,6 +479,8 @@ public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
 
 /**
  * Returns a sequence containing first elements satisfying the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  *
  * The operation is _intermediate_ and _stateless_.
  */

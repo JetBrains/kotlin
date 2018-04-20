@@ -52,10 +52,11 @@ object SequenceOps : TemplateGroupBase() {
         doc {
             """
             Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated.
-
-            ${if (f in listOf(ArraysOfPrimitives, ArraysOfObjects, Iterables)) "@sample samples.collections.Sequences.Building.sequenceFrom${f.doc.collection.capitalize()}" else ""}
             """
         }
+        if (f in listOf(ArraysOfPrimitives, ArraysOfObjects, Iterables))
+            sample("samples.collections.Sequences.Building.sequenceFrom${f.doc.collection.capitalize()}")
+
         returns("Sequence<T>")
         body {
             """

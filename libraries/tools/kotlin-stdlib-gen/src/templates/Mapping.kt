@@ -326,10 +326,9 @@ object Mapping : TemplateGroupBase() {
             applied to each ${f.element} and returns a map where each group key is associated with a list of corresponding ${f.element.pluralize()}.
 
             The returned map preserves the entry iteration order of the keys produced from the original ${f.collection}.
-
-            @sample samples.collections.Collections.Transformations.groupBy
             """
         }
+        sample("samples.collections.Collections.Transformations.groupBy")
         sequenceClassification(terminal)
         typeParam("K")
         returns("Map<K, List<T>>")
@@ -350,10 +349,9 @@ object Mapping : TemplateGroupBase() {
             applied to each ${f.element} and puts to the [destination] map each group key associated with a list of corresponding ${f.element.pluralize()}.
 
             @return The [destination] map.
-
-            @sample samples.collections.Collections.Transformations.groupBy
             """
         }
+        sample("samples.collections.Collections.Transformations.groupBy")
         sequenceClassification(terminal)
         returns("M")
         body {
@@ -380,10 +378,9 @@ object Mapping : TemplateGroupBase() {
             and returns a map where each group key is associated with a list of corresponding values.
 
             The returned map preserves the entry iteration order of the keys produced from the original ${f.collection}.
-
-            @sample samples.collections.Collections.Transformations.groupByKeysAndValues
             """
         }
+        sample("samples.collections.Collections.Transformations.groupByKeysAndValues")
         sequenceClassification(terminal)
         typeParam("K")
         typeParam("V")
@@ -408,10 +405,9 @@ object Mapping : TemplateGroupBase() {
             and puts to the [destination] map each group key associated with a list of corresponding values.
 
             @return The [destination] map.
-
-            @sample samples.collections.Collections.Transformations.groupByKeysAndValues
             """
         }
+        sample("samples.collections.Collections.Transformations.groupByKeysAndValues")
         sequenceClassification(terminal)
         returns("M")
         body {
@@ -441,10 +437,9 @@ object Mapping : TemplateGroupBase() {
             """
             Creates a [Grouping] source from ${f.collection.prefixWithArticle()} to be used later with one of group-and-fold operations
             using the specified [keySelector] function to extract a key from each ${f.element}.
-
-            @sample samples.collections.Collections.Transformations.groupingByEachCount
             """
         }
+        sample("samples.collections.Collections.Transformations.groupingByEachCount")
 
         body {
             """

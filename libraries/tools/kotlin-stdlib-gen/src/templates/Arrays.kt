@@ -118,10 +118,9 @@ object ArrayOps : TemplateGroupBase() {
         doc {
             """
             Returns a string representation of the contents of the specified array as if it is [List].
-
-            @sample samples.collections.Arrays.ContentOperations.contentToString
             """
         }
+        sample("samples.collections.Arrays.ContentOperations.contentToString")
         returns("String")
         on(Platform.JVM) {
             inlineOnly()
@@ -144,10 +143,9 @@ object ArrayOps : TemplateGroupBase() {
 
             If any of arrays contains itself on any nesting level that reference
             is rendered as `"[...]"` to prevent recursion.
-
-            @sample samples.collections.Arrays.ContentOperations.contentDeepToString
             """
         }
+        sample("samples.collections.Arrays.ContentOperations.contentDeepToString")
         returns("String")
         on(Platform.JVM) {
             inlineOnly()

@@ -55,6 +55,8 @@ class MemberBuilder(
 
     var doc: String? = null; private set
 
+    val samples = mutableListOf<String>()
+
     val sequenceClassification = mutableListOf<SequenceClass>()
     var deprecate: Deprecation? = null; private set
     var since: String? = null; private set
@@ -128,6 +130,10 @@ class MemberBuilder(
 
     @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { doc(valueBuilder) }"))
     fun doc(vararg fs: Family, valueBuilder: DocExtensions.() -> String) = specialFor(*fs) { doc(valueBuilder) }
+
+    fun sample(sampleRef: String) {
+        samples += sampleRef
+    }
 
     fun body(valueBuilder: () -> String) {
         body = valueBuilder()
@@ -298,6 +304,10 @@ class MemberBuilder(
             builder.append("/**\n")
             StringReader(methodDoc.trim()).forEachLine { line ->
                 builder.append(" * ").append(line.trim()).append("\n")
+            }
+            if (samples.any()) {
+                builder.append(" * \n")
+                samples.forEach { builder.append(" * @sample $it\n")}
             }
             if (family == Sequences && sequenceClassification.isNotEmpty()) {
                 builder.append(" *\n")
