@@ -348,7 +348,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
         appendStaticInitializers()
         appendEntryPointSelector(context.ir.symbols.entryPoint?.owner)
-        if (context.isDynamicLibrary) {
+        if (context.isNativeLibrary) {
             appendCAdapters()
         }
 

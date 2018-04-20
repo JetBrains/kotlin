@@ -796,7 +796,7 @@ internal class CAdapterGenerator(
         output("#endif  /* KONAN_${prefix.toUpperCase()}_H */")
 
         outputStreamWriter.close()
-        println("Produced dynamic library API in ${prefix}_api.h")
+        println("Produced library API in ${prefix}_api.h")
 
         outputStreamWriter = context.config.tempFiles
                 .cAdapterCpp

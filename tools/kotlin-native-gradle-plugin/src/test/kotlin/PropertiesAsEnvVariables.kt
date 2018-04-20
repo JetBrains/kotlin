@@ -32,6 +32,10 @@ open class PropertiesAsEnvVariables {
                 prefix = target.family.dynamicPrefix
                 suffix = target.family.dynamicSuffix
             }
+            ArtifactType.STATIC -> {
+                prefix = target.family.staticPrefix
+                suffix = target.family.staticSuffix
+            }
 
         }
         return "$prefix${baseName}.$suffix"

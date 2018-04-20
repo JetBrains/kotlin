@@ -394,8 +394,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     lateinit var debugInfo: DebugInfo
 
-    val isDynamicLibrary: Boolean by lazy {
-        config.configuration.get(KonanConfigKeys.PRODUCE) == CompilerOutputKind.DYNAMIC
+    val isNativeLibrary: Boolean by lazy {
+        val kind = config.configuration.get(KonanConfigKeys.PRODUCE)
+        kind == CompilerOutputKind.DYNAMIC || kind == CompilerOutputKind.STATIC
     }
 }
 

@@ -110,6 +110,10 @@ class EnvVariableSpecification extends BaseKonanSpecification {
                 prefix = target.family.dynamicPrefix
                 suffix = target.family.dynamicSuffix
                 break
+            case ArtifactType.STATIC:
+                prefix = target.family.staticPrefix
+                suffix = target.family.staticSuffix
+                break
             case ArtifactType.FRAMEWORK:
                 suffix = "framework"
         }
@@ -194,6 +198,7 @@ class EnvVariableSpecification extends BaseKonanSpecification {
         files.contains(artifactFileName("program", ArtifactType.PROGRAM))
         files.contains(artifactFileName("library", ArtifactType.LIBRARY))
         files.contains(artifactFileName("dynamic", ArtifactType.DYNAMIC))
+        files.contains(artifactFileName("static", ArtifactType.STATIC))
         if (HostManager.hostIsMac) {
             files.contains(artifactFileName("framework", ArtifactType.FRAMEWORK))
         }

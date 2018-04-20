@@ -29,6 +29,7 @@ enum ArtifactType {
     BITCODE("bitcode"),
     INTEROP("interop"),
     DYNAMIC("dynamic"),
+    STATIC("static"),
     FRAMEWORK("framework")
 
     String type

@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 val CompilerOutputKind.isNativeBinary: Boolean get() = when (this) {
-    CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC, CompilerOutputKind.FRAMEWORK -> true
+    CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
+    CompilerOutputKind.STATIC, CompilerOutputKind.FRAMEWORK -> true
     CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
 }
 
@@ -34,6 +35,7 @@ internal fun produceOutput(context: Context) {
     val produce = config.get(KonanConfigKeys.PRODUCE)
 
     when (produce) {
+        CompilerOutputKind.STATIC,
         CompilerOutputKind.DYNAMIC,
         CompilerOutputKind.FRAMEWORK,
         CompilerOutputKind.PROGRAM -> {
@@ -41,7 +43,7 @@ internal fun produceOutput(context: Context) {
             context.bitcodeFileName = output
 
             val generatedBitcodeFiles = 
-                if (produce == CompilerOutputKind.DYNAMIC) {
+                if (produce == CompilerOutputKind.DYNAMIC || produce == CompilerOutputKind.STATIC) {
                     produceCAdapterBitcode(
                         context.config.clang, 
                         tempFiles.cAdapterCppName, 
