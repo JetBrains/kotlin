@@ -18,27 +18,27 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 import java.lang.AssertionError
 import java.lang.UnsupportedOperationException
 
 abstract class IrPropertyAccessorCallBase(
     startOffset: Int, endOffset: Int,
+    type: IrType,
     override val symbol: IrFunctionSymbol,
     override val descriptor: FunctionDescriptor,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null
-) : IrMemberAccessExpressionBase(startOffset, endOffset, descriptor.returnType!!, typeArgumentsCount, valueArgumentsCount, origin),
+) : IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArgumentsCount, valueArgumentsCount, origin),
     IrCall {
 
     override val superQualifier: ClassDescriptor? get() = superQualifierSymbol?.descriptor
@@ -55,17 +55,20 @@ abstract class IrPropertyAccessorCallBase(
 class IrGetterCallImpl(
     startOffset: Int,
     endOffset: Int,
+    type: IrType,
     symbol: IrFunctionSymbol,
     descriptor: FunctionDescriptor,
     typeArgumentsCount: Int,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, symbol, descriptor, typeArgumentsCount, 0, origin, superQualifierSymbol),
+) :
+    IrPropertyAccessorCallBase(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, 0, origin, superQualifierSymbol),
     IrCallWithShallowCopy {
 
     constructor(
         startOffset: Int,
         endOffset: Int,
+        type: IrType,
         symbol: IrFunctionSymbol,
         descriptor: FunctionDescriptor,
         typeArgumentsCount: Int,
@@ -73,27 +76,9 @@ class IrGetterCallImpl(
         extensionReceiver: IrExpression?,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, symbol, descriptor, typeArgumentsCount, origin, superQualifierSymbol) {
+    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, origin, superQualifierSymbol) {
         this.dispatchReceiver = dispatchReceiver
         this.extensionReceiver = extensionReceiver
-    }
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        symbol: IrFunctionSymbol,
-        descriptor: FunctionDescriptor,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        origin: IrStatementOrigin? = null,
-        superQualifierSymbol: IrClassSymbol? = null
-    ) : this(
-        startOffset, endOffset, symbol, descriptor,
-        descriptor.typeArgumentsCount,
-        dispatchReceiver, extensionReceiver, origin, superQualifierSymbol
-    ) {
-        copyTypeArgumentsFrom(typeArguments)
     }
 
     override fun getValueArgument(index: Int): IrExpression? = null
@@ -108,7 +93,7 @@ class IrGetterCallImpl(
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: IrFunctionSymbol, newSuperQualifier: IrClassSymbol?): IrCall =
         IrGetterCallImpl(
-            startOffset, endOffset, newCallee,
+            startOffset, endOffset, type, newCallee,
             descriptor, // TODO substitute descriptor for new callee?
             typeArgumentsCount, dispatchReceiver, extensionReceiver, newOrigin, newSuperQualifier
         ).also { newCall ->
@@ -117,7 +102,7 @@ class IrGetterCallImpl(
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: FunctionDescriptor, newSuperQualifier: ClassDescriptor?): IrCall =
         IrGetterCallImpl(
-            startOffset, endOffset,
+            startOffset, endOffset, type,
             createFunctionSymbol(newCallee),
             newCallee,
             typeArgumentsCount,
@@ -132,16 +117,20 @@ class IrGetterCallImpl(
 
 class IrSetterCallImpl(
     startOffset: Int, endOffset: Int,
+    type: IrType,
     symbol: IrFunctionSymbol,
     descriptor: FunctionDescriptor,
     typeArgumentsCount: Int,
     origin: IrStatementOrigin? = null,
     superQualifierSymbol: IrClassSymbol? = null
-) : IrPropertyAccessorCallBase(startOffset, endOffset, symbol, descriptor, typeArgumentsCount, 1, origin, superQualifierSymbol),
+) :
+    IrPropertyAccessorCallBase(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, 1, origin, superQualifierSymbol),
     IrCallWithShallowCopy {
 
     constructor(
-        startOffset: Int, endOffset: Int,
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
         symbol: IrFunctionSymbol,
         descriptor: FunctionDescriptor,
         typeArgumentsCount: Int,
@@ -150,24 +139,7 @@ class IrSetterCallImpl(
         argument: IrExpression,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, symbol, descriptor, typeArgumentsCount, origin, superQualifierSymbol) {
-        this.dispatchReceiver = dispatchReceiver
-        this.extensionReceiver = extensionReceiver
-        putValueArgument(SETTER_ARGUMENT_INDEX, argument)
-    }
-
-    constructor(
-        startOffset: Int, endOffset: Int,
-        symbol: IrFunctionSymbol,
-        descriptor: FunctionDescriptor,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        dispatchReceiver: IrExpression?,
-        extensionReceiver: IrExpression?,
-        argument: IrExpression,
-        origin: IrStatementOrigin? = null,
-        superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, symbol, descriptor, descriptor.typeArgumentsCount, origin, superQualifierSymbol) {
-        copyTypeArgumentsFrom(typeArguments)
+    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, origin, superQualifierSymbol) {
         this.dispatchReceiver = dispatchReceiver
         this.extensionReceiver = extensionReceiver
         putValueArgument(SETTER_ARGUMENT_INDEX, argument)
@@ -190,7 +162,7 @@ class IrSetterCallImpl(
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: IrFunctionSymbol, newSuperQualifier: IrClassSymbol?): IrCall =
         IrSetterCallImpl(
-            startOffset, endOffset, newCallee,
+            startOffset, endOffset, type, newCallee,
             descriptor, // TODO substitute newCallee.descriptor?
             typeArgumentsCount, dispatchReceiver, extensionReceiver, argumentImpl!!, newOrigin, newSuperQualifier
         ).also { newCall ->
@@ -199,7 +171,7 @@ class IrSetterCallImpl(
 
     override fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: FunctionDescriptor, newSuperQualifier: ClassDescriptor?): IrCall =
         IrSetterCallImpl(
-            startOffset, endOffset,
+            startOffset, endOffset, type,
             createFunctionSymbol(newCallee),
             newCallee,
             typeArgumentsCount,

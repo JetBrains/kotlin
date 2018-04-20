@@ -21,30 +21,35 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrGetValueImpl(
-    startOffset: Int, endOffset: Int,
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
     symbol: IrValueSymbol,
     override val origin: IrStatementOrigin? = null
 ) : IrGetValue,
     IrTerminalDeclarationReferenceBase<IrValueSymbol, ValueDescriptor>(
         startOffset,
         endOffset,
-        symbol.descriptor.type,
+        type,
         symbol,
         symbol.descriptor
     ) {
     @Deprecated("Creates unbound reference")
     constructor(
-        startOffset: Int, endOffset: Int,
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
         descriptor: ValueDescriptor,
         origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, createValueSymbol(descriptor), origin)
+    ) : this(startOffset, endOffset, type, createValueSymbol(descriptor), origin)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetValue(this, data)
 
     override fun copy(): IrGetValue =
-        IrGetValueImpl(startOffset, endOffset, symbol, origin)
+        IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
 }

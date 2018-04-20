@@ -17,20 +17,17 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
-import org.jetbrains.kotlin.ir.expressions.typeArgumentsCount
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrPropertyReferenceImpl(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType,
+    type: IrType,
     override val descriptor: PropertyDescriptor,
     typeArgumentsCount: Int,
     override val field: IrFieldSymbol?,
@@ -39,20 +36,6 @@ class IrPropertyReferenceImpl(
     origin: IrStatementOrigin? = null
 ) : IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArgumentsCount, origin),
     IrPropertyReference {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        descriptor: PropertyDescriptor,
-        field: IrFieldSymbol?,
-        getter: IrFunctionSymbol?,
-        setter: IrFunctionSymbol?,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, descriptor, descriptor.typeArgumentsCount, field, getter, setter, origin) {
-        copyTypeArgumentsFrom(typeArguments)
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitPropertyReference(this, data)
