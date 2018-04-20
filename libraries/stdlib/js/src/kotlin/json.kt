@@ -72,6 +72,7 @@ public fun Json.add(other: Json): Json {
 /**
  * Exposes the JavaScript [JSON object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON) to Kotlin.
  */
+@Suppress("NOT_DOCUMENTED")
 public external object JSON {
     public fun stringify(o: Any?): String
     public fun stringify(o: Any?, replacer: ((key: String, value: Any?) -> Any?)): String

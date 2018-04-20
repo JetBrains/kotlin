@@ -21,6 +21,7 @@ import kotlin.internal.LowPriorityInOverloadResolution
 /**
  * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
  */
+@Suppress("NOT_DOCUMENTED")
 public open external class Promise<out T>(executor: (resolve: (T) -> Unit, reject: (Throwable) -> Unit) -> Unit) {
     @LowPriorityInOverloadResolution
     public open fun <S> then(onFulfilled: ((T) -> S)?): Promise<S>

@@ -19,6 +19,7 @@ package kotlin.js
 /**
  * Exposes the JavaScript [RegExp object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/RegExp) to Kotlin.
  */
+@Suppress("NOT_DOCUMENTED")
 public external class RegExp(pattern: String, flags: String? = definedExternally) {
 
     public fun test(str: String): Boolean
@@ -48,6 +49,7 @@ public fun RegExp.reset() {
 /**
  * Represents the return value of [RegExp.exec].
  */
+@Suppress("NOT_DOCUMENTED")
 public external interface RegExpMatch {
     public val index: Int
     public val input: String

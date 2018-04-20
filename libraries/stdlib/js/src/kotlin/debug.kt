@@ -3,7 +3,8 @@ package kotlin.js
 /**
  * Exposes the [console API](https://developer.mozilla.org/en/DOM/console) to Kotlin.
  */
-external public interface Console {
+@Suppress("NOT_DOCUMENTED")
+public external interface Console {
     public fun dir(o: Any): Unit
     public fun error(vararg o: Any?): Unit
     public fun info(vararg o: Any?): Unit
