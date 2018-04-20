@@ -20,7 +20,6 @@ import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.model.KonanArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModel
-import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.util.visibleName
 
 object KonanToolingModelBuilder : ToolingModelBuilder {
@@ -30,11 +29,12 @@ object KonanToolingModelBuilder : ToolingModelBuilder {
         val artifacts = project.konanArtifactsContainer.flatten()
                 .toList()
                 .map { KonanArtifactImpl("${it.artifact.name}-${it.konanTarget.visibleName}", it.artifact.canonicalPath) }
-        return KonanModelImpl(artifacts)
+        return KonanModelImpl(project.konanVersion, artifacts)
     }
 }
 
 private class KonanModelImpl(
+        override val konanVersion: String,
         override val artifacts: List<KonanArtifact>
 ) : KonanModel
 
