@@ -86,7 +86,7 @@ internal class MovingSubList<out E>(private val list: List<E>) : AbstractList<E>
  *
  * Buffer overflow is not allowed so [add] doesn't overwrite tail but raises an exception.
  */
-private class RingBuffer<T>(val capacity: Int): AbstractList<T>(), RandomAccess {
+private class RingBuffer<T>(val capacity: Int) : AbstractList<T>(), RandomAccess {
     init {
         require(capacity >= 0) { "ring buffer capacity should not be negative but it is $capacity" }
     }
@@ -106,25 +106,25 @@ private class RingBuffer<T>(val capacity: Int): AbstractList<T>(), RandomAccess 
     fun isFull() = size == capacity
 
     override fun iterator(): Iterator<T> = object : AbstractIterator<T>() {
-            private var count = size
-            private var index = startIndex
+        private var count = size
+        private var index = startIndex
 
-            override fun computeNext() {
-                if (count == 0) {
-                    done()
-                } else {
-                    @Suppress("UNCHECKED_CAST")
-                    setNext(buffer[index] as T)
-                    index = index.forward(1)
-                    count--
-                }
+        override fun computeNext() {
+            if (count == 0) {
+                done()
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                setNext(buffer[index] as T)
+                index = index.forward(1)
+                count--
             }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> toArray(array: Array<T>): Array<T> {
         val result: Array<T?> =
-                if (array.size < this.size) array.copyOf(this.size) else array as Array<T?>
+            if (array.size < this.size) array.copyOf(this.size) else array as Array<T?>
 
         val size = this.size
 

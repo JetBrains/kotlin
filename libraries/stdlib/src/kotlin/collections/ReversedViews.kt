@@ -27,11 +27,12 @@ private class ReversedList<T>(private val delegate: MutableList<T>) : AbstractMu
         delegate.add(reversePositionIndex(index), element)
     }
 }
+
 private fun List<*>.reverseElementIndex(index: Int) =
-        if (index in 0..lastIndex) lastIndex - index else throw IndexOutOfBoundsException("Element index $index must be in range [${0..lastIndex}].")
+    if (index in 0..lastIndex) lastIndex - index else throw IndexOutOfBoundsException("Element index $index must be in range [${0..lastIndex}].")
 
 private fun List<*>.reversePositionIndex(index: Int) =
-        if (index in 0..size) size - index else throw IndexOutOfBoundsException("Position index $index must be in range [${0..size}].")
+    if (index in 0..size) size - index else throw IndexOutOfBoundsException("Position index $index must be in range [${0..size}].")
 
 
 /**

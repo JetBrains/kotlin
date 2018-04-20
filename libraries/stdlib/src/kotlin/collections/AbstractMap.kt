@@ -16,7 +16,7 @@ package kotlin.collections
  *
  * @param K the type of map keys. The map is invariant on its key type.
  * @param V the type of map values. The map is covariant on its value type.
-*/
+ */
 @SinceKotlin("1.1")
 public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> {
 
@@ -78,25 +78,29 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
      * Accessing this property first time creates a keys view from [entries].
      * All subsequent accesses just return the created instance.
      */
-    private @kotlin.jvm.Volatile var _keys: Set<K>? = null
-    override val keys: Set<K> get() {
-        if (_keys == null) {
-            _keys = object : AbstractSet<K>() {
-                override operator fun contains(element: K): Boolean = containsKey(element)
+    override val keys: Set<K>
+        get() {
+            if (_keys == null) {
+                _keys = object : AbstractSet<K>() {
+                    override operator fun contains(element: K): Boolean = containsKey(element)
 
-                override operator fun iterator(): Iterator<K> {
-                    val entryIterator = entries.iterator()
-                    return object : Iterator<K> {
-                        override fun hasNext(): Boolean = entryIterator.hasNext()
-                        override fun next(): K = entryIterator.next().key
+                    override operator fun iterator(): Iterator<K> {
+                        val entryIterator = entries.iterator()
+                        return object : Iterator<K> {
+                            override fun hasNext(): Boolean = entryIterator.hasNext()
+                            override fun next(): K = entryIterator.next().key
+                        }
                     }
-                }
 
-                override val size: Int get() = this@AbstractMap.size
+                    override val size: Int get() = this@AbstractMap.size
+                }
             }
+            return _keys!!
         }
-        return _keys!!
-    }
+
+    @kotlin.jvm.Volatile
+    private var _keys: Set<K>? = null
+
 
     override fun toString(): String = entries.joinToString(", ", "{", "}") { toString(it) }
 
@@ -110,25 +114,28 @@ public abstract class AbstractMap<K, out V> protected constructor() : Map<K, V> 
      * Accessing this property first time creates a values view from [entries].
      * All subsequent accesses just return the created instance.
      */
-    private @kotlin.jvm.Volatile var _values: Collection<V>? = null
-    override val values: Collection<V> get() {
-        if (_values == null) {
-            _values = object : AbstractCollection<V>() {
-                override operator fun contains(element: @UnsafeVariance V): Boolean = containsValue(element)
+    override val values: Collection<V>
+        get() {
+            if (_values == null) {
+                _values = object : AbstractCollection<V>() {
+                    override operator fun contains(element: @UnsafeVariance V): Boolean = containsValue(element)
 
-                override operator fun iterator(): Iterator<V> {
-                    val entryIterator = entries.iterator()
-                    return object : Iterator<V> {
-                        override fun hasNext(): Boolean = entryIterator.hasNext()
-                        override fun next(): V = entryIterator.next().value
+                    override operator fun iterator(): Iterator<V> {
+                        val entryIterator = entries.iterator()
+                        return object : Iterator<V> {
+                            override fun hasNext(): Boolean = entryIterator.hasNext()
+                            override fun next(): V = entryIterator.next().value
+                        }
                     }
-                }
 
-                override val size: Int get() = this@AbstractMap.size
+                    override val size: Int get() = this@AbstractMap.size
+                }
             }
+            return _values!!
         }
-        return _values!!
-    }
+
+    @kotlin.jvm.Volatile
+    private var _values: Collection<V>? = null
 
     private fun implFindEntry(key: K): Map.Entry<K, V>? = entries.firstOrNull { it.key == key }
 

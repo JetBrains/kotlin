@@ -29,6 +29,7 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
     actual constructor(elements: Collection<E>) : super(LinkedHashMap<E, Any>()) {
         addAll(elements)
     }
+
     /**
      * Constructs a new empty [LinkedHashSet].
      *

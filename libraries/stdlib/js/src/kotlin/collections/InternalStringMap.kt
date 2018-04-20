@@ -52,8 +52,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
             size++
 //            structureChanged(host)
             return null
-        }
-        else {
+        } else {
 //            valueMod++
             return oldValue.unsafeCast<V>()
         }
@@ -67,8 +66,7 @@ internal class InternalStringMap<K, V>(override val equality: EqualityComparator
             size--
 //            structureChanged(host)
             return value.unsafeCast<V>()
-        }
-        else {
+        } else {
 //            valueMod++
             return null
         }

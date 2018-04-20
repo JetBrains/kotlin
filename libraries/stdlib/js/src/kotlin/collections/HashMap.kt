@@ -92,12 +92,13 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
     actual override fun containsValue(value: V): Boolean = internalMap.any { equality.equals(it.value, value) }
 
     private var _entries: MutableSet<MutableMap.MutableEntry<K, V>>? = null
-    actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() {
-        if (_entries == null) {
-            _entries = createEntrySet()
+    actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+        get() {
+            if (_entries == null) {
+                _entries = createEntrySet()
+            }
+            return _entries!!
         }
-        return _entries!!
-    }
 
     protected open fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
 

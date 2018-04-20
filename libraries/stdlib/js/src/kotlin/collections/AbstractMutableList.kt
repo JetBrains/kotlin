@@ -120,7 +120,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         }
 
         override fun remove() {
-            check(last != -1) { "Call next() or previous() before removing element from the iterator."}
+            check(last != -1) { "Call next() or previous() before removing element from the iterator." }
 
             removeAt(last)
             index = last
@@ -158,7 +158,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         }
 
         override fun set(element: E) {
-            check(last != -1) { "Call next() or previous() before updating element value with the iterator."}
+            check(last != -1) { "Call next() or previous() before updating element value with the iterator." }
             this@AbstractMutableList[last] = element
         }
     }

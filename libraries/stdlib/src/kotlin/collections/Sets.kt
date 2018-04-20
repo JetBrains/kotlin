@@ -32,6 +32,7 @@ internal object EmptySet : Set<Nothing>, Serializable {
  * @sample samples.collections.Collections.Sets.emptyReadOnlySet
  */
 public fun <T> emptySet(): Set<T> = EmptySet
+
 /**
  * Returns a new read-only set with the given elements.
  * Elements of the set are iterated in the order they were specified.

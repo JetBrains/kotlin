@@ -53,7 +53,7 @@ internal object EmptyList : List<Nothing>, Serializable, RandomAccess {
 
 internal fun <T> Array<out T>.asCollection(): Collection<T> = ArrayAsCollection(this, isVarargs = false)
 
-private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Boolean): Collection<T> {
+private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Boolean) : Collection<T> {
     override val size: Int get() = values.size
     override fun isEmpty(): Boolean = values.isEmpty()
     override fun contains(element: T): Boolean = values.contains(element)
@@ -102,15 +102,15 @@ public inline fun <T> arrayListOf(): ArrayList<T> = ArrayList()
  * Returns a new [MutableList] with the given elements.
  * @sample samples.collections.Collections.Lists.mutableList
  */
-public fun <T> mutableListOf(vararg elements: T): MutableList<T>
-        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
+public fun <T> mutableListOf(vararg elements: T): MutableList<T> =
+    if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
 
 /**
  * Returns a new [ArrayList] with the given elements.
  * @sample samples.collections.Collections.Lists.arrayList
  */
-public fun <T> arrayListOf(vararg elements: T): ArrayList<T>
-        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
+public fun <T> arrayListOf(vararg elements: T): ArrayList<T> =
+    if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements, isVarargs = true))
 
 /**
  * Returns a new read-only list either of single given element, if it is not null, or empty list if the element is null. The returned list is serializable (JVM).
@@ -214,7 +214,7 @@ internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
  * @sample samples.collections.Collections.Lists.binarySearchOnComparable
  * @sample samples.collections.Collections.Lists.binarySearchWithBoundaries
  */
-public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {
+public fun <T : Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {
     rangeCheck(size, fromIndex, toIndex)
 
     var low = fromIndex
@@ -287,8 +287,13 @@ public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fr
  * so that the list (or the specified subrange of list) still remains sorted.
  * @sample samples.collections.Collections.Lists.binarySearchByKey
  */
-public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size, crossinline selector: (T) -> K?): Int =
-        binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
+public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(
+    key: K?,
+    fromIndex: Int = 0,
+    toIndex: Int = size,
+    crossinline selector: (T) -> K?
+): Int =
+    binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
 
 // do not introduce this overload --- too rare
 //public fun <T, K> List<T>.binarySearchBy(key: K, comparator: Comparator<K>, fromIndex: Int = 0, toIndex: Int = size(), selector: (T) -> K): Int =

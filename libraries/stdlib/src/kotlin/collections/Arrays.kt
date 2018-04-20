@@ -10,7 +10,6 @@
 package kotlin.collections
 
 
-
 /**
  * Returns a single list of all elements from all arrays in the given array.
  * @sample samples.collections.Arrays.Transformations.flattenArray

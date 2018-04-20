@@ -7,7 +7,7 @@ package kotlin.collections
 /**
  * Provides a skeletal implementation of the read-only [Collection] interface.
  *
-* @param E the type of elements contained in the collection. The collection is covariant on its element type.
+ * @param E the type of elements contained in the collection. The collection is covariant on its element type.
  */
 @SinceKotlin("1.1")
 public abstract class AbstractCollection<out E> protected constructor() : Collection<E> {
@@ -17,7 +17,7 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
     override fun contains(element: @UnsafeVariance E): Boolean = any { it == element }
 
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean =
-            elements.all { contains(it) } // use when js will support bound refs: elements.all(this::contains)
+        elements.all { contains(it) } // use when js will support bound refs: elements.all(this::contains)
 
     override fun isEmpty(): Boolean = size == 0
 

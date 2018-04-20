@@ -12,12 +12,14 @@ expect class LinkedHashSet<E> : MutableSet<E> {
     constructor(elements: Collection<E>)
 
     // From Set
+
     override val size: Int
     override fun isEmpty(): Boolean
     override fun contains(element: @UnsafeVariance E): Boolean
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
     // From MutableSet
+
     override fun iterator(): MutableIterator<E>
     override fun add(element: E): Boolean
     override fun remove(element: E): Boolean

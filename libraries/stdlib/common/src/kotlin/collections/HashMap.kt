@@ -12,6 +12,7 @@ expect class HashMap<K, V> : MutableMap<K, V> {
     constructor(original: Map<out K, V>)
 
     // From Map
+
     override val size: Int
     override fun isEmpty(): Boolean
     override fun containsKey(key: K): Boolean
@@ -19,6 +20,7 @@ expect class HashMap<K, V> : MutableMap<K, V> {
     override operator fun get(key: K): V?
 
     // From MutableMap
+
     override fun put(key: K, value: V): V?
     override fun remove(key: K): V?
     override fun putAll(from: Map<out K, V>)

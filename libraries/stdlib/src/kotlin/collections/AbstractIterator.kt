@@ -17,7 +17,7 @@ private enum class State {
  * A base class to simplify implementing iterators so that implementations only have to implement [computeNext]
  * to implement the iterator, calling [done] when the iteration is complete.
  */
-public abstract class AbstractIterator<T>: Iterator<T> {
+public abstract class AbstractIterator<T> : Iterator<T> {
     private var state = State.NotReady
     private var nextValue: T? = null
 

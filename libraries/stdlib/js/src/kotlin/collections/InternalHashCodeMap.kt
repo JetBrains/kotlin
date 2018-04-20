@@ -36,21 +36,18 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
         if (chainOrEntry == null) {
             // This is a new chain, put it to the map.
             backingMap[hashCode] = SimpleEntry(key, value)
-        }
-        else {
+        } else {
             if (chainOrEntry !is Array<*>) {
                 // It is an entry
                 val entry: SimpleEntry<K, V> = chainOrEntry
                 if (equality.equals(entry.key, key)) {
                     return entry.setValue(value)
-                }
-                else {
+                } else {
                     backingMap[hashCode] = arrayOf(entry, SimpleEntry(key, value))
                     size++
                     return null
                 }
-            }
-            else {
+            } else {
                 // Chain already exists, perhaps key also exists.
                 val chain: Array<MutableEntry<K, V>> = chainOrEntry
                 val entry = chain.findEntryInChain(key)
@@ -74,12 +71,10 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
                 deleteProperty(backingMap, hashCode)
                 size--
                 return entry.value
-            }
-            else {
+            } else {
                 return null
             }
-        }
-        else {
+        } else {
             val chain: Array<MutableEntry<K, V>> = chainOrEntry
             for (index in chain.indices) {
                 val entry = chain[index]
@@ -116,19 +111,17 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
             val entry: MutableEntry<K, V> = chainOrEntry
             if (equality.equals(entry.key, key)) {
                 return entry
-            }
-            else {
+            } else {
                 return null
             }
-        }
-        else {
+        } else {
             val chain: Array<MutableEntry<K, V>> = chainOrEntry
             return chain.findEntryInChain(key)
         }
     }
 
     private fun Array<MutableEntry<K, V>>.findEntryInChain(key: K): MutableEntry<K, V>? =
-            firstOrNull { entry -> equality.equals(entry.key, key) }
+        firstOrNull { entry -> equality.equals(entry.key, key) }
 
     override fun iterator(): MutableIterator<MutableEntry<K, V>> {
 
@@ -155,8 +148,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
                     isChain = chainOrEntry is Array<*>
                     itemIndex = 0
                     return 0
-                }
-                else {
+                } else {
                     chainOrEntry = null
                     return 1
                 }
@@ -172,8 +164,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
                 if (!hasNext()) throw NoSuchElementException()
                 val lastEntry = if (isChain) {
                     chainOrEntry.unsafeCast<Array<MutableEntry<K, V>>>()[itemIndex]
-                }
-                else {
+                } else {
                     chainOrEntry.unsafeCast<MutableEntry<K, V>>()
                 }
                 this.lastEntry = lastEntry

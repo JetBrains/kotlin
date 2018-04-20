@@ -24,6 +24,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
      * @param initialCapacity initial capacity (ignored)
      */
     public actual constructor(initialCapacity: Int) : this(emptyArray()) {}
+
     /**
      * Creates an [ArrayList] filled from the [elements] collection.
      */
@@ -31,6 +32,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
 
     /** Does nothing in this ArrayList implementation. */
     public actual fun trimToSize() {}
+
     /** Does nothing in this ArrayList implementation. */
     public actual fun ensureCapacity(minCapacity: Int) {}
 

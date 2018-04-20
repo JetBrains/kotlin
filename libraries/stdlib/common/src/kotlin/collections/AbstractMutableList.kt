@@ -9,6 +9,7 @@ expect abstract class AbstractMutableList<E> : MutableList<E> {
     protected constructor()
 
     // From List
+
     override fun isEmpty(): Boolean
     override fun contains(element: @UnsafeVariance E): Boolean
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
@@ -16,9 +17,11 @@ expect abstract class AbstractMutableList<E> : MutableList<E> {
     override fun lastIndexOf(element: @UnsafeVariance E): Int
 
     // From MutableCollection
+
     override fun iterator(): MutableIterator<E>
 
     // From MutableList
+
     override fun add(element: E): Boolean
     override fun remove(element: E): Boolean
     override fun addAll(elements: Collection<E>): Boolean

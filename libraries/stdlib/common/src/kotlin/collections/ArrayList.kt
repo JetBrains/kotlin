@@ -14,6 +14,7 @@ expect class ArrayList<E> : MutableList<E>, RandomAccess {
     fun ensureCapacity(minCapacity: Int)
 
     // From List
+
     override val size: Int
     override fun isEmpty(): Boolean
     override fun contains(element: @UnsafeVariance E): Boolean
@@ -23,9 +24,11 @@ expect class ArrayList<E> : MutableList<E>, RandomAccess {
     override fun lastIndexOf(element: @UnsafeVariance E): Int
 
     // From MutableCollection
+
     override fun iterator(): MutableIterator<E>
 
     // From MutableList
+
     override fun add(element: E): Boolean
     override fun remove(element: E): Boolean
     override fun addAll(elements: Collection<E>): Boolean

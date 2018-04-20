@@ -15,8 +15,10 @@ expect inline fun <reified T> Collection<T>.toTypedArray(): Array<T>
 
 @SinceKotlin("1.2")
 expect fun <T> MutableList<T>.fill(value: T): Unit
+
 @SinceKotlin("1.2")
 expect fun <T> MutableList<T>.shuffle(): Unit
+
 @SinceKotlin("1.2")
 expect fun <T> Iterable<T>.shuffled(): List<T>
 
