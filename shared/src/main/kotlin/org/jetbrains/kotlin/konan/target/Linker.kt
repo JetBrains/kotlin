@@ -66,7 +66,7 @@ abstract class LinkerFlags(val configurables: Configurables)
 
     protected fun postLinkGnuArCommand(ar: String, executable: ExecutableFile) =
             Command("/bin/sh", "-c").apply {
-                +"/bin/echo -e 'create $executable\\naddlib $executable\\nsave\\nend' | $ar -M"
+                +"printf 'create $executable\\naddlib $executable\\nsave\\nend' | $ar -M"
             }
 
 }
@@ -76,7 +76,7 @@ open class AndroidLinker(targetProperties: AndroidConfigurables)
 
     private val prefix = "$absoluteTargetToolchain/bin/"
     private val clang = "$prefix/clang"
-    private val ar = "$prefix/ar"
+    private val ar = "$absoluteTargetToolchain/${targetProperties.targetArg}/bin/ar"
 
     override val useCompilerDriverAsLinker: Boolean get() = true
 
