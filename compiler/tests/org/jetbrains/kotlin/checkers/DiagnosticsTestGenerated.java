@@ -20989,6 +20989,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/thisAndSuper/genericQualifiedSuperOverridden.kt");
             }
 
+            @TestMetadata("implicitInvokeOnSuper.kt")
+            public void testImplicitInvokeOnSuper() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/implicitInvokeOnSuper.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("notAccessibleSuperInTrait.kt")
             public void testNotAccessibleSuperInTrait() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/thisAndSuper/notAccessibleSuperInTrait.kt");

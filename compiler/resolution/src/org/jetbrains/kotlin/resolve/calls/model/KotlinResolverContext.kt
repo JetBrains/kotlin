@@ -207,6 +207,7 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CheckArguments,
         CheckExternalArgument
     ),
+    INVOKE(*FUNCTION.resolutionSequence.toTypedArray()),
     UNSUPPORTED();
 
     val resolutionSequence = resolutionPart.asList()
