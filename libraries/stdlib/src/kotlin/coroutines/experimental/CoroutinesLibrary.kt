@@ -4,6 +4,7 @@
  */
 
 @file:kotlin.jvm.JvmName("CoroutinesKt")
+
 package kotlin.coroutines.experimental
 
 import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
@@ -19,8 +20,8 @@ import kotlin.internal.InlineOnly
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 public fun <R, T> (suspend R.() -> T).startCoroutine(
-        receiver: R,
-        completion: Continuation<T>
+    receiver: R,
+    completion: Continuation<T>
 ) {
     createCoroutineUnchecked(receiver, completion).resume(Unit)
 }
@@ -32,8 +33,8 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
-public fun <T> (suspend  () -> T).startCoroutine(
-        completion: Continuation<T>
+public fun <T> (suspend () -> T).startCoroutine(
+    completion: Continuation<T>
 ) {
     createCoroutineUnchecked(completion).resume(Unit)
 }
@@ -49,8 +50,8 @@ public fun <T> (suspend  () -> T).startCoroutine(
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 public fun <R, T> (suspend R.() -> T).createCoroutine(
-        receiver: R,
-        completion: Continuation<T>
+    receiver: R,
+    completion: Continuation<T>
 ): Continuation<Unit> = SafeContinuation(createCoroutineUnchecked(receiver, completion), COROUTINE_SUSPENDED)
 
 /**
@@ -64,7 +65,7 @@ public fun <R, T> (suspend R.() -> T).createCoroutine(
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
 public fun <T> (suspend () -> T).createCoroutine(
-        completion: Continuation<T>
+    completion: Continuation<T>
 ): Continuation<Unit> = SafeContinuation(createCoroutineUnchecked(completion), COROUTINE_SUSPENDED)
 
 /**
@@ -77,11 +78,11 @@ public fun <T> (suspend () -> T).createCoroutine(
  */
 @SinceKotlin("1.1")
 public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T =
-        suspendCoroutineOrReturn { c: Continuation<T> ->
-            val safe = SafeContinuation(c)
-            block(safe)
-            safe.getResult()
-        }
+    suspendCoroutineOrReturn { c: Continuation<T> ->
+        val safe = SafeContinuation(c)
+        block(safe)
+        safe.getResult()
+    }
 
 /**
  * Continuation context of current coroutine.

@@ -109,20 +109,24 @@ public expect fun CharSequence.repeat(n: Int): String
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  */
 expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
+
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
 expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
+
 /**
  * Returns a new string with the first occurrence of [oldChar] replaced with [newChar].
  */
 expect fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
+
 /**
  * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
  * with the specified [newValue] string.
  */
 expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
+
 /**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
  *
@@ -143,8 +147,13 @@ expect fun CharSequence.isBlank(): Boolean
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
-expect fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean
-
+expect fun CharSequence.regionMatches(
+    thisOffset: Int,
+    other: CharSequence,
+    otherOffset: Int,
+    length: Int,
+    ignoreCase: Boolean = false
+): Boolean
 
 
 /**
@@ -228,4 +237,5 @@ expect fun String.toFloatOrNull(): Float?
 
 @PublishedApi
 internal expect fun checkRadix(radix: Int): Int
+
 internal expect fun digitOf(char: Char, radix: Int): Int

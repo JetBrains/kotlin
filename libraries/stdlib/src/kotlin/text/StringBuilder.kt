@@ -14,7 +14,7 @@ package kotlin.text
  */
 @kotlin.internal.InlineOnly
 public inline fun buildString(builderAction: StringBuilder.() -> Unit): String =
-        StringBuilder().apply(builderAction).toString()
+    StringBuilder().apply(builderAction).toString()
 
 /**
  * Builds new string by populating newly created [StringBuilder] initialized with the given [capacity]
@@ -23,7 +23,7 @@ public inline fun buildString(builderAction: StringBuilder.() -> Unit): String =
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
 public inline fun buildString(capacity: Int, builderAction: StringBuilder.() -> Unit): String =
-        StringBuilder(capacity).apply(builderAction).toString()
+    StringBuilder(capacity).apply(builderAction).toString()
 
 /**
  * Appends all arguments to the given [Appendable].
@@ -51,7 +51,6 @@ public fun StringBuilder.append(vararg value: Any?): StringBuilder {
         append(item)
     return this
 }
-
 
 
 internal fun <T> Appendable.appendElement(element: T, transform: ((T) -> CharSequence)?) {

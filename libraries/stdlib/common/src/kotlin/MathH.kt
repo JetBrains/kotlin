@@ -345,6 +345,7 @@ public expect fun sign(x: Double): Double
  */
 @SinceKotlin("1.2")
 public expect fun min(a: Double, b: Double): Double
+
 /**
  * Returns the greater of two values.
  *
@@ -432,6 +433,7 @@ public expect val Double.ulp: Double
  */
 @SinceKotlin("1.2")
 public expect fun Double.nextUp(): Double
+
 /**
  * Returns the [Double] value nearest to this value in direction of negative infinity.
  */
@@ -805,6 +807,7 @@ public expect fun sign(x: Float): Float
  */
 @SinceKotlin("1.2")
 public expect fun min(a: Float, b: Float): Float
+
 /**
  * Returns the greater of two values.
  *
@@ -868,6 +871,7 @@ public expect val Float.sign: Float
  */
 @SinceKotlin("1.2")
 public expect fun Float.withSign(sign: Float): Float
+
 /**
  * Returns this value with the sign bit same as of the [sign] value.
  */

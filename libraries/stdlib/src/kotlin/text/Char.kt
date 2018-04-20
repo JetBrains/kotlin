@@ -12,7 +12,7 @@ package kotlin.text
  * Concatenates this Char and a String.
  */
 @kotlin.internal.InlineOnly
-public inline operator fun Char.plus(other: String) : String = this.toString() + other
+public inline operator fun Char.plus(other: String): String = this.toString() + other
 
 /**
  * Returns `true` if this character is equal to the [other] character, optionally ignoring character case.

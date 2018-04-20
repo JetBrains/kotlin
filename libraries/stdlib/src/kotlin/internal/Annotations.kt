@@ -86,11 +86,11 @@ internal annotation class AccessibleLateinitPropertyLiteral
 @Retention(AnnotationRetention.SOURCE)
 @SinceKotlin("1.2")
 internal annotation class RequireKotlin(
-        val version: String,
-        val message: String = "",
-        val level: DeprecationLevel = DeprecationLevel.ERROR,
-        val versionKind: RequireKotlinVersionKind = RequireKotlinVersionKind.LANGUAGE_VERSION,
-        val errorCode: Int = -1
+    val version: String,
+    val message: String = "",
+    val level: DeprecationLevel = DeprecationLevel.ERROR,
+    val versionKind: RequireKotlinVersionKind = RequireKotlinVersionKind.LANGUAGE_VERSION,
+    val errorCode: Int = -1
 )
 
 /**

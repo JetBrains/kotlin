@@ -112,6 +112,7 @@ public interface MatchResult {
         public operator inline fun component9():  String = match.groupValues[9]
         @kotlin.internal.InlineOnly
         public operator inline fun component10(): String = match.groupValues[10]
+
         /**
          *  Returns destructured group values as a list of strings.
          *  First value in the returned list corresponds to the value of the first group, and so on.

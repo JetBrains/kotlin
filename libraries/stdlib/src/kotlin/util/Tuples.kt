@@ -4,6 +4,7 @@
  */
 
 @file:kotlin.jvm.JvmName("TuplesKt")
+
 package kotlin
 
 
@@ -23,9 +24,9 @@ package kotlin
  * @constructor Creates a new instance of Pair.
  */
 public data class Pair<out A, out B>(
-        public val first: A,
-        public val second: B
-                                    ) : Serializable {
+    public val first: A,
+    public val second: B
+) : Serializable {
 
     /**
      * Returns string representation of the [Pair] including its [first] and [second] values.
@@ -62,10 +63,10 @@ public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
  * @property third Third value.
  */
 public data class Triple<out A, out B, out C>(
-        public val first: A,
-        public val second: B,
-        public val third: C
-                                             ) : Serializable {
+    public val first: A,
+    public val second: B,
+    public val third: C
+) : Serializable {
 
     /**
      * Returns string representation of the [Triple] including its [first], [second] and [third] values.

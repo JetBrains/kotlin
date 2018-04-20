@@ -69,9 +69,9 @@ public fun String.replaceIndent(newIndent: String = ""): String {
     val lines = lines()
 
     val minCommonIndent = lines
-            .filter(String::isNotBlank)
-            .map(String::indentWidth)
-            .min() ?: 0
+        .filter(String::isNotBlank)
+        .map(String::indentWidth)
+        .min() ?: 0
 
     return lines.reindent(length + newIndent.length * lines.size, getIndentFunction(newIndent), { line -> line.drop(minCommonIndent) })
 }
@@ -83,18 +83,18 @@ public fun String.replaceIndent(newIndent: String = ""): String {
  */
 public fun String.prependIndent(indent: String = "    "): String =
     lineSequence()
-    .map {
-        when {
-            it.isBlank() -> {
-                when {
-                    it.length < indent.length -> indent
-                    else -> it
+        .map {
+            when {
+                it.isBlank() -> {
+                    when {
+                        it.length < indent.length -> indent
+                        else -> it
+                    }
                 }
+                else -> indent + it
             }
-            else -> indent + it
         }
-    }
-    .joinToString("\n")
+        .joinToString("\n")
 
 private fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let { if (it == -1) length else it }
 
@@ -103,14 +103,18 @@ private fun getIndentFunction(indent: String) = when {
     else -> { line: String -> indent + line }
 }
 
-private inline fun List<String>.reindent(resultSizeEstimate: Int, indentAddFunction: (String) -> String, indentCutFunction: (String) -> String?): String {
+private inline fun List<String>.reindent(
+    resultSizeEstimate: Int,
+    indentAddFunction: (String) -> String,
+    indentCutFunction: (String) -> String?
+): String {
     val lastIndex = lastIndex
     return mapIndexedNotNull { index, value ->
-            if ((index == 0 || index == lastIndex) && value.isBlank())
-                null
-            else
-                indentCutFunction(value)?.let(indentAddFunction) ?: value
-        }
+        if ((index == 0 || index == lastIndex) && value.isBlank())
+            null
+        else
+            indentCutFunction(value)?.let(indentAddFunction) ?: value
+    }
         .joinTo(StringBuilder(resultSizeEstimate), "\n")
         .toString()
 }
