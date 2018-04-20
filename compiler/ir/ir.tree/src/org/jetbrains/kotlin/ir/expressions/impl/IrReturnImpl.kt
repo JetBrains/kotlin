@@ -19,39 +19,25 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrReturnImpl(
     startOffset: Int,
     endOffset: Int,
-    type: KotlinType,
+    type: IrType,
     override val returnTargetSymbol: IrReturnTargetSymbol,
     override var value: IrExpression
-) : IrExpressionBase(startOffset, endOffset, type), IrReturn {
-    constructor(startOffset: Int, endOffset: Int, returnTargetSymbol: IrFunctionSymbol, value: IrExpression) :
-            this(startOffset, endOffset, returnTargetSymbol.descriptor.builtIns.nothingType, returnTargetSymbol, value)
+) :
+    IrExpressionBase(startOffset, endOffset, type),
+    IrReturn {
 
     @Deprecated("Creates unbound symbol")
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType, returnTargetDescriptor: FunctionDescriptor, value: IrExpression) :
-            this(
-                startOffset, endOffset, type,
-                createFunctionSymbol(returnTargetDescriptor),
-                value
-            )
-
-    @Deprecated("Creates unbound symbol")
-    constructor(startOffset: Int, endOffset: Int, returnTargetDescriptor: FunctionDescriptor, value: IrExpression) :
-            this(
-                startOffset, endOffset, returnTargetDescriptor.builtIns.nothingType,
-                createFunctionSymbol(returnTargetDescriptor),
-                value
-            )
+    constructor(startOffset: Int, endOffset: Int, type: IrType, returnTargetDescriptor: FunctionDescriptor, value: IrExpression) :
+            this(startOffset, endOffset, type, createFunctionSymbol(returnTargetDescriptor), value)
 
     override val returnTarget: FunctionDescriptor get() = returnTargetSymbol.descriptor
 
