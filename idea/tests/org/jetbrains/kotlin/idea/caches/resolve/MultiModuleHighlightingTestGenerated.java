@@ -25,6 +25,11 @@ public class MultiModuleHighlightingTestGenerated extends AbstractMultiModuleHig
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    @TestMetadata("additionalMembersInPlatformInterface")
+    public void testAdditionalMembersInPlatformInterface() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/additionalMembersInPlatformInterface/");
+    }
+
     public void testAllFilesPresentInMultiplatform() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleHighlighting/multiplatform"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
@@ -84,6 +89,11 @@ public class MultiModuleHighlightingTestGenerated extends AbstractMultiModuleHig
         runTest("idea/testData/multiModuleHighlighting/multiplatform/nestedClassWithoutImpl/");
     }
 
+    @TestMetadata("platformTypeAliasInterchangebleWithAliasedClass")
+    public void testPlatformTypeAliasInterchangebleWithAliasedClass() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/platformTypeAliasInterchangebleWithAliasedClass/");
+    }
+
     @TestMetadata("suppressHeaderWithoutImpl")
     public void testSuppressHeaderWithoutImpl() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/suppressHeaderWithoutImpl/");
@@ -104,9 +114,24 @@ public class MultiModuleHighlightingTestGenerated extends AbstractMultiModuleHig
         runTest("idea/testData/multiModuleHighlighting/multiplatform/triangleWithDependency/");
     }
 
+    @TestMetadata("typeAliasedParameter")
+    public void testTypeAliasedParameter() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/typeAliasedParameter/");
+    }
+
+    @TestMetadata("useAppendable")
+    public void testUseAppendable() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/useAppendable/");
+    }
+
     @TestMetadata("useCorrectBuiltInsForCommonModule")
     public void testUseCorrectBuiltInsForCommonModule() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/useCorrectBuiltInsForCommonModule/");
+    }
+
+    @TestMetadata("usePlatformSpecificMember")
+    public void testUsePlatformSpecificMember() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/usePlatformSpecificMember/");
     }
 
     @TestMetadata("withOverrides")
