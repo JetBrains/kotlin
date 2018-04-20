@@ -73,7 +73,8 @@ object RangeOps : TemplateGroupBase() {
             """
             Returns a progression from this value down to the specified [to] value with the step -1.
 
-            The [to] value has to be less than this value.
+            The [to] value should be less than or equal to `this` value.
+            If the [to] value is greater than `this` value the returned progression is empty.
             """
         }
 
@@ -110,6 +111,8 @@ object RangeOps : TemplateGroupBase() {
         doc {
             """
             Returns a range from this value up to but excluding the specified [to] value.
+
+            If the [to] value is less than or equal to `this` value the returned range is empty.
 
             ${textWhen(elementType == toType) {
                 "If the [to] value is less than or equal to $minValueRef the returned range is empty."

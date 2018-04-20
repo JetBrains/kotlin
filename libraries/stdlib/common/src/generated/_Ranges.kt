@@ -255,7 +255,8 @@ public operator fun ClosedRange<Float>.contains(value: Short): Boolean {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Int.downTo(to: Byte): IntProgression {
     return IntProgression.fromClosedRange(this, to.toInt(), -1)
@@ -264,7 +265,8 @@ public infix fun Int.downTo(to: Byte): IntProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Long.downTo(to: Byte): LongProgression {
     return LongProgression.fromClosedRange(this, to.toLong(), -1L)
@@ -273,7 +275,8 @@ public infix fun Long.downTo(to: Byte): LongProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Byte.downTo(to: Byte): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
@@ -282,7 +285,8 @@ public infix fun Byte.downTo(to: Byte): IntProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Short.downTo(to: Byte): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
@@ -291,7 +295,8 @@ public infix fun Short.downTo(to: Byte): IntProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Char.downTo(to: Char): CharProgression {
     return CharProgression.fromClosedRange(this, to, -1)
@@ -300,7 +305,8 @@ public infix fun Char.downTo(to: Char): CharProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Int.downTo(to: Int): IntProgression {
     return IntProgression.fromClosedRange(this, to, -1)
@@ -309,7 +315,8 @@ public infix fun Int.downTo(to: Int): IntProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Long.downTo(to: Int): LongProgression {
     return LongProgression.fromClosedRange(this, to.toLong(), -1L)
@@ -318,7 +325,8 @@ public infix fun Long.downTo(to: Int): LongProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Byte.downTo(to: Int): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to, -1)
@@ -327,7 +335,8 @@ public infix fun Byte.downTo(to: Int): IntProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Short.downTo(to: Int): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to, -1)
@@ -336,7 +345,8 @@ public infix fun Short.downTo(to: Int): IntProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Int.downTo(to: Long): LongProgression {
     return LongProgression.fromClosedRange(this.toLong(), to, -1L)
@@ -345,7 +355,8 @@ public infix fun Int.downTo(to: Long): LongProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Long.downTo(to: Long): LongProgression {
     return LongProgression.fromClosedRange(this, to, -1L)
@@ -354,7 +365,8 @@ public infix fun Long.downTo(to: Long): LongProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Byte.downTo(to: Long): LongProgression {
     return LongProgression.fromClosedRange(this.toLong(), to, -1L)
@@ -363,7 +375,8 @@ public infix fun Byte.downTo(to: Long): LongProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Short.downTo(to: Long): LongProgression {
     return LongProgression.fromClosedRange(this.toLong(), to, -1L)
@@ -372,7 +385,8 @@ public infix fun Short.downTo(to: Long): LongProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Int.downTo(to: Short): IntProgression {
     return IntProgression.fromClosedRange(this, to.toInt(), -1)
@@ -381,7 +395,8 @@ public infix fun Int.downTo(to: Short): IntProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Long.downTo(to: Short): LongProgression {
     return LongProgression.fromClosedRange(this, to.toLong(), -1L)
@@ -390,7 +405,8 @@ public infix fun Long.downTo(to: Short): LongProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Byte.downTo(to: Short): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
@@ -399,7 +415,8 @@ public infix fun Byte.downTo(to: Short): IntProgression {
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  * 
- * The [to] value has to be less than this value.
+ * The [to] value should be less than or equal to `this` value.
+ * If the [to] value is greater than `this` value the returned progression is empty.
  */
 public infix fun Short.downTo(to: Short): IntProgression {
     return IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
@@ -508,6 +525,8 @@ internal fun Float.toShortExactOrNull(): Short? {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  */
 public infix fun Int.until(to: Byte): IntRange {
     return this .. (to.toInt() - 1).toInt()
@@ -515,6 +534,8 @@ public infix fun Int.until(to: Byte): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  */
 public infix fun Long.until(to: Byte): LongRange {
     return this .. (to.toLong() - 1).toLong()
@@ -522,6 +543,8 @@ public infix fun Long.until(to: Byte): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  */
 public infix fun Byte.until(to: Byte): IntRange {
     return this.toInt() .. (to.toInt() - 1).toInt()
@@ -529,6 +552,8 @@ public infix fun Byte.until(to: Byte): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  */
 public infix fun Short.until(to: Byte): IntRange {
     return this.toInt() .. (to.toInt() - 1).toInt()
@@ -536,6 +561,8 @@ public infix fun Short.until(to: Byte): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  * 
  * If the [to] value is less than or equal to `'\u0000'` the returned range is empty.
  */
@@ -547,6 +574,8 @@ public infix fun Char.until(to: Char): CharRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
+ * 
  * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
  */
 public infix fun Int.until(to: Int): IntRange {
@@ -556,6 +585,8 @@ public infix fun Int.until(to: Int): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  */
 public infix fun Long.until(to: Int): LongRange {
     return this .. (to.toLong() - 1).toLong()
@@ -563,6 +594,8 @@ public infix fun Long.until(to: Int): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  * 
  * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
  */
@@ -574,6 +607,8 @@ public infix fun Byte.until(to: Int): IntRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
+ * 
  * If the [to] value is less than or equal to [Int.MIN_VALUE] the returned range is empty.
  */
 public infix fun Short.until(to: Int): IntRange {
@@ -583,6 +618,8 @@ public infix fun Short.until(to: Int): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  * 
  * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
@@ -594,6 +631,8 @@ public infix fun Int.until(to: Long): LongRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
+ * 
  * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
 public infix fun Long.until(to: Long): LongRange {
@@ -603,6 +642,8 @@ public infix fun Long.until(to: Long): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  * 
  * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
@@ -614,6 +655,8 @@ public infix fun Byte.until(to: Long): LongRange {
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
  * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
+ * 
  * If the [to] value is less than or equal to [Long.MIN_VALUE] the returned range is empty.
  */
 public infix fun Short.until(to: Long): LongRange {
@@ -623,6 +666,8 @@ public infix fun Short.until(to: Long): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  */
 public infix fun Int.until(to: Short): IntRange {
     return this .. (to.toInt() - 1).toInt()
@@ -630,6 +675,8 @@ public infix fun Int.until(to: Short): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  */
 public infix fun Long.until(to: Short): LongRange {
     return this .. (to.toLong() - 1).toLong()
@@ -637,6 +684,8 @@ public infix fun Long.until(to: Short): LongRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  */
 public infix fun Byte.until(to: Short): IntRange {
     return this.toInt() .. (to.toInt() - 1).toInt()
@@ -644,6 +693,8 @@ public infix fun Byte.until(to: Short): IntRange {
 
 /**
  * Returns a range from this value up to but excluding the specified [to] value.
+ * 
+ * If the [to] value is less than or equal to `this` value the returned range is empty.
  */
 public infix fun Short.until(to: Short): IntRange {
     return this.toInt() .. (to.toInt() - 1).toInt()
