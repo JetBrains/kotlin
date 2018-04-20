@@ -48,6 +48,15 @@ plugins {
     id("jps-compatible")
 }
 
+pill {
+    excludedDirs(
+        "out",
+        "buildSrc/build",
+        "buildSrc/prepare-deps/android-dx/build",
+        "buildSrc/prepare-deps/intellij-sdk/build"
+    )
+}
+
 buildScan {
     setTermsOfServiceUrl("https://gradle.com/terms-of-service")
     setTermsOfServiceAgree("yes")
