@@ -2,6 +2,7 @@
 package org.jetbrains.kotlin.pill
 
 import java.io.File
+import org.gradle.api.Project
 
 open class PillExtension {
     enum class Variant {
@@ -23,6 +24,12 @@ open class PillExtension {
     open var variant: Variant = Variant.DEFAULT
 
     open var importAsLibrary: Boolean = false
+
+    open var excludedDirs: List<File> = emptyList()
+
+    fun Project.excludedDirs(vararg dirs: String) {
+        excludedDirs = excludedDirs + dirs.map { File(projectDir, it) }
+    }
 
     open var libraryPath: File? = null
         set(v) {

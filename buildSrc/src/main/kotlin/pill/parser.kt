@@ -86,9 +86,10 @@ fun parse(project: Project, libraries: List<PLibrary>, context: ParserContext): 
         return projectVariant in context.variant.includes
     }
 
-    val modules = project.allprojects
-        .filter { it.plugins.hasPlugin(JpsCompatiblePlugin::class.java) && it.matchesSelectedVariant() }
-        .flatMap { parseModules(it) }
+    val (includedProjects, excludedProjects) = project.allprojects
+        .partition { it.plugins.hasPlugin(JpsCompatiblePlugin::class.java) && it.matchesSelectedVariant() }
+
+    val modules = includedProjects.flatMap { parseModules(it, excludedProjects) }
 
     return PProject("Kotlin", project.projectDir, modules, libraries)
 }
@@ -116,7 +117,7 @@ private val SOURCE_SET_MAPPING = mapOf(
     "test" to Kind.TEST
 )
 
-private fun ParserContext.parseModules(project: Project): List<PModule> {
+private fun ParserContext.parseModules(project: Project, excludedProjects: List<Project>): List<PModule> {
     val (productionContentRoots, testContentRoots) = parseContentRoots(project).partition { !it.forTests }
 
     val modules = mutableListOf<PModule>()
@@ -124,7 +125,10 @@ private fun ParserContext.parseModules(project: Project): List<PModule> {
     fun getJavaExcludedDirs() = project.plugins.findPlugin(IdeaPlugin::class.java)
         ?.model?.module?.excludeDirs?.toList() ?: emptyList()
 
-    val allExcludedDirs = getJavaExcludedDirs() + project.buildDir
+    fun getPillExcludedDirs() = project.extensions.getByType(PillExtension::class.java).excludedDirs
+
+    val allExcludedDirs = getPillExcludedDirs() + getJavaExcludedDirs() + project.buildDir +
+            (if (project == project.rootProject) excludedProjects.map { it.buildDir } else emptyList())
 
     var productionSourcesModule: PModule? = null
 
