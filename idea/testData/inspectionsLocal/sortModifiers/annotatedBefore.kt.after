@@ -1,4 +1,4 @@
 annotation class Ann
 
 @Ann
-abstract public class Test
+public abstract class Test

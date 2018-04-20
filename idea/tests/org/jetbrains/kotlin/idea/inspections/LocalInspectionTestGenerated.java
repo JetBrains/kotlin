@@ -4376,6 +4376,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/sortModifiers"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotatedBefore.kt")
+        public void testAnnotatedBefore() throws Exception {
+            runTest("idea/testData/inspectionsLocal/sortModifiers/annotatedBefore.kt");
+        }
+
         @TestMetadata("annotation.kt")
         public void testAnnotation() throws Exception {
             runTest("idea/testData/inspectionsLocal/sortModifiers/annotation.kt");

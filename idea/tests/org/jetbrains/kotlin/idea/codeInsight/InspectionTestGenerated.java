@@ -329,11 +329,6 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/sealedSubClassCanBeObject/inspectionData/inspections.test");
         }
 
-        @TestMetadata("sortModifiers/inspectionData/inspections.test")
-        public void testSortModifiers_inspectionData_Inspections_test() throws Exception {
-            runTest("idea/testData/inspections/sortModifiers/inspectionData/inspections.test");
-        }
-
         @TestMetadata("spelling/inspectionData/inspections.test")
         public void testSpelling_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/spelling/inspectionData/inspections.test");
