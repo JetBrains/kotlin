@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.daemon.experimental.integration
 
 import com.intellij.openapi.application.ApplicationManager
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -103,7 +101,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         daemonOptions: DaemonOptions,
         messageCollector: MessageCollector,
         vararg args: String
-    ): Pair<Int, Collection<OutputMessageUtil.Output>> {
+    ): Pair<Int, Collection<OutputMessageUtil.Output>> = runBlocking {
 
         log.info("KotlinCompilerClient.connectToCompileService() call")
         val daemon = KotlinCompilerClient.connectToCompileService(
@@ -113,17 +111,15 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             daemonOptions,
             DaemonReportingTargets(messageCollector = messageCollector),
             autostart = true
-        )
+        ).await()
         log.info("KotlinCompilerClient.connectToCompileService() called! (daemon = $daemon)")
 
         assertNotNull("failed to connect daemon", daemon)
 
         log.info("runBlocking { ")
-        runBlocking {
             log.info("register client...")
             daemon?.registerClient(clientAliveFile.absolutePath)
             log.info("   client registered")
-        }
         log.info("} ^ runBlocking")
 
 
@@ -137,8 +133,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             messageCollector,
             { outFile, srcFiles -> outputs.add(OutputMessageUtil.Output(srcFiles, outFile)) },
             reportSeverity = ReportSeverity.DEBUG
-        )
-        return code to outputs
+        ).await()
+        code to outputs
     }
 
     private fun getHelloAppBaseDir(): String = KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/helloApp"

@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.report.experimental
 
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -15,7 +14,8 @@ import org.jetbrains.kotlin.daemon.KotlinCompileDaemon.log
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.ReportCategory
 import org.jetbrains.kotlin.daemon.common.ReportSeverity
-import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseAsync
+import org.jetbrains.kotlin.daemon.common.experimental.report
 
 internal class CompileServicesFacadeMessageCollector(
         private val servicesFacade: CompilerServicesFacadeBaseAsync,
@@ -28,30 +28,32 @@ internal class CompileServicesFacadeMessageCollector(
         hasErrors = false
     }
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) = runBlocking {
-        log.info("Message: " + MessageRenderer.WITHOUT_PATHS.render(severity, message, location))
-        when (severity) {
-            CompilerMessageSeverity.OUTPUT -> {
-                servicesFacade.report(ReportCategory.OUTPUT_MESSAGE, ReportSeverity.ERROR, message)
-            }
-            CompilerMessageSeverity.EXCEPTION -> {
-                servicesFacade.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message)
-            }
-            else -> {
-                val reportSeverity = when (severity) {
-                    CompilerMessageSeverity.ERROR -> ReportSeverity.ERROR
-                    CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> ReportSeverity.WARNING
-                    CompilerMessageSeverity.INFO -> ReportSeverity.INFO
-                    else -> ReportSeverity.DEBUG
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+        async {
+            log.info("Message: " + MessageRenderer.WITHOUT_PATHS.render(severity, message, location))
+            when (severity) {
+                CompilerMessageSeverity.OUTPUT -> {
+                    servicesFacade.report(ReportCategory.OUTPUT_MESSAGE, ReportSeverity.ERROR, message)
                 }
+                CompilerMessageSeverity.EXCEPTION -> {
+                    servicesFacade.report(ReportCategory.EXCEPTION, ReportSeverity.ERROR, message)
+                }
+                else -> {
+                    val reportSeverity = when (severity) {
+                        CompilerMessageSeverity.ERROR -> ReportSeverity.ERROR
+                        CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> ReportSeverity.WARNING
+                        CompilerMessageSeverity.INFO -> ReportSeverity.INFO
+                        else -> ReportSeverity.DEBUG
+                    }
 
-                if (reportSeverity.code <= mySeverity) {
-                    servicesFacade.report(ReportCategory.COMPILER_MESSAGE, reportSeverity, message, location)
+                    if (reportSeverity.code <= mySeverity) {
+                        servicesFacade.report(ReportCategory.COMPILER_MESSAGE, reportSeverity, message, location)
+                    }
                 }
             }
+
+            hasErrors = hasErrors || severity.isError
         }
-
-        hasErrors = hasErrors || severity.isError
     }
 
     override fun hasErrors(): Boolean = hasErrors

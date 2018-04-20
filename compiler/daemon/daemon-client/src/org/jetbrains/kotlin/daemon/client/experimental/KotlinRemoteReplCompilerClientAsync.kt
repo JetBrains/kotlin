@@ -71,7 +71,7 @@ open class KotlinRemoteReplCompilerClientAsync(
         }
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult =
-        runBlocking { compileService.replCheck(sessionId, state.asState(RemoteReplCompilerStateAsync::class.java).replStateFacade.getId(), codeLine).get() }
+        runBlocking { compileService.replCheck(sessionId, state.asState(RemoteReplCompilerStateAsync::class.java).replStateFacade.getId(), codeLine).await().get() }
 
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult =
         runBlocking { compileService.replCompile(sessionId, state.asState(RemoteReplCompilerStateAsync::class.java).replStateFacade.getId(), codeLine).get() }

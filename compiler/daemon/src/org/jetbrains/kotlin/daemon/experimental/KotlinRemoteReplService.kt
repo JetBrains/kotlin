@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.daemon.experimental
 
 import com.intellij.openapi.Disposable
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
@@ -93,8 +91,8 @@ open class KotlinJvmReplServiceAsync(
         } finally { }
     }
 
-    fun createRemoteState(port: ServerSocketWrapper = portForServers): RemoteReplStateFacadeServerSide = statesLock.write {
-        val id = getValidId(stateIdCounter) { id -> states.none { runBlocking { it.key.getId() == id } } }
+    suspend fun createRemoteState(port: ServerSocketWrapper = portForServers): RemoteReplStateFacadeServerSide = statesLock.write {
+        val id = getValidId(stateIdCounter) { id -> states.none { it.key.getId() == id } }
         val stateFacade = RemoteReplStateFacadeServerSide(
             id,
             createState().asState(GenericReplCompilerState::class.java),
@@ -105,8 +103,8 @@ open class KotlinJvmReplServiceAsync(
         stateFacade
     }
 
-    fun <R> withValidReplState(stateId: Int, body: (IReplStageState<*>) -> R): CompileService.CallResult<R> = statesLock.read {
-        states.keys.firstOrNull { runBlocking { it.getId() == stateId } }?.let {
+    suspend fun <R> withValidReplState(stateId: Int, body: (IReplStageState<*>) -> R): CompileService.CallResult<R> = statesLock.read {
+        states.keys.firstOrNull { it.getId() == stateId }?.let {
             CompileService.CallResult.Good(body(it.state))
         } ?: CompileService.CallResult.Error("No REPL state with id $stateId found")
     }

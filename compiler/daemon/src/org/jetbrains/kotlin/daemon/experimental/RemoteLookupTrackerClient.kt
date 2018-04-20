@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.daemon.experimental
 
 import com.intellij.util.containers.StringInterner
-import kotlinx.coroutines.experimental.Unconfined
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerCallbackServicesFacadeClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseAsync
-import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSide
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position

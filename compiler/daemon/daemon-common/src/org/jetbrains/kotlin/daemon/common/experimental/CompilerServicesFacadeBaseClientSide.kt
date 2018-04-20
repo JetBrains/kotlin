@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
 import java.io.Serializable
@@ -16,6 +17,7 @@ class CompilerServicesFacadeBaseClientSideImpl(val serverPort: Int) :
     Client<CompilerServicesFacadeBaseServerSide> by DefaultClient(serverPort) {
 
     init {
+//        runBlocking { connectToServer() }
         log.info("CompilerServicesFacadeBaseClientSideImpl on $serverPort - inited")
     }
 

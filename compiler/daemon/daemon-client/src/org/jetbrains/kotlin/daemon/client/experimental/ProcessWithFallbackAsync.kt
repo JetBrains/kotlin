@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.daemon.client.NativePlatformLauncherWrapper
 import org.jetbrains.kotlin.daemon.common.DaemonReportCategory
 import java.io.IOException
 
-fun launchProcessWithFallback(
+suspend fun launchProcessWithFallback(
     processBuilder: ProcessBuilder,
     reportingTargets: DaemonReportingTargets,
     reportingSource: String = "process launcher"

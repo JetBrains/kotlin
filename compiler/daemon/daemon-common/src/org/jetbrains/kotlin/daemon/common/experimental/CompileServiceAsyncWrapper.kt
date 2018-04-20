@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import org.jetbrains.kotlin.daemon.common.CompilationOptions
-
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
-import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.CompilationOptions
+import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Client
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClientRMIWrapper
 import java.io.File
@@ -18,19 +19,21 @@ class CompileServiceAsyncWrapper(
     override val serverPort: Int
 ) : CompileServiceClientSide, Client<CompileServiceServerSide> by DefaultClientRMIWrapper() {
 
-    override suspend fun compile(
+    override fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide
-    ) = rmiCompileService.compile(
-        sessionId,
-        compilerArguments,
-        compilationOptions,
-        servicesFacade.toRMI(),
-        compilationResults.toRMI()
-    )
+    ) = async {
+        rmiCompileService.compile(
+            sessionId,
+            compilerArguments,
+            compilationOptions,
+            servicesFacade.toRMI(),
+            compilationResults.toRMI()
+        )
+    }
 
     override suspend fun leaseReplSession(
         aliveFlagPath: String?,
@@ -95,9 +98,9 @@ class CompileServiceAsyncWrapper(
         rmiCompileService.releaseReplSession(sessionId)
 
 
-    override suspend fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) =
+    override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = async {
         rmiCompileService.replCheck(sessionId, replStateId, codeLine)
-
+    }
 
     override suspend fun replCompile(
         sessionId: Int,

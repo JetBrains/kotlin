@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.incremental.experimental
 
-import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.IncrementalCompilerServicesFacadeAsync
 import org.jetbrains.kotlin.daemon.incremental.toDirtyData
@@ -15,6 +15,10 @@ import java.io.File
 
 class RemoteArtifactChangesProviderAsync(private val servicesFacade: IncrementalCompilerServicesFacadeAsync) : ArtifactChangesProvider {
     override fun getChanges(artifact: File, sinceTS: Long): Iterable<DirtyData>? = runBlocking {
+        servicesFacade.getChanges(artifact, sinceTS)?.map { it.toDirtyData() }
+    }
+
+    fun getChangesAsync(artifact: File, sinceTS: Long) = async {
         servicesFacade.getChanges(artifact, sinceTS)?.map { it.toDirtyData() }
     }
 }

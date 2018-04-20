@@ -4,16 +4,13 @@ import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import kotlinx.coroutines.experimental.CompletableDeferred
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.actor
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.io.ByteBuffer
 import kotlinx.coroutines.experimental.io.ByteReadChannel
 import kotlinx.coroutines.experimental.io.ByteWriteChannel
-import kotlinx.coroutines.experimental.io.copyAndClose
-import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.io.core.readBytes
 import java.io.*
 import java.util.logging.Logger
@@ -49,7 +46,7 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
             null
         }
 
-    private val readActor = actor<ReadQuery>(Unconfined, capacity = Channel.UNLIMITED) {
+    private val readActor = actor<ReadQuery>(capacity = Channel.UNLIMITED) {
         consumeEach { message ->
             if (!readChannel.isClosedForRead) {
                 readLength(readChannel)?.let { messageLength ->
@@ -119,7 +116,7 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
         }
 
     /** first reads <t>length</t> token (4 bytes), then reads <t>length</t> bytes and returns deserialized object */
-    suspend fun nextObject() = runBlocking {
+    suspend fun nextObject() = async {
         val obj = CompletableDeferred<Any?>()
         readActor.send(SerObjectQuery(obj))
         val result = obj.await()
@@ -136,7 +133,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
 
     private interface WriteActorQuery
 
-    private open class ByteData(val bytes: ByteArray): WriteActorQuery {
+    private open class ByteData(val bytes: ByteArray) : WriteActorQuery {
         open fun toByteArray(): ByteArray = bytes
     }
 
@@ -144,7 +141,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
         override fun toByteArray() = lengthBytes + bytes
     }
 
-    private class CloseMessage: WriteActorQuery
+    private class CloseMessage : WriteActorQuery
 
     private suspend fun tryPrint(b: Byte, writeChannel: ByteWriteChannel) {
         if (!writeChannel.isClosedForWrite) {
@@ -158,7 +155,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
         }
     }
 
-    private val writeActor = actor<WriteActorQuery>(Unconfined, capacity = Channel.UNLIMITED) {
+    private val writeActor = actor<WriteActorQuery>(capacity = Channel.UNLIMITED) {
         consumeEach { message ->
             if (!writeChannel.isClosedForWrite) {
                 when (message) {
@@ -186,6 +183,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
     }
 
     suspend fun printBytesAndLength(length: Int, bytes: ByteArray) {
+        println("printBytesAndLength : $length $bytes")
         writeActor.send(
             ObjectWithLength(
                 getLengthBytes(length),
@@ -197,9 +195,14 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
     private suspend fun printObjectImpl(obj: Any?) =
         ByteArrayOutputStream().use { bos ->
             ObjectOutputStream(bos).use { objOut ->
+                println("printObjectImpl : $obj")
+                println("obj is ser : ${obj is Serializable}")
                 objOut.writeObject(obj)
+                println("objOut.writeObject : $obj")
                 objOut.flush()
+                println("objOut.flush : $obj")
                 val bytes = bos.toByteArray()
+                println("bytes : $bytes")
                 printBytesAndLength(bytes.size, bytes)
             }
         }
@@ -219,15 +222,13 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
             }
 
     suspend fun writeObject(obj: Any?) {
+        println("write object : $obj")
         if (obj is String) printString(obj)
         else printObjectImpl(obj)
     }
 
-    fun close() {
-        runBlocking {
-            writeActor.send(CloseMessage())
-        }
-    }
+    suspend fun close() = writeActor.send(CloseMessage())
+
 }
 
 fun ByteReadChannel.toWrapper(log: Logger) = ByteReadChannelWrapper(this, log)
