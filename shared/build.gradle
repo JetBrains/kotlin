@@ -47,6 +47,13 @@ compileKotlin{
     dependsOn('generateCompilerVersion')
 }
 
+clean {
+    doFirst {
+        if (generateCompilerVersion.versionSourceDirectory.exists())
+             generateCompilerVersion.versionSourceDirectory.delete()
+    }
+}
+
 jar {
     archiveName = "shared.jar"
 }
