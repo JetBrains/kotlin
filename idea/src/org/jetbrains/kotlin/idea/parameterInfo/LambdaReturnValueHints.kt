@@ -18,7 +18,8 @@ fun provideLambdaReturnValueHints(expression: KtExpression): List<InlayInfo> {
         return emptyList()
     }
 
-    if (expression.parent is KtDotQualifiedExpression || expression.parent is KtSafeQualifiedExpression) {
+    val parent = expression.parent
+    if (parent is KtDotQualifiedExpression || parent is KtSafeQualifiedExpression || parent is KtBinaryExpression) {
         return emptyList()
     }
 
