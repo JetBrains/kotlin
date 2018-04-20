@@ -1,6 +1,7 @@
 description = 'Kotlin Standard Library for JVM'
 
 apply plugin: 'kotlin-platform-jvm'
+apply plugin: 'pill-configurable'
 
 archivesBaseName = 'kotlin-stdlib'
 
@@ -8,7 +9,9 @@ configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
 
-project.ext["jpsLibraryPath"] = rootProject.distLibDir
+pill {
+    importAsLibrary = true
+}
 
 sourceSets {
     annotations {

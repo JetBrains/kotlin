@@ -3,6 +3,7 @@ apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 apply plugin: 'groovy'
 apply plugin: 'org.jetbrains.dokka'
+apply plugin: 'jps-compatible'
 
 buildscript {
     repositories {
@@ -24,6 +25,10 @@ repositories {
 
 configurations {
     agp25CompileOnly
+}
+
+pill {
+    variant = "FULL"
 }
 
 dependencies {

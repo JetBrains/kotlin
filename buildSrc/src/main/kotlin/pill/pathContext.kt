@@ -17,7 +17,7 @@ interface PathContext {
     }
 }
 
-class ProjectContext private constructor(val projectDir: File) : PathContext {
+class ProjectContext private constructor(private val projectDir: File) : PathContext {
     constructor(project: PProject) : this(project.rootDirectory)
     constructor(project: Project) : this(project.projectDir)
 

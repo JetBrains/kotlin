@@ -153,7 +153,7 @@ fun generateKotlinPluginArtifactFile(rootProject: Project): PFile {
                         .findByName(EmbeddedComponents.CONFIGURATION_NAME)?.resolvedConfiguration
 
                     if (embeddedComponents != null) {
-                        for ((_, _, dependency) in listOf(embeddedComponents to Scope.COMPILE).collectDependencies()) {
+                        for ((_, dependency) in listOf(embeddedComponents to Scope.COMPILE).collectDependencies()) {
                             if (dependency.configuration == "runtimeElements") {
                                 archiveForJar.add(ModuleOutput(dependency.moduleName + ".src"))
                             } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {

@@ -11,6 +11,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.HasConvention
 import org.jetbrains.kotlin.pill.POrderRoot.*
 import org.jetbrains.kotlin.pill.PSourceRoot.*
+import org.jetbrains.kotlin.pill.PillExtension.*
 import java.io.File
 import java.util.LinkedList
 
@@ -43,11 +44,7 @@ data class PSourceRoot(
     val path: File,
     val kind: Kind
 ) {
-    enum class Kind {
-        PRODUCTION, TEST, RESOURCES, TEST_RESOURCES;
-
-        val isResources get() = this == RESOURCES || this == TEST_RESOURCES
-    }
+    enum class Kind { PRODUCTION, TEST, RESOURCES, TEST_RESOURCES }
 }
 
 data class POrderRoot(
@@ -83,8 +80,14 @@ fun parse(project: Project, libraries: List<PLibrary>, context: ParserContext): 
         error("$project is not a root project")
     }
 
+    fun Project.matchesSelectedVariant(): Boolean {
+        val extension = this.extensions.findByType(PillExtension::class.java) ?: return true
+        val projectVariant = extension.variant.takeUnless { it == Variant.DEFAULT } ?: Variant.BASE
+        return projectVariant in context.variant.includes
+    }
+
     val modules = project.allprojects
-        .filter { it.plugins.hasPlugin(JpsCompatiblePlugin::class.java) }
+        .filter { it.plugins.hasPlugin(JpsCompatiblePlugin::class.java) && it.matchesSelectedVariant() }
         .flatMap { parseModules(it) }
 
     return PProject("Kotlin", project.projectDir, modules, libraries)
@@ -162,8 +165,8 @@ private fun ParserContext.parseModules(project: Project): List<PModule> {
         }
     }
 
-    val mainModuleFileRelativePath = when {
-        project == project.rootProject -> File(project.rootProject.projectDir, project.name + ".iml")
+    val mainModuleFileRelativePath = when (project) {
+        project.rootProject -> File(project.rootProject.projectDir, project.name + ".iml")
         else -> getModuleFile()
     }
 
@@ -268,7 +271,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
             return configurations
         }
 
-        nextDependency@ for ((configuration, scope, dependency) in collectConfigurations().collectDependencies()) {
+        nextDependency@ for ((scope, dependency) in collectConfigurations().collectDependencies()) {
             for (mapper in dependencyMappers) {
                 if (dependency.moduleGroup == mapper.group
                     && dependency.moduleName == mapper.module
@@ -277,12 +280,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
                     val mappedDependency = mapper.mapping(dependency)
 
                     if (mappedDependency != null) {
-                        val orderRoot = POrderRoot(mappedDependency.main, scope)
-                        if (mappedDependency.main is PDependency.Module) {
-                            mainRoots += orderRoot
-                        } else {
-                            mainRoots += orderRoot
-                        }
+                        mainRoots += POrderRoot(mappedDependency.main, scope)
 
                         for (deferredDep in mappedDependency.deferred) {
                             deferredRoots += POrderRoot(deferredDep, scope)
@@ -293,10 +291,10 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
                 }
             }
 
-            if (dependency.configuration == "runtimeElements" && scope != Scope.TEST) {
-                mainRoots += POrderRoot(PDependency.Module(dependency.moduleName + ".src"), scope)
+            mainRoots += if (dependency.configuration == "runtimeElements" && scope != Scope.TEST) {
+                POrderRoot(PDependency.Module(dependency.moduleName + ".src"), scope)
             } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {
-                mainRoots += POrderRoot(
+                POrderRoot(
                     PDependency.Module(dependency.moduleName + ".test"),
                     scope,
                     isProductionOnTestDependency = true
@@ -304,7 +302,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
             } else {
                 val classes = dependency.moduleArtifacts.map { it.file }
                 val library = PLibrary(dependency.moduleName, classes)
-                mainRoots += POrderRoot(PDependency.ModuleLibrary(library), scope)
+                POrderRoot(PDependency.ModuleLibrary(library), scope)
             }
         }
 
@@ -314,7 +312,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
 
 private fun removeDuplicates(roots: List<POrderRoot>): List<POrderRoot> {
     val dependenciesByScope = roots.groupBy { it.scope }.mapValues { it.value.mapTo(mutableSetOf()) { it.dependency } }
-    fun depenciesFor(scope: Scope) = dependenciesByScope[scope] ?: emptySet<PDependency>()
+    fun dependenciesFor(scope: Scope) = dependenciesByScope[scope] ?: emptySet<PDependency>()
 
     val result = mutableSetOf<POrderRoot>()
     for (root in roots.distinct()) {
@@ -325,16 +323,16 @@ private fun removeDuplicates(roots: List<POrderRoot>): List<POrderRoot> {
             continue
         }
 
-        if ((scope == Scope.PROVIDED || scope == Scope.RUNTIME) && dependency in depenciesFor(Scope.COMPILE)) {
+        if ((scope == Scope.PROVIDED || scope == Scope.RUNTIME) && dependency in dependenciesFor(Scope.COMPILE)) {
             continue
         }
 
-        if (scope == Scope.PROVIDED && dependency in depenciesFor(Scope.RUNTIME)) {
+        if (scope == Scope.PROVIDED && dependency in dependenciesFor(Scope.RUNTIME)) {
             result += POrderRoot(dependency, Scope.COMPILE)
             continue
         }
 
-        if (scope == Scope.RUNTIME && dependency in depenciesFor(Scope.PROVIDED)) {
+        if (scope == Scope.RUNTIME && dependency in dependenciesFor(Scope.PROVIDED)) {
             result += POrderRoot(dependency, Scope.COMPILE)
             continue
         }
@@ -345,7 +343,7 @@ private fun removeDuplicates(roots: List<POrderRoot>): List<POrderRoot> {
     return result.toList()
 }
 
-data class DependencyInfo(val configuration: ResolvedConfiguration, val scope: Scope, val dependency: ResolvedDependency)
+data class DependencyInfo(val scope: Scope, val dependency: ResolvedDependency)
 
 fun List<Pair<ResolvedConfiguration, Scope>>.collectDependencies(): List<DependencyInfo> {
     val dependencies = mutableListOf<DependencyInfo>()
@@ -355,7 +353,7 @@ fun List<Pair<ResolvedConfiguration, Scope>>.collectDependencies(): List<Depende
 
     for ((configuration, scope) in this) {
         for (dependency in configuration.firstLevelModuleDependencies) {
-            unprocessed += DependencyInfo(configuration, scope, dependency)
+            unprocessed += DependencyInfo(scope, dependency)
         }
     }
 
@@ -371,7 +369,7 @@ fun List<Pair<ResolvedConfiguration, Scope>>.collectDependencies(): List<Depende
                 continue
             }
 
-            unprocessed += DependencyInfo(info.configuration, info.scope, child)
+            unprocessed += DependencyInfo(info.scope, child)
         }
     }
 
