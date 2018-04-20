@@ -23,7 +23,6 @@ import java.io.Serializable
  * This model is shared with the client processes such as an IDE.
  */
 interface KonanModel : Serializable {
-    val konanVersion: String
     val artifacts: List<KonanArtifact>
 }
 

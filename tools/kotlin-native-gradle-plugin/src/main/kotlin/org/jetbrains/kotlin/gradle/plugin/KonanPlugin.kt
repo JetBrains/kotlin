@@ -37,6 +37,7 @@ import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
+import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
@@ -110,9 +111,6 @@ internal val Project.konanExtension: KonanExtension
 internal val Project.konanCompilerDownloadTask
     get() = tasks.getByName(KonanPlugin.KONAN_DOWNLOAD_TASK_NAME)
 
-internal val Project.konanVersion
-    get() = getProperty(KonanPlugin.ProjectProperty.KONAN_VERSION, KonanPlugin.DEFAULT_KONAN_VERSION) as String
-
 internal val Project.requestedTargets
     get() = findProperty(KonanPlugin.ProjectProperty.KONAN_BUILD_TARGETS)?.let {
         it.toString().trim().split("\\s+".toRegex())
@@ -141,7 +139,7 @@ private fun Project.getOrCreateTask(name: String): Task = with(tasks) {
 }
 
 internal fun Project.konanCompilerName(): String =
-        "kotlin-native-${project.simpleOsName}-${this.konanVersion}"
+        "kotlin-native-${project.simpleOsName}-${KonanVersion.CURRENT}"
 
 internal fun Project.konanCompilerDownloadDir(): String =
         DependencyProcessor.localKonanDir.resolve(project.konanCompilerName()).absolutePath
@@ -218,7 +216,7 @@ internal fun dumpProperties(task: Task) {
             println("target             : $target")
             println("languageVersion    : $languageVersion")
             println("apiVersion         : $apiVersion")
-            println("konanVersion       : $konanVersion")
+            println("konanVersion       : ${KonanVersion.CURRENT}")
             println("konanHome          : $konanHome")
             println()
         }
@@ -239,7 +237,7 @@ internal fun dumpProperties(task: Task) {
             println("linkerOpts         : $linkerOpts")
             println("headers            : ${headers.dump()}")
             println("linkFiles          : ${linkFiles.dump()}")
-            println("konanVersion       : $konanVersion")
+            println("konanVersion       : ${KonanVersion.CURRENT}")
             println("konanHome          : $konanHome")
             println()
         }
@@ -273,7 +271,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
 
     enum class ProjectProperty(val propertyName: String) {
         KONAN_HOME                     ("konan.home"),
-        KONAN_VERSION                  ("konan.version"),
         KONAN_BUILD_TARGETS            ("konan.build.targets"),
         KONAN_JVM_ARGS                 ("konan.jvmArgs"),
         KONAN_USE_ENVIRONMENT_VARIABLES("konan.useEnvironmentVariables"),
@@ -294,11 +291,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         internal const val KONAN_MAIN_VARIANT = "konan_main_variant"
 
         internal const val KONAN_EXTENSION_NAME = "konan"
-
-        internal val DEFAULT_KONAN_VERSION = Properties().apply {
-            load(KonanPlugin::class.java.getResourceAsStream("/META-INF/gradle-plugins/konan.properties") ?:
-                throw RuntimeException("Cannot find a properties file"))
-        }.getProperty("default-konan-version") ?: throw RuntimeException("Cannot read the default compiler version")
     }
 
     private fun Project.cleanKonan() = project.tasks.withType(KonanBuildingTask::class.java).forEach {

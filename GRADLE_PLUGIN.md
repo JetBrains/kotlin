@@ -26,13 +26,8 @@ The Kotlin/Native plugin depends on `org.jetbrains.kotlin:kotlin-gradle-plugin`.
 plugins as buildscript dependencies, it's recommended to **declare them in the same `build.gradle`** to avoid issues with
 plugin classpath.
 
-The plugin downloads the compiler during its first run. You may specify a version of the compiler using `konan.version`
-project property:
-
-    konan.version=0.3
-
 If you already downloaded the compiler manually you may specify the path to its root directory using `konan.home`
-project property (e.g. in `gradle.properties`). Note: the plugin ignores the `konan.version` property in this case.
+project property (e.g. in `gradle.properties`).
 
     konan.home=/home/user/kotlin-native-0.5
 

@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+buildscript {
+    println("rootDir: $rootDir")
+    ext.rootBuildDirectory = "$rootDir/../.."
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
-package org.jetbrains.kotlin.backend.konan
-
-/**
- *  https://en.wikipedia.org/wiki/Software_versioning
- *  scheme major.minor[.build[.revision]].
-*/
-
-enum class MetaVersion {
-  EAP,
-  ALPHA,
-  BETA,
-  RC
 }
 
-class KonanVersion(val meta: MetaVersion?, val major: Int, val minor: Int, val maintenance: Int, val build:Int) {
-    companion object {
-        val CURRENT = KonanVersion(MetaVersion.EAP, 0, 6, 2, 0)
-    }
-    override fun toString() = if (meta != null) "$meta $major.$minor.$maintenance.$build" else "$major.$minor.$maintenance.$build"
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
 }

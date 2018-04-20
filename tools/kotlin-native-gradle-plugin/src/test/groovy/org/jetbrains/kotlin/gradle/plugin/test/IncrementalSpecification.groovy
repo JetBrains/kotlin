@@ -274,20 +274,6 @@ class IncrementalSpecification extends BaseKonanSpecification {
         recompilationAndInteropProcessingHappened(*results)
     }
 
-    def 'konan version change should cause recompilation and interop reprocessing'() {
-        when:
-        def project = KonanProject.createWithInterop(projectDirectory, ArtifactType.LIBRARY) { KonanProject it ->
-            it.propertiesFile.append("konan.version=0.3\n")
-        }
-        def results = buildTwice(project) { KonanProject it ->
-            def newText = it.propertiesFile.text.replace('konan.version=0.3', 'konan.version=0.4')
-            it.propertiesFile.write(newText)
-        }
-
-        then:
-        recompilationAndInteropProcessingHappened(*results)
-    }
-
     def 'Common source change should cause recompilation'() {
         when:
         File commonSource

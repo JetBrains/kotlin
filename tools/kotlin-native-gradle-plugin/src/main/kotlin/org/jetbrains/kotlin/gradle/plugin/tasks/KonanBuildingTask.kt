@@ -39,8 +39,6 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
     @Input
     val extraOpts = mutableListOf<String>()
 
-    val konanVersion
-        @Input get() = project.konanVersion
     val konanHome
         @Input get() = project.konanHome
 
