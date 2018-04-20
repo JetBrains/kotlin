@@ -6,6 +6,6 @@ actual class Foo {
     }
 }
 
-fun Foo.test() {
+fun Foo.test1() {
     "1".foo(2)
 }
