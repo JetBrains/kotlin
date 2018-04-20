@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -25,7 +26,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
 private class IrEmptyVarargExpression(
-    override val type: KotlinType,
+    override val type: IrType,
     override val startOffset: Int,
     override val endOffset: Int
 ) : IrExpression {
@@ -122,13 +123,11 @@ open class IrIntrinsicFunction(
             }
         }
 
-        fun createWithResult(
-            expression: IrMemberAccessExpression,
-            signature: JvmMethodSignature,
-            context: JvmBackendContext,
-            argsTypes: List<Type> = expression.argTypes(context),
-            invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Type
-        ): IrIntrinsicFunction {
+        fun createWithResult(expression: IrMemberAccessExpression,
+                   signature: JvmMethodSignature,
+                   context: JvmBackendContext,
+                   argsTypes: List<Type> = expression.argTypes(context),
+                   invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Type): IrIntrinsicFunction {
             return object : IrIntrinsicFunction(expression, signature, context, argsTypes) {
 
                 override fun genInvokeInstructionWithResult(v: InstructionAdapter) = invokeInstruction(v)
