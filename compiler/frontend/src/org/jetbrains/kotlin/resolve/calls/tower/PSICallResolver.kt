@@ -415,7 +415,7 @@ class PSICallResolver(
             if (variableReceiver.possibleTypes.isNotEmpty()) {
                 return ReceiverExpressionKotlinCallArgument(
                     createReceiverValueWithSmartCastInfo(variable),
-                    isVariableReceiverForInvoke = true
+                    isForImplicitInvoke = true
                 )
             }
 
@@ -470,7 +470,7 @@ class PSICallResolver(
         forcedExplicitReceiver: Receiver? = null
     ): PSIKotlinCallImpl {
         val resolvedExplicitReceiver = resolveReceiver(
-            context, forcedExplicitReceiver ?: oldCall.explicitReceiver, oldCall.isSafeCall(), isVariableReceiverForInvoke = false
+            context, forcedExplicitReceiver ?: oldCall.explicitReceiver, oldCall.isSafeCall(), isForImplicitInvoke = false
         )
         val dispatchReceiverForInvoke = resolveDispatchReceiverForInvoke(context, kotlinCallKind, oldCall)
 
@@ -529,14 +529,14 @@ class PSICallResolver(
         require(oldCall is CallTransformer.CallForImplicitInvoke) { "Call should be CallForImplicitInvoke, but it is: $oldCall" }
 
         val dispatchReceiver = oldCall.dispatchReceiver!! // dispatch receiver from CallForImplicitInvoke is always not null
-        return resolveReceiver(context, dispatchReceiver, isSafeCall = false, isVariableReceiverForInvoke = true)
+        return resolveReceiver(context, dispatchReceiver, isSafeCall = false, isForImplicitInvoke = true)
     }
 
     private fun resolveReceiver(
         context: BasicCallResolutionContext,
         oldReceiver: Receiver?,
         isSafeCall: Boolean,
-        isVariableReceiverForInvoke: Boolean
+        isForImplicitInvoke: Boolean
     ): ReceiverKotlinCallArgument? =
         when (oldReceiver) {
             null -> null
@@ -564,7 +564,7 @@ class PSICallResolver(
                     }
                 }
 
-                subCallArgument ?: ReceiverExpressionKotlinCallArgument(detailedReceiver, isSafeCall, isVariableReceiverForInvoke)
+                subCallArgument ?: ReceiverExpressionKotlinCallArgument(detailedReceiver, isSafeCall, isForImplicitInvoke)
             }
             else -> error("Incorrect receiver: $oldReceiver")
         }
