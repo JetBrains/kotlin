@@ -70,8 +70,7 @@ private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nul
                 val _v2 = _value
                 if (_v2 !== UNINITIALIZED_VALUE) {
                     @Suppress("UNCHECKED_CAST") (_v2 as T)
-                }
-                else {
+                } else {
                     val typedValue = initializer!!()
                     _value = typedValue
                     initializer = null
@@ -125,6 +124,7 @@ private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Se
         private val valueUpdater = java.util.concurrent.atomic.AtomicReferenceFieldUpdater.newUpdater(
             SafePublicationLazyImpl::class.java,
             Any::class.java,
-            "_value")
+            "_value"
+        )
     }
 }

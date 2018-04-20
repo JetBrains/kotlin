@@ -4,6 +4,7 @@
  */
 
 @file:JvmName("ThreadsKt")
+
 package kotlin.concurrent
 
 /**
@@ -16,7 +17,14 @@ package kotlin.concurrent
  * @param name the name of the thread.
  * @param priority the priority of the thread.
  */
-public fun thread(start: Boolean = true, isDaemon: Boolean = false, contextClassLoader: ClassLoader? = null, name: String? = null, priority: Int = -1, block: () -> Unit): Thread {
+public fun thread(
+    start: Boolean = true,
+    isDaemon: Boolean = false,
+    contextClassLoader: ClassLoader? = null,
+    name: String? = null,
+    priority: Int = -1,
+    block: () -> Unit
+): Thread {
     val thread = object : Thread() {
         public override fun run() {
             block()
@@ -47,6 +55,6 @@ public fun thread(start: Boolean = true, isDaemon: Boolean = false, contextClass
  * is stored for the current thread and then returned.
  */
 @kotlin.internal.InlineOnly
-public inline fun <T: Any> ThreadLocal<T>.getOrSet(default: () -> T): T {
+public inline fun <T : Any> ThreadLocal<T>.getOrSet(default: () -> T): T {
     return get() ?: default().also(this::set)
 }

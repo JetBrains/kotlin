@@ -5,6 +5,7 @@
 
 @file:JvmMultifileClass
 @file:JvmName("FilesKt")
+
 package kotlin.io
 
 import kotlin.*
@@ -35,15 +36,15 @@ public enum class FileWalkDirection {
  * If the file path given does not exist, walker iterates nothing, i.e. it's equivalent to an empty sequence.
  */
 public class FileTreeWalk private constructor(
-        private val start: File,
-        private val direction: FileWalkDirection = FileWalkDirection.TOP_DOWN,
-        private val onEnter: ((File) -> Boolean)?,
-        private val onLeave: ((File) -> Unit)?,
-        private val onFail: ((f: File, e: IOException) -> Unit)?,
-        private val maxDepth: Int = Int.MAX_VALUE
+    private val start: File,
+    private val direction: FileWalkDirection = FileWalkDirection.TOP_DOWN,
+    private val onEnter: ((File) -> Boolean)?,
+    private val onLeave: ((File) -> Unit)?,
+    private val onFail: ((f: File, e: IOException) -> Unit)?,
+    private val maxDepth: Int = Int.MAX_VALUE
 ) : Sequence<File> {
 
-    internal constructor(start: File, direction: FileWalkDirection = FileWalkDirection.TOP_DOWN): this(start, direction, null, null, null)
+    internal constructor(start: File, direction: FileWalkDirection = FileWalkDirection.TOP_DOWN) : this(start, direction, null, null, null)
 
 
     /** Returns an iterator walking through files. */
@@ -56,7 +57,7 @@ public class FileTreeWalk private constructor(
     }
 
     /** Abstract class that encapsulates directory visiting in some order, beginning from a given [rootDir] */
-    private abstract class DirectoryState(rootDir: File): WalkState(rootDir) {
+    private abstract class DirectoryState(rootDir: File) : WalkState(rootDir) {
         init {
             if (_Assertions.ENABLED)
                 assert(rootDir.isDirectory) { "rootDir must be verified to be directory beforehand." }
@@ -265,7 +266,7 @@ public class FileTreeWalk private constructor(
  * @param direction walk direction, top-down (by default) or bottom-up.
  */
 public fun File.walk(direction: FileWalkDirection = FileWalkDirection.TOP_DOWN): FileTreeWalk =
-        FileTreeWalk(this, direction)
+    FileTreeWalk(this, direction)
 
 /**
  * Gets a sequence for visiting this directory and all its content in top-down order.

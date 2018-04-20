@@ -8,17 +8,17 @@ package kotlin.jvm.internal
 internal object DoubleCompanionObject {
     val MIN_VALUE: Double = java.lang.Double.MIN_VALUE
     val MAX_VALUE: Double = java.lang.Double.MAX_VALUE
-    val POSITIVE_INFINITY : Double = java.lang.Double.POSITIVE_INFINITY
-    val NEGATIVE_INFINITY : Double = java.lang.Double.NEGATIVE_INFINITY
-    val NaN : Double = java.lang.Double.NaN
+    val POSITIVE_INFINITY: Double = java.lang.Double.POSITIVE_INFINITY
+    val NEGATIVE_INFINITY: Double = java.lang.Double.NEGATIVE_INFINITY
+    val NaN: Double = java.lang.Double.NaN
 }
 
 internal object FloatCompanionObject {
     val MIN_VALUE: Float = java.lang.Float.MIN_VALUE
     val MAX_VALUE: Float = java.lang.Float.MAX_VALUE
-    val POSITIVE_INFINITY : Float = java.lang.Float.POSITIVE_INFINITY
-    val NEGATIVE_INFINITY : Float = java.lang.Float.NEGATIVE_INFINITY
-    val NaN : Float = java.lang.Float.NaN
+    val POSITIVE_INFINITY: Float = java.lang.Float.POSITIVE_INFINITY
+    val NEGATIVE_INFINITY: Float = java.lang.Float.NEGATIVE_INFINITY
+    val NaN: Float = java.lang.Float.NaN
 }
 
 internal object IntCompanionObject {

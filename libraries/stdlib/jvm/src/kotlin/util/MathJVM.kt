@@ -439,6 +439,7 @@ public actual inline fun sign(x: Double): Double = nativeMath.signum(x)
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun min(a: Double, b: Double): Double = nativeMath.min(a, b)
+
 /**
  * Returns the greater of two values.
  *
@@ -524,6 +525,7 @@ public actual inline val Double.sign: Double get() = nativeMath.signum(this)
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun Double.withSign(sign: Double): Double = nativeMath.copySign(this, sign)
+
 /**
  * Returns this value with the sign bit same as of the [sign] value.
  */
@@ -551,6 +553,7 @@ public actual inline val Double.ulp: Double get() = nativeMath.ulp(this)
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun Double.nextUp(): Double = nativeMath.nextUp(this)
+
 /**
  * Returns the [Double] value nearest to this value in direction of negative infinity.
  */
@@ -599,8 +602,8 @@ public actual fun Double.roundToInt(): Int = when {
  * @throws IllegalArgumentException when this value is `NaN`
  */
 @SinceKotlin("1.2")
-public actual fun Double.roundToLong(): Long = if (isNaN()) throw IllegalArgumentException("Cannot round NaN value.") else nativeMath.round(this)
-
+public actual fun Double.roundToLong(): Long =
+    if (isNaN()) throw IllegalArgumentException("Cannot round NaN value.") else nativeMath.round(this)
 
 
 // ================ Float Math ========================================
@@ -963,6 +966,7 @@ public actual inline fun sign(x: Float): Float = nativeMath.signum(x)
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun min(a: Float, b: Float): Float = nativeMath.min(a, b)
+
 /**
  * Returns the greater of two values.
  *
@@ -1048,6 +1052,7 @@ public actual inline val Float.sign: Float get() = nativeMath.signum(this)
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun Float.withSign(sign: Float): Float = nativeMath.copySign(this, sign)
+
 /**
  * Returns this value with the sign bit same as of the [sign] value.
  */
@@ -1075,6 +1080,7 @@ public inline val Float.ulp: Float get() = nativeMath.ulp(this)
 @SinceKotlin("1.2")
 @InlineOnly
 public inline fun Float.nextUp(): Float = nativeMath.nextUp(this)
+
 /**
  * Returns the [Float] value nearest to this value in direction of negative infinity.
  */
@@ -1105,7 +1111,8 @@ public inline fun Float.nextTowards(to: Float): Float = nativeMath.nextAfter(thi
  * @throws IllegalArgumentException when this value is `NaN`
  */
 @SinceKotlin("1.2")
-public actual fun Float.roundToInt(): Int = if (isNaN()) throw IllegalArgumentException("Cannot round NaN value.") else nativeMath.round(this)
+public actual fun Float.roundToInt(): Int =
+    if (isNaN()) throw IllegalArgumentException("Cannot round NaN value.") else nativeMath.round(this)
 
 /**
  * Rounds this [Float] value to the nearest integer and converts the result to [Long].

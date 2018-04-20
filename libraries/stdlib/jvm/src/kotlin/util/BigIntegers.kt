@@ -125,5 +125,5 @@ public inline fun BigInteger.toBigDecimal(): BigDecimal = BigDecimal(this)
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun BigInteger.toBigDecimal(scale: Int = 0, mathContext: MathContext = MathContext.UNLIMITED): BigDecimal =
-        BigDecimal(this, scale, mathContext)
+    BigDecimal(this, scale, mathContext)
 

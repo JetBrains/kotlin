@@ -11,8 +11,8 @@ import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 @PublishedApi
 internal actual class SafeContinuation<in T>
 internal actual constructor(
-        private val delegate: Continuation<T>,
-        initialResult: Any?
+    private val delegate: Continuation<T>,
+    initialResult: Any?
 ) : Continuation<T> {
 
     @PublishedApi
@@ -31,7 +31,8 @@ internal actual constructor(
         @Suppress("UNCHECKED_CAST")
         @JvmStatic
         private val RESULT = AtomicReferenceFieldUpdater.newUpdater<SafeContinuation<*>, Any?>(
-                SafeContinuation::class.java, Any::class.java as Class<Any?>, "result")
+            SafeContinuation::class.java, Any::class.java as Class<Any?>, "result"
+        )
     }
 
     private class Fail(val exception: Throwable)
@@ -53,7 +54,7 @@ internal actual constructor(
     actual override fun resumeWithException(exception: Throwable) {
         while (true) { // lock-free loop
             val result = this.result // atomic read
-            when  {
+            when {
                 result === UNDECIDED -> if (RESULT.compareAndSet(this, UNDECIDED, Fail(exception))) return
                 result === COROUTINE_SUSPENDED -> if (RESULT.compareAndSet(this, COROUTINE_SUSPENDED, RESUMED)) {
                     delegate.resumeWithException(exception)

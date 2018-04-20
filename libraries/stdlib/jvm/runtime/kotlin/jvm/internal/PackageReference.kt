@@ -9,18 +9,18 @@ import kotlin.reflect.KCallable
 
 @SinceKotlin("1.1")
 public class PackageReference(
-        override val jClass: Class<*>,
-        @Suppress("unused") private val moduleName: String
+    override val jClass: Class<*>,
+    @Suppress("unused") private val moduleName: String
 ) : ClassBasedDeclarationContainer {
     override val members: Collection<KCallable<*>>
         get() = throw KotlinReflectionNotSupportedError()
 
     override fun equals(other: Any?) =
-            other is PackageReference && jClass == other.jClass
+        other is PackageReference && jClass == other.jClass
 
     override fun hashCode() =
-            jClass.hashCode()
+        jClass.hashCode()
 
     override fun toString() =
-            jClass.toString() + Reflection.REFLECTION_NOT_AVAILABLE
+        jClass.toString() + Reflection.REFLECTION_NOT_AVAILABLE
 }

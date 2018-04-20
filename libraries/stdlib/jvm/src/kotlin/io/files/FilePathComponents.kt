@@ -5,6 +5,7 @@
 
 @file:JvmMultifileClass
 @file:JvmName("FilesKt")
+
 package kotlin.io
 
 import java.io.File
@@ -141,7 +142,7 @@ internal fun File.toComponents(): FilePathComponents {
  * Number 0 belongs to a component closest to the root,
  * number count-1 belongs to a component farthest from the root.
  * @throws IllegalArgumentException if [beginIndex] is negative,
-* or [endIndex] is greater than existing number of components,
-* or [beginIndex] is greater than [endIndex].
+ * or [endIndex] is greater than existing number of components,
+ * or [beginIndex] is greater than [endIndex].
  */
 internal fun File.subPath(beginIndex: Int, endIndex: Int): File = toComponents().subPath(beginIndex, endIndex)

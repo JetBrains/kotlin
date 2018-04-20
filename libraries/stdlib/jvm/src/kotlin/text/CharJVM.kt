@@ -141,7 +141,7 @@ internal actual fun digitOf(char: Char, radix: Int): Int = Character.digit(char.
  */
 @PublishedApi
 internal actual fun checkRadix(radix: Int): Int {
-    if(radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
+    if (radix !in Character.MIN_RADIX..Character.MAX_RADIX) {
         throw IllegalArgumentException("radix $radix was not in valid range ${Character.MIN_RADIX..Character.MAX_RADIX}")
     }
     return radix

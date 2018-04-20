@@ -5,6 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("RangesKt")
+
 package kotlin.ranges
 
 import kotlin.*
@@ -14,10 +15,10 @@ import kotlin.*
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
-private class ClosedFloatRange (
+private class ClosedFloatRange(
     start: Float,
     endInclusive: Float
-): ClosedFloatingPointRange<Float> {
+) : ClosedFloatingPointRange<Float> {
     private val _start = start
     private val _endInclusive = endInclusive
     override val start: Float get() = _start
@@ -36,6 +37,7 @@ private class ClosedFloatRange (
     override fun hashCode(): Int {
         return if (isEmpty()) -1 else 31 * _start.hashCode() + _endInclusive.hashCode()
     }
+
     override fun toString(): String = "$_start..$_endInclusive"
 }
 

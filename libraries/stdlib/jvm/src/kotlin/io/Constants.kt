@@ -4,11 +4,12 @@
  */
 
 @file:JvmName("ConstantsKt")
+
 package kotlin.io
 
 /**
  * Returns the default buffer size when working with buffered streams.
-*/
+ */
 public const val DEFAULT_BUFFER_SIZE: Int = 8 * 1024
 
 /**
