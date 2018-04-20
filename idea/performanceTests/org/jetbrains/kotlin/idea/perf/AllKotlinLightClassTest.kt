@@ -38,6 +38,9 @@ class AllKotlinLightClassTest : WholeProjectPerformanceTest(), WholeProjectKotli
                             Arrays.hashCode(lightClass.superTypes)
                             Arrays.hashCode(lightClass.fields)
                             Arrays.hashCode(lightClass.methods)
+                            // Just to be sure: access types
+                            lightClass.fields.map { it.type }.hashCode()
+                            lightClass.methods.map { it.returnType }.hashCode()
                             lightClass.hashCode()
                         }
                     })
