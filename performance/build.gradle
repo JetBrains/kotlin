@@ -22,11 +22,12 @@ repositories {
 def jvmWarmup = 10000
 def nativeWarmup = 10
 
+ext."konan.home" = distDir
+
 apply plugin: 'kotlin'
 apply plugin: 'application'
 apply plugin: 'konan'
 
-project.setProperty("konan.home", distDir)
 checkKonanCompiler.dependsOn ':dist'
 
 konanArtifacts {
