@@ -305,13 +305,13 @@ class MemberBuilder(
             StringReader(methodDoc.trim()).forEachLine { line ->
                 builder.append(" * ").append(line.trim()).append("\n")
             }
-            if (samples.any()) {
-                builder.append(" * \n")
-                samples.forEach { builder.append(" * @sample $it\n")}
-            }
             if (family == Sequences && sequenceClassification.isNotEmpty()) {
                 builder.append(" *\n")
                 builder.append(" * The operation is ${sequenceClassification.joinToString(" and ") { "_${it}_" }}.\n")
+            }
+            if (samples.any()) {
+                builder.append(" * \n")
+                samples.forEach { builder.append(" * @sample $it\n")}
             }
             builder.append(" */\n")
         }

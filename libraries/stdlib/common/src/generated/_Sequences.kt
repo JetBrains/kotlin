@@ -332,10 +332,10 @@ public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns a sequence containing all elements except first [n] elements.
- * 
- * @sample samples.collections.Collections.Transformations.drop
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -348,10 +348,10 @@ public fun <T> Sequence<T>.drop(n: Int): Sequence<T> {
 
 /**
  * Returns a sequence containing all elements except first elements that satisfy the given [predicate].
- * 
- * @sample samples.collections.Collections.Transformations.drop
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.drop
  */
 public fun <T> Sequence<T>.dropWhile(predicate: (T) -> Boolean): Sequence<T> {
     return DropWhileSequence(this, predicate)
@@ -463,10 +463,10 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destinat
 
 /**
  * Returns a sequence containing first [n] elements.
- * 
- * @sample samples.collections.Collections.Transformations.take
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
@@ -479,10 +479,10 @@ public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
 
 /**
  * Returns a sequence containing first elements satisfying the given [predicate].
- * 
- * @sample samples.collections.Collections.Transformations.take
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.take
  */
 public fun <T> Sequence<T>.takeWhile(predicate: (T) -> Boolean): Sequence<T> {
     return TakeWhileSequence(this, predicate)
@@ -710,10 +710,10 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(dest
  * applied to each element and returns a map where each group key is associated with a list of corresponding elements.
  * 
  * The returned map preserves the entry iteration order of the keys produced from the original sequence.
- * 
- * @sample samples.collections.Collections.Transformations.groupBy
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>> {
     return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)
@@ -725,10 +725,10 @@ public inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List
  * and returns a map where each group key is associated with a list of corresponding values.
  * 
  * The returned map preserves the entry iteration order of the keys produced from the original sequence.
- * 
- * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <T, K, V> Sequence<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>> {
     return groupByTo(LinkedHashMap<K, MutableList<V>>(), keySelector, valueTransform)
@@ -739,10 +739,10 @@ public inline fun <T, K, V> Sequence<T>.groupBy(keySelector: (T) -> K, valueTran
  * applied to each element and puts to the [destination] map each group key associated with a list of corresponding elements.
  * 
  * @return The [destination] map.
- * 
- * @sample samples.collections.Collections.Transformations.groupBy
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupBy
  */
 public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Sequence<T>.groupByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
@@ -759,10 +759,10 @@ public inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Sequence<T>.group
  * and puts to the [destination] map each group key associated with a list of corresponding values.
  * 
  * @return The [destination] map.
- * 
- * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  */
 public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Sequence<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
@@ -776,10 +776,10 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Sequence<T>.gr
 /**
  * Creates a [Grouping] source from a sequence to be used later with one of group-and-fold operations
  * using the specified [keySelector] function to extract a key from each element.
- * 
- * @sample samples.collections.Collections.Transformations.groupingByEachCount
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupingByEachCount
  */
 @SinceKotlin("1.1")
 public inline fun <T, K> Sequence<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K> {
@@ -931,10 +931,10 @@ public fun <T> Sequence<T>.toMutableSet(): MutableSet<T> {
 
 /**
  * Returns `true` if all elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.all
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -943,10 +943,10 @@ public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if sequence has at least one element.
- * 
- * @sample samples.collections.Collections.Aggregates.any
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
  */
 public fun <T> Sequence<T>.any(): Boolean {
     return iterator().hasNext()
@@ -954,10 +954,10 @@ public fun <T> Sequence<T>.any(): Boolean {
 
 /**
  * Returns `true` if at least one element matches the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun <T> Sequence<T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -1225,10 +1225,10 @@ public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
 
 /**
  * Returns `true` if the sequence has no elements.
- * 
- * @sample samples.collections.Collections.Aggregates.none
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
  */
 public fun <T> Sequence<T>.none(): Boolean {
     return !iterator().hasNext()
@@ -1236,10 +1236,10 @@ public fun <T> Sequence<T>.none(): Boolean {
 
 /**
  * Returns `true` if no elements match the given [predicate].
- * 
- * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -1334,10 +1334,10 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
  * The last list in the resulting sequence may have less elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
- * 
- * @sample samples.collections.Collections.Transformations.chunked
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.collections.Collections.Transformations.chunked
  */
 @SinceKotlin("1.2")
 public fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>> {
@@ -1355,10 +1355,10 @@ public fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>> {
  * The last list may have less elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
- * 
- * @sample samples.text.Strings.chunkedTransform
  *
  * The operation is _intermediate_ and _stateful_.
+ * 
+ * @sample samples.text.Strings.chunkedTransform
  */
 @SinceKotlin("1.2")
 public fun <T, R> Sequence<T>.chunked(size: Int, transform: (List<T>) -> R): Sequence<R> {
@@ -1567,10 +1567,10 @@ public fun <T, R> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows:
 /**
  * Returns a sequence of values built from the elements of `this` sequence and the [other] sequence with the same index.
  * The resulting sequence ends as soon as the shortest input sequence ends.
- * 
- * @sample samples.collections.Sequences.Transformations.zip
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Sequences.Transformations.zip
  */
 public infix fun <T, R> Sequence<T>.zip(other: Sequence<R>): Sequence<Pair<T, R>> {
     return MergingSequence(this, other) { t1, t2 -> t1 to t2 }
@@ -1580,10 +1580,10 @@ public infix fun <T, R> Sequence<T>.zip(other: Sequence<R>): Sequence<Pair<T, R>
  * Returns a sequence of values built from the elements of `this` sequence and the [other] sequence with the same index
  * using the provided [transform] function applied to each pair of elements.
  * The resulting sequence ends as soon as the shortest input sequence ends.
- * 
- * @sample samples.collections.Sequences.Transformations.zipWithTransform
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Sequences.Transformations.zipWithTransform
  */
 public fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (a: T, b: R) -> V): Sequence<V> {
     return MergingSequence(this, other, transform)
@@ -1593,10 +1593,10 @@ public fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (a: T, b: R)
  * Returns a sequence of pairs of each two adjacent elements in this sequence.
  * 
  * The returned sequence is empty if this sequence contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.zipWithNext
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNext
  */
 @SinceKotlin("1.2")
 public fun <T> Sequence<T>.zipWithNext(): Sequence<Pair<T, T>> {
@@ -1608,10 +1608,10 @@ public fun <T> Sequence<T>.zipWithNext(): Sequence<Pair<T, T>> {
  * to an each pair of two adjacent elements in this sequence.
  * 
  * The returned sequence is empty if this sequence contains less than two elements.
- * 
- * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.zipWithNextToFindDeltas
  */
 @SinceKotlin("1.2")
 public fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequence<R> {
@@ -1632,10 +1632,10 @@ public fun <T, R> Sequence<T>.zipWithNext(transform: (a: T, b: T) -> R): Sequenc
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
- * 
- * @sample samples.collections.Collections.Transformations.joinTo
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.joinTo
  */
 public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): A {
     buffer.append(prefix)
@@ -1656,10 +1656,10 @@ public fun <T, A : Appendable> Sequence<T>.joinTo(buffer: A, separator: CharSequ
  * 
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
- * 
- * @sample samples.collections.Collections.Transformations.joinToString
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.joinToString
  */
 public fun <T> Sequence<T>.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((T) -> CharSequence)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
