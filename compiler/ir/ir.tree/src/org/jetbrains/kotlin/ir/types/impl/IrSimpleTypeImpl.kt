@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.ir.types.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.types.Variance
 
-class IrTypeImpl(
+class IrSimpleTypeImpl(
     override val classifier: IrClassifierSymbol,
     override val hasQuestionMark: Boolean,
     override val arguments: List<IrTypeProjection>,
-    override val annotations: List<IrCall>,
-    override val variance: Variance
-) : IrType, IrTypeProjection {
+    annotations: List<IrCall>,
+    variance: Variance
+) : IrTypeBase(annotations, variance), IrSimpleType, IrTypeProjection {
 
     constructor(
         classifier: IrClassifierSymbol,
@@ -27,15 +26,22 @@ class IrTypeImpl(
     ) : this(classifier, hasQuestionMark, arguments, annotations, Variance.INVARIANT)
 
     constructor(
-        other: IrType,
+        other: IrSimpleType,
         variance: Variance
     ) : this(other.classifier, other.hasQuestionMark, other.arguments, other.annotations, variance)
 
-    override val type: IrType get() = this
 }
 
+class IrTypeProjectionImpl internal constructor(
+    override val type: IrType,
+    override val variance: Variance
+) : IrTypeProjection
+
 fun makeTypeProjection(type: IrType, variance: Variance): IrTypeProjection =
-    if (type is IrTypeImpl && type.variance == variance)
-        type
-    else
-        IrTypeImpl(type, variance)
+    when {
+        type is IrTypeProjection && type.variance == variance -> type
+        type is IrSimpleType -> IrSimpleTypeImpl(type, variance)
+        type is IrDynamicType -> IrDynamicTypeImpl(type.annotations, variance)
+        type is IrErrorType -> IrErrorTypeImpl(type.annotations, variance)
+        else -> IrTypeProjectionImpl(type, variance)
+    }

@@ -14,7 +14,11 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.types.impl.IrTypeImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -46,20 +50,22 @@ class TypeTranslator(
         typeParametersResolver.resolveScopedTypeParameter(typeParameterDescriptor)
                 ?: symbolTable.referenceTypeParameter(typeParameterDescriptor)
 
-    fun translateType(ktType: KotlinType): IrTypeImpl =
-        translateType(ktType, Variance.INVARIANT)
+    fun translateType(ktType: KotlinType): IrType =
+        translateType(ktType, Variance.INVARIANT).type
 
-    private fun translateType(ktType: KotlinType, variance: Variance): IrTypeImpl {
-        if (ktType.isFlexible()) {
-            return translateType(ktType.upperIfFlexible(), variance)
+    private fun translateType(ktType: KotlinType, variance: Variance): IrTypeProjection {
+        when {
+            ktType.isError -> return IrErrorTypeImpl(translateTypeAnnotations(ktType.annotations), variance)
+            ktType.isFlexible() -> return translateType(ktType.upperIfFlexible(), variance)
+            ktType.isDynamic() -> return IrDynamicTypeImpl(translateTypeAnnotations(ktType.annotations), variance)
         }
 
         val ktTypeConstructor = ktType.constructor
-        val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor
+        val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor ?: throw AssertionError("No descriptor for type $ktType")
 
         return when (ktTypeDescriptor) {
             is TypeParameterDescriptor ->
-                IrTypeImpl(
+                IrSimpleTypeImpl(
                     resolveTypeParameter(ktTypeDescriptor),
                     ktType.isMarkedNullable,
                     emptyList(),
@@ -68,7 +74,7 @@ class TypeTranslator(
                 )
 
             is ClassDescriptor ->
-                IrTypeImpl(
+                IrSimpleTypeImpl(
                     symbolTable.referenceClass(ktTypeDescriptor),
                     ktType.isMarkedNullable,
                     translateTypeArguments(ktType.arguments),
@@ -77,7 +83,7 @@ class TypeTranslator(
                 )
 
             else ->
-                TODO()
+                throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
         }
     }
 
