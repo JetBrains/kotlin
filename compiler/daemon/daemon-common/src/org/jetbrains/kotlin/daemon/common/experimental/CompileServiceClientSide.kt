@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -44,15 +46,17 @@ class CompileServiceClientSideImpl(
 
     val log = Logger.getLogger("CompileServiceClientSideImpl")
 
-    override suspend fun compile(
+    override fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide
-    ): CallResult<Int> {
+    ): Deferred<CallResult<Int>> = async {
+        println("override fun compile(")
         val id = sendMessage(CompileMessage(sessionId, compilerArguments, compilationOptions, servicesFacade, compilationResults))
-        return readMessage(id)
+        println("override fun compile(: id = $id")
+        readMessage<CallResult<Int>>(id)
     }
 
     override suspend fun leaseReplSession(
@@ -115,6 +119,7 @@ class CompileServiceClientSideImpl(
     }
 
     override suspend fun registerClient(aliveFlagPath: String?): CallResult<Nothing> {
+        println("registerClient")
         val id = sendMessage(RegisterClientMessage(aliveFlagPath))
         return readMessage(id)
     }
@@ -171,11 +176,11 @@ class CompileServiceClientSideImpl(
         return readMessage(id)
     }
 
-    override suspend fun replCheck(
+    override fun replCheck(
         sessionId: Int,
         replStateId: Int,
         codeLine: ReplCodeLine
-    ): CallResult<ReplCheckResult> {
+    ): Deferred<CallResult<ReplCheckResult>> = async {
         val id = sendMessage(
             ReplCheckMessage(
                 sessionId,
@@ -183,7 +188,7 @@ class CompileServiceClientSideImpl(
                 codeLine
             )
         )
-        return readMessage(id)
+        readMessage<CallResult<ReplCheckResult>>(id)
     }
 
     override suspend fun replCompile(
@@ -273,7 +278,7 @@ class CompileServiceClientSideImpl(
                     compilationOptions,
                     servicesFacade,
                     compilationResults
-                )
+                ).await()
             )
     }
 
@@ -340,7 +345,7 @@ class CompileServiceClientSideImpl(
         val codeLine: ReplCodeLine
     ) : Server.Message<CompileServiceServerSide>() {
         override suspend fun processImpl(server: CompileServiceServerSide, sendReply: (Any?) -> Unit) =
-            sendReply(server.replCheck(sessionId, replStateId, codeLine))
+            sendReply(server.replCheck(sessionId, replStateId, codeLine).await())
     }
 
     class ReplCompileMessage(

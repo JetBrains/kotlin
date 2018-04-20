@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import kotlinx.coroutines.experimental.Deferred
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -37,13 +38,13 @@ interface CompileServiceAsync {
 
     suspend fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean>
 
-    suspend fun compile(
+    fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide
-    ): CompileService.CallResult<Int>
+    ): Deferred<CompileService.CallResult<Int>>
 
     suspend fun clearJarCache()
 
@@ -60,11 +61,11 @@ interface CompileServiceAsync {
 
     suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeClientSide>
 
-    suspend fun replCheck(
+    fun replCheck(
         sessionId: Int,
         replStateId: Int,
         codeLine: ReplCodeLine
-    ): CompileService.CallResult<ReplCheckResult>
+    ): Deferred<CompileService.CallResult<ReplCheckResult>>
 
     suspend fun replCompile(
         sessionId: Int,

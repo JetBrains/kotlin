@@ -110,8 +110,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
                 Client<CompilationResultsServerSide> by DefaultClientRMIWrapper() {
                 override suspend fun add(compilationResultCategory: Int, value: Serializable) {}
             }
-
-        )
+        ).await()
     }
 
     override fun clearJarCache() = runBlocking {
@@ -174,7 +173,7 @@ class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptio
     }
 
     override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = runBlocking {
-        server.replCheck(sessionId, replStateId, codeLine)
+        server.replCheck(sessionId, replStateId, codeLine).await()
     }
 
     override fun replCompile(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = runBlocking {

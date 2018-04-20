@@ -5,19 +5,22 @@
 
 package org.jetbrains.kotlin.daemon.incremental.experimental
 
-import kotlinx.coroutines.experimental.Unconfined
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.async
 import org.jetbrains.kotlin.daemon.common.experimental.IncrementalCompilerServicesFacadeAsync
 import org.jetbrains.kotlin.daemon.incremental.toSimpleDirtyData
 import org.jetbrains.kotlin.incremental.DirtyData
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
 
 internal class RemoteChangesRegistryAsync(private val servicesFacade: IncrementalCompilerServicesFacadeAsync) : ChangesRegistry {
-    override fun unknownChanges(timestamp: Long) = runBlocking {
-        servicesFacade.unknownChanges(timestamp)
+    override fun unknownChanges(timestamp: Long) {
+        async {
+            servicesFacade.unknownChanges(timestamp)
+        }
     }
 
-    override fun registerChanges(timestamp: Long, dirtyData: DirtyData) = runBlocking {
-        servicesFacade.registerChanges(timestamp, dirtyData.toSimpleDirtyData())
+    override fun registerChanges(timestamp: Long, dirtyData: DirtyData) {
+        async {
+            servicesFacade.registerChanges(timestamp, dirtyData.toSimpleDirtyData())
+        }
     }
 }

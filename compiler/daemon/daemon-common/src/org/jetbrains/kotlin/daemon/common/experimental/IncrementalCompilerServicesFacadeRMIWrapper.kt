@@ -44,7 +44,9 @@ class IncrementalCompilerServicesFacadeRMIWrapper(val clientSide: IncrementalCom
     }
 
     init {
-        clientSide.connectToServer()
+//        runBlocking {
+//            clientSide.connectToServer()
+//        }
     }
 }
 

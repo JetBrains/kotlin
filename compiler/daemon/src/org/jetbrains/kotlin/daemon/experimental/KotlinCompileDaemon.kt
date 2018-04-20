@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.daemon.experimental
 
 import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.Unconfined
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
@@ -50,12 +50,10 @@ class LogStream(name: String) : OutputStream() {
 object KotlinCompileDaemon {
 
     init {
+
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
         val (logPath: String, fileIsGiven: Boolean) =
-                System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)
-                    ?.trimQuotes()
-                    ?.let { Pair(it, File(it).isFile) }
-                        ?: Pair("%t", false)
+                System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.trimQuotes()?.let { Pair(it, File(it).isFile) } ?: Pair("%t", false)
         val cfg: String =
             "handlers = java.util.logging.FileHandler\n" +
                     "java.util.logging.FileHandler.level     = ALL\n" +
@@ -100,7 +98,12 @@ object KotlinCompileDaemon {
         setIdeaIoUseFallback()
 
         val compilerId = CompilerId()
+
+        log.info("compilerId: " + compilerId)
+
         val daemonOptions = DaemonOptions()
+
+        log.info("daemonOptions: " + daemonOptions)
 
         runBlocking {
 
@@ -108,11 +111,15 @@ object KotlinCompileDaemon {
 
             try {
 
+                log.info("in try")
+
                 val daemonJVMOptions = configureDaemonJVMOptions(
                     inheritMemoryLimits = true,
                     inheritOtherJvmOptions = true,
                     inheritAdditionalProperties = true
                 )
+
+                log.info("daemonJVMOptions: " + daemonJVMOptions)
 
                 val filteredArgs = args.asIterable()
                     .filterExtractProps(
@@ -121,7 +128,7 @@ object KotlinCompileDaemon {
                         prefix = COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX
                     )
 
-                log.info("filteredArgs")
+                log.info("filteredArgs: " + filteredArgs)
 
                 if (filteredArgs.any()) {
                     val helpLine = "usage: <daemon> <compilerId options> <daemon options>"
@@ -132,7 +139,6 @@ object KotlinCompileDaemon {
                 }
 
                 log.info("starting_daemon")
-                log.info("starting daemon")
 
                 // TODO: find minimal set of permissions and restore security management
                 // note: may be not needed anymore since (hopefully) server is now loopback-only
@@ -191,7 +197,7 @@ object KotlinCompileDaemon {
 
 
                 println(COMPILE_DAEMON_IS_READY_MESSAGE)
-                log.info("daemon is listening on socketPort: $port")
+                log.info("daemon is listening on port: ${port.port}")
 
                 // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
                 // TODO: implement more reliable scheme
