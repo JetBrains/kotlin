@@ -3276,8 +3276,7 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
 
         @TestMetadata("anonymousObjectAsLastExpressionInLambda.kt")
         public void testAnonymousObjectAsLastExpressionInLambda() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/anonymousObjectAsLastExpressionInLambda.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/box/closures/anonymousObjectAsLastExpressionInLambda.kt");
         }
 
         @TestMetadata("captureExtensionReceiver.kt")

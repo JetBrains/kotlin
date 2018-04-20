@@ -20991,8 +20991,7 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
 
             @TestMetadata("implicitInvokeOnSuper.kt")
             public void testImplicitInvokeOnSuper() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/implicitInvokeOnSuper.kt");
-                doTest(fileName);
+                runTest("compiler/testData/diagnostics/tests/thisAndSuper/implicitInvokeOnSuper.kt");
             }
 
             @TestMetadata("notAccessibleSuperInTrait.kt")
