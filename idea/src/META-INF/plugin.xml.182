@@ -2871,4 +2871,8 @@
     <highlighterExtension implementation="org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension"/>
   </extensions>
 
+    <extensions defaultExtensionNs="com.intellij.jvm">
+        <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
+    </extensions>
+
 </idea-plugin>
