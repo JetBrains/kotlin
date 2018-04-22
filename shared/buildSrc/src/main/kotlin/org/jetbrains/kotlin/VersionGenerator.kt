@@ -24,7 +24,9 @@ open class VersionGenerator: DefaultTask() {
                 val major = version[0].toInt()
                 val minor = version[1].toInt()
                 val maintenance = if (version.size > 2) version[2].toInt() else 0
-                val build = System.getenv("env.dep.Kotlin_KotlinNative_Master_KotlinNativeCheckout.build.counter")?.let {
+                val buildCounter = System.getenv("BUILD_NUMBER")
+                project.logger.info("BUILD_NUMBER: $buildCounter")
+                val build = buildCounter?.let {
                     it.split("-")[2].toInt() //7-dev-buildcount
                 }?: -1
                 val meta = project.properties["konanMetaVersion"]?.let { "MetaVersion.${it.toString().toUpperCase()}" } ?: "MetaVersion.DEV"
@@ -40,7 +42,19 @@ open class VersionGenerator: DefaultTask() {
                      |     val CURRENT = KonanVersion($meta, $major, $minor, $maintenance, $build)
                      |  }
                      |  private val versionString by lazy {
-                     |     "${'$'}{meta.name} ${'$'}major.${'$'}minor.${'$'}maintenance-${'$'}build".trim()
+                     |     buildString {
+                     |       append(major)
+                     |       append('.')
+                     |       append(minor)
+                     |       if (maintenance != 0) {
+                     |         append('.')
+                     |         append(maintenance)
+                     |       }
+                     |       append('-')
+                     |       append(meta.metaString)
+                     |       append('-')
+                     |       append(build)
+                     |     }
                      |  }
                      |  override fun toString() = versionString
                      |}

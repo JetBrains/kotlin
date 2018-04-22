@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 buildscript {
-    println("rootDir: $rootDir")
     ext.rootBuildDirectory = "$rootDir/../.."
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"

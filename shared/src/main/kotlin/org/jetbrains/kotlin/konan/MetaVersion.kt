@@ -21,10 +21,12 @@ package org.jetbrains.kotlin.konan
  *  scheme major.minor[.build[.revision]].
 */
 
-enum class MetaVersion {
-  DEV,
-  EAP,
-  ALPHA,
-  BETA,
-  RC
+enum class MetaVersion(val metaString:String) {
+  DEV("dev"),
+  EAP("eap"),
+  ALPHA("alpha"),
+  BETA("beta"),
+  RC1("rc1"),
+  RC2("rc2"),
+  REL("release")
 }

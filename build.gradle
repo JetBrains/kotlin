@@ -18,6 +18,14 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.util.*
 
+buildscript {
+    apply from: "gradle/kotlinGradlePlugin.gradle"
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    }
+}
+import org.jetbrains.kotlin.konan.*
+
 defaultTasks 'clean', 'dist'
 
 convention.plugins.platformInfo = new PlatformInfo()
@@ -332,7 +340,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     dependsOn('crossDistPlatformLibs')
     dependsOn('crossDist')
     def simpleOsName = HostManager.simpleOsName()
-    baseName = "kotlin-native-$simpleOsName-${project.konanVersion}"
+    baseName = "kotlin-native-$simpleOsName-${KonanVersion.CURRENT}"
     from("$project.rootDir/dist") {
         include '**'
         exclude 'dependencies'
