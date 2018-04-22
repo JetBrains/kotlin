@@ -325,13 +325,14 @@ open class WasmLinker(targetProperties: WasmConfigurables)
                               optimize: Boolean, debug: Boolean,
                               kind: LinkerOutputKind, outputDsymBundle: String): List<Command> {
         if (kind != LinkerOutputKind.EXECUTABLE) throw Error("Unsupported linker output kind")
-        // TODO(horsh): make it proper list.
+
+        // TODO(horsh): maybe rethink it.
         return listOf(object : Command() {
             override fun execute() {
                 val src = File(objectFiles.single())
                 val dst = File(executable)
                 src.recursiveCopyTo(dst)
-                javaScriptLink(args, executable)
+                javaScriptLink(libraries, executable)
             }
 
             private fun javaScriptLink(jsFiles: List<String>, executable: String): String {
@@ -344,13 +345,13 @@ open class WasmLinker(targetProperties: WasmConfigurables)
                                       |   konan.moduleEntry(arguments);
                                       |}""".trimMargin()
 
-                linkedJavaScript.writeBytes(linkerHeader.toByteArray());
+                linkedJavaScript.writeText(linkerHeader)
 
                 jsFiles.forEach {
                     linkedJavaScript.appendBytes(File(it).readBytes())
                 }
 
-                linkedJavaScript.appendBytes(linkerFooter.toByteArray());
+                linkedJavaScript.appendBytes(linkerFooter.toByteArray())
                 return linkedJavaScript.name
             }
         })
