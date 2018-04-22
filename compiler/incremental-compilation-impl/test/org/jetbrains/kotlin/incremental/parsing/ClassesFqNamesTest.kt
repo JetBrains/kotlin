@@ -40,6 +40,56 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
     }
 
     @Test
+    fun testComplexPackage() {
+        doTest(
+            setOf("foo.bar.юникод.Foo"),
+            """
+                // package simpleComment
+                package foo . bar . `юникод`
+                /*
+                    package multiLineComment
+                */
+
+                class Foo""".trimIndent()
+        )
+    }
+
+    @Test
+    fun testDifferentTypeOfClasses() {
+        doTest(
+            setOf("test.C", "test.I", "test.O", "test.E", "test.A"),
+            """
+                package test
+
+                class C
+                interface I
+                object O
+                enum class E
+                annotation class A
+                typealias T""".trimIndent()
+        )
+    }
+
+    @Test
+    fun testLocalClass() {
+        doTest(
+            setOf("test.Foo"),
+            """
+                package test
+
+                fun f() {
+                    class Fizz
+                }
+
+                class Foo {
+                    fun m() {
+                        class Buzz
+                    }
+                }""".trimIndent()
+        )
+    }
+
+    @Test
     fun testMultipleClasses() {
         doTest(
             setOf("test.Fizz", "test.Buzz"),
