@@ -431,6 +431,6 @@ task clean {
 
 // Don't run with other tasks (e.g. ./gradlew cleanAll bundle)
 task cleanAll {
-    dependsOn gradle.includedBuilds.collect { it.task(":clean") }
+    // dependsOn gradle.includedBuilds.collect { it.task(":clean") }
     dependsOn project.getTasksByName("clean", true)
 }
