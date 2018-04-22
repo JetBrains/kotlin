@@ -141,21 +141,4 @@ private fun parseDefFile(file: File?, substitutions: Map<String, String>): Tripl
      return Triple(properties, manifestAddendProperties, headerLines)
 }
 
-// Performs substitution similar to:
-//  foo = ${foo} ${foo.${arch}} ${foo.${os}}
-fun substitute(properties: Properties, substitutions: Map<String, String>) {
-    for (key in properties.stringPropertyNames()) {
-        for (substitution in substitutions.values) {
-            val suffix = ".$substitution"
-            if (key.endsWith(suffix)) {
-                val baseKey = key.removeSuffix(suffix)
-                val oldValue = properties.getProperty(baseKey, "")
-                val appendedValue = properties.getProperty(key, "")
-                val newValue = if (oldValue != "") "$oldValue $appendedValue" else appendedValue
-                properties.setProperty(baseKey, newValue)
-            }
-        }
-    }
-}
-
 private fun Properties.duplicate() = Properties().apply { putAll(this@duplicate) }
