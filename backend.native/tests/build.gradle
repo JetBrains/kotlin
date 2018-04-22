@@ -2664,7 +2664,7 @@ static String outputPath(SourceSet set) {
 }
 
 if (isMac() && project.testTarget != 'wasm32') {
-    def target = project.testTarget ?: 'host'
+    def target = ext.platformManager.targetByName(project.testTarget ?: 'host').name
 
     task testValuesFramework(type: FrameworkTest) {
         frameworkName = 'Values'
@@ -2672,6 +2672,10 @@ if (isMac() && project.testTarget != 'wasm32') {
             framework(frameworkName, targets: [ target ]) {
                 srcDir 'framework/values'
                 baseDir outputPath(sourceSets.testOutputFramework) + "/$frameworkName"
+
+                if (!useCustomDist) {
+                    dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                }
             }
         }
         swiftSources = ['framework/values/values.swift']
@@ -2684,6 +2688,10 @@ if (isMac() && project.testTarget != 'wasm32') {
             framework(frameworkName, targets: [ target ]) {
                 srcDir 'framework/stdlib'
                 baseDir outputPath(sourceSets.testOutputFramework) + "/$frameworkName"
+
+                if (!useCustomDist) {
+                    dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                }
             }
         }
         swiftSources = ['framework/stdlib/stdlib.swift']

@@ -20,7 +20,8 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin"
     }
 
-    if (!hasProperty("konan.home")) {
+    ext.useCustomDist = project.hasProperty("konan.home")
+    if (!useCustomDist) {
         ext.setProperty("konan.home", distDir.absolutePath)
     }
 }
@@ -34,7 +35,14 @@ konanArtifacts {
     }
     testFiles.files.each { file ->
         def name = file.name
-        library(name.take(name.lastIndexOf('.'))) { srcFiles file.absolutePath }
+        library(name.take(name.lastIndexOf('.'))) {
+            srcFiles file.absolutePath
+
+            // Build the compiler before building the test unless a custom path to the distribution is specified.
+            if (!useCustomDist) {
+                dependsOn ':dist'
+            }
+        }
     }
 }
 
