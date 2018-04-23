@@ -19,6 +19,3 @@ public final class SecondaryConstructors public constructor(x: kotlin.Boolean) {
     }
 }
 
-public final annotation class anno public constructor() : kotlin.Annotation {
-}
-
