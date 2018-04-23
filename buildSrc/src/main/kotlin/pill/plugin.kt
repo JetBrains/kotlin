@@ -80,8 +80,11 @@ class JpsCompatiblePlugin : Plugin<Project> {
         if (project == project.rootProject) {
             project.tasks.create("pill") {
                 doLast { pill(project) }
-                TaskUtils.useAndroidSdk(this)
-                TaskUtils.useAndroidJar(this)
+
+                if (System.getProperty("pill.android.tests", "false") == "true") {
+                    TaskUtils.useAndroidSdk(this)
+                    TaskUtils.useAndroidJar(this)
+                }
             }
 
             project.tasks.create("unpill") {
@@ -228,16 +231,18 @@ class JpsCompatiblePlugin : Plugin<Project> {
                     .configurations.getByName("robolectricClasspath")
                     .files.joinToString(File.pathSeparator)
 
-                val androidJarPath = project.configurations.getByName("androidJar").singleFile
-                val androidSdkPath = project.configurations.getByName("androidSdk").singleFile
-
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
                 addOrReplaceOptionValue("ideaSdk.androidPlugin.path", platformDirProjectRelative + "/plugins/android/lib")
                 addOrReplaceOptionValue("robolectric.classpath", robolectricClasspath)
                 addOrReplaceOptionValue("use.pill", "true")
 
-                addOrReplaceOptionValue("android.sdk", "\$PROJECT_DIR\$/" + androidSdkPath.toRelativeString(projectDir))
-                addOrReplaceOptionValue("android.jar", "\$PROJECT_DIR\$/" + androidJarPath.toRelativeString(projectDir))
+                val androidJarPath = project.configurations.findByName("androidJar")?.singleFile
+                val androidSdkPath = project.configurations.findByName("androidSdk")?.singleFile
+
+                if (androidJarPath != null && androidSdkPath != null) {
+                    addOrReplaceOptionValue("android.sdk", "\$PROJECT_DIR\$/" + androidSdkPath.toRelativeString(projectDir))
+                    addOrReplaceOptionValue("android.jar", "\$PROJECT_DIR\$/" + androidJarPath.toRelativeString(projectDir))
+                }
 
                 vmParams.setAttribute("value", options.joinToString(" "))
             }
