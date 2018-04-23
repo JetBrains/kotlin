@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.backend.js.utils.getFunctions
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.resolve.JsPlatform.builtIns
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
@@ -78,6 +80,7 @@ class JsIntrinsics(private val module: ModuleDescriptor, private val irBuiltIns:
 
     val jsObjectCreate: IrSimpleFunction = defineObjectCreateIntrinsic()
 
+    val jsCode = module.getFunctions(FqName("kotlin.js.js")).singleOrNull()?.let { symbolTable.referenceFunction(it) }
 
     // Helpers:
 
