@@ -262,20 +262,34 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
         val mainRoots = mutableListOf<POrderRoot>()
         val deferredRoots = mutableListOf<POrderRoot>()
 
-        fun collectConfigurations(): List<Pair<ResolvedConfiguration, Scope>> {
-            val configurations = mutableListOf<Pair<ResolvedConfiguration, Scope>>()
+        fun collectConfigurations(): List<CollectedConfiguration> {
+            val configurations = mutableListOf<CollectedConfiguration>()
 
             for ((configurationNames, scope) in configurationMapping) {
                 for (configurationName in configurationNames) {
                     val configuration = findByName(configurationName)?.also { it.resolve() } ?: continue
-                    configurations += Pair(configuration.resolvedConfiguration, scope)
+
+                    val extraDependencies = resolveExtraDependencies(configuration)
+                    configurations += CollectedConfiguration(configuration.resolvedConfiguration, scope, extraDependencies)
                 }
             }
 
             return configurations
         }
 
-        nextDependency@ for ((scope, dependency) in collectConfigurations().collectDependencies()) {
+        nextDependency@ for (dependencyInfo in collectConfigurations().collectDependencies()) {
+            val scope = dependencyInfo.scope
+
+            if (dependencyInfo is DependencyInfo.CustomDependencyInfo) {
+                val files = dependencyInfo.files
+                val library = PLibrary(files.firstOrNull()?.nameWithoutExtension ?: "unnamed", classes = files)
+
+                mainRoots += POrderRoot(PDependency.ModuleLibrary(library), scope)
+                continue
+            }
+
+            val dependency = (dependencyInfo as DependencyInfo.ResolvedDependencyInfo).dependency
+
             for (mapper in dependencyMappers) {
                 if (dependency.moduleGroup == mapper.group
                     && dependency.moduleName == mapper.module
@@ -314,6 +328,20 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
     }
 }
 
+private fun resolveExtraDependencies(configuration: Configuration): List<File> {
+    return configuration.dependencies
+        .filterIsInstance<SelfResolvingDependency>()
+        .map { it.resolve() }
+        .filter { isGradleApiDependency(it) }
+        .flatMap { it }
+}
+
+private fun isGradleApiDependency(files: Iterable<File>): Boolean {
+    return listOf("gradle-api", "groovy-all").all { dep ->
+        files.any { it.extension == "jar" && it.name.startsWith("$dep-") }
+    }
+}
+
 private fun removeDuplicates(roots: List<POrderRoot>): List<POrderRoot> {
     val dependenciesByScope = roots.groupBy { it.scope }.mapValues { it.value.mapTo(mutableSetOf()) { it.dependency } }
     fun dependenciesFor(scope: Scope) = dependenciesByScope[scope] ?: emptySet<PDependency>()
@@ -347,23 +375,37 @@ private fun removeDuplicates(roots: List<POrderRoot>): List<POrderRoot> {
     return result.toList()
 }
 
-data class DependencyInfo(val scope: Scope, val dependency: ResolvedDependency)
+data class CollectedConfiguration(
+    val configuration: ResolvedConfiguration,
+    val scope: Scope,
+    val extraDependencies: List<File> = emptyList())
 
-fun List<Pair<ResolvedConfiguration, Scope>>.collectDependencies(): List<DependencyInfo> {
+sealed class DependencyInfo(val scope: Scope) {
+    class ResolvedDependencyInfo(scope: Scope, val dependency: ResolvedDependency) : DependencyInfo(scope)
+    class CustomDependencyInfo(scope: Scope, val files: List<File>) : DependencyInfo(scope)
+}
+
+fun List<CollectedConfiguration>.collectDependencies(): List<DependencyInfo> {
     val dependencies = mutableListOf<DependencyInfo>()
 
     val unprocessed = LinkedList<DependencyInfo>()
     val existing = mutableSetOf<Pair<Scope, ResolvedDependency>>()
 
-    for ((configuration, scope) in this) {
+    for ((configuration, scope, extraDependencies) in this) {
         for (dependency in configuration.firstLevelModuleDependencies) {
-            unprocessed += DependencyInfo(scope, dependency)
+            unprocessed += DependencyInfo.ResolvedDependencyInfo(scope, dependency)
+        }
+
+        if (!extraDependencies.isEmpty()) {
+            unprocessed += DependencyInfo.CustomDependencyInfo(scope, extraDependencies)
         }
     }
 
     while (unprocessed.isNotEmpty()) {
         val info = unprocessed.removeAt(0)
         dependencies += info
+
+        info as? DependencyInfo.ResolvedDependencyInfo ?: continue
 
         val data = Pair(info.scope, info.dependency)
         existing += data
@@ -373,7 +415,7 @@ fun List<Pair<ResolvedConfiguration, Scope>>.collectDependencies(): List<Depende
                 continue
             }
 
-            unprocessed += DependencyInfo(info.scope, child)
+            unprocessed += DependencyInfo.ResolvedDependencyInfo(info.scope, child)
         }
     }
 
