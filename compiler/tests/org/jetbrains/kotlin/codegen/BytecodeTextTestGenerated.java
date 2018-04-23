@@ -2559,8 +2559,7 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
 
         @TestMetadata("doNotAppendEmptyString.kt")
         public void testDoNotAppendEmptyString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/doNotAppendEmptyString.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/doNotAppendEmptyString.kt");
         }
 
         @TestMetadata("interpolation.kt")

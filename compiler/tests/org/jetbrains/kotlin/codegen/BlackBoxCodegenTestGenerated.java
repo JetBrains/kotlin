@@ -4627,6 +4627,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("forInArrayOfObjectArrayWithIndex.kt")
+            public void testForInArrayOfObjectArrayWithIndex() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInArrayOfObjectArrayWithIndex.kt");
+            }
+
+            @TestMetadata("forInArrayOfPrimArrayWithIndex.kt")
+            public void testForInArrayOfPrimArrayWithIndex() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInArrayOfPrimArrayWithIndex.kt");
+            }
+
             @TestMetadata("forInArrayWithIndexContinuesAsUnmodified.kt")
             public void testForInArrayWithIndexContinuesAsUnmodified() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex/forInArrayWithIndexContinuesAsUnmodified.kt");
@@ -13814,8 +13824,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
                 @TestMetadata("kt23260.kt")
                 public void testKt23260() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/local/kt23260.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/codegen/box/properties/lateinit/local/kt23260.kt");
                 }
 
                 @TestMetadata("localLateinit.kt")
