@@ -156,7 +156,10 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
 
             val shortName = descriptor.name.asString()
 
-            val packageName = DescriptorUtils.getFqName(descriptor).parent().toSafe()
+            val fqName = DescriptorUtils.getFqName(descriptor)
+            if (fqName.isRoot) return false
+
+            val packageName = fqName.parent().toSafe()
             if (packageName == KOTLIN_REFLECT_FQ_NAME) {
                 return shortName.startsWith("KFunction") // KFunctionN, KFunction
                        || shortName.startsWith("KProperty") // KPropertyN, KProperty
