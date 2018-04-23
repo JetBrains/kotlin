@@ -1,3 +1,20 @@
+## v0.7 (May 2018)
+  * Interop with Objective-C/Swift changes:
+     * Uniform direct and reverse interops (values could be passed in both directions now)
+     * Interop by exceptions
+     * Type conversion and checks (`as`, `is`) for interop types
+     * Seamless interop on numbers, strings, lists, maps and sets
+     * Better interop on constructors and initializers
+  * Switched to Xcode 9.3 on Apple platforms
+  * Introduced object freezing API, frozen object could be used from multiple threads
+  * Kotlin enums are frozen by default
+  * Switch to Gradle 4.6
+  * Use Gradle native dependency model, allowing to use `.klib` as Maven artifacts
+  * Introduced typed arrays API
+  * Introduced weak references API
+  * Activated global devirtualization analysis
+  * Performance improvements (box caching, bridge inlining, others)
+
 ## v0.6.2 (Mar 2018)
   * Support several `expectedBy`-dependencies in Gradle plugin.
   * Improved interaction between Gradle plugin and IDE.
