@@ -7,5 +7,5 @@ package test.collections
 
 import java.util.*
 
-class LinkedListTest : OrderedIterableTests<LinkedList<String>>( { LinkedList(it.asList()) }, LinkedList<String>())
+class LinkedListTest : OrderedIterableTests<LinkedList<String>>({ LinkedList(it.asList()) }, LinkedList<String>())
 

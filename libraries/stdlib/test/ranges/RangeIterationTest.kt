@@ -11,11 +11,11 @@ import kotlin.test.*
 
 public open class RangeIterationTestBase {
     public fun <N : Any> doTest(
-            sequence: Iterable<N>,
-            expectedFirst: N,
-            expectedLast: N,
-            expectedIncrement: Number,
-            expectedElements: List<N>
+        sequence: Iterable<N>,
+        expectedFirst: N,
+        expectedLast: N,
+        expectedIncrement: Number,
+        expectedElements: List<N>
     ) {
         val first: Any
         val last: Any

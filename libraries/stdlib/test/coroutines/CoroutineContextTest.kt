@@ -154,7 +154,7 @@ class CoroutineContextTest {
         assertNotEquals(ctx3, ctx4)
     }
 
-    private fun  assertContents(ctx: CoroutineContext, vararg elements: CoroutineContext.Element) {
+    private fun assertContents(ctx: CoroutineContext, vararg elements: CoroutineContext.Element) {
         val set = ctx.fold(setOf<CoroutineContext>()) { a, b -> a + b }
         assertEquals(listOf(*elements), set.toList())
         for (elem in elements)

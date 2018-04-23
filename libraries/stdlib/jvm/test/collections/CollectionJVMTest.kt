@@ -192,16 +192,16 @@ class CollectionJVMTest {
     }
 
     @Test fun deserializeEmptyList() = testPersistedDeserialization(
-            "ac ed 00 05 73 72 00 1c 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 4c 69 73 74 99 6f c7 d0 a7 e0 60 32 02 00 00 78 70",
-            emptyList<Any>())
+        "ac ed 00 05 73 72 00 1c 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 4c 69 73 74 99 6f c7 d0 a7 e0 60 32 02 00 00 78 70",
+        emptyList<Any>())
 
     @Test fun deserializeEmptySet() = testPersistedDeserialization(
-            "ac ed 00 05 73 72 00 1b 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 53 65 74 2f 46 b0 15 76 d7 e2 f4 02 00 00 78 70",
-            emptySet<Any>())
+        "ac ed 00 05 73 72 00 1b 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 53 65 74 2f 46 b0 15 76 d7 e2 f4 02 00 00 78 70",
+        emptySet<Any>())
 
     @Test fun deserializeEmptyMap() = testPersistedDeserialization(
-            "ac ed 00 05 73 72 00 1b 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 4d 61 70 72 72 37 71 cb 04 4c d2 02 00 00 78 70",
-            emptyMap<Any, Any>())
+        "ac ed 00 05 73 72 00 1b 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 4d 61 70 72 72 37 71 cb 04 4c d2 02 00 00 78 70",
+        emptyMap<Any, Any>())
 
     private fun testPersistedDeserialization(hexValue: String, expected: Any) {
         val actual = deserializeFromHex<Any>(hexValue)

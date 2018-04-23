@@ -10,8 +10,8 @@ import test.collections.CompareContext
 public fun <T> CompareContext<List<T>>.listBehavior() {
     equalityBehavior()
     collectionBehavior()
-    compareProperty( { listIterator() }, { listIteratorBehavior() })
-    compareProperty( { listIterator(0) }, { listIteratorBehavior() })
+    compareProperty({ listIterator() }, { listIteratorBehavior() })
+    compareProperty({ listIterator(0) }, { listIteratorBehavior() })
 
     propertyFails { listIterator(-1) }
     propertyFails { listIterator(size + 1) }
@@ -24,8 +24,8 @@ public fun <T> CompareContext<List<T>>.listBehavior() {
     propertyEquals { indexOf(elementAtOrNull(0)) }
     propertyEquals { lastIndexOf(elementAtOrNull(0)) }
 
-    propertyFails { subList(0, size + 1)}
-    propertyFails { subList(-1, 0)}
+    propertyFails { subList(0, size + 1) }
+    propertyFails { subList(-1, 0) }
     propertyEquals { subList(0, size) }
 }
 
@@ -73,7 +73,7 @@ public fun <K, V> CompareContext<Map<K, V>>.mapBehavior() {
     propertyEquals { size }
     propertyEquals { isEmpty() }
 
-    (object {}).let { propertyEquals { containsKey(it as Any?) }  }
+    (object {}).let { propertyEquals { containsKey(it as Any?) } }
 
     if (expected.isEmpty().not())
         propertyEquals { contains(keys.first()) }
@@ -82,13 +82,13 @@ public fun <K, V> CompareContext<Map<K, V>>.mapBehavior() {
     propertyEquals { containsValue(values.firstOrNull()) }
     propertyEquals { get(null as Any?) }
 
-    compareProperty( { keys }, { setBehavior("keySet") } )
-    compareProperty( { entries }, { setBehavior("entrySet") } )
-    compareProperty( { values }, { collectionBehavior("values") })
+    compareProperty({ keys }, { setBehavior("keySet") })
+    compareProperty({ entries }, { setBehavior("entrySet") })
+    compareProperty({ values }, { collectionBehavior("values") })
 }
 
 public fun <T> CompareContext<T>.equalityBehavior(objectName: String = "") {
-    val prefix = objectName +  if (objectName.isNotEmpty()) "." else ""
+    val prefix = objectName + if (objectName.isNotEmpty()) "." else ""
     equals(objectName)
     propertyEquals(prefix + "hashCode") { hashCode() }
     propertyEquals(prefix + "toString") { toString() }
@@ -96,11 +96,11 @@ public fun <T> CompareContext<T>.equalityBehavior(objectName: String = "") {
 
 
 public fun <T> CompareContext<Collection<T>>.collectionBehavior(objectName: String = "") {
-    val prefix = objectName +  if (objectName.isNotEmpty()) "." else ""
-    propertyEquals (prefix + "size") { size }
-    propertyEquals (prefix + "isEmpty") { isEmpty() }
+    val prefix = objectName + if (objectName.isNotEmpty()) "." else ""
+    propertyEquals(prefix + "size") { size }
+    propertyEquals(prefix + "isEmpty") { isEmpty() }
 
-    (object {}).let { propertyEquals { contains(it as Any?) }  }
+    (object {}).let { propertyEquals { contains(it as Any?) } }
     propertyEquals { contains(firstOrNull()) }
     propertyEquals { containsAll(this) }
 }

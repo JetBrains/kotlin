@@ -24,33 +24,33 @@ class PromiseTest {
         assertStaticTypeIs<Promise<Int>>(p.then(f, ft))
 
         assertStaticTypeIs<Promise<Int>>(
-                    p.then({
-                        1
-                    } , {
-                        1
-                    })
+            p.then({
+                       1
+                   }, {
+                       1
+                   })
         )
 
         assertStaticTypeIs<Promise<Int>>(
-                    p.then({
-                        1
-                    }) {
-                        1
-                    }
+            p.then({
+                       1
+                   }) {
+                1
+            }
         )
 
         assertStaticTypeIs<Promise<Int>>(
-                    p.then(onFulfilled = {
-                        1
-                    })
+            p.then(onFulfilled = {
+                1
+            })
         )
 
         assertStaticTypeIs<Promise<Int>>(
-                    p.then(onFulfilled = {
-                        1
-                    }) {
-                        1
-                    }
+            p.then(onFulfilled = {
+                1
+            }) {
+                1
+            }
         )
 
         p.then {
@@ -59,12 +59,12 @@ class PromiseTest {
             assertStaticAndRuntimeTypeIs<String>(it)
             ps
         }.then(
-                {
-                    assertStaticAndRuntimeTypeIs<String>(it)
-                },
-                {
+            {
+                assertStaticAndRuntimeTypeIs<String>(it)
+            },
+            {
 
-                }
+            }
         )
     }
 }

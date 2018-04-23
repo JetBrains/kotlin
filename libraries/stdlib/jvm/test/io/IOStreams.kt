@@ -36,7 +36,7 @@ class IOStreamsTest {
         val result = mutableListOf<Byte>()
 
         x.inputStream().buffered().use { stream ->
-            for(b in stream) {
+            for (b in stream) {
                 result += b
             }
         }

@@ -43,10 +43,10 @@ class ListSpecificTest {
         assertFails { data.get(-1) }
         assertFails { empty.get(0) }
 
-        expect("foo") { data.getOrElse(0, {""} )}
-        expect("zoo") { data.getOrElse(-1, { "zoo" })}
-        expect("zoo") { data.getOrElse(2, { "zoo" })}
-        expect("zoo") { empty.getOrElse(0) { "zoo" }}
+        expect("foo") { data.getOrElse(0, { "" }) }
+        expect("zoo") { data.getOrElse(-1, { "zoo" }) }
+        expect("zoo") { data.getOrElse(2, { "zoo" }) }
+        expect("zoo") { empty.getOrElse(0) { "zoo" } }
 
         expect(null) { empty.getOrNull(0) }
 

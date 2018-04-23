@@ -261,18 +261,18 @@ class SequenceBuilderTest {
             effects.add(")") // marks step end
         }
         assertEquals(
-                listOf(
-                        "a",
-                        "(", 1, ")",
-                        "(", 2, ")",
-                        "b", "c",
-                        "(", 3, ")",
-                        "d",
-                        "(", 4, ")",
-                        "e", "f",
-                        "(", 5, ")"
-                ),
-                effects.toList()
+            listOf(
+                "a",
+                "(", 1, ")",
+                "(", 2, ")",
+                "b", "c",
+                "(", 3, ")",
+                "d",
+                "(", 4, ")",
+                "e", "f",
+                "(", 5, ")"
+            ),
+            effects.toList()
         )
     }
 

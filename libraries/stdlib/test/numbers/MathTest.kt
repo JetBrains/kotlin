@@ -133,7 +133,7 @@ class DoubleMathTest {
         assertEquals(0.25, 2.0.pow(-2))
         assertTrue(0.0.pow(Double.NaN).isNaN())
         assertTrue(Double.NaN.pow(-1).isNaN())
-        assertTrue((-7.0).pow(1/3.0).isNaN())
+        assertTrue((-7.0).pow(1 / 3.0).isNaN())
         assertTrue(1.0.pow(Double.POSITIVE_INFINITY).isNaN())
         assertTrue((-1.0).pow(Double.NEGATIVE_INFINITY).isNaN())
 
@@ -322,8 +322,7 @@ class DoubleMathTest {
             val prev = value.nextDown()
             if (prev > 0) {
                 assertEquals(value, prev + prev.ulp)
-            }
-            else {
+            } else {
                 assertEquals(prev, value - value.ulp)
             }
 
@@ -472,7 +471,7 @@ class FloatMathTest {
         assertEquals(0.25F, 2.0F.pow(-2))
         assertTrue(0.0F.pow(Float.NaN).isNaN())
         assertTrue(Float.NaN.pow(-1).isNaN())
-        assertTrue((-7.0F).pow(1/3.0F).isNaN())
+        assertTrue((-7.0F).pow(1 / 3.0F).isNaN())
         assertTrue(1.0F.pow(Float.POSITIVE_INFINITY).isNaN())
         assertTrue((-1.0F).pow(Float.NEGATIVE_INFINITY).isNaN())
 

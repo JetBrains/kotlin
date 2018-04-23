@@ -40,9 +40,9 @@ class Arrays {
         @Sample
         fun flattenArray() {
             val deepArray = arrayOf(
-                    arrayOf(1),
-                    arrayOf(2, 3),
-                    arrayOf(4, 5, 6)
+                arrayOf(1),
+                arrayOf(2, 3),
+                arrayOf(4, 5, 6)
             )
 
             assertPrints(deepArray.flatten(), "[1, 2, 3, 4, 5, 6]")
@@ -67,9 +67,9 @@ class Arrays {
         @Sample
         fun contentDeepToString() {
             val matrix = arrayOf(
-                    intArrayOf(3, 7, 9),
-                    intArrayOf(0, 1, 0),
-                    intArrayOf(2, 4, 8)
+                intArrayOf(3, 7, 9),
+                intArrayOf(0, 1, 0),
+                intArrayOf(2, 4, 8)
             )
 
             assertPrints(matrix.contentDeepToString(), "[[3, 7, 9], [0, 1, 0], [2, 4, 8]]")

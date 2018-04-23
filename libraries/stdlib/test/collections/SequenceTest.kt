@@ -90,10 +90,12 @@ public class SequenceTest {
 
     @Test fun mapIndexedNotNull() {
         // find which terms are divisible by their index
-        assertEquals(listOf("1/1", "5/5", "144/12", "46368/24", "75025/25"),
-                fibonacci().mapIndexedNotNull { index, value ->
-                    if (index > 0 && (value % index) == 0) "$value/$index" else null
-                }.take(5).toList())
+        assertEquals(
+            listOf("1/1", "5/5", "144/12", "46368/24", "75025/25"),
+            fibonacci().mapIndexedNotNull { index, value ->
+                if (index > 0 && (value % index) == 0) "$value/$index" else null
+            }.take(5).toList()
+        )
     }
 
 
@@ -457,14 +459,14 @@ public class SequenceTest {
 
     @Test fun flatMapAndTakeExtractTheTransformedElements() {
         val expected = listOf(
-                '3', // fibonacci(4) = 3
-                '5', // fibonacci(5) = 5
-                '8', // fibonacci(6) = 8
-                '1', '3', // fibonacci(7) = 13
-                '2', '1', // fibonacci(8) = 21
-                '3', '4', // fibonacci(9) = 34
-                '5' // fibonacci(10) = 55
-                             )
+            '3', // fibonacci(4) = 3
+            '5', // fibonacci(5) = 5
+            '8', // fibonacci(6) = 8
+            '1', '3', // fibonacci(7) = 13
+            '2', '1', // fibonacci(8) = 21
+            '3', '4', // fibonacci(9) = 34
+            '5' // fibonacci(10) = 55
+        )
 
         assertEquals(expected, fibonacci().drop(4).flatMap { it.toString().asSequence() }.take(10).toList())
     }

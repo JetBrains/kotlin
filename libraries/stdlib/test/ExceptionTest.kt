@@ -29,7 +29,12 @@ class ExceptionTest {
     @Test fun assertionError() = testCreateException(::AssertionError, ::AssertionError, ::AssertionError)
 
 
-    private fun <T : Throwable> testCreateException(noarg: () -> T, fromMessage: (String?) -> T, fromCause: ((Throwable?) -> T)? = null, fromMessageCause: ((String?, Throwable?) -> T)? = null) {
+    private fun <T : Throwable> testCreateException(
+        noarg: () -> T,
+        fromMessage: (String?) -> T,
+        fromCause: ((Throwable?) -> T)? = null,
+        fromMessageCause: ((String?, Throwable?) -> T)? = null
+    ) {
         noarg().let { e ->
             assertEquals(null, e.message)
             assertEquals(null, e.cause)

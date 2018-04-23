@@ -46,7 +46,7 @@ class ThreadTest {
         assertEquals("v3", v.getOrSet { "v2" })
 
 
-        val w = object: ThreadLocal<String>() {
+        val w = object : ThreadLocal<String>() {
             override fun initialValue() = "default"
         }
 

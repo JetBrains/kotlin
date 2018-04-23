@@ -87,5 +87,5 @@ private fun hexToBytes(value: String): ByteArray = value.split(" ").map { Intege
 public fun <T> deserializeFromHex(value: String) = deserializeFromByteArray<T>(hexToBytes(value))
 
 public fun <T> serializeToHex(value: T) =
-        serializeToByteArray(value).joinToString(" ") { (it.toInt() and 0xFF).toString(16).padStart(2, '0') }
+    serializeToByteArray(value).joinToString(" ") { (it.toInt() and 0xFF).toString(16).padStart(2, '0') }
 

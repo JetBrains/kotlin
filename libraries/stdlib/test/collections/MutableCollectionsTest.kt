@@ -9,15 +9,15 @@ import kotlin.test.*
 
 
 class MutableCollectionTest {
-    fun <T, C: MutableCollection<T>> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean, toMutableCollection: (List<T>) -> C)
-            = fun(operation: (C.() -> Boolean)) {
-                val list = toMutableCollection(before)
-                assertEquals(expectedModified, list.operation())
-                assertEquals(toMutableCollection(after), list)
-            }
+    fun <T, C : MutableCollection<T>> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean, toMutableCollection: (List<T>) -> C) =
+        fun(operation: (C.() -> Boolean)) {
+            val list = toMutableCollection(before)
+            assertEquals(expectedModified, list.operation())
+            assertEquals(toMutableCollection(after), list)
+        }
 
-    fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean)
-            = testOperation(before, after, expectedModified, { it.toMutableList() })
+    fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean) =
+        testOperation(before, after, expectedModified, { it.toMutableList() })
 
 
     @Test fun addAll() {

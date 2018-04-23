@@ -521,8 +521,7 @@ class FilesTest {
             }
 
             var conflicts = 0
-            src.copyRecursively(dst) {
-                _: File, e: IOException ->
+            src.copyRecursively(dst) { _: File, e: IOException ->
                 if (e is FileAlreadyExistsException) {
                     conflicts++
                     OnErrorAction.SKIP
@@ -536,8 +535,7 @@ class FilesTest {
                 try {
                     dst.deleteRecursively()
                     var caught = false
-                    assertTrue(src.copyRecursively(dst) {
-                        _: File, e: IOException ->
+                    assertTrue(src.copyRecursively(dst) { _: File, e: IOException ->
                         if (e is AccessDeniedException) {
                             caught = true
                             OnErrorAction.SKIP

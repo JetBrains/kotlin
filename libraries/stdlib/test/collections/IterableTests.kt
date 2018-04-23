@@ -14,7 +14,7 @@ fun <T> Iterable<T>.toIterable(): Iterable<T> = Iterable { this.iterator() }
 class IterableTest : OrderedIterableTests<Iterable<String>>({ iterableOf(*it) }, iterableOf<String>())
 class SetTest : IterableTests<Set<String>>({ setOf(*it) }, setOf())
 class LinkedSetTest : OrderedIterableTests<LinkedHashSet<String>>({ linkedSetOf(*it) }, linkedSetOf())
-class ListTest : OrderedIterableTests<List<String>>( { listOf(*it) }, listOf<String>())
+class ListTest : OrderedIterableTests<List<String>>({ listOf(*it) }, listOf<String>())
 class ArrayListTest : OrderedIterableTests<ArrayList<String>>({ arrayListOf(*it) }, arrayListOf<String>())
 
 abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out String>) -> T, empty: T) : IterableTests<T>(createFrom, empty) {
@@ -56,10 +56,10 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
         assertFails { data.elementAt(-1) }
         assertFails { empty.elementAt(0) }
 
-        expect("foo") { data.elementAtOrElse(0, {""} )}
-        expect("zoo") { data.elementAtOrElse(-1, { "zoo" })}
-        expect("zoo") { data.elementAtOrElse(2, { "zoo" })}
-        expect("zoo") { empty.elementAtOrElse(0) { "zoo" }}
+        expect("foo") { data.elementAtOrElse(0, { "" }) }
+        expect("zoo") { data.elementAtOrElse(-1, { "zoo" }) }
+        expect("zoo") { data.elementAtOrElse(2, { "zoo" }) }
+        expect("zoo") { empty.elementAtOrElse(0) { "zoo" } }
 
         expect(null) { empty.elementAtOrNull(0) }
 
@@ -239,7 +239,8 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
         assertEquals(listOf("foo"), foo)
     }
 
-    @Test fun filterIndexed() {
+    @Test
+    fun filterIndexed() {
         val result = data.filterIndexed { index, value -> value.first() == ('a' + index) }
         assertEquals(listOf("bar"), result)
     }
@@ -286,7 +287,7 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
         assertTrue(data === newData)
 
         // static types test
-        assertStaticTypeIs<ArrayList<Int>>(arrayListOf(1, 2, 3).onEach {  })
+        assertStaticTypeIs<ArrayList<Int>>(arrayListOf(1, 2, 3).onEach { })
     }
 
     @Test
@@ -490,7 +491,10 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
 }
 
 
-fun <T> Iterable<T>.assertSorted(isInOrder: (T, T) -> Boolean): Unit { this.iterator().assertSorted(isInOrder) }
+fun <T> Iterable<T>.assertSorted(isInOrder: (T, T) -> Boolean) {
+    this.iterator().assertSorted(isInOrder)
+}
+
 fun <T> Iterator<T>.assertSorted(isInOrder: (T, T) -> Boolean) {
     if (!hasNext()) return
     var index = 0
@@ -498,7 +502,7 @@ fun <T> Iterator<T>.assertSorted(isInOrder: (T, T) -> Boolean) {
     while (hasNext()) {
         index += 1
         val next = next()
-        assertTrue(isInOrder(prev, next), "Not in order at position $index, element[${index-1}]: $prev, element[$index]: $next")
+        assertTrue(isInOrder(prev, next), "Not in order at position $index, element[${index - 1}]: $prev, element[$index]: $next")
         prev = next
     }
     return

@@ -13,6 +13,7 @@ class TODOTest {
         public val prop: String get() = TODO()
         @Suppress("UNREACHABLE_CODE", "CAST_NEVER_SUCCEEDS")
         fun method1() = TODO() as String
+
         public fun method2(): Int = TODO()
 
         public fun method3(switch: Boolean, value: String): String {
@@ -41,11 +42,12 @@ class TODOTest {
     }
 
 
-    @Test fun usage() {
+    @Test
+    fun usage() {
         val inst = PartiallyImplementedClass()
 
         assertNotImplemented { inst.prop }
-        assertNotImplemented{ inst.method1() }
+        assertNotImplemented { inst.method1() }
         assertNotImplemented { inst.method2() }
         assertNotImplemented { inst.method4() }
         assertNotImplementedWithMessage("what if false") { inst.method3(false, "test") }

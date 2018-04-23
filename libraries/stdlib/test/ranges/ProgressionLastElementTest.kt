@@ -9,7 +9,7 @@ import kotlin.comparisons.*
 import kotlin.test.*
 
 
-class ProgressionLastElementTest  {
+class ProgressionLastElementTest {
 
     private val MAX = Int.MAX_VALUE
     private val MIN = Int.MIN_VALUE
