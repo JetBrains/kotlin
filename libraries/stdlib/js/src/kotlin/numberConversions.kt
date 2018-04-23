@@ -6,7 +6,6 @@
 package kotlin.text
 
 
-
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
  */
@@ -97,7 +96,7 @@ public actual fun String.toDoubleOrNull(): Double? = (+(this.asDynamic())).unsaf
 public actual inline fun String.toFloatOrNull(): Float? = toDoubleOrNull().unsafeCast<Float?>()
 
 
-private fun String.isNaN(): Boolean = when(this.toLowerCase()) {
+private fun String.isNaN(): Boolean = when (this.toLowerCase()) {
     "nan", "+nan", "-nan" -> true
     else -> false
 }
@@ -107,7 +106,7 @@ private fun String.isNaN(): Boolean = when(this.toLowerCase()) {
  */
 @PublishedApi
 internal actual fun checkRadix(radix: Int): Int {
-    if(radix !in 2..36) {
+    if (radix !in 2..36) {
         throw IllegalArgumentException("radix $radix was not in valid range 2..36")
     }
     return radix

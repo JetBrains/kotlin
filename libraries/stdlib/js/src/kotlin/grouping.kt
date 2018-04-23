@@ -11,9 +11,9 @@ package kotlin.collections
  */
 @SinceKotlin("1.1")
 public actual fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int> =
-        fold(0) { acc, _ -> acc + 1 }
+    fold(0) { acc, _ -> acc + 1 }
 
-/**
+/*
 /**
  * Groups elements from the [Grouping] source by key and sums values provided by the [valueSelector] function for elements in each group.
  *

@@ -71,7 +71,8 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     /** Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
+    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> =
+        generateSequence({ find(input, startIndex) }, { match -> match.next() })
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.
@@ -110,8 +111,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
             sb.append(transform(foundMatch))
             lastStart = foundMatch.range.endInclusive + 1
             match = foundMatch.next()
-        }
-        while (lastStart < length && match != null)
+        } while (lastStart < length && match != null)
 
         if (lastStart < length) {
             sb.append(input, lastStart, length)

@@ -8,7 +8,7 @@ package kotlin.reflect.js.internal
 import kotlin.reflect.*
 
 internal abstract class KClassImpl<T : Any>(
-        internal open val jClass: JsClass<T>
+    internal open val jClass: JsClass<T>
 ) : KClass<T> {
     override val annotations: List<Annotation>
         get() = TODO()
@@ -65,9 +65,9 @@ internal class SimpleKClassImpl<T : Any>(jClass: JsClass<T>) : KClassImpl<T>(jCl
 }
 
 internal class PrimitiveKClassImpl<T : Any>(
-        jClass: JsClass<T>,
-        private val givenSimpleName: String,
-        private val isInstanceFunction: (Any?) -> Boolean
+    jClass: JsClass<T>,
+    private val givenSimpleName: String,
+    private val isInstanceFunction: (Any?) -> Boolean
 ) : KClassImpl<T>(jClass) {
     override fun equals(other: Any?): Boolean {
         if (other !is PrimitiveKClassImpl<*>) return false

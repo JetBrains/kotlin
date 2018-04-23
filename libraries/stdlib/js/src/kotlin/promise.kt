@@ -14,6 +14,7 @@ import kotlin.internal.LowPriorityInOverloadResolution
 public open external class Promise<out T>(executor: (resolve: (T) -> Unit, reject: (Throwable) -> Unit) -> Unit) {
     @LowPriorityInOverloadResolution
     public open fun <S> then(onFulfilled: ((T) -> S)?): Promise<S>
+
     @LowPriorityInOverloadResolution
     public open fun <S> then(onFulfilled: ((T) -> S)?, onRejected: ((Throwable) -> S)?): Promise<S>
 
@@ -33,14 +34,14 @@ public open external class Promise<out T>(executor: (resolve: (T) -> Unit, rejec
 
 // It's workaround for KT-19672 since we can fix it properly until KT-11265 isn't fixed.
 inline fun <T, S> Promise<Promise<T>>.then(
-        noinline onFulfilled: ((T) -> S)?
+    noinline onFulfilled: ((T) -> S)?
 ): Promise<S> {
     return this.unsafeCast<Promise<T>>().then(onFulfilled)
 }
 
 inline fun <T, S> Promise<Promise<T>>.then(
-        noinline onFulfilled: ((T) -> S)?,
-        noinline onRejected: ((Throwable) -> S)?
+    noinline onFulfilled: ((T) -> S)?,
+    noinline onRejected: ((Throwable) -> S)?
 ): Promise<S> {
     return this.unsafeCast<Promise<T>>().then(onFulfilled, onRejected)
 }

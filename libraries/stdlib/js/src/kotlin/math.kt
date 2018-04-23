@@ -371,6 +371,7 @@ public actual inline fun sign(x: Double): Double = nativeMath.sign(x)
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun min(a: Double, b: Double): Double = nativeMath.min(a, b)
+
 /**
  * Returns the greater of two values.
  *
@@ -502,7 +503,7 @@ public actual fun Double.nextTowards(to: Double): Double = when {
     this.isNaN() || to.isNaN() -> Double.NaN
     to == this -> to
     to > this -> this.nextUp()
-    else /* to < this */-> this.nextDown()
+    else /* to < this */ -> this.nextDown()
 }
 
 
@@ -901,6 +902,7 @@ public actual inline fun sign(x: Float): Float = nativeMath.sign(x.toDouble()).t
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun min(a: Float, b: Float): Float = nativeMath.min(a, b)
+
 /**
  * Returns the greater of two values.
  *
@@ -970,6 +972,7 @@ public actual inline val Float.sign: Float get() = nativeMath.sign(this.toDouble
 @SinceKotlin("1.2")
 @InlineOnly
 public actual inline fun Float.withSign(sign: Float): Float = this.toDouble().withSign(sign.toDouble()).toFloat()
+
 /**
  * Returns this value with the sign bit same as of the [sign] value.
  */

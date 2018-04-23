@@ -8,6 +8,7 @@ package kotlin
 
 @Deprecated("Use Synchronized annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Synchronized"), level = DeprecationLevel.WARNING)
 public typealias Synchronized = kotlin.jvm.Synchronized
+
 @Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
 public typealias Volatile = kotlin.jvm.Volatile
 

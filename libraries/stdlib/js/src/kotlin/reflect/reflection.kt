@@ -10,39 +10,40 @@ import kotlin.reflect.js.internal.*
 
 @JsName("getKClass")
 internal fun <T : Any> getKClass(jClass: JsClass<T>): KClass<T> = getOrCreateKClass(jClass)
+
 @JsName("getKClassFromExpression")
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
-        when (jsTypeOf(e)) {
-            "string" -> PrimitiveClasses.stringClass
-            "number" -> if (js("e | 0") === e) PrimitiveClasses.intClass else PrimitiveClasses.doubleClass
-            "boolean" -> PrimitiveClasses.booleanClass
-            "function" -> PrimitiveClasses.functionClass(e.asDynamic().length)
-            else -> {
-                when {
-                    e is BooleanArray -> PrimitiveClasses.booleanArrayClass
-                    e is CharArray -> PrimitiveClasses.charArrayClass
-                    e is ByteArray -> PrimitiveClasses.byteArrayClass
-                    e is ShortArray -> PrimitiveClasses.shortArrayClass
-                    e is IntArray -> PrimitiveClasses.intArrayClass
-                    e is LongArray -> PrimitiveClasses.longArrayClass
-                    e is FloatArray -> PrimitiveClasses.floatArrayClass
-                    e is DoubleArray -> PrimitiveClasses.doubleArrayClass
-                    e is KClass<*> -> KClass::class
-                    e is Array<*> -> PrimitiveClasses.arrayClass
-                    else -> {
-                        val constructor = js("Object").getPrototypeOf(e).constructor
-                        when {
-                            constructor === js("Object") -> PrimitiveClasses.anyClass
-                            constructor === js("Error") -> PrimitiveClasses.throwableClass
-                            else -> {
-                                val jsClass: JsClass<T> = constructor
-                                getOrCreateKClass(jsClass)
-                            }
+    when (jsTypeOf(e)) {
+        "string" -> PrimitiveClasses.stringClass
+        "number" -> if (js("e | 0") === e) PrimitiveClasses.intClass else PrimitiveClasses.doubleClass
+        "boolean" -> PrimitiveClasses.booleanClass
+        "function" -> PrimitiveClasses.functionClass(e.asDynamic().length)
+        else -> {
+            when {
+                e is BooleanArray -> PrimitiveClasses.booleanArrayClass
+                e is CharArray -> PrimitiveClasses.charArrayClass
+                e is ByteArray -> PrimitiveClasses.byteArrayClass
+                e is ShortArray -> PrimitiveClasses.shortArrayClass
+                e is IntArray -> PrimitiveClasses.intArrayClass
+                e is LongArray -> PrimitiveClasses.longArrayClass
+                e is FloatArray -> PrimitiveClasses.floatArrayClass
+                e is DoubleArray -> PrimitiveClasses.doubleArrayClass
+                e is KClass<*> -> KClass::class
+                e is Array<*> -> PrimitiveClasses.arrayClass
+                else -> {
+                    val constructor = js("Object").getPrototypeOf(e).constructor
+                    when {
+                        constructor === js("Object") -> PrimitiveClasses.anyClass
+                        constructor === js("Error") -> PrimitiveClasses.throwableClass
+                        else -> {
+                            val jsClass: JsClass<T> = constructor
+                            getOrCreateKClass(jsClass)
                         }
                     }
                 }
             }
-        }.unsafeCast<KClass<T>>()
+        }
+    }.unsafeCast<KClass<T>>()
 
 private fun <T : Any> getOrCreateKClass(jClass: JsClass<T>): KClass<T> {
     if (jClass === js("String")) return PrimitiveClasses.stringClass.unsafeCast<KClass<T>>()
@@ -54,12 +55,10 @@ private fun <T : Any> getOrCreateKClass(jClass: JsClass<T>): KClass<T> {
             val kClass = SimpleKClassImpl(jClass)
             metadata.`$kClass$` = kClass
             kClass
-        }
-        else {
+        } else {
             metadata.`$kClass$`
         }
-    }
-    else {
+    } else {
         SimpleKClassImpl(jClass)
     }
 }

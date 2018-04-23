@@ -95,6 +95,7 @@ public actual fun <T> MutableList<T>.shuffle(): Unit {
         this[j] = copy
     }
 }
+
 private fun rand(upperBound: Int) = floor(kotlin.js.Math.random() * upperBound).toInt()
 
 /**
@@ -143,8 +144,8 @@ internal actual inline fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> = th
 
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =
-        if (isVarargs)
-        // no need to copy vararg array in JS
-            this
-        else
-            this.copyOf()
+    if (isVarargs)
+    // no need to copy vararg array in JS
+        this
+    else
+        this.copyOf()

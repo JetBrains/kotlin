@@ -90,8 +90,7 @@ internal fun noWhenBranchMatched(): Nothing = throw NoWhenBranchMatchedException
 internal fun subSequence(c: CharSequence, startIndex: Int, endIndex: Int): CharSequence {
     if (c is String) {
         return c.substring(startIndex, endIndex)
-    }
-    else {
+    } else {
         return c.asDynamic().`subSequence_vux9f0$`(startIndex, endIndex)
     }
 }
@@ -100,8 +99,7 @@ internal fun subSequence(c: CharSequence, startIndex: Int, endIndex: Int): CharS
 internal fun captureStack(baseClass: JsClass<in Throwable>, instance: Throwable) {
     if (js("Error").captureStackTrace) {
         js("Error").captureStackTrace(instance, instance::class.js);
-    }
-    else {
+    } else {
         instance.asDynamic().stack = js("new Error()").stack;
     }
 }
@@ -111,8 +109,7 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
     throwable.message = if (jsTypeOf(message) == "undefined") {
         if (cause != null) cause.toString() else null
-    }
-    else {
+    } else {
         message
     }
     throwable.cause = cause
@@ -151,8 +148,7 @@ internal inline fun <T> concat(args: Array<T>): T {
         val arr = args[i]
         if (arr !is Array<*>) {
             typed[i] = js("[]").slice.call(arr)
-        }
-        else {
+        } else {
             typed[i] = arr
         }
     }
@@ -182,8 +178,7 @@ internal fun <T> primitiveArrayConcat(a: T, b: T): T {
     val args: Array<T> = js("arguments")
     if (a is Array<*> && a.asDynamic().`$type$` === undefined) {
         return concat(args)
-    }
-    else {
+    } else {
         var size = 0
         for (i in args.indices) {
             size += args[i].asDynamic().length as Int

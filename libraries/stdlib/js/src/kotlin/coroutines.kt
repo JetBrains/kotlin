@@ -4,6 +4,7 @@
  */
 
 package kotlin.coroutines.experimental
+
 import kotlin.coroutines.experimental.intrinsics.*
 
 @JsName("CoroutineImpl")
@@ -38,13 +39,14 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
 
 private val UNDECIDED: Any? = Any()
 private val RESUMED: Any? = Any()
+
 private class Fail(val exception: Throwable)
 
 @PublishedApi
 internal actual class SafeContinuation<in T>
 internal actual constructor(
-        private val delegate: Continuation<T>,
-        initialResult: Any?
+    private val delegate: Continuation<T>,
+    initialResult: Any?
 ) : Continuation<T> {
 
     @PublishedApi

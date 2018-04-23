@@ -20,5 +20,5 @@ public fun Document.createElement(name: String, init: Element.() -> Unit): Eleme
  * The element is initialized with the speicifed [init] function.
  */
 public fun Element.appendElement(name: String, init: Element.() -> Unit): Element =
-        ownerDocument!!.createElement(name, init).also { appendChild(it) }
+    ownerDocument!!.createElement(name, init).also { appendChild(it) }
 

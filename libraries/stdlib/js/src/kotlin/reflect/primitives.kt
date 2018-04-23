@@ -19,10 +19,10 @@ internal object PrimitiveClasses {
     val nothingClass = NothingKClassImpl
 
     @JsName("booleanClass")
-    val booleanClass = PrimitiveKClassImpl(js("Boolean").unsafeCast<JsClass<Boolean>>(), "Boolean",  { it is Boolean })
+    val booleanClass = PrimitiveKClassImpl(js("Boolean").unsafeCast<JsClass<Boolean>>(), "Boolean", { it is Boolean })
 
     @JsName("byteClass")
-    val byteClass = PrimitiveKClassImpl(js("Number").unsafeCast<JsClass<Byte>>(), "Byte",  { it is Byte })
+    val byteClass = PrimitiveKClassImpl(js("Number").unsafeCast<JsClass<Byte>>(), "Byte", { it is Byte })
 
     @JsName("shortClass")
     val shortClass = PrimitiveKClassImpl(js("Number").unsafeCast<JsClass<Short>>(), "Short", { it is Short })

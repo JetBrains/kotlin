@@ -11,5 +11,6 @@ private class EventListenerHandler(private val handler: (Event) -> Unit) : Event
     public override fun handleEvent(e: Event) {
         handler(e)
     }
+
     public override fun toString(): String = "EventListenerHandler($handler)"
 }
