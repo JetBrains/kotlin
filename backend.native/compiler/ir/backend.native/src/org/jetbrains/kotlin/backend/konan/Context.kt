@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
+import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -93,7 +95,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                 { "Function $descriptor is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor.descriptor}" })
         val bridgeDirections = overriddenFunctionDescriptor.bridgeDirections
         return bridgesDescriptors.getOrPut(irFunction to bridgeDirections) {
-            val newDescriptor = SimpleFunctionDescriptorImpl.create(
+            val bridgeDescriptor = SimpleFunctionDescriptorImpl.create(
                     /* containingDeclaration = */ descriptor.containingDeclaration,
                     /* annotations           = */ Annotations.EMPTY,
                     /* name                  = */ "<bridge-$bridgeDirections>${irFunction.functionName}".synthesizedName,
@@ -105,8 +107,8 @@ internal class SpecialDeclarationsFactory(val context: Context) {
             IrFunctionImpl(
                     irFunction.startOffset,
                     irFunction.endOffset,
-                    DECLARATION_ORIGIN_BRIDGE_METHOD,
-                    newDescriptor
+                    DECLARATION_ORIGIN_BRIDGE_METHOD(irFunction),
+                    bridgeDescriptor
             ).apply {
                 createParameterDeclarations()
                 this.parent = overriddenFunctionDescriptor.descriptor.parent

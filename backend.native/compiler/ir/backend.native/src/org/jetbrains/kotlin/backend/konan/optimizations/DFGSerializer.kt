@@ -315,28 +315,32 @@ internal object DFGSerializer {
     }
 
     class PublicFunctionSymbol(val hash: Long, val numberOfParameters: Int, val isGlobalInitializer: Boolean,
-                               val index: Int, val name: String?) {
+                               val index: Int, val bridgeTarget: Int?, val name: String?) {
 
         constructor(data: ArraySlice) : this(data.readLong(), data.readInt(), data.readBoolean(), data.readInt(),
-                data.readNullableString())
+                data.readNullableInt(), data.readNullableString())
 
         fun write(result: ArraySlice) {
             result.writeLong(hash)
             result.writeInt(numberOfParameters)
             result.writeBoolean(isGlobalInitializer)
             result.writeInt(index)
+            result.writeNullableInt(bridgeTarget)
             result.writeNullableString(name)
         }
     }
 
-    class PrivateFunctionSymbol(val index: Int, val numberOfParameters: Int, val isGlobalInitializer: Boolean, val name: String?) {
+    class PrivateFunctionSymbol(val index: Int, val numberOfParameters: Int, val isGlobalInitializer: Boolean,
+                                val bridgeTarget: Int?, val name: String?) {
 
-        constructor(data: ArraySlice) : this(data.readInt(), data.readInt(), data.readBoolean(), data.readNullableString())
+        constructor(data: ArraySlice) : this(data.readInt(), data.readInt(), data.readBoolean(),
+                data.readNullableInt(), data.readNullableString())
 
         fun write(result: ArraySlice) {
             result.writeInt(index)
             result.writeInt(numberOfParameters)
             result.writeBoolean(isGlobalInitializer)
+            result.writeNullableInt(bridgeTarget)
             result.writeNullableString(name)
         }
     }
@@ -361,11 +365,11 @@ internal object DFGSerializer {
             fun external(hash: Long, numberOfParameters: Int, isGlobalInitializer: Boolean, escapes: Int?, pointsTo: IntArray?, name: String?) =
                     FunctionSymbol(ExternalFunctionSymbol(hash, numberOfParameters, isGlobalInitializer, escapes, pointsTo, name), null, null)
 
-            fun public(hash: Long, numberOfParameters: Int, isGlobalInitializer: Boolean, index: Int, name: String?) =
-                    FunctionSymbol(null, PublicFunctionSymbol(hash, numberOfParameters, isGlobalInitializer, index, name), null)
+            fun public(hash: Long, numberOfParameters: Int, isGlobalInitializer: Boolean, index: Int, bridgeTarget: Int?, name: String?) =
+                    FunctionSymbol(null, PublicFunctionSymbol(hash, numberOfParameters, isGlobalInitializer, index, bridgeTarget, name), null)
 
-            fun private(index: Int, numberOfParameters: Int, isGlobalInitializer: Boolean, name: String?) =
-                    FunctionSymbol(null, null, PrivateFunctionSymbol(index, numberOfParameters, isGlobalInitializer, name))
+            fun private(index: Int, numberOfParameters: Int, isGlobalInitializer: Boolean, bridgeTarget: Int?, name: String?) =
+                    FunctionSymbol(null, null, PrivateFunctionSymbol(index, numberOfParameters, isGlobalInitializer, bridgeTarget, name))
 
             fun read(data: ArraySlice): FunctionSymbol {
                 val tag = data.readByte().toInt()
@@ -786,6 +790,7 @@ internal object DFGSerializer {
                     val numberOfParameters = functionSymbol.numberOfParameters
                     val isGlobalInitializer = functionSymbol.isGlobalInitializer
                     val name = functionSymbol.name
+                    val bridgeTarget = (functionSymbol as? DataFlowIR.FunctionSymbol.Declared)?.let { functionSymbolMap[it] }
                     when (functionSymbol) {
                         is DataFlowIR.FunctionSymbol.External ->
                             FunctionSymbol.external(functionSymbol.hash, numberOfParameters, isGlobalInitializer,
@@ -793,11 +798,11 @@ internal object DFGSerializer {
 
                         is DataFlowIR.FunctionSymbol.Public ->
                             FunctionSymbol.public(functionSymbol.hash, numberOfParameters,
-                                    isGlobalInitializer, functionSymbol.symbolTableIndex, name)
+                                    isGlobalInitializer, functionSymbol.symbolTableIndex, bridgeTarget, name)
 
                         is DataFlowIR.FunctionSymbol.Private ->
                             FunctionSymbol.private(functionSymbol.symbolTableIndex, numberOfParameters,
-                                    isGlobalInitializer, name)
+                                    isGlobalInitializer, bridgeTarget, name)
 
                         else -> error("Unknown function symbol $functionSymbol")
                     }
@@ -956,7 +961,7 @@ internal object DFGSerializer {
                             if (symbolTableIndex >= 0)
                                 ++module.numberOfFunctions
                             DataFlowIR.FunctionSymbol.Public(public.hash, public.numberOfParameters, module,
-                                    symbolTableIndex, public.isGlobalInitializer, public.name).also {
+                                    symbolTableIndex, public.isGlobalInitializer, null, public.name).also {
                                 publicFunctionsMap.put(it.hash, it)
                             }
                         }
@@ -966,7 +971,7 @@ internal object DFGSerializer {
                             if (symbolTableIndex >= 0)
                                 ++module.numberOfFunctions
                             DataFlowIR.FunctionSymbol.Private(privateFunIndex++, private.numberOfParameters, module,
-                                    symbolTableIndex, private.isGlobalInitializer, private.name)
+                                    symbolTableIndex, private.isGlobalInitializer, null, private.name)
                         }
                     }
                 }
@@ -989,6 +994,16 @@ internal object DFGSerializer {
                     intestines.itable.forEach {
                         deserializedType.itable.put(it.hash, functionSymbols[it.impl])
                     }
+                }
+
+                symbolTable.functionSymbols.forEachIndexed { index, symbol ->
+                    val deserializedSymbol = functionSymbols[index] as? DataFlowIR.FunctionSymbol.Declared
+                            ?: return@forEachIndexed
+                    val bridgeTarget = if (deserializedSymbol is DataFlowIR.FunctionSymbol.Public)
+                                           symbol.public!!.bridgeTarget
+                                       else
+                                           symbol.private!!.bridgeTarget
+                    deserializedSymbol.bridgeTarget = bridgeTarget?.let { functionSymbols[it] }
                 }
 
                 fun deserializeEdge(edge: Edge) =

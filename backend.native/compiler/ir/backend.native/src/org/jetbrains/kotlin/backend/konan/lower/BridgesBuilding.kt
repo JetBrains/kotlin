@@ -177,8 +177,14 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     }
 }
 
-internal object DECLARATION_ORIGIN_BRIDGE_METHOD :
-        IrDeclarationOriginImpl("BRIDGE_METHOD")
+internal class DECLARATION_ORIGIN_BRIDGE_METHOD(val bridgeTarget: IrFunction) : IrDeclarationOrigin {
+    override fun toString(): String {
+        return "BRIDGE_METHOD(target=${bridgeTarget.descriptor})"
+    }
+}
+
+internal val IrFunction.bridgeTarget: IrFunction?
+        get() = (origin as? DECLARATION_ORIGIN_BRIDGE_METHOD)?.bridgeTarget
 
 private fun IrBuilderWithScope.returnIfBadType(value: IrExpression,
                                                type: KotlinType,

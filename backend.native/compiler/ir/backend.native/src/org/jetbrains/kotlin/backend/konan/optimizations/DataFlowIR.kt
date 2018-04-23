@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.llvm.symbolName
+import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
@@ -139,12 +141,14 @@ internal object DataFlowIR {
         }
 
         abstract class Declared(numberOfParameters: Int, val module: Module, val symbolTableIndex: Int,
-                                isGlobalInitializer: Boolean, name: String?)
-            : FunctionSymbol(numberOfParameters, isGlobalInitializer, name)
+                                isGlobalInitializer: Boolean, var bridgeTarget: FunctionSymbol?, name: String?)
+            : FunctionSymbol(numberOfParameters, isGlobalInitializer, name) {
+
+        }
 
         class Public(val hash: Long, numberOfParameters: Int, module: Module, symbolTableIndex: Int,
-                     isGlobalInitializer: Boolean, name: String? = null)
-            : Declared(numberOfParameters, module, symbolTableIndex, isGlobalInitializer, name) {
+                     isGlobalInitializer: Boolean, bridgeTarget: FunctionSymbol?, name: String? = null)
+            : Declared(numberOfParameters, module, symbolTableIndex, isGlobalInitializer, bridgeTarget, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Public) return false
@@ -162,8 +166,8 @@ internal object DataFlowIR {
         }
 
         class Private(val index: Int, numberOfParameters: Int, module: Module, symbolTableIndex: Int,
-                      isGlobalInitializer: Boolean, name: String? = null)
-            : Declared(numberOfParameters, module, symbolTableIndex, isGlobalInitializer, name) {
+                      isGlobalInitializer: Boolean, bridgeTarget: FunctionSymbol?, name: String? = null)
+            : Declared(numberOfParameters, module, symbolTableIndex, isGlobalInitializer, bridgeTarget, name) {
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
                 if (other !is Private) return false
@@ -509,13 +513,13 @@ internal object DataFlowIR {
 
         private val FunctionDescriptor.internalName get() = getFqName(this).asString() + "#internal"
 
-        fun mapFunction(descriptor: DeclarationDescriptor) = descriptor.original.let {
+        fun mapFunction(descriptor: DeclarationDescriptor): FunctionSymbol = descriptor.original.let {
             functionMap.getOrPut(it) {
                 when (it) {
                     is IrField -> {
                         // A global property initializer.
                         assert (it.parent !is IrClass) { "All local properties initializers should've been lowered" }
-                        FunctionSymbol.Private(privateFunIndex++, 0, module, -1, true, takeName { "${it.symbolName}_init" })
+                        FunctionSymbol.Private(privateFunIndex++, 0, module, -1, true, null, takeName { "${it.symbolName}_init" })
                     }
 
                     is FunctionDescriptor -> {
@@ -533,14 +537,20 @@ internal object DataFlowIR {
                         } else {
                             val isAbstract = it is SimpleFunctionDescriptor && it.modality == Modality.ABSTRACT
                             val classDescriptor = it.containingDeclaration as? ClassDescriptor
+                            val bridgeTarget = it.bridgeTarget
+                            val isSpecialBridge = bridgeTarget.let {
+                                it != null && BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(it.descriptor) != null
+                            }
+                            val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
+
                             val placeToFunctionsTable = !isAbstract && it !is ConstructorDescriptor && classDescriptor != null
                                     && classDescriptor.kind != ClassKind.ANNOTATION_CLASS
-                                    && (it.isOverridableOrOverrides || it.name.asString().contains("<bridge-") || !classDescriptor.isFinal())
+                                    && (it.isOverridableOrOverrides || bridgeTarget != null || !classDescriptor.isFinal())
                             val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
                             if (it.isExported())
-                                FunctionSymbol.Public(name.localHash.value, numberOfParameters, module, symbolTableIndex, false, takeName { name })
+                                FunctionSymbol.Public(name.localHash.value, numberOfParameters, module, symbolTableIndex, false, bridgeTargetSymbol, takeName { name })
                             else
-                                FunctionSymbol.Private(privateFunIndex++, numberOfParameters, module, symbolTableIndex, false, takeName { name })
+                                FunctionSymbol.Private(privateFunIndex++, numberOfParameters, module, symbolTableIndex, false, bridgeTargetSymbol, takeName { name })
                         }
                     }
 

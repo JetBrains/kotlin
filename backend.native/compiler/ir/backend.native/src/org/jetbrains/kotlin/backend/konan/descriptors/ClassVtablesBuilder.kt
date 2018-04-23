@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.simpleFunctions
@@ -180,12 +181,11 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }
 
-}
+    private val IrClass.sortedOverridableOrOverridingMethods: List<SimpleFunctionDescriptor>
+        get() =
+            this.simpleFunctions()
+                    .filter { (it.isOverridable || it.overriddenSymbols.isNotEmpty())
+                               && it.bridgeTarget == null }
+                    .sortedBy { it.functionName.localHash.value }
 
-private val IrClass.sortedOverridableOrOverridingMethods: List<SimpleFunctionDescriptor>
-    get() =
-        this.simpleFunctions()
-                .filter { it.isOverridable || it.overriddenSymbols.isNotEmpty() }
-                // TODO: extract method .isBridge()
-                .filterNot { it.name.asString().contains("<bridge-") }
-                .sortedBy { it.functionName.localHash.value }
+}
