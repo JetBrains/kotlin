@@ -22,6 +22,7 @@ import org.gradle.api.Project
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.konan.target.AppleConfigurables
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
@@ -124,6 +125,12 @@ fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
                executable: String, vararg args: String) = runProcess(executor, executable, args.toList())
 
 /**
+ * Returns Project's process executor
+ * @see Project.exec
+ */
+fun localExecutor(project: Project) = { a: Action<in ExecSpec> -> project.exec(a) }
+
+/**
  * Executes a given action with iPhone Simulator.
  *
  * The test target should be specified with -Ptest_target=ios_x64
@@ -144,11 +151,22 @@ private fun simulator(project: Project) : ExecutorService = object : ExecutorSer
         out.toString("UTF-8").trim()
     }
 
-    private val iosDevice = project.findProperty("iosDevice")?.toString() ?: "iPhone 8"
+    private val list by lazy {
+        val out = ByteArrayOutputStream()
+        val result = project.exec {
+            it.commandLine(simctl, "list")
+            it.standardOutput = out
+        }
+        result.assertNormalExitValue()
+        out.toString("UTF-8").trim()
+    }
+
+    private val iosDevice = project.findProperty("iosDevice")?.toString() ?: "iPhone 6"
 
     override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec { execSpec ->
+        println(list)
         action.execute(execSpec)
-        with(execSpec) { commandLine = listOf(simctl, "spawn", iosDevice, executable) + args }
+        with(execSpec) { commandLine = listOf("/usr/bin/xcrun", "simctl", "spawn", "iPhone 6", executable) + args }
     }
 }
 

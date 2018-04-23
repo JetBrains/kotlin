@@ -2612,6 +2612,9 @@ if (isMac()) {
                 args "-lobjc", '-fobjc-arc'
                 args '-fPIC', '-shared', '-o', "$buildDir/libobjcsmoke.dylib"
             }
+            if (project.testTarget == 'ios_x64') {
+                UtilsKt.codesign(project, "$buildDir/libobjcsmoke.dylib")
+            }
         }
     }
 }
