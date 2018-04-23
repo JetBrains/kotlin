@@ -423,14 +423,9 @@ task performance {
 }
 
 task clean {
+    dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
     doLast {
         delete distDir
         delete bundle.outputs.files
     }
-}
-
-// Don't run with other tasks (e.g. ./gradlew cleanAll bundle)
-task cleanAll {
-    // dependsOn gradle.includedBuilds.collect { it.task(":clean") }
-    dependsOn project.getTasksByName("clean", true)
 }
