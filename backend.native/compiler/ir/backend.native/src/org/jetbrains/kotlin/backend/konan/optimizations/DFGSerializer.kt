@@ -516,6 +516,15 @@ internal object DFGSerializer {
         }
     }
 
+    class AllocInstance(val type: Int) {
+
+        constructor(data: ArraySlice) : this(data.readInt())
+
+        fun write(result: ArraySlice) {
+            result.writeInt(type)
+        }
+    }
+
     class FieldRead(val receiver: Edge?, val field: Field) {
 
         constructor(data: ArraySlice) : this(data.readNullable { Edge(this) }, Field(data))
@@ -578,6 +587,7 @@ internal object DFGSerializer {
         VTABLE_CALL,
         ITABLE_CALL,
         SINGLETON,
+        ALLOC_INSTANCE,
         FIELD_READ,
         FIELD_WRITE,
         ARRAY_READ,
@@ -586,49 +596,52 @@ internal object DFGSerializer {
     }
 
     class Node {
-        var parameter  : Parameter?  = null
-        var const      : Const?      = null
-        var staticCall : StaticCall? = null
-        var newObject  : NewObject?  = null
-        var vtableCall : VtableCall? = null
-        var itableCall : ItableCall? = null
-        var singleton  : Singleton?  = null
-        var fieldRead  : FieldRead?  = null
-        var fieldWrite : FieldWrite? = null
-        var arrayRead  : ArrayRead? = null
-        var arrayWrite : ArrayWrite? = null
-        var variable   : Variable?   = null
+        var parameter    : Parameter?     = null
+        var const        : Const?         = null
+        var staticCall   : StaticCall?    = null
+        var newObject    : NewObject?     = null
+        var vtableCall   : VtableCall?    = null
+        var itableCall   : ItableCall?    = null
+        var singleton    : Singleton?     = null
+        var allocInstance: AllocInstance? = null
+        var fieldRead    : FieldRead?     = null
+        var fieldWrite   : FieldWrite?    = null
+        var arrayRead    : ArrayRead?     = null
+        var arrayWrite   : ArrayWrite?    = null
+        var variable     : Variable?      = null
 
         val type get() = when {
-            parameter  != null -> NodeType.PARAMETER
-            const      != null -> NodeType.CONST
-            staticCall != null -> NodeType.STATIC_CALL
-            newObject  != null -> NodeType.NEW_OBJECT
-            vtableCall != null -> NodeType.VTABLE_CALL
-            itableCall != null -> NodeType.ITABLE_CALL
-            singleton  != null -> NodeType.SINGLETON
-            fieldRead  != null -> NodeType.FIELD_READ
-            fieldWrite != null -> NodeType.FIELD_WRITE
-            arrayRead  != null -> NodeType.ARRAY_READ
-            arrayWrite != null -> NodeType.ARRAY_WRITE
-            variable   != null -> NodeType.VARIABLE
-            else               -> NodeType.UNKNOWN
+            parameter     != null -> NodeType.PARAMETER
+            const         != null -> NodeType.CONST
+            staticCall    != null -> NodeType.STATIC_CALL
+            newObject     != null -> NodeType.NEW_OBJECT
+            vtableCall    != null -> NodeType.VTABLE_CALL
+            itableCall    != null -> NodeType.ITABLE_CALL
+            singleton     != null -> NodeType.SINGLETON
+            allocInstance != null -> NodeType.ALLOC_INSTANCE
+            fieldRead     != null -> NodeType.FIELD_READ
+            fieldWrite    != null -> NodeType.FIELD_WRITE
+            arrayRead     != null -> NodeType.ARRAY_READ
+            arrayWrite    != null -> NodeType.ARRAY_WRITE
+            variable      != null -> NodeType.VARIABLE
+            else                  -> NodeType.UNKNOWN
         }
 
         fun write(result: ArraySlice) {
             result.writeByte(type.ordinal.toByte())
-            parameter ?.write(result)
-            const     ?.write(result)
-            staticCall?.write(result)
-            newObject ?.write(result)
-            vtableCall?.write(result)
-            itableCall?.write(result)
-            singleton ?.write(result)
-            fieldRead ?.write(result)
-            fieldWrite?.write(result)
-            arrayRead ?.write(result)
-            arrayWrite?.write(result)
-            variable  ?.write(result)
+            parameter    ?.write(result)
+            const        ?.write(result)
+            staticCall   ?.write(result)
+            newObject    ?.write(result)
+            vtableCall   ?.write(result)
+            itableCall   ?.write(result)
+            singleton    ?.write(result)
+            allocInstance?.write(result)
+            fieldRead    ?.write(result)
+            fieldWrite   ?.write(result)
+            arrayRead    ?.write(result)
+            arrayWrite   ?.write(result)
+            variable     ?.write(result)
         }
 
         companion object {
@@ -653,6 +666,9 @@ internal object DFGSerializer {
             fun singleton(type: Int, constructor: Int?) =
                     Node().also { it.singleton = Singleton(type, constructor) }
 
+            fun allocInst(type: Int) =
+                    Node().also { it.allocInstance = AllocInstance(type) }
+
             fun fieldRead(receiver: Edge?, field: Field) =
                     Node().also { it.fieldRead = FieldRead(receiver, field) }
 
@@ -672,19 +688,20 @@ internal object DFGSerializer {
                 val type = enumValues<NodeType>()[data.readByte().toInt()]
                 val result = Node()
                 when (type) {
-                    NodeType.PARAMETER   -> result.parameter  = Parameter (data)
-                    NodeType.CONST       -> result.const      = Const     (data)
-                    NodeType.STATIC_CALL -> result.staticCall = StaticCall(data)
-                    NodeType.NEW_OBJECT  -> result.newObject  = NewObject (data)
-                    NodeType.VTABLE_CALL -> result.vtableCall = VtableCall(data)
-                    NodeType.ITABLE_CALL -> result.itableCall = ItableCall(data)
-                    NodeType.SINGLETON   -> result.singleton  = Singleton (data)
-                    NodeType.FIELD_READ  -> result.fieldRead  = FieldRead (data)
-                    NodeType.FIELD_WRITE -> result.fieldWrite = FieldWrite(data)
-                    NodeType.ARRAY_READ  -> result.arrayRead  = ArrayRead (data)
-                    NodeType.ARRAY_WRITE -> result.arrayWrite = ArrayWrite(data)
-                    NodeType.VARIABLE    -> result.variable   = Variable  (data)
-                    else                 -> { }
+                    NodeType.PARAMETER      -> result.parameter     = Parameter    (data)
+                    NodeType.CONST          -> result.const         = Const        (data)
+                    NodeType.STATIC_CALL    -> result.staticCall    = StaticCall   (data)
+                    NodeType.NEW_OBJECT     -> result.newObject     = NewObject    (data)
+                    NodeType.VTABLE_CALL    -> result.vtableCall    = VtableCall   (data)
+                    NodeType.ITABLE_CALL    -> result.itableCall    = ItableCall   (data)
+                    NodeType.SINGLETON      -> result.singleton     = Singleton    (data)
+                    NodeType.ALLOC_INSTANCE -> result.allocInstance = AllocInstance(data)
+                    NodeType.FIELD_READ     -> result.fieldRead     = FieldRead    (data)
+                    NodeType.FIELD_WRITE    -> result.fieldWrite    = FieldWrite   (data)
+                    NodeType.ARRAY_READ     -> result.arrayRead     = ArrayRead    (data)
+                    NodeType.ARRAY_WRITE    -> result.arrayWrite    = ArrayWrite   (data)
+                    NodeType.VARIABLE       -> result.variable      = Variable     (data)
+                    else                    -> { }
                 }
                 return result
             }
@@ -872,6 +889,9 @@ internal object DFGSerializer {
 
                                     is DataFlowIR.Node.Singleton ->
                                         Node.singleton(typeMap[node.type]!!, node.constructor?.let { functionSymbolMap[it]!! })
+
+                                    is DataFlowIR.Node.AllocInstance ->
+                                        Node.allocInst(typeMap[node.type]!!)
 
                                     is DataFlowIR.Node.FieldRead ->
                                         Node.fieldRead(node.receiver?.let { buildEdge(it) }, buildField(node.field))
@@ -1106,6 +1126,10 @@ internal object DFGSerializer {
                             NodeType.SINGLETON -> {
                                 val singleton = it.singleton!!
                                 DataFlowIR.Node.Singleton(types[singleton.type], singleton.constructor?.let { functionSymbols[it] })
+                            }
+
+                            NodeType.ALLOC_INSTANCE -> {
+                                DataFlowIR.Node.AllocInstance(types[it.allocInstance!!.type])
                             }
 
                             NodeType.FIELD_READ -> {

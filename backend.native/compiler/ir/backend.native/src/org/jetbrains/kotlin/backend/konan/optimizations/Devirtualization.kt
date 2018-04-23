@@ -355,6 +355,10 @@ internal object Devirtualization {
                             node.constructor?.let { dfs(it) }
                         }
 
+                        is DataFlowIR.Node.AllocInstance -> {
+                            addInstantiatingClass(node.type)
+                        }
+
                         is DataFlowIR.Node.Const -> addInstantiatingClass(node.type)
 
                         is DataFlowIR.Node.StaticCall ->
@@ -916,6 +920,10 @@ internal object Devirtualization {
                             val instanceNode = concreteClass(type)
                             node.constructor?.let { doCall(it, listOf(instanceNode), type, null) }
                             instanceNode
+                        }
+
+                        is DataFlowIR.Node.AllocInstance -> {
+                            concreteClass(node.type.resolved())
                         }
 
                         is DataFlowIR.Node.FieldRead ->

@@ -237,6 +237,7 @@ internal object DataFlowIR {
                          val receiverType: Type?, irCallSite: IrFunctionAccessExpression?)
             : Call(callee, arguments, irCallSite)
 
+        // TODO: It can be replaced with a pair(AllocInstance, constructor Call), remove.
         class NewObject(constructor: FunctionSymbol, arguments: List<Edge>, val constructedType: Type, override val irCallSite: IrCall?)
             : Call(constructor, arguments, irCallSite)
 
@@ -253,6 +254,8 @@ internal object DataFlowIR {
             : VirtualCall(callee, arguments, receiverType, irCallSite)
 
         class Singleton(val type: Type, val constructor: FunctionSymbol?) : Node()
+
+        class AllocInstance(val type: Type) : Node()
 
         class FieldRead(val receiver: Edge?, val field: Field, val ir: IrGetField?) : Node()
 
@@ -295,6 +298,9 @@ internal object DataFlowIR {
 
                 is Node.Singleton ->
                     "        SINGLETON ${node.type}\n"
+
+                is Node.AllocInstance ->
+                    "        ALLOC INSTANCE ${node.type}\n"
 
                 is Node.StaticCall -> {
                     val result = StringBuilder()
