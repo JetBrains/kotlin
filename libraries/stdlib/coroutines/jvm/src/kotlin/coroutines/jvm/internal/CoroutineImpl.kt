@@ -3,8 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@file:JvmVersion
 package kotlin.coroutines.jvm.internal
 
 import java.lang.IllegalStateException
