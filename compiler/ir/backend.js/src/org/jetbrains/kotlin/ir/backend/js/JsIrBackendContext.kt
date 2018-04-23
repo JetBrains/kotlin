@@ -78,11 +78,11 @@ class JsIrBackendContext(
             override val stringBuilder
                 get() = TODO("not implemented")
             override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+                get() = TODO("not implemented")
             override val coroutineImpl: IrClassSymbol
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+                get() = TODO("not implemented")
             override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+                get() = TODO("not implemented")
         }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
@@ -109,7 +109,7 @@ class JsIrBackendContext(
     }
 
     override fun getInternalFunctions(name: String): List<FunctionDescriptor> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented")
     }
 
     override fun log(message: () -> String) {
