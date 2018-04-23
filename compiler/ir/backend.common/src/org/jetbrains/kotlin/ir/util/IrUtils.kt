@@ -235,6 +235,8 @@ val IrClass.defaultType: KotlinType
 
 val IrSimpleFunction.isReal: Boolean get() = descriptor.kind.isReal
 
+// This implementation is from kotlin-native
+// TODO: use this implementation instead of any other
 fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
 
     if (isReal) return this
@@ -264,7 +266,7 @@ fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
     }
 
     visited.clear()
-    realOverrides.asSequence().forEach { excludeRepeated(it) }
+    realOverrides.toList().forEach { excludeRepeated(it) }
 
     return realOverrides.singleOrNull { it.modality != Modality.ABSTRACT }
 }

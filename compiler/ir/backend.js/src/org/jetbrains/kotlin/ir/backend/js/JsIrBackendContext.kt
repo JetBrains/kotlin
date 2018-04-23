@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.ReflectionTypes
 import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.js.JsSpecialDescriptorsFactory
+import org.jetbrains.kotlin.backend.js.JsDescriptorsFactory
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -40,7 +40,7 @@ class JsIrBackendContext(
     override val builtIns = module.builtIns
     override val sharedVariablesManager =
         JsSharedVariablesManager(builtIns, KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal")))
-    override val descriptorsFactory = JsSpecialDescriptorsFactory(builtIns)
+    override val descriptorsFactory = JsDescriptorsFactory(builtIns)
 
     override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
         // TODO

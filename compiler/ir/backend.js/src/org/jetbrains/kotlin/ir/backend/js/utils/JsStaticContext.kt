@@ -21,6 +21,7 @@ class JsStaticContext(
     backendContext: JsIrBackendContext
 ) {
     val intrinsics = JsIntrinsicTransformers(backendContext)
+    // TODO: use IrSymbol instead of JsName
     val classModels = mutableMapOf<JsName, JsClassModel>()
 
     fun getNameForSymbol(irSymbol: IrSymbol, context: JsGenerationContext) = nameGenerator.getNameForSymbol(irSymbol, context)

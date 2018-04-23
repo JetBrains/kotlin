@@ -15,16 +15,16 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.descriptors.JsSymbolBuilder
 import org.jetbrains.kotlin.ir.backend.js.descriptors.initialize
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.types.KotlinType
@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.types.KotlinType
 // TODO replace with DeclarationContainerLowerPass && do flatTransform
 class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass, DeclarationContainerLoweringPass {
 
-    val lambdas = mutableMapOf<IrDeclaration, KotlinType>()
-    val oldToNewDeclarationMap = mutableMapOf<IrSymbolOwner, IrFunction>()
+    private val lambdas = mutableMapOf<IrDeclaration, KotlinType>()
+    private val oldToNewDeclarationMap = mutableMapOf<IrFunctionSymbol, IrFunction>()
 
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(FunctionReferenceCollector())
@@ -42,7 +42,6 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
     }
 
     inner class FunctionReferenceCollector : IrElementVisitorVoid {
-
         override fun visitFunctionReference(expression: IrFunctionReference) {
             lambdas[expression.symbol.owner as IrFunction] = expression.type
         }
@@ -50,7 +49,6 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
-
     }
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
@@ -66,9 +64,9 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
     inner class FunctionReferenceVisitor : IrElementTransformerVoid() {
 
         override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-            val newTarget = oldToNewDeclarationMap[expression.symbol.owner]
+            val newTarget = oldToNewDeclarationMap[expression.symbol]
 
-            return if (newTarget != null) IrCallImpl(expression.startOffset, expression.endOffset, newTarget.symbol).apply {
+            return if (newTarget != null) IrCallImpl(expression.startOffset, expression.endOffset, newTarget.symbol, expression.origin).apply {
                 copyTypeArgumentsFrom(expression)
                 var index = 0
                 for (i in 0 until expression.valueArgumentsCount) {
@@ -82,15 +80,17 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
     }
 
     private fun lowerKFunctionReference(declaration: IrFunction, functionType: KotlinType): List<IrFunction> {
+        // TODO: property reference
+
         // transform
         // x = Foo::bar ->
-        // x = Foo_bar_referenceGet(c1: closure$C1, c2: closure$C2) {
-        //   return function Foo_bar_closure(p0: Foo, p1: T2, p2: T3) {
-        //      return p0.foo(c1, c2, p1, p2)
+        // x = Foo_bar_KreferenceGet(c1: closure$C1, c2: closure$C2) : KFunctionN<Foo, T2, ..., TN, TReturn> {
+        //   return fun Foo_bar_KreferenceClosure(p0: Foo, p1: T2, p2: T3): TReturn {
+        //      return p0.bar(c1, c2, p1, p2)
         //   }
         // }
 
-        // KFunctionN<T1, T2, ..., TN, TReturn>, arguments.size = N + 1
+        // KFunctionN<Foo, T2, ..., TN, TReturn>, arguments.size = N + 1
 
         val closureParams = functionType.arguments.dropLast(1) // drop return type
         var kFunctionValueParamsCount = closureParams.size
@@ -99,7 +99,8 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         assert(kFunctionValueParamsCount >= 0)
 
-        val getterValueParameters = declaration.valueParameters.drop(kFunctionValueParamsCount)
+        // The `getter` function takes only parameters which have to be closured
+        val getterValueParameters = declaration.valueParameters.dropLast(kFunctionValueParamsCount)
         val getterName = "${declaration.descriptor.name}_KreferenceGet"
 
         val refGetSymbol =
@@ -117,10 +118,11 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         }
 
         val closureName = "${declaration.descriptor.name}_KreferenceClosure"
-        val refClosureSymbol = JsSymbolBuilder.buildSimpleFunction(declaration.descriptor.containingDeclaration, closureName)
+        val refClosureSymbol = JsSymbolBuilder.buildSimpleFunction(refGetSymbol.descriptor, closureName)
 
         // the params which are passed to closure
         val closureParamSymbols = closureParams.mapIndexed { index, p ->
+            // TODO: re-use original parameter names
             JsSymbolBuilder.buildValueParameter(refClosureSymbol, index, p.type)
         }
 
@@ -161,7 +163,7 @@ class FunctionReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             body = JsIrBuilder.buildBlockBody(listOf(irGetterReturn))
         }
 
-        oldToNewDeclarationMap[declaration] = refGetFunction
+        oldToNewDeclarationMap[declaration.symbol] = refGetFunction
 
         return listOf(declaration, refGetFunction)
     }

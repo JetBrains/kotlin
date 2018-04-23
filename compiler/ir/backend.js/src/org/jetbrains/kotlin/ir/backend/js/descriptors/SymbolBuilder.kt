@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.ir.backend.js.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
-import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -89,10 +88,10 @@ object JsSymbolBuilder {
 }
 
 
-fun <T : TypeParameterDescriptor> IrSimpleFunctionSymbol.initialize(
+fun IrSimpleFunctionSymbol.initialize(
     receiverParameterType: KotlinType? = null,
     dispatchParameterDescriptor: ReceiverParameterDescriptor? = null,
-    typeParameters: List<T> = emptyList(),
+    typeParameters: List<TypeParameterDescriptor> = emptyList(),
     valueParameters: List<ValueParameterDescriptor> = emptyList(),
     type: KotlinType? = null,
     modality: Modality = Modality.FINAL,

@@ -74,8 +74,7 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val args = translateCallArguments(call, context)
                 val initializer = args[0]
                 val propertyInit = JsPropertyInitializer(JsNameRef("v"), initializer)
-                val objectLiteral = JsObjectLiteral()
-                objectLiteral.apply { propertyInitializers += propertyInit }
+                JsObjectLiteral(listOf(propertyInit))
             }
 
             addIfNotNull(intrinsics.jsCode) { call, context ->

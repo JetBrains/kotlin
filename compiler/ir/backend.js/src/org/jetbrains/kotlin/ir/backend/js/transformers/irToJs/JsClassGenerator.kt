@@ -127,9 +127,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             return emptyList()
         }
 
-        val baseName = context.getNameForSymbol(baseClass.owner.symbol)
         val createCall = jsAssignment(
-            classPrototypeRef, JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototypeOf(baseName.makeRef()))
+            classPrototypeRef, JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototypeOf(baseClassName!!.makeRef()))
         ).makeStmt()
 
         val ctorAssign = jsAssignment(JsNameRef(Namer.CONSTRUCTOR_NAME, classPrototypeRef), classNameRef).makeStmt()

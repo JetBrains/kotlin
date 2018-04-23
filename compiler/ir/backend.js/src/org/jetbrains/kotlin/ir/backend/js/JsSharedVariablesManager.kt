@@ -10,24 +10,33 @@ import org.jetbrains.kotlin.backend.common.descriptors.SharedVariablesManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.Variance
 
 class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPackage: PackageFragmentDescriptor) : SharedVariablesManager {
 
     override fun createSharedVariableDescriptor(variableDescriptor: VariableDescriptor): VariableDescriptor =
         LocalVariableDescriptor(
-            variableDescriptor.containingDeclaration, Annotations.EMPTY, variableDescriptor.name,
+            variableDescriptor.containingDeclaration, variableDescriptor.annotations, variableDescriptor.name,
             getSharedVariableType(variableDescriptor.type),
             false, false, variableDescriptor.isLateInit, variableDescriptor.source
         )
@@ -35,7 +44,7 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
     override fun defineSharedValue(sharedVariableDescriptor: VariableDescriptor, originalDeclaration: IrVariable): IrStatement {
         val valueType = originalDeclaration.descriptor.type
         val boxConstructor = closureBoxConstructorTypeDescriptor
-        val boxConstructorSymbol = closureBoxConstrctorTypeSymbol
+        val boxConstructorSymbol = closureBoxConstructorTypeSymbol
         val constructorTypeParam = closureBoxConstructorTypeDescriptor.typeParameters[0]
         val boxConstructorTypeArgument = mapOf(constructorTypeParam to valueType)
         val initializer = originalDeclaration.initializer ?: IrConstImpl.constNull(
@@ -93,8 +102,7 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
     private val closureBoxConstructorTypeDescriptor = createClosureBoxClassConstructor()
     private val closureBoxFieldDescriptor = createClosureBoxField()
 
-    private val closureBoxTypeSymbol = IrClassSymbolImpl(closureBoxTypeDescriptor)
-    val closureBoxConstrctorTypeSymbol = createFunctionSymbol(closureBoxConstructorTypeDescriptor)
+    val closureBoxConstructorTypeSymbol = createFunctionSymbol(closureBoxConstructorTypeDescriptor)
     private val closureBoxFieldSymbol = IrFieldSymbolImpl(closureBoxFieldDescriptor)
 
 
@@ -112,13 +120,7 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
             true,
             SourceElement.NO_SOURCE
         ).apply {
-
-            /// constructor<T>(v: T) : T
-
             val typeParameter = constructedClass.declaredTypeParameters[0]
-
-
-//            val typeParameter = typeParameters[0]
             val typeParameterType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 Annotations.EMPTY,
                 typeParameter.typeConstructor,
@@ -179,18 +181,6 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
 
         return desc
     }
-
-    private fun getSubstitutedRefConstructor(valueType: KotlinType): ClassConstructorDescriptor =
-        closureBoxConstructorTypeDescriptor.substitute(
-            TypeSubstitutor.create(
-                closureBoxConstructorTypeDescriptor.typeParameters.associate {
-                    it.typeConstructor to TypeProjectionImpl(
-                        Variance.INVARIANT,
-                        valueType
-                    )
-                }
-            )
-        )!!
 
     private fun getRefType(valueType: KotlinType) =
         KotlinTypeFactory.simpleNotNullType(

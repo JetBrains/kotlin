@@ -28,11 +28,6 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             if (left != neutralExpression) JsBinaryOperation(JsBinaryOperator.COMMA, left, right) else right
         }
 
-    override fun visitBlock(expression: IrBlock, data: JsGenerationContext): JsExpression = visitContainerExpression(expression, data)
-
-    override fun visitComposite(expression: IrComposite, data: JsGenerationContext): JsExpression =
-        visitContainerExpression(expression, data)
-
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
         body.expression.accept(this, context)
 
@@ -78,6 +73,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.kind) {
         ClassKind.OBJECT -> {
+            // TODO:
             if (expression.type.isUnit()) JsNullLiteral()
             else {
                 val className = context.getNameForSymbol(expression.symbol)
@@ -133,7 +129,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             val targetName = context.getNameForSymbol(symbol)
             val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName))
             val callRef = JsNameRef(Namer.CALL_FUNCTION, qPrototype)
-            return JsInvocation(callRef, jsDispatchReceiver?. let { listOf(it) + arguments } ?: arguments)
+            return JsInvocation(callRef, jsDispatchReceiver?.let { listOf(it) + arguments } ?: arguments)
         }
 
         return if (symbol is IrConstructorSymbol) {
