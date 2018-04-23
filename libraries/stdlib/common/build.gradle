@@ -1,12 +1,17 @@
 description = 'Kotlin Common Standard Library'
 
 apply plugin: 'kotlin-platform-common'
+apply plugin: 'pill-configurable'
 
 configureDist(project)
 configurePublishing(project)
 
 def commonSrcDir = "../src"
 def commonTestSrcDir = "../test"
+
+pill {
+    importAsLibrary = true
+}
 
 sourceSets {
     main {
