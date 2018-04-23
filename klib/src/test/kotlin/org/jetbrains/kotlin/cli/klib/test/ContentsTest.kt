@@ -20,6 +20,7 @@ import kotlin.test.*
 import org.jetbrains.kotlin.cli.klib.*
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.preprocessor.convertLineSeparators
 import java.nio.file.Paths
 
 class ContentsTest {
@@ -33,7 +34,11 @@ class ContentsTest {
         if (printOutput) {
             println(output.trim().toString())
         }
-        assertEquals(expected(), output.trim().toString(), "klib contents test failed for library: $library")
+        assertEquals(
+                expected().convertLineSeparators(),
+                output.trim().toString().convertLineSeparators(),
+                "klib contents test failed for library: $library"
+        )
     }
 
     @Test
