@@ -406,19 +406,45 @@ internal fun registerGeneratedJavaSource(kaptTask: KaptTask, javaTask: AbstractC
 
 internal fun Configuration.getNamedDependencies(): List<Dependency> = allDependencies.filter { it.group != null && it.name != null }
 
+private val ANNOTATION_PROCESSOR = "annotationProcessor"
+private val ANNOTATION_PROCESSOR_CAP = ANNOTATION_PROCESSOR.capitalize()
+
 internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
     val isKapt3Enabled = Kapt3GradleSubplugin.isEnabled(project)
 
-    val androidAPDependencies = project.configurations
-            .filter { it.name == "annotationProcessor"
-                    || (it.name.endsWith("AnnotationProcessor") && !it.name.startsWith("_")) }
-            .flatMap { it.getNamedDependencies() }
+    val apConfigurations = project.configurations
+        .filter { it.name == ANNOTATION_PROCESSOR || (it.name.endsWith(ANNOTATION_PROCESSOR_CAP) && !it.name.startsWith("_")) }
 
-    if (androidAPDependencies.isNotEmpty()) {
-        val artifactsRendered = androidAPDependencies.joinToString { "'${it.group}:${it.name}:${it.version}'" }
+    val problemDependencies = mutableListOf<Dependency>()
+
+    for (apConfiguration in apConfigurations) {
+        val apConfigurationName = apConfiguration.name
+
+        val kaptConfigurationName = when (apConfigurationName) {
+            ANNOTATION_PROCESSOR -> "kapt"
+            else -> {
+                val configurationName = apConfigurationName.dropLast(ANNOTATION_PROCESSOR_CAP.length)
+                Kapt3KotlinGradleSubplugin.getKaptConfigurationName(configurationName)
+            }
+        }
+
+        val kaptConfiguration = project.configurations.findByName(kaptConfigurationName) ?: continue
+        val kaptConfigurationDependencies = kaptConfiguration.getNamedDependencies()
+
+        problemDependencies += apConfiguration.getNamedDependencies().filter { a ->
+            // Ignore annotationProcessor dependencies if they are also declared as 'kapt'
+            kaptConfigurationDependencies.none { k -> a.group == k.group && a.name == k.name && a.version == k.version }
+        }
+    }
+
+    if (problemDependencies.isNotEmpty()) {
+        val artifactsRendered = problemDependencies.joinToString { "'${it.group}:${it.name}:${it.version}'" }
         val andApplyKapt = if (isKapt3Enabled) "" else " and apply the kapt plugin: \"apply plugin: 'kotlin-kapt'\""
-        project.logger.warn("${project.name}: " +
-                "'annotationProcessor' dependencies won't be recognized as kapt annotation processors. " +
-                "Please change the configuration name to 'kapt' for these artifacts: $artifactsRendered$andApplyKapt.")
+
+        project.logger.warn(
+            "${project.name}: " +
+                    "'annotationProcessor' dependencies won't be recognized as kapt annotation processors. " +
+                    "Please change the configuration name to 'kapt' for these artifacts: $artifactsRendered$andApplyKapt."
+        )
     }
 }
