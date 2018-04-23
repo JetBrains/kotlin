@@ -34,22 +34,19 @@ class SimpleNameGenerator : NameGenerator {
                     }
                 }
                 is ValueParameterDescriptor -> {
-                    if (descriptor.name.isSpecial) {
-                        // TODO: consider this case more carefully
-                        nameBuilder.append(Namer.IMPLICIT_RECEIVER_NAME)
+                    val declaredName = descriptor.name.asString()
+                    nameBuilder.append(declaredName)
+                    if (declaredName.startsWith("\$")) {
                         nameBuilder.append('_')
                         nameBuilder.append(descriptor.index)
-                    } else {
-                        val declaredName = descriptor.name.identifier
-                        nameBuilder.append(declaredName)
-                        if (declaredName.startsWith("\$")) {
-                            nameBuilder.append('_')
-                            nameBuilder.append(descriptor.index)
-                        }
                     }
                 }
                 is PropertyDescriptor -> {
                     nameBuilder.append(descriptor.name.identifier)
+                    if (descriptor.visibility == Visibilities.PRIVATE || descriptor.modality != Modality.FINAL) {
+                        nameBuilder.append('$')
+                        nameBuilder.append(getNameForDescriptor(descriptor.containingDeclaration, context))
+                    }
                 }
                 is PropertyAccessorDescriptor -> {
                     when (descriptor) {
@@ -57,6 +54,10 @@ class SimpleNameGenerator : NameGenerator {
                         is PropertySetterDescriptor -> nameBuilder.append(Namer.SETTER_PREFIX)
                     }
                     nameBuilder.append(descriptor.correspondingProperty.name.asString())
+                    if (descriptor.visibility == Visibilities.PRIVATE) {
+                        nameBuilder.append('$')
+                        nameBuilder.append(getNameForDescriptor(descriptor.containingDeclaration, context))
+                    }
                 }
                 is ClassDescriptor -> {
                     if (descriptor.name.isSpecial) {
