@@ -52,8 +52,10 @@ open class VersionGenerator: DefaultTask() {
                      |       }
                      |       append('-')
                      |       append(meta.metaString)
-                     |       append('-')
-                     |       append(build)
+                     |       if (build != -1) {
+                     |         append('-')
+                     |         append(build)
+                     |       }
                      |     }
                      |  }
                      |  override fun toString() = versionString
