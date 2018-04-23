@@ -18,16 +18,19 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.appendElement
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVal
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.blockExpressionsOrSingle
+import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 class MergeWhenIntention : SelfTargetingRangeIntention<KtWhenExpression>(
     KtWhenExpression::class.java,
@@ -35,7 +38,7 @@ class MergeWhenIntention : SelfTargetingRangeIntention<KtWhenExpression>(
     "Merge 'when' expressions"
 ) {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
-        val next = PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java) as? KtWhenExpression ?: return null
+        val next = element.nextWhen() ?: return null
 
         val subject1 = element.subjectExpression
         val subject2 = next.subjectExpression
@@ -51,6 +54,12 @@ class MergeWhenIntention : SelfTargetingRangeIntention<KtWhenExpression>(
         ) return null
 
         return element.whenKeyword.textRange
+    }
+
+    private fun KtWhenExpression.nextWhen(): KtWhenExpression? {
+        return siblings(withItself = false)
+            .filter { it !is PsiWhiteSpace && it !is PsiComment && it.node.elementType != KtTokens.SEMICOLON }
+            .firstOrNull() as? KtWhenExpression
     }
 
     private fun conditionsMatch(e1: KtWhenEntry, e2: KtWhenEntry): Boolean =
@@ -74,12 +83,14 @@ class MergeWhenIntention : SelfTargetingRangeIntention<KtWhenExpression>(
             ?.toSet() ?: emptySet()
 
     override fun applyTo(element: KtWhenExpression, editor: Editor?) {
-        val nextWhen = PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java) as KtWhenExpression
+        val nextWhen = element.nextWhen() ?: return
         for ((entry1, entry2) in element.entries.zip(nextWhen.entries)) {
             entry1.expression.mergeWith(entry2.expression)
         }
 
-        element.parent.deleteChildRange(element.nextSibling, nextWhen)
+        val nextComment = element.siblings(withItself = false).takeWhile { it != nextWhen }.lastOrNull { it is PsiComment }
+        val nextSibling = nextComment?.nextSibling ?: element.nextSibling
+        element.parent.deleteChildRange(nextSibling, nextWhen)
     }
 
     private fun KtExpression?.mergeWith(that: KtExpression?): KtExpression? = when {

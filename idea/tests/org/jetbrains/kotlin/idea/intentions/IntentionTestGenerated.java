@@ -3245,6 +3245,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/branched/when/merge"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("hasCommentBetweenWhen.kt")
+                public void testHasCommentBetweenWhen() throws Exception {
+                    runTest("idea/testData/intentions/branched/when/merge/hasCommentBetweenWhen.kt");
+                }
+
+                @TestMetadata("hasSemicolonBetweenWhen.kt")
+                public void testHasSemicolonBetweenWhen() throws Exception {
+                    runTest("idea/testData/intentions/branched/when/merge/hasSemicolonBetweenWhen.kt");
+                }
+
                 @TestMetadata("mergeBlockWithBlock.kt")
                 public void testMergeBlockWithBlock() throws Exception {
                     runTest("idea/testData/intentions/branched/when/merge/mergeBlockWithBlock.kt");
