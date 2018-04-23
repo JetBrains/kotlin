@@ -13288,6 +13288,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/inlineFunctionWithDefaultLambda.kt");
             }
 
+            @TestMetadata("jvmOverloads.kt")
+            public void testJvmOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/jvmOverloads.kt");
+            }
+
             @TestMetadata("kt23239.kt")
             public void testKt23239() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/kt23239.kt");
