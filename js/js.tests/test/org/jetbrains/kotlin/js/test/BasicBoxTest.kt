@@ -542,7 +542,7 @@ abstract class BasicBoxTest(
         })
     }
 
-    private fun createPsiFile(fileName: String): KtFile {
+    protected fun createPsiFile(fileName: String): KtFile {
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
