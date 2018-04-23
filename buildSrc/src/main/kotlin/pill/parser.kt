@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
+import org.gradle.api.tasks.*
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.kotlin.dsl.configure
@@ -112,11 +113,6 @@ private val TEST_CONFIGURATION_MAPPING = mapOf(
     listOf("jpsTest") to Scope.TEST
 )
 
-private val SOURCE_SET_MAPPING = mapOf(
-    "main" to Kind.PRODUCTION,
-    "test" to Kind.TEST
-)
-
 private fun ParserContext.parseModules(project: Project, excludedProjects: List<Project>): List<PModule> {
     val (productionContentRoots, testContentRoots) = parseContentRoots(project).partition { !it.forTests }
 
@@ -208,47 +204,46 @@ private fun parseSourceRoots(project: Project): List<PSourceRoot> {
 
     val sourceRoots = mutableListOf<PSourceRoot>()
 
-    project.configure<JavaPluginConvention> {
-        for ((sourceSetName, kind) in SOURCE_SET_MAPPING) {
-            val sourceSet = sourceSets.findByName(sourceSetName) ?: continue
+    for (sourceSet in project.sourceSets) {
+        val sourceSetName = sourceSet.name
+        val kind = if (sourceSetName == SourceSet.TEST_SOURCE_SET_NAME) Kind.TEST else Kind.PRODUCTION
 
-            fun Any.getKotlin(): SourceDirectorySet {
-                val kotlinMethod = javaClass.getMethod("getKotlin")
-                val oldIsAccessible = kotlinMethod.isAccessible
-                try {
-                    kotlinMethod.isAccessible = true
-                    return kotlinMethod(this) as SourceDirectorySet
-                } finally {
-                    kotlinMethod.isAccessible = oldIsAccessible
-                }
+        fun Any.getKotlin(): SourceDirectorySet {
+            val kotlinMethod = javaClass.getMethod("getKotlin")
+            val oldIsAccessible = kotlinMethod.isAccessible
+            try {
+                kotlinMethod.isAccessible = true
+                return kotlinMethod(this) as SourceDirectorySet
+            } finally {
+                kotlinMethod.isAccessible = oldIsAccessible
+            }
+        }
+
+        val kotlinSourceDirectories = (sourceSet as HasConvention).convention
+            .plugins["kotlin"]?.getKotlin()?.srcDirs
+                ?: emptySet()
+
+        val directories = (sourceSet.java.sourceDirectories.files + kotlinSourceDirectories).toList()
+            .filter { it.exists() }
+            .takeIf { it.isNotEmpty() }
+                ?: continue
+
+        for (resourceRoot in sourceSet.resources.sourceDirectories.files) {
+            if (!resourceRoot.exists() || resourceRoot in directories) {
+                continue
             }
 
-            val kotlinSourceDirectories = (sourceSet as HasConvention).convention
-                .plugins["kotlin"]?.getKotlin()?.srcDirs
-                    ?: emptySet()
-
-            val directories = (sourceSet.java.sourceDirectories.files + kotlinSourceDirectories).toList()
-                .filter { it.exists() }
-                .takeIf { it.isNotEmpty() }
-                    ?: continue
-
-            for (resourceRoot in sourceSet.resources.sourceDirectories.files) {
-                if (!resourceRoot.exists() || resourceRoot in directories) {
-                    continue
-                }
-
-                val resourceRootKind = when (kind) {
-                    Kind.PRODUCTION -> Kind.RESOURCES
-                    Kind.TEST -> Kind.TEST_RESOURCES
-                    else -> error("Invalid source root kind $kind")
-                }
-
-                sourceRoots += PSourceRoot(resourceRoot, resourceRootKind)
+            val resourceRootKind = when (kind) {
+                Kind.PRODUCTION -> Kind.RESOURCES
+                Kind.TEST -> Kind.TEST_RESOURCES
+                else -> error("Invalid source root kind $kind")
             }
 
-            for (directory in directories) {
-                sourceRoots += PSourceRoot(directory, kind)
-            }
+            sourceRoots += PSourceRoot(resourceRoot, resourceRootKind)
+        }
+
+        for (directory in directories) {
+            sourceRoots += PSourceRoot(directory, kind)
         }
     }
 
@@ -421,3 +416,10 @@ fun List<CollectedConfiguration>.collectDependencies(): List<DependencyInfo> {
 
     return dependencies
 }
+
+private val Project.sourceSets: SourceSetContainer
+    get() {
+        lateinit var result: SourceSetContainer
+        project.configure<JavaPluginConvention> { result = sourceSets }
+        return result
+    }
