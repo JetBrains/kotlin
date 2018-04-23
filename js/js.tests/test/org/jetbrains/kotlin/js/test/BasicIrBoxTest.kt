@@ -48,7 +48,8 @@ abstract class BasicIrBoxTest(
             units.map { (it as TranslationUnit.SourceFile).file }
                 // TODO: temporary ignore _commonFiles/asserts.kt since it depends on stdlib but we don't have any library support in JS IR BE yet
                 // and probably it will be better to avoid using stdlib in testData as much as possible.
-                .filter { !it.virtualFilePath.endsWith("js/js.translator/testData/_commonFiles/asserts.kt") },
+                .filter { !it.virtualFilePath.endsWith("js/js.translator/testData/_commonFiles/arrayAsserts.kt") }
+                .filter { !it.virtualFilePath.endsWith("js/js.translator/testData/_commonFiles/fail.kt") },
             config.configuration,
             FqName((testPackage?.let { it + "." } ?: "") + testFunction))
 
