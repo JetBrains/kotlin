@@ -154,6 +154,13 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     protected static void updateConfigurationByDirectivesInTestFiles(
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
+            @NotNull CompilerConfiguration configuration
+    ) {
+        updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, "");
+    }
+
+    protected static void updateConfigurationByDirectivesInTestFiles(
+            @NotNull List<TestFile> testFilesWithConfigurationDirectives,
             @NotNull CompilerConfiguration configuration,
             @NotNull String coroutinesPackage
     ) {
