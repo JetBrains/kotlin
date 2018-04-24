@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.*
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
@@ -206,6 +207,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
         )
 
         val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptor)
+        irFunction.createParameterDeclarations()
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
             //TODO

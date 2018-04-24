@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
@@ -201,10 +203,15 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
                 isConstructor, accessor, context,
                 accessor.calleeDescriptor as? FunctionDescriptor ?: return,
                 accessorOwner)
-            val syntheticFunction = IrFunctionImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                    accessorForIr, body
+            val syntheticFunction = if (isConstructor) IrConstructorImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                accessorForIr as ClassConstructorDescriptor, body
+            ) else IrFunctionImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                accessorForIr, body
             )
+            syntheticFunction.createParameterDeclarations()
+
             val calleeDescriptor = accessor.calleeDescriptor as FunctionDescriptor
             val delegationCall =
                     if (!isConstructor)
