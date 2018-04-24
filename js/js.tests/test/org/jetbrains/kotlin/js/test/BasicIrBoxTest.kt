@@ -51,8 +51,7 @@ abstract class BasicIrBoxTest(
             // TODO: temporary ignore some files from _commonFiles directory since they can't be compiled correctly by JS IR BE yet.
             // Also, some declarations depends on stdlib but we don't have any library support in JS IR BE yet
             // and probably it will be better to avoid using stdlib in testData as much as possible.
-            "js/js.translator/testData/_commonFiles/arrayAsserts.kt",
-            "js/js.translator/testData/_commonFiles/fail.kt"
+            "js/js.translator/testData/_commonFiles/arrayAsserts.kt"
         )
 
         val filesToCompile = units
