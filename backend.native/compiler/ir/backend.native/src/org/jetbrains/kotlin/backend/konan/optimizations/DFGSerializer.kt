@@ -204,13 +204,26 @@ internal object DFGSerializer {
         }
     }
 
-    class ExternalType(val hash: Long, val name: String?) {
+    class TypeBase(val isFinal: Boolean, val isAbstract: Boolean, val correspondingValueType: ValueType?, val name: String?) {
 
-        constructor(data: ArraySlice) : this(data.readLong(), data.readNullableString())
+        constructor(data: ArraySlice) : this(data.readBoolean(), data.readBoolean(),
+                data.readNullableInt()?.let { ValueType.values()[it] }, data.readNullableString())
+
+        fun write(result: ArraySlice) {
+            result.writeBoolean(isFinal)
+            result.writeBoolean(isAbstract)
+            result.writeNullableInt(correspondingValueType?.ordinal)
+            result.writeNullableString(name)
+        }
+    }
+
+    class ExternalType(val hash: Long, val base: TypeBase) {
+
+        constructor(data: ArraySlice) : this(data.readLong(), TypeBase(data))
 
         fun write(result: ArraySlice) {
             result.writeLong(hash)
-            result.writeNullableString(name)
+            base.write(result)
         }
     }
 
@@ -224,16 +237,14 @@ internal object DFGSerializer {
         }
     }
 
-    class DeclaredType(val isFinal: Boolean, val isAbstract: Boolean, val correspondingValueType: ValueType?,
-                       val index: Int, val superTypes: IntArray, val vtable: IntArray, val itable: Array<ItableSlot>) {
+    class DeclaredType(val base: TypeBase, val index: Int, val superTypes: IntArray,
+                       val vtable: IntArray, val itable: Array<ItableSlot>) {
 
-        constructor(data: ArraySlice) : this(data.readBoolean(), data.readBoolean(), data.readNullableInt()?.let { ValueType.values()[it] },
-                data.readInt(), data.readIntArray(), data.readIntArray(), data.readArray { ItableSlot(this) })
+        constructor(data: ArraySlice) : this(TypeBase(data), data.readInt(), data.readIntArray(),
+                data.readIntArray(), data.readArray { ItableSlot(this) })
 
         fun write(result: ArraySlice) {
-            result.writeBoolean(isFinal)
-            result.writeBoolean(isAbstract)
-            result.writeNullableInt(correspondingValueType?.ordinal)
+            base.write(result)
             result.writeInt(index)
             result.writeIntArray(superTypes)
             result.writeIntArray(vtable)
@@ -241,25 +252,23 @@ internal object DFGSerializer {
         }
     }
 
-    class PublicType(val hash: Long, val intestines: DeclaredType, val name: String?) {
+    class PublicType(val hash: Long, val intestines: DeclaredType) {
 
-        constructor(data: ArraySlice) : this(data.readLong(), DeclaredType(data), data.readNullableString())
+        constructor(data: ArraySlice) : this(data.readLong(), DeclaredType(data))
 
         fun write(result: ArraySlice) {
             result.writeLong(hash)
             intestines.write(result)
-            result.writeNullableString(name)
         }
     }
 
-    class PrivateType(val index: Int, val intestines: DeclaredType, val name: String?) {
+    class PrivateType(val index: Int, val intestines: DeclaredType) {
 
-        constructor(data: ArraySlice) : this(data.readInt(), DeclaredType(data), data.readNullableString())
+        constructor(data: ArraySlice) : this(data.readInt(), DeclaredType(data))
 
         fun write(result: ArraySlice) {
             result.writeInt(index)
             intestines.write(result)
-            result.writeNullableString(name)
         }
     }
 
@@ -280,11 +289,11 @@ internal object DFGSerializer {
         }
 
         companion object {
-            fun external(hash: Long, name: String?) = Type(ExternalType(hash, name), null, null, false)
+            fun external(hash: Long, base: TypeBase) = Type(ExternalType(hash, base), null, null, false)
 
-            fun public(hash: Long, intestines: DeclaredType, name: String?) = Type(null, PublicType(hash, intestines, name), null, false)
+            fun public(hash: Long, intestines: DeclaredType) = Type(null, PublicType(hash, intestines), null, false)
 
-            fun private(index: Int, intestines: DeclaredType, name: String?) = Type(null, null, PrivateType(index, intestines, name), false)
+            fun private(index: Int, intestines: DeclaredType) = Type(null, null, PrivateType(index, intestines), false)
 
             fun virtual() = Type(null, null, null, true)
 
@@ -764,11 +773,12 @@ internal object DFGSerializer {
                 .sortedBy { it.value }
                 .map {
 
+                    fun buildTypeBase(type: DataFlowIR.Type) =
+                            TypeBase(type.isFinal, type.isAbstract, type.correspondingValueType, type.name)
+
                     fun buildTypeIntestines(type: DataFlowIR.Type.Declared) =
                             DeclaredType(
-                                    type.isFinal,
-                                    type.isAbstract,
-                                    type.correspondingValueType,
+                                    buildTypeBase(type),
                                     type.symbolTableIndex,
                                     type.superTypes.map { typeMap[it]!! }.toIntArray(),
                                     type.vtable.map { functionSymbolMap[it]!! }.toIntArray(),
@@ -779,11 +789,11 @@ internal object DFGSerializer {
                     when (type) {
                         DataFlowIR.Type.Virtual -> Type.virtual()
 
-                        is DataFlowIR.Type.External -> Type.external(type.hash, type.name)
+                        is DataFlowIR.Type.External -> Type.external(type.hash, buildTypeBase(type))
 
-                        is DataFlowIR.Type.Public -> Type.public(type.hash, buildTypeIntestines(type), type.name)
+                        is DataFlowIR.Type.Public -> Type.public(type.hash, buildTypeIntestines(type))
 
-                        is DataFlowIR.Type.Private -> Type.private(type.index, buildTypeIntestines(type), type.name)
+                        is DataFlowIR.Type.Private -> Type.private(type.index, buildTypeIntestines(type))
 
                         else -> error("Unknown type $type")
                     }
@@ -930,14 +940,17 @@ internal object DFGSerializer {
                         val public = it.public
                         val private = it.private
                         when {
-                            external != null -> DataFlowIR.Type.External(external.hash, external.name)
+                            external != null ->
+                                DataFlowIR.Type.External(external.hash, external.base.isFinal, external.base.isAbstract,
+                                        external.base.correspondingValueType, external.base.name)
 
                             public != null -> {
                                 val symbolTableIndex = public.intestines.index
                                 if (symbolTableIndex >= 0)
                                     ++module.numberOfClasses
-                                DataFlowIR.Type.Public(public.hash, public.intestines.isFinal, public.intestines.isAbstract,
-                                         public.intestines.correspondingValueType, module, symbolTableIndex, public.name).also {
+                                DataFlowIR.Type.Public(public.hash, public.intestines.base.isFinal,
+                                        public.intestines.base.isAbstract, public.intestines.base.correspondingValueType,
+                                        module, symbolTableIndex, public.intestines.base.name).also {
                                     publicTypesMap.put(it.hash, it)
                                     allTypes += it
                                 }
@@ -947,9 +960,9 @@ internal object DFGSerializer {
                                 val symbolTableIndex = private!!.intestines.index
                                 if (symbolTableIndex >= 0)
                                     ++module.numberOfClasses
-                                DataFlowIR.Type.Private(privateTypeIndex++, private.intestines.isFinal,
-                                        private.intestines.isAbstract, private.intestines.correspondingValueType,
-                                        module, symbolTableIndex, private.name).also {
+                                DataFlowIR.Type.Private(privateTypeIndex++, private.intestines.base.isFinal,
+                                        private.intestines.base.isAbstract, private.intestines.base.correspondingValueType,
+                                        module, symbolTableIndex, private.intestines.base.name).also {
                                     allTypes += it
                                 }
                             }
