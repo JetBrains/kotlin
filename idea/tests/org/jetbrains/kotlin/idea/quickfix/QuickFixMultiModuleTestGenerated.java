@@ -184,6 +184,46 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/implementMembersInImplClassNonImplInheritor/");
     }
 
+    @TestMetadata("importClassInCommon")
+    public void testImportClassInCommon() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/importClassInCommon/");
+    }
+
+    @TestMetadata("importClassInFromProductionInCommonTests")
+    public void testImportClassInFromProductionInCommonTests() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/importClassInFromProductionInCommonTests/");
+    }
+
+    @TestMetadata("importCommonClassInJs")
+    public void testImportCommonClassInJs() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/importCommonClassInJs/");
+    }
+
+    @TestMetadata("importCommonClassInJvm")
+    public void testImportCommonClassInJvm() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/importCommonClassInJvm/");
+    }
+
+    @TestMetadata("importCommonFunInJvm")
+    public void testImportCommonFunInJvm() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/importCommonFunInJvm/");
+    }
+
+    @TestMetadata("importExpectClassWithActualInJvm")
+    public void testImportExpectClassWithActualInJvm() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/importExpectClassWithActualInJvm/");
+    }
+
+    @TestMetadata("importExpectClassWithoutActualInJvm")
+    public void testImportExpectClassWithoutActualInJvm() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/importExpectClassWithoutActualInJvm/");
+    }
+
+    @TestMetadata("importFunInCommon")
+    public void testImportFunInCommon() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/importFunInCommon/");
+    }
+
     @TestMetadata("interface")
     public void testInterface() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/interface/");
