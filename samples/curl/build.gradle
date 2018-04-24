@@ -6,7 +6,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:+"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:${project.property('konan.plugin.version')}"
     }
 }
 konan.targets = ['macbook', 'linux']

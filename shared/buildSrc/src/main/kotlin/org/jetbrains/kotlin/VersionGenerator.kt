@@ -17,7 +17,9 @@ open class VersionGenerator: DefaultTask() {
         @Input get() = project.properties["konanVersion"].toString()
 
     val buildNumber: String?
-        @Optional @Input get() = System.getenv("BUILD_NUMBER")
+        // TeamCity passes all configuration parameters into a build script as project properties.
+        // Thus we can use them here instead of environment variables.
+        @Optional @Input get() = project.findProperty("build.number")?.toString()
 
     val meta: String
         @Input get() = project.properties["konanMetaVersion"]?.let {
