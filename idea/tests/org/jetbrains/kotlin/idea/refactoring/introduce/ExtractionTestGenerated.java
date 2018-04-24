@@ -861,6 +861,16 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 runTest("idea/testData/refactoring/extractFunction/basic/identityEquals.kt");
             }
 
+            @TestMetadata("inlineReified.kt")
+            public void testInlineReified() throws Exception {
+                runTest("idea/testData/refactoring/extractFunction/basic/inlineReified.kt");
+            }
+
+            @TestMetadata("inlineReified2.kt")
+            public void testInlineReified2() throws Exception {
+                runTest("idea/testData/refactoring/extractFunction/basic/inlineReified2.kt");
+            }
+
             @TestMetadata("invisibleType.kt")
             public void testInvisibleType() throws Exception {
                 runTest("idea/testData/refactoring/extractFunction/basic/invisibleType.kt");
