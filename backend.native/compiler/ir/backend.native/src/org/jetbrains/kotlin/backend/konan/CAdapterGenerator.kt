@@ -879,7 +879,8 @@ internal class CAdapterGenerator(
     )
 
     private val primitiveTypeMapping = mapOf(
-            ValueType.BOOLEAN to "${prefix}_KByte",
+            ValueType.BOOLEAN to "${prefix}_KBoolean",
+            ValueType.BYTE to "${prefix}_KByte",
             ValueType.SHORT to "${prefix}_KShort",
             ValueType.INT to "${prefix}_KInt",
             ValueType.LONG to "${prefix}_KLong",
