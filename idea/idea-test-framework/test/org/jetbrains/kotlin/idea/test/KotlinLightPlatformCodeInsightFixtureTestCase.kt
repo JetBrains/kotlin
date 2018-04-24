@@ -20,7 +20,6 @@ import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import kotlin.reflect.full.findAnnotation

@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.diagnostic.LogMessageEx
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.ExceptionUtil
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.replaced
@@ -49,7 +49,7 @@ fun getFunctionForExtractedFragment(
 ): ExtractionResult? {
 
     fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult, tmpFile: KtFile): String {
-        if (KotlinInternalMode.enabled) {
+        if (ApplicationManager.getApplication().isInternal) {
             val attachments = arrayOf(attachmentByPsiFile(tmpFile),
                                       attachmentByPsiFile(breakpointFile),
                                       attachmentByPsiFile(codeFragment),

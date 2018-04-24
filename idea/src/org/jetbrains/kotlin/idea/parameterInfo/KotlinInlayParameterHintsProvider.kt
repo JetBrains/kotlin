@@ -11,10 +11,10 @@ import com.intellij.codeInsight.hints.InlayParameterHintsProvider
 import com.intellij.codeInsight.hints.Option
 import com.intellij.lang.Language
 import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.name.Name
@@ -106,7 +106,7 @@ enum class HintType(desc: String, enabled: Boolean) {
         }
     },
     SUSPENDING_CALL("Show hints for suspending calls", false) {
-        override fun isApplicable(elem: PsiElement) = elem.isNameReferenceInCall() && KotlinInternalMode.enabled
+        override fun isApplicable(elem: PsiElement) = elem.isNameReferenceInCall() && ApplicationManager.getApplication().isInternal
 
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             val callExpression = elem.parent as? KtCallExpression ?: return emptyList()
