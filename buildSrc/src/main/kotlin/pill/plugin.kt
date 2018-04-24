@@ -222,8 +222,9 @@ class JpsCompatiblePlugin : Plugin<Project> {
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
 
-                fun addOrReplaceOptionValue(name: String, value: Any) {
-                    options = options.filter { !it.startsWith("-D$name=") } + listOf("-D$name=$value")
+                fun addOrReplaceOptionValue(name: String, value: Any?) {
+                    val optionsWithoutNewValue = options.filter { !it.startsWith("-D$name=") }
+                    options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("-D$name=$value"))
                 }
 
                 val robolectricClasspath = project.rootProject
@@ -235,6 +236,9 @@ class JpsCompatiblePlugin : Plugin<Project> {
                 addOrReplaceOptionValue("ideaSdk.androidPlugin.path", platformDirProjectRelative + "/plugins/android/lib")
                 addOrReplaceOptionValue("robolectric.classpath", robolectricClasspath)
                 addOrReplaceOptionValue("use.pill", "true")
+
+                val isAndroidStudioBunch = project.findProperty("versions.androidStudioRelease") != null
+                addOrReplaceOptionValue("idea.platform.prefix", if (isAndroidStudioBunch) "AndroidStudio" else null)
 
                 val androidJarPath = project.configurations.findByName("androidJar")?.singleFile
                 val androidSdkPath = project.configurations.findByName("androidSdk")?.singleFile
