@@ -85,6 +85,16 @@ open class PublishedKotlinModule : Plugin<Project> {
                     dependencies.removeIf {
                         InvokerHelper.getMetaClass(it).getProperty(it, "scope") == "test"
                     }
+
+                    dependencies
+                        .find {
+                            InvokerHelper.getMetaClass(it).getProperty(it, "groupId") == "org.jetbrains.kotlin"
+                                    && InvokerHelper.getMetaClass(it).getProperty(it, "artifactId") == "kotlin-stdlib"
+                        }
+                        ?.also {
+                            InvokerHelper.getMetaClass(it).setProperty(it, "exclusions", emptyList<Any>())
+                            logger.warn("WARNING! Removed exclusions from kotlin-stdlib dependency of ${this.artifactId} artifact's maven metadata, check kotlin-stdlib dependency of ${project.path} project")
+                        }
                 }
             }
 
