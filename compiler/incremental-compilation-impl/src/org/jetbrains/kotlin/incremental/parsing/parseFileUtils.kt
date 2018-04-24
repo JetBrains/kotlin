@@ -12,9 +12,12 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -37,6 +40,8 @@ fun classesFqNames(files: Set<File>): Set<String> {
 
 private fun classesFqNames(kotlinFiles: Collection<File>, disposable: Disposable): Set<String> {
     val config = CompilerConfiguration()
+    config.put(JVMConfigurationKeys.NO_JDK, true)
+    config.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
     val configFiles = EnvironmentConfigFiles.JVM_CONFIG_FILES
     val environment = KotlinCoreEnvironment.createForProduction(disposable, config, configFiles)
     val psiManager = PsiManager.getInstance(environment.project)
