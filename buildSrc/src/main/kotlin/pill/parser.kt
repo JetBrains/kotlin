@@ -43,10 +43,16 @@ data class PContentRoot(
 
 data class PSourceRoot(
     val path: File,
-    val kind: Kind
+    val kind: Kind,
+    val kotlinOptions: PSourceRootKotlinOptions?
 ) {
     enum class Kind { PRODUCTION, TEST, RESOURCES, TEST_RESOURCES }
 }
+
+data class PSourceRootKotlinOptions(
+    val compileArguments: List<String>,
+    val defaultCompileArguments: List<String>
+)
 
 data class POrderRoot(
     val dependency: PDependency,
@@ -202,11 +208,15 @@ private fun parseSourceRoots(project: Project): List<PSourceRoot> {
         return emptyList()
     }
 
+    val kotlinTasksBySourceSet = project.tasks
+            .filter { it.name.startsWith("compile") && it.name.endsWith("Kotlin") }
+            .associateBy { it.invokeInternal("getSourceSetName") }
+
     val sourceRoots = mutableListOf<PSourceRoot>()
 
     for (sourceSet in project.sourceSets) {
-        val sourceSetName = sourceSet.name
-        val kind = if (sourceSetName == SourceSet.TEST_SOURCE_SET_NAME) Kind.TEST else Kind.PRODUCTION
+        val kotlinCompileTask = kotlinTasksBySourceSet[sourceSet.name]
+        val kind = if (sourceSet.name == SourceSet.TEST_SOURCE_SET_NAME) Kind.TEST else Kind.PRODUCTION
 
         fun Any.getKotlin(): SourceDirectorySet {
             val kotlinMethod = javaClass.getMethod("getKotlin")
@@ -228,6 +238,8 @@ private fun parseSourceRoots(project: Project): List<PSourceRoot> {
             .takeIf { it.isNotEmpty() }
                 ?: continue
 
+        val kotlinOptions = kotlinCompileTask?.let { getKotlinOptions(it) }
+
         for (resourceRoot in sourceSet.resources.sourceDirectories.files) {
             if (!resourceRoot.exists() || resourceRoot in directories) {
                 continue
@@ -239,15 +251,34 @@ private fun parseSourceRoots(project: Project): List<PSourceRoot> {
                 else -> error("Invalid source root kind $kind")
             }
 
-            sourceRoots += PSourceRoot(resourceRoot, resourceRootKind)
+            sourceRoots += PSourceRoot(resourceRoot, resourceRootKind, kotlinOptions)
         }
 
         for (directory in directories) {
-            sourceRoots += PSourceRoot(directory, kind)
+            sourceRoots += PSourceRoot(directory, kind, kotlinOptions)
         }
     }
 
     return sourceRoots
+}
+
+private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? {
+    val compileArguments = kotlinCompileTask.invokeInternal("getSerializedCompilerArguments") as List<String>
+    val defaultCompileArguments = kotlinCompileTask.invokeInternal("getDefaultSerializedCompilerArguments") as List<String>
+
+    return PSourceRootKotlinOptions(compileArguments, defaultCompileArguments)
+}
+
+private fun Any.invokeInternal(name: String, instance: Any = this): Any? {
+    val method = javaClass.methods.single { it.name.startsWith(name) && it.parameterTypes.isEmpty() }
+
+    val oldIsAccessible = method.isAccessible
+    try {
+        method.isAccessible = true
+        return method.invoke(instance)
+    } finally {
+        method.isAccessible = oldIsAccessible
+    }
 }
 
 private fun ParserContext.parseDependencies(project: Project, forTests: Boolean): List<POrderRoot> {
