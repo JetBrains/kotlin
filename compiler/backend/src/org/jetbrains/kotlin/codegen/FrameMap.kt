@@ -14,119 +14,109 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Trinity;
-import gnu.trove.TObjectIntHashMap;
-import gnu.trove.TObjectIntIterator;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.org.objectweb.asm.Type;
+import com.google.common.collect.Lists
+import com.intellij.openapi.util.Trinity
+import gnu.trove.TObjectIntHashMap
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.ArrayList
 
-public class FrameMap {
-    private final TObjectIntHashMap<DeclarationDescriptor> myVarIndex = new TObjectIntHashMap<>();
-    private final TObjectIntHashMap<DeclarationDescriptor> myVarSizes = new TObjectIntHashMap<>();
-    private int myMaxIndex = 0;
+class FrameMap : FrameMapBase<DeclarationDescriptor>()
 
-    public int enter(DeclarationDescriptor descriptor, Type type) {
-        int index = myMaxIndex;
-        myVarIndex.put(descriptor, index);
-        myMaxIndex += type.getSize();
-        myVarSizes.put(descriptor, type.getSize());
-        return index;
+open class FrameMapBase<T : Any> {
+    private val myVarIndex = TObjectIntHashMap<T>()
+    private val myVarSizes = TObjectIntHashMap<T>()
+    var currentSize = 0
+        private set
+
+    fun enter(descriptor: T, type: Type): Int {
+        val index = currentSize
+        myVarIndex.put(descriptor, index)
+        currentSize += type.size
+        myVarSizes.put(descriptor, type.size)
+        return index
     }
 
-    public int leave(DeclarationDescriptor descriptor) {
-        int size = myVarSizes.get(descriptor);
-        myMaxIndex -= size;
-        myVarSizes.remove(descriptor);
-        int oldIndex = myVarIndex.remove(descriptor);
-        if (oldIndex != myMaxIndex) {
-            throw new IllegalStateException("Descriptor can be left only if it is last: " + descriptor);
+    fun leave(descriptor: T): Int {
+        val size = myVarSizes.get(descriptor)
+        currentSize -= size
+        myVarSizes.remove(descriptor)
+        val oldIndex = myVarIndex.remove(descriptor)
+        if (oldIndex != currentSize) {
+            throw IllegalStateException("Descriptor can be left only if it is last: $descriptor")
         }
-        return oldIndex;
+        return oldIndex
     }
 
-    public int enterTemp(Type type) {
-        int result = myMaxIndex;
-        myMaxIndex += type.getSize();
-        return result;
+    fun enterTemp(type: Type): Int {
+        val result = currentSize
+        currentSize += type.size
+        return result
     }
 
-    public void leaveTemp(Type type) {
-        myMaxIndex -= type.getSize();
+    fun leaveTemp(type: Type) {
+        currentSize -= type.size
     }
 
-    public int getIndex(DeclarationDescriptor descriptor) {
-        return myVarIndex.contains(descriptor) ? myVarIndex.get(descriptor) : -1;
+    fun getIndex(descriptor: T): Int {
+        return if (myVarIndex.contains(descriptor)) myVarIndex.get(descriptor) else -1
     }
 
-    public Mark mark() {
-        return new Mark(myMaxIndex);
+    fun mark(): Mark {
+        return Mark(currentSize)
     }
 
-    public int getCurrentSize() {
-        return myMaxIndex;
-    }
+    inner class Mark(private val myIndex: Int) {
 
-    public class Mark {
-        private final int myIndex;
-
-        public Mark(int index) {
-            myIndex = index;
-        }
-
-        public void dropTo() {
-            List<DeclarationDescriptor> descriptorsToDrop = new ArrayList<>();
-            TObjectIntIterator<DeclarationDescriptor> iterator = myVarIndex.iterator();
+        fun dropTo() {
+            val descriptorsToDrop = ArrayList<T>()
+            val iterator = myVarIndex.iterator()
             while (iterator.hasNext()) {
-                iterator.advance();
+                iterator.advance()
                 if (iterator.value() >= myIndex) {
-                    descriptorsToDrop.add(iterator.key());
+                    descriptorsToDrop.add(iterator.key())
                 }
             }
-            for (DeclarationDescriptor declarationDescriptor : descriptorsToDrop) {
-                myVarIndex.remove(declarationDescriptor);
-                myVarSizes.remove(declarationDescriptor);
+            for (declarationDescriptor in descriptorsToDrop) {
+                myVarIndex.remove(declarationDescriptor)
+                myVarSizes.remove(declarationDescriptor)
             }
-            myMaxIndex = myIndex;
+            currentSize = myIndex
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
+    override fun toString(): String {
+        val sb = StringBuilder()
 
         if (myVarIndex.size() != myVarSizes.size()) {
-            return "inconsistent";
+            return "inconsistent"
         }
 
-        List<Trinity<DeclarationDescriptor, Integer, Integer>> descriptors = Lists.newArrayList();
+        val descriptors = Lists.newArrayList<Trinity<T, Int, Int>>()
 
-        for (Object descriptor0 : myVarIndex.keys()) {
-            DeclarationDescriptor descriptor = (DeclarationDescriptor) descriptor0;
-            int varIndex = myVarIndex.get(descriptor);
-            int varSize = myVarSizes.get(descriptor);
-            descriptors.add(Trinity.create(descriptor, varIndex, varSize));
+        for (descriptor0 in myVarIndex.keys()) {
+            val descriptor = descriptor0 as T
+            val varIndex = myVarIndex.get(descriptor)
+            val varSize = myVarSizes.get(descriptor)
+            descriptors.add(Trinity.create(descriptor, varIndex, varSize))
         }
 
-        descriptors.sort(Comparator.comparingInt(left -> left.second));
+        descriptors.sortBy { left -> left.second }
 
-        sb.append("size=").append(myMaxIndex);
+        sb.append("size=").append(currentSize)
 
-        boolean first = true;
-        for (Trinity<DeclarationDescriptor, Integer, Integer> t : descriptors) {
+        var first = true
+        for (t in descriptors) {
             if (!first) {
-                sb.append(", ");
+                sb.append(", ")
             }
-            first = false;
-            sb.append(t.first).append(",i=").append(t.second).append(",s=").append(t.third);
+            first = false
+            sb.append(t.first).append(",i=").append(t.second).append(",s=").append(t.third)
         }
 
-        return sb.toString();
+        return sb.toString()
     }
 }
