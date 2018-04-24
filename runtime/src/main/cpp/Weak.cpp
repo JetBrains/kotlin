@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "Memory.h"
+#include "Types.h"
 
 namespace {
 
@@ -39,11 +40,19 @@ inline void unlock(int32_t* address) {
 extern "C" {
 
 OBJ_GETTER(makeWeakReferenceCounter, void*);
+OBJ_GETTER(makeObjCWeakReferenceImpl, void*);
 
 // See Weak.kt for implementation details.
 // Retrieve link on the counter object.
-OBJ_GETTER(Konan_getWeakReferenceCounter, ObjHeader* referred) {
+OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
   MetaObjHeader* meta = referred->meta_object();
+
+#if KONAN_OBJC_INTEROP
+  if (IsInstance(referred, theObjCObjectWrapperTypeInfo)) {
+    RETURN_RESULT_OF(makeObjCWeakReferenceImpl, meta->associatedObject_);
+  }
+#endif // KONAN_OBJC_INTEROP
+
   if (meta->counter_ == nullptr) {
      ObjHolder counterHolder;
      // Cast unneeded, just to emphasize we store an object reference as void*.

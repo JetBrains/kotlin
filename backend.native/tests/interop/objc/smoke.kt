@@ -1,5 +1,6 @@
 import kotlinx.cinterop.*
 import objcSmoke.*
+import konan.ref.*
 import kotlin.test.*
 
 fun main(args: Array<String>) {
@@ -11,6 +12,7 @@ fun main(args: Array<String>) {
 fun run() {
     testTypeOps()
     testConversions()
+    testWeakRefs()
 
     println(
             getSupplier(
@@ -143,6 +145,35 @@ fun testMethodsOfAny(kotlinObject: Any, equalNsObject: NSObject, otherObject: An
     assertEquals(kotlinObject, equalNsObject)
     assertEquals(equalNsObject, kotlinObject)
     assertNotEquals(equalNsObject, otherObject)
+}
+
+fun testWeakRefs() {
+    testWeakReference({ NSObject.new()!! })
+
+    createAndAbandonWeakRef(NSObject())
+
+    testWeakReference({ NSArray.arrayWithArray(listOf(42)) as NSArray })
+}
+
+fun testWeakReference(block: () -> NSObject) {
+    val ref = autoreleasepool {
+        createAndTestWeakReference(block)
+    }
+
+    assertNull(ref.get())
+}
+
+fun createAndTestWeakReference(block: () -> NSObject): WeakReference<NSObject> {
+    val ref = createWeakReference(block)
+    assertNotNull(ref.get())
+    assertEquals(ref.get()!!.hash(), ref.get()!!.hash())
+    return ref
+}
+
+fun createWeakReference(block: () -> NSObject) = WeakReference(block())
+
+fun createAndAbandonWeakRef(obj: NSObject) {
+    WeakReference(obj)
 }
 
 fun nsArrayOf(vararg elements: Any): NSArray = NSMutableArray().apply {

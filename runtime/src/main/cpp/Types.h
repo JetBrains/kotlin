@@ -84,6 +84,7 @@ extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;
 extern const TypeInfo* theUnitTypeInfo;
 extern const TypeInfo* theForeignObjCObjectTypeInfo;
+extern const TypeInfo* theObjCObjectWrapperTypeInfo;
 
 KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PURE;
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);

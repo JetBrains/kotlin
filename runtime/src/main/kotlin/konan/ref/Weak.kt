@@ -27,14 +27,14 @@ class WeakReference<T : Any> {
      * removing object, and is nullified once object is collected.
      */
     constructor(referred: T) {
-        pointer = getWeakReferenceCounter(referred)
+        pointer = getWeakReferenceImpl(referred)
     }
 
     /**
      * Backing store for the object pointer, inaccessible directly.
      */
     @PublishedApi
-    internal var pointer: WeakReferenceCounter?
+    internal var pointer: WeakReferenceImpl?
 
     /**
      * Clears reference to an object.
@@ -47,5 +47,4 @@ class WeakReference<T : Any> {
 /**
  * Returns either reference to an object or null, if it was collected.
  */
-@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 public inline fun <reified T : Any> WeakReference<T>.get() = pointer?.get() as T?

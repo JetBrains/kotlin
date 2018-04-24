@@ -24,7 +24,7 @@ interface ObjCClassOf<T : ObjCObject> : ObjCClass // TODO: T should be added to 
 typealias ObjCObjectMeta = ObjCClass
 
 @ExportTypeInfo("theForeignObjCObjectTypeInfo")
-internal open class ForeignObjCObject
+internal open class ForeignObjCObject : konan.internal.ObjCObjectWrapper
 
 abstract class ObjCObjectBase protected constructor() : ObjCObject {
     @Target(AnnotationTarget.CONSTRUCTOR)
@@ -149,6 +149,20 @@ private external fun <T : ObjCObject> getObjCClass(): NativePtr
 
 @konan.internal.Intrinsic external fun getMessenger(superClass: NativePtr): COpaquePointer?
 @konan.internal.Intrinsic external fun getMessengerLU(superClass: NativePtr): COpaquePointer?
+
+internal class ObjCWeakReferenceImpl : konan.ref.WeakReferenceImpl() {
+    @SymbolName("Konan_ObjCInterop_getWeakReference")
+    external override fun get(): Any?
+}
+
+@SymbolName("Konan_ObjCInterop_initWeakReference")
+private external fun ObjCWeakReferenceImpl.init(objcPtr: NativePtr)
+
+@konan.internal.ExportForCppRuntime internal fun makeObjCWeakReferenceImpl(objcPtr: NativePtr): ObjCWeakReferenceImpl {
+    val result = ObjCWeakReferenceImpl()
+    result.init(objcPtr)
+    return result
+}
 
 // Konan runtme:
 

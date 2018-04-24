@@ -18,7 +18,14 @@ package konan.internal
 
 import konan.internal.ExportForCppRuntime
 
-internal class NSArrayAsKList : AbstractList<Any?>() {
+/**
+ * This interface denotes the object to be a wrapper for the Objective-C object,
+ * so the latter should be used to observe object lifetime.
+ */
+@ExportTypeInfo("theObjCObjectWrapperTypeInfo")
+internal interface ObjCObjectWrapper
+
+internal class NSArrayAsKList : AbstractList<Any?>(), ObjCObjectWrapper {
 
     override val size: Int get() = getSize()
 
@@ -29,7 +36,7 @@ internal class NSArrayAsKList : AbstractList<Any?>() {
     external override fun get(index: Int): Any?
 }
 
-internal class NSMutableArrayAsKMutableList : AbstractMutableList<Any?>() {
+internal class NSMutableArrayAsKMutableList : AbstractMutableList<Any?>(), ObjCObjectWrapper {
 
     override val size: Int get() = getSize()
 
@@ -49,7 +56,7 @@ internal class NSMutableArrayAsKMutableList : AbstractMutableList<Any?>() {
     external override fun set(index: Int, element: Any?): Any?
 }
 
-internal class NSSetAsKSet : AbstractSet<Any?>(), konan.internal.KonanSet<Any?> {
+internal class NSSetAsKSet : AbstractSet<Any?>(), konan.internal.KonanSet<Any?>, ObjCObjectWrapper {
 
     override val size: Int get() = getSize()
 
@@ -66,7 +73,7 @@ internal class NSSetAsKSet : AbstractSet<Any?>(), konan.internal.KonanSet<Any?> 
     external override fun iterator(): Iterator<Any?>
 }
 
-internal class NSDictionaryAsKMap : Map<Any?, Any?> {
+internal class NSDictionaryAsKMap : Map<Any?, Any?>, ObjCObjectWrapper {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

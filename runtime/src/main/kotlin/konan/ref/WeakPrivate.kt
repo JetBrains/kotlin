@@ -18,7 +18,6 @@ package konan.ref
 
 import kotlinx.cinterop.COpaquePointer
 import konan.internal.ExportForCppRuntime
-import konan.internal.ExportForCompiler
 
 /**
  *   Theory of operations:
@@ -43,18 +42,22 @@ import konan.internal.ExportForCompiler
  */
 
 // Clear holding the counter object, which refers to the actual object.
-@ExportForCompiler
-internal class WeakReferenceCounter(var referred: COpaquePointer?) {
+internal class WeakReferenceCounter(var referred: COpaquePointer?) : WeakReferenceImpl() {
     // Spinlock, potentially taken when materializing or removing 'referred' object.
     var lock: Int = 0
 
     @SymbolName("Konan_WeakReferenceCounter_get")
-    internal external fun get(): Any?
+    external override fun get(): Any?
+}
+
+@PublishedApi
+internal abstract class WeakReferenceImpl {
+    abstract fun get(): Any?
 }
 
 // Get a counter from non-null object.
-@SymbolName("Konan_getWeakReferenceCounter")
-external internal fun getWeakReferenceCounter(referent: Any): WeakReferenceCounter
+@SymbolName("Konan_getWeakReferenceImpl")
+external internal fun getWeakReferenceImpl(referent: Any): WeakReferenceImpl
 
 // Create a counter object.
 @ExportForCppRuntime
