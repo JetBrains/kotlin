@@ -24,6 +24,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
+import org.gradle.api.internal.tasks.DefaultTaskDependency
 import org.gradle.api.tasks.*
 import org.gradle.language.cpp.CppBinary
 import org.gradle.language.cpp.internal.NativeVariant
@@ -104,11 +105,11 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
                 override fun getClassifier():String? = target.name
                 override fun getFile() = artifact
                 override fun getDate() = Date(artifact.lastModified())
-                override fun getBuildDependencies(): TaskDependency = this@KonanArtifactTask.taskDependencies
+                override fun getBuildDependencies(): TaskDependency =
+                        DefaultTaskDependency().apply { add(this@KonanArtifactTask) }
             })
             val objectFactory = project.objects
             val linkUsage = objectFactory.named(Usage::class.java, Usage.NATIVE_LINK)
-            val runtimeUsage = objectFactory.named(Usage::class.java, Usage.NATIVE_RUNTIME)
             val konanSoftwareComponent = config.mainVariant
             konanSoftwareComponent.addVariant(NativeVariant(Names.of("${artifact.name.removeSuffix("$artifactSuffix")}_${target.name}"), linkUsage, null, linkUsage, platformConfiguration))
         }

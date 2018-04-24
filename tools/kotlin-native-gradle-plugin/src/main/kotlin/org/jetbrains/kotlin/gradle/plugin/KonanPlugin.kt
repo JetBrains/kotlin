@@ -358,7 +358,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     val artifactId = buildingConfig.name
                     val konanSoftwareComponent = buildingConfig.mainVariant
                     project.extensions.configure(PublishingExtension::class.java) {
-                        val publishing = it
                         it.publications.create(artifactId, MavenPublication::class.java) {
                             it.artifactId = artifactId
                             it.groupId = project.group.toString()
