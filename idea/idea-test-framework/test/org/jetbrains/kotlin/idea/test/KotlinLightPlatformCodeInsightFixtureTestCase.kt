@@ -26,20 +26,14 @@ import org.jetbrains.kotlin.test.TestMetadata
 import kotlin.reflect.full.findAnnotation
 
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeInsightFixtureTestCase() {
-    private var kotlinInternalModeOriginalValue: Boolean = false
-
     override fun setUp() {
         super.setUp()
         (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
         invalidateLibraryCache(project)
-
-        kotlinInternalModeOriginalValue = KotlinInternalMode.enabled
-        KotlinInternalMode.enabled = true
     }
 
     override fun tearDown() {
-        KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         doKotlinTearDown(project) {

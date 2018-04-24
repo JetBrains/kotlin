@@ -72,7 +72,6 @@ class DebugInfoAnnotator : Annotator {
     }
 
     companion object {
-
         val isDebugInfoEnabled: Boolean
             get() = KotlinInternalMode.enabled
     }

@@ -16,19 +16,15 @@
 
 package org.jetbrains.kotlin.idea.actions.internal
 
-import com.intellij.ide.util.PropertiesComponent
+import com.intellij.openapi.application.ApplicationManager
 
 class KotlinInternalMode {
     companion object Instance {
-        private val INTERNAL_MODE_PROPERTY = "kotlin.internal.mode.enabled"
-
-        var enabled: Boolean
-            get() = PropertiesComponent.getInstance()!!.getBoolean(
-                    INTERNAL_MODE_PROPERTY,
-                    System.getProperty(INTERNAL_MODE_PROPERTY) == "true"
-            )
-            set(value) {
-                PropertiesComponent.getInstance()!!.setValue(INTERNAL_MODE_PROPERTY, value.toString())
-            }
+        @Deprecated(
+            "Same as Application.isInternal()",
+            ReplaceWith("com.intellij.openapi.application.ApplicationManager.getApplication().isInternal")
+        )
+        val enabled: Boolean
+            get() = ApplicationManager.getApplication().isInternal
     }
 }

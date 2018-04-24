@@ -82,9 +82,9 @@
 
     <group id = "ConvertJavaToKotlinGroup">
       <separator/>
-    <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction"
-            text="Convert Java File to Kotlin File">
-      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift K"/>
+      <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction"
+              text="Convert Java File to Kotlin File">
+        <keyboard-shortcut keymap="$default" first-keystroke="control alt shift K"/>
       </action>
       <add-to-group group-id="CodeMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
@@ -123,50 +123,43 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
-    <action id="KotlinInternalMode" class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalModeToggleAction">
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
-    </action>
+    <group id="InternalKotlin" text="IDEA Internal Actions" internal="true">
+      <separator/>
+      <group id="KotlinInternalGroup" text="Kotlin" popup="true">
+        <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion">
+          <action id="TopLevelCompletionBenchmarkAction"
+                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.TopLevelCompletionBenchmarkAction"
+                  text="Top-level scenario"/>
 
+          <action id="LocalCompletionBenchmarkAction"
+                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.LocalCompletionBenchmarkAction"
+                  text="Local scenario"/>
+        </group>
 
+        <action id="HighlightingBenchmarkAction"
+                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"
+                text="Benchmark highlighting"/>
 
-    <group id="KotlinInternalGroup" popup="true" text="Internal" icon="/general/balloonWarning.png"
-           class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalActionGroup">
+        <action id="CacheResetOnProcessCanceledToggleAction"
+                class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"
+                text="Reset caches on ProcessCanceledException"/>
 
-      <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion"
-             class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalActionGroup" >
+        <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
+                text="Check Component Functions Usage Search"/>
 
-        <action id="TopLevelCompletionBenchmarkAction"
-                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.TopLevelCompletionBenchmarkAction"
-                text="Top-level scenario"/>
+        <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
+                text="Find Implicit Nothing Calls"/>
 
-        <action id="LocalCompletionBenchmarkAction"
-                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.LocalCompletionBenchmarkAction"
-                text="Local scenario"/>
+        <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
+                text="Search Not Property Candidates"/>
+
+        <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
+                text="Throw cached PCE"/>
       </group>
+      <separator/>
 
-      <action id="HighlightingBenchmarkAction"
-              class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"
-              text="Benchmark highlighting"/>
-
-      <action id="CacheResetOnProcessCanceledToggleAction"
-              class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"
-              text="Reset caches on ProcessCanceledException"/>
-
-      <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
-              text="Check Component Functions Usage Search"/>
-
-      <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
-              text="Find Implicit Nothing Calls"/>
-
-      <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
-              text="Search Not Property Candidates"/>
-
-      <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
-              text="Throw cached PCE"/>
-
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+      <add-to-group group-id="Internal" anchor="last"/>
     </group>
-
 
     <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction"
             text="Function to _Scope...">

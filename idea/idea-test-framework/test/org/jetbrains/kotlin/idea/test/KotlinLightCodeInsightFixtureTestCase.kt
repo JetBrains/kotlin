@@ -47,8 +47,6 @@ import java.util.*
 import kotlin.reflect.full.findAnnotation
 
 abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFixtureTestCaseBase() {
-    private var kotlinInternalModeOriginalValue = false
-
     private val exceptions = ArrayList<Throwable>()
 
     protected val module: Module get() = myFixture.module
@@ -59,9 +57,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         super.setUp()
         (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
-
-        kotlinInternalModeOriginalValue = KotlinInternalMode.enabled
-        KotlinInternalMode.enabled = true
 
         project.getComponent(EditorTracker::class.java)?.projectOpened()
 
@@ -81,7 +76,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     override fun tearDown() {
         LoggedErrorProcessor.restoreDefaultProcessor()
 
-        KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         doKotlinTearDown(project) {
