@@ -715,6 +715,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             }
             localEndSignal.countDown()
         }
+
     }
 
     fun testParallelCompilationOnDaemon() {
