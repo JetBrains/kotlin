@@ -50,9 +50,28 @@ data class PSourceRoot(
 }
 
 data class PSourceRootKotlinOptions(
-    val compileArguments: List<String>,
-    val defaultCompileArguments: List<String>
-)
+    val noStdlib: Boolean?,
+    val noReflect: Boolean?,
+    val moduleName: String?,
+    val apiVersion: String?,
+    val languageVersion: String?,
+    val jvmTarget: String?,
+    val addCompilerBuiltIns: Boolean?,
+    val loadBuiltInsFromDependencies: Boolean?,
+    val extraArguments: List<String>
+) {
+    fun intersect(other: PSourceRootKotlinOptions) = PSourceRootKotlinOptions(
+        if (noStdlib == other.noStdlib) noStdlib else null,
+        if (noReflect == other.noReflect) noReflect else null,
+        if (moduleName == other.moduleName) moduleName else null,
+        if (apiVersion == other.apiVersion) apiVersion else null,
+        if (languageVersion == other.languageVersion) languageVersion else null,
+        if (jvmTarget == other.jvmTarget) jvmTarget else null,
+        if (addCompilerBuiltIns == other.addCompilerBuiltIns) addCompilerBuiltIns else null,
+        if (loadBuiltInsFromDependencies == other.loadBuiltInsFromDependencies) loadBuiltInsFromDependencies else null,
+        extraArguments.intersect(other.extraArguments).toList()
+    )
+}
 
 data class POrderRoot(
     val dependency: PDependency,
@@ -264,9 +283,27 @@ private fun parseSourceRoots(project: Project): List<PSourceRoot> {
 
 private fun getKotlinOptions(kotlinCompileTask: Any): PSourceRootKotlinOptions? {
     val compileArguments = kotlinCompileTask.invokeInternal("getSerializedCompilerArguments") as List<String>
-    val defaultCompileArguments = kotlinCompileTask.invokeInternal("getDefaultSerializedCompilerArguments") as List<String>
+    fun parseBoolean(name: String) = compileArguments.contains("-$name")
+    fun parseString(name: String) = compileArguments.dropWhile { it != "-$name" }.drop(1).firstOrNull()
 
-    return PSourceRootKotlinOptions(compileArguments, defaultCompileArguments)
+    val addCompilerBuiltins = "Xadd-compiler-builtins"
+    val loadBuiltinsFromDependencies = "Xload-builtins-from-dependencies"
+
+    val extraArguments = compileArguments.filter {
+        it.startsWith("-X") && it != "-$addCompilerBuiltins" && it != "-$loadBuiltinsFromDependencies"
+    }
+
+    return PSourceRootKotlinOptions(
+            parseBoolean("no-stdlib"),
+            parseBoolean("no-reflect"),
+            parseString("module-name"),
+            parseString("api-version"),
+            parseString("language-version"),
+            parseString("jvm-target"),
+            parseBoolean(addCompilerBuiltins),
+            parseBoolean(loadBuiltinsFromDependencies),
+            extraArguments
+    )
 }
 
 private fun Any.invokeInternal(name: String, instance: Any = this): Any? {
