@@ -401,7 +401,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
 task uploadBundle {
     dependsOn ':bundle'
     doLast {
-        def kind = konanVersion.contains("dev") ? "dev" : "releases"
+        def kind = (KonanVersion.CURRENT.meta == MetaVersion.DEV) ? "dev" : "releases"
         def ftpSettings = [
                 server: project.findProperty("cdnUrl") ?: System.getenv("CDN_URL"),
                 userid: project.findProperty("cdnUser") ?: System.getenv("CDN_USER"),
