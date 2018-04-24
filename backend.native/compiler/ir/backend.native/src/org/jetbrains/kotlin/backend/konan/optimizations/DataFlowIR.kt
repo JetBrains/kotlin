@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal object DataFlowIR {
 
@@ -122,13 +124,23 @@ internal object DataFlowIR {
         var numberOfClasses = 0
     }
 
-    abstract class FunctionSymbol(val isGlobalInitializer: Boolean, val name: String?) {
+    object FunctionAttributes {
+        val IS_GLOBAL_INITIALIZER = 1
+        val RETURNS_UNIT = 2
+        val RETURNS_NOTHING = 4
+    }
+
+    abstract class FunctionSymbol(val attributes: Int, val name: String?) {
         lateinit var parameterTypes: Array<Type>
         lateinit var returnType: Type
 
-        class External(val hash: Long, isGlobalInitializer: Boolean,
+        val isGlobalInitializer = attributes.and(FunctionAttributes.IS_GLOBAL_INITIALIZER) != 0
+        val returnsUnit = attributes.and(FunctionAttributes.RETURNS_UNIT) != 0
+        val returnsNothing = attributes.and(FunctionAttributes.RETURNS_NOTHING) != 0
+
+        class External(val hash: Long, attributes: Int,
                        val escapes: Int?, val pointsTo: IntArray?, name: String? = null)
-            : FunctionSymbol(isGlobalInitializer, name) {
+            : FunctionSymbol(attributes, name) {
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -147,14 +159,14 @@ internal object DataFlowIR {
         }
 
         abstract class Declared(val module: Module, val symbolTableIndex: Int,
-                                isGlobalInitializer: Boolean, var bridgeTarget: FunctionSymbol?, name: String?)
-            : FunctionSymbol(isGlobalInitializer, name) {
+                                attributes: Int, var bridgeTarget: FunctionSymbol?, name: String?)
+            : FunctionSymbol(attributes, name) {
 
         }
 
         class Public(val hash: Long, module: Module, symbolTableIndex: Int,
-                     isGlobalInitializer: Boolean, bridgeTarget: FunctionSymbol?, name: String? = null)
-            : Declared(module, symbolTableIndex, isGlobalInitializer, bridgeTarget, name) {
+                     attributes: Int, bridgeTarget: FunctionSymbol?, name: String? = null)
+            : Declared(module, symbolTableIndex, attributes, bridgeTarget, name) {
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -173,8 +185,8 @@ internal object DataFlowIR {
         }
 
         class Private(val index: Int, module: Module, symbolTableIndex: Int,
-                      isGlobalInitializer: Boolean, bridgeTarget: FunctionSymbol?, name: String? = null)
-            : Declared(module, symbolTableIndex, isGlobalInitializer, bridgeTarget, name) {
+                      attributes: Int, bridgeTarget: FunctionSymbol?, name: String? = null)
+            : Declared(module, symbolTableIndex, attributes, bridgeTarget, name) {
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -538,6 +550,13 @@ internal object DataFlowIR {
             functionMap[it]?.let { return it }
 
             val name = if (it.isExported()) it.symbolName else it.internalName
+            val returnsUnit = it is ConstructorDescriptor || (!it.isSuspend && it.returnType.isUnit())
+            val returnsNothing = !it.isSuspend && it.returnType.isNothing()
+            var attributes = 0
+            if (returnsUnit)
+                attributes = attributes or FunctionAttributes.RETURNS_UNIT
+            if (returnsNothing)
+                attributes = attributes or FunctionAttributes.RETURNS_NOTHING
             val symbol = when {
                 it.module != irModule.descriptor || it.isExternal || (it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB) -> {
                     val escapesAnnotation = it.descriptor.annotations.findAnnotation(FQ_NAME_ESCAPES)
@@ -546,7 +565,7 @@ internal object DataFlowIR {
                     val escapesBitMask = (escapesAnnotation?.allValueArguments?.get(escapesWhoDescriptor.name) as? ConstantValue<Int>)?.value
                     @Suppress("UNCHECKED_CAST")
                     val pointsToBitMask = (pointsToAnnotation?.allValueArguments?.get(pointsToOnWhomDescriptor.name) as? ConstantValue<List<IntValue>>)?.value
-                    FunctionSymbol.External(name.localHash.value, false, escapesBitMask,
+                    FunctionSymbol.External(name.localHash.value, attributes, escapesBitMask,
                             pointsToBitMask?.let { it.map { it.value }.toIntArray() }, takeName { name })
                 }
 
@@ -560,12 +579,12 @@ internal object DataFlowIR {
                     val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
                     val placeToFunctionsTable = !isAbstract && it !is ConstructorDescriptor && classDescriptor != null
                             && classDescriptor.kind != ClassKind.ANNOTATION_CLASS
-                            && (it.isOverridableOrOverrides || bridgeTarget != null || !classDescriptor.isFinal())
+                            && (it.isOverridableOrOverrides || bridgeTarget != null || descriptor.name.asString().contains("<bridge-") || !classDescriptor.isFinal())
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
                     if (it.isExported())
-                        FunctionSymbol.Public(name.localHash.value, module, symbolTableIndex, false, bridgeTargetSymbol, takeName { name })
+                        FunctionSymbol.Public(name.localHash.value, module, symbolTableIndex, attributes, bridgeTargetSymbol, takeName { name })
                     else
-                        FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, false, bridgeTargetSymbol, takeName { name })
+                        FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, attributes, bridgeTargetSymbol, takeName { name })
                 }
             }
             functionMap[it] = symbol
@@ -586,7 +605,8 @@ internal object DataFlowIR {
             functionMap[it]?.let { return it }
 
             assert(it.parent !is IrClass) { "All local properties initializers should've been lowered" }
-            val symbol = FunctionSymbol.Private(privateFunIndex++, module, -1, true, null, takeName { "${it.symbolName}_init" })
+            val attributes = FunctionAttributes.IS_GLOBAL_INITIALIZER or FunctionAttributes.RETURNS_UNIT
+            val symbol = FunctionSymbol.Private(privateFunIndex++, module, -1, attributes, null, takeName { "${it.symbolName}_init" })
 
             functionMap[it] = symbol
 

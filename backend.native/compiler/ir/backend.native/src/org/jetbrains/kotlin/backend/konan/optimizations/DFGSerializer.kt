@@ -309,14 +309,14 @@ internal object DFGSerializer {
         }
     }
 
-    class FunctionSymbolBase(val parameterTypes: IntArray, val returnType: Int, val isGlobalInitializer: Boolean) {
+    class FunctionSymbolBase(val parameterTypes: IntArray, val returnType: Int, val attributes: Int) {
 
-        constructor(data: ArraySlice) : this(data.readIntArray(), data.readInt(), data.readBoolean())
+        constructor(data: ArraySlice) : this(data.readIntArray(), data.readInt(), data.readInt())
 
         fun write(result: ArraySlice) {
             result.writeIntArray(parameterTypes)
             result.writeInt(returnType)
-            result.writeBoolean(isGlobalInitializer)
+            result.writeInt(attributes)
         }
     }
 
@@ -807,7 +807,7 @@ internal object DFGSerializer {
                             FunctionSymbolBase(
                                     symbol.parameterTypes.map { typeMap[it]!! }.toIntArray(),
                                     typeMap[symbol.returnType]!!,
-                                    symbol.isGlobalInitializer
+                                    symbol.attributes
                             )
 
                     val symbol = it.key
@@ -971,21 +971,21 @@ internal object DFGSerializer {
                 }
 
                 val functionSymbols = symbolTable.functionSymbols.map {
-                    val isGlobalInitializer = it.base.isGlobalInitializer
+                    val attributes = it.base.attributes
                     val external = it.external
                     val public = it.public
                     val private = it.private
                     when {
                         external != null ->
                             DataFlowIR.FunctionSymbol.External(external.hash,
-                                    isGlobalInitializer, external.escapes, external.pointsTo, external.name)
+                                    attributes, external.escapes, external.pointsTo, external.name)
 
                         public != null -> {
                             val symbolTableIndex = public.index
                             if (symbolTableIndex >= 0)
                                 ++module.numberOfFunctions
                             DataFlowIR.FunctionSymbol.Public(public.hash,
-                                    module, symbolTableIndex, isGlobalInitializer, null, public.name).also {
+                                    module, symbolTableIndex, attributes, null, public.name).also {
                                 publicFunctionsMap.put(it.hash, it)
                             }
                         }
@@ -995,7 +995,7 @@ internal object DFGSerializer {
                             if (symbolTableIndex >= 0)
                                 ++module.numberOfFunctions
                             DataFlowIR.FunctionSymbol.Private(privateFunIndex++,
-                                    module, symbolTableIndex, isGlobalInitializer, null, private.name)
+                                    module, symbolTableIndex, attributes, null, private.name)
                         }
                     }.apply {
                         parameterTypes = it.base.parameterTypes.map { types[it] }.toTypedArray()
