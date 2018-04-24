@@ -26,12 +26,13 @@ import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.types.KotlinType
 
+internal fun KonanSymbols.getTypeConversion(actualType: KotlinType, expectedType: KotlinType) =
+        getTypeConversion(actualType.correspondingValueType, expectedType.correspondingValueType)
+
 internal fun KonanSymbols.getTypeConversion(
-        actualType: KotlinType,
-        expectedType: KotlinType
+        actualValueType: ValueType?,
+        expectedValueType: ValueType?
 ): IrSimpleFunctionSymbol? {
-    val actualValueType = actualType.correspondingValueType
-    val expectedValueType = expectedType.correspondingValueType
 
     return when {
         actualValueType == expectedValueType -> null
@@ -48,7 +49,7 @@ internal fun KonanSymbols.getTypeConversion(
             this.boxFunctions[actualValueType]!!
         }
 
-        else -> throw IllegalArgumentException("actual type is $actualType, expected $expectedType")
+        else -> throw IllegalArgumentException("actual type is $actualValueType, expected $expectedValueType")
     }
 }
 

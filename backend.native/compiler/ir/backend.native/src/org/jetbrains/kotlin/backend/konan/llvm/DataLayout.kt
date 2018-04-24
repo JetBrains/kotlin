@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
+import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -49,6 +50,9 @@ internal fun RuntimeAware.getLLVMType(type: KotlinType): LLVMTypeRef {
 
     return this.kObjHeaderPtr
 }
+
+internal fun RuntimeAware.getLLVMType(type: DataFlowIR.Type) =
+        type.correspondingValueType?.let { valueTypes[it]!! } ?: this.kObjHeaderPtr
 
 internal fun RuntimeAware.getLLVMReturnType(type: KotlinType): LLVMTypeRef {
     return when {

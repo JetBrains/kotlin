@@ -2009,20 +2009,19 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun evaluatePrivateFunctionCall(callee: IrPrivateFunctionCall, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef {
-        val target = callee.symbol.owner as IrFunction
-
+        val dfgSymbol = callee.dfgSymbol
         val functionIndex = callee.functionIndex
         val function = if (callee.moduleDescriptor == context.irModule!!.descriptor) {
             codegen.llvmFunction(context.privateFunctions[functionIndex])
         } else {
             context.llvm.externalFunction(
                     callee.moduleDescriptor.privateFunctionSymbolName(functionIndex),
-                    codegen.getLlvmFunctionType(target),
+                    codegen.getLlvmFunctionType(dfgSymbol),
                     callee.moduleDescriptor.llvmSymbolOrigin
 
             )
         }
-        return call(target, function, args, resultLifetime)
+        return call(callee.symbol.owner as IrFunction, function, args, resultLifetime)
     }
 
     //-------------------------------------------------------------------------//

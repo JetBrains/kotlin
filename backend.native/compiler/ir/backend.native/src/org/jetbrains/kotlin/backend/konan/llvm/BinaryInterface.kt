@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
+import llvm.LLVMVoidType
+import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
+import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
@@ -250,6 +253,14 @@ internal fun RuntimeAware.getLlvmFunctionType(function: FunctionDescriptor): LLV
     val paramTypes = ArrayList(original.allParameters.map { getLLVMType(it.type) })
     if (original.isSuspend)
         paramTypes.add(kObjHeaderPtr)                       // Suspend functions have implicit parameter of type Continuation<>.
+    if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
+
+    return functionType(returnType, isVarArg = false, paramTypes = *paramTypes.toTypedArray())
+}
+
+internal fun RuntimeAware.getLlvmFunctionType(symbol: DataFlowIR.FunctionSymbol): LLVMTypeRef {
+    val returnType = if (symbol.returnsUnit) voidType else getLLVMType(symbol.returnType)
+    val paramTypes = ArrayList(symbol.parameterTypes.map { getLLVMType(it) })
     if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
 
     return functionType(returnType, isVarArg = false, paramTypes = *paramTypes.toTypedArray())

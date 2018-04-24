@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
+import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.SourceManager
@@ -188,6 +189,7 @@ class IrSuspendableExpressionImpl(startOffset: Int, endOffset: Int, type: Kotlin
 }
 
 internal interface IrPrivateFunctionCall : IrCall {
+    val dfgSymbol: DataFlowIR.FunctionSymbol.Declared
     val moduleDescriptor: ModuleDescriptor
     val totalFunctions: Int
     val functionIndex: Int
@@ -199,6 +201,7 @@ internal class IrPrivateFunctionCallImpl(startOffset: Int,
                                          override val symbol: IrFunctionSymbol,
                                          override val descriptor: FunctionDescriptor,
                                          typeArgumentsCount: Int,
+                                         override val dfgSymbol: DataFlowIR.FunctionSymbol.Declared,
                                          override val moduleDescriptor: ModuleDescriptor,
                                          override val totalFunctions: Int,
                                          override val functionIndex: Int
