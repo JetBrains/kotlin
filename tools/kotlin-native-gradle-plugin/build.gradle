@@ -46,18 +46,9 @@ group = 'org.jetbrains.kotlin'
 // Gradle doesn't allow using the KonanVersion class defined in `shared` from this build.
 // TODO: Investigate if we can workaround this issue in better way.
 def metaVersion = project.findProperty("konanMetaVersion")?.toString()?.toLowerCase() ?: "dev"
-switch (metaVersion) {
-    case "dev":
-        // Use a full build number (e.g. 0.7-dev-123) for dev builds to distinguish them.
-        version = project.findProperty("build.number")?.toString() ?: konanVersion
-        break
-    case "rel":
-        // Use the version specified for the project (e.g. 0.7) in case of release builds.
-        version = konanVersion
-        break
-    default:
-        // Just append the meta-version in other cases, e.g. 0.7-rc1, 0.7-beta
-        version = "$konanVersion-$metaVersion"
+version = "$konanVersion-$metaVersion"
+if (project.hasProperty("build.number")) {
+    version <<= "-${project.findProperty("build.number")?.toString().split('-')[2]}"
 }
 
 repositories {
