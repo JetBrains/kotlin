@@ -57,12 +57,16 @@ class InterfaceDelegationLowering(val state: GenerationState) : IrElementTransfo
             //skip java 8 default methods
             if (!interfaceFun.isDefinitelyNotDefaultImplsMethod()) {
                 val inheritedFun =
-                        if (classDescriptor !== descriptor) {
-                            InterfaceLowering.createDefaultImplFunDescriptor(descriptor as DefaultImplsClassDescriptorImpl, interfaceFun, classDescriptor, state.typeMapper)
-                        }
-                        else {
-                            value
-                        }
+                    if (classDescriptor !== descriptor) {
+                        InterfaceLowering.createDefaultImplFunDescriptor(
+                            descriptor as DefaultImplsClassDescriptorImpl,
+                            interfaceFun,
+                            classDescriptor,
+                            state.typeMapper
+                        )
+                    } else {
+                        value
+                    }
                 generateDelegationToDefaultImpl(irClass, interfaceFun, inheritedFun)
             }
         }
@@ -75,9 +79,11 @@ class InterfaceDelegationLowering(val state: GenerationState) : IrElementTransfo
 
         val interfaceDescriptor = interfaceFun.containingDeclaration as ClassDescriptor
         val defaultImpls = InterfaceLowering.createDefaultImplsClassDescriptor(interfaceDescriptor)
-        val defaultImplFun = InterfaceLowering.createDefaultImplFunDescriptor(defaultImpls, interfaceFun.original, interfaceDescriptor, state.typeMapper)
+        val defaultImplFun =
+            InterfaceLowering.createDefaultImplFunDescriptor(defaultImpls, interfaceFun.original, interfaceDescriptor, state.typeMapper)
         val returnType = inheritedFun.returnType!!
-        val irCallImpl = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, defaultImplFun, null, JvmLoweredStatementOrigin.DEFAULT_IMPLS_DELEGATION)
+        val irCallImpl =
+            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, defaultImplFun, null, JvmLoweredStatementOrigin.DEFAULT_IMPLS_DELEGATION)
         irBody.statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, inheritedFun, irCallImpl))
 
         var shift = 0

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.psi.KtParameter
@@ -46,8 +47,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
     fun generate() {
         try {
             doGenerate()
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             throw RuntimeException("${e.message} while generating code for:\n${irFunction.dump()}", e)
         }
     }
@@ -75,7 +75,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
 
     private fun calculateMethodFlags(isStatic: Boolean): Int {
         var flags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, state).or(if (isStatic) Opcodes.ACC_STATIC else 0).xor(
-                if (DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) Opcodes.ACC_FINAL else 0/*TODO*/
+            if (DescriptorUtils.isAnnotationClass(descriptor.containingDeclaration)) Opcodes.ACC_FINAL else 0/*TODO*/
         ).or(if (descriptor is JvmDescriptorWithExtraFlags) descriptor.extraFlags else 0)
 
         if (irFunction.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER) {
@@ -91,10 +91,12 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
     }
 
     open protected fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
-        return classCodegen.visitor.newMethod(irFunction.OtherOrigin,
-                                              flags,
-                                              signature.asmMethod.name, signature.asmMethod.descriptor,
-                                              signature.genericsSignature, null/*TODO support exception*/)
+        return classCodegen.visitor.newMethod(
+            irFunction.OtherOrigin,
+            flags,
+            signature.asmMethod.name, signature.asmMethod.descriptor,
+            signature.genericsSignature, null/*TODO support exception*/
+        )
     }
 
     private fun generateAnnotationDefaultValueIfNeeded(methodVisitor: MethodVisitor) {
@@ -104,7 +106,8 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
             (source.getPsi() as? KtParameter)?.defaultValue?.apply {
                 val defaultValue = this
                 val constant = org.jetbrains.kotlin.codegen.ExpressionCodegen.getCompileTimeConstant(
-                        defaultValue, state.bindingContext, true, state.shouldInlineConstVals)
+                    defaultValue, state.bindingContext, true, state.shouldInlineConstVals
+                )
                 assert(!state.classBuilderMode.generateBodies || constant != null) { "Default value for annotation parameter should be compile time value: " + defaultValue.text }
                 if (constant != null) {
                     val annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(methodVisitor, classCodegen, state.typeMapper)
@@ -116,18 +119,18 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
 }
 
 fun createFrameMapWithReceivers(
-        state: GenerationState,
-        function: FunctionDescriptor,
-        signature: JvmMethodSignature,
-        isStatic: Boolean
+    state: GenerationState,
+    function: FunctionDescriptor,
+    signature: JvmMethodSignature,
+    isStatic: Boolean
 ): FrameMap {
     val frameMap = FrameMap()
     if (!isStatic) {
         val descriptorForThis =
-                if (function is ClassConstructorDescriptor)
-                    function.containingDeclaration.thisAsReceiverParameter
-                else
-                    function.dispatchReceiverParameter
+            if (function is ClassConstructorDescriptor)
+                function.containingDeclaration.thisAsReceiverParameter
+            else
+                function.dispatchReceiverParameter
 
         frameMap.enter(descriptorForThis, AsmTypes.OBJECT_TYPE)
     }
@@ -137,12 +140,10 @@ fun createFrameMapWithReceivers(
             val receiverParameter = function.extensionReceiverParameter
             if (receiverParameter != null) {
                 frameMap.enter(receiverParameter, state.typeMapper.mapType(receiverParameter))
-            }
-            else {
+            } else {
                 frameMap.enterTemp(parameter.asmType)
             }
-        }
-        else if (parameter.kind != JvmMethodParameterKind.VALUE) {
+        } else if (parameter.kind != JvmMethodParameterKind.VALUE) {
             frameMap.enterTemp(parameter.asmType)
         }
     }
