@@ -127,6 +127,11 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
   }
 }
 
+@interface NSObject (NSObjectPrivateMethods)
+// Implemented for NSObject in libobjc/NSObject.mm
+-(BOOL)_tryRetain;
+@end;
+
 @interface KotlinBase : NSObject <ConvertibleToKotlin, NSCopying>
 @end;
 
@@ -187,6 +192,20 @@ static inline id AtomicSetAssociatedObject(ObjHeader* obj, id associatedObject) 
     AddRefFromAssociatedObject(obj);
   }
   return self;
+}
+
+-(BOOL)_tryRetain {
+  ObjHeader* obj = kotlinObj;
+  if (obj->permanent()) {
+    return [super _tryRetain];
+  } else if (!obj->has_meta_object()) {
+    // Then object is being deallocated;
+    // return `NO` as required by _tryRetain semantics:
+    return NO;
+  } else {
+    AddRefFromAssociatedObject(obj);
+    return YES;
+  }
 }
 
 -(oneway void)release {
