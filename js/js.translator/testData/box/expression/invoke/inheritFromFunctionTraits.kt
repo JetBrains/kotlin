@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1125
 /**
  * NOTE: this test originally checked that values of classes inheriting from functions could be invoked as functions.
