@@ -195,6 +195,10 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         performAdditionalChecksAfterDiagnostics(testDataFile, files, groupedByModule, modules, moduleBindings)
     }
 
+    protected open fun getExpectedDiagnosticsFile(testDataFile: File): File {
+        return testDataFile
+    }
+
     protected open fun performAdditionalChecksAfterDiagnostics(
         testDataFile: File,
         testFiles: List<TestFile>,
