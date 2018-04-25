@@ -1,24 +1,12 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.builtins.ranges
 
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.io.PrintWriter
 
 class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
@@ -43,7 +31,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             "and" to "Performs a bitwise AND operation between the two values.",
             "or" to "Performs a bitwise OR operation between the two values.",
             "xor" to "Performs a bitwise XOR operation between the two values.")
-    private val typeDescriptions: Map<PrimitiveType, String> = hashMapOf(
+    private val typeDescriptions: Map<PrimitiveType, String> = mapOf(
             PrimitiveType.DOUBLE to "double-precision 64-bit IEEE 754 floating point number",
             PrimitiveType.FLOAT to "single-precision 32-bit IEEE 754 floating point number",
             PrimitiveType.LONG to "64-bit signed integer",
@@ -57,7 +45,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         PrimitiveType.INT -> listOf(java.lang.Integer.MIN_VALUE, java.lang.Integer.MAX_VALUE)
         PrimitiveType.BYTE -> listOf(java.lang.Byte.MIN_VALUE, java.lang.Byte.MAX_VALUE)
         PrimitiveType.SHORT -> listOf(java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE)
-        PrimitiveType.LONG ->listOf((java.lang.Long.MIN_VALUE + 1).toString() + "L - 1L", java.lang.Long.MAX_VALUE.toString() + "L")
+        PrimitiveType.LONG -> listOf((java.lang.Long.MIN_VALUE + 1).toString() + "L - 1L", java.lang.Long.MAX_VALUE.toString() + "L")
 //        PrimitiveType.DOUBLE -> listOf(java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE, "1.0/0.0", "-1.0/0.0", "0.0/0.0")
 //        PrimitiveType.FLOAT -> listOf(java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE, "1.0F/0.0F", "-1.0F/0.0F", "0.0F/0.0F").map { it as? String ?: "${it}F" }
         else -> throw IllegalArgumentException("type: $type")
@@ -167,10 +155,10 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             out.println("    /** $doc */")
             when (name) {
-                OperatorNameConventions.REM.asString() ->
+                "rem" ->
                     out.println("    @SinceKotlin(\"1.1\")")
 
-                OperatorNameConventions.MOD.asString() ->
+                "mod" ->
                     out.println("    @Deprecated(\"Use rem(other) instead\", ReplaceWith(\"rem(other)\"), DeprecationLevel.WARNING)")
             }
             out.println("    public operator fun $name(other: ${otherKind.capitalized}): ${returnType.capitalized}")
