@@ -12,12 +12,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
 
-// TODO don't use JsDynamicScope
-val dummyScope = JsDynamicScope
-
-fun Name.toJsName() =
-    // TODO sanitize
-    dummyScope.declareName(asString())
+@Deprecated("Use context.getNameForSymbol(symbol) instead")
+fun Name.toJsName() = JsDynamicScope.declareName(asString())
 
 fun jsVar(name: Name, initializer: IrExpression?, context: JsGenerationContext): JsVars {
     val jsInitializer = initializer?.accept(IrElementToJsExpressionTransformer(), context)
