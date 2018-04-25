@@ -8,9 +8,14 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.DeprecationResolver
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
+import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.CompletedCallInfo
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -18,10 +23,13 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaAtom
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.types.NonFixedType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 
 class CoroutineInferenceSession(
     psiCallResolver: PSICallResolver,
@@ -29,9 +37,15 @@ class CoroutineInferenceSession(
     kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     callComponents: KotlinCallComponents,
     builtIns: KotlinBuiltIns,
+    private val topLevelCallContext: BasicCallResolutionContext,
     private val stubsForPostponedVariables: Map<NewTypeVariable, NonFixedType>,
     private val trace: BindingTrace,
-    private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer
+    private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+    private val expressionTypingServices: ExpressionTypingServices,
+    private val argumentTypeResolver: ArgumentTypeResolver,
+    private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
+    private val deprecationResolver: DeprecationResolver,
+    private val moduleDescriptor: ModuleDescriptor
 ) : ManyCandidatesResolver<CallableDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
@@ -50,17 +64,24 @@ class CoroutineInferenceSession(
             normalCompletedCalls.add(callInfo)
     }
 
+    override fun writeOnlyStubs(): Boolean {
+        return true
+    }
+
     override fun currentConstraintSystem(): ConstraintStorage {
         return ConstraintStorage.Empty
     }
 
-    override fun inferPostponedVariables(initialStorage: ConstraintStorage): Map<TypeConstructor, UnwrappedType> {
+    override fun inferPostponedVariables(
+        lambda: ResolvedLambdaAtom,
+        initialStorage: ConstraintStorage
+    ): Map<TypeConstructor, UnwrappedType> {
         val commonSystem = buildCommonSystem(initialStorage)
 
         val context = commonSystem.asConstraintSystemCompleterContext()
         kotlinConstraintSystemCompleter.completeConstraintSystem(context, builtIns.unitType)
 
-        updateCalls(initialStorage, commonSystem)
+        updateCalls(lambda, commonSystem)
 
         return commonSystem.fixedTypeVariables
     }
@@ -88,7 +109,7 @@ class CoroutineInferenceSession(
         *
         * while substitutor from parameter map non-fixed types to the original type variable
         * */
-        val callSubstitutor = storage.buildResultingSubstitutor()
+        val callSubstitutor = storage.buildResultingSubstitutor() // substitutor only for fixed variables
 
         for (initialConstraint in storage.initialConstraints) {
             val lower = nonFixedToVariablesSubstitutor.safeSubstitute(callSubstitutor.safeSubstitute(initialConstraint.a))
@@ -124,31 +145,67 @@ class CoroutineInferenceSession(
         return commonSystem
     }
 
-    private fun updateCalls(initialStorage: ConstraintStorage, commonSystem: NewConstraintSystemImpl) {
-        val nonFixedToResult = mutableMapOf<TypeConstructor, UnwrappedType>()
-        for (variable in initialStorage.postponedTypeVariables) {
-            nonFixedToResult[variable.freshTypeConstructor] = commonSystem.fixedTypeVariables[variable.freshTypeConstructor] ?: continue
-        }
+    private fun updateCalls(lambda: ResolvedLambdaAtom, commonSystem: NewConstraintSystemImpl) {
+        val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
+        val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor()
 
-        val commonSystemSubstitutor = NewTypeSubstitutorByConstructorMap(nonFixedToResult)
+        val nonFixedTypesToResult = nonFixedToVariablesSubstitutor.map.mapValues { commonSystemSubstitutor.safeSubstitute(it.value) }
+
+        val nonFixedTypesToResultSubstitutor = ComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)
+
+        val lambdaAtomCompleter = createResolvedAtomCompleter(nonFixedTypesToResultSubstitutor, topLevelCallContext)
+        lambdaAtomCompleter.completeAll(lambda)
 
         for (completedCall in suspendCompletedCalls + normalCompletedCalls) {
             val resultCallAtom = completedCall.callResolutionResult.resultCallAtom
             val call = resultCallAtom.atom.getResolvedPsiKotlinCall<CallableDescriptor>(trace) ?: continue
 
-            val resultingCallSubstitutor = completedCall
-                .callResolutionResult
-                .constraintSystem
-                .fixedTypeVariables
-                .entries
-                .associate { it.key to commonSystemSubstitutor.safeSubstitute(it.value) }
-
-            call.setResultingSubstitutor(NewTypeSubstitutorByConstructorMap(resultingCallSubstitutor))
+            updateCall(completedCall, nonFixedTypesToResultSubstitutor, nonFixedTypesToResult)
 
             val resultingDescriptor = call.resultingDescriptor
             kotlinToResolvedCallTransformer.reportCallDiagnostic(
                 completedCall.context, trace, resultCallAtom, resultingDescriptor, commonSystem.diagnostics
             )
         }
+    }
+
+    private fun updateCall(
+        completedCall: PSICompletedCallInfo,
+        nonFixedTypesToResultSubstitutor: NewTypeSubstitutor,
+        nonFixedTypesToResult: Map<TypeConstructor, UnwrappedType>
+    ) {
+        val resultingCallSubstitutor = completedCall.callResolutionResult.constraintSystem.fixedTypeVariables.entries
+            .associate { it.key to nonFixedTypesToResultSubstitutor.safeSubstitute(it.value) }
+
+        val resultingSubstitutor = NewTypeSubstitutorByConstructorMap(resultingCallSubstitutor + nonFixedTypesToResult)
+
+        val atomCompleter = createResolvedAtomCompleter(resultingSubstitutor, completedCall.context)
+        val resultCallAtom = completedCall.callResolutionResult.resultCallAtom
+
+        for (subResolvedAtom in resultCallAtom.subResolvedAtoms) {
+            atomCompleter.completeAll(subResolvedAtom)
+        }
+        atomCompleter.completeResolvedCall(resultCallAtom, completedCall.callResolutionResult.diagnostics)
+
+        val callTrace = completedCall.context.trace
+        if (callTrace is TemporaryBindingTrace) {
+            callTrace.commit()
+        }
+    }
+
+    private fun createResolvedAtomCompleter(
+        resultSubstitutor: NewTypeSubstitutor,
+        context: BasicCallResolutionContext
+    ): ResolvedAtomCompleter {
+        return ResolvedAtomCompleter(
+            resultSubstitutor, context.trace, context, kotlinToResolvedCallTransformer, expressionTypingServices,
+            argumentTypeResolver, doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context.dataFlowValueFactory
+        )
+    }
+}
+
+class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubstitutor) : NewTypeSubstitutor {
+    override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
+        return left.safeSubstitute(right.substituteNotNullTypeWithConstructor(constructor) ?: return null)
     }
 }

@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.DelegatedPropertyConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaAtom
 import org.jetbrains.kotlin.resolve.calls.tower.ManyCandidatesResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSIPartialCallInfo
@@ -83,7 +82,12 @@ class DelegatedPropertyInferenceSession(
         addConstraintForThis(candidateDescriptor, commonSystem)
     }
 
-    override fun inferPostponedVariables(initialStorage: ConstraintStorage): Map<TypeConstructor, UnwrappedType> = emptyMap()
+    override fun inferPostponedVariables(
+        lambda: ResolvedLambdaAtom,
+        initialStorage: ConstraintStorage
+    ): Map<TypeConstructor, UnwrappedType> = emptyMap()
+
+    override fun writeOnlyStubs(): Boolean = false
 }
 
 object InferenceSessionForExistingCandidates : InferenceSession {
@@ -96,5 +100,10 @@ object InferenceSessionForExistingCandidates : InferenceSession {
     override fun addErrorCallInfo(callInfo: ErrorCallInfo) {}
 
     override fun currentConstraintSystem(): ConstraintStorage = ConstraintStorage.Empty
-    override fun inferPostponedVariables(initialStorage: ConstraintStorage): Map<TypeConstructor, UnwrappedType> = emptyMap()
+    override fun inferPostponedVariables(
+        lambda: ResolvedLambdaAtom,
+        initialStorage: ConstraintStorage
+    ): Map<TypeConstructor, UnwrappedType> = emptyMap()
+
+    override fun writeOnlyStubs(): Boolean = false
 }

@@ -195,6 +195,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 
 internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        // smartset!
         val typesForCoroutineCall = resolvedCall.argumentToCandidateParameter
             .filter { (argument, parameter) -> callComponents.statelessCallbacks.isCoroutineCall(argument, parameter) }
             .mapNotNull { it.value.type.getReceiverTypeFromFunctionType() }

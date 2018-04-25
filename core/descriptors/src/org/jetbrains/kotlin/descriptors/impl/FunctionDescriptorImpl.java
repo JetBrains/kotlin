@@ -172,6 +172,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.hasSynthesizedParameterNames = hasSynthesizedParameterNames;
     }
 
+    public void setExtensionReceiverParameter(@NotNull ReceiverParameterDescriptor extensionReceiverParameter) {
+        this.extensionReceiverParameter = extensionReceiverParameter;
+    }
+
     @Nullable
     @Override
     public ReceiverParameterDescriptor getExtensionReceiverParameter() {

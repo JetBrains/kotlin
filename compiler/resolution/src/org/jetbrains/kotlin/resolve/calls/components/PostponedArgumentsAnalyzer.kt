@@ -101,10 +101,12 @@ class PostponedArgumentsAnalyzer(
             c.getBuilder().addSubtypeConstraint(lambda.returnType.let(::substitute), unitType, LambdaArgumentConstraintPosition(lambda))
         }
 
+        lambda.setAnalyzedResults(returnArguments, subResolvedKtPrimitives)
+
         if (inferenceSession != null) {
             val storageSnapshot = c.getBuilder().currentStorage()
 
-            val postponedVariables = inferenceSession.inferPostponedVariables(storageSnapshot)
+            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot)
 
             for ((constructor, resultType) in postponedVariables) {
                 val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue
@@ -114,7 +116,5 @@ class PostponedArgumentsAnalyzer(
                 c.getBuilder().addEqualityConstraint(variable.defaultType, resultType, CoroutinePosition())
             }
         }
-
-        lambda.setAnalyzedResults(returnArguments, subResolvedKtPrimitives)
     }
 }

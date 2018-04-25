@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.lang.reflect.ParameterizedType
+import kotlin.reflect.KFunction1
 
 fun ClassDescriptor.underlyingRepresentation(): ValueParameterDescriptor? {
     if (!isInline) return null

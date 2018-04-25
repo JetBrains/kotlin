@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.inference.buildResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -96,9 +97,18 @@ class KotlinToResolvedCallTransformer(
             is CompletedCallResolutionResult, is ErrorCallResolutionResult -> {
                 val candidate = (baseResolvedCall as SingleCallResolutionResult).resultCallAtom
 
-                context.inferenceSession.addCompletedCallInfo(
-                    PSICompletedCallInfo(baseResolvedCall as CompletedCallResolutionResult, context, tracingStrategy)
-                )
+                if (baseResolvedCall is CompletedCallResolutionResult) {
+                    context.inferenceSession.addCompletedCallInfo(PSICompletedCallInfo(baseResolvedCall, context, tracingStrategy))
+                }
+
+                if (context.inferenceSession.writeOnlyStubs()) {
+                    return createStubResolvedCallAndWriteItToTrace(
+                        candidate,
+                        context.trace,
+                        baseResolvedCall.diagnostics,
+                        completedCall = true
+                    )
+                }
 
                 val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor()
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
@@ -121,9 +131,11 @@ class KotlinToResolvedCallTransformer(
     fun <D : CallableDescriptor> createStubResolvedCallAndWriteItToTrace(
         candidate: ResolvedCallAtom,
         trace: BindingTrace,
-        diagnostics: Collection<KotlinCallDiagnostic>
+        diagnostics: Collection<KotlinCallDiagnostic>,
+        completedCall: Boolean = false
     ): ResolvedCall<D> {
-        val result = transformToResolvedCall<D>(candidate, trace, null, diagnostics)
+        val substitutor = if (completedCall) NewTypeSubstitutorByConstructorMap(emptyMap()) else null
+        val result = transformToResolvedCall<D>(candidate, trace, substitutor, diagnostics)
         val psiKotlinCall = candidate.atom.psiKotlinCall
         val tracing = psiKotlinCall.safeAs<PSIKotlinCallForInvoke>()?.baseCall?.tracingStrategy ?: psiKotlinCall.tracingStrategy
 
@@ -499,6 +511,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     private lateinit var typeArguments: List<UnwrappedType>
 
     private var extensionReceiver = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
+    private var dispatchReceiver = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
     private var smartCastDispatchReceiverType: KotlinType? = null
 
     override val kotlinCall: KotlinCall get() = resolvedCallAtom.atom
@@ -511,7 +524,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     override fun getCandidateDescriptor(): D = resolvedCallAtom.candidateDescriptor as D
     override fun getResultingDescriptor(): D = resultingDescriptor
     override fun getExtensionReceiver(): ReceiverValue? = extensionReceiver
-    override fun getDispatchReceiver(): ReceiverValue? = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
+    override fun getDispatchReceiver(): ReceiverValue? = dispatchReceiver
     override fun getExplicitReceiverKind(): ExplicitReceiverKind = resolvedCallAtom.explicitReceiverKind
 
     override fun getTypeArguments(): Map<TypeParameterDescriptor, KotlinType> {
@@ -538,6 +551,16 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         diagnostics = completedDiagnostics
     }
 
+    private fun updateExtensionReceiverType(newType: KotlinType) {
+        if (extensionReceiver?.type == newType) return
+        extensionReceiver = extensionReceiver?.replaceType(newType)
+    }
+
+    private fun updateDispatchReceiverType(newType: KotlinType) {
+        if (dispatchReceiver?.type == newType) return
+        dispatchReceiver = dispatchReceiver?.replaceType(newType)
+    }
+
     fun setResultingSubstitutor(substitutor: NewTypeSubstitutor?) {
         //clear cached values
         argumentToParameterMap = null
@@ -545,6 +568,16 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         if (substitutor != null) {
             // todo: add asset that we do not complete call many times
             isCompleted = true
+
+            dispatchReceiver?.type?.let {
+                val newType = substitutor.safeSubstitute(it.unwrap())
+                updateDispatchReceiverType(newType)
+            }
+
+            extensionReceiver?.type?.let {
+                val newType = substitutor.safeSubstitute(it.unwrap())
+                updateExtensionReceiverType(newType)
+            }
         }
 
         resultingDescriptor = run {

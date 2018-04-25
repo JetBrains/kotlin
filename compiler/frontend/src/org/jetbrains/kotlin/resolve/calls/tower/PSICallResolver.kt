@@ -65,7 +65,9 @@ class PSICallResolver(
     private val constantExpressionEvaluator: ConstantExpressionEvaluator,
     private val dataFlowValueFactory: DataFlowValueFactory,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter
+    private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
+    private val deprecationResolver: DeprecationResolver,
+    private val moduleDescriptor: ModuleDescriptor
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
 
@@ -158,14 +160,15 @@ class PSICallResolver(
     }
 
     private fun createResolutionCallbacks(context: BasicCallResolutionContext) =
-        createResolutionCallbacks(context.trace, context.inferenceSession)
+        createResolutionCallbacks(context.trace, context.inferenceSession, context)
 
-    fun createResolutionCallbacks(trace: BindingTrace, inferenceSession: InferenceSession) =
+    fun createResolutionCallbacks(trace: BindingTrace, inferenceSession: InferenceSession, context: BasicCallResolutionContext?) =
         KotlinResolutionCallbacksImpl(
             trace, expressionTypingServices, typeApproximator,
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
             dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver,
-            this, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents
+            this, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents,
+            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {

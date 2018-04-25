@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
 
 class Controller<T> {
     suspend fun yield(t: T) {}
