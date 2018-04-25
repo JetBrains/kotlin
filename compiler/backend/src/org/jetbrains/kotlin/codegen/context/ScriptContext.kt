@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -32,9 +31,8 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.ScriptEnvironmentDescriptor
 import org.jetbrains.org.objectweb.asm.Type
 import kotlin.reflect.KClass
 
@@ -75,6 +73,9 @@ class ScriptContext(
     }
 
     fun getOuterReceiverExpression(prefix: StackValue?, thisOrOuterClass: ClassDescriptor): StackValue {
+        if (thisOrOuterClass is ScriptEnvironmentDescriptor) {
+            return prefix ?: StackValue.LOCAL_0
+        }
         receiverDescriptors.forEachIndexed { index, outerReceiver ->
             if (outerReceiver == thisOrOuterClass) {
                 return getImplicitReceiverType(index)?.let { type ->

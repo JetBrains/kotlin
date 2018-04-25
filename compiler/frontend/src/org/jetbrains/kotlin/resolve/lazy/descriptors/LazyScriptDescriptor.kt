@@ -102,7 +102,7 @@ class LazyScriptDescriptor(
         }
     }
 
-    private fun findTypeDescriptor(type: KType, errorDiagnostic: DiagnosticFactory1<PsiElement, FqName>): ClassDescriptor? {
+    internal fun findTypeDescriptor(type: KType, errorDiagnostic: DiagnosticFactory1<PsiElement, FqName>): ClassDescriptor? {
         val receiverClassId = type.classifier?.let { it as? KClass<*> }?.classId
         return receiverClassId?.let {
             module.findClassAcrossModuleDependencies(it)
@@ -119,15 +119,11 @@ class LazyScriptDescriptor(
 
     override fun getImplicitReceivers(): List<ClassDescriptor> = scriptImplicitReceivers()
 
-    private val scriptEnvironmentProperties: () -> List<Pair<String, ClassDescriptor>> = resolveSession.storageManager.createLazyValue {
-        scriptDefinition.environmentVariables.mapNotNull { (name, type) ->
-            findTypeDescriptor(type, Errors.MISSING_SCRIPT_ENVIRONMENT_PROPERTY_CLASS)?.let {
-                name to it
-            }
-        }
+    private val scriptEnvironment: () -> ScriptEnvironmentDescriptor = resolveSession.storageManager.createLazyValue {
+        ScriptEnvironmentDescriptor(this)
     }
 
-    fun getScriptEnvironmentProperties(): List<Pair<String, ClassDescriptor>> = scriptEnvironmentProperties()
+    override fun getScriptEnvironmentProperties(): List<PropertyDescriptor> = scriptEnvironment().properties
 
     private val scriptOuterScope: () -> LexicalScope = resolveSession.storageManager.createLazyValue {
         var outerScope = super.getOuterScope()
@@ -160,7 +156,7 @@ private val KClass<*>.classId: ClassId
 private val KType.classId: ClassId?
     get() = classifier?.let { it as? KClass<*> }?.classId
 
-private class ScriptEnvironmentDescriptor(script: LazyScriptDescriptor) :
+class ScriptEnvironmentDescriptor(script: LazyScriptDescriptor) :
     MutableClassDescriptor(
         script, ClassKind.CLASS, false, false,
         Name.special("<synthetic script environment for ${script.name}>"), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
@@ -176,23 +172,32 @@ private class ScriptEnvironmentDescriptor(script: LazyScriptDescriptor) :
     private val memberScope by lazy {
         ScriptEnvironmentMemberScope(
             script.name.identifier,
-            script.getScriptEnvironmentProperties().map {
-                makeEnvironmentPropertyDescriptor(
-                    Name.identifier(it.first),
-                    it.second,
-                    true,
-                    script
-                )
-            }
+            properties
         )
     }
 
     override fun getUnsubstitutedMemberScope(): MemberScope = memberScope
+
+    val properties by lazy {
+        script.scriptDefinition.environmentVariables.mapNotNull { (name, type) ->
+            script.findTypeDescriptor(type, Errors.MISSING_SCRIPT_ENVIRONMENT_PROPERTY_CLASS)?.let {
+                name to it
+            }
+        }.map { (key, value) ->
+            ScriptEnvironmentPropertyDescriptor(
+                Name.identifier(key),
+                value,
+                thisAsReceiverParameter,
+                true,
+                script
+            )
+        }
+    }
 }
 
 private class ScriptEnvironmentMemberScope(
     private val scriptId: String,
-    private val environmentProperties: List<PropertyDescriptorImpl>
+    private val environmentProperties: List<PropertyDescriptor>
 ) : MemberScopeImpl() {
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
@@ -208,27 +213,35 @@ private class ScriptEnvironmentMemberScope(
     }
 }
 
-private fun ScriptEnvironmentDescriptor.makeEnvironmentPropertyDescriptor(name: Name, typeDescriptor: ClassDescriptor, isVar: Boolean, script: LazyScriptDescriptor) =
-    PropertyDescriptorImpl.create(
-        script.containingDeclaration,
-        Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC,
-        isVar,
-        name,
-        CallableMemberDescriptor.Kind.SYNTHESIZED,
-        SourceElement.NO_SOURCE,
-        /* lateInit = */ false, /* isConst = */ false, /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false,
-        /* isDelegated = */ true
-    ).also {
-        it.setType(typeDescriptor.defaultType, emptyList<TypeParameterDescriptorImpl>(), thisAsReceiverParameter, null as KotlinType?)
-        it.initialize(
-            it.makePropertyGetterDescriptor(),
-            if (!isVar) null else it.makePropertySetterDescriptor()
+class ScriptEnvironmentPropertyDescriptor(
+    name: Name,
+    typeDescriptor: ClassDescriptor,
+    receiver: ReceiverParameterDescriptor?,
+    isVar: Boolean,
+    script: LazyScriptDescriptor
+) : PropertyDescriptorImpl(
+    script,
+    null,
+    Annotations.EMPTY, Modality.OPEN, Visibilities.PUBLIC,
+    isVar,
+    name,
+    CallableMemberDescriptor.Kind.SYNTHESIZED,
+    SourceElement.NO_SOURCE,
+    /* lateInit = */ false, /* isConst = */ false, /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false,
+    /* isDelegated = */ true
+) {
+    init {
+        setType(typeDescriptor.defaultType, emptyList<TypeParameterDescriptorImpl>(), receiver, null as KotlinType?)
+        initialize(
+            makePropertyGetterDescriptor(),
+            if (!isVar) null else makePropertySetterDescriptor()
         )
     }
+}
 
 private fun PropertyDescriptorImpl.makePropertyGetterDescriptor() =
     PropertyGetterDescriptorImpl(
-        this, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC,
+        this, Annotations.EMPTY, Modality.OPEN, Visibilities.PUBLIC,
         /* isDefault = */ false, /* isExternal = */ false, /* isInline = */ false,
         CallableMemberDescriptor.Kind.SYNTHESIZED, null, SourceElement.NO_SOURCE
     ).also {
@@ -237,7 +250,7 @@ private fun PropertyDescriptorImpl.makePropertyGetterDescriptor() =
 
 private fun PropertyDescriptorImpl.makePropertySetterDescriptor() =
     PropertySetterDescriptorImpl(
-        this, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC,
+        this, Annotations.EMPTY, Modality.OPEN, Visibilities.PUBLIC,
         /* isDefault = */ false, /* isExternal = */ false, /* isInline = */ false,
         CallableMemberDescriptor.Kind.SYNTHESIZED, null, SourceElement.NO_SOURCE
     ).also {

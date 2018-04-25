@@ -29,6 +29,11 @@ public class CustomScriptCodegenTestGenerated extends AbstractCustomScriptCodege
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/customScript"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("simpleEnvVars.kts")
+    public void testSimpleEnvVars() throws Exception {
+        runTest("compiler/testData/codegen/customScript/simpleEnvVars.kts");
+    }
+
     @TestMetadata("stringReceiver.kts")
     public void testStringReceiver() throws Exception {
         runTest("compiler/testData/codegen/customScript/stringReceiver.kts");

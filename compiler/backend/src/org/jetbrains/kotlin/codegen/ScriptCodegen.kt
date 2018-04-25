@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -53,6 +54,10 @@ class ScriptCodegen private constructor(
 
     override fun generateSyntheticPartsBeforeBody() {
         generatePropertyMetadataArrayFieldIfNeeded(classAsmType)
+        scriptContext.scriptDescriptor.scriptEnvironmentProperties.forEach {
+            propertyCodegen.generateGetter(null, it, null)
+            propertyCodegen.generateSetter(null, it, null)
+        }
     }
 
     override fun generateSyntheticPartsAfterBody() {}
@@ -68,7 +73,12 @@ class ScriptCodegen private constructor(
     ) {
         val scriptDefinition = scriptContext.script.kotlinScriptDefinition.value
 
-        val jvmSignature = typeMapper.mapScriptSignature(scriptDescriptor, scriptContext.earlierScripts, scriptDefinition.implicitReceivers)
+        val jvmSignature = typeMapper.mapScriptSignature(
+            scriptDescriptor,
+            scriptContext.earlierScripts,
+            scriptDefinition.implicitReceivers,
+            scriptDefinition.environmentVariables
+        )
 
         if (state.replSpecific.shouldGenerateScriptResultValue) {
             val resultFieldInfo = scriptContext.resultFieldInfo
@@ -108,6 +118,7 @@ class ScriptCodegen private constructor(
                 val valueParamStart = 1
                     .incrementIf(scriptContext.earlierScripts.isNotEmpty())
                     .incrementIf(scriptDefinition.implicitReceivers.isNotEmpty())
+                    .incrementIf(scriptDefinition.environmentVariables.isNotEmpty())
 
                 val valueParameters = scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters
                 for (superclassParam in ctorDesc.valueParameters) {
@@ -155,6 +166,14 @@ class ScriptCodegen private constructor(
                 }
             }
 
+            if (scriptDefinition.environmentVariables.isNotEmpty()) {
+                val envParamIndex = frameMap.enterTemp(AsmTypes.OBJECT_TYPE)
+                val mapType = Type.getObjectType("java/util/Map")
+                iv.load(0, classType)
+                iv.load(envParamIndex, mapType)
+                iv.putfield(classType.internalName, "environment", mapType.descriptor)
+            }
+
             val codegen = ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this)
 
             generateInitializers { codegen }
@@ -183,6 +202,16 @@ class ScriptCodegen private constructor(
                 ACC_PUBLIC or ACC_FINAL,
                 scriptContext.getImplicitReceiverName(receiverIndex),
                 scriptContext.getImplicitReceiverType(receiverIndex)!!.descriptor,
+                null,
+                null
+            )
+        }
+        if (scriptContext.scriptDescriptor.scriptEnvironmentProperties.isNotEmpty()) {
+            classBuilder.newField(
+                NO_ORIGIN,
+                ACC_PUBLIC or ACC_FINAL,
+                "environment",
+                Type.getObjectType("java/util/Map").descriptor,
                 null,
                 null
             )

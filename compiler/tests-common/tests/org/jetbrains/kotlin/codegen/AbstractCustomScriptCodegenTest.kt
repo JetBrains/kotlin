@@ -212,3 +212,13 @@ object TestScriptWithReceiversConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>
 @KotlinScriptDefaultCompilationConfiguration(TestScriptWithReceiversConfiguration::class)
 abstract class TestScriptWithReceivers
 
+object TestScriptWithSimpleEnvVarsConfiguration : ArrayList<Pair<TypedKey<*>, Any?>>(
+    listOf(
+        ScriptCompileConfigurationProperties.contextVariables("stringVar1" to String::class.starProjectedType)
+    )
+)
+
+@Suppress("unused")
+@KotlinScript
+@KotlinScriptDefaultCompilationConfiguration(TestScriptWithSimpleEnvVarsConfiguration::class)
+abstract class TestScriptWithSimpleEnvVars
