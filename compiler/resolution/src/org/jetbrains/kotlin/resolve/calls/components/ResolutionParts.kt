@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
@@ -192,17 +193,24 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
     }
 }
 
-internal object InferLaterInitializerResolutionPart : ResolutionPart() {
+internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
-        resolvedCall.argumentToCandidateParameter
+        val typesForCoroutineCall = resolvedCall.argumentToCandidateParameter
             .filter { (argument, parameter) -> callComponents.statelessCallbacks.isCoroutineCall(argument, parameter) }
-            .flatMap { (_, parameter) ->
-                resolvedCall.substitutor.freshVariables.filter { variable ->
-                    parameter.type.contains { it.constructor == variable.originalTypeParameter.typeConstructor }
-                }
+            .mapNotNull { it.value.type.getReceiverTypeFromFunctionType() }
+
+        if (typesForCoroutineCall.isEmpty()) return
+
+        for (freshVariable in resolvedCall.substitutor.freshVariables) {
+            val isPostponedVariable = typesForCoroutineCall.any { typeForCoroutineCall ->
+                typeForCoroutineCall.contains { it.constructor == freshVariable.originalTypeParameter.typeConstructor }
             }
-            .distinct()
-            .forEach { csBuilder.markPostponedVariable(it) }
+
+            if (isPostponedVariable) {
+                csBuilder.markPostponedVariable(freshVariable)
+            }
+
+        }
     }
 }
 

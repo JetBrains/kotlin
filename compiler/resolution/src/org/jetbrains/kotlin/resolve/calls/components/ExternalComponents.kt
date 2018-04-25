@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.NonFixedType
 import org.jetbrains.kotlin.types.UnwrappedType
 
