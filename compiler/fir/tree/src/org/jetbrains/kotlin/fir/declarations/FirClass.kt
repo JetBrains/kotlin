@@ -21,13 +21,13 @@ interface FirClass : FirDeclarationContainer, FirMemberDeclaration, FirSymbolOwn
 
     val classKind: ClassKind
 
-    val isInner: Boolean
+    val isInner: Boolean get() = status.isInner
 
-    val isCompanion: Boolean
+    val isCompanion: Boolean get() = status.isCompanion
 
-    val isData: Boolean
+    val isData: Boolean get() = status.isData
 
-    val isInline: Boolean
+    val isInline: Boolean get() = status.isInline
 
     override val symbol: FirClassSymbol
 

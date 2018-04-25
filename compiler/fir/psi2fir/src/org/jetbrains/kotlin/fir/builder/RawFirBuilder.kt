@@ -68,15 +68,6 @@ class RawFirBuilder(val session: FirSession) {
             }
         }
 
-    private val KtDeclaration.platformStatus: FirMemberPlatformStatus
-        get() {
-            return when {
-                hasExpectModifier() -> FirMemberPlatformStatus.EXPECT
-                hasActualModifier() -> FirMemberPlatformStatus.ACTUAL
-                else -> FirMemberPlatformStatus.DEFAULT
-            }
-        }
-
     private inner class Visitor : KtVisitor<FirElement, Unit>() {
         private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =
             this?.accept(this@Visitor, Unit) as? R
@@ -111,9 +102,9 @@ class RawFirBuilder(val session: FirSession) {
         ): FirPropertyAccessor {
             if (this == null) {
                 return if (isGetter) {
-                    FirDefaultPropertyGetter(session, property, propertyType)
+                    FirDefaultPropertyGetter(session, property, propertyType, property.visibility)
                 } else {
-                    FirDefaultPropertySetter(session, property, propertyType)
+                    FirDefaultPropertySetter(session, property, propertyType, property.visibility)
                 }
             }
             val firAccessor = FirPropertyAccessorImpl(
@@ -164,7 +155,8 @@ class RawFirBuilder(val session: FirSession) {
                 nameAsSafeName,
                 visibility,
                 modality,
-                platformStatus,
+                hasExpectModifier(),
+                hasActualModifier(),
                 isOverride = hasModifier(KtTokens.OVERRIDE_KEYWORD),
                 isConst = false,
                 isLateInit = false,
@@ -172,8 +164,8 @@ class RawFirBuilder(val session: FirSession) {
                 returnType = type,
                 isVar = isMutable,
                 initializer = null,
-                getter = FirDefaultPropertyGetter(session, this, type),
-                setter = FirDefaultPropertySetter(session, this, type),
+                getter = FirDefaultPropertyGetter(session, this, type, visibility),
+                setter = FirDefaultPropertySetter(session, this, type, visibility),
                 delegate = null
             )
             extractAnnotationsTo(firProperty)
@@ -269,7 +261,8 @@ class RawFirBuilder(val session: FirSession) {
                 session,
                 this ?: owner,
                 this?.visibility ?: Visibilities.UNKNOWN,
-                this?.platformStatus ?: FirMemberPlatformStatus.DEFAULT,
+                this?.hasExpectModifier() ?: false,
+                this?.hasActualModifier() ?: false,
                 delegatedSelfType,
                 firDelegatedCall
             )
@@ -362,7 +355,8 @@ class RawFirBuilder(val session: FirSession) {
                     classOrObject.nameAsSafeName,
                     classOrObject.visibility,
                     classOrObject.modality,
-                    classOrObject.platformStatus,
+                    classOrObject.hasExpectModifier(),
+                    classOrObject.hasActualModifier(),
                     classKind,
                     isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD),
                     isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true,
@@ -402,7 +396,8 @@ class RawFirBuilder(val session: FirSession) {
                     FirTypeAliasSymbol(currentClassId),
                     typeAlias.nameAsSafeName,
                     typeAlias.visibility,
-                    typeAlias.platformStatus,
+                    typeAlias.hasExpectModifier(),
+                    typeAlias.hasActualModifier(),
                     typeAlias.getTypeReference().toFirOrErrorType()
                 )
                 typeAlias.extractAnnotationsTo(firTypeAlias)
@@ -424,7 +419,8 @@ class RawFirBuilder(val session: FirSession) {
                 function.nameAsSafeName,
                 function.visibility,
                 function.modality,
-                function.platformStatus,
+                function.hasExpectModifier(),
+                function.hasActualModifier(),
                 function.hasModifier(KtTokens.OVERRIDE_KEYWORD),
                 function.hasModifier(KtTokens.OPERATOR_KEYWORD),
                 function.hasModifier(KtTokens.INFIX_KEYWORD),
@@ -456,7 +452,8 @@ class RawFirBuilder(val session: FirSession) {
                 session,
                 this,
                 visibility,
-                platformStatus,
+                hasExpectModifier(),
+                hasActualModifier(),
                 delegatedSelfType,
                 getDelegationCall().convert(delegatedSuperType, delegatedSelfType, hasPrimaryConstructor),
                 buildFirBody()
@@ -503,7 +500,8 @@ class RawFirBuilder(val session: FirSession) {
                 property.nameAsSafeName,
                 property.visibility,
                 property.modality,
-                property.platformStatus,
+                property.hasExpectModifier(),
+                property.hasActualModifier(),
                 property.hasModifier(KtTokens.OVERRIDE_KEYWORD),
                 property.hasModifier(KtTokens.CONST_KEYWORD),
                 property.hasModifier(KtTokens.LATEINIT_KEYWORD),

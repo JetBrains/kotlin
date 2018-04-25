@@ -90,6 +90,14 @@ abstract class FirVisitor<out R, in D> {
         return visitDeclaration(variable, data)
     }
 
+    open fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): R {
+        return visitElement(declarationStatus, data)
+    }
+
+    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): R {
+        return visitDeclarationStatus(resolvedDeclarationStatus, data)
+    }
+
     open fun visitImport(import: FirImport, data: D): R {
         return visitElement(import, data)
     }

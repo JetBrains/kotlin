@@ -6,15 +6,15 @@ FILE: nestedClass.kt
             public? get(): String
 
     }
-    public? final class Outer {
+    public? final? class Outer {
         public? constructor(): super<kotlin.Any>()
 
-        public? final class Derived : Base {
+        public? final? class Derived : Base {
             public? constructor(s: String): super<Base>()
 
         }
 
-        public? final object Obj : Base {
+        public? final? object Obj : Base {
             public? constructor(): super<Base>()
 
         }

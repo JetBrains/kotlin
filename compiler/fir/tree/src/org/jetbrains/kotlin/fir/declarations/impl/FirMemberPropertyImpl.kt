@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -25,10 +24,11 @@ class FirMemberPropertyImpl(
     name: Name,
     visibility: Visibility,
     modality: Modality?,
-    platformStatus: FirMemberPlatformStatus,
+    isExpect: Boolean,
+    isActual: Boolean,
     isOverride: Boolean,
-    override val isConst: Boolean,
-    override val isLateInit: Boolean,
+    isConst: Boolean,
+    isLateInit: Boolean,
     receiverType: FirType?,
     returnType: FirType,
     override val isVar: Boolean,
@@ -36,8 +36,14 @@ class FirMemberPropertyImpl(
     override var getter: FirPropertyAccessor,
     override var setter: FirPropertyAccessor,
     override val delegate: FirExpression?
-) : FirAbstractCallableMember(session, psi, name, visibility, modality, platformStatus, isOverride, receiverType, returnType),
-    FirProperty {
+) : FirAbstractCallableMember(
+    session, psi, name, visibility, modality, isExpect, isActual, isOverride, receiverType, returnType
+), FirProperty {
+    init {
+        status.isConst = isConst
+        status.isLateInit = isLateInit
+    }
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         getter = getter.transformSingle(transformer, data)
         setter = setter.transformSingle(transformer, data)

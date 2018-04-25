@@ -90,6 +90,14 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformDeclaration(variable, data)
     }
 
+    open fun transformDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): CompositeTransformResult<FirDeclarationStatus> {
+        return transformElement(declarationStatus, data)
+    }
+
+    open fun transformResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): CompositeTransformResult<FirDeclarationStatus> {
+        return transformDeclarationStatus(resolvedDeclarationStatus, data)
+    }
+
     open fun transformImport(import: FirImport, data: D): CompositeTransformResult<FirImport> {
         return transformElement(import, data)
     }
@@ -198,6 +206,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformDeclaration(declaration, data)
     }
 
+    final override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: D): CompositeTransformResult<FirElement> {
+        return transformDeclarationStatus(declarationStatus, data)
+    }
+
     final override fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody, data: D): CompositeTransformResult<FirElement> {
         return transformDeclarationWithBody(declarationWithBody, data)
     }
@@ -284,6 +296,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitVariable(variable: FirVariable, data: D): CompositeTransformResult<FirElement> {
         return transformVariable(variable, data)
+    }
+
+    final override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: D): CompositeTransformResult<FirElement> {
+        return transformResolvedDeclarationStatus(resolvedDeclarationStatus, data)
     }
 
     final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: D): CompositeTransformResult<FirElement> {

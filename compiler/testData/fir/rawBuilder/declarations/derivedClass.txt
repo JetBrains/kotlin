@@ -6,7 +6,7 @@ FILE: derivedClass.kt
             public? get(): T
 
     }
-    <T : Any> public? final class Derived : Base<T> {
+    <T : Any> public? final? class Derived : Base<T> {
         public? constructor(x: T): super<Base<T>>()
 
     }

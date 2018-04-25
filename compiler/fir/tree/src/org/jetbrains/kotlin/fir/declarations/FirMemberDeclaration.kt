@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirMemberDeclaration : FirTypeParameterContainer, FirNamedDeclaration, FirAnnotationContainer {
-    val visibility: Visibility
+    val status: FirDeclarationStatus
 
-    val modality: Modality?
+    val visibility: Visibility get() = status.visibility
 
-    val platformStatus: FirMemberPlatformStatus
+    val modality: Modality? get() = status.modality
 
-    val isExpect: Boolean get() = platformStatus == FirMemberPlatformStatus.EXPECT
+    val isExpect: Boolean get() = status.isExpect
 
-    val isActual: Boolean get() = platformStatus == FirMemberPlatformStatus.ACTUAL
+    val isActual: Boolean get() = status.isActual
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitMemberDeclaration(this, data)
@@ -29,12 +29,7 @@ interface FirMemberDeclaration : FirTypeParameterContainer, FirNamedDeclaration,
         for (typeParameter in typeParameters) {
             typeParameter.accept(visitor, data)
         }
+        status.accept(visitor, data)
         super.acceptChildren(visitor, data)
     }
-}
-
-enum class FirMemberPlatformStatus {
-    DEFAULT,
-    EXPECT,
-    ACTUAL
 }

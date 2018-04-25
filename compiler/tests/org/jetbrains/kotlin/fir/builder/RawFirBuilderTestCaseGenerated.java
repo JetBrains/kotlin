@@ -98,8 +98,7 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
 
         @TestMetadata("noPrimaryConstructor.kt")
         public void testNoPrimaryConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/rawBuilder/declarations/noPrimaryConstructor.kt");
-            doRawFirTest(fileName);
+            runTest("compiler/testData/fir/rawBuilder/declarations/noPrimaryConstructor.kt");
         }
 
         @TestMetadata("simpleClass.kt")

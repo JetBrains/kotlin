@@ -1,16 +1,16 @@
 FILE: simpleClass.kt
-    public? abstract interface SomeInterface {
+    public? final? interface SomeInterface {
         public? final? function foo(x: Int, y: String): String
 
         public? final? property bar(val): Boolean
             public? get(): Boolean
 
     }
-    public? final class SomeClass : SomeInterface {
+    public? final? class SomeClass : SomeInterface {
         public? constructor(): super<kotlin.Any>()
 
         private final? property baz(val): <implicit> = STUB
-            public? get(): <implicit>
+            private get(): <implicit>
 
         public? open? override function foo(x: Int, y: String): String {
         }
@@ -27,7 +27,7 @@ FILE: simpleClass.kt
             public? set(value: Double): kotlin.Unit
 
     }
-    public? final inline class InlineClass {
+    public? final? inline class InlineClass {
         public? constructor(): super<kotlin.Any>()
 
     }

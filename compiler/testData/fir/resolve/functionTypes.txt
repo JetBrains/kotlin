@@ -1,17 +1,17 @@
 FILE: functionTypes.kt
-    <T> public? final? function simpleRun(f: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
+    <T> public final function simpleRun(f: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
         STUB
     }
-    <T, R> public? final? function simpleMap R|kotlin/collections/List<T>|.(f: R|(T) -> R|): R|R| {
+    <T, R> public final function simpleMap R|kotlin/collections/List<T>|.(f: R|(T) -> R|): R|R| {
     }
-    <T> public? final? function simpleWith(t: R|T|, f: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
+    <T> public final function simpleWith(t: R|T|, f: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
         STUB
     }
-    <T, R> public? abstract interface KMutableProperty1 : R|KProperty1<T, R>|, R|KMutableProperty<R>| {
+    <T, R> public abstract interface KMutableProperty1 : R|KProperty1<T, R>|, R|KMutableProperty<R>| {
     }
-    <T, out R> public? abstract interface KProperty1 : R|KProperty<R>|, R|(T) -> R| {
+    <T, out R> public abstract interface KProperty1 : R|KProperty<R>|, R|(T) -> R| {
     }
-    <out R> public? abstract interface KProperty {
+    <out R> public abstract interface KProperty {
     }
-    <R> public? abstract interface KMutableProperty {
+    <R> public abstract interface KMutableProperty {
     }

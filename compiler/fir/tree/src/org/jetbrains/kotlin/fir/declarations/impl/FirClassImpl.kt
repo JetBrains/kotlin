@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirType
@@ -26,20 +25,22 @@ open class FirClassImpl(
     name: Name,
     visibility: Visibility,
     modality: Modality?,
-    platformStatus: FirMemberPlatformStatus,
+    isExpect: Boolean,
+    isActual: Boolean,
     final override val classKind: ClassKind,
-    final override val isInner: Boolean,
-    final override val isCompanion: Boolean,
-    final override val isData: Boolean,
-    override val isInline: Boolean
-) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, platformStatus), FirClass {
+    isInner: Boolean,
+    isCompanion: Boolean,
+    isData: Boolean,
+    isInline: Boolean
+) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, isExpect, isActual), FirClass {
 
     init {
         symbol.bind(this)
+        status.isInner = isInner
+        status.isCompanion = isCompanion
+        status.isData = isData
+        status.isInline = isInline
     }
-
-    override val modality: Modality
-        get() = super.modality ?: if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
 
     override val superTypes = mutableListOf<FirType>()
 
@@ -48,8 +49,10 @@ open class FirClassImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirClass {
         superTypes.transformInplace(transformer, data)
-        declarations.transformInplace(transformer, data)
+        val result = super<FirAbstractMemberDeclaration>.transformChildren(transformer, data) as FirClass
 
-        return super<FirAbstractMemberDeclaration>.transformChildren(transformer, data) as FirClass
+        // Transform declarations in last turn
+        declarations.transformInplace(transformer, data)
+        return result
     }
 }

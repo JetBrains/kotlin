@@ -14,7 +14,9 @@ interface FirPropertyAccessor : @VisitedSupertype FirFunction, FirTypedDeclarati
 
     val isSetter: Boolean get() = !isGetter
 
-    val visibility: Visibility
+    val status: FirDeclarationStatus
+
+    val visibility: Visibility get() = status.visibility
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitPropertyAccessor(this, data)
@@ -25,5 +27,6 @@ interface FirPropertyAccessor : @VisitedSupertype FirFunction, FirTypedDeclarati
             parameter.accept(visitor, data)
         }
         body?.accept(visitor, data)
+        status.accept(visitor, data)
     }
 }

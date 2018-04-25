@@ -90,6 +90,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitDeclaration(variable, null)
     }
 
+    open fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus) {
+        visitElement(declarationStatus, null)
+    }
+
+    open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus) {
+        visitDeclarationStatus(resolvedDeclarationStatus, null)
+    }
+
     open fun visitImport(import: FirImport) {
         visitElement(import, null)
     }
@@ -198,6 +206,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitDeclaration(declaration)
     }
 
+    final override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: Nothing?) {
+        visitDeclarationStatus(declarationStatus)
+    }
+
     final override fun visitDeclarationWithBody(declarationWithBody: FirDeclarationWithBody, data: Nothing?) {
         visitDeclarationWithBody(declarationWithBody)
     }
@@ -284,6 +296,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitVariable(variable: FirVariable, data: Nothing?) {
         visitVariable(variable)
+    }
+
+    final override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: Nothing?) {
+        visitResolvedDeclarationStatus(resolvedDeclarationStatus)
     }
 
     final override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
