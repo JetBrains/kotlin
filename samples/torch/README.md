@@ -16,8 +16,8 @@ make sure you have Python 2.X and pyyaml installed:
     # Linux: if you don't have pip
     apt-get -y install python-pip
     
-    # if you don't have pyyaml
-    sudo pip install pyyaml
+    # if you don't have pyyaml or typing
+    sudo pip install pyyaml typing
     
 Now
 
