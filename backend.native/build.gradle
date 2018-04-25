@@ -163,7 +163,7 @@ task start(dependsOn: "${hostName}Start")
 // konan.home, --runtime, -Djava.library.path etc
 
 targetList.each { target ->
-    def konanJvmArgs = ["-ea",
+    def konanJvmArgs = ["-ea", "-Xmx3G",
     "-Dkonan.home=${rootProject.projectDir}",
     "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
     "-Dfile.encoding=UTF-8"]
