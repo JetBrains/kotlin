@@ -10,10 +10,15 @@ import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ex.ApplicationEx
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.FileTypeIndex
+import com.intellij.psi.search.ProjectScope
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -37,71 +42,66 @@ abstract class AllKotlinTest : DaemonAnalyzerTestCase() {
 
     data class PerFileTestResult(val perProcess: Map<String, Long>, val totalNs: Long, val errors: List<Throwable>)
 
-    protected abstract fun doTest(file: File): PerFileTestResult
-
-    protected fun File.toPsiFile(): PsiFile? {
-        val vFile = VfsUtil.findFileByIoFile(this, false) ?: return null
-
-        val psi = PsiManager.getInstance(project)
-        return psi.findFile(vFile)
-    }
+    protected abstract fun doTest(file: VirtualFile): PerFileTestResult
 
     fun testWholeProjectPerformance() {
 
-        val totals = mutableMapOf<String, Long>()
+        tcSuite(this::class.simpleName ?: "Unknown") {
+            val totals = mutableMapOf<String, Long>()
 
-        val statsOutput = statsFile.bufferedWriter()
+            val statsOutput = statsFile.bufferedWriter()
 
-        statsOutput.appendln("File, InspectionID, Time")
+            statsOutput.appendln("File, ProcessID, Time")
 
-        fun appendInspectionResult(file: String, id: String, nanoTime: Long) {
-            totals.merge(id, nanoTime) { a, b -> a + b }
+            fun appendInspectionResult(file: String, id: String, nanoTime: Long) {
+                totals.merge(id, nanoTime) { a, b -> a + b }
 
-            statsOutput.appendln(buildString {
-                append(file)
-                append(", ")
-                append(id)
-                append(", ")
-                append((nanoTime * 1e-6).toLong())
-            })
-        }
+                statsOutput.appendln(buildString {
+                    append(file)
+                    append(", ")
+                    append(id)
+                    append(", ")
+                    append(nanoTime.nsToMs)
+                })
+            }
 
-        tcSuite("SumPerFile") {
-            tmp.walkTopDown().filter {
-                it.extension == "kt" && "testdata" !in it.path.toLowerCase() && "resources" !in it.path
-            }.forEach {
-                val filePath = it.relativeTo(tmp).path.replace(File.separatorChar, '/')
-                tcTest(filePath) {
-                    val result = doTest(it)
-                    result.perProcess.forEach { (k, v) ->
-                        appendInspectionResult(filePath, k, v)
+            tcSuite("TotalPerFile") {
+                val scope = KotlinSourceFilterScope.projectSources(ProjectScope.getContentScope(project), project)
+                val files = FileTypeIndex.getFiles(KotlinFileType.INSTANCE, scope)
+
+                files.forEach {
+                    val filePath = File(it.path).relativeTo(tmp).path.replace(File.separatorChar, '/')
+                    tcTest(filePath) {
+                        val result = doTest(it)
+                        result.perProcess.forEach { (k, v) ->
+                            appendInspectionResult(filePath, k, v)
+                        }
+                        (result.totalNs.nsToMs) to result.errors
                     }
-                    (result.totalNs * 1e-6).toLong() to result.errors
+                }
+            }
+
+            statsOutput.flush()
+            statsOutput.close()
+
+
+            tcSuite("Total") {
+                totals.forEach { (k, v) ->
+                    tcTest(k) {
+                        v.nsToMs to emptyList()
+                    }
                 }
             }
         }
-
-        statsOutput.flush()
-        statsOutput.close()
-
-
-        tcSuite("Total") {
-            totals.forEach { (k, v) ->
-                tcTest(k) {
-                    (v * 1e-6).toLong() to emptyList()
-                }
-            }
-        }
-
     }
 
-    private inline fun tcSuite(name: String, block: () -> Unit) {
+    inline fun tcSuite(name: String, block: () -> Unit) {
         println("##teamcity[testSuiteStarted name='$name']")
         block()
         println("##teamcity[testSuiteFinished name='$name']")
     }
 
-    private inline fun tcTest(name: String, block: () -> Pair<Long, List<Throwable>>) {
+    inline fun tcTest(name: String, block: () -> Pair<Long, List<Throwable>>) {
         println("##teamcity[testStarted name='$name' captureStandardOutput='true']")
         val (time, errors) = block()
         if (errors.isNotEmpty()) {
@@ -118,7 +118,7 @@ abstract class AllKotlinTest : DaemonAnalyzerTestCase() {
         println("##teamcity[testFinished name='$name' duration='$time']")
     }
 
-    private fun String.tcEscape(): String {
+    fun String.tcEscape(): String {
         return this
             .replace("|", "||")
             .replace("[", "|[")
@@ -133,6 +133,10 @@ abstract class AllKotlinTest : DaemonAnalyzerTestCase() {
         for (child in this.children) {
             child.acceptRecursively(visitor)
         }
+    }
+
+    companion object {
+        val Long.nsToMs get() = this * (1e-6).toLong()
     }
 
 }

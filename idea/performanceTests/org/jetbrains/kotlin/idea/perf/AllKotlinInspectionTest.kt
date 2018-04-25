@@ -12,6 +12,7 @@ import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ex.InspectionToolRegistrar
 import com.intellij.codeInspection.ex.Tools
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
@@ -37,12 +38,12 @@ class AllKotlinInspectionTest : AllKotlinTest() {
 
     class ExceptionWhileInspection(inspectionId: String, cause: Throwable) : RuntimeException(inspectionId, cause)
 
-    override fun doTest(file: File): PerFileTestResult {
+    override fun doTest(file: VirtualFile): PerFileTestResult {
 
         val results = mutableMapOf<String, Long>()
         var totalNs = 0L
 
-        val psiFile = file.toPsiFile() ?: run {
+        val psiFile = file.toPsiFile(project) ?: run {
             return PerFileTestResult(results, totalNs, listOf(AssertionError("PsiFile not found for $file")))
         }
 
