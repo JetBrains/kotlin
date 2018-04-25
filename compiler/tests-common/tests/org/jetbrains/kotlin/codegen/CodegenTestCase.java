@@ -518,7 +518,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         return true;
     }
 
-    private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {
+    protected static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {
         boolean noErrors = true;
         for (OutputFile file : ClassFileUtilsKt.getClassFiles(factory)) {
             noErrors &= verifyWithAsm(file, loader);
