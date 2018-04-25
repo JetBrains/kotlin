@@ -248,6 +248,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     var phase: KonanPhase? = null
     var depth: Int = 0
 
+    lateinit var privateFunctions: List<IrFunction>
+    lateinit var privateClasses: List<IrClass>
+
     // Cache used for source offset->(line,column) mapping.
     val fileEntryCache = mutableMapOf<String, SourceManager.FileEntry>()
 

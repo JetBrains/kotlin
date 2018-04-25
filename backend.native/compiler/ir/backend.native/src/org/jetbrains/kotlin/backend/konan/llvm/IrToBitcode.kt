@@ -92,18 +92,29 @@ internal fun emitLLVM(context: Context) {
         devirtualizationAnalysisResult = Devirtualization.run(irModule, context, moduleDFG!!, externalModulesDFG!!)
 
         val privateFunctions = moduleDFG!!.symbolTable.getPrivateFunctionsTableForExport()
-
-        codegenVisitor.codegen.staticData.placeGlobalConstArray(irModule.descriptor.privateFunctionsTableSymbolName, int8TypePtr,
-                privateFunctions.map { constPointer(codegenVisitor.codegen.llvmFunction(it)).bitcast(int8TypePtr) },
-                isExported = true
-        )
+        privateFunctions.forEachIndexed { index, it ->
+            val function = codegenVisitor.codegen.llvmFunction(it)
+            LLVMAddAlias(
+                    context.llvmModule,
+                    function.type,
+                    function,
+                    irModule.descriptor.privateFunctionSymbolName(index)
+            )!!
+        }
+        context.privateFunctions = privateFunctions
 
         val privateClasses = moduleDFG!!.symbolTable.getPrivateClassesTableForExport()
 
-        codegenVisitor.codegen.staticData.placeGlobalConstArray(irModule.descriptor.privateClassesTableSymbolName, int8TypePtr,
-                privateClasses.map { constPointer(codegenVisitor.codegen.typeInfoValue(it)).bitcast(int8TypePtr) },
-                isExported = true
-        )
+        privateClasses.forEachIndexed { index, it ->
+            val typeInfoPtr = codegenVisitor.codegen.typeInfoValue(it)
+            LLVMAddAlias(
+                    context.llvmModule,
+                    typeInfoPtr.type,
+                    typeInfoPtr,
+                    irModule.descriptor.privateClassSymbolName(index)
+            )!!
+        }
+        context.privateClasses = privateClasses
     }
 
     phaser.phase(KonanPhase.ESCAPE_ANALYSIS) {
@@ -1998,36 +2009,36 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun evaluatePrivateFunctionCall(callee: IrPrivateFunctionCall, args: List<LLVMValueRef>, resultLifetime: Lifetime): LLVMValueRef {
-        val functionsListName = callee.moduleDescriptor.privateFunctionsTableSymbolName
-        // LLVM inlines access to this global array (with -opt option on).
-        val functionsList =
-                if (callee.moduleDescriptor == context.irModule!!.descriptor)
-                    LLVMGetNamedGlobal(context.llvmModule, functionsListName)
-                else
-                    codegen.importGlobal(functionsListName, LLVMArrayType(int8TypePtr, callee.totalFunctions)!!, callee.moduleDescriptor.llvmSymbolOrigin)
-        val functionIndex    = Int32(callee.functionIndex).llvm
-        val functionPlacePtr = LLVMBuildGEP(functionGenerationContext.builder, functionsList, cValuesOf(kImmZero, functionIndex), 2, "")!!
-        val functionPtr      = functionGenerationContext.load(functionPlacePtr)
-
         val target = callee.symbol.owner as IrFunction
-        val functionPtrType  = pointerType(codegen.getLlvmFunctionType(target))
-        val function         = functionGenerationContext.bitcast(functionPtrType, functionPtr)
+
+        val functionIndex = callee.functionIndex
+        val function = if (callee.moduleDescriptor == context.irModule!!.descriptor) {
+            codegen.llvmFunction(context.privateFunctions[functionIndex])
+        } else {
+            context.llvm.externalFunction(
+                    callee.moduleDescriptor.privateFunctionSymbolName(functionIndex),
+                    codegen.getLlvmFunctionType(target),
+                    callee.moduleDescriptor.llvmSymbolOrigin
+
+            )
+        }
         return call(target, function, args, resultLifetime)
     }
 
     //-------------------------------------------------------------------------//
 
     private fun evaluatePrivateClassReference(classReference: IrPrivateClassReference): LLVMValueRef {
-        val classesListName = classReference.moduleDescriptor.privateClassesTableSymbolName
-        // LLVM inlines access to this global array (with -opt option on).
-        val functionsList =
-                if (classReference.moduleDescriptor == context.irModule!!.descriptor)
-                    LLVMGetNamedGlobal(context.llvmModule, classesListName)
-                else
-                    codegen.importGlobal(classesListName, LLVMArrayType(int8TypePtr, classReference.totalClasses)!!, classReference.moduleDescriptor.llvmSymbolOrigin)
-        val classIndex    = Int32(classReference.classIndex).llvm
-        val classPlacePtr = LLVMBuildGEP(functionGenerationContext.builder, functionsList, cValuesOf(kImmZero, classIndex), 2, "")!!
-        return functionGenerationContext.load(classPlacePtr)
+        val classIndex = classReference.classIndex
+        val typeInfoPtr = if (classReference.moduleDescriptor == context.irModule!!.descriptor) {
+            codegen.typeInfoValue(context.privateClasses[classIndex])
+        } else {
+            codegen.importGlobal(
+                    classReference.moduleDescriptor.privateClassSymbolName(classIndex),
+                    codegen.kTypeInfo,
+                    classReference.moduleDescriptor.llvmSymbolOrigin
+            )
+        }
+        return functionGenerationContext.bitcast(int8TypePtr, typeInfoPtr)
     }
 
     //-------------------------------------------------------------------------//
