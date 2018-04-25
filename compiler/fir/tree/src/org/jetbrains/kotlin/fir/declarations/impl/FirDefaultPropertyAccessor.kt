@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -22,10 +24,12 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 abstract class FirDefaultPropertyAccessor(
     final override val session: FirSession,
     final override val psi: PsiElement?,
-    final override val isGetter: Boolean
+    final override val isGetter: Boolean,
+    visibility: Visibility
 ) : FirPropertyAccessor {
-    final override val visibility =
-        Visibilities.UNKNOWN
+    override var status = FirDeclarationStatusImpl(
+        session, visibility, Modality.FINAL
+    )
 
     final override val body: FirBody? =
         null
@@ -37,14 +41,16 @@ abstract class FirDefaultPropertyAccessor(
 class FirDefaultPropertyGetter(
     session: FirSession,
     psi: PsiElement?,
-    propertyType: FirType
-) : FirDefaultPropertyAccessor(session, psi, isGetter = true) {
+    propertyType: FirType,
+    visibility: Visibility
+) : FirDefaultPropertyAccessor(session, psi, isGetter = true, visibility = visibility) {
     override val valueParameters: List<FirValueParameter> = emptyList()
 
     override var returnType: FirType = propertyType
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         returnType = returnType.transformSingle(transformer, data)
+        status = status.transformSingle(transformer, data)
 
         return this
     }
@@ -53,8 +59,9 @@ class FirDefaultPropertyGetter(
 class FirDefaultPropertySetter(
     session: FirSession,
     psi: PsiElement?,
-    propertyType: FirType
-) : FirDefaultPropertyAccessor(session, psi, isGetter = false) {
+    propertyType: FirType,
+    visibility: Visibility
+) : FirDefaultPropertyAccessor(session, psi, isGetter = false, visibility = visibility) {
     override val valueParameters = mutableListOf(FirDefaultSetterValueParameter(session, psi, propertyType))
 
     override var returnType: FirType = FirImplicitUnitType(session, psi)
@@ -62,6 +69,7 @@ class FirDefaultPropertySetter(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         valueParameters.transformInplace(transformer, data)
         returnType = returnType.transformSingle(transformer, data)
+        status = status.transformSingle(transformer, data)
 
         return this
     }

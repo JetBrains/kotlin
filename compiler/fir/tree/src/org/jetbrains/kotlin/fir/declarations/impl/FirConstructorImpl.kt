@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBody
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -25,13 +24,14 @@ open class FirConstructorImpl(
     session: FirSession,
     psi: PsiElement?,
     visibility: Visibility,
-    platformStatus: FirMemberPlatformStatus,
+    isExpect: Boolean,
+    isActual: Boolean,
     delegatedSelfType: FirType,
     final override var delegatedConstructor: FirDelegatedConstructorCall?,
     override val body: FirBody?
 ) : FirAbstractCallableMember(
     session, psi, NAME, visibility, Modality.FINAL,
-    platformStatus, false, null, delegatedSelfType
+    isExpect, isActual, isOverride = false, receiverType = null, returnType = delegatedSelfType
 ), FirConstructor {
     override val valueParameters = mutableListOf<FirValueParameter>()
 

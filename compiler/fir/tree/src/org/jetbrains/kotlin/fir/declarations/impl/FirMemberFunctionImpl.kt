@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBody
@@ -25,20 +24,29 @@ class FirMemberFunctionImpl(
     name: Name,
     visibility: Visibility,
     modality: Modality?,
-    platformStatus: FirMemberPlatformStatus,
+    isExpect: Boolean,
+    isActual: Boolean,
     isOverride: Boolean,
-    override val isOperator: Boolean,
-    override val isInfix: Boolean,
-    override val isInline: Boolean,
-    override val isTailRec: Boolean,
-    override val isExternal: Boolean,
+    isOperator: Boolean,
+    isInfix: Boolean,
+    isInline: Boolean,
+    isTailRec: Boolean,
+    isExternal: Boolean,
     receiverType: FirType?,
     returnType: FirType,
     override val body: FirBody?
 ) : FirAbstractCallableMember(
     session, psi, name, visibility, modality,
-    platformStatus, isOverride, receiverType, returnType
+    isExpect, isActual, isOverride, receiverType, returnType
 ), FirNamedFunction {
+    init {
+        status.isOperator = isOperator
+        status.isInfix = isInfix
+        status.isInline = isInline
+        status.isTailRec = isTailRec
+        status.isExternal = isExternal
+    }
+
     override val valueParameters = mutableListOf<FirValueParameter>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {

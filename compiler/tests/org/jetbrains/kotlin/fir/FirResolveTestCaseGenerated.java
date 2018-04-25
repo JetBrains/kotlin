@@ -106,8 +106,7 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
 
     @TestMetadata("typeParameterInPropertyReceiver.kt")
     public void testTypeParameterInPropertyReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/fir/resolve/typeParameterInPropertyReceiver.kt");
-        doTest(fileName);
+        runTest("compiler/testData/fir/resolve/typeParameterInPropertyReceiver.kt");
     }
 
     @TestMetadata("typeParameterVsNested.kt")
@@ -130,6 +129,44 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @TestMetadata("lists.kt")
         public void testLists() throws Exception {
             runTest("compiler/testData/fir/resolve/builtins/lists.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/fir/resolve/fromBuilder")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FromBuilder extends AbstractFirResolveTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFromBuilder() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/fir/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("complexTypes.kt")
+        public void testComplexTypes() throws Exception {
+            runTest("compiler/testData/fir/resolve/fromBuilder/complexTypes.kt");
+        }
+
+        @TestMetadata("enums.kt")
+        public void testEnums() throws Exception {
+            runTest("compiler/testData/fir/resolve/fromBuilder/enums.kt");
+        }
+
+        @TestMetadata("noPrimaryConstructor.kt")
+        public void testNoPrimaryConstructor() throws Exception {
+            runTest("compiler/testData/fir/resolve/fromBuilder/noPrimaryConstructor.kt");
+        }
+
+        @TestMetadata("simpleClass.kt")
+        public void testSimpleClass() throws Exception {
+            runTest("compiler/testData/fir/resolve/fromBuilder/simpleClass.kt");
+        }
+
+        @TestMetadata("typeParameters.kt")
+        public void testTypeParameters() throws Exception {
+            runTest("compiler/testData/fir/resolve/fromBuilder/typeParameters.kt");
         }
     }
 

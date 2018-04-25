@@ -13,10 +13,10 @@ FILE: NestedSuperType.kt
         }
 
     }
-    public? final class Your : My {
+    public? final? class Your : My {
         public? constructor(): super<My>()
 
-        public? final class NestedThree : NestedOne {
+        public? final? class NestedThree : NestedOne {
             public? constructor(): super<NestedOne>()
 
         }

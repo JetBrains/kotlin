@@ -1,0 +1,15 @@
+FILE: complexTypes.kt
+    <T, out S> public final class C {
+        public constructor(): super<R|kotlin/Any|>()
+
+        <R, in P> public final inner class D {
+            public constructor(): super<R|kotlin/Any|>()
+
+        }
+
+    }
+    public abstract interface Test {
+        public abstract property x(val): R|a/b/C.D<out kotlin/CharSequence, *, in kotlin/collections/List<*>, *>|
+            public get(): R|a/b/C.D<out kotlin/CharSequence, *, in kotlin/collections/List<*>, *>|
+
+    }

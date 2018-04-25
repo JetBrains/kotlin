@@ -1,5 +1,5 @@
 FILE: typeParameters.kt
-    <out T : Any> public? abstract interface List {
+    <out T : Any> public? final? interface List {
         public? final? operator function get(index: Int): T
 
         public? final? infix function concat(other: List<T>): List<T>
@@ -11,7 +11,7 @@ FILE: typeParameters.kt
         public? constructor(): super<kotlin.Any>()
 
     }
-    public? final class SomeList : AbstractList<Int> {
+    public? final? class SomeList : AbstractList<Int> {
         public? constructor(): super<AbstractList<Int>>()
 
         public? open? override function get(index: Int): Int {

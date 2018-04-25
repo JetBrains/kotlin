@@ -1,5 +1,5 @@
 FILE: noPrimaryConstructor.kt
-    public? final class NoPrimary {
+    public? final? class NoPrimary {
         public? final? property x(val): String
             public? get(): String
 

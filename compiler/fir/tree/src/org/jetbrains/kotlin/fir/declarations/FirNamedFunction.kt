@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
 interface FirNamedFunction : @VisitedSupertype FirFunction, FirCallableMember {
-    val isOperator: Boolean
+    val isOperator: Boolean get() = status.isOperator
 
-    val isInfix: Boolean
+    val isInfix: Boolean get() = status.isInfix
 
-    val isInline: Boolean
+    val isInline: Boolean get() = status.isInline
 
-    val isTailRec: Boolean
+    val isTailRec: Boolean get() = status.isTailRec
 
-    val isExternal: Boolean
+    val isExternal: Boolean get() = status.isExternal
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitNamedFunction(this, data)

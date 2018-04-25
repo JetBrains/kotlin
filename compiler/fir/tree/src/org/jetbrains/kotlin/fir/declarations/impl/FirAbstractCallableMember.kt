@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMember
-import org.jetbrains.kotlin.fir.declarations.FirMemberPlatformStatus
-import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -24,11 +22,16 @@ abstract class FirAbstractCallableMember(
     name: Name,
     visibility: Visibility,
     modality: Modality?,
-    platformStatus: FirMemberPlatformStatus,
-    final override val isOverride: Boolean,
+    isExpect: Boolean,
+    isActual: Boolean,
+    isOverride: Boolean,
     final override var receiverType: FirType?,
     final override var returnType: FirType
-) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, platformStatus), FirCallableMember {
+) : FirAbstractMemberDeclaration(session, psi, name, visibility, modality, isExpect, isActual), FirCallableMember {
+
+    init {
+        status.isOverride = isOverride
+    }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         receiverType = receiverType?.transformSingle(transformer, data)

@@ -1,29 +1,29 @@
 FILE: Annotations.kt
     @FILE:R|annotations/Simple|()
-    @R|annotations/WithInt|(STUB) public? abstract class First {
-        public? constructor(): super<R|kotlin/Any|>()
+    @R|annotations/WithInt|(STUB) public abstract class First {
+        public constructor(): super<R|kotlin/Any|>()
 
-        @R|annotations/Simple|() public? abstract function foo(@R|annotations/WithString|(STUB) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|
+        @R|annotations/Simple|() public abstract function foo(@R|annotations/WithString|(STUB) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|
 
-        @R|annotations/Complex|(STUB, STUB) public? abstract property v(val): R|kotlin/String|
-            public? get(): R|kotlin/String|
+        @R|annotations/Complex|(STUB, STUB) public abstract property v(val): R|kotlin/String|
+            public get(): R|kotlin/String|
 
     }
-    @R|annotations/WithString|(STUB) public? final class Second : @R|annotations/WithInt|(STUB) R|test/First| {
-        public? constructor(y: R|kotlin/Char|): super<@R|annotations/WithInt|(STUB) R|test/First|>()
+    @R|annotations/WithString|(STUB) public final class Second : @R|annotations/WithInt|(STUB) R|test/First| {
+        public constructor(y: R|kotlin/Char|): super<@R|annotations/WithInt|(STUB) R|test/First|>()
 
-        public? final? property y(val): R|kotlin/Char|
-            public? get(): R|kotlin/Char|
+        public final property y(val): R|kotlin/Char|
+            public get(): R|kotlin/Char|
 
-        public? open? override function foo(arg: R|kotlin/Double|): R|kotlin/Unit| {
+        public final override function foo(arg: R|kotlin/Double|): R|kotlin/Unit| {
         }
 
-        public? open? override property v(val): R|kotlin/String|
-            @R|annotations/Simple|() public? get(): R|kotlin/String| {
+        public final override property v(val): R|kotlin/String|
+            @R|annotations/Simple|() public get(): R|kotlin/String| {
                 STUB
             }
 
-        @R|annotations/WithString|(STUB) public? constructor(): this<R|test/Second|>()
+        @R|annotations/WithString|(STUB) public constructor(): this<R|test/Second|>()
 
     }
-    @R|annotations/WithInt|(STUB) @R|annotations/WithInt|(STUB) public? final typealias Third = @R|annotations/Simple|() R|test/Second|
+    @R|annotations/WithInt|(STUB) @R|annotations/WithInt|(STUB) public final typealias Third = @R|annotations/Simple|() R|test/Second|

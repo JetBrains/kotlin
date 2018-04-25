@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -19,12 +20,17 @@ class FirPropertyAccessorImpl(
     session: FirSession,
     psi: PsiElement?,
     override val isGetter: Boolean,
-    override val visibility: Visibility,
+    visibility: Visibility,
     override var returnType: FirType,
     body: FirBody?
 ) : FirAbstractFunction(session, psi, body), FirPropertyAccessor {
+    override var status = FirDeclarationStatusImpl(
+        session, visibility, Modality.FINAL
+    )
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         returnType = returnType.transformSingle(transformer, data)
+        status = status.transformSingle(transformer, data)
 
         return super<FirAbstractFunction>.transformChildren(transformer, data)
     }
