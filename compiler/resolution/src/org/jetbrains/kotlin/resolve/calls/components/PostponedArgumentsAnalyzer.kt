@@ -102,7 +102,7 @@ class PostponedArgumentsAnalyzer(
         }
 
         if (inferenceSession != null) {
-            val storageSnapshot = c.getBuilder().copyCurrentStorage()
+            val storageSnapshot = c.getBuilder().currentStorage()
 
             val postponedVariables = inferenceSession.inferPostponedVariables(storageSnapshot)
 

@@ -97,32 +97,4 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override val hasContradiction: Boolean get() = errors.any { !it.candidateApplicability.isSuccess }
     override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType> = LinkedHashMap()
     override val postponedTypeVariables: ArrayList<NewTypeVariable> = ArrayList()
-
-    fun copy(): ConstraintStorage {
-        return object : ConstraintStorage {
-            override val allTypeVariables: Map<TypeConstructor, NewTypeVariable> =
-                this@MutableConstraintStorage.allTypeVariables.toMap()
-
-            override val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints> =
-                this@MutableConstraintStorage.notFixedTypeVariables.toMap()
-
-            override val initialConstraints: List<InitialConstraint> =
-                this@MutableConstraintStorage.initialConstraints.toList()
-
-            override val maxTypeDepthFromInitialConstraints: Int =
-                this@MutableConstraintStorage.maxTypeDepthFromInitialConstraints
-
-            override val errors: List<KotlinCallDiagnostic> =
-                this@MutableConstraintStorage.errors.toList()
-
-            override val hasContradiction: Boolean =
-                this@MutableConstraintStorage.hasContradiction
-
-            override val fixedTypeVariables: Map<TypeConstructor, UnwrappedType> =
-                this@MutableConstraintStorage.fixedTypeVariables.toMap()
-
-            override val postponedTypeVariables: List<NewTypeVariable> =
-                this@MutableConstraintStorage.postponedTypeVariables.toList()
-        }
-    }
 }

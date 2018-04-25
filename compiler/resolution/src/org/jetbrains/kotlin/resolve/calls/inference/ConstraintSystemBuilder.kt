@@ -49,7 +49,7 @@ interface ConstraintSystemBuilder : ConstraintSystemOperation {
 
     fun buildCurrentSubstitutor(): NewTypeSubstitutor
 
-    fun copyCurrentStorage(): ConstraintStorage
+    fun currentStorage(): ConstraintStorage
 }
 
 fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(

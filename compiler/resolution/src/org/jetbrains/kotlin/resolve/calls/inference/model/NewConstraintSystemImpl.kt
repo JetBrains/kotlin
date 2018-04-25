@@ -278,9 +278,9 @@ class NewConstraintSystemImpl(
         return storage.postponedTypeVariables.associate { it to NonFixedType(it.freshTypeConstructor, it.defaultType.isMarkedNullable) }
     }
 
-    override fun copyCurrentStorage(): ConstraintStorage {
+    override fun currentStorage(): ConstraintStorage {
         checkState(State.BUILDING, State.COMPLETION)
-        return storage.copy()
+        return storage
     }
 
     // PostponedArgumentsAnalyzer.Context
