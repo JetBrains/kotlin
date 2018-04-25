@@ -228,6 +228,8 @@ public abstract class AnnotationCodegen {
         annotationTargetMap.put(KotlinTarget.PROPERTY_SETTER, ElementType.METHOD);
         annotationTargetMap.put(KotlinTarget.FIELD, ElementType.FIELD);
         annotationTargetMap.put(KotlinTarget.VALUE_PARAMETER, ElementType.PARAMETER);
+        annotationTargetMap.put(KotlinTarget.TYPE_PARAMETER, ElementType.TYPE_PARAMETER);
+        annotationTargetMap.put(KotlinTarget.TYPE, ElementType.TYPE_USE);
     }
 
     private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
