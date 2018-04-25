@@ -39,6 +39,8 @@ ext {
     kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
+
+    gradlePluginVersion = KonanVersion.CURRENT.gradlePluginVersion
 }
 
 allprojects {
@@ -385,7 +387,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
                 return it.replace("/dist", "")
             }
             if (it.startsWith("konan.plugin.version=")) {
-                return "konan.plugin.version=$konanVersion"
+                return "konan.plugin.version=$gradlePluginVersion"
             }
             return it
         }

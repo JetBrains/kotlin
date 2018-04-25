@@ -51,24 +51,32 @@ open class VersionGenerator: DefaultTask() {
                      |  companion object {
                      |     val CURRENT = KonanVersion($meta, $major, $minor, $maintenance, $build)
                      |  }
-                     |  private val versionString by lazy {
-                     |     buildString {
-                     |       append(major)
-                     |       append('.')
-                     |       append(minor)
-                     |       if (maintenance != 0) {
-                     |         append('.')
-                     |         append(maintenance)
-                     |       }
-                     |       append('-')
-                     |       append(meta.metaString)
-                     |       if (build != -1) {
-                     |         append('-')
-                     |         append(build)
-                     |       }
-                     |     }
+                     |  private fun versionToString(showMeta: Boolean = true, showBuild: Boolean = true) = buildString {
+                     |    append(major)
+                     |    append('.')
+                     |    append(minor)
+                     |    if (maintenance != 0) {
+                     |      append('.')
+                     |      append(maintenance)
+                     |    }
+                     |    if (showMeta) {
+                     |      append('-')
+                     |      append(meta.metaString)
+                     |    }
+                     |    if (showBuild && build != -1) {
+                     |      append('-')
+                     |      append(build)
+                     |    }
                      |  }
+                     |  private val versionString by lazy { versionToString(true, true) }
                      |  override fun toString() = versionString
+                     |
+                     |  val gradlePluginVersion by lazy {
+                     |    if (meta == MetaVersion.RELEASE)
+                     |      versionToString(false, false)
+                     |    else
+                     |      versionString
+                     |  }
                      |}
             """.trimMargin()
             }

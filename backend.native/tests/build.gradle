@@ -26,7 +26,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
     }
     ext.useCustomDist = project.hasProperty("konan.home")
     if (!useCustomDist) {

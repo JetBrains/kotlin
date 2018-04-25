@@ -31,8 +31,8 @@ include ':utilities'
 include ':performance'
 include ':platformLibs'
 
-includeBuild 'tools/kotlin-native-gradle-plugin'
 includeBuild 'shared'
+includeBuild 'tools/kotlin-native-gradle-plugin'
 
 if (hasProperty("kotlinProjectPath")) {
     includeBuild(kotlinProjectPath) {

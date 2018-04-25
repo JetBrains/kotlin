@@ -28,5 +28,5 @@ enum class MetaVersion(val metaString:String) {
   BETA("beta"),
   RC1("rc1"),
   RC2("rc2"),
-  REL("release")
+  RELEASE("release")
 }

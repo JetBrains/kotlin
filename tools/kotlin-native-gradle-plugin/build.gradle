@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.konan.KonanVersion
+
 /**
  * One may use bintrayUser/bintrayKey project properties or BINTRAY_USER/BINTRAY_KEY environment variables to upload
  * built plugin to bintray repository.
@@ -30,6 +32,7 @@ buildscript {
     }
 
     dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
     }
@@ -42,14 +45,7 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'org.jetbrains.kotlin'
-
-// Gradle doesn't allow using the KonanVersion class defined in `shared` from this build.
-// TODO: Investigate if we can workaround this issue in better way.
-def metaVersion = project.findProperty("konanMetaVersion")?.toString()?.toLowerCase() ?: "dev"
-version = "$konanVersion-$metaVersion"
-if (project.hasProperty("build.number")) {
-    version <<= "-${project.findProperty("build.number")?.toString().split('-')[2]}"
-}
+version = KonanVersion.CURRENT.gradlePluginVersion
 
 repositories {
     mavenCentral()
