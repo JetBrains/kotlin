@@ -179,6 +179,11 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
+    public JvmTarget getJvmTarget() {
+        return jvmTarget;
+    }
+
+    @NotNull
     public Type mapOwner(@NotNull DeclarationDescriptor descriptor) {
         return mapOwner(descriptor, true);
     }

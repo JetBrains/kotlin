@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.annotation.WrappedAnnotated;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
@@ -87,9 +88,9 @@ public abstract class AnnotationCodegen {
     private final InnerClassConsumer innerClassConsumer;
     private final KotlinTypeMapper typeMapper;
 
-    private AnnotationCodegen(@NotNull InnerClassConsumer innerClassConsumer, @NotNull KotlinTypeMapper mapper) {
+    private AnnotationCodegen(@NotNull InnerClassConsumer innerClassConsumer, @NotNull KotlinTypeMapper typeMapper) {
         this.innerClassConsumer = innerClassConsumer;
-        this.typeMapper = mapper;
+        this.typeMapper = typeMapper;
     }
 
     /**
@@ -217,23 +218,37 @@ public abstract class AnnotationCodegen {
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass);
     }
 
-    private static final Map<KotlinTarget, ElementType> annotationTargetMap = new EnumMap<>(KotlinTarget.class);
+    private static final Map<JvmTarget, Map<KotlinTarget, ElementType>> annotationTargetMaps = new EnumMap<>(JvmTarget.class);
 
     static {
-        annotationTargetMap.put(KotlinTarget.CLASS, ElementType.TYPE);
-        annotationTargetMap.put(KotlinTarget.ANNOTATION_CLASS, ElementType.ANNOTATION_TYPE);
-        annotationTargetMap.put(KotlinTarget.CONSTRUCTOR, ElementType.CONSTRUCTOR);
-        annotationTargetMap.put(KotlinTarget.LOCAL_VARIABLE, ElementType.LOCAL_VARIABLE);
-        annotationTargetMap.put(KotlinTarget.FUNCTION, ElementType.METHOD);
-        annotationTargetMap.put(KotlinTarget.PROPERTY_GETTER, ElementType.METHOD);
-        annotationTargetMap.put(KotlinTarget.PROPERTY_SETTER, ElementType.METHOD);
-        annotationTargetMap.put(KotlinTarget.FIELD, ElementType.FIELD);
-        annotationTargetMap.put(KotlinTarget.VALUE_PARAMETER, ElementType.PARAMETER);
+        Map<KotlinTarget, ElementType> jvm6 = new EnumMap<>(KotlinTarget.class);
+        jvm6.put(KotlinTarget.CLASS, ElementType.TYPE);
+        jvm6.put(KotlinTarget.ANNOTATION_CLASS, ElementType.ANNOTATION_TYPE);
+        jvm6.put(KotlinTarget.CONSTRUCTOR, ElementType.CONSTRUCTOR);
+        jvm6.put(KotlinTarget.LOCAL_VARIABLE, ElementType.LOCAL_VARIABLE);
+        jvm6.put(KotlinTarget.FUNCTION, ElementType.METHOD);
+        jvm6.put(KotlinTarget.PROPERTY_GETTER, ElementType.METHOD);
+        jvm6.put(KotlinTarget.PROPERTY_SETTER, ElementType.METHOD);
+        jvm6.put(KotlinTarget.FIELD, ElementType.FIELD);
+        jvm6.put(KotlinTarget.VALUE_PARAMETER, ElementType.PARAMETER);
+
+        Map<KotlinTarget, ElementType> jvm8 = new EnumMap<>(jvm6);
+        jvm8.put(KotlinTarget.TYPE_PARAMETER, ElementType.TYPE_PARAMETER);
+        jvm8.put(KotlinTarget.TYPE, ElementType.TYPE_USE);
+
+        annotationTargetMaps.put(JvmTarget.JVM_1_6, jvm6);
+        annotationTargetMaps.put(JvmTarget.JVM_1_8, jvm8);
     }
 
-    private void generateTargetAnnotation(@NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent) {
+    private void generateTargetAnnotation(
+            @NotNull ClassDescriptor classDescriptor, @NotNull Set<String> annotationDescriptorsAlreadyPresent
+    ) {
         String descriptor = Type.getType(Target.class).getDescriptor();
         if (!annotationDescriptorsAlreadyPresent.add(descriptor)) return;
+
+        Map<KotlinTarget, ElementType> annotationTargetMap = annotationTargetMaps.get(typeMapper.getJvmTarget());
+        if (annotationTargetMap == null) throw new AssertionError("No annotation target map for JVM target " + typeMapper.getJvmTarget());
+
         Set<KotlinTarget> targets = AnnotationChecker.Companion.applicableTargetSet(classDescriptor);
         Set<ElementType> javaTargets;
         if (targets == null) {
@@ -243,8 +258,10 @@ public abstract class AnnotationCodegen {
         else {
             javaTargets = EnumSet.noneOf(ElementType.class);
             for (KotlinTarget target : targets) {
-                if (annotationTargetMap.get(target) == null) continue;
-                javaTargets.add(annotationTargetMap.get(target));
+                ElementType elementType = annotationTargetMap.get(target);
+                if (elementType != null) {
+                    javaTargets.add(elementType);
+                }
             }
         }
         AnnotationVisitor visitor = visitAnnotation(descriptor, true);
