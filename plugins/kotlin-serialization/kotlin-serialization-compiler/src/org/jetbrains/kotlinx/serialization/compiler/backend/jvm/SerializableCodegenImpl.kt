@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -182,7 +183,15 @@ class SerializableCodegenImpl(
                     { "Non-serializable parent of serializable $serializableDescriptor must have no arg constructor" })
 
             // call
-            invokespecial(superType, "<init>", "()V", false)
+            // Sealed classes have private <init> so they cannot be inherited from Java src
+            // public <init> is synthetic and contains additional parameter
+            val desc = if (DescriptorUtils.isSealedClass(superClass)) {
+                aconst(null)
+                "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"
+            } else {
+                "()V"
+            }
+            invokespecial(superType, "<init>", desc, false)
             return 0 to propStartVar
         }
         else {
