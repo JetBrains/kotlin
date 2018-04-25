@@ -275,7 +275,7 @@ class NewConstraintSystemImpl(
 
     override fun bindingStubsForPostponedVariables(): Map<NewTypeVariable, NonFixedType> {
         checkState(State.BUILDING, State.COMPLETION)
-        return storage.postponedTypeVariables.associate { it to NonFixedType(it.freshTypeConstructor) }
+        return storage.postponedTypeVariables.associate { it to NonFixedType(it.freshTypeConstructor, it.defaultType.isMarkedNullable) }
     }
 
     override fun copyCurrentStorage(): ConstraintStorage {
