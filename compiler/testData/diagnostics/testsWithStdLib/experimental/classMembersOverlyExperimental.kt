@@ -1,10 +1,9 @@
 // !API_VERSION: 1.3
-// MODULE: api
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.WARNING)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 annotation class ExperimentalAPI
 
@@ -23,7 +22,6 @@ class C {
     }
 }
 
-// MODULE: usage(api)
 // FILE: usage.kt
 
 package usage

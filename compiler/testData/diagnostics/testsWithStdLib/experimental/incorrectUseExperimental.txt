@@ -1,24 +1,4 @@
-// -- Module: <api> --
 package
 
-package api {
-    @api.BinaryExperimental public val x: kotlin.String = ""
-
-    @kotlin.Experimental(changesMayBreak = {Impact.RUNTIME}, level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY}) public final annotation class BinaryExperimental : kotlin.Annotation {
-        public constructor BinaryExperimental()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-}
-
-
-// -- Module: <usage> --
-package
-
-@kotlin.UseExperimental(markerClass = {}) public fun use1(): kotlin.String
-@kotlin.UseExperimental(markerClass = {api.BinaryExperimental::class}) public fun use2(): kotlin.String
-@kotlin.UseExperimental(markerClass = {kotlin.UseExperimental::class}) public fun use3(): kotlin.String
-
-package api {
-}
+@kotlin.UseExperimental(markerClass = {}) public fun f1(): kotlin.Unit
+@kotlin.UseExperimental(markerClass = {kotlin.UseExperimental::class}) public fun f2(): kotlin.Unit

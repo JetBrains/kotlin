@@ -4,7 +4,7 @@ $TEMP_DIR$
 -Xskip-runtime-version-check
 -language-version
 1.3
--Xexperimental=org.test.BinaryError
--Xexperimental=org.test.BinaryHidden
--Xuse-experimental=org.test.SourceError
--Xuse-experimental=org.test.SourceHidden
+-Xexperimental=org.test.Error1
+-Xexperimental=org.test.Hidden1
+-Xuse-experimental=org.test.Error2
+-Xuse-experimental=org.test.Hidden2

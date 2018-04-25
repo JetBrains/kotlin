@@ -5,7 +5,7 @@
 
 package api
 
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.ERROR)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI

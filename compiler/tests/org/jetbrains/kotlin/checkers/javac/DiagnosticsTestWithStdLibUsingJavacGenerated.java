@@ -2077,14 +2077,14 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/annotation.kt");
         }
 
-        @TestMetadata("bodyUsageInSameModule.kt")
-        public void testBodyUsageInSameModule() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/bodyUsageInSameModule.kt");
-        }
-
         @TestMetadata("bodyUsages.kt")
         public void testBodyUsages() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/bodyUsages.kt");
+        }
+
+        @TestMetadata("bodyUsagesAndInline.kt")
+        public void testBodyUsagesAndInline() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/bodyUsagesAndInline.kt");
         }
 
         @TestMetadata("classMembers.kt")
@@ -2095,11 +2095,6 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("classMembersOverlyExperimental.kt")
         public void testClassMembersOverlyExperimental() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/classMembersOverlyExperimental.kt");
-        }
-
-        @TestMetadata("compilationVsLinkageVsRuntime.kt")
-        public void testCompilationVsLinkageVsRuntime() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/compilationVsLinkageVsRuntime.kt");
         }
 
         @TestMetadata("constVal.kt")
@@ -2122,11 +2117,6 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalOnWholeModule.kt");
         }
 
-        @TestMetadata("experimentalWithNoImpact.kt")
-        public void testExperimentalWithNoImpact() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalWithNoImpact.kt");
-        }
-
         @TestMetadata("incorrectTargetsForExperimentalAnnotation.kt")
         public void testIncorrectTargetsForExperimentalAnnotation() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/incorrectTargetsForExperimentalAnnotation.kt");
@@ -2135,11 +2125,6 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("incorrectUseExperimental.kt")
         public void testIncorrectUseExperimental() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/incorrectUseExperimental.kt");
-        }
-
-        @TestMetadata("indirectBodyUsageInAnotherModule.kt")
-        public void testIndirectBodyUsageInAnotherModule() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/indirectBodyUsageInAnotherModule.kt");
         }
 
         @TestMetadata("override.kt")
@@ -2170,6 +2155,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("useExperimentalOnFile.kt")
         public void testUseExperimentalOnFile() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/useExperimentalOnFile.kt");
+        }
+
+        @TestMetadata("useExperimentalOnFileWithVeryExperimentalMarker.kt")
+        public void testUseExperimentalOnFileWithVeryExperimentalMarker() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/useExperimentalOnFileWithVeryExperimentalMarker.kt");
         }
 
         @TestMetadata("useExperimentalOnWholeModule.kt")

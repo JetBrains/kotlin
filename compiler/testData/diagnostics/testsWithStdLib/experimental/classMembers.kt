@@ -1,10 +1,9 @@
 // !API_VERSION: 1.3
-// MODULE: api
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.WARNING)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class ExperimentalAPI
 
@@ -19,7 +18,6 @@ class C {
 @ExperimentalAPI
 fun C.extension() {}
 
-// MODULE: usage1(api)
 // FILE: usage-propagate.kt
 
 package usage1
@@ -47,7 +45,6 @@ class Use {
     }
 }
 
-// MODULE: usage2(api)
 // FILE: usage-use.kt
 
 package usage2
@@ -66,7 +63,7 @@ fun useAll() {
 
 @UseExperimental(ExperimentalAPI::class)
 class Use {
-    fun useAll(c: <!EXPERIMENTAL_API_USAGE!>C<!>) {
+    fun useAll(c: C) {
         c.function()
         c.property
         C.Nested()
@@ -75,7 +72,6 @@ class Use {
     }
 }
 
-// MODULE: usage3(api)
 // FILE: usage-none.kt
 
 package usage3

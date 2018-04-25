@@ -1,10 +1,9 @@
 // !API_VERSION: 1.3
-// MODULE: api
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.COMPILATION])
+@Experimental
 annotation class E
 
 open class Base {
@@ -12,7 +11,6 @@ open class Base {
     open fun foo() {}
 }
 
-// MODULE: usage(api)
 // FILE: usage.kt
 
 package usage
