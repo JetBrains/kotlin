@@ -48,4 +48,17 @@ public class OutputPrefixPostfixTestGenerated extends AbstractOutputPrefixPostfi
     public void testSimpleWithPrefixAndPostfix() throws Exception {
         runTest("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefixAndPostfix.kt");
     }
+
+    @TestMetadata("js/js.translator/testData/outputPrefixPostfix/out")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Out extends AbstractOutputPrefixPostfixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInOut() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/outputPrefixPostfix/out"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+    }
 }

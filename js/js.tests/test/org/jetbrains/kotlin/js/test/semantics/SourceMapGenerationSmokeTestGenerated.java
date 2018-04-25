@@ -43,4 +43,17 @@ public class SourceMapGenerationSmokeTestGenerated extends AbstractSourceMapGene
     public void testMethodCallInMethod() throws Exception {
         runTest("js/js.translator/testData/sourcemap/methodCallInMethod.kt");
     }
+
+    @TestMetadata("js/js.translator/testData/sourcemap/out")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Out extends AbstractSourceMapGenerationSmokeTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInOut() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/sourcemap/out"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+    }
 }
