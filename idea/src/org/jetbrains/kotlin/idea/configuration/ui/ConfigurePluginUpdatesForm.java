@@ -10,12 +10,24 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import javax.swing.*;
 
 public class ConfigurePluginUpdatesForm {
-    public JComboBox channelCombo;
+    public JComboBox<String> channelCombo;
     public JButton checkForUpdatesNowButton;
     public JPanel mainPanel;
     public AsyncProcessIcon updateCheckProgressIcon;
     public JLabel updateStatusLabel;
     public JButton installButton;
+
+    public ConfigurePluginUpdatesForm() {
+        int size = channelCombo.getModel().getSize();
+        String maxLengthItem = "";
+        for (int i = 0; i < size; i++) {
+            String item = channelCombo.getModel().getElementAt(i);
+            if (item.length() > maxLengthItem.length()) {
+                maxLengthItem = item;
+            }
+        }
+        channelCombo.setPrototypeDisplayValue(maxLengthItem + " ");
+    }
 
     private void createUIComponents() {
         updateCheckProgressIcon = new AsyncProcessIcon("Plugin update check progress");
