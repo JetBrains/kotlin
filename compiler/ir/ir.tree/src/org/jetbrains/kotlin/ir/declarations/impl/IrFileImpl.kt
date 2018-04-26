@@ -34,7 +34,9 @@ class IrFileImpl(
     override val fileEntry: SourceManager.FileEntry,
     override val symbol: IrFileSymbol,
     override val fqName: FqName
-) : IrElementBase(0, fileEntry.maxOffset), IrFile {
+) :
+    IrElementBase(0, fileEntry.maxOffset),
+    IrFile {
 
     constructor(fileEntry: SourceManager.FileEntry, symbol: IrFileSymbol) :
             this(fileEntry, symbol, symbol.descriptor.fqName)

@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.types.KotlinType
 
 
 class IrFieldImpl(
@@ -36,34 +36,44 @@ class IrFieldImpl(
     origin: IrDeclarationOrigin,
     override val symbol: IrFieldSymbol,
     override val name: Name,
-    override val type: KotlinType,
+    override val type: IrType,
     override val visibility: Visibility,
     override val isFinal: Boolean,
     override val isExternal: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin), IrField {
+) : IrDeclarationBase(startOffset, endOffset, origin),
+    IrField {
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         symbol: IrFieldSymbol,
-        initializer: IrExpressionBody? = null
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name, symbol.descriptor.type, symbol.descriptor.visibility,
-        !symbol.descriptor.isVar,
-        symbol.descriptor.isEffectivelyExternal()
-    ) {
-        this.initializer = initializer
-    }
-
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor) :
-            this(startOffset, endOffset, origin, IrFieldSymbolImpl(descriptor))
+        type: IrType
+    ) :
+            this(
+                startOffset, endOffset, origin, symbol,
+                symbol.descriptor.name, type, symbol.descriptor.visibility,
+                !symbol.descriptor.isVar,
+                symbol.descriptor.isEffectivelyExternal()
+            )
 
     constructor(
-        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor,
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: PropertyDescriptor,
+        type: IrType
+    ) :
+            this(startOffset, endOffset, origin, IrFieldSymbolImpl(descriptor), type)
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: PropertyDescriptor,
+        type: IrType,
         initializer: IrExpressionBody?
-    ) : this(startOffset, endOffset, origin, descriptor) {
+    ) : this(startOffset, endOffset, origin, descriptor, type) {
         this.initializer = initializer
     }
 
