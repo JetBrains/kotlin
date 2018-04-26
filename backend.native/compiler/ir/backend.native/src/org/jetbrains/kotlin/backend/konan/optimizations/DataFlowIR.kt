@@ -495,7 +495,13 @@ internal object DataFlowIR {
             return type
         }
 
-        fun mapType(type: KotlinType) = mapClass(type.erasure(context).single())
+        private fun choosePrimary(erasure: List<ClassDescriptor>): ClassDescriptor {
+            if (erasure.size == 1) return erasure[0]
+            // A parameter with constraints - choose class if exists.
+            return erasure.singleOrNull { !it.isInterface } ?: context.ir.symbols.any.owner
+        }
+
+        fun mapType(type: KotlinType) = mapClass(choosePrimary(type.erasure(context)))
 
         // TODO: use from LlvmDeclarations.
         private fun getFqName(descriptor: DeclarationDescriptor): FqName =
