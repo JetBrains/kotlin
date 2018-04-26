@@ -11,9 +11,28 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 
 class DataCollector {
 
-    private val references = mutableMapOf<String, List<String>>()
-    private val packagePerClass = mutableMapOf<String, FqName>()
-    private val baseTransformedTypes = mutableListOf<String>()
+    data class NameWithTypeParameters(val name: String, val typeParameters: List<String>) : Comparable<NameWithTypeParameters> {
+        override fun compareTo(other: NameWithTypeParameters): Int = name.compareTo(other.name)
+
+        constructor(name: String, typeParameterString: String) :
+                this(name, typeParameterString.drop(1).dropLast(1).split(" ", "\t", ",").filter { it.isNotEmpty() })
+
+        constructor(name: String) : this(name, emptyList())
+
+        override fun toString(): String =
+            name + if (typeParameters.isEmpty()) "" else typeParameters.joinToString(prefix = "<", postfix = ">", separator = ", ")
+    }
+
+    private val references = mutableMapOf<NameWithTypeParameters, List<NameWithTypeParameters>>()
+    private val packagePerClass = mutableMapOf<NameWithTypeParameters, FqName>()
+    private val baseTransformedTypes = mutableListOf<NameWithTypeParameters>()
+
+    private fun KtSuperTypeListEntry.toNameWithTypeParameters(): NameWithTypeParameters? {
+        val type = typeAsUserType ?: return null
+        val name = type.referencedName ?: return null
+        val typeArguments = type.typeArgumentList?.text ?: ""
+        return NameWithTypeParameters(name, typeArguments)
+    }
 
     fun readFile(file: KtFile) {
         file.acceptChildren(object : KtVisitorVoid() {
@@ -24,14 +43,18 @@ class DataCollector {
             }
 
             override fun visitClass(klass: KtClass) {
-                val className = klass.name
-                if (klass.isInterface() && className != null) {
-                    packagePerClass[className] = file.packageFqName
+                val className = klass.name ?: run {
+                    super.visitClass(klass)
+                    return
+                }
+                val classNameWithParameters = NameWithTypeParameters(className, klass.typeParameterList?.text ?: "")
+                if (klass.isInterface()) {
+                    packagePerClass[classNameWithParameters] = file.packageFqName
                     val isBaseTT = klass.annotationEntries.any {
                         it.shortName?.asString() == BASE_TRANSFORMED_TYPE_ANNOTATION_NAME
                     }
                     if (isBaseTT) {
-                        baseTransformedTypes += className
+                        baseTransformedTypes += classNameWithParameters
                     }
 
                     val manual = klass.superTypeListEntries.find {
@@ -40,11 +63,11 @@ class DataCollector {
                         } != null
                     }
                     if (manual != null) {
-                        references[className] = listOfNotNull(manual.typeAsUserType?.referencedName)
+                        references[classNameWithParameters] = listOfNotNull(manual.toNameWithTypeParameters())
                     } else {
-                        references[className] =
+                        references[classNameWithParameters] =
                                 klass.superTypeListEntries.mapNotNull {
-                                    it.typeAsUserType?.referencedName
+                                    it.toNameWithTypeParameters()
                                 }
                     }
                 }
@@ -55,8 +78,8 @@ class DataCollector {
     }
 
 
-    private fun Map<String, List<String>>.computeBackReferences(): Map<String, List<String>> {
-        val result = mutableMapOf<String, List<String>>()
+    private fun <K> Map<K, List<K>>.computeBackReferences(): Map<K, List<K>> {
+        val result = mutableMapOf<K, List<K>>()
 
         this.forEach { (k, v) ->
             v.forEach {
@@ -66,7 +89,7 @@ class DataCollector {
         return result
     }
 
-    private fun Map<String, List<String>>.sorted(): Map<String, List<String>> {
+    private fun <K : Comparable<K>> Map<K, List<K>>.sortedMap(): Map<K, List<K>> {
         return this.toSortedMap().mapValues { (_, v) -> v.sorted() }
     }
 
@@ -80,17 +103,17 @@ class DataCollector {
 
         val cleanBack = back.filterKeys { it in keysToKeep }
         return ReferencesData(
-            cleanBack.computeBackReferences().sorted(),
-            cleanBack.sorted(),
+            cleanBack.computeBackReferences().sortedMap(),
+            cleanBack.sortedMap(),
             packagePerClass.filterKeys { it in keysToKeep }.values.distinct().sortedBy { it.asString() },
             baseTransformedTypes.sorted()
         )
     }
 
     data class ReferencesData(
-        val direct: Map<String, List<String>>,
-        val back: Map<String, List<String>>,
+        val direct: Map<NameWithTypeParameters, List<NameWithTypeParameters>>,
+        val back: Map<NameWithTypeParameters, List<NameWithTypeParameters>>,
         val usedPackages: List<FqName>,
-        val baseTransformedTypes: List<String>
+        val baseTransformedTypes: List<NameWithTypeParameters>
     )
 }

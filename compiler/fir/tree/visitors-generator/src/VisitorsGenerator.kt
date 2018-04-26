@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 
-const val FIR_ELEMENT_CLASS_NAME = "FirElement"
+val FIR_ELEMENT_CLASS_NAME = DataCollector.NameWithTypeParameters("FirElement")
 const val VISITOR_PACKAGE = "org.jetbrains.kotlin.fir.visitors"
 const val SIMPLE_VISITOR_NAME = "FirVisitor"
 const val UNIT_VISITOR_NAME = "FirVisitorVoid"
@@ -71,7 +71,10 @@ fun AbstractVisitorGenerator.runGenerator(file: File) {
 val String.classNameWithoutFir get() = this.removePrefix("Fir")
 
 
-fun DataCollector.ReferencesData.walkHierarchyTopDown(from: String, l: (p: String, e: String) -> Unit) {
+fun DataCollector.ReferencesData.walkHierarchyTopDown(
+    from: DataCollector.NameWithTypeParameters,
+    l: (p: DataCollector.NameWithTypeParameters, e: DataCollector.NameWithTypeParameters) -> Unit
+) {
     val referents = back[from] ?: return
     for (referent in referents) {
         l(from, referent)

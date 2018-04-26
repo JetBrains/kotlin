@@ -361,6 +361,10 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print("STUB")
     }
 
+    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>) {
+        print("${constExpression.kind}(${constExpression.value})")
+    }
+
     override fun visitCall(call: FirCall) {
         print("(")
         call.arguments.renderSeparated()

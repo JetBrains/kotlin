@@ -138,6 +138,10 @@ abstract class FirVisitor<out R, in D> {
         return visitCall(delegatedConstructorCall, data)
     }
 
+    open fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: D): R {
+        return visitExpression(constExpression, data)
+    }
+
     open fun visitErrorExpression(errorExpression: FirErrorExpression, data: D): R {
         return visitExpression(errorExpression, data)
     }

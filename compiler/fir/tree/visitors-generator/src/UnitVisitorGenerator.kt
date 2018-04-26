@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.visitors.generator
 
+import org.jetbrains.kotlin.fir.visitors.generator.DataCollector.NameWithTypeParameters
 import org.jetbrains.kotlin.utils.Printer
 
 class UnitVisitorGenerator(referencesData: DataCollector.ReferencesData) : AbstractVisitorGenerator(referencesData) {
@@ -33,34 +34,39 @@ class UnitVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abstr
     }
 
 
-    private fun Printer.generateVisit(className: String, parent: String) {
-        val shortcutName = className.classNameWithoutFir
+    private fun Printer.generateVisit(
+        className: NameWithTypeParameters,
+        parent: NameWithTypeParameters
+    ) {
+        val shortcutName = className.name.classNameWithoutFir
         val parameterName = shortcutName.decapitalize().safeName
         generateFunction(
             name = "visit$shortcutName",
             parameters = mapOf(
                 parameterName to className
             ),
-            returnType = "Unit"
+            returnType = "Unit",
+            typeParameters = className.typeParameters
         ) {
             printIndent()
-            generateCall("visit${parent.classNameWithoutFir}", listOf(parameterName, "null"))
+            generateCall("visit${parent.name.classNameWithoutFir}", listOf(parameterName, "null"))
             println()
         }
     }
 
-    private fun Printer.generateTrampolineVisit(className: String) {
-        val shortcutName = className.classNameWithoutFir
+    private fun Printer.generateTrampolineVisit(className: NameWithTypeParameters) {
+        val shortcutName = className.name.classNameWithoutFir
         val parameterName = shortcutName.decapitalize().safeName
         generateFunction(
             name = "visit$shortcutName",
             parameters = mapOf(
                 parameterName to className,
-                "data" to "Nothing?"
+                "data" to NameWithTypeParameters("Nothing?")
             ),
             returnType = "Unit",
             override = true,
-            final = true
+            final = true,
+            typeParameters = className.typeParameters
         ) {
             printIndent()
             generateCall("visit$shortcutName", listOf(parameterName))

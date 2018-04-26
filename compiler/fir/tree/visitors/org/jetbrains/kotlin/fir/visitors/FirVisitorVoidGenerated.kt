@@ -138,6 +138,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitCall(delegatedConstructorCall, null)
     }
 
+    open fun <T> visitConstExpression(constExpression: FirConstExpression<T>) {
+        visitExpression(constExpression, null)
+    }
+
     open fun visitErrorExpression(errorExpression: FirErrorExpression) {
         visitExpression(errorExpression, null)
     }
@@ -308,6 +312,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitBody(body: FirBody, data: Nothing?) {
         visitBody(body)
+    }
+
+    final override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Nothing?) {
+        visitConstExpression(constExpression)
     }
 
     final override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Nothing?) {
