@@ -13,16 +13,18 @@ import org.jetbrains.kotlin.psi.*
 
 class SuspiciousEqualsCombination : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            binaryExpressionVisitor(fun(expression) {
-                if (expression.parent is KtBinaryExpression) return
-                val operands = expression.parseBinary()
-                val eqeq = operands.eqEqOperands.map { it.text }
-                val eqeqeq = operands.eqEqEqOperands.map { it.text }
-                if (eqeq.intersect(eqeqeq).isNotEmpty()) {
-                    holder.registerProblem(expression, "Suspicious combination of == and ===",
-                                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
-                }
-            })
+        binaryExpressionVisitor(fun(expression) {
+            if (expression.parent is KtBinaryExpression) return
+            val operands = expression.parseBinary()
+            val eqeq = operands.eqEqOperands.map { it.text }
+            val eqeqeq = operands.eqEqEqOperands.map { it.text }
+            if (eqeq.intersect(eqeqeq).isNotEmpty()) {
+                holder.registerProblem(
+                    expression, "Suspicious combination of == and ===",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                )
+            }
+        })
 
     private fun KtBinaryExpression.parseBinary(pair: ComparisonOperands = ComparisonOperands()): ComparisonOperands {
         when (operationToken) {
@@ -51,5 +53,7 @@ class SuspiciousEqualsCombination : AbstractKotlinInspection() {
     }
 }
 
-private data class ComparisonOperands(val eqEqOperands: MutableList<KtExpression> = mutableListOf(),
-                                      val eqEqEqOperands: MutableList<KtExpression> = mutableListOf())
+private data class ComparisonOperands(
+    val eqEqOperands: MutableList<KtExpression> = mutableListOf(),
+    val eqEqEqOperands: MutableList<KtExpression> = mutableListOf()
+)
