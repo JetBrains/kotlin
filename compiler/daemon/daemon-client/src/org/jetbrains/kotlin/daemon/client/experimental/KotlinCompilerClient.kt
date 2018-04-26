@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.experimental.Profiler
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import java.io.File
 import java.io.PrintStream
@@ -48,29 +50,29 @@ object KotlinCompilerClient {
             ?.takeIf(File::exists)
                 ?: makeAutodeletingFlagFile(baseDir = File(daemonOptions.runFilesPathOrDefault))
 
-    fun connectToCompileService(
+    suspend fun connectToCompileService(
         compilerId: CompilerId,
         daemonJVMOptions: DaemonJVMOptions,
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean = true,
         checkId: Boolean = true
-    ): Deferred<CompileServiceClientSide?> {
+    ): CompileServiceClientSide? {
         log.info("in connectToCompileService")
         val flagFile = getOrCreateClientFlagFile(daemonOptions)
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
 
-    fun connectToCompileService(
+    suspend fun connectToCompileService(
         compilerId: CompilerId,
         clientAliveFlagFile: File,
         daemonJVMOptions: DaemonJVMOptions,
         daemonOptions: DaemonOptions,
         reportingTargets: DaemonReportingTargets,
         autostart: Boolean = true
-    ): Deferred<CompileServiceClientSide?> = async {
+    ): CompileServiceClientSide? {
         log.info("connectToCompileService")
-        connectAndLease(
+        return connectAndLease(
             compilerId,
             clientAliveFlagFile,
             daemonJVMOptions,
@@ -79,11 +81,11 @@ object KotlinCompilerClient {
             autostart,
             leaseSession = false,
             sessionAliveFlagFile = null
-        ).await()?.compileService
+        )?.compileService
     }
 
 
-    fun connectAndLease(
+    suspend fun connectAndLease(
         compilerId: CompilerId,
         clientAliveFlagFile: File,
         daemonJVMOptions: DaemonJVMOptions,
@@ -92,8 +94,8 @@ object KotlinCompilerClient {
         autostart: Boolean,
         leaseSession: Boolean,
         sessionAliveFlagFile: File? = null
-    ): Deferred<CompileServiceSession?> = async {
-        connectLoop(reportingTargets, autostart) { isLastAttempt ->
+    ): CompileServiceSession? {
+        return connectLoop(reportingTargets, autostart) { isLastAttempt ->
 
             log.info("connectAndLease")
 
@@ -140,17 +142,15 @@ object KotlinCompilerClient {
         }
     }
 
-    fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions) {
-        async {
-            connectToCompileService(
-                compilerId,
-                DaemonJVMOptions(),
-                daemonOptions,
-                DaemonReportingTargets(out = System.out),
-                autostart = false,
-                checkId = false
-            ).await()?.shutdown()
-        }
+    suspend fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions) {
+        connectToCompileService(
+            compilerId,
+            DaemonJVMOptions(),
+            daemonOptions,
+            DaemonReportingTargets(out = System.out),
+            autostart = false,
+            checkId = false
+        )?.shutdown()
     }
 
     fun leaseCompileSession(compilerService: CompileServiceClientSide, aliveFlagPath: String?): Deferred<Int> =
@@ -159,7 +159,7 @@ object KotlinCompilerClient {
     fun releaseCompileSession(compilerService: CompileServiceClientSide, sessionId: Int) =
         async { compilerService.releaseCompileSession(sessionId) }
 
-    fun compile(
+    suspend fun compile(
         compilerService: CompileServiceClientSide,
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -169,39 +169,36 @@ object KotlinCompilerClient {
         compilerMode: CompilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
         reportSeverity: ReportSeverity = ReportSeverity.INFO,
         profiler: Profiler = DummyProfiler()
-    ): Deferred<Int> = profiler.withMeasure(this) {
-        async {
-            val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
-                messageCollector,
-                outputsCollector,
-                findCallbackServerSocket()
-            )
-            log.info("[BasicCompilerServicesWithResultsFacadeServerServerSide] services.runServer()")
-            services.runServer()
-            compilerService.compile(
-                sessionId,
-                args,
-                CompilationOptions(
-                    compilerMode,
-                    targetPlatform,
-                    arrayOf(
-                        ReportCategory.COMPILER_MESSAGE.code,
-                        ReportCategory.DAEMON_MESSAGE.code,
-                        ReportCategory.EXCEPTION.code,
-                        ReportCategory.OUTPUT_MESSAGE.code
-                    ),
-                    reportSeverity.code,
-                    emptyArray()
+    ): Int = profiler.withMeasure(this) {
+        val services = BasicCompilerServicesWithResultsFacadeServerServerSide(
+            messageCollector,
+            outputsCollector,
+            findCallbackServerSocket()
+        )
+        log.info("[BasicCompilerServicesWithResultsFacadeServerServerSide] services.runServer()")
+        services.runServer()
+        compilerService.compile(
+            sessionId,
+            args,
+            CompilationOptions(
+                compilerMode,
+                targetPlatform,
+                arrayOf(
+                    ReportCategory.COMPILER_MESSAGE.code,
+                    ReportCategory.DAEMON_MESSAGE.code,
+                    ReportCategory.EXCEPTION.code,
+                    ReportCategory.OUTPUT_MESSAGE.code
                 ),
-                services.clientSide,
-                createCompResults().clientSide
-            )
-                .await()
-                .get()
-                .also {
-                    log.info("CODE = $it")
-                }
-        }
+                reportSeverity.code,
+                emptyArray()
+            ),
+            services.clientSide,
+            createCompResults().clientSide
+        )
+            .get()
+            .also {
+                log.info("CODE = $it")
+            }
     }
 
     val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
@@ -269,7 +266,7 @@ object KotlinCompilerClient {
                 DaemonReportingTargets(out = System.out),
                 autostart = !clientOptions.stop,
                 checkId = !clientOptions.stop
-            ).await()
+            )
 
             if (daemon == null) {
                 if (clientOptions.stop) {
@@ -312,7 +309,7 @@ object KotlinCompilerClient {
                             ),
                             servicesFacade.clientSide,
                             compResults.clientSide
-                        ).await()
+                        )
 
                         val endTime = System.nanoTime()
                         log.info("Compilation ${if (res.isGood) "succeeded" else "failed"}, result code: ${res.get()}")

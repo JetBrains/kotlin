@@ -367,7 +367,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                             ),
                             servicesClient,
                             compResultsClient
-                        ).await().get().also { println("CODE = $it") }
+                        ).get().also { println("CODE = $it") }
                     }
                     codes[i] = code
                 }

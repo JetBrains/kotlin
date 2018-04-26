@@ -3,6 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNCHECKED_CAST")
+
 package org.jetbrains.kotlin.daemon.experimental
 
 import com.intellij.openapi.Disposable
@@ -10,8 +12,11 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import io.ktor.network.sockets.Socket
+import kotlinx.coroutines.experimental.CompletableDeferred
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.actor
+import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -34,6 +39,10 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.LazyClasspathWatcher
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.experimental.Profiler
+import org.jetbrains.kotlin.daemon.common.experimental.WallAndThreadAndMemoryTotalProfiler
+import org.jetbrains.kotlin.daemon.common.experimental.WallAndThreadTotalProfiler
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteAnnotationsFileUpdaterAsync
 import org.jetbrains.kotlin.daemon.incremental.experimental.RemoteArtifactChangesProviderAsync
@@ -45,7 +54,7 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
-import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.progress.experimental.CompilationCanceledStatus
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -66,18 +75,18 @@ fun nowSeconds() = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime())
 
 
 interface EventManager {
-    fun onCompilationFinished(f: () -> Unit)
+    suspend fun onCompilationFinished(f: suspend () -> Unit)
 }
 
 private class EventManagerImpl : EventManager {
-    private val onCompilationFinished = arrayListOf<() -> Unit>()
+    private val onCompilationFinished = arrayListOf<suspend () -> Unit>()
 
     @Throws(RemoteException::class)
-    override fun onCompilationFinished(f: () -> Unit) {
+    override suspend fun onCompilationFinished(f: suspend () -> Unit) {
         onCompilationFinished.add(f)
     }
 
-    fun fireCompilationFinished() {
+    suspend fun fireCompilationFinished() {
         onCompilationFinished.forEach { it() }
     }
 }
@@ -85,6 +94,25 @@ private class EventManagerImpl : EventManager {
 typealias AnyMessage = Server.AnyMessage<CompileServiceServerSide>
 typealias Message = Server.Message<CompileServiceServerSide>
 typealias EndConnectionMessage = Server.EndConnectionMessage<CompileServiceServerSide>
+
+
+//class CoroutineTimer {
+//    private fun periodicTask(periodTime: Int, block: suspend () -> Unit): suspend () -> Unit = {
+//        while (true) {
+//            block()
+//            delay(periodTime)
+//        }
+//    }
+//
+//    suspend fun schedule(delayTime: Int, block: suspend () -> Unit) {
+//        delay(delayTime)
+//        block()
+//    }
+//
+//    suspend fun schedule(delayTime: Int, periodTime: Int, block: suspend () -> Unit) {
+//        schedule(delayTime, periodicTask(periodTime, block))
+//    }
+//}
 
 class CompileServiceServerSideImpl(
     override val serverSocketWithPort: ServerSocketWrapper,
@@ -106,6 +134,84 @@ class CompileServiceServerSideImpl(
 
     override suspend fun serverHandshake(input: ByteReadChannelWrapper, output: ByteWriteChannelWrapper, log: Logger): Boolean {
         return tryAcquireHandshakeMessage(input, log) && trySendHandshakeMessage(output, log)
+    }
+
+    interface CompileServiceTask
+    interface CompileServiceTaskWithResult : CompileServiceTask
+
+    open class ExclusiveTask(val completed: CompletableDeferred<Boolean>, val shutdownAction: suspend () -> Any) : CompileServiceTask
+    open class ShutdownTaskWithResult(val result: CompletableDeferred<Any>, val defaultValue: Any, shutdownAction: suspend () -> Any) :
+        ExclusiveTask(CompletableDeferred(), shutdownAction), CompileServiceTaskWithResult
+
+    open class OrdinaryTask(val completed: CompletableDeferred<Boolean>, val action: suspend () -> Any) : CompileServiceTask
+    class OrdinaryTaskWithResult(val result: CompletableDeferred<Any>, val defaultValue: Any, action: suspend () -> Any) :
+        OrdinaryTask(CompletableDeferred(), action),
+        CompileServiceTaskWithResult
+
+    class TaskFinished(val taskId: Int) : CompileServiceTask
+
+    var isWriteLocked = false
+    var isReadLocked = false
+    val queriesActor = actor<CompileServiceTask> {
+        var currentTaskId = 0
+        var shutdownTask: ExclusiveTask? = null
+        val activeTaskIds = arrayListOf<Int>()
+        fun tryInvokeShutdown() {
+            async {
+                if (activeTaskIds.isEmpty()) {
+                    shutdownTask?.let { task ->
+                        val res = task.shutdownAction()
+                        task.completed.complete(true)
+                        if (task is ShutdownTaskWithResult) {
+                            task.result.complete(res)
+                        }
+                    }
+                    shutdownTask = null
+                    isWriteLocked = false
+                }
+            }
+        }
+        consumeEach { task ->
+            when (task) {
+                is ExclusiveTask -> {
+                    if (shutdownTask == null) {
+                        shutdownTask = task
+                        isWriteLocked = true
+                        tryInvokeShutdown()
+                    } else {
+                        task.completed.complete(true)
+                        if (task is ShutdownTaskWithResult) {
+                            task.result.complete(task.defaultValue)
+                        }
+                    }
+                }
+                is OrdinaryTask -> {
+                    if (shutdownTask == null) {
+                        val id = currentTaskId++
+                        activeTaskIds.add(id)
+                        isReadLocked = true
+                        async {
+                            val res = task.action()
+                            if (task is OrdinaryTaskWithResult) {
+                                task.result.complete(res)
+                            }
+                            task.completed.complete(true)
+                            channel.send(TaskFinished(id))
+                        }
+                    } else {
+                        if (task is OrdinaryTaskWithResult) {
+                            task.result.complete(task.defaultValue)
+                        }
+                        task.completed.complete(true)
+                    }
+                }
+                is TaskFinished -> {
+                    activeTaskIds.remove(task.taskId)
+                    isReadLocked = activeTaskIds.isEmpty()
+                    tryInvokeShutdown()
+                }
+            }
+        }
     }
 
     constructor(
@@ -261,9 +367,7 @@ class CompileServiceServerSideImpl(
 
     @Volatile
     private var _lastUsedSeconds = nowSeconds()
-    val lastUsedSeconds: Long get() = if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
-
-    private val rwlock = ReentrantReadWriteLock()
+    val lastUsedSeconds: Long get() = if (isReadLocked || isWriteLocked) nowSeconds() else _lastUsedSeconds
 
     private var runFile: File
     private var securityData: SecurityData
@@ -330,12 +434,15 @@ class CompileServiceServerSideImpl(
                 })
         }
 
-    override suspend fun releaseCompileSession(sessionId: Int) = ifAlive(minAliveness = Aliveness.LastSession, info = "registerClient") {
+    override suspend fun releaseCompileSession(sessionId: Int) = ifAlive(
+        minAliveness = Aliveness.LastSession,
+        info = "registerClient"
+    ) {
         state.sessions.remove(sessionId)
         log.info("cleaning after session $sessionId")
-        rwlock.write {
-            clearJarCache()
-        }
+        val completed = CompletableDeferred<Boolean>()
+        queriesActor.send(ExclusiveTask(completed, { clearJarCache() }))
+        completed.await()
         if (state.sessions.isEmpty()) {
             // TODO: and some goes here
         }
@@ -344,6 +451,7 @@ class CompileServiceServerSideImpl(
         }
         CompileService.CallResult.Ok()
     }
+
 
     override suspend fun checkCompilerId(expectedCompilerId: CompilerId): Boolean =
         (compilerId.compilerVersion.isEmpty() || compilerId.compilerVersion == expectedCompilerId.compilerVersion) &&
@@ -371,91 +479,89 @@ class CompileServiceServerSideImpl(
             CompileService.CallResult.Good(res)
         }
 
-    override fun compile(
+    override suspend fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide
-    ): Deferred<CompileService.CallResult<Int>> = async {
-        ifAlive(info = "compile") {
-            log.info("servicesFacade : $servicesFacade")
-            servicesFacade.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, "abacaba")
-            log.info("servicesFacade - sent \"abacaba\"")
-            val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
-            val daemonReporter = DaemonMessageReporterAsync(servicesFacade, compilationOptions)
-            val targetPlatform = compilationOptions.targetPlatform
-            log.info("Starting compilation with args: " + compilerArguments.joinToString(" "))
+    ): CompileService.CallResult<Int> = ifAlive(info = "compile") {
+        log.info("servicesFacade : $servicesFacade")
+        servicesFacade.report(ReportCategory.DAEMON_MESSAGE, ReportSeverity.INFO, "abacaba")
+        log.info("servicesFacade - sent \"abacaba\"")
+        val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
+        val daemonReporter = DaemonMessageReporterAsync(servicesFacade, compilationOptions)
+        val targetPlatform = compilationOptions.targetPlatform
+        log.info("Starting compilation with args: " + compilerArguments.joinToString(" "))
 
-            @Suppress("UNCHECKED_CAST")
-            val compiler = when (targetPlatform) {
-                CompileService.TargetPlatform.JVM -> K2JVMCompiler()
-                CompileService.TargetPlatform.JS -> K2JSCompiler()
-                CompileService.TargetPlatform.METADATA -> K2MetadataCompiler()
-            } as CLICompiler<CommonCompilerArguments>
+        @Suppress("UNCHECKED_CAST")
+        val compiler = when (targetPlatform) {
+            CompileService.TargetPlatform.JVM -> K2JVMCompiler()
+            CompileService.TargetPlatform.JS -> K2JSCompiler()
+            CompileService.TargetPlatform.METADATA -> K2MetadataCompiler()
+        } as CLICompiler<CommonCompilerArguments>
 
-            val k2PlatformArgs = compiler.createArguments()
-            parseCommandLineArguments(compilerArguments.asList(), k2PlatformArgs)
-            val argumentParseError = validateArguments(k2PlatformArgs.errors)
-            if (argumentParseError != null) {
-                messageCollector.report(CompilerMessageSeverity.ERROR, argumentParseError)
-                CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
-            } else when (compilationOptions.compilerMode) {
-                CompilerMode.JPS_COMPILER -> {
-                    val jpsServicesFacade = servicesFacade as CompilerCallbackServicesFacadeClientSide
+        val k2PlatformArgs = compiler.createArguments()
+        parseCommandLineArguments(compilerArguments.asList(), k2PlatformArgs)
+        val argumentParseError = validateArguments(k2PlatformArgs.errors)
+        if (argumentParseError != null) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, argumentParseError)
+            CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
+        } else when (compilationOptions.compilerMode) {
+            CompilerMode.JPS_COMPILER -> {
+                val jpsServicesFacade = servicesFacade as CompilerCallbackServicesFacadeClientSide
 
-                    withIC(enabled = servicesFacade.hasIncrementalCaches()) {
-                        doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
-                            val services = createCompileServices(jpsServicesFacade, eventManger, profiler).await()
-                            compiler.exec(messageCollector, services, k2PlatformArgs)
-                        }.await()
-                    }
-                }
-                CompilerMode.NON_INCREMENTAL_COMPILER -> {
-                    doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                        log.info("(in doCompile's body) - start")
-                        compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs).also {
-                            log.info("(in doCompile's body) - end")
-                        }
+                withIC(enabled = servicesFacade.hasIncrementalCaches()) {
+                    doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
+                        val services = createCompileServices(jpsServicesFacade, eventManger, profiler).await()
+                        compiler.exec(messageCollector, services, k2PlatformArgs)
                     }.await()
                 }
-                CompilerMode.INCREMENTAL_COMPILER -> {
-                    val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
-                    val gradleIncrementalServicesFacade = servicesFacade as IncrementalCompilerServicesFacadeAsync
-
-                    when (targetPlatform) {
-                        CompileService.TargetPlatform.JVM -> {
-                            val k2jvmArgs = k2PlatformArgs as K2JVMCompilerArguments
-                            withIC {
-                                doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                                    execIncrementalCompiler(
-                                        k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResults,
-                                        messageCollector, daemonReporter
-                                    )
-                                }.await()
-                            }
-                        }
-                        CompileService.TargetPlatform.JS -> {
-                            val k2jsArgs = k2PlatformArgs as K2JSCompilerArguments
-
-                            withJsIC {
-                                doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
-                                    execJsIncrementalCompiler(
-                                        k2jsArgs,
-                                        gradleIncrementalArgs,
-                                        gradleIncrementalServicesFacade,
-                                        compilationResults,
-                                        messageCollector
-                                    )
-                                }.await()
-                            }
-                        }
-                        else -> throw IllegalStateException("Incremental compilation is not supported for target platform: $targetPlatform")
-
-                    }
-                }
-                else -> throw IllegalStateException("Unknown compilation mode ${compilationOptions.compilerMode}")
             }
+            CompilerMode.NON_INCREMENTAL_COMPILER -> {
+                doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                    log.info("(in doCompile's body) - start")
+                    compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs).also {
+                        log.info("(in doCompile's body) - end")
+                    }
+                }.await()
+            }
+            CompilerMode.INCREMENTAL_COMPILER -> {
+                val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
+                val gradleIncrementalServicesFacade = servicesFacade as IncrementalCompilerServicesFacadeAsync
+
+                when (targetPlatform) {
+                    CompileService.TargetPlatform.JVM -> {
+                        val k2jvmArgs = k2PlatformArgs as K2JVMCompilerArguments
+                        withIC {
+                            doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                                execIncrementalCompiler(
+                                    k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResults,
+                                    messageCollector, daemonReporter
+                                )
+                            }.await()
+                        }
+                    }
+                    CompileService.TargetPlatform.JS -> {
+                        val k2jsArgs = k2PlatformArgs as K2JSCompilerArguments
+
+                        withJsIC {
+                            doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
+                                execJsIncrementalCompiler(
+                                    k2jsArgs,
+                                    gradleIncrementalArgs,
+                                    gradleIncrementalServicesFacade,
+                                    compilationResults,
+                                    messageCollector
+                                )
+                            }.await()
+                        }
+                    }
+                    else -> throw IllegalStateException("Incremental compilation is not supported for target platform: $targetPlatform")
+
+                }
+            }
+            else -> throw IllegalStateException("Unknown compilation mode ${compilationOptions.compilerMode}")
         }
     }
 
@@ -604,16 +710,14 @@ class CompileServiceServerSideImpl(
             }
         }
 
-    override fun replCheck(
+    override suspend fun replCheck(
         sessionId: Int,
         replStateId: Int,
         codeLine: ReplCodeLine
-    ): Deferred<CompileService.CallResult<ReplCheckResult>> = async {
-        ifAlive(minAliveness = Aliveness.Alive, info = "replCheck") {
-            withValidRepl(sessionId) {
-                withValidReplState(replStateId) { state ->
-                    check(state, codeLine)
-                }
+    ): CompileService.CallResult<ReplCheckResult> = ifAlive(minAliveness = Aliveness.Alive, info = "replCheck") {
+        withValidRepl(sessionId) {
+            withValidReplState(replStateId) { state ->
+                check(state, codeLine)
             }
         }
     }
@@ -670,10 +774,9 @@ class CompileServiceServerSideImpl(
             exceptionLoggingTimerThread(info = "periodicSeldomCheck") { periodicSeldomCheck() }
         }
         log.info("last_init_end")
-
     }
 
-    private inline fun exceptionLoggingTimerThread(info: String = "no info", body: () -> Unit) {
+    private fun exceptionLoggingTimerThread(info: String = "no info", body: () -> Unit) {
         try {
             println("exceptionLoggingTimerThread body($info) : starting...")
             body()
@@ -691,40 +794,41 @@ class CompileServiceServerSideImpl(
 
         val anyDead = state.sessions.cleanDead() || state.cleanDeadClients()
 
-        ifAliveUnit(minAliveness = Aliveness.LastSession, info = "periodicAndAfterSessionCheck - 1") {
-            when {
-            // check if in graceful shutdown state and all sessions are closed
-                state.alive.get() == Aliveness.LastSession.ordinal && state.sessions.isEmpty() -> {
-                    log.info("All sessions finished")
-                    shutdownWithDelay()
-                    return
-                }
-                state.aliveClientsCount == 0 -> {
-                    log.info("No more clients left")
-                    shutdownWithDelay()
-                    return
-                }
-            // discovery file removed - shutdown
-                !runFile.exists() -> {
-                    log.info("Run file removed")
-                    shutdownWithDelay()
-                    return
+        runBlocking {
+            ifAliveUnit(minAliveness = Aliveness.LastSession, info = "periodicAndAfterSessionCheck - 1") {
+                when {
+                // check if in graceful shutdown state and all sessions are closed
+                    state.alive.get() == Aliveness.LastSession.ordinal && state.sessions.isEmpty() -> {
+                        log.info("All sessions finished")
+                        shutdownWithDelay()
+                        return@ifAliveUnit
+                    }
+                    state.aliveClientsCount == 0 -> {
+                        log.info("No more clients left")
+                        shutdownWithDelay()
+                        return@ifAliveUnit
+                    }
+                // discovery file removed - shutdown
+                    !runFile.exists() -> {
+                        log.info("Run file removed")
+                        shutdownWithDelay()
+                        return@ifAliveUnit
+                    }
                 }
             }
-        }
 
-        ifAliveUnit(minAliveness = Aliveness.Alive, info = "periodicAndAfterSessionCheck - 2") {
-            when {
-                daemonOptions.autoshutdownUnusedSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && compilationsCounter.get() == 0 && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownUnusedSeconds -> {
-                    log.info("Unused timeout exceeded ${daemonOptions.autoshutdownUnusedSeconds}s")
-                    gracefulShutdown(false)
-                }
-                daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownIdleSeconds -> {
-                    log.info("Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s")
-                    gracefulShutdown(false)
-                }
-                anyDead -> {
-                    async {
+
+            ifAliveUnit(minAliveness = Aliveness.Alive, info = "periodicAndAfterSessionCheck - 2") {
+                when {
+                    daemonOptions.autoshutdownUnusedSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && compilationsCounter.get() == 0 && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownUnusedSeconds -> {
+                        log.info("Unused timeout exceeded ${daemonOptions.autoshutdownUnusedSeconds}s")
+                        gracefulShutdown(false)
+                    }
+                    daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownIdleSeconds -> {
+                        log.info("Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s")
+                        gracefulShutdown(false)
+                    }
+                    anyDead -> {
                         clearJarCache()
                     }
                 }
@@ -733,12 +837,14 @@ class CompileServiceServerSideImpl(
     }
 
     private fun periodicSeldomCheck() {
-        ifAliveUnit(minAliveness = Aliveness.Alive, info = "periodicSeldomCheck") {
+        async {
+            ifAliveUnit(minAliveness = Aliveness.Alive, info = "periodicSeldomCheck") {
 
-            // compiler changed (seldom check) - shutdown
-            if (classpathWatcher.isChanged) {
-                log.info("Compiler changed.")
-                gracefulShutdown(false)
+                // compiler changed (seldom check) - shutdown
+                if (classpathWatcher.isChanged) {
+                    log.info("Compiler changed.")
+                    gracefulShutdown(false)
+                }
             }
         }
     }
@@ -746,10 +852,9 @@ class CompileServiceServerSideImpl(
 
     // TODO: handover should include mechanism for client to switch to a new daemon then previous "handed over responsibilities" and shot down
     private fun initiateElections() {
-        ifAliveUnit(info = "initiateElections") {
-            log.info("initiate elections")
-            runBlocking {
-                log.info("initiate elections - runBlocking")
+        async {
+            ifAliveUnit(info = "initiateElections") {
+                log.info("initiate elections")
                 val aliveWithOpts = walkDaemonsAsync(
                     File(daemonOptions.runFilesPathOrDefault),
                     compilerId,
@@ -828,6 +933,7 @@ class CompileServiceServerSideImpl(
                         //   - runServer (or better persuade client to runServer) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
                     }
                 }
+
             }
         }
     }
@@ -845,6 +951,27 @@ class CompileServiceServerSideImpl(
         log.handlers.forEach { it.flush() }
     }
 
+    private fun shutdownWithDelayImpl(currentClientsCount: Int, currentSessionId: Int, currentCompilationsCount: Int) {
+        log.info("${log.name} .......shutdowning........")
+        log.info("${log.name} currentCompilationsCount = $currentCompilationsCount, compilationsCounter.get(): ${compilationsCounter.get()}")
+        state.delayedShutdownQueued.set(false)
+        if (currentClientsCount == state.clientsCounter &&
+            currentCompilationsCount == compilationsCounter.get() &&
+            currentSessionId == state.sessions.lastSessionId
+        ) {
+            log.info("currentCompilationsCount == compilationsCounter.get()")
+            runBlocking {
+                ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession, info = "initiate elections - shutdown") {
+                    log.info("Execute delayed shutdown!!!")
+                    log.fine("Execute delayed shutdown")
+                    shutdownNow()
+                }
+            }
+        } else {
+            log.info("Cancel delayed shutdown due to a new activity")
+        }
+    }
+
     private fun shutdownWithDelay() {
         state.delayedShutdownQueued.set(true)
         val currentClientsCount = state.clientsCounter
@@ -852,37 +979,11 @@ class CompileServiceServerSideImpl(
         val currentCompilationsCount = compilationsCounter.get()
         log.info("Delayed shutdown in ${daemonOptions.shutdownDelayMilliseconds}ms")
         timer.schedule(daemonOptions.shutdownDelayMilliseconds) {
-            log.info("${log.name} .......shutdowning........")
-            log.info("${log.name} currentCompilationsCount = $currentCompilationsCount, compilationsCounter.get(): ${compilationsCounter.get()}")
-            state.delayedShutdownQueued.set(false)
-            if (currentClientsCount == state.clientsCounter &&
-                currentCompilationsCount == compilationsCounter.get() &&
-                currentSessionId == state.sessions.lastSessionId
-            ) {
-                log.info("currentCompilationsCount == compilationsCounter.get()")
-                ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession, info = "initiate elections - shutdown") {
-                    log.info("Execute delayed shutdown!!!")
-                    log.fine("Execute delayed shutdown")
-                    shutdownNow()
-                }
-            } else {
-                log.info("Cancel delayed shutdown due to a new activity")
-            }
+            shutdownWithDelayImpl(currentClientsCount, currentSessionId, currentCompilationsCount)
         }
     }
 
     private fun gracefulShutdown(onAnotherThread: Boolean): Boolean {
-
-        fun shutdownIfIdle() = when {
-            state.sessions.isEmpty() -> shutdownWithDelay()
-            else -> {
-                daemonOptions.autoshutdownIdleSeconds =
-                        TimeUnit.MILLISECONDS.toSeconds(daemonOptions.forceShutdownTimeoutMilliseconds).toInt()
-                daemonOptions.autoshutdownUnusedSeconds = daemonOptions.autoshutdownIdleSeconds
-                log.info("Some sessions are active, waiting for them to finish")
-                log.info("Unused/idle timeouts are set to ${daemonOptions.autoshutdownUnusedSeconds}/${daemonOptions.autoshutdownIdleSeconds}s")
-            }
-        }
 
         if (!state.alive.compareAndSet(Aliveness.Alive.ordinal, Aliveness.LastSession.ordinal)) {
             log.info("Invalid state for graceful shutdown: ${state.alive.get().toAlivenessName()}")
@@ -894,12 +995,30 @@ class CompileServiceServerSideImpl(
             shutdownIfIdle()
         } else {
             timer.schedule(1) {
-                ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession, info = "gracefulShutdown") {
-                    shutdownIfIdle()
-                }
+                gracefulShutdownImpl()
             }
+
         }
         return true
+    }
+
+    private fun gracefulShutdownImpl() {
+        async {
+            ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession, info = "gracefulShutdown") {
+                shutdownIfIdle()
+            }
+        }
+    }
+
+    private fun shutdownIfIdle() = when {
+        state.sessions.isEmpty() -> shutdownWithDelay()
+        else -> {
+            daemonOptions.autoshutdownIdleSeconds =
+                    TimeUnit.MILLISECONDS.toSeconds(daemonOptions.forceShutdownTimeoutMilliseconds).toInt()
+            daemonOptions.autoshutdownUnusedSeconds = daemonOptions.autoshutdownIdleSeconds
+            log.info("Some sessions are active, waiting for them to finish")
+            log.info("Unused/idle timeouts are set to ${daemonOptions.autoshutdownUnusedSeconds}/${daemonOptions.autoshutdownIdleSeconds}s")
+        }
     }
 
     private fun doCompile(
@@ -908,28 +1027,24 @@ class CompileServiceServerSideImpl(
         tracer: RemoteOperationsTracer?,
         body: suspend (EventManager, Profiler) -> ExitCode
     ): Deferred<CompileService.CallResult<Int>> = async {
-        ifAlive(info = "doCompile") {
-            log.info("alive!")
-            withValidClientOrSessionProxy(sessionId) {
-                //                tracer?.before("compile")
-                log.info("before compile")
-                val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
-                val eventManger = EventManagerImpl()
-                try {
-                    log.info("trying get exitCode")
-                    val exitCode = checkedCompile(daemonMessageReporterAsync, rpcProfiler) {
-                        log.info("body of exitCode")
-                        body(eventManger, rpcProfiler).code.also {
-                            log.info("after body of exitCode")
-                        }
-                    }.await()
-                    log.info("got exitCode")
-                    CompileService.CallResult.Good(exitCode)
-                } finally {
-                    eventManger.fireCompilationFinished()
-//                    tracer?.after("compile")
-                    log.info("after compile")
-                }
+        log.info("alive!")
+        withValidClientOrSessionProxy(sessionId) {
+            log.info("before compile")
+            val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
+            val eventManger = EventManagerImpl()
+            try {
+                log.info("trying get exitCode")
+                val exitCode = checkedCompile(daemonMessageReporterAsync, rpcProfiler) {
+                    log.info("body of exitCode")
+                    body(eventManger, rpcProfiler).code.also {
+                        log.info("after body of exitCode")
+                    }
+                }.await()
+                log.info("got exitCode")
+                CompileService.CallResult.Good(exitCode)
+            } finally {
+                eventManger.fireCompilationFinished()
+                log.info("after compile")
             }
         }
     }
@@ -1006,49 +1121,72 @@ class CompileServiceServerSideImpl(
         (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
     }
 
-    private inline fun <R> ifAlive(
+    private suspend fun <R> ifAlive(
         minAliveness: Aliveness = Aliveness.LastSession,
         info: String = "no info",
-        body: () -> CompileService.CallResult<R>
-    ): CompileService.CallResult<R> = run {
-        log.info("alive?")
-        ifAliveChecksImpl(minAliveness, info, body)
+        body: suspend () -> CompileService.CallResult<R>
+    ): CompileService.CallResult<R> {
+        val result = CompletableDeferred<Any>()
+        queriesActor.send(OrdinaryTaskWithResult(result, CompileService.CallResult.Dying(), {
+            log.info("alive?")
+            ifAliveChecksImpl(minAliveness, info, body)
+        }))
+        return result.await() as CompileService.CallResult<R>
     }
 
-    private inline fun ifAliveUnit(minAliveness: Aliveness = Aliveness.LastSession, info: String = "no info", body: () -> Unit) {
+    private suspend fun ifAliveUnit(
+        minAliveness: Aliveness = Aliveness.LastSession,
+        info: String = "no info",
+        body: suspend () -> Unit
+    ) {
         log.info("ifAliveUnit(1)($info)")
-        run {
-            log.info("ifAliveUnit(2)($info)")
-            ifAliveChecksImpl(minAliveness, info) {
+        val completed = CompletableDeferred<Boolean>()
+        queriesActor.send(
+            OrdinaryTask(
+                completed,
+                {
+                    log.info("ifAliveUnit(2)($info)")
+                    ifAliveChecksImpl(minAliveness, info) {
+                        body()
+                        CompileService.CallResult.Ok()
+                    }
+                }
+            )
+        )
+        completed.await()
+    }
+
+    private suspend fun <R> ifAliveExclusive(
+        minAliveness: Aliveness = Aliveness.LastSession,
+        info: String = "no info",
+        body: suspend () -> CompileService.CallResult<R>
+    ): CompileService.CallResult<R> {
+        val result = CompletableDeferred<Any>()
+        queriesActor.send(ShutdownTaskWithResult(result, CompileService.CallResult.Dying(), {
+            ifAliveChecksImpl(minAliveness, info, body)
+        }))
+        return result.await() as CompileService.CallResult<R>
+    }
+
+    private suspend fun ifAliveExclusiveUnit(
+        minAliveness: Aliveness = Aliveness.LastSession,
+        info: String = "no info",
+        body: suspend () -> Unit
+    ): CompileService.CallResult<Unit> {
+        val result = CompletableDeferred<Any>()
+        queriesActor.send(ShutdownTaskWithResult(result, CompileService.CallResult.Dying(), {
+            ifAliveChecksImpl(minAliveness) {
                 body()
                 CompileService.CallResult.Ok()
             }
-        }
+        }))
+        return result.await() as CompileService.CallResult<Unit>
     }
 
-    private inline fun <R> ifAliveExclusive(
+    private suspend fun <R> ifAliveChecksImpl(
         minAliveness: Aliveness = Aliveness.LastSession,
         info: String = "no info",
-        body: () -> CompileService.CallResult<R>
-    ): CompileService.CallResult<R> = run {
-        ifAliveChecksImpl(minAliveness, info, body)
-    }
-
-    private inline fun ifAliveExclusiveUnit(
-        minAliveness: Aliveness = Aliveness.LastSession,
-        info: String = "no info",
-        body: () -> Unit
-    ): Unit = run {
-        ifAliveChecksImpl(minAliveness) {
-            body()
-            CompileService.CallResult.Ok()
-        }
-    }
-
-    private inline fun <R> ifAliveChecksImpl(
-        minAliveness: Aliveness = Aliveness.LastSession,
-        info: String = "no info",
-        body: () -> CompileService.CallResult<R>
+        body: suspend () -> CompileService.CallResult<R>
     ): CompileService.CallResult<R> {
         val curState = state.alive.get()
         log.info("[$info] alive check? - state = $curState ; minAliveness.ordinal = ${minAliveness.ordinal}")

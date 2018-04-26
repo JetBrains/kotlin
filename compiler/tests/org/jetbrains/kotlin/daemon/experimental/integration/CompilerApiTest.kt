@@ -111,7 +111,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             daemonOptions,
             DaemonReportingTargets(messageCollector = messageCollector),
             autostart = true
-        ).await()
+        )
         log.info("KotlinCompilerClient.connectToCompileService() called! (daemon = $daemon)")
 
         assertNotNull("failed to connect daemon", daemon)
@@ -133,7 +133,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             messageCollector,
             { outFile, srcFiles -> outputs.add(OutputMessageUtil.Output(srcFiles, outFile)) },
             reportSeverity = ReportSeverity.DEBUG
-        ).await()
+        )
         code to outputs
     }
 

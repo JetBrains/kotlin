@@ -103,7 +103,10 @@ open class KotlinJvmReplServiceAsync(
         stateFacade
     }
 
-    suspend fun <R> withValidReplState(stateId: Int, body: (IReplStageState<*>) -> R): CompileService.CallResult<R> = statesLock.read {
+    suspend fun <R> withValidReplState(
+        stateId: Int,
+        body: (IReplStageState<*>) -> R
+    ): CompileService.CallResult<R> = statesLock.read {
         states.keys.firstOrNull { it.getId() == stateId }?.let {
             CompileService.CallResult.Good(body(it.state))
         } ?: CompileService.CallResult.Error("No REPL state with id $stateId found")

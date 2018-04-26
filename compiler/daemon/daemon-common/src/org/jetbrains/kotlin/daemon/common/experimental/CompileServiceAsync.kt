@@ -38,13 +38,13 @@ interface CompileServiceAsync {
 
     suspend fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean>
 
-    fun compile(
+    suspend fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide
-    ): Deferred<CompileService.CallResult<Int>>
+    ): CompileService.CallResult<Int>
 
     suspend fun clearJarCache()
 
@@ -61,11 +61,11 @@ interface CompileServiceAsync {
 
     suspend fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacadeClientSide>
 
-    fun replCheck(
+    suspend fun replCheck(
         sessionId: Int,
         replStateId: Int,
         codeLine: ReplCodeLine
-    ): Deferred<CompileService.CallResult<ReplCheckResult>>
+    ): CompileService.CallResult<ReplCheckResult>
 
     suspend fun replCompile(
         sessionId: Int,

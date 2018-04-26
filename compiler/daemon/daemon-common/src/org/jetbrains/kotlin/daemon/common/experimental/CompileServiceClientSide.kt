@@ -46,17 +46,17 @@ class CompileServiceClientSideImpl(
 
     val log = Logger.getLogger("CompileServiceClientSideImpl")
 
-    override fun compile(
+    override suspend fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide
-    ): Deferred<CallResult<Int>> = async {
+    ): CallResult<Int> {
         println("override fun compile(")
         val id = sendMessage(CompileMessage(sessionId, compilerArguments, compilationOptions, servicesFacade, compilationResults))
         println("override fun compile(: id = $id")
-        readMessage<CallResult<Int>>(id)
+        return readMessage(id)
     }
 
     override suspend fun leaseReplSession(
@@ -176,11 +176,11 @@ class CompileServiceClientSideImpl(
         return readMessage(id)
     }
 
-    override fun replCheck(
+    override suspend fun replCheck(
         sessionId: Int,
         replStateId: Int,
         codeLine: ReplCodeLine
-    ): Deferred<CallResult<ReplCheckResult>> = async {
+    ): CallResult<ReplCheckResult> {
         val id = sendMessage(
             ReplCheckMessage(
                 sessionId,
@@ -188,7 +188,7 @@ class CompileServiceClientSideImpl(
                 codeLine
             )
         )
-        readMessage<CallResult<ReplCheckResult>>(id)
+        return readMessage(id)
     }
 
     override suspend fun replCompile(
@@ -209,7 +209,8 @@ class CompileServiceClientSideImpl(
     // Query messages:
 
     class CheckCompilerIdMessage(val expectedCompilerId: CompilerId) : Server.Message<CompileServiceServerSide>() {
-        override suspend fun processImpl(server: CompileServiceServerSide, sendReply: (Any?) -> Unit) = sendReply(server.checkCompilerId(expectedCompilerId))
+        override suspend fun processImpl(server: CompileServiceServerSide, sendReply: (Any?) -> Unit) =
+            sendReply(server.checkCompilerId(expectedCompilerId))
     }
 
     class GetUsedMemoryMessage : Server.Message<CompileServiceServerSide>() {
@@ -278,7 +279,7 @@ class CompileServiceClientSideImpl(
                     compilationOptions,
                     servicesFacade,
                     compilationResults
-                ).await()
+                )
             )
     }
 
@@ -345,7 +346,7 @@ class CompileServiceClientSideImpl(
         val codeLine: ReplCodeLine
     ) : Server.Message<CompileServiceServerSide>() {
         override suspend fun processImpl(server: CompileServiceServerSide, sendReply: (Any?) -> Unit) =
-            sendReply(server.replCheck(sessionId, replStateId, codeLine).await())
+            sendReply(server.replCheck(sessionId, replStateId, codeLine))
     }
 
     class ReplCompileMessage(

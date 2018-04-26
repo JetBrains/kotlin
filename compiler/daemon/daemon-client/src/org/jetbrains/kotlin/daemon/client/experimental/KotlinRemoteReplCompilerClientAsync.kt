@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.daemon.client.experimental
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.cli.common.repl.experimental.ReplCompiler
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.ServerSocketWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.findCallbackServerSocket
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -51,28 +51,33 @@ open class KotlinRemoteReplCompilerClientAsync(
     }
 
     // dispose should be called at the end of the repl lifetime to free daemon repl session and appropriate resources
-    open fun dispose() {
-        try {
-            runBlocking { compileService.releaseReplSession(sessionId) }
-        }
-        catch (ex: java.rmi.RemoteException) {
-            // assuming that communication failed and daemon most likely is already down
-        }
+    open suspend fun dispose() {
+        compileService.releaseReplSession(sessionId)
     }
 
-    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> =
-        runBlocking {
-            println("creating state...")
-            val stateRes = compileService.replCreateState(sessionId)
-            println("stateRes = $stateRes")
-            val state = stateRes.get()
-            println("state = $state")
-            RemoteReplCompilerStateAsync(state, lock)
-        }
+    override suspend fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> {
+        println("creating state...")
+        val stateRes = compileService.replCreateState(sessionId)
+        println("stateRes = $stateRes")
+        val state = stateRes.get()
+        println("state = $state")
+        return RemoteReplCompilerStateAsync(state, lock)
+    }
 
-    override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult =
-        runBlocking { compileService.replCheck(sessionId, state.asState(RemoteReplCompilerStateAsync::class.java).replStateFacade.getId(), codeLine).await().get() }
+    override suspend fun check(
+        state: IReplStageState<*>,
+        codeLine: ReplCodeLine
+    ): ReplCheckResult =
+        compileService.replCheck(
+            sessionId,
+            state.asState(RemoteReplCompilerStateAsync::class.java).replStateFacade.getId(),
+            codeLine
+        ).get()
 
-    override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult =
-        runBlocking { compileService.replCompile(sessionId, state.asState(RemoteReplCompilerStateAsync::class.java).replStateFacade.getId(), codeLine).get() }
+    override suspend fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult =
+        compileService.replCompile(
+            sessionId,
+            state.asState(RemoteReplCompilerStateAsync::class.java).replStateFacade.getId(),
+            codeLine
+        ).get()
 }
