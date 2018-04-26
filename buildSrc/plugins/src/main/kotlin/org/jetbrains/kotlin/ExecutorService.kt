@@ -151,22 +151,11 @@ private fun simulator(project: Project) : ExecutorService = object : ExecutorSer
         out.toString("UTF-8").trim()
     }
 
-    private val list by lazy {
-        val out = ByteArrayOutputStream()
-        val result = project.exec {
-            it.commandLine(simctl, "list")
-            it.standardOutput = out
-        }
-        result.assertNormalExitValue()
-        out.toString("UTF-8").trim()
-    }
-
     private val iosDevice = project.findProperty("iosDevice")?.toString() ?: "iPhone 6"
 
     override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec { execSpec ->
-        println(list)
         action.execute(execSpec)
-        with(execSpec) { commandLine = listOf("/usr/bin/xcrun", "simctl", "spawn", "iPhone 6", executable) + args }
+        with(execSpec) { commandLine = listOf(simctl, "spawn", iosDevice, executable) + args }
     }
 }
 
