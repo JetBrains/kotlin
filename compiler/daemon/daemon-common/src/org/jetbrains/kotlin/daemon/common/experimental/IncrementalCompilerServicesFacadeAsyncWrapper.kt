@@ -18,33 +18,21 @@ class IncrementalCompilerServicesFacadeAsyncWrapper(
     val rmiImpl: IncrementalCompilerServicesFacade
 ) : IncrementalCompilerServicesFacadeClientSide, Client<CompilerServicesFacadeBaseServerSide> by DefaultClientRMIWrapper() {
 
-    override suspend fun hasAnnotationsFileUpdater() = runBlocking {
-        rmiImpl.hasAnnotationsFileUpdater()
-    }
+    override suspend fun hasAnnotationsFileUpdater() = rmiImpl.hasAnnotationsFileUpdater()
 
-    override suspend fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) = runBlocking {
+    override suspend fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) =
         rmiImpl.updateAnnotations(outdatedClassesJvmNames)
-    }
 
-    override suspend fun revert() = runBlocking {
-        rmiImpl.revert()
-    }
+    override suspend fun revert() = rmiImpl.revert()
 
-    override suspend fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) = runBlocking {
-        rmiImpl.registerChanges(timestamp, dirtyData)
-    }
+    override suspend fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) = rmiImpl.registerChanges(timestamp, dirtyData)
 
-    override suspend fun unknownChanges(timestamp: Long) = runBlocking {
-        rmiImpl.unknownChanges(timestamp)
-    }
+    override suspend fun unknownChanges(timestamp: Long) = rmiImpl.unknownChanges(timestamp)
 
-    override suspend fun getChanges(artifact: File, sinceTS: Long) = runBlocking {
-        rmiImpl.getChanges(artifact, sinceTS)
-    }
+    override suspend fun getChanges(artifact: File, sinceTS: Long) = rmiImpl.getChanges(artifact, sinceTS)
 
-    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking {
+    override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) =
         rmiImpl.report(category, severity, message, attachment)
-    }
 
 }
 

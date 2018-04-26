@@ -19,21 +19,19 @@ class CompileServiceAsyncWrapper(
     override val serverPort: Int
 ) : CompileServiceClientSide, Client<CompileServiceServerSide> by DefaultClientRMIWrapper() {
 
-    override fun compile(
+    override suspend fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide
-    ) = async {
-        rmiCompileService.compile(
-            sessionId,
-            compilerArguments,
-            compilationOptions,
-            servicesFacade.toRMI(),
-            compilationResults.toRMI()
-        )
-    }
+    ) = rmiCompileService.compile(
+        sessionId,
+        compilerArguments,
+        compilationOptions,
+        servicesFacade.toRMI(),
+        compilationResults.toRMI()
+    )
 
     override suspend fun leaseReplSession(
         aliveFlagPath: String?,
@@ -98,17 +96,14 @@ class CompileServiceAsyncWrapper(
         rmiCompileService.releaseReplSession(sessionId)
 
 
-    override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) = async {
+    override suspend fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine) =
         rmiCompileService.replCheck(sessionId, replStateId, codeLine)
-    }
 
     override suspend fun replCompile(
         sessionId: Int,
         replStateId: Int,
         codeLine: ReplCodeLine
-    ) =
-        rmiCompileService.replCompile(sessionId, replStateId, codeLine)
-
+    ) = rmiCompileService.replCompile(sessionId, replStateId, codeLine)
 
     override suspend fun checkCompilerId(expectedCompilerId: CompilerId) =
         rmiCompileService.checkCompilerId(expectedCompilerId)

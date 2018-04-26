@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
-import org.jetbrains.kotlin.daemon.common.experimental.withMeasureBlocking
+import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.experimental.Profiler
 import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCanceledException
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerCallbackServicesFacadeClientSide
 import org.jetbrains.kotlin.progress.CompilationCanceledException
-import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.progress.experimental.CompilationCanceledStatus
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
@@ -38,7 +37,7 @@ class RemoteCompilationCanceledStatusClient(
     @Volatile
     var lastChecked: Long = System.nanoTime()
 
-    override fun checkCanceled() {
+    override suspend fun checkCanceled() {
 
         fun cancelOnError(e: Exception) {
             log.warning("error communicating with host, assuming compilation canceled (${e.message})")
@@ -47,7 +46,7 @@ class RemoteCompilationCanceledStatusClient(
 
         val curNanos = System.nanoTime()
         if (curNanos - lastChecked > CANCELED_STATUS_CHECK_THRESHOLD_NS) {
-            profiler.withMeasureBlocking(this) {
+            profiler.withMeasure(this) {
                 try {
                     facade.compilationCanceledStatus_checkCanceled()
                 } catch (e: RmiFriendlyCompilationCanceledException) {

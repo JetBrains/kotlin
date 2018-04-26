@@ -5,22 +5,22 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import org.jetbrains.kotlin.daemon.common.DummyProfiler
-import org.jetbrains.kotlin.daemon.common.Profiler
+import kotlinx.coroutines.experimental.runBlocking
+import org.jetbrains.kotlin.daemon.common.experimental.DummyProfiler
+import org.jetbrains.kotlin.daemon.common.experimental.Profiler
 import org.jetbrains.kotlin.daemon.common.experimental.RemoteOutputStreamAsyncClientSide
-import org.jetbrains.kotlin.daemon.common.experimental.withMeasureBlocking
 import java.io.OutputStream
 
-class RemoteOutputStreamClient(val remote: RemoteOutputStreamAsyncClientSide, val profiler: Profiler = DummyProfiler()): OutputStream() {
-    override fun write(data: ByteArray) {
-        profiler.withMeasureBlocking(this) { remote.write(data, 0, data.size) }
+class RemoteOutputStreamClient(val remote: RemoteOutputStreamAsyncClientSide, val profiler: Profiler = DummyProfiler()) : OutputStream() {
+    override fun write(data: ByteArray) = runBlocking {
+        profiler.withMeasure(this) { remote.write(data, 0, data.size) }
     }
 
-    override fun write(data: ByteArray, offset: Int, length: Int) {
-        profiler.withMeasureBlocking(this) { remote.write(data, offset, length) }
+    override fun write(data: ByteArray, offset: Int, length: Int) = runBlocking {
+        profiler.withMeasure(this) { remote.write(data, offset, length) }
     }
 
-    override fun write(byte: Int) {
-        profiler.withMeasureBlocking(this) { remote.write(byte) }
+    override fun write(byte: Int) = runBlocking {
+        profiler.withMeasure(this) { remote.write(byte) }
     }
 }
