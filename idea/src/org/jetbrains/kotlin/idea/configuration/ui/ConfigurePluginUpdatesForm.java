@@ -16,6 +16,7 @@ public class ConfigurePluginUpdatesForm {
     public AsyncProcessIcon updateCheckProgressIcon;
     public JLabel updateStatusLabel;
     public JButton installButton;
+    public JLabel installStatusLabel;
 
     public ConfigurePluginUpdatesForm() {
         int size = channelCombo.getModel().getSize();
@@ -36,10 +37,26 @@ public class ConfigurePluginUpdatesForm {
     public void resetUpdateStatus() {
         updateStatusLabel.setText(" ");
         installButton.setVisible(false);
+        installStatusLabel.setVisible(false);
     }
 
     public void setUpdateStatus(String message, boolean showInstallButton) {
+        installButton.setEnabled(true);
         installButton.setVisible(showInstallButton);
+
         updateStatusLabel.setText(message);
+
+        installStatusLabel.setVisible(true);
+        installStatusLabel.setText("");
+    }
+
+    public void showInstallButton() {
+        installButton.setEnabled(true);
+        installButton.setVisible(true);
+    }
+
+    public void hideInstallButton() {
+        installButton.setEnabled(false);
+        installButton.setVisible(false);
     }
 }

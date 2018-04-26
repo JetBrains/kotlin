@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.ide.IdeBundle
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.updateSettings.impl.UpdateSettings
@@ -43,6 +44,11 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
     private val form = ConfigurePluginUpdatesForm()
     private var update: PluginUpdateStatus.Update? = null
 
+    private var versionForInstallation: String? = null
+
+    private var installedVersion: String? = null
+    private var installingStatus: String? = null
+
     override fun getId(): String = ID
 
     override fun getDisplayName(): String = "Kotlin Updates"
@@ -51,6 +57,11 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
 
     override fun apply() {
         // Selected channel is now saved automatically
+    }
+
+    private fun setInstalledVersion(installedVersion: String?, installingStatus: String?) {
+        this.installedVersion = installedVersion
+        this.installingStatus = installingStatus
     }
 
     override fun createComponent(): JComponent? {
@@ -64,7 +75,36 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
         form.installButton.isVisible = false
         form.installButton.addActionListener {
             update?.let {
-                KotlinPluginUpdater.getInstance().installPluginUpdate(it)
+                form.hideInstallButton()
+
+                setInstalledVersion(it.pluginDescriptor.version, "Installing...")
+
+                form.installStatusLabel.text = installingStatus
+
+                KotlinPluginUpdater.getInstance().installPluginUpdate(
+                    it,
+                    successCallback = {
+                        setInstalledVersion(it.pluginDescriptor.version, IdeBundle.message("plugin.manager.installed.tooltip"))
+                        if (versionForInstallation == it.pluginDescriptor.version) {
+                            form.installStatusLabel.text = installingStatus
+                        }
+                    },
+                    cancelCallback = {
+                        if (versionForInstallation == it.pluginDescriptor.version) {
+                            form.installStatusLabel.text = ""
+                            form.showInstallButton()
+
+                            setInstalledVersion(null, null)
+                        }
+                    },
+                    errorCallback = {
+                        if (versionForInstallation == it.pluginDescriptor.version) {
+                            form.installStatusLabel.text = "Installation failed"
+                            form.showInstallButton()
+                            setInstalledVersion(null, null)
+                        }
+                    }
+                )
             }
         }
 
@@ -99,7 +139,13 @@ class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.N
 
                 is PluginUpdateStatus.Update -> {
                     update = pluginUpdateStatus
+                    versionForInstallation = update?.pluginDescriptor?.version
                     form.setUpdateStatus("A new version ${pluginUpdateStatus.pluginDescriptor.version} is available", true)
+                    if (installedVersion != null && installedVersion == versionForInstallation) {
+                        // Installation of the plugin has been started or finished
+                        form.hideInstallButton()
+                        form.installStatusLabel.text = installingStatus
+                    }
                 }
 
                 is PluginUpdateStatus.CheckFailed ->
