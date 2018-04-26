@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.psi2ir.transformations
+package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -16,29 +16,20 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.generators.ConstantValueGenerator
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-fun generateAnnotationsForDeclarations(context: GeneratorContext, irElement: IrElement) {
-    val annotationGenerator = AnnotationGenerator(context.moduleDescriptor, context.symbolTable)
-    irElement.acceptVoid(annotationGenerator)
-}
 
 class AnnotationGenerator(
     moduleDescriptor: ModuleDescriptor,
     private val symbolTable: SymbolTable
 ) : IrElementVisitorVoid {
 
-    constructor(context: GeneratorContext) : this(context.moduleDescriptor, context.symbolTable)
-
+    private val typeTranslator = TypeTranslator(moduleDescriptor, symbolTable)
     private val scopedTypeParameterResolver = ScopedTypeParametersResolver()
     private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, this, scopedTypeParameterResolver)
 
@@ -86,19 +77,24 @@ class AnnotationGenerator(
         }
     }
 
+    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
+
     fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor): IrCall {
         val annotationType = annotationDescriptor.type
         val annotationClassDescriptor = annotationType.constructor.declarationDescriptor as? ClassDescriptor
                 ?: throw AssertionError("No declaration descriptor for annotation $annotationDescriptor")
+
+        if (annotationClassDescriptor !is ClassDescriptor) {
+            throw AssertionError("Annotation type descriptor is not a class: $annotationClassDescriptor")
+        }
+
         assert(DescriptorUtils.isAnnotationClass(annotationClassDescriptor)) {
             "Annotation class expected: $annotationClassDescriptor"
         }
 
-        val primaryConstructorDescriptor =
-            annotationClassDescriptor.unsubstitutedPrimaryConstructor
-                    ?: annotationClassDescriptor.constructors.singleOrNull()
-                    ?: throw AssertionError("No constructor for annotation class $annotationClassDescriptor")
-
+        val primaryConstructorDescriptor = annotationClassDescriptor.unsubstitutedPrimaryConstructor
+                ?: annotationClassDescriptor.constructors.singleOrNull()
+                ?: throw AssertionError("No constructor for annotation class $annotationClassDescriptor")
         val primaryConstructorSymbol = symbolTable.referenceConstructor(primaryConstructorDescriptor)
 
         val psi = annotationDescriptor.source.safeAs<PsiSourceElement>()?.psi
@@ -106,7 +102,8 @@ class AnnotationGenerator(
         val endOffset = psi?.startOffset ?: UNDEFINED_OFFSET
 
         val irCall = IrCallImpl(
-            startOffset, endOffset, annotationType,
+            startOffset, endOffset,
+            annotationType.toIrType(),
             primaryConstructorSymbol, primaryConstructorDescriptor,
             typeArgumentsCount = 0
         )

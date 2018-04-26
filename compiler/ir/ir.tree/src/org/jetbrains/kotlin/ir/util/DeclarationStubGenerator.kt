@@ -29,12 +29,16 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class DeclarationStubGenerator(
+    moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
     val origin: IrDeclarationOrigin
 ) {
+    private val typeTranslator = TypeTranslator(moduleDescriptor, symbolTable)
+
     fun generateEmptyModuleFragmentStub(descriptor: ModuleDescriptor, irBuiltIns: IrBuiltIns): IrModuleFragment =
         IrModuleFragmentImpl(descriptor, irBuiltIns)
 
@@ -59,7 +63,10 @@ class DeclarationStubGenerator(
         }
 
     private fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty =
-        IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irProperty ->
+        IrPropertyImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+            descriptor, descriptor.type.toIrType()
+        ).also { irProperty ->
             val getterDescriptor = descriptor.getter
             if (getterDescriptor == null) {
                 irProperty.backingField =
@@ -97,16 +104,24 @@ class DeclarationStubGenerator(
         descriptor.valueParameters.mapTo(function.valueParameters) { generateValueParameterStub(it) }
     }
 
+    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
+
     private fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
-        IrValueParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, this)
+        IrValueParameterImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, this,
+            type.toIrType(), null
+        )
 
     private fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter =
-        IrValueParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor).also { irValueParameter ->
+        IrValueParameterImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+            descriptor, descriptor.type.toIrType(), descriptor.varargElementType?.toIrType()
+        ).also { irValueParameter ->
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue =
                         IrExpressionBodyImpl(
                             IrErrorExpressionImpl(
-                                UNDEFINED_OFFSET, UNDEFINED_OFFSET, descriptor.type,
+                                UNDEFINED_OFFSET, UNDEFINED_OFFSET, descriptor.type.toIrType(),
                                 "Stub expression for default value of ${descriptor.name}"
                             )
                         )
@@ -137,7 +152,10 @@ class DeclarationStubGenerator(
     }
 
     private fun generateTypeParameterStub(descriptor: TypeParameterDescriptor): IrTypeParameter =
-        IrTypeParameterImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, descriptor)
+        IrTypeParameterImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+            descriptor, descriptor.upperBounds.map { it.toIrType() }
+        )
 
     private fun generateMemberStubs(memberScope: MemberScope, container: IrDeclarationContainer) {
         generateChildStubs(memberScope.getContributedDescriptors(), container)
