@@ -176,9 +176,3 @@ internal fun debugInfoParameterLocation(builder: DIBuilderRef?,
 
     return VariableDebugLocation(localVariable = variableDeclaration!!, location = location, file = file, line = line)
 }
-
-private val ValueDescriptor.type get() = when (this) {
-    is IrVariable -> this.type
-    is IrValueParameter -> this.type
-    else -> error(this)
-}

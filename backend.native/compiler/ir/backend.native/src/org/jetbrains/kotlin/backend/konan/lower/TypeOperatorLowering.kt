@@ -21,22 +21,27 @@ import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.util.isSimpleTypeWithQuestionMark
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.containsNull
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 /**
  * This lowering pass lowers some [IrTypeOperatorCall]s.
@@ -60,22 +65,24 @@ private class TypeOperatorTransformer(val context: CommonBackendContext, val fun
         return declaration
     }
 
-    private fun KotlinType.erasure(): KotlinType {
-        val descriptor = this.constructor.declarationDescriptor
-        return when (descriptor) {
-            is ClassDescriptor -> this
-            is TypeParameterDescriptor -> {
-                val upperBound = descriptor.upperBounds.singleOrNull() ?:
-                        TODO("$descriptor : ${descriptor.upperBounds}")
+    private fun IrType.erasure(): IrType {
+        if (this !is IrSimpleType) return this
 
-                if (this.isMarkedNullable) {
+        val classifier = this.classifier
+        return when (classifier) {
+            is IrClassSymbol -> this
+            is IrTypeParameterSymbol -> {
+                val upperBound = classifier.owner.superTypes.singleOrNull() ?:
+                        TODO("${classifier.descriptor} : ${classifier.descriptor.upperBounds}")
+
+                if (this.hasQuestionMark) {
                     // `T?`
                     upperBound.erasure().makeNullable()
                 } else {
                     upperBound.erasure()
                 }
             }
-            else -> TODO(this.toString())
+            else -> TODO(classifier.toString())
         }
     }
 
@@ -83,32 +90,32 @@ private class TypeOperatorTransformer(val context: CommonBackendContext, val fun
         builder.at(expression)
         val typeOperand = expression.typeOperand.erasure()
 
-        assert (!TypeUtils.hasNullableSuperType(typeOperand)) // So that `isNullable()` <=> `isMarkedNullable`.
+//        assert (!TypeUtils.hasNullableSuperType(typeOperand)) // So that `isNullable()` <=> `isMarkedNullable`.
 
         // TODO: consider the case when expression type is wrong e.g. due to generics-related unchecked casts.
 
         return when {
             expression.argument.type.isSubtypeOf(typeOperand) -> expression.argument
 
-            expression.argument.type.isNullable() -> {
+            expression.argument.type.containsNull() -> {
                 with (builder) {
                     irLetS(expression.argument) { argument ->
                         irIfThenElse(
                                 type = expression.type,
-                                condition = irEqeqeq(irGet(argument), irNull()),
+                                condition = irEqeqeq(irGet(argument.owner), irNull()),
 
-                                thenPart = if (typeOperand.isMarkedNullable)
+                                thenPart = if (typeOperand.isSimpleTypeWithQuestionMark)
                                     irNull()
                                 else
-                                    irCall(throwTypeCastException),
+                                    irCall(throwTypeCastException.owner),
 
-                                elsePart = irAs(irGet(argument), typeOperand.makeNotNullable())
+                                elsePart = irAs(irGet(argument.owner), typeOperand.makeNotNull())
                         )
                     }
                 }
             }
 
-            typeOperand.isMarkedNullable -> builder.irAs(expression.argument, typeOperand.makeNotNullable())
+            typeOperand.isSimpleTypeWithQuestionMark -> builder.irAs(expression.argument, typeOperand.makeNotNull())
 
             typeOperand == expression.typeOperand -> expression
 
@@ -124,8 +131,8 @@ private class TypeOperatorTransformer(val context: CommonBackendContext, val fun
         return builder.irBlock(expression) {
             +irLetS(expression.argument) { variable ->
                 irIfThenElse(expression.type,
-                        condition = irIs(irGet(variable), typeOperand),
-                        thenPart = irImplicitCast(irGet(variable), typeOperand),
+                        condition = irIs(irGet(variable.owner), typeOperand),
+                        thenPart = irImplicitCast(irGet(variable.owner), typeOperand),
                         elsePart = irNull())
             }
         }

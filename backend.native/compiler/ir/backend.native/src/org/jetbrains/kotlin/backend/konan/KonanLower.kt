@@ -18,13 +18,9 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.referenceAllTypeExternalClassifiers
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.lower.DefaultArgumentStubGenerator
-import org.jetbrains.kotlin.backend.konan.lower.DefaultParameterInjector
 import org.jetbrains.kotlin.backend.konan.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.konan.lower.LateinitLowering
-import org.jetbrains.kotlin.backend.konan.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.konan.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -83,12 +79,10 @@ internal class KonanLower(val context: Context) {
         }
 
         val symbolTable = context.ir.symbols.symbolTable
-        irModule.referenceAllTypeExternalClassifiers(symbolTable)
 
         do {
             @Suppress("DEPRECATION")
             irModule.replaceUnboundSymbols(context)
-            irModule.referenceAllTypeExternalClassifiers(symbolTable)
         } while (symbolTable.unboundClasses.isNotEmpty())
 
         irModule.patchDeclarationParents()

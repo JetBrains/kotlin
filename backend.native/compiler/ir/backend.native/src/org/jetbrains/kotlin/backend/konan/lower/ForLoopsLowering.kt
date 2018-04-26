@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.ir.util.isSimpleTypeWithQuestionMark
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -134,36 +138,40 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
 
     //region Util methods ==============================================================================================
     private fun IrExpression.castIfNecessary(progressionType: ProgressionType): IrExpression {
+        val type = this.type.toKotlinType()
         assert(type in progressionElementClassesTypes || type in progressionElementClassesNullableTypes)
         return if (type == progressionType.elementType) {
             this
         } else {
-            IrCallImpl(startOffset, endOffset, symbols.getFunction(progressionType.numberCastFunctionName, type))
+            val function = symbols.getFunction(progressionType.numberCastFunctionName, type)
+            IrCallImpl(startOffset, endOffset, function.owner.returnType, function)
                     .apply { dispatchReceiver = this@castIfNecessary }
         }
     }
 
     private fun DeclarationIrBuilder.ensureNotNullable(expression: IrExpression): IrExpression {
-        return if (expression.type.isMarkedNullable) {
-            irImplicitCast(expression, expression.type.makeNotNullable())
+        return if (expression.type.isSimpleTypeWithQuestionMark) {
+            irImplicitCast(expression, expression.type.makeNotNull())
         } else {
             expression
         }
     }
 
-    private fun IrExpression.unaryMinus(): IrExpression =
-            IrCallImpl(startOffset, endOffset, symbols.getUnaryOperator(OperatorNameConventions.UNARY_MINUS, type)).apply {
-                dispatchReceiver = this@unaryMinus
-            }
+    private fun IrExpression.unaryMinus(): IrExpression {
+        val unaryOperator = symbols.getUnaryOperator(OperatorNameConventions.UNARY_MINUS, type.toKotlinType())
+        return IrCallImpl(startOffset, endOffset, unaryOperator.owner.returnType, unaryOperator).apply {
+            dispatchReceiver = this@unaryMinus
+        }
+    }
 
     private fun ProgressionInfo.defaultStep(startOffset: Int, endOffset: Int): IrExpression =
         progressionType.elementType.let { type ->
             val step = if (increasing) 1 else -1
             when {
                 KotlinBuiltIns.isInt(type) || KotlinBuiltIns.isChar(type) ->
-                    IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, step)
+                    IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, step)
                 KotlinBuiltIns.isLong(type) ->
-                    IrConstImpl.long(startOffset, endOffset, context.builtIns.longType, step.toLong())
+                    IrConstImpl.long(startOffset, endOffset, context.irBuiltIns.longType, step.toLong())
                 else -> throw IllegalArgumentException()
             }
         }
@@ -178,9 +186,9 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     // Used only by the assert.
     private fun stepHasRightType(step: IrExpression, progressionType: ProgressionType) =
             ((progressionType.isCharProgression() || progressionType.isIntProgression()) &&
-                    KotlinBuiltIns.isInt(step.type.makeNotNullable())) ||
+                    KotlinBuiltIns.isInt(step.type.toKotlinType().makeNotNullable())) ||
             (progressionType.isLongProgression() &&
-                    KotlinBuiltIns.isLong(step.type.makeNotNullable()))
+                    KotlinBuiltIns.isLong(step.type.toKotlinType().makeNotNullable()))
 
     private fun irCheckProgressionStep(progressionType: ProgressionType,
                                        step: IrExpression): Pair<IrExpression, Boolean> {
@@ -193,25 +201,25 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         // so there is no need to cast it.
         assert(stepHasRightType(step, progressionType))
 
-        val symbol = symbols.checkProgressionStep[step.type.makeNotNullable()]
+        val symbol = symbols.checkProgressionStep[step.type.toKotlinType().makeNotNullable()]
                 ?: throw IllegalArgumentException("Unknown progression element type: ${step.type}")
-        return IrCallImpl(step.startOffset, step.endOffset, symbol).apply {
+        return IrCallImpl(step.startOffset, step.endOffset, symbol.owner.returnType, symbol).apply {
             putValueArgument(0, step)
         } to true
     }
 
     private fun irGetProgressionLast(progressionType: ProgressionType,
-                                     first: IrVariableSymbol,
+                                     first: IrVariable,
                                      lastExpression: IrExpression,
-                                     step: IrVariableSymbol): IrExpression {
+                                     step: IrVariable): IrExpression {
         val symbol = symbols.getProgressionLast[progressionType.elementType]
                 ?: throw IllegalArgumentException("Unknown progression element type: ${lastExpression.type}")
         val startOffset = lastExpression.startOffset
         val endOffset = lastExpression.endOffset
-        return IrCallImpl(startOffset, lastExpression.endOffset, symbol).apply {
-            putValueArgument(0, IrGetValueImpl(startOffset, endOffset, first))
+        return IrCallImpl(startOffset, lastExpression.endOffset, symbol.owner.returnType, symbol).apply {
+            putValueArgument(0, IrGetValueImpl(startOffset, endOffset, first.type, first.symbol))
             putValueArgument(1, lastExpression.castIfNecessary(progressionType))
-            putValueArgument(2, IrGetValueImpl(startOffset, endOffset, step))
+            putValueArgument(2, IrGetValueImpl(startOffset, endOffset, step.type, step.symbol))
         }
     }
     //endregion
@@ -236,11 +244,11 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
     /** Contains information about variables used in the loop. */
     private data class ForLoopInfo(
             val progressionInfo: ProgressionInfo,
-            val inductionVariable: IrVariableSymbol,
-            val bound: IrVariableSymbol,
-            val last: IrVariableSymbol,
-            val step: IrVariableSymbol,
-            var loopVariable: IrVariableSymbol? = null)
+            val inductionVariable: IrVariable,
+            val bound: IrVariable,
+            val last: IrVariable,
+            val step: IrVariable,
+            var loopVariable: IrVariable? = null)
 
     private inner class ProgressionInfoBuilder : IrElementVisitor<ProgressionInfo?, Nothing?> {
 
@@ -287,7 +295,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         override fun visitElement(element: IrElement, data: Nothing?): ProgressionInfo? = null
 
         override fun visitCall(expression: IrCall, data: Nothing?): ProgressionInfo? {
-            val type = expression.type
+            val type = expression.type.toKotlinType()
             val progressionType = when {
                 type.isSubtypeOf(symbols.charProgression.descriptor.defaultType) -> CHAR_PROGRESSION
                 type.isSubtypeOf(symbols.intProgression.descriptor.defaultType) -> INT_PROGRESSION
@@ -362,15 +370,15 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                 var lastExpression: IrExpression? = null
                 if (!closed) {
                     val decrementSymbol = symbols.getUnaryOperator(OperatorNameConventions.DEC, boundValue.descriptor.type)
-                    lastExpression = irCall(decrementSymbol).apply {
-                        dispatchReceiver = irGet(boundValue.symbol)
+                    lastExpression = irCall(decrementSymbol.owner).apply {
+                        dispatchReceiver = irGet(boundValue)
                     }
                 }
                 if (needLastCalculation) {
                     lastExpression = irGetProgressionLast(progressionType,
-                            inductionVariable.symbol,
-                            lastExpression ?: irGet(boundValue.symbol),
-                            stepValue.symbol)
+                            inductionVariable,
+                            lastExpression ?: irGet(boundValue),
+                            stepValue)
                 }
                 val lastValue = if (lastExpression != null) {
                     scope.createTemporaryVariable(lastExpression,
@@ -383,12 +391,12 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                 }
 
                 iteratorToLoopInfo[symbol] = ForLoopInfo(progressionInfo,
-                        inductionVariable.symbol,
-                        boundValue.symbol,
-                        lastValue.symbol,
-                        stepValue.symbol)
+                        inductionVariable,
+                        boundValue,
+                        lastValue,
+                        stepValue)
 
-                return IrCompositeImpl(startOffset, endOffset, context.builtIns.unitType, null, statements)
+                return IrCompositeImpl(startOffset, endOffset, context.irBuiltIns.unitType, null, statements)
             }
         }
     }
@@ -406,15 +414,15 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                 forLoopInfo.inductionVariable.descriptor.type,
                 forLoopInfo.step.descriptor.type
         )
-        forLoopInfo.loopVariable = variable.symbol
+        forLoopInfo.loopVariable = variable
 
         with(builder) {
             variable.initializer = irGet(forLoopInfo.inductionVariable)
             val increment = irSetVar(forLoopInfo.inductionVariable,
-                    irCallOp(plusOperator, irGet(forLoopInfo.inductionVariable), irGet(forLoopInfo.step)))
+                    irCallOp(plusOperator.owner, irGet(forLoopInfo.inductionVariable), irGet(forLoopInfo.step)))
             return IrCompositeImpl(variable.startOffset,
                     variable.endOffset,
-                    context.irBuiltIns.unit,
+                    context.irBuiltIns.unitType,
                     IrStatementOrigin.FOR_LOOP_NEXT,
                     listOf(variable, increment))
         }
@@ -427,16 +435,16 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
         return irCall(context.irBuiltIns.greaterFunByOperandType[context.irBuiltIns.int]?.symbol!!).apply {
             val minConst = when {
                 progressionType.isIntProgression() -> IrConstImpl
-                        .int(startOffset, endOffset, context.builtIns.intType, Int.MIN_VALUE)
+                        .int(startOffset, endOffset, context.irBuiltIns.intType, Int.MIN_VALUE)
                 progressionType.isCharProgression() -> IrConstImpl
-                        .char(startOffset, endOffset, context.builtIns.charType, 0.toChar())
+                        .char(startOffset, endOffset, context.irBuiltIns.charType, 0.toChar())
                 progressionType.isLongProgression() -> IrConstImpl
-                        .long(startOffset, endOffset, context.builtIns.longType, Long.MIN_VALUE)
+                        .long(startOffset, endOffset, context.irBuiltIns.longType, Long.MIN_VALUE)
                 else -> throw IllegalArgumentException("Unknown progression type")
             }
             val compareToCall = irCall(symbols.getBinaryOperator(OperatorNameConventions.COMPARE_TO,
                     forLoopInfo.bound.descriptor.type,
-                    minConst.type)).apply {
+                    minConst.type.toKotlinType())).apply {
                 dispatchReceiver = irGet(forLoopInfo.bound)
                 putValueArgument(0, minConst)
             }
@@ -458,7 +466,7 @@ private class ForLoopsTransformer(val context: Context) : IrElementTransformerVo
                 forLoopInfo.last.descriptor.type)
 
         val check: IrExpression = irCall(comparingBuiltIn!!).apply {
-            putValueArgument(0, irCallOp(compareTo, irGet(forLoopInfo.inductionVariable), irGet(forLoopInfo.last)))
+            putValueArgument(0, irCallOp(compareTo.owner, irGet(forLoopInfo.inductionVariable), irGet(forLoopInfo.last)))
             putValueArgument(1, irInt(0))
         }
 

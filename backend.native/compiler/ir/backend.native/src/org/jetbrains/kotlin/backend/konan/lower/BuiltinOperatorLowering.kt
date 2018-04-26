@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.containsNull
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.isSubtypeOf
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.*
@@ -33,13 +35,13 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.util.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 /**
  * This lowering pass lowers some calls to [IrBuiltinOperatorDescriptor]s.
@@ -82,9 +84,11 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         irBuiltins.eqeqeq -> lowerEqeqeq(expression)
 
         irBuiltins.throwNpe -> IrCallImpl(expression.startOffset, expression.endOffset,
+                context.ir.symbols.ThrowNullPointerException.owner.returnType,
                 context.ir.symbols.ThrowNullPointerException)
 
         irBuiltins.noWhenBranchMatchedException -> IrCallImpl(expression.startOffset, expression.endOffset,
+                context.ir.symbols.ThrowNoWhenBranchMatchedException.owner.returnType,
                 context.ir.symbols.ThrowNoWhenBranchMatchedException)
 
         else -> expression
@@ -148,8 +152,8 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
                             putValueArgument(0, rhs)
                         }
 
-            val lhsIsNotNullable = !lhs.type.isNullable()
-            val rhsIsNotNullable = !rhs.type.isNullable()
+            val lhsIsNotNullable = !lhs.type.containsNull()
+            val rhsIsNotNullable = !rhs.type.containsNull()
 
             return if (expression.descriptor in ieee754EqualsDescriptors()) {
                 if (lhsIsNotNullable && rhsIsNotNullable)
@@ -159,15 +163,15 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
                     val rhsTemp = irTemporary(rhs)
                     if (lhsIsNotNullable xor rhsIsNotNullable) { // Exactly one nullable.
                         +irLogicalAnd(
-                                irIsNotNull(irGet((if (lhsIsNotNullable) rhsTemp else lhsTemp).symbol)),
-                                callEquals(irGet(lhsTemp.symbol), irGet(rhsTemp.symbol))
+                                irIsNotNull(irGet(if (lhsIsNotNullable) rhsTemp else lhsTemp)),
+                                callEquals(irGet(lhsTemp), irGet(rhsTemp))
                         )
                     } else { // Both are nullable.
-                        +irIfThenElse(builtIns.booleanType, irIsNull(irGet(lhsTemp.symbol)),
-                                irIsNull(irGet(rhsTemp.symbol)),
+                        +irIfThenElse(context.irBuiltIns.booleanType, irIsNull(irGet(lhsTemp)),
+                                irIsNull(irGet(rhsTemp)),
                                 irLogicalAnd(
-                                        irIsNotNull(irGet(rhsTemp.symbol)),
-                                        callEquals(irGet(lhsTemp.symbol), irGet(rhsTemp.symbol))
+                                        irIsNotNull(irGet(rhsTemp)),
+                                        callEquals(irGet(lhsTemp), irGet(rhsTemp))
                                 )
                         )
                     }
@@ -179,12 +183,12 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
                     irBlock {
                         val lhsTemp = irTemporary(lhs)
                         if (rhsIsNotNullable)
-                            +irLogicalAnd(irIsNotNull(irGet(lhsTemp.symbol)), callEquals(irGet(lhsTemp.symbol), rhs))
+                            +irLogicalAnd(irIsNotNull(irGet(lhsTemp)), callEquals(irGet(lhsTemp), rhs))
                         else {
                             val rhsTemp = irTemporary(rhs)
-                            +irIfThenElse(builtIns.booleanType, irIsNull(irGet(lhsTemp.symbol)),
-                                    irIsNull(irGet(rhsTemp.symbol)),
-                                    callEquals(irGet(lhsTemp.symbol), irGet(rhsTemp.symbol))
+                            +irIfThenElse(irBuiltins.booleanType, irIsNull(irGet(lhsTemp)),
+                                    irIsNull(irGet(rhsTemp)),
+                                    callEquals(irGet(lhsTemp), irGet(rhsTemp))
                             )
                         }
                     }
@@ -193,7 +197,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         }
     }
 
-    private fun selectIntrinsic(from: List<IrSimpleFunctionSymbol>, lhsType: KotlinType, rhsType: KotlinType, allowNullable: Boolean) =
+    private fun selectIntrinsic(from: List<IrSimpleFunctionSymbol>, lhsType: IrType, rhsType: IrType, allowNullable: Boolean) =
             from.atMostOne {
                 val leftParamType = it.owner.valueParameters[0].type
                 val rightParamType = it.owner.valueParameters[1].type

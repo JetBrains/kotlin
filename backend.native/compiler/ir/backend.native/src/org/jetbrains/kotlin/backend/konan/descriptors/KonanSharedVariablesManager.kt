@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.descriptors.SharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -34,8 +35,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.types.*
 
 internal class KonanSharedVariablesManager(val context: KonanBackendContext) : SharedVariablesManager {
@@ -55,7 +56,7 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
     }
 
     private fun refType(elementType: KotlinType): KotlinType {
-        return refClass.owner.defaultType.replace(listOf(TypeProjectionImpl(elementType)))
+        return refClass.descriptor.defaultType.replace(listOf(TypeProjectionImpl(elementType)))
     }
 
     private fun getElementPropertyDescriptor(sharedVariableDescriptor: VariableDescriptor): PropertyDescriptor {
@@ -74,18 +75,19 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
                 false, false, variableDescriptor.source
         )
 
-        val valueType = originalDeclaration.descriptor.type
-
-        val refConstructorTypeArguments = mapOf(refClassConstructor.descriptor.typeParameters[0] to valueType)
+        val valueType = originalDeclaration.type
 
         val refConstructorCall = IrCallImpl(
                 originalDeclaration.startOffset, originalDeclaration.endOffset,
-                refClassConstructor, refConstructor(valueType), refConstructorTypeArguments
-        )
+                refClass.typeWith(valueType),
+                refClassConstructor, refConstructor(valueType.toKotlinType()), 1
+        ).apply {
+            putTypeArgument(0, valueType)
+        }
 
         return IrVariableImpl(
                 originalDeclaration.startOffset, originalDeclaration.endOffset, originalDeclaration.origin,
-                sharedVariableDescriptor
+                sharedVariableDescriptor, refConstructorCall.type
         ).apply {
             initializer = refConstructorCall
         }
@@ -97,16 +99,18 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
         val elementPropertyDescriptor = getElementPropertyDescriptor(sharedVariableDeclaration.descriptor)
 
         val sharedVariableInitialization =
-                IrCallImpl(initializer.startOffset, initializer.endOffset, elementProperty.setter!!.symbol,
+                IrCallImpl(initializer.startOffset, initializer.endOffset,
+                        context.irBuiltIns.unitType, elementProperty.setter!!.symbol,
                         elementPropertyDescriptor.setter!!)
 
         sharedVariableInitialization.dispatchReceiver =
-                IrGetValueImpl(initializer.startOffset, initializer.endOffset, sharedVariableDeclaration.symbol)
+                IrGetValueImpl(initializer.startOffset, initializer.endOffset,
+                        sharedVariableDeclaration.type, sharedVariableDeclaration.symbol)
 
         sharedVariableInitialization.putValueArgument(0, initializer)
 
         return IrCompositeImpl(
-                originalDeclaration.startOffset, originalDeclaration.endOffset, context.builtIns.unitType, null,
+                originalDeclaration.startOffset, originalDeclaration.endOffset, context.irBuiltIns.unitType, null,
                 listOf(sharedVariableDeclaration, sharedVariableInitialization)
         )
     }
@@ -115,18 +119,25 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
 
         val elementPropertyDescriptor = getElementPropertyDescriptor(sharedVariableSymbol.descriptor)
 
-        return IrCallImpl(originalGet.startOffset, originalGet.endOffset, elementProperty.getter!!.symbol,
+        return IrCallImpl(originalGet.startOffset, originalGet.endOffset,
+                originalGet.type, elementProperty.getter!!.symbol,
                 elementPropertyDescriptor.getter!!).apply {
-            dispatchReceiver = IrGetValueImpl(originalGet.startOffset, originalGet.endOffset, sharedVariableSymbol)
+            dispatchReceiver = IrGetValueImpl(
+                    originalGet.startOffset, originalGet.endOffset,
+                    sharedVariableSymbol.owner.type, sharedVariableSymbol
+            )
         }
     }
 
     override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetVariable): IrExpression {
         val elementPropertyDescriptor = getElementPropertyDescriptor(sharedVariableSymbol.descriptor)
 
-        return IrCallImpl(originalSet.startOffset, originalSet.endOffset, elementProperty.setter!!.symbol,
-                elementPropertyDescriptor.setter!!).apply {
-            dispatchReceiver = IrGetValueImpl(originalSet.startOffset, originalSet.endOffset, sharedVariableSymbol)
+        return IrCallImpl(originalSet.startOffset, originalSet.endOffset, context.irBuiltIns.unitType,
+                elementProperty.setter!!.symbol, elementPropertyDescriptor.setter!!).apply {
+            dispatchReceiver = IrGetValueImpl(
+                    originalSet.startOffset, originalSet.endOffset,
+                    sharedVariableSymbol.owner.type, sharedVariableSymbol
+            )
             putValueArgument(0, originalSet.value)
         }
     }

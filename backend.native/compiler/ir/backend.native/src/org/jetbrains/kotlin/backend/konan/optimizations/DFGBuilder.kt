@@ -35,24 +35,23 @@ import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.utils.constructedClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-private fun getClassWithBoxingIncluded(type: KotlinType, ir: KonanIr): ClassDescriptor? {
+private fun getClassWithBoxingIncluded(type: IrType, ir: KonanIr): ClassDescriptor? {
     /*
      *  Some primitive types can be null and some can't. Those that can't must be replaced with the corresponding box.
      *  Int -> Int
@@ -61,29 +60,29 @@ private fun getClassWithBoxingIncluded(type: KotlinType, ir: KonanIr): ClassDesc
      *  CPointer -> CPointer
      *  CPointer? -> CPointer
      */
-    return if (type.correspondingValueType == null && type.makeNotNullable().correspondingValueType != null)
-        ir.getClass(ir.symbols.getTypeConversion(type.makeNotNullable(), type)!!.descriptor.returnType!!)!!
+    return if (type.correspondingValueType == null && type.makeNotNull().correspondingValueType != null)
+        ir.symbols.getTypeConversion(type.makeNotNull(), type)!!.owner.returnType.getClass()!!
     else
-        ir.getClass(type)
+        type.getClass()
 }
 
-private fun computeErasure(type: KotlinType, ir: KonanIr, erasure: MutableList<ClassDescriptor>) {
+private fun computeErasure(type: IrType, ir: KonanIr, erasure: MutableList<ClassDescriptor>) {
     val irClass = getClassWithBoxingIncluded(type, ir)
     if (irClass != null) {
         erasure += irClass
     } else {
-        val descriptor = type.constructor.declarationDescriptor
-        if (descriptor is TypeParameterDescriptor) {
-            descriptor.upperBounds.forEach {
+        val classifier = type.classifierOrFail
+        if (classifier is IrTypeParameterSymbol) {
+            classifier.owner.superTypes.forEach {
                 computeErasure(it, ir, erasure)
             }
         } else {
-            TODO(descriptor.toString())
+            TODO(classifier.descriptor.toString())
         }
     }
 }
 
-internal fun KotlinType.erasure(context: Context): List<ClassDescriptor> {
+internal fun IrType.erasure(context: Context): List<ClassDescriptor> {
     val result = mutableListOf<ClassDescriptor>()
     computeErasure(this, context.ir, result)
     return result
@@ -163,7 +162,7 @@ private class ExpressionValuesExtractor(val context: Context,
                     forEachValue(
                             expression = (expression.statements.last() as? IrExpression)
                                     ?: IrGetObjectValueImpl(expression.startOffset, expression.endOffset,
-                                            context.builtIns.unitType, context.ir.symbols.unit),
+                                            context.irBuiltIns.unitType, context.ir.symbols.unit),
                             block      = block
                     )
             }
@@ -187,7 +186,8 @@ private class ExpressionValuesExtractor(val context: Context,
                 else { // Propagate cast to sub-values.
                     forEachValue(expression.argument) { value ->
                         with(expression) {
-                            block(IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, value))
+                            block(IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand,
+                                    typeOperand.classifierOrFail, value))
                         }
                     }
                 }
@@ -254,7 +254,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
 
             override fun visitConstructor(declaration: IrConstructor) {
                 val body = declaration.body
-                assert (body != null || declaration.symbol.constructedClass.kind == ClassKind.ANNOTATION_CLASS) {
+                assert (body != null || declaration.constructedClass.kind == ClassKind.ANNOTATION_CLASS) {
                     "Non-annotation class constructor has empty body"
                 }
                 DEBUG_OUTPUT(0) {
@@ -280,7 +280,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         println("Analysing global field ${declaration.descriptor}")
                         println("IR: ${ir2stringWhole(declaration)}")
                     }
-                    analyze(declaration, IrSetFieldImpl(it.startOffset, it.endOffset, declaration.symbol, null, it.expression))
+                    analyze(declaration, IrSetFieldImpl(it.startOffset, it.endOffset, declaration.symbol, null,
+                            it.expression, context.irBuiltIns.unitType))
                 }
             }
 
@@ -379,11 +380,13 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             if (expression is IrCall && expression.symbol == scheduleImplSymbol) {
                 // Producer and job of scheduleImpl are called externally, we need to reflect this somehow.
                 val producerInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
+                        scheduleImplProducerInvoke.returnType,
                         scheduleImplProducerInvoke.symbol, scheduleImplProducerInvoke.descriptor)
                 producerInvocation.dispatchReceiver = expression.getValueArgument(2)
                 val jobFunctionReference = expression.getValueArgument(3) as? IrFunctionReference
                         ?: error("A function reference expected")
                 val jobInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
+                        jobFunctionReference.symbol.owner.returnType,
                         jobFunctionReference.symbol, jobFunctionReference.descriptor)
                 jobInvocation.putValueArgument(0, producerInvocation)
 
@@ -447,6 +450,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "doResume" }.symbol
 
     private val getContinuationSymbol = context.ir.symbols.getContinuation
+    private val continuationType = getContinuationSymbol.owner.returnType
 
     private val arrayGetSymbol = context.ir.symbols.arrayGet
     private val arraySetSymbol = context.ir.symbols.arraySet
@@ -631,21 +635,27 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                             val owner = callee.containingDeclaration as ClassDescriptor
                                             val actualReceiverType = value.dispatchReceiver!!.type
                                             val receiverType =
-                                                    if (actualReceiverType.constructor.declarationDescriptor is TypeParameterDescriptor
+                                                    if (actualReceiverType.classifierOrNull is IrTypeParameterSymbol
                                                             || !callee.isReal /* Could be a bridge. */)
                                                         symbolTable.mapClass(owner)
                                                     else {
-                                                        val actualClassAtCallsite = actualReceiverType.constructor.declarationDescriptor as org.jetbrains.kotlin.descriptors.ClassDescriptor
-                                                        assert (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
-                                                            "Expected an inheritor of ${owner.descriptor}, but was $actualClassAtCallsite"
+                                                        val actualClassAtCallsite =
+                                                                actualReceiverType.classifierOrFail.descriptor
+                                                                        as org.jetbrains.kotlin.descriptors.ClassDescriptor
+//                                                        assert (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
+//                                                            "Expected an inheritor of ${owner.descriptor}, but was $actualClassAtCallsite"
+//                                                        }
+                                                        if (DescriptorUtils.isSubclass(actualClassAtCallsite, owner.descriptor)) {
+                                                            symbolTable.mapType(
+                                                                    actualReceiverType.let {
+                                                                        if (it.isValueType())  // A virtual call on a value type - it must be boxed.
+                                                                            context.ir.symbols.getTypeConversion(it, it.makeNullable())!!.owner.returnType
+                                                                        else it
+                                                                    }
+                                                            )
+                                                        } else {
+                                                            symbolTable.mapClass(owner)
                                                         }
-                                                        symbolTable.mapType(
-                                                                actualReceiverType.let {
-                                                                    if (it.isValueType())  // A virtual call on a value type - it must be boxed.
-                                                                        context.ir.symbols.getTypeConversion(it, it.makeNullable())!!.descriptor.returnType!!
-                                                                    else it
-                                                                }
-                                                        )
                                                     }
                                             if (owner.isInterface) {
                                                 val calleeHash = callee.functionName.localHash.value
@@ -681,8 +691,9 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                             }
 
                             is IrDelegatingConstructorCall -> {
-                                val thiz = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                        (descriptor as ConstructorDescriptor).constructedClass.thisReceiver!!.symbol)
+                                val thisReceiver = (descriptor as ConstructorDescriptor).constructedClass.thisReceiver!!
+                                val thiz = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisReceiver.type,
+                                        thisReceiver.symbol)
                                 val arguments = listOf(thiz) + value.getArguments().map { it.second }
                                 DataFlowIR.Node.StaticCall(
                                         symbolTable.mapFunction(value.symbol.owner),

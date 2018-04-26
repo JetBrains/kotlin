@@ -20,7 +20,6 @@ import llvm.LLVMLinkage
 import llvm.LLVMSetLinkage
 import llvm.LLVMTypeRef
 import llvm.LLVMValueRef
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.defaultType
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.fqNameSafe
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.llvmSymbolOrigin
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -28,8 +27,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.replace
 
 
 private fun StaticData.objHeader(typeInfo: ConstPointer): Struct {

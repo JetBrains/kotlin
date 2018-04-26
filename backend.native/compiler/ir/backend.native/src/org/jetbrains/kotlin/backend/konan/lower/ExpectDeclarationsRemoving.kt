@@ -3,10 +3,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -79,20 +76,21 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 expression.transformChildrenVoid()
-                val newSymbol = remapExpectValueSymbol(expression.symbol)
+                val newValue = remapExpectValue(expression.symbol)
                         ?: return expression
 
                 return IrGetValueImpl(
                         expression.startOffset,
                         expression.endOffset,
-                        newSymbol,
+                        newValue.type,
+                        newValue.symbol,
                         expression.origin
                 )
             }
         }, data = null)
     }
 
-    private fun remapExpectValueSymbol(symbol: IrValueSymbol): IrValueParameterSymbol? {
+    private fun remapExpectValue(symbol: IrValueSymbol): IrValueParameter? {
         if (symbol !is IrValueParameterSymbol) {
             return null
         }
@@ -120,6 +118,6 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
             }
 
             else -> error(parent)
-        }.symbol
+        }
     }
 }

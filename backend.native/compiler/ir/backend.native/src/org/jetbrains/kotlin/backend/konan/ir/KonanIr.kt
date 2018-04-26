@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.konan.file.File
@@ -148,7 +149,7 @@ interface IrSuspendableExpression : IrExpression {
     var result: IrExpression
 }
 
-class IrSuspensionPointImpl(startOffset: Int, endOffset: Int, type: KotlinType,
+class IrSuspensionPointImpl(startOffset: Int, endOffset: Int, type: IrType,
                             override var suspensionPointIdParameter: IrVariable,
                             override var result: IrExpression,
                             override var resumeResult: IrExpression)
@@ -170,7 +171,7 @@ class IrSuspensionPointImpl(startOffset: Int, endOffset: Int, type: KotlinType,
     }
 }
 
-class IrSuspendableExpressionImpl(startOffset: Int, endOffset: Int, type: KotlinType,
+class IrSuspendableExpressionImpl(startOffset: Int, endOffset: Int, type: IrType,
                                   override var suspensionPointId: IrExpression, override var result: IrExpression)
     : IrExpressionBase(startOffset, endOffset, type), IrSuspendableExpression {
 
@@ -198,7 +199,7 @@ internal interface IrPrivateFunctionCall : IrCall {
 
 internal class IrPrivateFunctionCallImpl(startOffset: Int,
                                          endOffset: Int,
-                                         type: KotlinType,
+                                         type: IrType,
                                          override val symbol: IrFunctionSymbol,
                                          override val descriptor: FunctionDescriptor,
                                          override val virtualCallee: IrCall?,
@@ -235,9 +236,9 @@ internal interface IrPrivateClassReference : IrClassReference {
 
 internal class IrPrivateClassReferenceImpl(startOffset: Int,
                                            endOffset: Int,
-                                           type: KotlinType,
+                                           type: IrType,
                                            symbol: IrClassifierSymbol,
-                                           override val classType: KotlinType,
+                                           override val classType: IrType,
                                            override val moduleDescriptor: ModuleDescriptor,
                                            override val totalClasses: Int,
                                            override val classIndex: Int,

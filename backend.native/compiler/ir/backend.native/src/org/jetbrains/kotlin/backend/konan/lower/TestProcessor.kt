@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithStarProjections
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithoutArguments
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -38,15 +40,14 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -98,50 +99,50 @@ internal class TestProcessor (val context: KonanBackendContext) {
             add(TestFunction(function, kind))
 
     private fun <T: IrElement> IrStatementsBuilder<T>.generateFunctionRegistration(
-            receiver: IrValueSymbol,
+            receiver: IrValueDeclaration,
             registerTestCase: IrFunctionSymbol,
             registerFunction: IrFunctionSymbol,
             functions: Collection<TestFunction>) {
         functions.forEach {
             if (it.kind == FunctionKind.TEST) {
                 // Call registerTestCase(name: String, testFunction: () -> Unit) method.
-                +irCall(registerTestCase).apply {
+                +irCall(registerTestCase, registerTestCase.descriptor.returnType!!.toErasedIrType()).apply {
                     dispatchReceiver = irGet(receiver)
                     putValueArgument(0, IrConstImpl.string(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            context.builtIns.stringType,
+                            context.irBuiltIns.stringType,
                             it.function.descriptor.name.identifier)
                     )
                     putValueArgument(1, IrFunctionReferenceImpl(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            descriptor.valueParameters[1].type,
+                            descriptor.valueParameters[1].type.toErasedIrType(),
                             it.function,
-                            it.function.descriptor, emptyMap()))
+                            it.function.descriptor, 0))
                     putValueArgument(2, IrConstImpl.boolean(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            context.builtIns.booleanType,
+                            context.irBuiltIns.booleanType,
                             it.ignored
                     ))
                 }
             } else {
                 // Call registerFunction(kind: TestFunctionKind, () -> Unit) method.
-                +irCall(registerFunction).apply {
+                +irCall(registerFunction, registerFunction.descriptor.returnType!!.toErasedIrType()).apply {
                     dispatchReceiver = irGet(receiver)
                     val testKindEntry = it.kind.runtimeKind
                     putValueArgument(0, IrGetEnumValueImpl(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            testKindEntry.descriptor.defaultType,
+                            symbols.testFunctionKind.typeWithoutArguments,
                             testKindEntry)
                     )
                     putValueArgument(1, IrFunctionReferenceImpl(UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            descriptor.valueParameters[1].type,
+                            descriptor.valueParameters[1].type.toErasedIrType(),
                             it.function,
-                            it.function.descriptor, emptyMap()))
+                            it.function.descriptor, 0))
                 }
             }
         }
@@ -282,7 +283,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
     //region Symbol and IR builders
 
     /** Base class for getters (createInstance and getCompanion). */
-    private abstract inner class GetterBuilder(val returnType: KotlinType,
+    private abstract inner class GetterBuilder(val returnType: IrType,
                                                val testSuite: IrClassSymbol,
                                                val getterName: Name)
         : SymbolWithIrBuilder<IrSimpleFunctionSymbol, IrFunction>() {
@@ -300,7 +301,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
                     /* dispatchReceiverParameter    = */ testSuite.descriptor.thisAsReceiverParameter,
                     /* typeParameters               = */ emptyList(),
                     /* unsubstitutedValueParameters = */ emptyList(),
-                    /* returnType                   = */ returnType,
+                    /* returnType                   = */ returnType.toKotlinType(),
                     /* modality                     = */ Modality.FINAL,
                     /* visibility                   = */ Visibilities.PROTECTED
             ).apply {
@@ -324,18 +325,21 @@ internal class TestProcessor (val context: KonanBackendContext) {
      * returning a reference to an object represented by `[objectSymbol]`.
      */
     private inner class ObjectGetterBuilder(val objectSymbol: IrClassSymbol, testSuite: IrClassSymbol, getterName: Name)
-        : GetterBuilder(objectSymbol.descriptor.defaultType, testSuite, getterName) {
+        : GetterBuilder(objectSymbol.typeWithoutArguments, testSuite, getterName) {
 
         override fun buildIr(): IrFunction = IrFunctionImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 TEST_SUITE_GENERATED_MEMBER,
                 symbol).apply {
+
+            this.returnType = this@ObjectGetterBuilder.returnType
+
             val builder = context.createIrBuilder(symbol)
-            createParameterDeclarations()
+            createParameterDeclarations(context.ir.symbols.symbolTable)
             body = builder.irBlockBody {
                 +irReturn(IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        objectSymbol.descriptor.defaultType, objectSymbol)
+                        objectSymbol.typeWithoutArguments, objectSymbol)
                 )
             }
         }
@@ -346,17 +350,20 @@ internal class TestProcessor (val context: KonanBackendContext) {
      * returning a new instance of class referenced by [classSymbol].
      */
     private inner class InstanceGetterBuilder(val classSymbol: IrClassSymbol, testSuite: IrClassSymbol, getterName: Name)
-        : GetterBuilder(classSymbol.descriptor.defaultType, testSuite, getterName) {
+        : GetterBuilder(classSymbol.typeWithStarProjections, testSuite, getterName) {
 
         override fun buildIr() = IrFunctionImpl(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset =   UNDEFINED_OFFSET,
                 origin =      TEST_SUITE_GENERATED_MEMBER,
                 symbol =      symbol).apply {
+
+            this.returnType = this@InstanceGetterBuilder.returnType
+
             val builder = context.createIrBuilder(symbol)
-            createParameterDeclarations()
+            createParameterDeclarations(context.ir.symbols.symbolTable)
             body = builder.irBlockBody {
-                val constructor = classSymbol.constructors.single { it.descriptor.valueParameters.isEmpty() }
+                val constructor = classSymbol.owner.constructors.single { it.valueParameters.isEmpty() }
                 +irReturn(irCall(constructor))
             }
         }
@@ -385,15 +392,18 @@ internal class TestProcessor (val context: KonanBackendContext) {
                 UNDEFINED_OFFSET,
                 TEST_SUITE_GENERATED_MEMBER,
                 symbol).apply {
-            createParameterDeclarations()
 
-            val registerTestCase = testSuite.getFunction("registerTestCase") {
+            returnType = testSuite.typeWithStarProjections
+
+            createParameterDeclarations(context.ir.symbols.symbolTable)
+
+            val registerTestCase = symbols.baseClassSuite.getFunction("registerTestCase") {
                 it.valueParameters.size == 3 &&
                 KotlinBuiltIns.isString(it.valueParameters[0].type) && // name: String
                 it.valueParameters[1].type.isFunctionType &&           // function: testClassType.() -> Unit
                 KotlinBuiltIns.isBoolean(it.valueParameters[2].type)   // ignored: Boolean
             }
-            val registerFunction = testSuite.getFunction("registerFunction") {
+            val registerFunction = symbols.baseClassSuite.getFunction("registerFunction") {
                 it.valueParameters.size == 2 &&
                 it.valueParameters[0].type == symbols.testFunctionKind.descriptor.defaultType && // kind: TestFunctionKind
                 it.valueParameters[1].type.isFunctionType                                        // function: () -> Unit
@@ -404,26 +414,28 @@ internal class TestProcessor (val context: KonanBackendContext) {
                 +IrDelegatingConstructorCallImpl(
                         startOffset =   UNDEFINED_OFFSET,
                         endOffset =     UNDEFINED_OFFSET,
+                        type =          context.irBuiltIns.unitType,
                         symbol =        symbols.symbolTable.referenceConstructor(superConstructor),
                         descriptor =    superConstructor,
                         typeArgumentsCount = 2
                 ).apply {
-                    copyTypeArgumentsFrom(mapOf(superConstructor.typeParameters[0] to testClassType,
-                            superConstructor.typeParameters[1] to testCompanionType))
+                    putTypeArgument(0, testClassType.toErasedIrType())
+                    putTypeArgument(1, testCompanionType.toErasedIrType())
+
                     putValueArgument(0, IrConstImpl.string(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            context.builtIns.stringType,
+                            context.irBuiltIns.stringType,
                             suiteName)
                     )
                     putValueArgument(1, IrConstImpl.boolean(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            context.builtIns.booleanType,
+                            context.irBuiltIns.booleanType,
                             ignored
                     ))
                 }
-                generateFunctionRegistration(testSuite.owner.thisReceiver!!.symbol,
+                generateFunctionRegistration(testSuite.owner.thisReceiver!!,
                         registerTestCase, registerFunction, functions)
             }
         }
@@ -444,6 +456,8 @@ internal class TestProcessor (val context: KonanBackendContext) {
                 )
         )
     }
+
+    private fun KotlinType.toErasedIrType(): IrType = context.ir.translateErased(this)
 
     /**
      * Builds a test suite class representing a test class (any class in the original IrFile with method(s)
@@ -489,17 +503,17 @@ internal class TestProcessor (val context: KonanBackendContext) {
             }
         }
 
-        override fun buildIr() = IrClassImpl(
+        override fun buildIr() = symbols.symbolTable.declareClass(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 TEST_SUITE_CLASS,
-                symbol).apply {
+                symbol.descriptor).apply {
             createParameterDeclarations()
             addMember(constructorBuilder.ir)
             addMember(instanceGetterBuilder.ir)
             companionGetterBuilder?.let { addMember(it.ir) }
-            addFakeOverrides()
-            setSuperSymbols(context.ir.symbols.symbolTable)
+            addFakeOverrides(symbols.symbolTable)
+            setSuperSymbols(symbols.symbolTable)
         }
 
         override fun doInitialize() {
@@ -526,7 +540,7 @@ internal class TestProcessor (val context: KonanBackendContext) {
             companionGetterBuilder?.initialize()
         }
 
-        override fun buildSymbol() = IrClassSymbolImpl(
+        override fun buildSymbol() = symbols.symbolTable.referenceClass(
                 ClassDescriptorImpl(
                         /* containingDeclaration = */ containingDeclaration,
                         /* name                  = */ suiteClassName,
@@ -549,8 +563,9 @@ internal class TestProcessor (val context: KonanBackendContext) {
                     testClass.functions)) {
                 initialize()
                 irFile.addChild(ir)
+                val irConstructor = ir.constructors.single()
                 irFile.addTopLevelInitializer(
-                        IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, ir.symbol.constructors.single())
+                        IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irConstructor.returnType, irConstructor.symbol)
                 )
             }
 
@@ -575,10 +590,10 @@ internal class TestProcessor (val context: KonanBackendContext) {
         irFile.addTopLevelInitializer(builder.irBlock {
             val constructorCall = irCall(symbols.topLevelSuiteConstructor).apply {
                 putValueArgument(0, IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                context.builtIns.stringType, suiteName))
+                                context.irBuiltIns.stringType, suiteName))
             }
             val testSuiteVal = irTemporary(constructorCall,  "topLevelTestSuite")
-            generateFunctionRegistration(testSuiteVal.symbol,
+            generateFunctionRegistration(testSuiteVal,
                     symbols.topLevelSuiteRegisterTestCase,
                     symbols.topLevelSuiteRegisterFunction,
                     functions)

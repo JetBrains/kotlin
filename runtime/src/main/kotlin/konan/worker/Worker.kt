@@ -47,7 +47,7 @@ class Worker(val id: WorkerId) {
      * until all scheduled jobs processed, or terminate immediately.
      */
     fun requestTermination(processScheduledJobs: Boolean = true) =
-            Future<FutureId>(requestTerminationInternal(id, processScheduledJobs))
+            Future<Nothing?>(requestTerminationInternal(id, processScheduledJobs))
 
     /**
      * Schedule a job for further execution in the worker. Schedule is a two-phase operation,

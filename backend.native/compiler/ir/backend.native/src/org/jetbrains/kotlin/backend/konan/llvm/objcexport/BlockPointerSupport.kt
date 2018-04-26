@@ -19,18 +19,17 @@ package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.descriptors.CurrentKonanModule
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal fun ObjCExportCodeGenerator.generateKotlinFunctionImpl(invokeMethod: FunctionDescriptor): ConstPointer {
+internal fun ObjCExportCodeGenerator.generateKotlinFunctionImpl(invokeMethod: IrSimpleFunction): ConstPointer {
     // TODO: consider also overriding methods of `Any`.
 
     val numberOfParameters = invokeMethod.valueParameters.size
 
     val function = generateFunction(
             codegen,
-            codegen.getLlvmFunctionType(context.ir.get(invokeMethod)),
+            codegen.getLlvmFunctionType(invokeMethod),
             "invokeFunction$numberOfParameters"
     ) {
         val args = (0 until numberOfParameters).map { index -> kotlinReferenceToObjC(param(index + 1)) }

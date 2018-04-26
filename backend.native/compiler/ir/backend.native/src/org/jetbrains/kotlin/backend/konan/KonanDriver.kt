@@ -79,7 +79,7 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
         context.irModule = module
         context.ir.symbols = symbols
 
-        validateIrModule(context, module)
+//        validateIrModule(context, module)
     }
     phaser.phase(KonanPhase.SERIALIZER) {
         markBackingFields(context)

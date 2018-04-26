@@ -61,7 +61,7 @@ internal class OverriddenFunctionDescriptor(
             } else {
                 descriptor
             }
-            context.specialDeclarationsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
+            context.specialDeclarationsFactory.getBridge(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
         }
         return if (implementation.modality == Modality.ABSTRACT) null else implementation
     }

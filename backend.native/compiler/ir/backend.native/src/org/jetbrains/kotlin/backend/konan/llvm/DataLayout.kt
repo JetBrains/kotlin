@@ -20,9 +20,8 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isUnit
 
 private val valueTypes = ValueType.values().associate {
     it to when (it) {
@@ -41,7 +40,7 @@ private val valueTypes = ValueType.values().associate {
 internal val ValueType.llvmType
     get() = valueTypes[this]!!
 
-internal fun RuntimeAware.getLLVMType(type: KotlinType): LLVMTypeRef {
+internal fun RuntimeAware.getLLVMType(type: IrType): LLVMTypeRef {
     for ((valueType, llvmType) in valueTypes) {
         if (type.isRepresentedAs(valueType)) {
             return llvmType
@@ -54,7 +53,7 @@ internal fun RuntimeAware.getLLVMType(type: KotlinType): LLVMTypeRef {
 internal fun RuntimeAware.getLLVMType(type: DataFlowIR.Type) =
         type.correspondingValueType?.let { valueTypes[it]!! } ?: this.kObjHeaderPtr
 
-internal fun RuntimeAware.getLLVMReturnType(type: KotlinType): LLVMTypeRef {
+internal fun RuntimeAware.getLLVMReturnType(type: IrType): LLVMTypeRef {
     return when {
         type.isUnit() -> LLVMVoidType()!!
         // TODO: stdlib have methods taking Nothing, such as kotlin.collections.EmptySet.contains().
@@ -62,5 +61,3 @@ internal fun RuntimeAware.getLLVMReturnType(type: KotlinType): LLVMTypeRef {
         else -> getLLVMType(type)
     }
 }
-
-fun RuntimeAware.isObjectType(type: KotlinType) : Boolean = isObjectType(getLLVMType(type))

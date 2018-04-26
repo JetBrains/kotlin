@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.getStringValueOrNull
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 

@@ -184,8 +184,8 @@ private fun debugInfoBaseType(context:Context, targetData:LLVMTargetDataRef, typ
 
 internal val FunctionDescriptor.types:List<KotlinType>
     get() {
-        val parameters = valueParameters.map{it.type}
-        return listOf(returnType, *parameters.toTypedArray())
+        val parameters = descriptor.valueParameters.map{it.type}
+        return listOf(descriptor.returnType!!, *parameters.toTypedArray())
     }
 
 internal fun KotlinType.size(context:Context) = context.debugInfo.llvmTypeSizes.getOrDefault(this, context.debugInfo.otherTypeSize)

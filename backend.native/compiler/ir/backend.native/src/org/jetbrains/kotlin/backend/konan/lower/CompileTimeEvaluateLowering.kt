@@ -4,10 +4,11 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
@@ -29,14 +30,14 @@ internal class CompileTimeEvaluateLowering(val context: Context): FileLoweringPa
                 // TODO: refer functions more reliably.
 
                 if (elementsArr.elements.any { it is IrSpreadElement }
-                        || !elementsArr.elements.all { it is IrConst<*> && KotlinBuiltIns.isString(it.type) })
+                        || !elementsArr.elements.all { it is IrConst<*> && it.type.isString() })
                     return expression
 
 
                 builder.at(expression)
 
-                val typeArguments = descriptor.typeParameters.map { expression.getTypeArgument(it)!! }
-                return builder.irCall(context.ir.symbols.listOfInternal, typeArguments).apply {
+                val typeArgument = expression.getTypeArgument(0)!!
+                return builder.irCall(context.ir.symbols.listOfInternal.owner, listOf(typeArgument)).apply {
                     putValueArgument(0, elementsArr)
                 }
             }

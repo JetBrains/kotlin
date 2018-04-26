@@ -20,11 +20,14 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithStarProjections
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWithoutArguments
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -43,7 +46,7 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                 expression.transformChildrenVoid()
                 builder.at(expression)
 
-                val typeArgument = expression.descriptor.defaultType
+                val typeArgument = expression.symbol.typeWithStarProjections
 
                 return builder.irCall(symbols.kClassImplConstructor, listOf(typeArgument)).apply {
                     putValueArgument(0, builder.irCall(symbols.getClassTypeInfo, listOf(typeArgument)))
@@ -54,7 +57,7 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                 expression.transformChildrenVoid()
                 builder.at(expression)
 
-                val typeArgument = expression.type.arguments.single().type
+                val typeArgument = expression.argument.type
                 return builder.irCall(symbols.kClassImplConstructor, listOf(typeArgument)).apply {
                     val typeInfo = builder.irCall(symbols.getObjectTypeInfo).apply {
                         putValueArgument(0, expression.argument)
@@ -95,7 +98,7 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                     }
                     expression.putValueArgument(0, IrConstImpl<String>(
                             expression.startOffset, expression.endOffset,
-                            context.ir.symbols.immutableBinaryBlob.descriptor.defaultType,
+                            context.ir.symbols.immutableBinaryBlob.typeWithoutArguments,
                             IrConstKind.String, builder.toString()))
                 }
 

@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.ir.IrPrivateClassReferenceImpl
 import org.jetbrains.kotlin.backend.konan.ir.IrPrivateFunctionCallImpl
-import org.jetbrains.kotlin.backend.konan.lower.nullConst
-import org.jetbrains.kotlin.backend.konan.objcexport.getErasedTypeClass
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.getErasedTypeClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -40,14 +39,14 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.getValueArgument
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.addArguments
 import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.irCall
+import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -1009,7 +1008,7 @@ internal object Devirtualization {
 
         class PossiblyCoercedValue(val value: IrVariable, val coercion: IrFunctionSymbol?) {
             fun getFullValue(irBuilder: IrBuilderWithScope) = irBuilder.run {
-                irCoerce(irGet(value.symbol), coercion)
+                irCoerce(irGet(value), coercion)
             }
         }
 
@@ -1020,7 +1019,7 @@ internal object Devirtualization {
                     val coercion = expression as IrCall
                     PossiblyCoercedValue(
                             irTemporary(irImplicitCast(coercion.getArguments().single().second,
-                                    coercion.descriptor.explicitParameters.single().type))
+                                    coercion.symbol.owner.explicitParameters.single().type))
                             , coercion.symbol)
                 }
 
@@ -1041,12 +1040,12 @@ internal object Devirtualization {
             val coercion = context.ir.symbols.getTypeConversion(type.correspondingValueType, targetType.correspondingValueType)
                     ?: return possiblyCoercedValue.getFullValue(this)
             if (prevCoercion == null)
-                return irCoerce(irGet(value.symbol), coercion)
+                return irCoerce(irGet(value), coercion)
             assertCoercionsMatch(coercion, prevCoercion)
-            return irGet(value.symbol)
+            return irGet(value)
         }
 
-        fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: KotlinType,
+        fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: IrType,
                                                    devirtualizedCallee: DataFlowIR.FunctionSymbol.Declared) =
                 IrPrivateFunctionCallImpl(
                         startOffset        = startOffset,
@@ -1062,7 +1061,7 @@ internal object Devirtualization {
                         virtualCallee      = callee
                 )
 
-        fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: KotlinType,
+        fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: IrType,
                                                     actualCallee: DataFlowIR.FunctionSymbol.Declared,
                                                     receiver: IrVariable,
                                                     extensionReceiver: PossiblyCoercedValue?,
@@ -1070,7 +1069,7 @@ internal object Devirtualization {
                 actualCallee.bridgeTarget.let {
                     if (it == null)
                         irDevirtualizedCall(callee, actualType, actualCallee).apply {
-                            this.dispatchReceiver = irGet(receiver.symbol)
+                            this.dispatchReceiver = irGet(receiver)
                             this.extensionReceiver = extensionReceiver?.getFullValue(this@irDevirtualizedCall)
                             callee.descriptor.valueParameters.forEach {
                                 putValueArgument(it.index, parameters[it]!!.getFullValue(this@irDevirtualizedCall))
@@ -1079,7 +1078,7 @@ internal object Devirtualization {
                     else {
                         val bridgeTarget = it.resolved() as DataFlowIR.FunctionSymbol.Declared
                         val callResult = irDevirtualizedCall(callee, actualType, bridgeTarget).apply {
-                            this.dispatchReceiver = irGet(receiver.symbol)
+                            this.dispatchReceiver = irGet(receiver)
                             this.extensionReceiver = extensionReceiver?.let {
                                 irCoerceIfNeeded(
                                         type = actualCallee.parameterTypes[1].resolved(),
@@ -1140,21 +1139,22 @@ internal object Devirtualization {
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val type = if (descriptor.isSuspend)
-                               context.builtIns.nullableAnyType
-                           else descriptor.original.returnType!!
+                               context.irBuiltIns.anyNType
+                           else expression.symbol.owner.returnType
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
                 irBuilder.run {
                     val dispatchReceiver = expression.dispatchReceiver!!
                     return when {
                         possibleCallees.isEmpty() -> irBlock(expression) {
-                            +irCall(context.ir.symbols.throwInvalidReceiverTypeException).apply {
-                                putValueArgument(0, irCall(context.ir.symbols.kClassImplConstructor, listOf(dispatchReceiver.type)).apply {
-                                    putValueArgument(0, irCall(context.ir.symbols.getObjectTypeInfo).apply {
+                            val throwExpr = irCall(context.ir.symbols.throwInvalidReceiverTypeException.owner).apply {
+                                putValueArgument(0, irCall(context.ir.symbols.kClassImplConstructor.owner, listOf(dispatchReceiver.type)).apply {
+                                    putValueArgument(0, irCall(context.ir.symbols.getObjectTypeInfo.owner).apply {
                                         putValueArgument(0, dispatchReceiver)
                                     })
                                 })
                             }
-                            +nullConst(expression, type)
+                            // Insert proper unboxing (unreachable code):
+                            +irCoerce(throwExpr, context.ir.symbols.getTypeConversion(throwExpr.type, type))
                         }
 
                         optimize && possibleCallees.size == 1 -> { // Monomorphic callsite.
@@ -1176,7 +1176,7 @@ internal object Devirtualization {
                                 it to irSplitCoercion(expression.getValueArgument(it)!!)
                             }
                             val typeInfo = irTemporary(irCall(context.ir.symbols.getObjectTypeInfo).apply {
-                                putValueArgument(0, irGet(receiver.symbol))
+                                putValueArgument(0, irGet(receiver))
                             })
 
                             val branches = mutableListOf<IrBranchImpl>()
@@ -1186,8 +1186,8 @@ internal object Devirtualization {
                                 val expectedTypeInfo = IrPrivateClassReferenceImpl(
                                         startOffset      = startOffset,
                                         endOffset        = endOffset,
-                                        type             = nativePtrType,
-                                        symbol           = IrClassSymbolImpl(dispatchReceiver.type.getErasedTypeClass()),
+                                        type             = context.ir.symbols.nativePtrType,
+                                        symbol           = dispatchReceiver.type.getErasedTypeClass(),
                                         classType        = receiver.type,
                                         moduleDescriptor = actualReceiverType.module!!.descriptor,
                                         totalClasses     = actualReceiverType.module.numberOfClasses,
@@ -1198,7 +1198,7 @@ internal object Devirtualization {
                                             irTrue() // Don't check last type in optimize mode.
                                         else
                                             irCall(nativePtrEqualityOperatorSymbol).apply {
-                                                putValueArgument(0, irGet(typeInfo.symbol))
+                                                putValueArgument(0, irGet(typeInfo))
                                                 putValueArgument(1, expectedTypeInfo)
                                             }
                                 IrBranchImpl(
@@ -1218,7 +1218,7 @@ internal object Devirtualization {
                                                     irCall(context.ir.symbols.kClassImplConstructor,
                                                             listOf(dispatchReceiver.type)
                                                     ).apply {
-                                                        putValueArgument(0, irGet(typeInfo.symbol))
+                                                        putValueArgument(0, irGet(typeInfo))
                                                     }
                                             )
                                         })

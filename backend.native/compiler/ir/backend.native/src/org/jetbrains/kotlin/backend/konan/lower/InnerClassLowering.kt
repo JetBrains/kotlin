@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 
 internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
@@ -57,7 +56,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun createOuterThisField() {
-            val field = context.specialDeclarationsFactory.getOuterThisField(classDescriptor)
+            val field = context.specialDeclarationsFactory.getOuterThisField(irClass)
             outerThisFieldSymbol = field.symbol
             irClass.addChild(field)
         }
@@ -78,12 +77,15 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
                         ?: throw AssertionError("Unexpected constructor body: ${irConstructor.body}")
                 val startOffset = irConstructor.startOffset
                 val endOffset = irConstructor.endOffset
+                val thisReceiver = irClass.thisReceiver!!
+                val outerReceiver = irConstructor.dispatchReceiverParameter!!
                 blockBody.statements.add(
                         0,
                         IrSetFieldImpl(
                                 startOffset, endOffset, outerThisFieldSymbol,
-                                IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.symbol),
-                                IrGetValueImpl(startOffset, endOffset, irConstructor.dispatchReceiverParameter!!.symbol)
+                                IrGetValueImpl(startOffset, endOffset, thisReceiver.type, thisReceiver.symbol),
+                                IrGetValueImpl(startOffset, endOffset, outerReceiver.type, outerReceiver.symbol),
+                                context.irBuiltIns.unitType
                         )
                 )
             }
@@ -108,28 +110,28 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
                     val origin = expression.origin
 
                     var irThis: IrExpression
-                    var innerClass: ClassDescriptor
+                    var innerClass: IrClass
                     if (constructorSymbol == null || constructorSymbol.descriptor.constructedClass != classDescriptor) {
-                        innerClass = classDescriptor
+                        innerClass = irClass
                         val currentIrFunction = currentFunction!!.scope.scopeOwnerSymbol.owner as IrFunction
 
                         val currentFunctionReceiver = currentIrFunction.dispatchReceiverParameter
-                        val thisSymbol = if (currentFunctionReceiver?.descriptor == irClass.thisReceiver!!.descriptor) {
+                        val thisParameter = if (currentFunctionReceiver?.descriptor == irClass.thisReceiver!!.descriptor) {
                             currentFunctionReceiver
                         } else {
                             irClass.thisReceiver!!
-                        }.symbol
+                        }
 
-                        irThis = IrGetValueImpl(startOffset, endOffset, thisSymbol, origin)
+                        irThis = IrGetValueImpl(startOffset, endOffset, thisParameter.type, thisParameter.symbol, origin)
                     } else {
                         // For constructor we have outer class as dispatchReceiverParameter.
-                        innerClass = DescriptorUtils.getContainingClass(classDescriptor) ?:
+                        innerClass = irClass.parent as? IrClass ?:
                                 throw AssertionError("No containing class for inner class $classDescriptor")
-                        irThis = IrGetValueImpl(startOffset, endOffset,
-                                constructorSymbol.owner.dispatchReceiverParameter!!.symbol, origin)
+                        val thisParameter = constructorSymbol.owner.dispatchReceiverParameter!!
+                        irThis = IrGetValueImpl(startOffset, endOffset, thisParameter.type, thisParameter.symbol, origin)
                     }
 
-                    while (innerClass != implicitThisClass) {
+                    while (innerClass.descriptor != implicitThisClass) {
                         if (!innerClass.isInner) {
                             // Captured 'this' unrelated to inner classes nesting hierarchy, leave it as is -
                             // should be transformed by closures conversion.
@@ -137,11 +139,16 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
                         }
 
                         val outerThisField = context.specialDeclarationsFactory.getOuterThisField(innerClass)
-                        irThis = IrGetFieldImpl(startOffset, endOffset, outerThisField.symbol, irThis, origin)
+                        irThis = IrGetFieldImpl(
+                                startOffset, endOffset,
+                                outerThisField.symbol, outerThisField.type,
+                                irThis,
+                                origin
+                        )
 
-                        val outer = innerClass.containingDeclaration
-                        innerClass = outer as? ClassDescriptor ?:
-                                throw AssertionError("Unexpected containing declaration for inner class $innerClass: $outer")
+                        val outer = innerClass.parent
+                        innerClass = outer as? IrClass ?:
+                                throw AssertionError("Unexpected containing declaration for inner class ${innerClass.descriptor}: $outer")
                     }
 
                     return irThis

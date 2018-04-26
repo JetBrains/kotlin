@@ -18,23 +18,16 @@ package org.jetbrains.kotlin.backend.konan.irasdescriptors
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 // This file contains some IR utilities which actually use descriptors.
 // TODO: port this code to IR.
 
-internal val IrDeclaration.annotations get() = this.descriptor.annotations
 internal val IrDeclaration.isAnonymousObject get() = DescriptorUtils.isAnonymousObject(this.descriptor)
 internal val IrFunction.isExternal get() = this.descriptor.isExternal
 internal val IrDeclaration.isLocal get() = DescriptorUtils.isLocal(this.descriptor)
@@ -59,9 +52,5 @@ internal val IrDeclaration.llvmSymbolOrigin get() = this.descriptor.llvmSymbolOr
 
 internal fun IrFunction.isMain() = MainFunctionDetector.isMain(this.descriptor)
 
-internal fun IrTypeOperatorCall.getTypeOperandClass(context: Context): IrClass? =
-        context.ir.getClass(this.typeOperand)
-
-internal fun IrCatch.getCatchParameterTypeClass(context: Context): IrClass? =
-        context.ir.getClass(this.catchParameter.type)
+internal fun IrType.isObjCObjectType() = this.toKotlinType().isObjCObjectType()
 

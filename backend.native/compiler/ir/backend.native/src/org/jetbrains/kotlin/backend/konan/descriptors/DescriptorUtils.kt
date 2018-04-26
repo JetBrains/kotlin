@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)

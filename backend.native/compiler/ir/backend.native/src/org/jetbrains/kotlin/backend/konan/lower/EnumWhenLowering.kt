@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.containsNull
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.getClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -50,11 +53,11 @@ internal class EnumWhenLowering(private val context: Context) : IrElementTransfo
         }
         val subject = irBlock.statements[0] as IrVariable
         // Subject should not be nullable because we will access the `ordinal` property.
-        if (subject.type.isNullable()) {
+        if (subject.type.containsNull()) {
             return false
         }
         // Check that subject is enum entry.
-        val enumClass = subject.type.constructor.declarationDescriptor as? ClassDescriptor
+        val enumClass = subject.type.getClass()
                 ?: return false
         return enumClass.kind == ClassKind.ENUM_CLASS
     }
@@ -83,14 +86,22 @@ internal class EnumWhenLowering(private val context: Context) : IrElementTransfo
 
     private fun createEnumOrdinalVariable(enumVariable: IrVariable): IrVariable {
         val ordinalPropertyGetter = context.ir.symbols.enum.getPropertyGetter("ordinal")!!
-        val getOrdinal = IrCallImpl(enumVariable.startOffset, enumVariable.endOffset, ordinalPropertyGetter).apply {
-            dispatchReceiver = IrGetValueImpl(enumVariable.startOffset, enumVariable.endOffset, enumVariable.symbol)
+        val getOrdinal = IrCallImpl(
+                enumVariable.startOffset, enumVariable.endOffset,
+                ordinalPropertyGetter.owner.returnType,
+                ordinalPropertyGetter
+        ).apply {
+            dispatchReceiver = IrGetValueImpl(
+                    enumVariable.startOffset, enumVariable.endOffset,
+                    enumVariable.type, enumVariable.symbol
+            )
         }
         // Create temporary variable for subject's ordinal.
         val ordinalDescriptor = IrTemporaryVariableDescriptorImpl(enumVariable.descriptor.containingDeclaration,
                 Name.identifier(enumVariable.name.asString() + "_ordinal"), context.builtIns.intType)
         return IrVariableImpl(enumVariable.startOffset, enumVariable.endOffset,
-                IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, ordinalDescriptor, getOrdinal)
+                IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, ordinalDescriptor,
+                context.irBuiltIns.intType, getOrdinal)
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
@@ -100,7 +111,7 @@ internal class EnumWhenLowering(private val context: Context) : IrElementTransfo
     }
 
     private val areEqualByValue = context.ir.symbols.areEqualByValue.first {
-        it.owner.valueParameters[0].type == context.builtIns.intType
+        it.owner.valueParameters[0].type.classifierOrNull == context.ir.symbols.int
     }
 
     // We are looking for branch that is a comparison of the subject and another enum entry.
@@ -114,19 +125,20 @@ internal class EnumWhenLowering(private val context: Context) : IrElementTransfo
         }
         val lhs = callArgs[0].second
         val rhs = callArgs[1].second
-        // Both entries should belong to the same class.
-        if (lhs.type != rhs.type) {
-            return call
-        }
+
         // If there is nothing on stack then nothing we can do.
         val (topmostSubject, topmostOrdinalProvider) = subjectWithOrdinalStack.peek()
                 ?: return call
-        if (lhs is IrValueAccessExpression && lhs.symbol.owner == topmostSubject && rhs is IrGetEnumValue) {
+        if (lhs is IrValueAccessExpression && lhs.symbol.owner == topmostSubject && rhs is IrGetEnumValue &&
+                // Both entries should belong to the same class:
+                topmostSubject.type.classifierOrNull?.owner == rhs.symbol.owner.parent) {
             val entryOrdinal = context.specialDeclarationsFactory.getEnumEntryOrdinal(rhs.descriptor)
             val subjectOrdinal = topmostOrdinalProvider.value
-            return IrCallImpl(call.startOffset, call.endOffset, areEqualByValue).apply {
-                putValueArgument(0, IrGetValueImpl(lhs.startOffset, lhs.endOffset, subjectOrdinal.symbol))
-                putValueArgument(1, IrConstImpl.int(rhs.startOffset, rhs.endOffset, context.builtIns.intType, entryOrdinal))
+            return IrCallImpl(call.startOffset, call.endOffset, areEqualByValue.owner.returnType, areEqualByValue).apply {
+                putValueArgument(0,
+                        IrGetValueImpl(lhs.startOffset, lhs.endOffset, subjectOrdinal.type, subjectOrdinal.symbol))
+                putValueArgument(1,
+                        IrConstImpl.int(rhs.startOffset, rhs.endOffset, context.irBuiltIns.intType, entryOrdinal))
             }
         }
         return call

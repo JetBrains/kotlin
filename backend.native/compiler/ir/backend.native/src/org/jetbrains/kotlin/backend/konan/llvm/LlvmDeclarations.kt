@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -140,7 +141,7 @@ private fun Context.getDeclaredFields(classDescriptor: ClassDescriptor): List<Ir
 private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>): LLVMTypeRef {
     val fieldTypes = fields.map {
         @Suppress("DEPRECATION")
-        getLLVMType(if (it.isDelegate) context.builtIns.nullableAnyType else it.type)
+        getLLVMType(if (it.isDelegate) context.irBuiltIns.anyNType else it.type)
     }
 
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!

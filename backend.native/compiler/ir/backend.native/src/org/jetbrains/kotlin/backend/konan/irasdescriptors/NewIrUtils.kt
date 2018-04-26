@@ -23,28 +23,15 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.getTypeArgumentOrDefault
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 
 val IrConstructor.constructedClass get() = this.parent as IrClass
 
@@ -88,26 +75,6 @@ val IrFunction.allParameters: List<IrValueParameter>
         explicitParameters
     }
 
-/**
- * @return naturally-ordered list of the parameters that can have values specified at call site.
- */
-val IrFunction.explicitParameters: List<IrValueParameter>
-    get() {
-        val result = ArrayList<IrValueParameter>(valueParameters.size + 2)
-
-        this.dispatchReceiverParameter?.let {
-            result.add(it)
-        }
-
-        this.extensionReceiverParameter?.let {
-            result.add(it)
-        }
-
-        result.addAll(valueParameters)
-
-        return result
-    }
-
 val IrValueParameter.isVararg get() = this.varargElementType != null
 
 val IrFunction.isSuspend get() = this is IrSimpleFunction && this.isSuspend
@@ -116,6 +83,7 @@ fun IrClass.isUnit() = this.fqNameSafe == KotlinBuiltIns.FQ_NAMES.unit.toSafe()
 
 fun IrClass.isKotlinArray() = this.fqNameSafe == KotlinBuiltIns.FQ_NAMES.array.toSafe()
 
+val IrClass.superClasses get() = this.superTypes.map { it.classifierOrFail as IrClassSymbol }
 fun IrClass.getSuperClassNotAny() = this.superClasses.map { it.owner }.atMostOne { !it.isInterface && !it.isAny() }
 
 fun IrClass.isAny() = this.fqNameSafe == KotlinBuiltIns.FQ_NAMES.any.toSafe()
@@ -132,7 +100,8 @@ val IrProperty.konanBackingField: IrField?
                     this.startOffset,
                     this.endOffset,
                     IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                    backingFieldDescriptor
+                    backingFieldDescriptor,
+                    this.getter!!.returnType // TODO: this copies the behaviour found in backing field descriptor creation, but both are incorrect for property delegation.
             ).also {
                 it.parent = this.parent
             }
@@ -142,9 +111,6 @@ val IrProperty.konanBackingField: IrField?
 
         return null
     }
-
-val IrClass.defaultType: KotlinType
-    get() = this.thisReceiver!!.type
 
 val IrField.containingClass get() = this.parent as? IrClass
 
@@ -177,109 +143,17 @@ fun IrSimpleFunction.overrides(other: IrSimpleFunction): Boolean {
 
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
 
-val IrClass.constructors get() = this.declarations.filterIsInstance<IrConstructor>()
-
 internal val IrValueParameter.isValueParameter get() = this.index >= 0
 
-fun IrModuleFragment.referenceAllTypeExternalClassifiers(symbolTable: SymbolTable) {
-    val moduleDescriptor = this.descriptor
+private val IrCall.annotationClass
+    get() = (this.symbol.owner as IrConstructor).constructedClass
 
-    fun KotlinType.referenceAllClassifiers() {
-        TypeUtils.getClassDescriptor(this)?.let {
-            if (!ErrorUtils.isError(it) && it.module != moduleDescriptor) {
-                if (it.kind == ClassKind.ENUM_ENTRY) {
-                    symbolTable.referenceEnumEntry(it)
-                } else {
-                    symbolTable.referenceClass(it)
-                }
-            }
-        }
+fun List<IrCall>.hasAnnotation(fqName: FqName): Boolean =
+        this.any { it.annotationClass.fqNameSafe == fqName }
 
-        this.constructor.supertypes.forEach {
-            it.referenceAllClassifiers()
-        }
-    }
+fun IrAnnotationContainer.hasAnnotation(fqName: FqName) =
+        this.annotations.hasAnnotation(fqName)
 
-    val visitor = object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitValueParameter(declaration: IrValueParameter) {
-            super.visitValueParameter(declaration)
-            declaration.type.referenceAllClassifiers()
-        }
-
-        override fun visitVariable(declaration: IrVariable) {
-            super.visitVariable(declaration)
-            declaration.type.referenceAllClassifiers()
-        }
-
-        override fun visitExpression(expression: IrExpression) {
-            super.visitExpression(expression)
-            expression.type.referenceAllClassifiers()
-        }
-
-        override fun visitDeclaration(declaration: IrDeclaration) {
-            super.visitDeclaration(declaration)
-            declaration.descriptor.annotations.getAllAnnotations().forEach {
-                handleClassReferences(it.annotation)
-            }
-        }
-
-        private fun handleClassReferences(annotation: AnnotationDescriptor) {
-            annotation.allValueArguments.values.forEach {
-                it.accept(object : AnnotationArgumentVisitor<Unit, Nothing?> {
-
-                    override fun visitKClassValue(p0: KClassValue?, p1: Nothing?) {
-                        p0?.value?.referenceAllClassifiers()
-                    }
-
-                    override fun visitArrayValue(p0: ArrayValue?, p1: Nothing?) {
-                        p0?.value?.forEach { it.accept(this, null) }
-                    }
-
-                    override fun visitAnnotationValue(p0: AnnotationValue?, p1: Nothing?) {
-                        p0?.let { handleClassReferences(p0.value) }
-                    }
-
-                    override fun visitBooleanValue(p0: BooleanValue?, p1: Nothing?) {}
-                    override fun visitShortValue(p0: ShortValue?, p1: Nothing?) {}
-                    override fun visitByteValue(p0: ByteValue?, p1: Nothing?) {}
-                    override fun visitNullValue(p0: NullValue?, p1: Nothing?) {}
-                    override fun visitDoubleValue(p0: DoubleValue?, p1: Nothing?) {}
-                    override fun visitLongValue(p0: LongValue, p1: Nothing?) {}
-                    override fun visitCharValue(p0: CharValue?, p1: Nothing?) {}
-                    override fun visitIntValue(p0: IntValue?, p1: Nothing?) {}
-                    override fun visitUIntValue(p0: UIntValue?, p1: Nothing?) {}
-                    override fun visitUShortValue(p0: UShortValue?, p1: Nothing?) {}
-                    override fun visitUByteValue(p0: UByteValue?, p1: Nothing?) {}
-                    override fun visitULongValue(p0: ULongValue?, p1: Nothing?) {}
-                    override fun visitErrorValue(p0: ErrorValue?, p1: Nothing?) {}
-                    override fun visitFloatValue(p0: FloatValue?, p1: Nothing?) {}
-                    override fun visitEnumValue(p0: EnumValue?, p1: Nothing?) {}
-                    override fun visitStringValue(p0: StringValue?, p1: Nothing?) {}
-                }, null)
-            }
-        }
-
-        override fun visitFunction(declaration: IrFunction) {
-            super.visitFunction(declaration)
-            declaration.returnType.referenceAllClassifiers()
-        }
-
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
-            super.visitFunctionAccess(expression)
-            expression.descriptor.original.typeParameters.forEach {
-                expression.getTypeArgumentOrDefault(it).referenceAllClassifiers()
-            }
-        }
-    }
-
-    this.acceptVoid(visitor)
-    this.dependencyModules.forEach { module ->
-        module.externalPackageFragments.forEach {
-            it.acceptVoid(visitor)
-        }
-    }
+fun List<IrCall>.findAnnotation(fqName: FqName): IrCall? = this.firstOrNull {
+    it.annotationClass.fqNameSafe == fqName
 }

@@ -36,14 +36,19 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, IrElementTransformerVoidWithContext() {
+
+    private val symbols get() = context.ir.symbols
 
     private interface HighLevelJump {
         fun toIr(context: Context, startOffset: Int, endOffset: Int, value: IrExpression): IrExpression
@@ -51,24 +56,24 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
 
     private data class Return(val target: IrReturnTargetSymbol): HighLevelJump {
         override fun toIr(context: Context, startOffset: Int, endOffset: Int, value: IrExpression)
-                = IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, target, value)
+                = IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, target, value)
     }
 
     private data class Break(val loop: IrLoop): HighLevelJump {
         override fun toIr(context: Context, startOffset: Int, endOffset: Int, value: IrExpression)
-                = IrBlockImpl(startOffset, endOffset, context.builtIns.nothingType, null,
+                = IrBlockImpl(startOffset, endOffset, context.irBuiltIns.nothingType, null,
                 statements = listOf(
                         value,
-                        IrBreakImpl(startOffset, endOffset, context.builtIns.nothingType, loop)
+                        IrBreakImpl(startOffset, endOffset, context.irBuiltIns.nothingType, loop)
                 ))
     }
 
     private data class Continue(val loop: IrLoop): HighLevelJump {
         override fun toIr(context: Context, startOffset: Int, endOffset: Int, value: IrExpression)
-                = IrBlockImpl(startOffset, endOffset, context.builtIns.nothingType, null,
+                = IrBlockImpl(startOffset, endOffset, context.irBuiltIns.nothingType, null,
                 statements = listOf(
                         value,
-                        IrContinueImpl(startOffset, endOffset, context.builtIns.nothingType, loop)
+                        IrContinueImpl(startOffset, endOffset, context.irBuiltIns.nothingType, loop)
                 ))
     }
 
@@ -183,10 +188,11 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
 
         val currentTryScope = tryScopes[index]
         currentTryScope.jumps.getOrPut(jump) {
-            val symbol = getIrReturnableBlockSymbol(jump.toString(), value.type)
+            val type = value.type
+            val symbol = getIrReturnableBlockSymbol(jump.toString(), type)
             with(currentTryScope) {
                 irBuilder.run {
-                    val inlinedFinally = irInlineFinally(symbol, expression, finallyExpression)
+                    val inlinedFinally = irInlineFinally(symbol, type, expression, finallyExpression)
                     expression = performHighLevelJump(
                             tryScopes   = tryScopes,
                             index       = index + 1,
@@ -201,7 +207,7 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
             return IrReturnImpl(
                     startOffset        = startOffset,
                     endOffset          = endOffset,
-                    type               = context.builtIns.nothingType,
+                    type               = context.irBuiltIns.nothingType,
                     returnTargetSymbol = it,
                     value              = value)
         }
@@ -219,7 +225,7 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
             val transformedTry = IrTryImpl(
                     startOffset = startOffset,
                     endOffset   = endOffset,
-                    type        = context.builtIns.nothingType
+                    type        = context.irBuiltIns.nothingType
             )
             val transformedFinallyExpression = finallyExpression.transform(transformer, null)
             val parameter = IrTemporaryVariableDescriptorImpl(
@@ -228,24 +234,26 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
                     outType               = context.builtIns.throwable.defaultType
             )
             val catchParameter = IrVariableImpl(
-                    startOffset, endOffset, IrDeclarationOrigin.CATCH_PARAMETER, parameter)
+                    startOffset, endOffset, IrDeclarationOrigin.CATCH_PARAMETER, parameter,
+                    symbols.throwable.owner.defaultType)
 
             val syntheticTry = IrTryImpl(
                     startOffset       = startOffset,
                     endOffset         = endOffset,
-                    type              = context.builtIns.nothingType,
+                    type              = context.irBuiltIns.nothingType,
                     tryResult         = transformedTry,
                     catches           = listOf(
                             irCatch(catchParameter).apply {
                                 result = irBlock {
                                     +finallyExpression.copy()
-                                    +irThrow(irGet(catchParameter.symbol))
+                                    +irThrow(irGet(catchParameter))
                                 }
                             }),
                     finallyExpression = null
             )
             using(TryScope(syntheticTry, transformedFinallyExpression, this)) {
-                val fallThroughSymbol = getIrReturnableBlockSymbol("fallThrough", aTry.type)
+                val fallThroughType = aTry.type
+                val fallThroughSymbol = getIrReturnableBlockSymbol("fallThrough", fallThroughType)
                 val transformedResult = aTry.tryResult.transform(transformer, null)
                 transformedTry.tryResult = irReturn(fallThroughSymbol, transformedResult)
                 for (aCatch in aTry.catches) {
@@ -253,28 +261,28 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
                     transformedCatch.result = irReturn(fallThroughSymbol, transformedCatch.result)
                     transformedTry.catches.add(transformedCatch)
                 }
-                return irInlineFinally(fallThroughSymbol, it.expression, it.finallyExpression)
+                return irInlineFinally(fallThroughSymbol, fallThroughType, it.expression, it.finallyExpression)
             }
         }
     }
 
-    private fun IrBuilderWithScope.irInlineFinally(symbol: IrReturnableBlockSymbol,
+    private fun IrBuilderWithScope.irInlineFinally(symbol: IrReturnableBlockSymbol, type: IrType,
                                                    value: IrExpression,
                                                    finallyExpression: IrExpression): IrExpression {
         val returnType = symbol.descriptor.returnType!!
         return when {
-            returnType.isUnit() || returnType.isNothing() -> irBlock(value, null, returnType) {
-                +irReturnableBlock(symbol) {
+            returnType.isUnit() || returnType.isNothing() -> irBlock(value, null, type) {
+                +irReturnableBlock(symbol, type) {
                     +value
                 }
                 +finallyExpression.copy()
             }
-            else -> irBlock(value, null, returnType) {
-                val tmp = irTemporary(irReturnableBlock(symbol) {
+            else -> irBlock(value, null, type) {
+                val tmp = irTemporary(irReturnableBlock(symbol, type) {
                     +irReturn(symbol, value)
                 })
                 +finallyExpression.copy()
-                +irGet(tmp.symbol)
+                +irGet(tmp)
             }
         }
     }
@@ -285,16 +293,16 @@ internal class FinallyBlocksLowering(val context: Context): FileLoweringPass, Ir
                 initialize(null, null, emptyList(), emptyList(), returnType, Modality.ABSTRACT, Visibilities.PRIVATE)
             }
 
-    private fun getIrReturnableBlockSymbol(name: String, returnType: KotlinType): IrReturnableBlockSymbol =
-            IrReturnableBlockSymbolImpl(getFakeFunctionDescriptor(name, returnType))
+    private fun getIrReturnableBlockSymbol(name: String, returnType: IrType): IrReturnableBlockSymbol =
+            IrReturnableBlockSymbolImpl(getFakeFunctionDescriptor(name, returnType.toKotlinType()))
 
     private inline fun <reified T : IrElement> T.copy() = this.deepCopyWithVariables()
 
     fun IrBuilderWithScope.irReturn(target: IrReturnTargetSymbol, value: IrExpression) =
-            IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, target, value)
+            IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, target, value)
 
-    inline fun IrBuilderWithScope.irReturnableBlock(symbol: IrReturnableBlockSymbol, body: IrBlockBuilder.() -> Unit) =
-            IrReturnableBlockImpl(startOffset, endOffset, symbol.descriptor.returnType!!, symbol, null,
-                    IrBlockBuilder(context, scope, startOffset, endOffset, null, symbol.descriptor.returnType!!)
+    inline fun IrBuilderWithScope.irReturnableBlock(symbol: IrReturnableBlockSymbol, type: IrType, body: IrBlockBuilder.() -> Unit) =
+            IrReturnableBlockImpl(startOffset, endOffset, type, symbol, null,
+                    IrBlockBuilder(context, scope, startOffset, endOffset, null, type)
                             .block(body).statements)
 }

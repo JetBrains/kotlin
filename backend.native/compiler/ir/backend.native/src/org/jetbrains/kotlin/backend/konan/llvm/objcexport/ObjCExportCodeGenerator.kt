@@ -380,7 +380,7 @@ private fun ObjCExportCodeGenerator.generateKotlinFunctionAdapterToBlock(numberO
     val invokeMethod = irInterface.declarations.filterIsInstance<IrSimpleFunction>()
             .single { it.name == OperatorNameConventions.INVOKE }
 
-    val invokeImpl = generateKotlinFunctionImpl(invokeMethod.descriptor)
+    val invokeImpl = generateKotlinFunctionImpl(invokeMethod)
 
     return rttiGenerator.generateSyntheticInterfaceImpl(
             irInterface,

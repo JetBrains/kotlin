@@ -18,18 +18,16 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
+import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.ReflectionTypes
 import org.jetbrains.kotlin.backend.common.validateIrModule
-import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.descriptors.DescriptorsFactory
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryWriter
 import org.jetbrains.kotlin.backend.konan.library.LinkData
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
-import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -42,23 +40,23 @@ import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.ir.util.endOffsetOrUndefined
-import org.jetbrains.kotlin.ir.util.startOffsetOrUndefined
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.metadata.KonanLinkData
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.types.KotlinType
 import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
@@ -66,72 +64,49 @@ internal class SpecialDeclarationsFactory(val context: Context) {
     private val enumSpecialDeclarationsFactory by lazy { EnumSpecialDeclarationsFactory(context) }
     private val outerThisFields = mutableMapOf<ClassDescriptor, IrField>()
     private val bridgesDescriptors = mutableMapOf<Pair<IrSimpleFunction, BridgeDirections>, IrSimpleFunction>()
-    private val loweredEnums = mutableMapOf<ClassDescriptor, LoweredEnum>()
-    private val ordinals = mutableMapOf<IrClass, Map<ClassDescriptor, Int>>()
+    private val loweredEnums = mutableMapOf<IrClass, LoweredEnum>()
+    private val ordinals = mutableMapOf<ClassDescriptor, Map<ClassDescriptor, Int>>()
 
     object DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS :
             IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
 
-    fun getOuterThisField(innerClassDescriptor: ClassDescriptor): IrField =
-        if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
-        else outerThisFields.getOrPut(innerClassDescriptor) {
-            val outerClassDescriptor = DescriptorUtils.getContainingClass(innerClassDescriptor) ?:
-                    throw AssertionError("No containing class for inner class $innerClassDescriptor")
+    fun getOuterThisField(innerClass: IrClass): IrField =
+        if (!innerClass.descriptor.isInner) throw AssertionError("Class is not inner: ${innerClass.descriptor}")
+        else outerThisFields.getOrPut(innerClass.descriptor) {
+            val outerClass = innerClass.parent as? IrClass
+                    ?: throw AssertionError("No containing class for inner class ${innerClass.descriptor}")
 
-            val receiver = ReceiverParameterDescriptorImpl(innerClassDescriptor, ImplicitClassReceiver(innerClassDescriptor))
+            val receiver = ReceiverParameterDescriptorImpl(innerClass.descriptor, ImplicitClassReceiver(innerClass.descriptor))
             val descriptor = PropertyDescriptorImpl.create(
-                    innerClassDescriptor, Annotations.EMPTY, Modality.FINAL,
+                    innerClass.descriptor, Annotations.EMPTY, Modality.FINAL,
                     Visibilities.PRIVATE, false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED,
                     SourceElement.NO_SOURCE, false, false, false, false, false, false
-            ).initialize(outerClassDescriptor.defaultType, dispatchReceiverParameter = receiver)
+            ).apply {
+                val receiverType: KotlinType? = null
+                this.setType(outerClass.descriptor.defaultType, emptyList(), receiver, receiverType)
+                initialize(null, null)
+            }
 
             IrFieldImpl(
-                    innerClassDescriptor.startOffsetOrUndefined,
-                    innerClassDescriptor.endOffsetOrUndefined,
+                    innerClass.descriptor.startOffsetOrUndefined,
+                    innerClass.descriptor.endOffsetOrUndefined,
                     DECLARATION_ORIGIN_FIELD_FOR_OUTER_THIS,
-                    descriptor
+                    descriptor,
+                    outerClass.defaultType
             )
         }
 
-    fun getBridgeDescriptor(overriddenFunctionDescriptor: OverriddenFunctionDescriptor): IrSimpleFunction {
-        val irFunction = overriddenFunctionDescriptor.descriptor
-        val descriptor = irFunction.descriptor
-        assert(overriddenFunctionDescriptor.needBridge,
-                { "Function $descriptor is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor.descriptor}" })
-        val bridgeDirections = overriddenFunctionDescriptor.bridgeDirections
-        return bridgesDescriptors.getOrPut(irFunction to bridgeDirections) {
-            val bridgeDescriptor = SimpleFunctionDescriptorImpl.create(
-                    /* containingDeclaration = */ descriptor.containingDeclaration,
-                    /* annotations           = */ Annotations.EMPTY,
-                    /* name                  = */ "<bridge-$bridgeDirections>${irFunction.functionName}".synthesizedName,
-                    /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-                    /* source                = */ SourceElement.NO_SOURCE).apply {
-                initializeBridgeDescriptor(this, descriptor, bridgeDirections.array)
-            }
-
-            IrFunctionImpl(
-                    irFunction.startOffset,
-                    irFunction.endOffset,
-                    DECLARATION_ORIGIN_BRIDGE_METHOD(irFunction),
-                    bridgeDescriptor
-            ).apply {
-                createParameterDeclarations()
-                this.parent = overriddenFunctionDescriptor.descriptor.parent
-            }
+    fun getLoweredEnum(enumClass: IrClass): LoweredEnum {
+        assert(enumClass.kind == ClassKind.ENUM_CLASS, { "Expected enum class but was: ${enumClass.descriptor}" })
+        return loweredEnums.getOrPut(enumClass) {
+            enumSpecialDeclarationsFactory.createLoweredEnum(enumClass)
         }
     }
 
-    fun getLoweredEnum(enumClassDescriptor: ClassDescriptor): LoweredEnum {
-        assert(enumClassDescriptor.kind == ClassKind.ENUM_CLASS, { "Expected enum class but was: $enumClassDescriptor" })
-        return loweredEnums.getOrPut(enumClassDescriptor) {
-            enumSpecialDeclarationsFactory.createLoweredEnum(enumClassDescriptor)
-        }
-    }
-
-    private fun assignOrdinalsToEnumEntries(irClass: IrClass): Map<ClassDescriptor, Int> {
+    private fun assignOrdinalsToEnumEntries(classDescriptor: ClassDescriptor): Map<ClassDescriptor, Int> {
         val enumEntryOrdinals = mutableMapOf<ClassDescriptor, Int>()
-        irClass.declarations.filterIsInstance<IrEnumEntry>().forEachIndexed { index, entry ->
-            enumEntryOrdinals[entry.descriptor] = index
+        classDescriptor.enumEntries.forEachIndexed { index, entry ->
+            enumEntryOrdinals[entry] = index
         }
         return enumEntryOrdinals
     }
@@ -145,54 +120,130 @@ internal class SpecialDeclarationsFactory(val context: Context) {
                     .first { entryDescriptor.name == enumClassDescriptor.c.nameResolver.getName(it.name) }
                     .getExtension(KonanLinkData.enumEntryOrdinal)
         }
-        val enumClass = context.ir.getEnum(enumClassDescriptor)
-        return ordinals.getOrPut(enumClass) { assignOrdinalsToEnumEntries(enumClass) }[entryDescriptor]!!
+        return ordinals.getOrPut(enumClassDescriptor) { assignOrdinalsToEnumEntries(enumClassDescriptor) }[entryDescriptor]!!
     }
 
-    private fun initializeBridgeDescriptor(bridgeDescriptor: SimpleFunctionDescriptorImpl,
-                                           descriptor: FunctionDescriptor,
-                                           bridgeDirections: Array<BridgeDirection>) {
-        val returnType = when (bridgeDirections[0]) {
-            BridgeDirection.TO_VALUE_TYPE   -> descriptor.returnType!!
-            BridgeDirection.NOT_NEEDED      -> descriptor.returnType
-            BridgeDirection.FROM_VALUE_TYPE -> context.builtIns.nullableAnyType
+    fun getBridge(overriddenFunctionDescriptor: OverriddenFunctionDescriptor): IrSimpleFunction {
+        val irFunction = overriddenFunctionDescriptor.descriptor
+        assert(overriddenFunctionDescriptor.needBridge,
+                { "Function ${irFunction.descriptor} is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor.descriptor}" })
+        val bridgeDirections = overriddenFunctionDescriptor.bridgeDirections
+        return bridgesDescriptors.getOrPut(irFunction to bridgeDirections) {
+            createBridge(irFunction, bridgeDirections)
+        }
+    }
+
+    private fun createBridge(function: IrFunction, bridgeDirections: BridgeDirections): IrFunctionImpl {
+        val returnType = when (bridgeDirections.array[0]) {
+            BridgeDirection.TO_VALUE_TYPE,
+            BridgeDirection.NOT_NEEDED -> function.returnType
+            BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
         }
 
-        val extensionReceiverType = when (bridgeDirections[1]) {
-            BridgeDirection.TO_VALUE_TYPE   -> descriptor.extensionReceiverParameter!!.type
-            BridgeDirection.NOT_NEEDED      -> descriptor.extensionReceiverParameter?.type
-            BridgeDirection.FROM_VALUE_TYPE -> context.builtIns.nullableAnyType
+        val extensionReceiverType = when (bridgeDirections.array[1]) {
+            BridgeDirection.TO_VALUE_TYPE   -> function.extensionReceiverParameter!!.type
+            BridgeDirection.NOT_NEEDED      -> function.extensionReceiverParameter?.type
+            BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
         }
+
+        val valueParameterTypes = function.valueParameters.mapIndexed { index, valueParameter ->
+            when (bridgeDirections.array[index + 2]) {
+                BridgeDirection.TO_VALUE_TYPE   -> valueParameter.type
+                BridgeDirection.NOT_NEEDED      -> valueParameter.type
+                BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
+            }
+        }
+        val bridgeDescriptor = createBridgeDescriptor(
+                function,
+                bridgeDirections,
+                returnType,
+                extensionReceiverType,
+                valueParameterTypes
+        )
+
+        val bridge = IrFunctionImpl(
+                function.startOffset,
+                function.endOffset,
+                DECLARATION_ORIGIN_BRIDGE_METHOD(function),
+                bridgeDescriptor
+        ).apply {
+            this.returnType = returnType
+            this.parent = function.parent
+        }
+
+        bridge.createDispatchReceiverParameter()
+        extensionReceiverType?.let {
+            val extensionReceiverParameter = function.extensionReceiverParameter!!
+            bridge.extensionReceiverParameter = IrValueParameterImpl(
+                    extensionReceiverParameter.startOffset,
+                    extensionReceiverParameter.endOffset,
+                    extensionReceiverParameter.origin,
+                    bridge.descriptor.extensionReceiverParameter!!,
+                    it, null
+            )
+        }
+        function.valueParameters.mapIndexedTo(bridge.valueParameters) { index, valueParameter ->
+            val type = valueParameterTypes[index]
+
+            IrValueParameterImpl(
+                    valueParameter.startOffset,
+                    valueParameter.endOffset,
+                    valueParameter.origin,
+                    bridge.descriptor.valueParameters[index],
+                    type, valueParameter.varargElementType
+            )
+        }
+
+        function.typeParameters.mapTo(bridge.typeParameters) {
+            IrTypeParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor).apply {
+                superTypes += it.superTypes
+            }
+        }
+
+        return bridge
+    }
+
+    private fun createBridgeDescriptor(
+            function: IrFunction,
+            bridgeDirections: BridgeDirections,
+            returnType: IrType,
+            extensionReceiverType: IrType?,
+            valueParameterTypes: List<IrType>
+    ): SimpleFunctionDescriptor {
+
+        val descriptor = function.descriptor
+        val bridgeDescriptor = SimpleFunctionDescriptorImpl.create(
+                /* containingDeclaration = */ descriptor.containingDeclaration,
+                /* annotations           = */ Annotations.EMPTY,
+                /* name                  = */ "<bridge-$bridgeDirections>${function.functionName}".synthesizedName,
+                /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
+                /* source                = */ SourceElement.NO_SOURCE)
 
         val valueParameters = descriptor.valueParameters.mapIndexed { index, valueParameterDescriptor ->
-                val outType = when (bridgeDirections[index + 2]) {
-                    BridgeDirection.TO_VALUE_TYPE   -> valueParameterDescriptor.type
-                    BridgeDirection.NOT_NEEDED      -> valueParameterDescriptor.type
-                    BridgeDirection.FROM_VALUE_TYPE -> context.builtIns.nullableAnyType
-                }
-                ValueParameterDescriptorImpl(
+            ValueParameterDescriptorImpl(
                     containingDeclaration = valueParameterDescriptor.containingDeclaration,
-                    original              = null,
-                    index                 = index,
-                    annotations           = Annotations.EMPTY,
-                    name                  = valueParameterDescriptor.name,
-                    outType               = outType,
-                    declaresDefaultValue  = valueParameterDescriptor.declaresDefaultValue(),
-                    isCrossinline         = valueParameterDescriptor.isCrossinline,
-                    isNoinline            = valueParameterDescriptor.isNoinline,
-                    varargElementType     = valueParameterDescriptor.varargElementType,
-                    source                = SourceElement.NO_SOURCE)
+                    original = null,
+                    index = index,
+                    annotations = Annotations.EMPTY,
+                    name = valueParameterDescriptor.name,
+                    outType = valueParameterTypes[index].toKotlinType(),
+                    declaresDefaultValue = valueParameterDescriptor.declaresDefaultValue(),
+                    isCrossinline = valueParameterDescriptor.isCrossinline,
+                    isNoinline = valueParameterDescriptor.isNoinline,
+                    varargElementType = valueParameterDescriptor.varargElementType,
+                    source = SourceElement.NO_SOURCE)
         }
         bridgeDescriptor.initialize(
-                /* receiverParameterType        = */ extensionReceiverType,
+                /* receiverParameterType        = */ extensionReceiverType?.toKotlinType(),
                 /* dispatchReceiverParameter    = */ descriptor.dispatchReceiverParameter,
                 /* typeParameters               = */ descriptor.typeParameters,
                 /* unsubstitutedValueParameters = */ valueParameters,
-                /* unsubstitutedReturnType      = */ returnType,
+                /* unsubstitutedReturnType      = */ returnType.toKotlinType(),
                 /* modality                     = */ descriptor.modality,
                 /* visibility                   = */ descriptor.visibility).apply {
-            isSuspend                           =    descriptor.isSuspend
+            isSuspend = descriptor.isSuspend
         }
+        return bridgeDescriptor
     }
 }
 

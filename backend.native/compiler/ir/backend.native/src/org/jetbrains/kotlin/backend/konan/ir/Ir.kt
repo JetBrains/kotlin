@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.descriptors.konanInternal
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.typeWith
 import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -38,12 +39,19 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.translateErased
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import kotlin.properties.Delegates
 
@@ -57,9 +65,6 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
     lateinit var moduleIndexForCodegen: ModuleIndex
 
     override var symbols: KonanSymbols by Delegates.notNull()
-
-    fun getClass(type: KotlinType): IrClass? =
-            (type.constructor.declarationDescriptor as? ClassDescriptor)?.let { get(it) }
 
     fun get(descriptor: FunctionDescriptor): IrFunction {
         return moduleIndexForCodegen.functions[descriptor]
@@ -90,10 +95,35 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
                 ?: symbols.symbolTable.referenceEnumEntry(descriptor).owner
     }
 
-    fun getEnum(descriptor: ClassDescriptor): IrClass {
-        assert(descriptor.kind == ClassKind.ENUM_CLASS)
-        return originalModuleIndex.classes[descriptor]
-                ?: symbols.symbolTable.referenceClass(descriptor).owner
+    fun translateErased(type: KotlinType): IrSimpleType = symbols.symbolTable.translateErased(type)
+
+    fun translateBroken(type: KotlinType): IrType {
+        val declarationDescriptor = type.constructor.declarationDescriptor
+        return when (declarationDescriptor) {
+            is ClassDescriptor -> {
+                val classifier = IrClassSymbolImpl(declarationDescriptor)
+                val typeArguments = type.arguments.map {
+                    if (it.isStarProjection) {
+                        IrStarProjectionImpl
+                    } else {
+                        makeTypeProjection(translateBroken(it.type), it.projectionKind)
+                    }
+                }
+                IrSimpleTypeImpl(
+                        classifier,
+                        type.isMarkedNullable,
+                        typeArguments,
+                        emptyList()
+                )
+            }
+            is TypeParameterDescriptor -> IrSimpleTypeImpl(
+                    IrTypeParameterSymbolImpl(declarationDescriptor),
+                    type.isMarkedNullable,
+                    emptyList(),
+                    emptyList()
+            )
+            else -> error(declarationDescriptor ?: "null")
+        }
     }
 }
 
@@ -105,6 +135,8 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val throwable = symbolTable.referenceClass(builtIns.throwable)
     val string = symbolTable.referenceClass(builtIns.string)
     val enum = symbolTable.referenceClass(builtIns.enum)
+    val nativePtr = symbolTable.referenceClass(context.builtIns.nativePtr)
+    val nativePtrType = nativePtr.typeWith(arguments = emptyList())
 
     val arrayList = symbolTable.referenceClass(getArrayListClassDescriptor(context))
 
@@ -225,19 +257,25 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
     val getProgressionLast = context.getInternalFunctions("getProgressionLast")
             .map { Pair(it.returnType, symbolTable.referenceSimpleFunction(it)) }.toMap()
 
-    val arrayContentToString = arrayTypes.associateBy({ it }, { findArrayExtension(it, "contentToString") })
-    val arrayContentHashCode = arrayTypes.associateBy({ it }, { findArrayExtension(it, "contentHashCode") })
+    val arrayContentToString = arrays.associateBy(
+            { it },
+            { findArrayExtension(it.descriptor, "contentToString") }
+    )
+    val arrayContentHashCode = arrays.associateBy(
+            { it },
+            { findArrayExtension(it.descriptor, "contentHashCode") }
+    )
 
-    fun findArrayExtension(type: KotlinType, name: String): IrSimpleFunctionSymbol {
-        val descriptor = builtInsPackage("kotlin", "collections")
+    fun findArrayExtension(descriptor: ClassDescriptor, name: String): IrSimpleFunctionSymbol {
+        val functionDescriptor = builtInsPackage("kotlin", "collections")
                 .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
                 .singleOrNull {
                     it.valueParameters.isEmpty()
-                            && (it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor as? ClassDescriptor)?.defaultType == type
+                            && it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == descriptor
                             && !it.isExpect
                 }
-                ?: throw Error(type.toString())
-        return symbolTable.referenceSimpleFunction(descriptor)
+                ?: throw Error(descriptor.toString())
+        return symbolTable.referenceSimpleFunction(functionDescriptor)
     }
 
     override val copyRangeTo = arrays.map { symbol ->
@@ -339,6 +377,11 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable): Sym
 
     val kFunctions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
             .map { symbolTable.referenceClass(context.reflectionTypes.getKFunction(it)) }
+
+    fun getKFunctionType(returnType: IrType, parameterTypes: List<IrType>): IrType {
+        val kFunctionClassSymbol = kFunctions[parameterTypes.size]
+        return kFunctionClassSymbol.typeWith(parameterTypes + returnType)
+    }
 
     val suspendFunctions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
             .map { symbolTable.referenceClass(builtIns.getSuspendFunction(it)) }

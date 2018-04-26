@@ -21,12 +21,16 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.types.KotlinType
 
 internal fun KonanSymbols.getTypeConversion(actualType: KotlinType, expectedType: KotlinType) =
+        getTypeConversion(actualType.correspondingValueType, expectedType.correspondingValueType)
+
+internal fun KonanSymbols.getTypeConversion(actualType: IrType, expectedType: IrType) =
         getTypeConversion(actualType.correspondingValueType, expectedType.correspondingValueType)
 
 internal fun KonanSymbols.getTypeConversion(

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * Provides utilities to create static data.

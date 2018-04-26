@@ -17,25 +17,19 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
-import llvm.LLVMVoidType
-import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.library.KonanLibraryReader
 import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 
@@ -128,14 +122,14 @@ private val publishedApiAnnotation = FqName("kotlin.PublishedApi")
 
 private val inlineExposedAnnotation = FqName("kotlin.internal.InlineExposed")
 
-private fun acyclicTypeMangler(visited: MutableSet<TypeParameterDescriptor>, type: KotlinType): String {
-    val descriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
+private fun acyclicTypeMangler(visited: MutableSet<TypeParameterDescriptor>, type: IrType): String {
+    val descriptor = (type.classifierOrNull as? IrTypeParameterSymbol)?.owner
     if (descriptor != null) {
         val upperBounds = if (visited.contains(descriptor)) "" else {
 
             visited.add(descriptor)
 
-            descriptor.upperBounds.map {
+            descriptor.superTypes.map {
                 val bound = acyclicTypeMangler(visited, it)
                 if (bound == "kotlin.Any?") "" else "_$bound"
             }.joinToString("")
@@ -143,24 +137,27 @@ private fun acyclicTypeMangler(visited: MutableSet<TypeParameterDescriptor>, typ
         return "#GENERIC" + upperBounds
     }
 
-    var hashString = TypeUtils.getClassDescriptor(type)!!.fqNameSafe.asString()
+    var hashString = type.getClass()!!.fqNameSafe.asString()
+    if (type !is IrSimpleType) error(type)
     if (!type.arguments.isEmpty()) {
         hashString += "<${type.arguments.map {
-            if (it.isStarProjection()) {
-                "#STAR" 
-            } else {
-                val variance = it.projectionKind.label
-                val projection = if (variance == "") "" else "${variance}_" 
-                projection + acyclicTypeMangler(visited, it.type)
+            when (it) {
+                is IrStarProjection -> "#STAR"
+                is IrTypeProjection -> {
+                    val variance = it.variance.label
+                    val projection = if (variance == "") "" else "${variance}_"
+                    projection + acyclicTypeMangler(visited, it.type)
+                }
+                else -> error(it)
             }
         }.joinToString(",")}>"
     }
 
-    if (type.isMarkedNullable) hashString += "?"
+    if (type.hasQuestionMark) hashString += "?"
     return hashString
 }
 
-private fun typeToHashString(type: KotlinType) 
+private fun typeToHashString(type: IrType)
     = acyclicTypeMangler(mutableSetOf<TypeParameterDescriptor>(), type)
 
 private val FunctionDescriptor.signature: String
@@ -175,7 +172,7 @@ private val FunctionDescriptor.signature: String
                 when {
                     this.typeParameters.isNotEmpty() -> "Generic"
                     returnType.isValueType() -> "ValueType"
-                    !KotlinBuiltIns.isUnitOrNullableUnit(returnType) -> typeToHashString(returnType)
+                    !returnType.isUnitOrNullableUnit() -> typeToHashString(returnType)
                     else -> ""
                 }
         return "$extensionReceiverPart($argsPart)$signatureSuffix"
@@ -188,7 +185,7 @@ internal val FunctionDescriptor.functionName: String
             this.getObjCMethodInfo()?.let {
                 return buildString {
                     if (extensionReceiverParameter != null) {
-                        append(TypeUtils.getClassDescriptor(extensionReceiverParameter!!.type)!!.name)
+                        append(extensionReceiverParameter!!.type.getClass()!!.name)
                         append(".")
                     }
 
@@ -235,7 +232,7 @@ internal val IrField.symbolName: String
 
     }
 
-private fun getStringValue(annotation: AnnotationDescriptor): String? {
+internal fun getStringValue(annotation: AnnotationDescriptor): String? {
     return annotation.allValueArguments.values.ifNotEmpty {
         val stringValue = single() as? StringValue
         stringValue?.value
