@@ -9,7 +9,10 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.lower.BlockDecomposerLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.FunctionReferenceLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.IntrinsicifyCallsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.SecondaryCtorLowering
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -38,8 +41,8 @@ fun compile(
     val context = JsIrBackendContext(
         analysisResult.moduleDescriptor,
         psi2IrContext.irBuiltIns,
-        moduleFragment,
-        psi2IrContext.symbolTable
+        psi2IrContext.symbolTable,
+        moduleFragment
     )
 
     ExternalDependenciesGenerator(psi2IrContext.symbolTable, psi2IrContext.irBuiltIns).generateUnboundSymbolsAsDependencies(moduleFragment)
@@ -62,6 +65,7 @@ fun JsIrBackendContext.lower(file: IrFile) {
     InnerClassConstructorCallsLowering(this).runOnFilePostfix(file)
     PropertiesLowering().lower(file)
     InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).runOnFilePostfix(file)
+    BlockDecomposerLowering(this).runOnFilePostfix(file)
     SecondaryCtorLowering(this).runOnFilePostfix(file)
     IntrinsicifyCallsLowering(this).lower(file)
     FunctionReferenceLowering(this).lower(file)

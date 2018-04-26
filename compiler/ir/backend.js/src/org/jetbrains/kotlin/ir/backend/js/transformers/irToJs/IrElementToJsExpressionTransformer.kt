@@ -19,13 +19,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
 
-    private val neutralExpression: JsExpression = JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
-
-    override fun visitContainerExpression(expression: IrContainerExpression, context: JsGenerationContext): JsExpression =
-        expression.statements.map { it.accept(this, context) }.fold(neutralExpression) { left, right ->
-            if (left != neutralExpression) JsBinaryOperation(JsBinaryOperator.COMMA, left, right) else right
-        }
-
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
         body.expression.accept(this, context)
 

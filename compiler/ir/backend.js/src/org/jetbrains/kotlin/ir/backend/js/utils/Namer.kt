@@ -34,6 +34,8 @@ object Namer {
     val CALL_FUNCTION = "call"
     val APPLY_FUNCTION = "apply"
 
+    val UNREACHABLE_NAME = "\$unreachable"
+
     val OUTER_FIELD_NAME = "\$outer"
 
     val DELEGATE = "\$delegate"

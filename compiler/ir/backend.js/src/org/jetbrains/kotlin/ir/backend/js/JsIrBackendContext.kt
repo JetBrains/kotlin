@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 class JsIrBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
-    irModuleFragment: IrModuleFragment,
-    symbolTable: SymbolTable
+    val symbolTable: SymbolTable,
+    irModuleFragment: IrModuleFragment
 ) : CommonBackendContext {
 
     val intrinsics = JsIntrinsics(module, irBuiltIns, symbolTable)

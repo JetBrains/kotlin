@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -42,13 +43,39 @@ object JsIrBuilder {
 
     fun buildFunction(symbol: IrSimpleFunctionSymbol) = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, symbol)
 
-    fun buildGetValue(symbol: IrValueSymbol) = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, SYNTHESIZED_STATEMENT)
+    fun buildGetObjectValue(type: KotlinType, classSymbol: IrClassSymbol) =
+        IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)
+    fun buildGetClass(expression: IrExpression, type: KotlinType) = IrGetClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, expression)
 
-    fun buildBlockBody(stmts: List<IrStatement>) = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, stmts)
+    fun buildGetValue(symbol: IrValueSymbol) = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, SYNTHESIZED_STATEMENT)
+    fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression) =
+        IrSetVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, value, SYNTHESIZED_STATEMENT)
+
+    fun buildGetField(symbol: IrFieldSymbol, receiver: IrExpression?, superQualifierSymbol: IrClassSymbol? = null) =
+        IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, receiver, SYNTHESIZED_STATEMENT, superQualifierSymbol)
+
+    fun buildSetField(symbol: IrFieldSymbol, receiver: IrExpression?, value: IrExpression, superQualifierSymbol: IrClassSymbol? = null) =
+        IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, receiver, value, SYNTHESIZED_STATEMENT, superQualifierSymbol)
+
+    fun buildBlockBody(statements: List<IrStatement>) = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, statements)
+
+    fun buildBlock(type: KotlinType) = IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, SYNTHESIZED_STATEMENT)
+    fun buildBlock(type: KotlinType, statements: List<IrStatement>) =
+        IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, SYNTHESIZED_STATEMENT, statements)
 
     fun buildFunctionReference(type: KotlinType, symbol: IrFunctionSymbol) =
         IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, symbol.descriptor)
 
-    fun buildVar(symbol: IrVariableSymbol) = IrVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, symbol)
+    fun buildVar(symbol: IrVariableSymbol, initializer: IrExpression? = null) =
+        IrVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SYNTHESIZED_DECLARATION, symbol).apply { this.initializer = initializer }
 
+    fun buildBreak(type: KotlinType, loop: IrLoop) = IrBreakImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
+    fun buildContinue(type: KotlinType, loop: IrLoop) = IrContinueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, loop)
+
+    fun buildIfElse(type: KotlinType, cond: IrExpression, thenBranch: IrExpression, elseBranch: IrExpression? = null) = IrIfThenElseImpl(
+        UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, cond, thenBranch, elseBranch, SYNTHESIZED_STATEMENT
+    )
+
+    fun buildNull(type: KotlinType) = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
+    fun buildBoolean(type: KotlinType, v: Boolean) = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)
 }
