@@ -11,7 +11,7 @@ import javax.swing.*;
 
 public class ConfigurePluginUpdatesForm {
     public JComboBox<String> channelCombo;
-    public JButton checkForUpdatesNowButton;
+    public JButton reCheckButton;
     public JPanel mainPanel;
     public AsyncProcessIcon updateCheckProgressIcon;
     public JLabel updateStatusLabel;
@@ -36,5 +36,10 @@ public class ConfigurePluginUpdatesForm {
     public void resetUpdateStatus() {
         updateStatusLabel.setText(" ");
         installButton.setVisible(false);
+    }
+
+    public void setUpdateStatus(String message, boolean showInstallButton) {
+        installButton.setVisible(showInstallButton);
+        updateStatusLabel.setText(message);
     }
 }

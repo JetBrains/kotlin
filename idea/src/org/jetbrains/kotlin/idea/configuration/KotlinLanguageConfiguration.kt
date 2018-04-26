@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.PluginUpdateStatus
 import org.jetbrains.kotlin.idea.configuration.ui.ConfigurePluginUpdatesForm
 import javax.swing.JComponent
 
-class KotlinUpdatesSettingsConfigurable() : SearchableConfigurable, Configurable.NoScroll {
+class KotlinUpdatesSettingsConfigurable : SearchableConfigurable, Configurable.NoScroll {
     companion object {
         const val ID = "preferences.language.Kotlin"
 
@@ -43,46 +43,22 @@ class KotlinUpdatesSettingsConfigurable() : SearchableConfigurable, Configurable
     private val form = ConfigurePluginUpdatesForm()
     private var update: PluginUpdateStatus.Update? = null
 
-    private var savedChannel: Int = EAPChannels.EAP_1_3.indexIfAvailable() ?: EAPChannels.EAP_1_2.indexIfAvailable() ?: 0
-
     override fun getId(): String = ID
 
     override fun getDisplayName(): String = "Kotlin Updates"
 
-    override fun isModified(): Boolean {
-        return savedChannel != form.channelCombo.selectedIndex
-    }
+    override fun isModified() = false
 
     override fun apply() {
-        saveSettings()
+        // Selected channel is now saved automatically
     }
 
     override fun createComponent(): JComponent? {
         form.updateCheckProgressIcon.suspend()
         form.updateCheckProgressIcon.setPaintPassiveIcon(false)
 
-        form.checkForUpdatesNowButton.addActionListener {
-            saveSettings()
-            form.updateCheckProgressIcon.resume()
-            form.resetUpdateStatus()
-            KotlinPluginUpdater.getInstance().runUpdateCheck{ pluginUpdateStatus ->
-                form.updateCheckProgressIcon.suspend()
-                when (pluginUpdateStatus) {
-                    PluginUpdateStatus.LatestVersionInstalled ->
-                        form.updateStatusLabel.text = "You have the latest version of the plugin (${KotlinPluginUtil.getPluginVersion()}) installed."
-
-                    is PluginUpdateStatus.Update -> {
-                        update = pluginUpdateStatus
-                        form.installButton.isVisible = true
-                        form.updateStatusLabel.text = "A new version ${pluginUpdateStatus.pluginDescriptor.version} is available"
-                    }
-
-                    is PluginUpdateStatus.CheckFailed ->
-                        form.updateStatusLabel.text = "Update check failed: ${pluginUpdateStatus.message}"
-                }
-
-                false  // do not auto-retry update check
-            }
+        form.reCheckButton.addActionListener {
+            checkForUpdates()
         }
 
         form.installButton.isVisible = false
@@ -92,18 +68,50 @@ class KotlinUpdatesSettingsConfigurable() : SearchableConfigurable, Configurable
             }
         }
 
+        val savedChannel: Int = EAPChannels.EAP_1_3.indexIfAvailable() ?: EAPChannels.EAP_1_2.indexIfAvailable() ?: 0
+        form.channelCombo.selectedIndex = savedChannel
+
         form.channelCombo.addActionListener {
-            form.resetUpdateStatus()
+            checkForUpdates()
         }
 
-        form.channelCombo.selectedIndex = savedChannel
+        checkForUpdates()
 
         return form.mainPanel
     }
 
+    private fun checkForUpdates() {
+        saveSettings()
+        form.updateCheckProgressIcon.resume()
+        form.resetUpdateStatus()
+        KotlinPluginUpdater.getInstance().runUpdateCheck{ pluginUpdateStatus ->
+            // Need this to show something is happening when check is very fast
+            Thread.sleep(30)
+            form.updateCheckProgressIcon.suspend()
+
+            when (pluginUpdateStatus) {
+                PluginUpdateStatus.LatestVersionInstalled -> {
+                    form.setUpdateStatus(
+                        "You have the latest version of the plugin (${KotlinPluginUtil.getPluginVersion()}) installed.",
+                        false
+                    )
+                }
+
+                is PluginUpdateStatus.Update -> {
+                    update = pluginUpdateStatus
+                    form.setUpdateStatus("A new version ${pluginUpdateStatus.pluginDescriptor.version} is available", true)
+                }
+
+                is PluginUpdateStatus.CheckFailed ->
+                    form.setUpdateStatus("Update check failed: ${pluginUpdateStatus.message}", false)
+            }
+
+            false  // do not auto-retry update check
+        }
+    }
+
     private fun saveSettings() {
-        savedChannel = form.channelCombo.selectedIndex
-        saveSelectedChannel(savedChannel)
+        saveSelectedChannel(form.channelCombo.selectedIndex)
     }
 }
 
