@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.google.common.collect.Sets
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
