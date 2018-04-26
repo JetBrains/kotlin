@@ -25,4 +25,5 @@ class Second(val y: Char) : @WithInt(0) First() {
 }
 
 @WithInt(24)
+@VeryComplex(3.14f, 6.67e-11, false, 123456789012345L, null)
 typealias Third = @Simple Second

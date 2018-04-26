@@ -15,7 +15,7 @@ class SimpleVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abs
                 "visitElement",
                 parameters = mapOf(
                     "element" to FIR_ELEMENT_CLASS_NAME,
-                    "data" to "D"
+                    "data" to DataCollector.NameWithTypeParameters("D")
                 ),
                 returnType = "R",
                 body = null
@@ -27,19 +27,23 @@ class SimpleVisitorGenerator(referencesData: DataCollector.ReferencesData) : Abs
         println("}")
     }
 
-    private fun Printer.generateVisit(className: String, parent: String) {
-        val shortcutName = className.classNameWithoutFir
+    private fun Printer.generateVisit(
+        className: DataCollector.NameWithTypeParameters,
+        parent: DataCollector.NameWithTypeParameters
+    ) {
+        val shortcutName = className.name.classNameWithoutFir
         val parameterName = shortcutName.decapitalize().safeName
         generateFunction(
             name = "visit$shortcutName",
             parameters = mapOf(
                 parameterName to className,
-                "data" to "D"
+                "data" to DataCollector.NameWithTypeParameters("D")
             ),
-            returnType = "R"
+            returnType = "R",
+            typeParameters = className.typeParameters
         ) {
             print("return ")
-            generateCall("visit${parent.classNameWithoutFir}", listOf(parameterName, "data"))
+            generateCall("visit${parent.name.classNameWithoutFir}", listOf(parameterName, "data"))
             println()
         }
     }

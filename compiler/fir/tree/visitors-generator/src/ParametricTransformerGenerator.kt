@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.visitors.generator
 
+import org.jetbrains.kotlin.fir.visitors.generator.DataCollector.NameWithTypeParameters
 import org.jetbrains.kotlin.utils.Printer
 
 class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : AbstractVisitorGenerator(data) {
@@ -15,8 +16,8 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
             generateFunction(
                 "transformElement",
                 mapOf(
-                    "element" to "E",
-                    "data" to "D"
+                    "element" to NameWithTypeParameters("E"),
+                    "data" to NameWithTypeParameters("D")
                 ),
                 constructCompositeBoxType("E"),
                 typeParameters = listOf("E : $FIR_ELEMENT_CLASS_NAME"),
@@ -40,7 +41,7 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
         return "$TRANSFORMER_RESULT_NAME<$type>"
     }
 
-    val baseTypes = mutableMapOf<String, String>().also {
+    val baseTypes = mutableMapOf<NameWithTypeParameters, NameWithTypeParameters>().also {
         for (baseTransformedType in referencesData.baseTransformedTypes) {
             it[baseTransformedType] = baseTransformedType
         }
@@ -50,18 +51,19 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
         }
     }
 
-    fun Printer.generateTrampolineVisit(className: String) {
-        val shortcutName = className.classNameWithoutFir
+    fun Printer.generateTrampolineVisit(className: NameWithTypeParameters) {
+        val shortcutName = className.name.classNameWithoutFir
         val parameterName = shortcutName.decapitalize().safeName
         generateFunction(
             name = "visit$shortcutName",
             parameters = mapOf(
                 parameterName to className,
-                "data" to "D"
+                "data" to NameWithTypeParameters("D")
             ),
-            returnType = constructCompositeBoxType(FIR_ELEMENT_CLASS_NAME),
+            returnType = constructCompositeBoxType(FIR_ELEMENT_CLASS_NAME.name),
             override = true,
-            final = true
+            final = true,
+            typeParameters = className.typeParameters
         ) {
             print("return ")
             generateCall("transform$shortcutName", listOf(parameterName, "data"))
@@ -69,23 +71,26 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
         }
     }
 
-    fun Printer.generateTransformMethod(className: String, parent: String) {
+    fun Printer.generateTransformMethod(
+        className: NameWithTypeParameters,
+        parent: NameWithTypeParameters
+    ) {
         val baseType = baseTypes[className]
 
-        val shortcutName = className.classNameWithoutFir
+        val shortcutName = className.name.classNameWithoutFir
         val parameterName = shortcutName.decapitalize().safeName
         if (baseType == null) {
             generateFunction(
                 "transform$shortcutName",
                 mapOf(
-                    parameterName to "E",
-                    "data" to "D"
+                    parameterName to NameWithTypeParameters("E"),
+                    "data" to NameWithTypeParameters("D")
                 ),
                 constructCompositeBoxType("E"),
-                typeParameters = listOf("E : $parent")
+                typeParameters = listOf("E : $parent") + className.typeParameters
             ) {
                 print("return ")
-                generateCall("transform${parent.classNameWithoutFir}", listOf(parameterName, "data"))
+                generateCall("transform${parent.name.classNameWithoutFir}", listOf(parameterName, "data"))
                 printlnWithNoIndent()
             }
         } else {
@@ -93,12 +98,13 @@ class ParametricTransformerGenerator(data: DataCollector.ReferencesData) : Abstr
                 "transform$shortcutName",
                 mapOf(
                     parameterName to className,
-                    "data" to "D"
+                    "data" to NameWithTypeParameters("D")
                 ),
-                constructCompositeBoxType(baseType)
+                constructCompositeBoxType(baseType.name),
+                typeParameters = className.typeParameters
             ) {
                 print("return ")
-                generateCall("transform${parent.classNameWithoutFir}", listOf(parameterName, "data"))
+                generateCall("transform${parent.name.classNameWithoutFir}", listOf(parameterName, "data"))
                 printlnWithNoIndent()
             }
         }

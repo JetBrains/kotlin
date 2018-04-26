@@ -138,6 +138,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformCall(delegatedConstructorCall, data)
     }
 
+    open fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: D): CompositeTransformResult<FirStatement> {
+        return transformExpression(constExpression, data)
+    }
+
     open fun transformErrorExpression(errorExpression: FirErrorExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformExpression(errorExpression, data)
     }
@@ -308,6 +312,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitBody(body: FirBody, data: D): CompositeTransformResult<FirElement> {
         return transformBody(body, data)
+    }
+
+    final override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: D): CompositeTransformResult<FirElement> {
+        return transformConstExpression(constExpression, data)
     }
 
     final override fun visitErrorExpression(errorExpression: FirErrorExpression, data: D): CompositeTransformResult<FirElement> {

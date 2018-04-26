@@ -5,4 +5,6 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-interface FirErrorExpression : FirExpression
+interface FirErrorExpression : FirExpression {
+    val reason: String
+}

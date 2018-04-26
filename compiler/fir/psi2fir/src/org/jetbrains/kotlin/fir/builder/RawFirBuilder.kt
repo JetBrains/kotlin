@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.builder
 
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
@@ -91,8 +93,127 @@ class RawFirBuilder(val session: FirSession) {
                 else -> FirExpressionBodyImpl(session, FirExpressionStub(session, null))
             }
 
-        private fun ValueArgument?.toFirExpression(): FirExpression = with(this as? KtElement) {
-            convertSafe() ?: FirErrorExpressionImpl(session, this)
+        private fun String.parseCharacter(): Char? {
+            // Strip the quotes
+            if (length < 2 || this[0] != '\'' || this[length - 1] != '\'') {
+                return null
+            }
+            val text = substring(1, length - 1) // now there're no quotes
+
+            if (text.isEmpty()) {
+                return null
+            }
+
+            return if (text[0] != '\\') {
+                // No escape
+                if (text.length == 1) {
+                    text[0]
+                } else {
+                    null
+                }
+            } else {
+                escapedStringToCharacter(text)
+            }
+        }
+
+        private fun escapedStringToCharacter(text: String): Char? {
+            assert(text.isNotEmpty() && text[0] == '\\') {
+                "Only escaped sequences must be passed to this routine: $text"
+            }
+
+            // Escape
+            val escape = text.substring(1) // strip the slash
+            when (escape.length) {
+                0 -> {
+                    // bare slash
+                    return null
+                }
+                1 -> {
+                    // one-char escape
+                    return translateEscape(escape[0]) ?: return null
+                }
+                5 -> {
+                    // unicode escape
+                    if (escape[0] == 'u') {
+                        try {
+                            val intValue = Integer.valueOf(escape.substring(1), 16)
+                            return intValue.toInt().toChar()
+                        } catch (e: NumberFormatException) {
+                            // Will be reported below
+                        }
+                    }
+                }
+            }
+            return null
+        }
+
+        private fun translateEscape(c: Char): Char? =
+            when (c) {
+                't' -> '\t'
+                'b' -> '\b'
+                'n' -> '\n'
+                'r' -> '\r'
+                '\'' -> '\''
+                '\"' -> '\"'
+                '\\' -> '\\'
+                '$' -> '$'
+                else -> null
+            }
+
+        private fun ValueArgument?.toFirExpression(): FirExpression {
+            this ?: return FirErrorExpressionImpl(session, this as? KtElement, "No argument given")
+            val expression = this.getArgumentExpression()
+            when (expression) {
+                is KtConstantExpression -> {
+                    val type = expression.node.elementType
+                    val text: String = expression.text
+                    return when (type) {
+                        KtNodeTypes.INTEGER_CONSTANT ->
+                            if (text.last() == 'l' || text.last() == 'L') {
+                                FirConstExpressionImpl(
+                                    session, expression, IrConstKind.Long, text.dropLast(1).toLongOrNull(), "Incorrect long: $text"
+                                )
+                            } else {
+                                // TODO: support byte / short
+                                FirConstExpressionImpl(session, expression, IrConstKind.Int, text.toIntOrNull(), "Incorrect int: $text")
+                            }
+                        KtNodeTypes.FLOAT_CONSTANT ->
+                            if (text.last() == 'f' || text.last() == 'F') {
+                                FirConstExpressionImpl(
+                                    session, expression, IrConstKind.Float, text.dropLast(1).toFloatOrNull(), "Incorrect float: $text"
+                                )
+                            } else {
+                                FirConstExpressionImpl(
+                                    session, expression, IrConstKind.Double, text.toDoubleOrNull(), "Incorrect double: $text"
+                                )
+                            }
+                        KtNodeTypes.CHARACTER_CONSTANT ->
+                            FirConstExpressionImpl(
+                                session, expression, IrConstKind.Char, text.parseCharacter(), "Incorrect character: $text"
+                            )
+                        KtNodeTypes.BOOLEAN_CONSTANT ->
+                            FirConstExpressionImpl(session, expression, IrConstKind.Boolean, text.toBoolean())
+                        KtNodeTypes.NULL ->
+                            FirConstExpressionImpl(session, expression, IrConstKind.Null, null)
+                        else ->
+                            throw AssertionError("Unknown literal type: $type, $text")
+                    }
+                }
+
+                is KtStringTemplateExpression -> {
+                    val sb = StringBuilder()
+                    for (entry in expression.entries) {
+                        when (entry) {
+                            is KtLiteralStringTemplateEntry -> sb.append(entry.text)
+                            is KtEscapeStringTemplateEntry -> sb.append(entry.unescapedValue)
+                            else -> return FirErrorExpressionImpl(session, expression, "Incorrect template entry: ${entry.text}")
+                        }
+                    }
+                    return FirConstExpressionImpl(session, expression, IrConstKind.String, sb.toString())
+                }
+
+                else -> return FirExpressionStub(session, this as? KtElement)
+            }
         }
 
         private fun KtPropertyAccessor?.toFirPropertyAccessor(

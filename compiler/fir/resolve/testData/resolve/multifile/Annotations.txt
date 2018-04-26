@@ -1,16 +1,16 @@
 FILE: Annotations.kt
     @FILE:R|annotations/Simple|()
-    @R|annotations/WithInt|(STUB) public abstract class First {
+    @R|annotations/WithInt|(Int(42)) public abstract class First {
         public constructor(): super<R|kotlin/Any|>()
 
-        @R|annotations/Simple|() public abstract function foo(@R|annotations/WithString|(STUB) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|
+        @R|annotations/Simple|() public abstract function foo(@R|annotations/WithString|(String(abc)) arg: @R|annotations/Simple|() R|kotlin/Double|): R|kotlin/Unit|
 
         @R|annotations/Complex|(STUB, STUB) public abstract property v(val): R|kotlin/String|
             public get(): R|kotlin/String|
 
     }
-    @R|annotations/WithString|(STUB) public final class Second : @R|annotations/WithInt|(STUB) R|test/First| {
-        public constructor(y: R|kotlin/Char|): super<@R|annotations/WithInt|(STUB) R|test/First|>()
+    @R|annotations/WithString|(String(xyz)) public final class Second : @R|annotations/WithInt|(Int(0)) R|test/First| {
+        public constructor(y: R|kotlin/Char|): super<@R|annotations/WithInt|(Int(0)) R|test/First|>()
 
         public final property y(val): R|kotlin/Char|
             public get(): R|kotlin/Char|
@@ -23,7 +23,7 @@ FILE: Annotations.kt
                 STUB
             }
 
-        @R|annotations/WithString|(STUB) public constructor(): this<R|test/Second|>()
+        @R|annotations/WithString|(String(constructor)) public constructor(): this<R|test/Second|>()
 
     }
-    @R|annotations/WithInt|(STUB) @R|annotations/WithInt|(STUB) public final typealias Third = @R|annotations/Simple|() R|test/Second|
+    @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) @R|annotations/WithInt|(Int(24)) @R|annotations/VeryComplex|(Float(3.14), Double(6.67E-11), Boolean(false), Long(123456789012345), Null(null)) public final typealias Third = @R|annotations/Simple|() R|test/Second|
