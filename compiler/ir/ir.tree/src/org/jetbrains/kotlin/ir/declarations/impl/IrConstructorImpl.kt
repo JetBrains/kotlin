@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrConstructorImpl(
     startOffset: Int,
@@ -35,7 +35,7 @@ class IrConstructorImpl(
     override val symbol: IrConstructorSymbol,
     name: Name,
     visibility: Visibility,
-    returnType: KotlinType,
+    returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
     override val isPrimary: Boolean
@@ -51,12 +51,13 @@ class IrConstructorImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         symbol: IrConstructorSymbol,
+        returnType: IrType,
         body: IrBody? = null
     ) : this(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.name,
         symbol.descriptor.visibility,
-        symbol.descriptor.returnType,
+        returnType,
         symbol.descriptor.isInline,
         symbol.descriptor.isEffectivelyExternal(),
         symbol.descriptor.isPrimary
@@ -68,8 +69,9 @@ class IrConstructorImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: ClassConstructorDescriptor
-    ) : this(startOffset, endOffset, origin, IrConstructorSymbolImpl(descriptor))
+        descriptor: ClassConstructorDescriptor,
+        returnType: IrType
+    ) : this(startOffset, endOffset, origin, IrConstructorSymbolImpl(descriptor), returnType)
 
     @Deprecated("Let use constructor which takes symbol instead of descriptor")
     constructor(
@@ -77,8 +79,9 @@ class IrConstructorImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ClassConstructorDescriptor,
+        returnType: IrType,
         body: IrBody?
-    ) : this(startOffset, endOffset, origin, descriptor) {
+    ) : this(startOffset, endOffset, origin, descriptor, returnType) {
         this.body = body
     }
 
