@@ -6,6 +6,7 @@
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:JvmPackageName("kotlin.test.junit.annotations")
+
 package kotlin.test
 
 public actual typealias Test = org.junit.Test

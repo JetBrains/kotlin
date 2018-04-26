@@ -14,9 +14,10 @@ internal external object QUnit {
     fun skip(name: String, testFn: (dynamic) -> Unit): Unit
 }
 
-/**
+/*
  * Jasmine/Mocha/Jest API
  */
+
 internal external fun describe(name: String, fn: () -> Unit)
 internal external fun xdescribe(name: String, fn: () -> Unit)
 internal external fun it(name: String, fn: () -> Unit)
