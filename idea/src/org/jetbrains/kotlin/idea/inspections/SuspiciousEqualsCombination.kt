@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -29,12 +30,16 @@ class SuspiciousEqualsCombination : AbstractKotlinInspection() {
     private fun KtBinaryExpression.parseBinary(pair: ComparisonOperands = ComparisonOperands()): ComparisonOperands {
         when (operationToken) {
             KtTokens.EQEQ, KtTokens.EXCLEQ -> {
-                (left as? KtNameReferenceExpression)?.let(pair.eqEqOperands::add)
-                (right as? KtNameReferenceExpression)?.let(pair.eqEqOperands::add)
+                if (!left.isNullExpression() && !right.isNullExpression()) {
+                    (left as? KtNameReferenceExpression)?.let(pair.eqEqOperands::add)
+                    (right as? KtNameReferenceExpression)?.let(pair.eqEqOperands::add)
+                }
             }
             KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ -> {
-                (left as? KtNameReferenceExpression)?.let(pair.eqEqEqOperands::add)
-                (right as? KtNameReferenceExpression)?.let(pair.eqEqEqOperands::add)
+                if (!left.isNullExpression() && !right.isNullExpression()) {
+                    (left as? KtNameReferenceExpression)?.let(pair.eqEqEqOperands::add)
+                    (right as? KtNameReferenceExpression)?.let(pair.eqEqEqOperands::add)
+                }
             }
             KtTokens.ANDAND, KtTokens.OROR -> {
                 right?.parseExpression(pair)
