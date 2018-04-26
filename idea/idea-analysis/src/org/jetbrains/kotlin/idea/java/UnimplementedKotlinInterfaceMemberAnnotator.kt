@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.resolve.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.utils.ifEmpty
+import org.jetbrains.uast.java.annotations
 
 class UnimplementedKotlinInterfaceMemberAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
