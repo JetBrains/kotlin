@@ -56,7 +56,7 @@ class UnimplementedKotlinInterfaceMemberAnnotator : Annotator {
         val signaturesVisibleThroughKotlinSuperClass = kotlinSuperClass?.visibleSignatures ?: emptyList()
         return signaturesFromKotlinInterfaces.firstOrNull {
             it !in signaturesVisibleThroughKotlinSuperClass &&
-                    it.method.annotations.none { annotation ->
+                    it.method.modifierList.annotations.none { annotation ->
                         annotation.qualifiedName == JVM_DEFAULT_FQ_NAME.asString()
                     }
         }?.method as? KtLightMethod
