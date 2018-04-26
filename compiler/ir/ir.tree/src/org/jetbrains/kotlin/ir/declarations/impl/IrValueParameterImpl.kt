@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class IrValueParameterImpl(
@@ -36,34 +36,52 @@ class IrValueParameterImpl(
     override val symbol: IrValueParameterSymbol,
     override val name: Name,
     override val index: Int,
-    override val type: KotlinType,
-    override val varargElementType: KotlinType?,
+    override val type: IrType,
+    override val varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
-) : IrDeclarationBase(startOffset, endOffset, origin), IrValueParameter {
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
+    IrValueParameter {
 
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrValueParameterSymbol) :
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrValueParameterSymbol,
+        type: IrType,
+        varargElementType: IrType?
+    ) :
             this(
                 startOffset, endOffset, origin,
                 symbol,
                 symbol.descriptor.name,
                 symbol.descriptor.safeAs<ValueParameterDescriptor>()?.index ?: -1,
-                symbol.descriptor.type,
-                symbol.descriptor.safeAs<ValueParameterDescriptor>()?.varargElementType,
+                type,
+                varargElementType,
                 symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isCrossinline ?: false,
                 symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isNoinline ?: false
             )
-
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ParameterDescriptor) :
-            this(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor))
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ParameterDescriptor,
+        type: IrType,
+        varargElementType: IrType?
+    ) :
+            this(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), type, varargElementType)
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ParameterDescriptor,
+        type: IrType,
+        varargElementType: IrType?,
         defaultValue: IrExpressionBody?
-    ) : this(startOffset, endOffset, origin, descriptor) {
+    ) : this(startOffset, endOffset, origin, descriptor, type, varargElementType) {
         this.defaultValue = defaultValue
     }
 

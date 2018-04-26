@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
 
 interface IrProperty : IrDeclaration {
     override val descriptor: PropertyDescriptor
 
     val name: Name
-    val type: KotlinType
+    val type: IrType
     val modality: Modality
     val visibility: Visibility
     val isVar: Boolean

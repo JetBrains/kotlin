@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrPropertyImpl(
@@ -34,7 +34,7 @@ class IrPropertyImpl(
     origin: IrDeclarationOrigin,
     override val descriptor: PropertyDescriptor,
     override val name: Name,
-    override val type: KotlinType,
+    override val type: IrType,
     override val visibility: Visibility,
     override val modality: Modality,
     override val isVar: Boolean,
@@ -50,10 +50,11 @@ class IrPropertyImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         isDelegated: Boolean,
-        descriptor: PropertyDescriptor
+        descriptor: PropertyDescriptor,
+        type: IrType
     ) : this(
         startOffset, endOffset, origin, descriptor,
-        descriptor.name, descriptor.type, descriptor.visibility, descriptor.modality,
+        descriptor.name, type, descriptor.visibility, descriptor.modality,
         isVar = descriptor.isVar,
         isConst = descriptor.isConst,
         isLateinit = descriptor.isLateInit,
@@ -65,8 +66,9 @@ class IrPropertyImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor
-    ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
+        descriptor: PropertyDescriptor,
+        type: IrType
+    ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor, type)
 
     constructor(
         startOffset: Int,
@@ -74,8 +76,9 @@ class IrPropertyImpl(
         origin: IrDeclarationOrigin,
         isDelegated: Boolean,
         descriptor: PropertyDescriptor,
+        type: IrType,
         backingField: IrField?
-    ) : this(startOffset, endOffset, origin, isDelegated, descriptor) {
+    ) : this(startOffset, endOffset, origin, isDelegated, descriptor, type) {
         this.backingField = backingField
     }
 
@@ -85,10 +88,11 @@ class IrPropertyImpl(
         origin: IrDeclarationOrigin,
         isDelegated: Boolean,
         descriptor: PropertyDescriptor,
+        type: IrType,
         backingField: IrField?,
         getter: IrSimpleFunction?,
         setter: IrSimpleFunction?
-    ) : this(startOffset, endOffset, origin, isDelegated, descriptor, backingField) {
+    ) : this(startOffset, endOffset, origin, isDelegated, descriptor, type, backingField) {
         this.getter = getter
         this.setter = setter
     }
