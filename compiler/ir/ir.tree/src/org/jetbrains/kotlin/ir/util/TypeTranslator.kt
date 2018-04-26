@@ -3,29 +3,19 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.psi2ir.types
+package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.transformations.AnnotationGenerator
-import org.jetbrains.kotlin.psi2ir.transformations.ScopedTypeParametersResolver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 
@@ -33,8 +23,6 @@ class TypeTranslator(
     moduleDescriptor: ModuleDescriptor,
     private val symbolTable: SymbolTable
 ) {
-
-    constructor(context: GeneratorContext) : this(context.moduleDescriptor, context.symbolTable)
 
     private val annotationGenerator = AnnotationGenerator(moduleDescriptor, symbolTable)
     private val typeParametersResolver = ScopedTypeParametersResolver()
