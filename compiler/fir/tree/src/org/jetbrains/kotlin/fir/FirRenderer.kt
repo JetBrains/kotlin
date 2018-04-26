@@ -170,6 +170,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             if (memberDeclaration.isExternal) {
                 print("external ")
             }
+            if (memberDeclaration.isSuspend) {
+                print("suspend ")
+            }
         } else if (memberDeclaration is FirProperty) {
             if (memberDeclaration.isConst) {
                 print("const ")

@@ -548,6 +548,7 @@ class RawFirBuilder(val session: FirSession) {
                 function.hasModifier(KtTokens.INLINE_KEYWORD),
                 function.hasModifier(KtTokens.TAILREC_KEYWORD),
                 function.hasModifier(KtTokens.EXTERNAL_KEYWORD),
+                function.hasModifier(KtTokens.SUSPEND_KEYWORD),
                 function.receiverTypeReference.convertSafe(),
                 if (function.hasBlockBody()) {
                     typeReference.toFirOrUnitType()
