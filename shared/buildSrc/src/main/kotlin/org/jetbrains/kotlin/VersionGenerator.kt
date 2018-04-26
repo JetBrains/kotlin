@@ -68,17 +68,17 @@ open class VersionGenerator: DefaultTask() {
                      |      append(build)
                      |    }
                      |  }
-                     |  private val versionString by lazy { versionToString(true, true) }
+                     |
+                     |  private val isRelease: Boolean
+                     |    get() = meta == MetaVersion.RELEASE
+                     |
+                     |  private val versionString by lazy { versionToString(!isRelease, !isRelease) }
+                     |
                      |  override fun toString() = versionString
                      |
-                     |  val gradlePluginVersion by lazy {
-                     |    if (meta == MetaVersion.RELEASE)
-                     |      versionToString(false, false)
-                     |    else
-                     |      versionString
-                     |  }
+                     |  val gradlePluginVersion by lazy { versionString }
                      |}
-            """.trimMargin()
+                """.trimMargin()
             }
             versionFile.printWriter().use {
                 it.println(content)
