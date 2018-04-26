@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/testData/multiModuleHighlighting/multiplatform")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class MultiModuleHighlightingTestGenerated extends AbstractMultiModuleHighlightingTest {
+public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatformHighlightingTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }

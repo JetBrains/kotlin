@@ -30,6 +30,9 @@ abstract class AbstractMultiModuleHighlightingTest : AbstractMultiHighlightingTe
             checkHighlighting(myEditor, true, false)
         }
     }
+}
+
+abstract class AbstractMultiPlatformHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     protected open fun doTest(path: String) {
         setupMppProjectFromDirStructure(File(path))
