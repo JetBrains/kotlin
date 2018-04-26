@@ -102,37 +102,5 @@ class TypeTranslator(
             // TODO starProjection
             translateType(it.type, it.projectionKind)
         }
-
-    private inner class SimpleTranslationVisitor : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitDeclaration(declaration: IrDeclaration) {
-            if (declaration is IrTypeParametersContainer) {
-                enterScope(declaration)
-            }
-            declaration.acceptChildrenVoid(this)
-            if (declaration is IrTypeParametersContainer) {
-                leaveScope()
-            }
-        }
-
-        override fun visitExpression(expression: IrExpression) {
-            translateType(expression.type)
-            expression.acceptChildrenVoid(this)
-        }
-    }
-
-    companion object {
-
-        fun tryTranslateAllExpressionTypes(
-            element: IrElement,
-            context: GeneratorContext
-        ) {
-            element.acceptVoid(TypeTranslator(context).SimpleTranslationVisitor())
-        }
-
-    }
 }
 
