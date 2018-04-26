@@ -24,9 +24,12 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 
-class ExternalDependenciesGenerator(val symbolTable: SymbolTable, val irBuiltIns: IrBuiltIns) {
-
-    private val stubGenerator = DeclarationStubGenerator(symbolTable, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
+class ExternalDependenciesGenerator(
+    moduleDescriptor: ModuleDescriptor,
+    val symbolTable: SymbolTable,
+    val irBuiltIns: IrBuiltIns
+) {
+    private val stubGenerator = DeclarationStubGenerator(moduleDescriptor,symbolTable, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
 
     fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
         DependencyGenerationTask(irModule).run()

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import java.lang.AssertionError
 
 class StatementGenerator(
     val bodyGenerator: BodyGenerator,
@@ -206,7 +206,7 @@ class StatementGenerator(
         )
 
     fun generateConstantExpression(expression: KtExpression, constant: CompileTimeConstant<*>): IrExpression =
-        ConstantValueGenerator(context).generateConstantValueAsExpression(
+        ConstantValueGenerator(context.moduleDescriptor, context.symbolTable, null).generateConstantValueAsExpression(
             expression.startOffset,
             expression.endOffset,
             constant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))

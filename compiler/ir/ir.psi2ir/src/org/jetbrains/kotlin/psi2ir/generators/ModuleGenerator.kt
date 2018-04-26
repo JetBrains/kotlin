@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.transformations.AnnotationGenerator
+import org.jetbrains.kotlin.ir.util.AnnotationGenerator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
-    private val annotationGenerator = AnnotationGenerator(context)
+    private val annotationGenerator = AnnotationGenerator(context.moduleDescriptor, context.symbolTable)
 
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
         generateModuleFragmentWithoutDependencies(ktFiles).also { irModule ->
@@ -41,7 +41,9 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
         }
 
     fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
-        ExternalDependenciesGenerator(context.symbolTable, context.irBuiltIns).generateUnboundSymbolsAsDependencies(irModule)
+        ExternalDependenciesGenerator(
+            irModule.descriptor, context.symbolTable, context.irBuiltIns
+        ).generateUnboundSymbolsAsDependencies(irModule)
     }
 
     private fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {
