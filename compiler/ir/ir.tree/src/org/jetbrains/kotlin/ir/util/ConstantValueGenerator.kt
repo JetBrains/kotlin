@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.psi2ir.generators
+package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -14,9 +14,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.psi2ir.transformations.AnnotationGenerator
-import org.jetbrains.kotlin.psi2ir.transformations.ScopedTypeParametersResolver
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -29,10 +26,9 @@ class ConstantValueGenerator(
     private val scopedTypeParameterResolver: ScopedTypeParametersResolver?
 ) {
 
-    constructor(
-        context: GeneratorContext,
-        annotationGenerator: AnnotationGenerator? = null
-    ) : this(context.moduleDescriptor, context.symbolTable, annotationGenerator, null)
+    private val typeTranslator = TypeTranslator(moduleDescriptor, symbolTable)
+
+    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     fun generateConstantValueAsExpression(
         startOffset: Int,
@@ -40,7 +36,8 @@ class ConstantValueGenerator(
         constantValue: ConstantValue<*>,
         varargElementType: KotlinType? = null
     ): IrExpression {
-        val constantType = constantValue.getType(moduleDescriptor)
+        val constantKtType = constantValue.getType(moduleDescriptor)
+        val constantType = constantKtType.toIrType()
 
         return when (constantValue) {
             is StringValue -> IrConstImpl.string(startOffset, endOffset, constantType, constantValue.value)
@@ -55,11 +52,11 @@ class ConstantValueGenerator(
             is ShortValue -> IrConstImpl.short(startOffset, endOffset, constantType, constantValue.value)
 
             is ArrayValue -> {
-                val arrayElementType = varargElementType ?: constantType.getArrayElementType()
+                val arrayElementType = varargElementType ?: constantKtType.getArrayElementType()
                 IrVarargImpl(
                     startOffset, endOffset,
                     constantType,
-                    arrayElementType,
+                    arrayElementType.toIrType(),
                     constantValue.value.map {
                         generateConstantValueAsExpression(startOffset, endOffset, it, null)
                     }
@@ -68,7 +65,7 @@ class ConstantValueGenerator(
 
             is EnumValue -> {
                 val enumEntryDescriptor =
-                    constantType.memberScope.getContributedClassifier(constantValue.enumEntryName, NoLookupLocation.FROM_BACKEND)
+                    constantKtType.memberScope.getContributedClassifier(constantValue.enumEntryName, NoLookupLocation.FROM_BACKEND)
                             ?: throw AssertionError("No such enum entry ${constantValue.enumEntryName} in $constantType")
                 if (enumEntryDescriptor !is ClassDescriptor) {
                     throw AssertionError("Enum entry $enumEntryDescriptor should be a ClassDescriptor")
@@ -86,9 +83,9 @@ class ConstantValueGenerator(
             }
 
             is KClassValue -> {
-                val classifierType = constantValue.value
-                val classifierDescriptor = classifierType.constructor.declarationDescriptor
-                        ?: throw AssertionError("Unexpected KClassValue: $classifierType")
+                val classifierKtType = constantValue.value
+                val classifierDescriptor = classifierKtType.constructor.declarationDescriptor
+                        ?: throw AssertionError("Unexpected KClassValue: $classifierKtType")
 
                 val typeParameterSymbol = classifierDescriptor.safeAs<TypeParameterDescriptor>()?.let {
                     scopedTypeParameterResolver?.resolveScopedTypeParameter(it)
@@ -96,9 +93,9 @@ class ConstantValueGenerator(
 
                 IrClassReferenceImpl(
                     startOffset, endOffset,
-                    constantValue.getType(moduleDescriptor),
+                    constantValue.getType(moduleDescriptor).toIrType(),
                     typeParameterSymbol ?: symbolTable.referenceClassifier(classifierDescriptor),
-                    classifierType
+                    classifierKtType.toIrType()
                 )
             }
 
