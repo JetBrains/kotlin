@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
+import kotlin.collections.ArrayList
 
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
 // See http://web.cs.ucla.edu/~palsberg/tba/papers/sundaresan-et-al-oopsla00.pdf for details.
@@ -103,25 +104,29 @@ internal object Devirtualization {
         private val symbolTable = moduleDFG.symbolTable
 
         sealed class Node(val id: Int) : DirectedGraphNode<Node> {
-            override val directEdges = mutableListOf<Node>()
-            override val reversedEdges = mutableListOf<Node>()
+            override var directEdges: MutableList<Node>? = null
+            override var reversedEdges : MutableList<Node>? = null
             override val key get() = this
 
-            val directCastEdges = mutableListOf<CastEdge>()
-            val reversedCastEdges = mutableListOf<CastEdge>()
+            var directCastEdges: MutableList<CastEdge>? = null
+            var reversedCastEdges: MutableList<CastEdge>? = null
 
             val types = BitSet()
 
             var priority = -1
 
             fun addEdge(node: Node) {
-                directEdges += node
-                node.reversedEdges += this
+                if (directEdges == null) directEdges = ArrayList(1)
+                directEdges!!.add(node)
+                if (node.reversedEdges == null) node.reversedEdges = ArrayList(1)
+                node.reversedEdges!!.add(this)
             }
 
             fun addCastEdge(edge: CastEdge) {
-                directCastEdges += edge
-                edge.node.reversedCastEdges += CastEdge(this, edge.suitableTypes)
+                if (directCastEdges == null) directCastEdges = ArrayList(1)
+                directCastEdges!!.add(edge)
+                if (edge.node.reversedCastEdges == null) edge.node.reversedCastEdges = ArrayList(1)
+                edge.node.reversedCastEdges!!.add(CastEdge(this, edge.suitableTypes))
             }
 
             abstract fun toString(allTypes: List<DataFlowIR.Type.Declared>): String
@@ -407,10 +412,10 @@ internal object Devirtualization {
                 println("FULL CONSTRAINT GRAPH")
                 constraintGraph.nodes.forEach {
                     println("    NODE #${it.id}")
-                    it.directEdges.forEach {
+                    it.directEdges?.forEach {
                         println("        EDGE: #${it.id}z")
                     }
-                    it.directCastEdges.forEach {
+                    it.directCastEdges?.forEach {
                         println("        CAST EDGE: #${it.node.id}z casted to ${it.suitableTypes.format(allTypes)}")
                     }
                     allTypes.forEachIndexed { index, type ->
@@ -422,14 +427,14 @@ internal object Devirtualization {
 
             constraintGraph.nodes.forEach {
                 if (it is Node.Source) {
-                    assert(it.reversedEdges.isEmpty(), { "A source node #${it.id} has incoming edges" })
-                    assert(it.reversedCastEdges.isEmpty(), { "A source node #${it.id} has incoming edges" })
+                    assert(it.reversedEdges?.isEmpty() ?: true, { "A source node #${it.id} has incoming edges" })
+                    assert(it.reversedCastEdges?.isEmpty() ?: true, { "A source node #${it.id} has incoming edges" })
                 }
             }
 
             DEBUG_OUTPUT(0) {
                 println("CONSTRAINT GRAPH: ${constraintGraph.nodes.size} nodes, " +
-                    "${constraintGraph.nodes.sumBy { it.directEdges.size + it.directCastEdges.size } } edges")
+                    "${constraintGraph.nodes.sumBy { (it.directEdges?.size ?: 0) + (it.directCastEdges?.size ?: 0) } } edges")
             }
 
             val topologicalOrder = DirectedGraphCondensationBuilder(constraintGraph).build().topologicalOrder
@@ -453,10 +458,10 @@ internal object Devirtualization {
                     continue // A source has no incoming edges.
                 val types = BitSet()
                 for (node in multiNode.nodes) {
-                    node.reversedEdges.forEach { types.or(it.types) }
+                    node.reversedEdges?.forEach { types.or(it.types) }
                     node.reversedCastEdges
-                            .filter { it.node.priority < node.priority } // Doesn't contradict topological order.
-                            .forEach {
+                            ?.filter { it.node.priority < node.priority } // Doesn't contradict topological order.
+                            ?.forEach {
                                 val sourceTypes = it.node.types.copy()
                                 sourceTypes.and(it.suitableTypes)
                                 types.or(sourceTypes)
@@ -468,20 +473,20 @@ internal object Devirtualization {
             val badEdges = mutableListOf<Pair<Node, Node.CastEdge>>()
             for (node in constraintGraph.nodes) {
                 node.directCastEdges
-                        .filter { it.node.priority < node.priority } // Contradicts topological order.
-                        .forEach { badEdges += node to it }
+                        ?.filter { it.node.priority < node.priority } // Contradicts topological order.
+                        ?.forEach { badEdges += node to it }
             }
             badEdges.sortBy { it.second.node.priority } // Heuristic.
 
             do {
                 fun propagateTypes(node: Node, types: BitSet) {
                     node.types.or(types)
-                    for (edge in node.directEdges) {
+                    node.directEdges?.forEach { edge ->
                         val missingTypes = types.copy().apply { andNot(edge.types) }
                         if (!missingTypes.isEmpty)
                             propagateTypes(edge, missingTypes)
                     }
-                    for (castEdge in node.directCastEdges) {
+                    node.directCastEdges?.forEach { castEdge ->
                         val missingTypes = types.copy().apply { andNot(castEdge.node.types) }
                         missingTypes.and(castEdge.suitableTypes)
                         if (!missingTypes.isEmpty)

@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.backend.konan
 
 internal interface DirectedGraphNode<out K> {
     val key: K
-    val directEdges: List<K>
-    val reversedEdges: List<K>
+    val directEdges: List<K>?
+    val reversedEdges: List<K>?
 }
 
 internal interface DirectedGraph<K, out N: DirectedGraphNode<K>> {
@@ -70,7 +70,7 @@ internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(
 
     private fun findOrder(node: N) {
         visited += node.key
-        node.directEdges.forEach {
+        node.directEdges?.forEach {
             if (!visited.contains(it))
                 findOrder(graph.get(it))
         }
@@ -80,7 +80,7 @@ internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(
     private fun paint(node: N, multiNode: MutableSet<K>) {
         visited += node.key
         multiNode += node.key
-        node.reversedEdges.forEach {
+        node.reversedEdges?.forEach {
             if (!visited.contains(it))
                 paint(graph.get(it), multiNode)
         }
@@ -89,7 +89,7 @@ internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(
     private fun findMultiNodesOrder(node: DirectedGraphMultiNode<K>) {
         visited.addAll(node.nodes)
         node.nodes.forEach {
-            graph.get(it).directEdges.forEach {
+            graph.get(it).directEdges?.forEach {
                 if (!visited.contains(it))
                     findMultiNodesOrder(nodeToMultiNodeMap[graph.get(it)]!!)
             }
