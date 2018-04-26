@@ -32,6 +32,7 @@ class FirMemberFunctionImpl(
     isInline: Boolean,
     isTailRec: Boolean,
     isExternal: Boolean,
+    isSuspend: Boolean,
     receiverType: FirType?,
     returnType: FirType,
     override val body: FirBody?
@@ -45,6 +46,7 @@ class FirMemberFunctionImpl(
         status.isInline = isInline
         status.isTailRec = isTailRec
         status.isExternal = isExternal
+        status.isSuspend = isSuspend
     }
 
     override val valueParameters = mutableListOf<FirValueParameter>()

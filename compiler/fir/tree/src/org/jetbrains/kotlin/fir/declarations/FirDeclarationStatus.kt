@@ -44,6 +44,8 @@ interface FirDeclarationStatus : FirElement {
 
     val isData: Boolean
 
+    val isSuspend: Boolean
+
     override val psi: PsiElement?
         get() = null
 
