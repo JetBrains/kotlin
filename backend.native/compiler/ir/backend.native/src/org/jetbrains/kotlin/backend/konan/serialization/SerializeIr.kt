@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.metadata.KonanIr.IrConst.ValueCase.*
 import org.jetbrains.kotlin.metadata.KonanIr.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.metadata.KonanIr.IrVarargElement.VarargElementCase.*
 import org.jetbrains.kotlin.metadata.KonanLinkData
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassConstructorDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
@@ -187,8 +188,7 @@ internal class IrSerializer(val context: Context,
                 // Am I observing an IR generation regression?
                 // I see a lack of arg for an empty vararg,
                 // rather than an empty vararg node.
-                assert(it.varargElementType != null ||
-                    it.declaresDefaultValue())
+                assert(it.varargElementType != null || it.hasDefaultValue())
             } else {
                 argOrNull.expression = serializeExpression(actual)
             }
