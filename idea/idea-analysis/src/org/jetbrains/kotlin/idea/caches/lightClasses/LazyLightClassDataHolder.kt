@@ -30,30 +30,20 @@ typealias DummyLightClassContextProvider = (() -> LightClassConstructionContext?
 typealias DiagnosticsHolderProvider = () -> LazyLightClassDataHolder.DiagnosticsHolder
 
 sealed class LazyLightClassDataHolder(
-    builder: LightClassBuilder,
-    exactContextProvider: ExactLightClassContextProvider,
+    private val builder: LightClassBuilder,
+    private val exactContextProvider: ExactLightClassContextProvider,
     dummyContextProvider: DummyLightClassContextProvider,
     private val diagnosticsHolderProvider: DiagnosticsHolderProvider
 ) : LightClassDataHolder {
 
-    class DiagnosticsHolder(private val storageManager: StorageManager) {
-        private val computedLightClassDiagnostics = hashMapOf<LazyLightClassDataHolder, Diagnostics>()
+    class DiagnosticsHolder(storageManager: StorageManager) {
+        private val cache = storageManager.createCacheWithNotNullValues<LazyLightClassDataHolder, Diagnostics>()
 
-        fun putDiagnostics(lazyLightClassDataHolder: LazyLightClassDataHolder, diagnostics: Diagnostics) {
-            storageManager.compute {
-                computedLightClassDiagnostics[lazyLightClassDataHolder] = diagnostics
-            }
-        }
-
-        fun getComputedDiagnostics(lazyLightClassDataHolder: LazyLightClassDataHolder): Diagnostics? =
-            storageManager.compute { computedLightClassDiagnostics[lazyLightClassDataHolder] }
+        fun getOrCompute(lazyLightClassDataHolder: LazyLightClassDataHolder, diagnostics: () -> Diagnostics) =
+            cache.computeIfAbsent(lazyLightClassDataHolder, diagnostics)
     }
 
-    private val exactResultLazyValue = lazyPub {
-        val (stub, _, diagnostics) = builder(exactContextProvider())
-        diagnosticsHolderProvider().putDiagnostics(this, diagnostics)
-        stub
-    }
+    private val exactResultLazyValue = lazyPub { builder(exactContextProvider()).stub }
 
     private val lazyInexactStub by lazyPub {
         dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context).stub } }
@@ -65,11 +55,11 @@ sealed class LazyLightClassDataHolder(
     override val javaFileStub by exactResultLazyValue
 
     override val extraDiagnostics: Diagnostics
-        get() {
-            // run light class builder
-            exactResultLazyValue.value
-
-            return diagnosticsHolderProvider().getComputedDiagnostics(this) ?: Diagnostics.EMPTY
+        get() = diagnosticsHolderProvider().getOrCompute(this) {
+            builder(exactContextProvider()).diagnostics
+                // Force lazy diagnostics computation because otherwise a lot of memory is retained by computation.
+                // NB: Laziness here is not crucial anyway since somebody already has requested diagnostics and we hope one will use them
+                .takeUnless { it.isEmpty() } ?: Diagnostics.EMPTY
         }
 
     // for facade or defaultImpls
