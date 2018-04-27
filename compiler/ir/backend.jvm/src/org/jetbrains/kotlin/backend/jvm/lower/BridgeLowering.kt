@@ -213,7 +213,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             //TODO
             //MemberCodegen.markLineNumberForDescriptor(owner.getThisDescriptor(), iv)
             if (delegateTo.method.argumentTypes.isNotEmpty() && isSpecialBridge) {
-                generateTypeCheckBarrierIfNeeded(descriptor, bridgeDescriptor, delegateTo.method.argumentTypes)
+                generateTypeCheckBarrierIfNeeded(descriptor, bridgeDescriptor, irFunction, delegateTo.method.argumentTypes)
             }
 
             val implementation = if (isSpecialBridge) delegateTo.descriptor.copyAsDeclaration() else delegateTo.descriptor
@@ -225,21 +225,21 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
             call.dispatchReceiver = IrGetValueImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                containingClass.thisAsReceiverParameter,
+                irFunction.dispatchReceiverParameter!!.symbol,
                 JvmLoweredStatementOrigin.BRIDGE_DELEGATION
             )
-            bridgeDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
+            irFunction.valueParameters.mapIndexed { i, valueParameter ->
                 call.putValueArgument(
                     i,
                     IrGetValueImpl(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
-                        valueParameterDescriptor,
+                        valueParameter.symbol,
                         JvmLoweredStatementOrigin.BRIDGE_DELEGATION
                     )
                 )
             }
-            +IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridgeDescriptor, call)
+            +IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.symbol, call)
         }.apply {
             irFunction.body = this
         }
@@ -250,21 +250,27 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
     private fun IrBlockBodyBuilder.generateTypeCheckBarrierIfNeeded(
         overrideDescriptor: FunctionDescriptor,
         bridgeDescriptor: FunctionDescriptor,
+        bridgeFunction: IrFunction,
         delegateParameterTypes: Array<Type>?
     ) {
         val typeSafeBarrierDescription =
             BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(overrideDescriptor) ?: return
 
         BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(overrideDescriptor)
-                ?: error("Overridden built-in method should not be null for " + overrideDescriptor)
+                ?: error("Overridden built-in method should not be null for $overrideDescriptor")
 
         val conditions = bridgeDescriptor.valueParameters.withIndex().filter { (i, parameterDescriptor) ->
             typeSafeBarrierDescription.checkParameter(i) ||
                     !(delegateParameterTypes == null || OBJECT_TYPE == delegateParameterTypes[i]) ||
                     !TypeUtils.isNullableType(parameterDescriptor.type)
-        }.map { (i, parameterDescriptor) ->
+        }.map { (i, _) ->
             val checkValue =
-                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameterDescriptor, JvmLoweredStatementOrigin.BRIDGE_DELEGATION)
+                IrGetValueImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    bridgeFunction.valueParameters[i].symbol,
+                    JvmLoweredStatementOrigin.BRIDGE_DELEGATION
+                )
             if (delegateParameterTypes == null || OBJECT_TYPE == delegateParameterTypes[i]) {
                 irNotEquals(checkValue, irNull())
             } else {

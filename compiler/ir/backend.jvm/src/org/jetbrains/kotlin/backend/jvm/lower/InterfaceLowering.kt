@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -141,12 +143,13 @@ internal fun createStaticFunctionWithReceivers(
 }
 
 internal fun FunctionDescriptor.createFunctionAndMapVariables(oldFunction: IrFunction) =
-    IrFunctionImpl(oldFunction.startOffset, oldFunction.endOffset, oldFunction.origin, this, oldFunction.body).also {
-        val mapping: Map<ValueDescriptor, ValueDescriptor> =
+    IrFunctionImpl(oldFunction.startOffset, oldFunction.endOffset, oldFunction.origin, this, oldFunction.body).apply {
+        createParameterDeclarations()
+        val mapping: Map<ValueDescriptor, IrValueParameter> =
             (
                     listOfNotNull(oldFunction.descriptor.dispatchReceiverParameter!!, oldFunction.descriptor.extensionReceiverParameter) +
                             oldFunction.descriptor.valueParameters
-                    ).zip(this.valueParameters).toMap()
+                    ).zip(valueParameters).toMap()
 
-        it.body?.transform(VariableRemapper(mapping), null)
+        body?.transform(VariableRemapper(mapping), null)
     }
