@@ -54,7 +54,8 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
                 val context = receiverTypeReference.analyze()
                 val receiverType = context[BindingContext.TYPE, receiverTypeReference] ?: return
-                if (DescriptorUtils.isCompanionObject(receiverType.constructor.declarationDescriptor)) return
+                val receiverTypeDeclaration = receiverType.constructor.declarationDescriptor
+                if (DescriptorUtils.isCompanionObject(receiverTypeDeclaration)) return
 
                 if (callableDeclaration.isOverridable() ||
                     callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
@@ -68,6 +69,13 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 val callable = callableDeclaration.descriptor
 
                 if (callable != null && MainFunctionDetector.isMain(callable)) return
+
+                if ((callableDeclaration is KtProperty || callableDeclaration is KtNamedFunction)
+                    && callable?.containingDeclaration == receiverTypeDeclaration
+                ) {
+                    registerProblem(receiverTypeReference)
+                    return
+                }
 
                 var used = false
                 callableDeclaration.acceptChildren(object : KtVisitorVoid() {
@@ -102,14 +110,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                     }
                 })
 
-                if (!used) {
-                    holder.registerProblem(
-                        receiverTypeReference,
-                        KotlinBundle.message("unused.receiver.parameter"),
-                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                        MyQuickFix()
-                    )
-                }
+                if (!used) registerProblem(receiverTypeReference)
             }
 
             override fun visitNamedFunction(function: KtNamedFunction) {
@@ -118,6 +119,15 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
             override fun visitProperty(property: KtProperty) {
                 check(property)
+            }
+
+            private fun registerProblem(receiverTypeReference: KtTypeReference) {
+                holder.registerProblem(
+                    receiverTypeReference,
+                    KotlinBundle.message("unused.receiver.parameter"),
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    MyQuickFix()
+                )
             }
         }
     }
