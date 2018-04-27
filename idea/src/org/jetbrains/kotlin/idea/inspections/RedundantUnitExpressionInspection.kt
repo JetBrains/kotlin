@@ -9,6 +9,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
@@ -18,7 +19,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -40,21 +43,7 @@ private fun KtReferenceExpression.isRedundantUnit(): Boolean {
     if (!isUnitLiteral()) return false
     val parent = this.parent ?: return false
     if (parent is KtReturnExpression) {
-        if (parent.labeledExpression != null) {
-            val functionLiteral = parent.getStrictParentOfType<KtFunctionLiteral>()
-            val callExpression = functionLiteral?.getStrictParentOfType<KtCallExpression>()
-            if (functionLiteral != null && callExpression != null) {
-                val valueArgument = functionLiteral.getStrictParentOfType<KtValueArgument>()
-                val index = if (valueArgument != null)
-                    callExpression.valueArguments.indexOf(valueArgument)
-                else
-                    callExpression.valueArguments.size - 1
-                val parameter = callExpression.getCallableDescriptor()?.valueParameters?.getOrNull(index)
-                val returnType = parameter?.returnType?.arguments?.firstOrNull()?.type
-                if (returnType?.nameIfStandardType == KotlinBuiltIns.FQ_NAMES.any.shortName()) return false
-            }
-        }
-        return true
+        return parent.returnType()?.nameIfStandardType != KotlinBuiltIns.FQ_NAMES.any.shortName()
     }
     if (parent is KtBlockExpression) {
         // Do not report just 'Unit' in function literals (return@label Unit is OK even in literals)
@@ -78,6 +67,19 @@ private fun KtReferenceExpression.isRedundantUnit(): Boolean {
 
 private fun KtExpression.isUnitLiteral(): Boolean =
     KotlinBuiltIns.FQ_NAMES.unit.shortName() == (this as? KtNameReferenceExpression)?.getReferencedNameAsName()
+
+private fun KtReturnExpression.returnType(): KotlinType? {
+    if (labeledExpression != null) {
+        val functionLiteral = getStrictParentOfType<KtFunctionLiteral>() ?: return null
+        val callExpression = functionLiteral.getStrictParentOfType<KtCallExpression>() ?: return null
+        val valueArgument = functionLiteral.getStrictParentOfType<KtValueArgument>()
+        val valueArguments = callExpression.valueArguments
+        val index = if (valueArgument != null) valueArguments.indexOf(valueArgument) else valueArguments.size - 1
+        val parameter = callExpression.getCallableDescriptor()?.valueParameters?.getOrNull(index)
+        return parameter?.returnType?.arguments?.firstOrNull()?.type
+    }
+    return getStrictParentOfType<KtNamedFunction>()?.typeReference?.let { analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, it] }
+}
 
 private class RemoveRedundantUnitFix : LocalQuickFix {
     override fun getName() = "Remove redundant 'Unit'"
