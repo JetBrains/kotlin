@@ -37,27 +37,8 @@ import com.sun.tools.javac.util.List as JavacList
 fun KaptContext<*>.doAnnotationProcessing(
         javaSourceFiles: List<File>,
         processors: List<Processor>,
-        compileClasspath: List<File>,
-        annotationProcessingClasspath: List<File>,
-        sourcesOutputDir: File,
-        classesOutputDir: File,
-        additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil(),
-        withJdk: Boolean = false
+        additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
 ) {
-    with (options) {
-        put(Option.PROC, "only") // Only process annotations
-
-        if (!withJdk) {
-            putJavacOption("BOOTCLASSPATH", "BOOT_CLASS_PATH", "") // No boot classpath
-        }
-
-        putJavacOption("CLASSPATH", "CLASS_PATH", compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
-        putJavacOption("PROCESSORPATH", "PROCESSOR_PATH", annotationProcessingClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
-        put(Option.S, sourcesOutputDir.canonicalPath)
-        put(Option.D, classesOutputDir.canonicalPath)
-        put(Option.ENCODING, "UTF-8")
-    }
-
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
     val wrappedProcessors = processors.map { ProcessorWrapper(it) }
 
