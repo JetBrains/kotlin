@@ -32,6 +32,7 @@ class LeakingThisInspection : AbstractKotlinInspection() {
             val context = klass.analyzeWithContent()
             val leakingThese = context.getSliceContents(LEAKING_THIS)
             these@ for ((expression, leakingThisDescriptor) in leakingThese) {
+                if (leakingThisDescriptor.classOrObject != klass) continue@these
                 val description = when (leakingThisDescriptor) {
                     is NonFinalClass ->
                         if (expression is KtThisExpression)
