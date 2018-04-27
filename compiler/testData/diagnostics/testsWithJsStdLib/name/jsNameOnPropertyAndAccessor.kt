@@ -8,7 +8,7 @@ class A {
 
     @JsName("m_") var m: Int
         <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@JsName("get_m")<!> get() = 23
-        <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@JsName("set_m")<!> set(value) {}
+        <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@JsName("set_m")<!> set(<!UNUSED_PARAMETER!>value<!>) {}
 }
 
 @JsName("xx_") val xx: Int
@@ -18,4 +18,4 @@ class A {
 
 @JsName("mm_") var mm: Int
     <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@JsName("get_mm")<!> get() = 23
-    <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@JsName("set_mm")<!> set(value) {}
+    <!JS_NAME_ON_ACCESSOR_AND_PROPERTY!>@JsName("set_mm")<!> set(<!UNUSED_PARAMETER!>value<!>) {}
