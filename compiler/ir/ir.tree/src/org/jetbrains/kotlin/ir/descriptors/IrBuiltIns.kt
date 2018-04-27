@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.types.withHasQuestionMark
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -36,11 +38,21 @@ import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-class IrBuiltIns(val builtIns: KotlinBuiltIns) {
-    private val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtIns.builtInsModule, KOTLIN_INTERNAL_IR_FQN)
+class IrBuiltIns(val builtIns: KotlinBuiltIns, outerSymbolTable: SymbolTable?) {
+
+    constructor(builtIns: KotlinBuiltIns) : this(builtIns, null)
+
+    private val builtInsModule = builtIns.builtInsModule
+
+    private val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
     val irBuiltInsExternalPackageFragment = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(packageFragment))
 
-    private val stubBuilder = DeclarationStubGenerator(SymbolTable(), IrDeclarationOrigin.IR_BUILTINS_STUB)
+    private val symbolTable = outerSymbolTable ?: SymbolTable()
+    private val stubBuilder = DeclarationStubGenerator(builtInsModule, symbolTable, IrDeclarationOrigin.IR_BUILTINS_STUB)
+    private val typeTranslator = TypeTranslator(builtInsModule, symbolTable)
+
+    private fun ClassDescriptor.toIrSymbol() = symbolTable.referenceClass(this)
+    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrSimpleFunction {
         val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragment, Name.identifier(name), returnType)
@@ -68,19 +80,57 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     private fun List<SimpleType>.defineComparisonOperatorForEachType(name: String) =
         associate { it to defineComparisonOperator(name, it) }
 
-    val bool = builtIns.booleanType
     val any = builtIns.anyType
     val anyN = builtIns.nullableAnyType
+    val anyType = any.toIrType()
+    val anyClass = builtIns.any.toIrSymbol()
+    val anyNType = anyType.withHasQuestionMark(true)
+
+    val bool = builtIns.booleanType
+    val boolType = bool.toIrType()
+    val boolClass = builtIns.boolean.toIrSymbol()
+
     val char = builtIns.charType
+    val charType = char.toIrType()
+    val charClass = builtIns.char.toIrSymbol()
+
     val byte = builtIns.byteType
+    val byteType = byte.toIrType()
+    val byteClass = builtIns.byte.toIrSymbol()
+
     val short = builtIns.shortType
+    val shortType = short.toIrType()
+    val shortClass = builtIns.short.toIrSymbol()
+
     val int = builtIns.intType
+    val intType = int.toIrType()
+    val intClass = builtIns.int.toIrSymbol()
+
     val long = builtIns.longType
+    val longType = long.toIrType()
+    val longClass = builtIns.long.toIrSymbol()
+
     val float = builtIns.floatType
+    val floatType = float.toIrType()
+    val floatClass = builtIns.float.toIrSymbol()
+
     val double = builtIns.doubleType
+    val doubleType = double.toIrType()
+    val doubleClass = builtIns.double.toIrSymbol()
+
     val nothing = builtIns.nothingType
+    val nothingN = builtIns.nullableNothingType
+    val nothingType = nothing.toIrType()
+    val nothingClass = builtIns.nothing.toIrSymbol()
+    val nothingNType = nothingType.withHasQuestionMark(true)
+
     val unit = builtIns.unitType
+    val unitType = unit.toIrType()
+    val unitClass = builtIns.unit.toIrSymbol()
+
     val string = builtIns.stringType
+    val stringType = string.toIrType()
+    val stringClass = builtIns.string.toIrSymbol()
 
     val primitiveTypes = listOf(bool, char, byte, short, int, long, float, double)
     val primitiveTypesWithComparisons = listOf(int, long, float, double)
