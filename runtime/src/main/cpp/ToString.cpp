@@ -41,7 +41,8 @@ template <typename T> OBJ_GETTER(Kotlin_toStringRadix, T value, KInt radix) {
   if (value == 0) {
     RETURN_RESULT_OF(CreateStringFromCString, "0");
   }
-  char cstring[sizeof(T) * CHAR_BIT + 1];
+  // In the worst case, we convert to binary, with sign.
+  char cstring[sizeof(T) * CHAR_BIT + 2];
   bool negative = (value < 0);
   if  (!negative) {
     value = -value;
