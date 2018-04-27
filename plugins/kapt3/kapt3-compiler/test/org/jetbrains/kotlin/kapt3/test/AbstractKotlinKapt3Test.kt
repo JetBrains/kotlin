@@ -120,23 +120,36 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
                 key to value
             }.toMap()
 
-        val kaptContext = KaptContext(logger, generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
-            classBuilderFactory.origins, generationState, mapDiagnosticLocations = true,
-                                      processorOptions = emptyMap(), javacOptions = javacOptions)
-
-        val javaFiles = files
-            .filter { it.name.toLowerCase().endsWith(".java") }
-            .map { createTempFile(it.name.substringBeforeLast('.'), ".java", it.content) }
+        var javaFiles: List<File>? = null
+        var kaptContext: KaptContext<*>? = null
 
         try {
+            val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
+
+            val paths = KaptPaths(
+                compileClasspath = PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
+                annotationProcessingClasspath = emptyList(), javaSourceRoots = emptyList(),
+                sourcesOutputDir = sourceOutputDir, classFilesOutputDir = sourceOutputDir,
+                stubsOutputDir = sourceOutputDir, incrementalDataOutputDir = sourceOutputDir
+            )
+
+            kaptContext = KaptContext(paths, true, AptMode.STUBS_AND_APT,
+                                          logger, generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
+                                          classBuilderFactory.origins, generationState, mapDiagnosticLocations = true,
+                                          processorOptions = emptyMap(), javacOptions = javacOptions)
+
+            javaFiles = files
+                .filter { it.name.toLowerCase().endsWith(".java") }
+                .map { createTempFile(it.name.substringBeforeLast('.'), ".java", it.content) }
+
             check(kaptContext, javaFiles, txtFile, wholeFile)
         } catch (e: Throwable) {
             throw RuntimeException(e)
         } finally {
-            javaFiles.forEach { it.delete() }
+            javaFiles?.forEach { it.delete() }
             tempFiles.forEach { if (it.isFile) it.delete() else it.deleteRecursively() }
             tempFiles.clear()
-            kaptContext.close()
+            kaptContext?.close()
         }
     }
 
@@ -287,22 +300,17 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
 abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
     override fun check(kaptContext: KaptContext<GenerationState>, javaFiles: List<File>, txtFile: File, wholeFile: File) {
         val compilationUnits = convert(kaptContext, javaFiles, generateNonExistentClass = false, correctErrorTypes = true)
-        val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
-        try {
-            kaptContext.doAnnotationProcessing(emptyList(), listOf(JavaKaptContextTest.simpleProcessor()),
-                compileClasspath = PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
-                annotationProcessingClasspath = emptyList(),
-                sourcesOutputDir = sourceOutputDir, classesOutputDir = sourceOutputDir,
-                additionalSources = compilationUnits, withJdk = true
-            )
 
-            val javaFiles = sourceOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
-            val actualRaw = javaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }
-            val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
-            KotlinTestUtils.assertEqualsToFile(txtFile, actual)
-        } finally {
-            sourceOutputDir.deleteRecursively()
-        }
+        kaptContext.doAnnotationProcessing(
+            emptyList(),
+            listOf(JavaKaptContextTest.simpleProcessor()),
+            additionalSources = compilationUnits
+        )
+
+        val stubJavaFiles = kaptContext.paths.sourcesOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
+        val actualRaw = stubJavaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }
+        val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
+        KotlinTestUtils.assertEqualsToFile(txtFile, actual)
     }
 }
 

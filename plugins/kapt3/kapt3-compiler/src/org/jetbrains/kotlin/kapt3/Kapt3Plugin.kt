@@ -301,10 +301,16 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Options: $apOptions")
         }
 
+        val paths = KaptPaths(
+            compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir,
+            stubsOutputDir, incrementalDataOutputDir
+        )
+
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
-                compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir,
-                stubsOutputDir, incrementalDataOutputDir, apOptions, javacCliOptions, annotationProcessors,
-                aptMode, useLightAnalysis, correctErrorTypes, mapDiagnosticLocations, System.currentTimeMillis(), logger, configuration)
+            paths, apOptions, javacCliOptions, annotationProcessors,
+            aptMode, useLightAnalysis, correctErrorTypes, mapDiagnosticLocations, System.currentTimeMillis(), logger, configuration
+        )
+
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }
 

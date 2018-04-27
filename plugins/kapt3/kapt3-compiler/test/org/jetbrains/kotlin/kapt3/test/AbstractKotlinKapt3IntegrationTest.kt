@@ -23,11 +23,8 @@ import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
+import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.AptMode.STUBS_AND_APT
-import org.jetbrains.kotlin.kapt3.Kapt3BuilderFactory
-import org.jetbrains.kotlin.kapt3.prettyPrint
-import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
@@ -162,11 +159,13 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             options: Map<String, String>,
             stubsOutputDir: File,
             incrementalDataOutputDir: File
-    ) : AbstractKapt3Extension(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
-                               emptyList(), javaSourceRoots, outputDir, outputDir,
-                               stubsOutputDir, incrementalDataOutputDir, options, emptyMap(), emptyList(), STUBS_AND_APT, System.currentTimeMillis(),
-                               KaptLogger(true), correctErrorTypes = true, mapDiagnosticLocations = true,
-                               compilerConfiguration = CompilerConfiguration.EMPTY
+    ) : AbstractKapt3Extension(
+        KaptPaths(
+            PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
+            emptyList(), javaSourceRoots, outputDir, outputDir, stubsOutputDir, incrementalDataOutputDir
+        ), options, emptyMap(), emptyList(), STUBS_AND_APT, System.currentTimeMillis(),
+        KaptLogger(true), correctErrorTypes = true, mapDiagnosticLocations = true,
+        compilerConfiguration = CompilerConfiguration.EMPTY
     ) {
         internal var savedStubs: String? = null
         internal var savedBindings: Map<String, KaptJavaFileObject>? = null
