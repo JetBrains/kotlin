@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isInheritable
@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
@@ -61,6 +60,7 @@ import org.jetbrains.kotlin.idea.util.hasActualsFor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.awt.GridBagConstraints
@@ -81,10 +81,9 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                 is KtProperty, is KtParameter -> {
                     if (declaration is KtParameter && !declaration.hasValOrVar()) return false
                     // can't rely on light element, check annotation ourselves
-                    val descriptor = declaration.descriptor ?: return false
                     val entryPointsManager = EntryPointsManager.getInstance(declaration.project) as EntryPointsManagerBase
                     return checkAnnotatedUsingPatterns(
-                        descriptor,
+                        declaration,
                         entryPointsManager.additionalAnnotations + entryPointsManager.ADDITIONAL_ANNOTATIONS
                     )
                 }
@@ -106,8 +105,14 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             toLightMethods().any { JavaHighlightUtil.isSerializationRelatedMethod(it, it.containingClass) }
 
         // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
-        fun checkAnnotatedUsingPatterns(annotated: Annotated, annotationPatterns: Collection<String>): Boolean {
-            val annotationsPresent = annotated.annotations.mapNotNull { it.fqName?.asString() }
+        fun checkAnnotatedUsingPatterns(
+            declaration: KtNamedDeclaration,
+            annotationPatterns: Collection<String>
+        ): Boolean {
+            val context = declaration.analyze()
+            val annotationsPresent = declaration.annotationEntries.mapNotNull {
+                context[BindingContext.ANNOTATION, it]?.fqName?.asString()
+            }
             if (annotationsPresent.isEmpty()) return false
 
             for (pattern in annotationPatterns) {
