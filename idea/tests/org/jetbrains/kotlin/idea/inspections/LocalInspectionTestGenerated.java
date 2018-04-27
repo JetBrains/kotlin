@@ -3412,6 +3412,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testRedundant5() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantUnitExpression/redundant5.kt");
         }
+
+        @TestMetadata("returnAsAny.kt")
+        public void testReturnAsAny() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/returnAsAny.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/removeRedundantBackticks")
