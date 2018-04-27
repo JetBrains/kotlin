@@ -2172,6 +2172,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/typealias.kt");
         }
 
+        @TestMetadata("usageNotAsAnnotation.kt")
+        public void testUsageNotAsAnnotation() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/usageNotAsAnnotation.kt");
+        }
+
         @TestMetadata("useExperimentalOnFile.kt")
         public void testUseExperimentalOnFile() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/useExperimentalOnFile.kt");
