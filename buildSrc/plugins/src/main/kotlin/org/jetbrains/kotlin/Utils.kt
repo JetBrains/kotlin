@@ -2,11 +2,11 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.PlatformManager
 
-fun Project.platformManager() = rootProject.findProperty("platformManager") as PlatformManager
-
-fun Project.testTarget() = platformManager().targetManager(project.findProperty("testTarget") as String?).target
+fun Project.platformManager() = findProperty("platformManager") as PlatformManager
+fun Project.testTarget() = findProperty("target") as KonanTarget
 
 /**
  * Ad-hoc signing of the specified path

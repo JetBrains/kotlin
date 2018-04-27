@@ -16,6 +16,7 @@
 
 import groovy.json.JsonOutput
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 buildscript {
     repositories {
@@ -2612,7 +2613,7 @@ if (isMac()) {
                 args "-lobjc", '-fobjc-arc'
                 args '-fPIC', '-shared', '-o', "$buildDir/libobjcsmoke.dylib"
             }
-            if (project.testTarget == 'ios_x64') {
+            if (project.target instanceof KonanTarget.IOS_X64) {
                 UtilsKt.codesign(project, "$buildDir/libobjcsmoke.dylib")
             }
         }
