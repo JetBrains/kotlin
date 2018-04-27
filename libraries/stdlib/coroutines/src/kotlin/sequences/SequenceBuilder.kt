@@ -5,6 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SequenceBuilderKt")
+
 package kotlin.sequences
 
 import kotlin.*
@@ -85,6 +86,7 @@ public abstract class SequenceBuilder<in T> internal constructor() {
 }
 
 private typealias State = Int
+
 private const val State_NotReady: State = 0
 private const val State_ManyNotReady: State = 1
 private const val State_ManyReady: State = 2
@@ -130,7 +132,7 @@ private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Co
             }
             State_Ready -> {
                 state = State_NotReady
-                @Suppress("UNCHECKED_CAST") 
+                @Suppress("UNCHECKED_CAST")
                 val result = nextValue as T
                 nextValue = null
                 return result

@@ -16,9 +16,9 @@ import kotlin.jvm.internal.Lambda
  */
 @SinceKotlin("1.3")
 public abstract class CoroutineImpl(
-        arity: Int,
-        @JvmField
-        protected var completion: Continuation<Any?>?
+    arity: Int,
+    @JvmField
+    protected var completion: Continuation<Any?>?
 ) : Lambda(arity), Continuation<Any?> {
 
     // label == -1 when coroutine cannot be started (it is just a factory object) or has already finished execution

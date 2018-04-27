@@ -6,6 +6,7 @@
 @file:kotlin.jvm.JvmName("IntrinsicsKt")
 @file:kotlin.jvm.JvmMultifileClass
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.*
@@ -21,7 +22,7 @@ import kotlin.coroutines.*
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
-        completion: Continuation<T>
+    completion: Continuation<T>
 ): Any? = (this as Function1<Continuation<T>, Any?>).invoke(completion)
 
 /**
@@ -35,8 +36,8 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
-        receiver: R,
-        completion: Continuation<T>
+    receiver: R,
+    completion: Continuation<T>
 ): Any? = (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
 
 
@@ -54,15 +55,15 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
  */
 @SinceKotlin("1.3")
 public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
-        completion: Continuation<T>
+    completion: Continuation<T>
 ): Continuation<Unit> =
-        if (this !is kotlin.coroutines.jvm.internal.CoroutineImpl)
-                buildContinuationByInvokeCall(completion) {
-                        @Suppress("UNCHECKED_CAST")
-                        (this as Function1<Continuation<T>, Any?>).invoke(completion)
-                }
-        else
-                (this.create(completion) as kotlin.coroutines.jvm.internal.CoroutineImpl).facade
+    if (this !is kotlin.coroutines.jvm.internal.CoroutineImpl)
+        buildContinuationByInvokeCall(completion) {
+            @Suppress("UNCHECKED_CAST")
+            (this as Function1<Continuation<T>, Any?>).invoke(completion)
+        }
+    else
+        (this.create(completion) as kotlin.coroutines.jvm.internal.CoroutineImpl).facade
 
 /**
  * Creates a coroutine with receiver type [R] and result type [T].
@@ -76,36 +77,36 @@ public actual fun <T> (suspend () -> T).createCoroutineUnchecked(
  */
 @SinceKotlin("1.3")
 public actual fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
-        receiver: R,
-        completion: Continuation<T>
+    receiver: R,
+    completion: Continuation<T>
 ): Continuation<Unit> =
-        if (this !is kotlin.coroutines.jvm.internal.CoroutineImpl)
-                buildContinuationByInvokeCall(completion) {
-                        @Suppress("UNCHECKED_CAST")
-                        (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
-                }
-        else
-                (this.create(receiver, completion) as kotlin.coroutines.jvm.internal.CoroutineImpl).facade
+    if (this !is kotlin.coroutines.jvm.internal.CoroutineImpl)
+        buildContinuationByInvokeCall(completion) {
+            @Suppress("UNCHECKED_CAST")
+            (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+        }
+    else
+        (this.create(receiver, completion) as kotlin.coroutines.jvm.internal.CoroutineImpl).facade
 
 // INTERNAL DEFINITIONS
 
 private inline fun <T> buildContinuationByInvokeCall(
-        completion: Continuation<T>,
-        crossinline block: () -> Any?
+    completion: Continuation<T>,
+    crossinline block: () -> Any?
 ): Continuation<Unit> {
-        val continuation =
-                object : Continuation<Unit> {
-                        override val context: CoroutineContext
-                                get() = completion.context
+    val continuation =
+        object : Continuation<Unit> {
+            override val context: CoroutineContext
+                get() = completion.context
 
-                        override fun resume(value: Unit) {
-                                processBareContinuationResume(completion, block)
-                        }
+            override fun resume(value: Unit) {
+                processBareContinuationResume(completion, block)
+            }
 
-                        override fun resumeWithException(exception: Throwable) {
-                                completion.resumeWithException(exception)
-                        }
-                }
+            override fun resumeWithException(exception: Throwable) {
+                completion.resumeWithException(exception)
+            }
+        }
 
-        return kotlin.coroutines.jvm.internal.interceptContinuationIfNeeded(completion.context, continuation)
+    return kotlin.coroutines.jvm.internal.interceptContinuationIfNeeded(completion.context, continuation)
 }
