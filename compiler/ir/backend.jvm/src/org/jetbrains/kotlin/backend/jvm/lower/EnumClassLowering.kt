@@ -118,28 +118,28 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             val constructorDescriptor = enumConstructor.descriptor
             val loweredConstructorDescriptor = lowerEnumConstructor(constructorDescriptor)
             return IrConstructorImpl(
-                    enumConstructor.startOffset, enumConstructor.endOffset, enumConstructor.origin,
-                    loweredConstructorDescriptor,
-                    enumConstructor.body!! // will be transformed later
+                enumConstructor.startOffset, enumConstructor.endOffset, enumConstructor.origin,
+                loweredConstructorDescriptor,
+                enumConstructor.body!! // will be transformed later
             )
         }
 
         private fun lowerEnumConstructor(constructorDescriptor: ClassConstructorDescriptor): ClassConstructorDescriptor {
             val loweredConstructorDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
-                    constructorDescriptor.containingDeclaration,
-                    constructorDescriptor.annotations,
-                    constructorDescriptor.isPrimary,
-                    constructorDescriptor.source
+                constructorDescriptor.containingDeclaration,
+                constructorDescriptor.annotations,
+                constructorDescriptor.isPrimary,
+                constructorDescriptor.source
             )
 
             val valueParameters =
-                    listOf(
-                            loweredConstructorDescriptor.createValueParameter(0, "name", context.builtIns.stringType),
-                            loweredConstructorDescriptor.createValueParameter(1, "ordinal", context.builtIns.intType)
-                    ) +
-                    constructorDescriptor.valueParameters.map {
-                        lowerConstructorValueParameter(loweredConstructorDescriptor, it)
-                    }
+                listOf(
+                    loweredConstructorDescriptor.createValueParameter(0, "name", context.builtIns.stringType),
+                    loweredConstructorDescriptor.createValueParameter(1, "ordinal", context.builtIns.intType)
+                ) +
+                        constructorDescriptor.valueParameters.map {
+                            lowerConstructorValueParameter(loweredConstructorDescriptor, it)
+                        }
             loweredConstructorDescriptor.initialize(valueParameters, Visibilities.PROTECTED)
 
             loweredConstructorDescriptor.returnType = constructorDescriptor.returnType
@@ -150,13 +150,13 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         }
 
         private fun lowerConstructorValueParameter(
-                loweredConstructorDescriptor: ClassConstructorDescriptor,
-                valueParameterDescriptor: ValueParameterDescriptor
+            loweredConstructorDescriptor: ClassConstructorDescriptor,
+            valueParameterDescriptor: ValueParameterDescriptor
         ): ValueParameterDescriptor {
             val loweredValueParameterDescriptor = valueParameterDescriptor.copy(
-                    loweredConstructorDescriptor,
-                    valueParameterDescriptor.name,
-                    valueParameterDescriptor.index + 2
+                loweredConstructorDescriptor,
+                valueParameterDescriptor.name,
+                valueParameterDescriptor.index + 2
             )
             loweredEnumConstructorParameters[valueParameterDescriptor] = loweredValueParameterDescriptor
             return loweredValueParameterDescriptor
@@ -165,10 +165,11 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         private fun lowerEnumEntries() {
             irClass.declarations.transformFlat { declaration ->
                 if (declaration is IrEnumEntry) {
-                    listOfNotNull(createFieldForEnumEntry(declaration),
-                                  lowerEnumEntryClass(declaration.correspondingClass))
-                }
-                else null
+                    listOfNotNull(
+                        createFieldForEnumEntry(declaration),
+                        lowerEnumEntryClass(declaration.correspondingClass)
+                    )
+                } else null
             }
         }
 
@@ -188,9 +189,9 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
             val enumEntryInitializer = enumEntry.initializerExpression!!
             return IrFieldImpl(
-                    enumEntry.startOffset, enumEntry.endOffset, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
-                    fieldPropertyDescriptor,
-                    IrExpressionBodyImpl(enumEntryInitializer)
+                enumEntry.startOffset, enumEntry.endOffset, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
+                fieldPropertyDescriptor,
+                IrExpressionBodyImpl(enumEntryInitializer)
             )
         }
 
@@ -204,14 +205,14 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         }
 
         private fun findFunctionDescriptorForMemberWithSyntheticBodyKind(kind: IrSyntheticBodyKind): FunctionDescriptor =
-                irClass.declarations
-                        .first {
-                            it is IrFunction &&
+            irClass.declarations
+                .first {
+                    it is IrFunction &&
                             it.body.let { body ->
                                 body is IrSyntheticBody && body.kind == kind
                             }
-                        }
-                        .descriptor as FunctionDescriptor
+                }
+                .descriptor as FunctionDescriptor
 
 
         private fun createSyntheticValuesFieldDeclaration(): IrFieldImpl {
@@ -220,26 +221,28 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
             val irValuesInitializer = createSyntheticValuesFieldInitializerExpression()
 
-            return IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_VALUES,
-                               valuesFieldDescriptor,
-                               IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValuesInitializer))
+            return IrFieldImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_VALUES,
+                valuesFieldDescriptor,
+                IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValuesInitializer)
+            )
         }
 
         private fun createSyntheticValuesFieldInitializerExpression(): IrExpression =
-                createArrayOfExpression(
-                        irClass.descriptor.defaultType,
-                        enumEntryFields.map { fieldDescriptor ->
-                            IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fieldDescriptor)
-                        })
+            createArrayOfExpression(
+                irClass.descriptor.defaultType,
+                enumEntryFields.map { fieldDescriptor ->
+                    IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fieldDescriptor)
+                })
 
         private fun createSyntheticValuesFieldDescriptor(valuesArrayType: SimpleType): PropertyDescriptorImpl {
             return JvmPropertyDescriptorImpl.createStaticVal(
-                    Name.identifier("\$VALUES"),
-                    valuesArrayType,
-                    irClass.descriptor,
-                    Annotations.EMPTY,
-                    Modality.FINAL, Visibilities.PRIVATE, Opcodes.ACC_SYNTHETIC,
-                    irClass.descriptor.source
+                Name.identifier("\$VALUES"),
+                valuesArrayType,
+                irClass.descriptor,
+                Annotations.EMPTY,
+                Modality.FINAL, Visibilities.PRIVATE, Opcodes.ACC_SYNTHETIC,
+                irClass.descriptor.source
             )
         }
 
@@ -248,7 +251,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         }
 
         private inner class InEnumClassConstructor(val enumClassConstructor: ClassConstructorDescriptor) :
-                EnumConstructorCallTransformer {
+            EnumConstructorCallTransformer {
             override fun transform(enumConstructorCall: IrEnumConstructorCall): IrExpression {
                 val startOffset = enumConstructorCall.startOffset
                 val endOffset = enumConstructorCall.endOffset
@@ -327,17 +330,21 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 throw AssertionError("Unexpected delegating constructor call within enum entry: $enumEntry")
             }
 
-            abstract fun createConstructorCall(startOffset: Int, endOffset: Int, loweredConstructor: ClassConstructorDescriptor): IrMemberAccessExpression
+            abstract fun createConstructorCall(
+                startOffset: Int,
+                endOffset: Int,
+                loweredConstructor: ClassConstructorDescriptor
+            ): IrMemberAccessExpression
         }
 
         private inner class InEnumEntryClassConstructor(enumEntry: ClassDescriptor) : InEnumEntry(enumEntry) {
             override fun createConstructorCall(startOffset: Int, endOffset: Int, loweredConstructor: ClassConstructorDescriptor) =
-                    IrDelegatingConstructorCallImpl(startOffset, endOffset, loweredConstructor)
+                IrDelegatingConstructorCallImpl(startOffset, endOffset, loweredConstructor)
         }
 
         private inner class InEnumEntryInitializer(enumEntry: ClassDescriptor) : InEnumEntry(enumEntry) {
             override fun createConstructorCall(startOffset: Int, endOffset: Int, loweredConstructor: ClassConstructorDescriptor) =
-                    IrCallImpl(startOffset, endOffset, loweredConstructor)
+                IrCallImpl(startOffset, endOffset, loweredConstructor)
         }
 
         private inner class EnumClassBodyTransformer : IrElementTransformerVoid() {
@@ -350,7 +357,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                     return declaration
                 }
 
-                assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}"}
+                assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}" }
 
                 enumConstructorCallTransformer = InEnumEntryInitializer(enumEntry)
 
@@ -369,11 +376,10 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 val previous = enumConstructorCallTransformer
 
                 if (containingClass.kind == ClassKind.ENUM_ENTRY) {
-                    assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}"}
+                    assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}" }
                     enumConstructorCallTransformer = InEnumEntryClassConstructor(containingClass)
-                }
-                else if (containingClass.kind == ClassKind.ENUM_CLASS) {
-                    assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}"}
+                } else if (containingClass.kind == ClassKind.ENUM_CLASS) {
+                    assert(enumConstructorCallTransformer == null) { "Nested enum entry initialization:\n${declaration.dump()}" }
                     enumConstructorCallTransformer = InEnumClassConstructor(constructorDescriptor)
                 }
 
@@ -387,9 +393,10 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val callTransformer = enumConstructorCallTransformer ?:
-                                      throw AssertionError("Enum constructor call outside of enum entry initialization or enum class constructor:\n" +
-                                                           irClass.dump())
+                val callTransformer = enumConstructorCallTransformer ?: throw AssertionError(
+                    "Enum constructor call outside of enum entry initialization or enum class constructor:\n" +
+                            irClass.dump()
+                )
 
                 return callTransformer.transform(expression)
             }
@@ -398,9 +405,10 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 expression.transformChildrenVoid(this)
 
                 if (expression.descriptor.containingDeclaration.kind == ClassKind.ENUM_CLASS) {
-                    val callTransformer = enumConstructorCallTransformer ?:
-                                          throw AssertionError("Enum constructor call outside of enum entry initialization or enum class constructor:\n" +
-                                                               irClass.dump())
+                    val callTransformer = enumConstructorCallTransformer ?: throw AssertionError(
+                        "Enum constructor call outside of enum entry initialization or enum class constructor:\n" +
+                                irClass.dump()
+                    )
 
                     return callTransformer.transform(expression)
                 }
@@ -412,8 +420,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 val loweredParameter = loweredEnumConstructorParameters[expression.descriptor]
                 return if (loweredParameter != null) {
                     IrGetValueImpl(expression.startOffset, expression.endOffset, loweredParameter, expression.origin)
-                }
-                else {
+                } else {
                     expression
                 }
             }
@@ -436,13 +443,15 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
                 val substitutedValueOf = unsubstitutedValueOf.substitute(typeSubstitutor)!!
 
-                val irValueOfCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, substitutedValueOf, mapOf(typeParameterT to enumClassType))
+                val irValueOfCall =
+                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, substitutedValueOf, mapOf(typeParameterT to enumClassType))
                 irValueOfCall.putValueArgument(
-                        0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueOfFunctionDescriptor.valueParameters[0]))
+                    0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueOfFunctionDescriptor.valueParameters[0])
+                )
 
                 return IrBlockBodyImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        listOf(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueOfFunctionDescriptor, irValueOfCall))
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    listOf(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueOfFunctionDescriptor, irValueOfCall))
                 )
             }
 
@@ -454,8 +463,8 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
                 }
 
                 return IrBlockBodyImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        listOf(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valuesFunctionDescriptor, irCloneValues))
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    listOf(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valuesFunctionDescriptor, irCloneValues))
                 )
             }
         }
