@@ -1,0 +1,14 @@
+package
+
+@kotlin.SinceKotlin(version = "1.3") @kotlin.WasExperimental(markerClass = {Marker::class}) public fun newFunExperimentalInThePast(): kotlin.Unit
+@kotlin.SinceKotlin(version = "1.3") public fun newPublishedFun(): kotlin.Unit
+public fun use1(): kotlin.Unit
+@kotlin.UseExperimental(markerClass = {Marker::class}) public fun use2(): kotlin.Unit
+@Marker public fun use3(): kotlin.Unit
+
+@kotlin.Experimental public final annotation class Marker : kotlin.Annotation {
+    public constructor Marker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

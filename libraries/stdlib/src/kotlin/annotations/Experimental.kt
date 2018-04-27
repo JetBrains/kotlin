@@ -50,3 +50,10 @@ annotation class Experimental(val level: Level = Level.ERROR) {
 annotation class UseExperimental(
     vararg val markerClass: KClass<out Annotation>
 )
+
+
+@Target(CLASS, PROPERTY, CONSTRUCTOR, FUNCTION)
+@Retention(BINARY)
+internal annotation class WasExperimental(
+    vararg val markerClass: KClass<out Annotation>
+)

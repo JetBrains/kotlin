@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve
@@ -22,17 +11,22 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 
-val SINCE_KOTLIN_FQ_NAME = FqName("kotlin.SinceKotlin")
+sealed class SinceKotlinAccessibility {
+    object Accessible : SinceKotlinAccessibility()
 
-/**
- * @return true if the descriptor is accessible according to [languageVersionSettings], or false otherwise. The [actionIfInaccessible]
- * callback is called with the version specified in the [SinceKotlin] annotation if the descriptor is inaccessible.
- */
-fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(
-    languageVersionSettings: LanguageVersionSettings,
-    actionIfInaccessible: ((ApiVersion) -> Unit)? = null
-): Boolean {
+    data class NotAccessibleButWasExperimental(
+        val version: ApiVersion,
+        val annotationFqNames: List<FqName>
+    ) : SinceKotlinAccessibility()
+
+    data class NotAccessible(
+        val version: ApiVersion
+    ) : SinceKotlinAccessibility()
+}
+
+fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(languageVersionSettings: LanguageVersionSettings): SinceKotlinAccessibility {
     val version =
         if (this is CallableMemberDescriptor && !kind.isReal) getSinceKotlinVersionByOverridden(this)
         else getOwnSinceKotlinVersion()
@@ -41,11 +35,14 @@ fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(
     // 1) There's no @SinceKotlin annotation for this descriptor
     // 2) There's a @SinceKotlin annotation but its value is some unrecognizable nonsense
     // 3) The value as a version is not greater than our API version
-    if (version == null || version <= languageVersionSettings.apiVersion) return true
+    if (version == null || version <= languageVersionSettings.apiVersion) return SinceKotlinAccessibility.Accessible
 
-    actionIfInaccessible?.invoke(version)
+    val wasExperimentalFqNames = with(ExperimentalUsageChecker) { loadWasExperimentalMarkerFqNames() }
+    if (wasExperimentalFqNames.isNotEmpty()) {
+        return SinceKotlinAccessibility.NotAccessibleButWasExperimental(version, wasExperimentalFqNames)
+    }
 
-    return false
+    return SinceKotlinAccessibility.NotAccessible(version)
 }
 
 /**

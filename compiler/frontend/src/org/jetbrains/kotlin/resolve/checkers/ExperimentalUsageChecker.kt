@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -62,7 +63,9 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
     companion object {
         val EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
         internal val USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
+        private val WAS_EXPERIMENTAL_FQ_NAME = FqName("kotlin.WasExperimental")
         internal val USE_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
+        private val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
 
         private val LEVEL = Name.identifier("level")
         private val WARNING_LEVEL = Name.identifier("WARNING")
@@ -119,21 +122,24 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             return Experimentality(fqNameSafe, severity)
         }
 
+        private fun PsiElement.isExperimentalityAccepted(annotationFqName: FqName, context: CheckerContext): Boolean =
+            isExperimentalityAccepted(annotationFqName, context.languageVersionSettings, context.trace.bindingContext)
+
         /**
          * Checks whether there's an element lexically above in the tree, annotated with `@UseExperimental(X::class)`, or a declaration
          * annotated with `@X` where [annotationFqName] is the FQ name of X
          */
-        private fun PsiElement.isExperimentalityAccepted(annotationFqName: FqName, context: CheckerContext): Boolean {
-            val languageVersionSettings = context.languageVersionSettings
-            val bindingContext = context.trace.bindingContext
-
-            return annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlag.experimental) ||
+        fun PsiElement.isExperimentalityAccepted(
+            annotationFqName: FqName,
+            languageVersionSettings: LanguageVersionSettings,
+            bindingContext: BindingContext
+        ): Boolean =
+            annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlag.experimental) ||
                     annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlag.useExperimental) ||
                     anyParentMatches { element ->
                         element.isDeclarationAnnotatedWith(annotationFqName, bindingContext) ||
                                 element.isElementAnnotatedWithUseExperimentalOf(annotationFqName, bindingContext)
                     }
-        }
 
         private fun PsiElement.isDeclarationAnnotatedWith(annotationFqName: FqName, bindingContext: BindingContext): Boolean {
             if (this !is KtDeclaration) return false
@@ -161,6 +167,20 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 if (predicate(element)) return true
                 element = element.parent ?: return false
             }
+        }
+
+        internal fun Annotated.loadWasExperimentalMarkerFqNames(): List<FqName> {
+            val wasExperimental = annotations.findAnnotation(WAS_EXPERIMENTAL_FQ_NAME)
+            if (wasExperimental != null) {
+                val annotationClasses = wasExperimental.allValueArguments[WAS_EXPERIMENTAL_ANNOTATION_CLASS]
+                if (annotationClasses is ArrayValue) {
+                    return annotationClasses.value.mapNotNull { annotationClass ->
+                        (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor?.fqNameSafe
+                    }
+                }
+            }
+
+            return emptyList()
         }
 
         fun checkCompilerArguments(

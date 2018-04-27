@@ -49,8 +49,10 @@ class SimpleCandidateFactory(
     val callComponents: KotlinCallComponents,
     val scopeTower: ImplicitScopeTower,
     val kotlinCall: KotlinCall,
-    val inferenceSession: InferenceSession
+    val resolutionCallbacks: KotlinResolutionCallbacks
 ) : CandidateFactory<KotlinResolutionCandidate> {
+    val inferenceSession: InferenceSession = resolutionCallbacks.inferenceSession
+
     val baseSystem: ConstraintStorage
 
     init {
@@ -144,7 +146,7 @@ class SimpleCandidateFactory(
 
         initialDiagnostics.forEach(candidate::addDiagnostic)
 
-        if (callComponents.statelessCallbacks.isHiddenInResolution(descriptor, kotlinCall)) {
+        if (callComponents.statelessCallbacks.isHiddenInResolution(descriptor, kotlinCall, resolutionCallbacks)) {
             candidate.addDiagnostic(HiddenDescriptor)
         }
 
