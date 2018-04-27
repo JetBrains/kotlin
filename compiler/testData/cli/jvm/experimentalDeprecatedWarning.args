@@ -1,8 +1,6 @@
 $TESTDATA_DIR$/experimentalDeprecatedWarning.kt
 -d
 $TEMP_DIR$
--Xskip-runtime-version-check
--language-version
-1.3
+-Xuse-experimental=kotlin.Experimental
 -Xuse-experimental=org.test.Warning1
 -Xexperimental=org.test.Warning2

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
-import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
@@ -218,42 +217,24 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         val lib = MockLibraryUtil.compileJvmLibraryToJar(
             testDataPath + "${getTestName(true)}/lib", "lib",
             extraOptions = listOf(
-                "-Xskip-runtime-version-check",
-                "-language-version",
-                "1.3",
+                "-Xuse-experimental=kotlin.Experimental",
                 "-Xexperimental=lib.ExperimentalAPI"
             )
         )
-        withSkipMetadataVersionCheck {
-            module("usage").addLibrary(lib)
-            checkHighlightingInAllFiles()
-        }
+        module("usage").addLibrary(lib)
+        checkHighlightingInAllFiles()
     }
 
     fun testJsExperimentalLibrary() {
         val lib = MockLibraryUtil.compileJsLibraryToJar(
             testDataPath + "${getTestName(true)}/lib", "lib", false,
             extraOptions = listOf(
-                "-Xskip-runtime-version-check",
-                "-language-version",
-                "1.3",
+                "-Xuse-experimental=kotlin.Experimental",
                 "-Xexperimental=lib.ExperimentalAPI"
             )
         )
-        withSkipMetadataVersionCheck {
-            module("usage").addLibrary(lib, kind = JSLibraryKind)
-            checkHighlightingInAllFiles()
-        }
-    }
-
-    private fun withSkipMetadataVersionCheck(block: () -> Unit) {
-        val holder = KotlinCommonCompilerArgumentsHolder.getInstance(project)
-        try {
-            holder.update { skipMetadataVersionCheck = true }
-            block()
-        } finally {
-            holder.update { skipMetadataVersionCheck = false }
-        }
+        module("usage").addLibrary(lib, kind = JSLibraryKind)
+        checkHighlightingInAllFiles()
     }
 
     private fun Module.setupKotlinFacet(configure: KotlinFacetConfiguration.() -> Unit) = apply {

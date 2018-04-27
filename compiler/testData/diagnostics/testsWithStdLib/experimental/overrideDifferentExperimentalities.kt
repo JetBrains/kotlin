@@ -1,4 +1,4 @@
-// !API_VERSION: 1.3
+// !USE_EXPERIMENTAL: kotlin.Experimental
 
 @Experimental(Experimental.Level.WARNING)
 annotation class E1

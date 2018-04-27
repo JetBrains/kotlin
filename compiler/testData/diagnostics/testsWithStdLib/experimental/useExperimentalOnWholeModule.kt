@@ -1,5 +1,4 @@
-// !API_VERSION: 1.3
-// !USE_EXPERIMENTAL: api.ExperimentalAPI
+// !USE_EXPERIMENTAL: kotlin.Experimental api.ExperimentalAPI
 // MODULE: api
 // FILE: api.kt
 

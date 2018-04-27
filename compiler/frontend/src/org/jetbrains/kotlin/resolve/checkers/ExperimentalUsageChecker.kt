@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.SmartSet
@@ -66,6 +67,9 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         private val LEVEL = Name.identifier("level")
         private val WARNING_LEVEL = Name.identifier("WARNING")
         private val ERROR_LEVEL = Name.identifier("ERROR")
+
+        private val EXPERIMENTAL_SHORT_NAME = EXPERIMENTAL_FQ_NAME.shortName()
+        private val USE_EXPERIMENTAL_SHORT_NAME = USE_EXPERIMENTAL_FQ_NAME.shortName()
 
         private fun reportNotAcceptedExperimentalities(
             experimentalities: Collection<Experimentality>, element: PsiElement, context: CheckerContext
@@ -196,7 +200,9 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             }
 
             val validExperimental = languageVersionSettings.getFlag(AnalysisFlag.experimental).filter(::checkAnnotation)
-            val validUseExperimental = languageVersionSettings.getFlag(AnalysisFlag.useExperimental).filter(::checkAnnotation)
+            val validUseExperimental = languageVersionSettings.getFlag(AnalysisFlag.useExperimental).filter { fqName ->
+                fqName == EXPERIMENTAL_FQ_NAME.asString() || checkAnnotation(fqName)
+            }
 
             for (fqName in validExperimental.intersect(validUseExperimental)) {
                 reportError("'-Xuse-experimental=$fqName' has no effect because '-Xexperimental=$fqName' is used")
@@ -208,8 +214,23 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         private val moduleAnnotationsResolver = ModuleAnnotationsResolver.getInstance(project)
 
         override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
+            val name = targetDescriptor.name
+            if (name == EXPERIMENTAL_SHORT_NAME || name == USE_EXPERIMENTAL_SHORT_NAME) {
+                val fqName = targetDescriptor.fqNameUnsafe
+                if (fqName == EXPERIMENTAL_FQ_NAME.toUnsafe() || fqName == USE_EXPERIMENTAL_FQ_NAME.toUnsafe()) {
+                    checkUsageOfKotlinExperimentalOrUseExperimental(element, context)
+                    return
+                }
+            }
+
             val experimentalities = targetDescriptor.loadExperimentalities(moduleAnnotationsResolver)
             reportNotAcceptedExperimentalities(experimentalities, element, context)
+        }
+
+        private fun checkUsageOfKotlinExperimentalOrUseExperimental(element: PsiElement, context: CheckerContext) {
+            if (EXPERIMENTAL_FQ_NAME.asString() !in context.languageVersionSettings.getFlag(AnalysisFlag.useExperimental)) {
+                context.trace.report(Errors.EXPERIMENTAL_IS_NOT_ENABLED.on(element))
+            }
         }
     }
 

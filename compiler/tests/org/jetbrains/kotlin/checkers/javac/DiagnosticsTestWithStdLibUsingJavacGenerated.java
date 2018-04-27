@@ -2112,6 +2112,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/errors.kt");
         }
 
+        @TestMetadata("experimentalIsNotEnabled.kt")
+        public void testExperimentalIsNotEnabled() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalIsNotEnabled.kt");
+        }
+
         @TestMetadata("experimentalOnWholeModule.kt")
         public void testExperimentalOnWholeModule() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalOnWholeModule.kt");

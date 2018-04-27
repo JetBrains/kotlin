@@ -8,16 +8,21 @@ package kotlin
 import kotlin.annotation.AnnotationRetention.BINARY
 import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.internal.RequireKotlin
+import kotlin.internal.RequireKotlinVersionKind
 import kotlin.reflect.KClass
 
 /**
  * Signals that the annotated annotation class is a marker of an experimental API. Any declaration annotated with that marker is thus
  * considered an experimental declaration and its call sites should accept the experimental aspect of it either by using [UseExperimental],
  * or by being annotated with that marker themselves, effectively causing further propagation of that experimental aspect.
+ *
+ * This class is experimental itself and can only be used with the compiler argument `-Xuse-experimental=kotlin.Experimental`.
  */
 @Target(ANNOTATION_CLASS)
 @Retention(BINARY)
-@SinceKotlin("1.3")
+@SinceKotlin("1.2")
+@RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Suppress("ANNOTATION_CLASS_MEMBER")
 annotation class Experimental(val level: Level = Level.ERROR) {
     /**
@@ -35,10 +40,13 @@ annotation class Experimental(val level: Level = Level.ERROR) {
 /**
  * Allows to use experimental API denoted by the given markers in the annotated file, declaration, or expression.
  * If a declaration is annotated with [UseExperimental], its usages are **not** required to opt-in to that experimental API.
+ *
+ * This class is experimental itself and can only be used with the compiler argument `-Xuse-experimental=kotlin.Experimental`.
  */
 @Target(CLASS, PROPERTY, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, EXPRESSION, FILE)
 @Retention(SOURCE)
-@SinceKotlin("1.3")
+@SinceKotlin("1.2")
+@RequireKotlin("1.2.50", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 annotation class UseExperimental(
     vararg val markerClass: KClass<out Annotation>
 )

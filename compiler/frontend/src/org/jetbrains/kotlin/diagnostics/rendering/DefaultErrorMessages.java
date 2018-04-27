@@ -146,6 +146,7 @@ public class DefaultErrorMessages {
         MAP.put(EXPERIMENTAL_OVERRIDE, "This declaration overrides experimental member of supertype ''{1}'' and should be annotated with ''@{0}''", TO_STRING, NAME);
         MAP.put(EXPERIMENTAL_OVERRIDE_ERROR, "This declaration overrides experimental member of supertype ''{1}'' and must be annotated with ''@{0}''", TO_STRING, NAME);
 
+        MAP.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xuse-experimental=kotlin.Experimental'");
         MAP.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@UseExperimental without any arguments has no effect");
         MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @UseExperimental is ignored", TO_STRING);
         MAP.put(EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET, "Experimental annotation cannot be used on the following code elements: {0}. Please remove these targets", STRING);
