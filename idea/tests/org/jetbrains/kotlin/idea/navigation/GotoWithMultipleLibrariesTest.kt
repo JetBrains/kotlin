@@ -20,6 +20,7 @@ import com.intellij.ide.util.gotoByName.GotoSymbolModel2
 import com.intellij.openapi.module.StdModuleTypes
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
@@ -63,7 +64,7 @@ class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
             module("m${++i}", srcPath).addDependency(projectLibrary("libB", jarRoot, jarRoot.findChild("src")!!))
         }
 
-        checkFiles {
+        checkFiles({ project.allKotlinFiles() }) {
             GotoCheck.checkGotoDirectives(GotoSymbolModel2(project), editor, nonProjectSymbols = true, checkNavigation = true)
         }
     }
