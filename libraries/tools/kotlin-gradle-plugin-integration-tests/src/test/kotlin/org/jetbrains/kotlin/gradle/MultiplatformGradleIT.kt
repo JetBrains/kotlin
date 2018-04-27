@@ -256,4 +256,35 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertContains("$successMarker :lib:compileTestJava")
         }
     }
+
+    @Test
+    fun testCustomSourceSets() = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+
+        val sourceSetName = "foo"
+        val sourceSetDeclaration = "\nsourceSets { $sourceSetName { } }"
+
+        listOf("lib", "libJvm", "libJs").forEach { module ->
+            gradleBuildScript(module).appendText(sourceSetDeclaration)
+        }
+
+        listOf(
+            "expect fun foo(): String" to "lib/src/$sourceSetName/kotlin",
+            "actual fun foo(): String = \"jvm\"" to "libJvm/src/$sourceSetName/kotlin",
+            "actual fun foo(): String = \"js\"" to "libJs/src/$sourceSetName/kotlin"
+        ).forEach { (code, path) ->
+            File(projectDir, path).run {
+                mkdirs();
+                File(this, "Foo.kt").writeText(code)
+            }
+        }
+
+        val customSourceSetCompileTasks = listOf(":lib" to "Common", ":libJs" to "2Js", ":libJvm" to "")
+            .map { (module, platform) -> "$module:compile${sourceSetName.capitalize()}Kotlin$platform" }
+
+        build(*customSourceSetCompileTasks.toTypedArray()) {
+            assertSuccessful()
+            assertTasksExecuted(customSourceSetCompileTasks)
+        }
+    }
 }
