@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.idea.caches.project
 
 import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
@@ -29,7 +26,6 @@ import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.script.getScriptDefinition
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.sure
@@ -63,55 +59,6 @@ fun getLibrarySourcesModuleInfos(project: Project, virtualFile: VirtualFile) =
         virtualFile
     )
 
-fun collectAllModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform): List<IdeaModuleInfo> {
-    val ideaModules = ModuleManager.getInstance(project).modules.toList()
-    val modulesSourcesInfos = ideaModules.flatMap(Module::correspondingModuleInfos)
-
-    //TODO: (module refactoring) include libraries that are not among dependencies of any module
-    val ideaLibraries = ideaModules.flatMap {
-        ModuleRootManager.getInstance(it).orderEntries.filterIsInstance<LibraryOrderEntry>().map {
-            it.library
-        }
-    }.filterNotNull().toSet()
-
-    val librariesInfos = ideaLibraries.map { LibraryInfo(project, it) }
-
-    val sdksFromModulesDependencies = ideaModules.flatMap {
-        ModuleRootManager.getInstance(it).orderEntries.filterIsInstance<JdkOrderEntry>().map {
-            it.jdk
-        }
-    }
-
-    val sdksInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map {
-        SdkInfo(
-            project,
-            it
-        )
-    }
-
-    return mergePlatformModules(modulesSourcesInfos, platform) + librariesInfos + sdksInfos
-}
-
-private fun mergePlatformModules(
-    allModules: List<IdeaModuleInfo>,
-    platform: TargetPlatform
-): List<IdeaModuleInfo> {
-    if (platform == TargetPlatform.Common) return allModules
-
-    val platformModules =
-        allModules.flatMap { module ->
-            if (module is ModuleSourceInfo && module.platform == platform && module.expectedBy.isNotEmpty())
-                listOf(module to module.expectedBy)
-            else emptyList()
-        }.map { (module, expectedBys) ->
-            PlatformModuleInfo(module, expectedBys)
-        }
-
-    val rest = allModules - platformModules.flatMap { it.containedModules }
-    return rest + platformModules
-}
-
-
 fun getScriptRelatedModuleInfo(project: Project, virtualFile: VirtualFile): ModuleSourceInfo? {
     val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
 
@@ -126,10 +73,6 @@ fun getScriptRelatedModuleInfo(project: Project, virtualFile: VirtualFile): Modu
     }
 
     return null
-}
-
-internal fun getAllProjectSdks(): Collection<Sdk> {
-    return ProjectJdkTable.getInstance().allJdks.toList()
 }
 
 private typealias VirtualFileProcessor<T> = (Project, VirtualFile, Boolean, Boolean) -> T
