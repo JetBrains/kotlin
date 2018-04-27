@@ -94,10 +94,6 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, for
     }
 }
 
-fun <T> Module.cached(provider: CachedValueProvider<T>): T {
-    return CachedValuesManager.getManager(project).getCachedValue(this, provider)
-}
-
 private fun OrderEntry.acceptAsDependency(forProduction: Boolean): Boolean {
     return this !is ExportableOrderEntry
             || !forProduction
