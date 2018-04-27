@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintCommitPrefEditsInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintCommitPrefEditsInspection
 
 import android.app.Activity
 import android.content.Context
@@ -29,35 +29,6 @@ class SharedPrefsText(context: Context) : Activity() {
         }
     }
 
-    // OK using with lambda
-    fun withLambda() {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        with(preferences.edit()) {
-            putString("foo", "bar")
-            putInt("bar", 42)
-            apply()
-        }
-    }
-
-    // OK using apply lambda
-    fun testApplyLambda() {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().apply {
-            putString("foo", "bar")
-            putInt("bar", 42)
-            apply()
-        }
-    }
-
-    // OK using also lambda
-    fun testAlsoLambda() {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        preferences.edit().also {
-            it.putString("foo", "bar")
-            it.putInt("bar", 42)
-            it.apply()
-        }
-    }
-
     // Not a bug
     fun test(foo: Foo) {
         val bar1 = foo.edit()
@@ -85,43 +56,19 @@ class SharedPrefsText(context: Context) : Activity() {
     fun bug1(savedInstanceState: Bundle) {
         super.onCreate(savedInstanceState)
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val editor = preferences.<warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">edit()</warning>
+        val editor = <warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">preferences.edit()</warning>
         editor.putString("foo", "bar")
         editor.putInt("bar", 42)
     }
 
-    // Bug missing commit in apply lambda
-    fun applyLambdaMissingCommit() {
-        PreferenceManager.getDefaultSharedPreferences(this).<warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">edit()</warning>.apply {
-            putString("foo", "bar")
-            putInt("bar", 42)
-        }
-    }
-
-    // Bug missing commit in also lambda
-    fun alsoLambdaMissingCommit() {
-        PreferenceManager.getDefaultSharedPreferences(this).<warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">edit()</warning>.also {
-            it.putString("foo", "bar")
-            it.putInt("bar", 42)
-        }
-    }
-
-    // Bug missing commit in with lambda
-    fun withLambdaMissingCommit() {
-        with(PreferenceManager.getDefaultSharedPreferences(this).<warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">edit()</warning>) {
-            putString("foo", "bar")
-            putInt("bar", 42)
-        }
-    }
-
     init {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor = preferences.<warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call"><warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">edit()</warning></warning>
+        val editor = <warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">preferences.edit()</warning>
         editor.putString("foo", "bar")
     }
 
     fun testResultOfCommit() {
         val r1 = PreferenceManager.getDefaultSharedPreferences(this).edit().putString("wat", "wat").commit()
-        val r2 = PreferenceManager.getDefaultSharedPreferences(this).edit().putString("wat", "wat").commit().toString()
+        val r2 = <warning descr="`SharedPreferences.edit()` without a corresponding `commit()` or `apply()` call">PreferenceManager.getDefaultSharedPreferences(this).edit()</warning>.putString("wat", "wat").commit().toString()
     }
 }

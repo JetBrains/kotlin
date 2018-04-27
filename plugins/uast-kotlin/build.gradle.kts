@@ -12,7 +12,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
     compile(project(":idea:idea-core"))
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "util", "extensions", "asm-all") }
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "java-api", "java-impl", "platform-api", "platform-impl", "util", "extensions", "asm-all") }
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -20,7 +20,7 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":idea:idea-test-framework"))
-    testCompileOnly(intellijDep()) { includeJars("idea_rt") }
+    testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl", "idea_rt") }
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-android"))
