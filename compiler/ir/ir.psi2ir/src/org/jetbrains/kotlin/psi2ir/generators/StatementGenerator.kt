@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -42,14 +43,22 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 class StatementGenerator(
     val bodyGenerator: BodyGenerator,
     override val scope: Scope
-) : KtVisitor<IrStatement, Nothing?>(), GeneratorWithScope {
+) : KtVisitor<IrStatement, Nothing?>(),
+    GeneratorWithScope {
+
     override val context: GeneratorContext get() = bodyGenerator.context
+
     val scopeOwner: DeclarationDescriptor get() = bodyGenerator.scopeOwner
+
+    private val typeTranslator = TypeTranslator(context.moduleDescriptor, context.symbolTable)
+
+    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     fun generateStatement(ktElement: KtElement): IrStatement =
         ktElement.genStmt()
@@ -145,7 +154,7 @@ class StatementGenerator(
         if (isBlockBody) throw AssertionError("Use IrBlockBody and corresponding body generator to generate blocks as function bodies")
 
         val returnType = getInferredTypeWithImplicitCasts(expression) ?: context.builtIns.unitType
-        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType)
+        val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, returnType.toIrType())
 
         expression.statements.forEach {
             irBlock.statements.add(it.genStmt())
