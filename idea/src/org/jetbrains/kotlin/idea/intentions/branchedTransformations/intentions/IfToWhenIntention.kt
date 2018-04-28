@@ -39,16 +39,16 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
     }
 
     private fun canPassThrough(expression: KtExpression?): Boolean =
-            when (expression) {
-                is KtReturnExpression, is KtThrowExpression ->
-                    false
-                is KtBlockExpression ->
-                    expression.statements.all { canPassThrough(it) }
-                is KtIfExpression ->
-                    canPassThrough(expression.then) || canPassThrough(expression.`else`)
-                else ->
-                    true
-            }
+        when (expression) {
+            is KtReturnExpression, is KtThrowExpression ->
+                false
+            is KtBlockExpression ->
+                expression.statements.all { canPassThrough(it) }
+            is KtIfExpression ->
+                canPassThrough(expression.then) || canPassThrough(expression.`else`)
+            else ->
+                true
+        }
 
     private fun buildNextBranch(ifExpression: KtIfExpression): KtExpression? {
         var nextSibling = ifExpression.getNextSiblingIgnoringWhitespaceAndComments() ?: return null
@@ -125,16 +125,13 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                         baseIfExpressionForSyntheticBranch = syntheticElseBranch
                         currentIfExpression = syntheticElseBranch
                         toDelete.add(syntheticElseBranch)
-                    }
-                    else {
+                    } else {
                         appendElseBlock(syntheticElseBranch)
                         break
                     }
-                }
-                else if (currentElseBranch is KtIfExpression) {
+                } else if (currentElseBranch is KtIfExpression) {
                     currentIfExpression = currentElseBranch
-                }
-                else {
+                } else {
                     appendElseBlock(currentElseBranch)
                     applyFullCommentSaver = false
                     break
