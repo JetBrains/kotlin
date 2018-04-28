@@ -236,6 +236,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     private static final Pattern BOOLEAN_FLAG_PATTERN = Pattern.compile("([+-])(([a-zA-Z_0-9]*)\\.)?([a-zA-Z_0-9]*)");
     private static final Pattern CONSTRUCTOR_CALL_NORMALIZATION_MODE_FLAG_PATTERN = Pattern.compile(
             "CONSTRUCTOR_CALL_NORMALIZATION_MODE=([a-zA-Z_0-9]*)");
+    private static final Pattern ASSERTIONS_MODE_FLAG_PATTERN = Pattern.compile("ASSERTIONS_MODE=([a-zA-Z_0-9-]*)");
 
     private static void updateConfigurationWithFlags(@NotNull CompilerConfiguration configuration, @NotNull List<String> flags) {
         for (String flag : flags) {
@@ -255,6 +256,14 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 JVMConstructorCallNormalizationMode mode = JVMConstructorCallNormalizationMode.fromStringOrNull(flagValueString);
                 assert mode != null : "Wrong CONSTRUCTOR_CALL_NORMALIZATION_MODE value: " + flagValueString;
                 configuration.put(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE, mode);
+            }
+
+            m = ASSERTIONS_MODE_FLAG_PATTERN.matcher(flag);
+            if (m.matches()) {
+                String flagValueString = m.group(1);
+                JVMAssertionsMode mode = JVMAssertionsMode.fromStringOrNull(flagValueString);
+                assert mode != null : "Wrong ASSERTIONS_MODE value: " + flagValueString;
+                configuration.put(JVMConfigurationKeys.ASSERTIONS_MODE, mode);
             }
         }
     }

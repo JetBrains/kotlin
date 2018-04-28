@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.*
 
 class K2JVMCompilerArguments : CommonCompilerArguments() {
     companion object {
@@ -123,6 +120,17 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         description = "Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable"
     )
     var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
+
+    @Argument(
+        value = "-Xassertions", valueDescription = "{always-enable|always-disable|jvm|legacy}",
+        description = "Assert calls behaviour\n" +
+                "-Xassertions=always-enable:  enable, ignore jvm assertion settings;\n" +
+                "-Xassertions=always-disable: disable, ignore jvm assertion settings;\n" +
+                "-Xassertions=jvm:            enable, depend on jvm assertion settings;\n" +
+                "-Xassertions=legacy:         calculate condition on each call, check depends on jvm assertion settings in the kotlin package;\n" +
+                "default: legacy"
+    )
+    var assertionsMode: String? by FreezableVar(JVMAssertionsMode.DEFAULT.description)
 
     @Argument(
         value = "-Xbuild-file",

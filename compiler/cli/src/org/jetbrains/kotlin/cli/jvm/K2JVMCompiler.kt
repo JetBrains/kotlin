@@ -361,6 +361,20 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 constructorCallNormalizationMode ?: JVMConstructorCallNormalizationMode.DEFAULT
             )
 
+            val assertionsMode =
+                JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
+            if (assertionsMode == null) {
+                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                    ERROR,
+                    "Unknown assertions mode: ${arguments.assertionsMode}, " +
+                            "supported modes: ${JVMAssertionsMode.values().map { it.description }}"
+                )
+            }
+            configuration.put(
+                JVMConfigurationKeys.ASSERTIONS_MODE,
+                assertionsMode ?: JVMAssertionsMode.DEFAULT
+            )
+
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, arguments.useTypeTable)
             configuration.put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
