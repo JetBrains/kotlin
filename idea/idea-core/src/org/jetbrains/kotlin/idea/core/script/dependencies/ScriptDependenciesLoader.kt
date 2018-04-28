@@ -15,9 +15,7 @@ import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.SLRUMap
 import kotlinx.coroutines.experimental.launch
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesCache
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
-import org.jetbrains.kotlin.idea.core.script.scriptDependencies
+import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
@@ -68,16 +66,36 @@ abstract class ScriptDependenciesLoader(
 
     protected abstract fun loadDependencies()
     protected abstract fun shouldUseBackgroundThread(): Boolean
+    protected abstract fun shouldShowNotification(): Boolean
 
     protected val contentLoader = ScriptContentLoader(project)
     protected val cache: ScriptDependenciesCache = ServiceManager.getService(project, ScriptDependenciesCache::class.java)
 
     protected fun processResult(result: DependenciesResolver.ResolveResult) {
-        saveDependencies(result)
+        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
+
+        val newDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
+        if (cache[file] != newDependencies) {
+            if (shouldShowNotification() && cache[file] != null && !ApplicationManager.getApplication().isUnitTestMode) {
+                file.addScriptDependenciesNotificationPanel(result, project) {
+                    saveDependencies(result)
+                }
+            } else {
+                saveDependencies(result)
+            }
+        } else {
+            if (shouldShowNotification()) {
+                file.removeScriptDependenciesNotificationPanel(project)
+            }
+        }
+
+        loaders.remove(file)
     }
 
     private fun saveDependencies(result: DependenciesResolver.ResolveResult) {
-        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
+        if (shouldShowNotification()) {
+            file.removeScriptDependenciesNotificationPanel(project)
+        }
 
         val newDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: ScriptDependencies.Empty
 
@@ -93,8 +111,6 @@ abstract class ScriptDependenciesLoader(
         if (rootsChanged) {
             notifyRootsChanged()
         }
-
-        loaders.remove(file)
     }
 
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")

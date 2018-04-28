@@ -40,6 +40,7 @@ class AsyncScriptDependenciesLoader(
     }
 
     override fun shouldUseBackgroundThread() = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
+    override fun shouldShowNotification(): Boolean = !KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
 
     private var lastRequest: ModStampedRequest? = null
 

@@ -22,4 +22,5 @@ class SyncScriptDependenciesLoader(
     }
 
     override fun shouldUseBackgroundThread(): Boolean = false
+    override fun shouldShowNotification(): Boolean = false
 }

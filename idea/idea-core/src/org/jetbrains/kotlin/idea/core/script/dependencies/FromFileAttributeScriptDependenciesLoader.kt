@@ -31,4 +31,5 @@ class FromFileAttributeScriptDependenciesLoader(
     }
 
     override fun shouldUseBackgroundThread() = false
+    override fun shouldShowNotification(): Boolean = false
 }

@@ -31,7 +31,6 @@ import com.intellij.util.Alarm
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.dependencies.FromFileAttributeScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesLoader
-import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.findScriptDefinition
@@ -42,7 +41,6 @@ class ScriptDependenciesUpdater(
     private val cache: ScriptDependenciesCache,
     private val scriptDefinitionProvider: ScriptDefinitionProvider
 ) {
-    private val modifiedScripts = mutableSetOf<VirtualFile>()
     private val scriptsQueue = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
     private val scriptChangesListenerDelay = 1400
 
@@ -61,24 +59,6 @@ class ScriptDependenciesUpdater(
         return cache[file] ?: ScriptDependencies.Empty
     }
 
-    fun reloadModifiedScripts() {
-        for (it in modifiedScripts.filter { cache[it] != null }) {
-            val scriptDef = scriptDefinitionProvider.findScriptDefinition(it) ?: return
-            ScriptDependenciesLoader.updateDependencies(it, scriptDef, project, shouldNotifyRootsChanged = true)
-        }
-        modifiedScripts.clear()
-    }
-
-    fun requestUpdate(files: Iterable<VirtualFile>) {
-        files.forEach { file ->
-            if (!file.isValid) {
-                cache.delete(file)
-            } else if (cache[file] != null) { // only update dependencies for scripts that were touched recently
-                modifiedScripts.add(file)
-            }
-        }
-    }
-
     private fun listenForChangesInScripts() {
         project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
             override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
@@ -95,17 +75,24 @@ class ScriptDependenciesUpdater(
 
                 val document = event.document
                 val file = FileDocumentManager.getInstance().getFile(document)?.takeIf { it.isInLocalFileSystem } ?: return
+                if (!file.isValid) {
+                    cache.delete(file)
+                    return
+                }
+
+                // only update dependencies for scripts that were touched recently
+                if (cache[file] == null) {
+                    return
+                }
+
+                val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
 
                 scriptsQueue.cancelAllRequests()
 
                 scriptsQueue.addRequest(
                     {
                         FileDocumentManager.getInstance().saveDocument(document)
-                        requestUpdate(listOf(file))
-
-                        if (KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled) {
-                            reloadModifiedScripts()
-                        }
+                        ScriptDependenciesLoader.updateDependencies(file, scriptDef, project, shouldNotifyRootsChanged = true)
                     },
                     scriptChangesListenerDelay,
                     true

@@ -283,8 +283,6 @@ class ReloadGradleTemplatesOnSync : ExternalSystemTaskNotificationListenerAdapte
             val project = id.findProject() ?: return
             val gradleDefinitionsContributor = ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project)
             gradleDefinitionsContributor?.reloadIfNeccessary()
-
-            ServiceManager.getService(project, ScriptDependenciesUpdater::class.java).reloadModifiedScripts()
         }
     }
 }
