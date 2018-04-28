@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -38,6 +39,13 @@ class IrEnumConstructorCallImpl(
         valueArgumentsCount = symbol.descriptor.valueParameters.size
     ),
     IrEnumConstructorCall {
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrConstructorSymbol
+    ) : this(startOffset, endOffset, type, symbol, symbol.descriptor.typeParametersCount)
 
     @Deprecated("Creates unbound symbols")
     constructor(

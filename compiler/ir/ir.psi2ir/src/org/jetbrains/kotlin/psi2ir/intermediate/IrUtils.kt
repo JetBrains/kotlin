@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi2ir
+package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 
 fun IrVariable.defaultLoad(): IrExpression =
-    IrGetValueImpl(startOffset, endOffset, symbol)
+    IrGetValueImpl(startOffset, endOffset, type, symbol)
 

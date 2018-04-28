@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class AnonymousInitializerGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+class AnonymousInitializerGenerator(
+    declarationGenerator: DeclarationGenerator
+) : DeclarationGeneratorExtension(declarationGenerator) {
+
     fun generateAnonymousInitializerDeclaration(
         ktAnonymousInitializer: KtAnonymousInitializer,
         classDescriptor: ClassDescriptor

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.types.KotlinType
 
 interface IrMemberAccessExpression : IrExpression {
     var dispatchReceiver: IrExpression?
@@ -49,7 +50,17 @@ fun IrMemberAccessExpression.copyTypeArgumentsFrom(other: IrMemberAccessExpressi
     }
 }
 
-val CallableDescriptor.typeArgumentsCount: Int
+inline fun IrMemberAccessExpression.putTypeArguments(
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+    toIrType: (KotlinType) -> IrType
+) {
+    if (typeArguments == null) return
+    for ((typeParameter, typeArgument) in typeArguments) {
+        putTypeArgument(typeParameter.index, toIrType(typeArgument))
+    }
+}
+
+val CallableDescriptor.typeParametersCount: Int
     get() =
         when (this) {
             is PropertyAccessorDescriptor -> correspondingProperty.typeParameters.size

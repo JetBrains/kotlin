@@ -87,8 +87,8 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns, outerSymbolTable: SymbolTable?) {
     val anyNType = anyType.withHasQuestionMark(true)
 
     val bool = builtIns.booleanType
-    val boolType = bool.toIrType()
-    val boolClass = builtIns.boolean.toIrSymbol()
+    val booleanType = bool.toIrType()
+    val booleanClass = builtIns.boolean.toIrSymbol()
 
     val char = builtIns.charType
     val charType = char.toIrType()
@@ -150,7 +150,7 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns, outerSymbolTable: SymbolTable?) {
     val eqeqFun = defineOperator("EQEQ", bool, listOf(anyN, anyN))
     val throwNpeFun = defineOperator("THROW_NPE", nothing, listOf())
     val booleanNotFun = defineOperator("NOT", bool, listOf(bool))
-    val noWhenBranchMatchedExceptionFun = defineOperator("noWhenBranchMatchedException", unit, listOf())
+    val noWhenBranchMatchedExceptionFun = defineOperator("noWhenBranchMatchedException", nothing, listOf())
 
     val eqeqeq = eqeqeqFun.descriptor
     val eqeq = eqeqFun.descriptor
