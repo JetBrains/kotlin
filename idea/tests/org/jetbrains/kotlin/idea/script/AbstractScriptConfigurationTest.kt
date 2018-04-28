@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.script
 
 import com.intellij.codeInsight.highlighting.HighlightUsagesHandler
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager.Companion.updateScriptDependenciesSynchronously
+import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -60,6 +62,16 @@ abstract class AbstractScriptConfigurationHighlightingTest : AbstractScriptConfi
             editor,
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_WARNINGS"),
             InTextDirectivesUtils.isDirectiveDefined(file.text, "// CHECK_INFOS"))
+    }
+
+    override fun setUp() {
+        super.setUp()
+        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = true
+    }
+
+    override fun tearDown() {
+        ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled = false
+        super.tearDown()
     }
 }
 

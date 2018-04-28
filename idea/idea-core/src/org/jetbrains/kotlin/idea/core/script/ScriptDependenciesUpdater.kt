@@ -18,14 +18,16 @@ package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.isProjectOrWorkspaceFile
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.newvfs.BulkFileListener
-import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.util.Alarm
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.dependencies.FromFileAttributeScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesLoader
@@ -41,9 +43,11 @@ class ScriptDependenciesUpdater(
     private val scriptDefinitionProvider: ScriptDefinitionProvider
 ) {
     private val modifiedScripts = mutableSetOf<VirtualFile>()
+    private val scriptsQueue = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
+    private val scriptChangesListenerDelay = 1400
 
     init {
-        listenToVfsChanges()
+        listenForChangesInScripts()
     }
 
     fun getCurrentDependencies(file: VirtualFile): ScriptDependencies {
@@ -75,32 +79,39 @@ class ScriptDependenciesUpdater(
         }
     }
 
-    private fun listenToVfsChanges() {
-        project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
-            val projectFileIndex = ProjectRootManager.getInstance(project).fileIndex
-            val application = ApplicationManager.getApplication()
-
-            override fun after(events: List<VFileEvent>) {
-                if (application.isUnitTestMode && application.isScriptDependenciesUpdaterDisabled == true) {
-                    return
-                }
-
-                val modifiedScripts = events.mapNotNull {
-                    // The check is partly taken from the BuildManager.java
-                    it.file?.takeIf {
-                        // the isUnitTestMode check fixes ScriptConfigurationHighlighting & Navigation tests, since they are not trigger proper update mechanims
-                        // TODO: find out the reason, then consider to fix tests and remove this check
-                        (application.isUnitTestMode ||
-                                scriptDefinitionProvider.isScript(it.name) && projectFileIndex.isInContent(it)) && !isProjectOrWorkspaceFile(it)
-                    }
-                }
-                requestUpdate(modifiedScripts)
-
-                if (KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled) {
-                    reloadModifiedScripts()
-                }
+    private fun listenForChangesInScripts() {
+        project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+            override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+                val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
+                ScriptDependenciesLoader.updateDependencies(file, scriptDef, project, shouldNotifyRootsChanged = true)
             }
         })
+
+        EditorFactory.getInstance().eventMulticaster.addDocumentListener(object : DocumentListener {
+            override fun documentChanged(event: DocumentEvent) {
+                if (project.isDisposed) return
+
+                if (ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true) return
+
+                val document = event.document
+                val file = FileDocumentManager.getInstance().getFile(document)?.takeIf { it.isInLocalFileSystem } ?: return
+
+                scriptsQueue.cancelAllRequests()
+
+                scriptsQueue.addRequest(
+                    {
+                        FileDocumentManager.getInstance().saveDocument(document)
+                        requestUpdate(listOf(file))
+
+                        if (KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled) {
+                            reloadModifiedScripts()
+                        }
+                    },
+                    scriptChangesListenerDelay,
+                    true
+                )
+            }
+        }, project.messageBus.connect())
     }
 }
 
