@@ -41,7 +41,7 @@ class Launcher(val numWarmIterations: Int) {
                 }
                 cleanup()
             }
-            if (time >= 100L * 1_000_000) // 100ms
+            if (time >= 200L * 1_000_000) // 200ms
                 break
             autoEvaluatedNumberOfMeasureIteration *= 2
         }
@@ -103,18 +103,15 @@ class Launcher(val numWarmIterations: Int) {
     fun printResultsNormalized() {
         var total = 0.0
         results.asSequence().sortedBy { it.key }.forEach {
-            val normaTime = NormaResults[it.key]
-            if (normaTime == null) println("ERROR: no norma for benchmark ${it.key}")
-
-            val norma     = it.value.toDouble() / normaTime!!.toDouble()
+            val norma     = it.value.toDouble()
             val niceName  = it.key.padEnd(50, ' ')
-            val niceNorma = norma.toString(2).padStart(10, ' ')
+            val niceNorma = norma.toString(9)
             println("$niceName : $niceNorma")
 
             total += norma
         }
         val average = total / results.size
-        println("\nRingAverage: ${average.toString(2)}")
+        println("\nRingAverage: ${average.toString(9)}")
     }
 
     //-------------------------------------------------------------------------//

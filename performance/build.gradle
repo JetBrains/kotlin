@@ -95,10 +95,12 @@ task bench(type:DefaultTask) {
         def konanReport = new Report(project.file("build/konanReport.txt"))
         def average = "none"
         def absoluteAverage = "none"
-        jvmReport.report.each { k, v ->
+        jvmReport.report
+                .sort { konanReport.report[it.key] / it.value }
+                .each { k, v ->
             def konanValue = konanReport.report[k]
-            def ratio = String.format('%.2f', konanValue/v)
-            def formattedKonanValue = String.format('%.2f', konanValue/1000)
+            def ratio = String.format('%.2f', konanValue / v)
+            def formattedKonanValue = String.format('%.2f', konanValue / 1000)
             if (k == 'RingAverage') {
                 average = ratio
                 absoluteAverage = formattedKonanValue

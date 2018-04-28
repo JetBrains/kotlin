@@ -19,7 +19,7 @@ package org.jetbrains.ring
 var globalAddendum = 0
 
 open class LambdaBenchmark {
-    private fun <T> runLambda(x: () -> T): T = x()
+    private inline fun <T> runLambda(x: () -> T): T = x()
     private fun <T> runLambdaNoInline(x: () -> T): T = x()
 
     fun setup() {
