@@ -43,8 +43,8 @@ class IrTypeOperatorCallImpl(
         type: IrType,
         operator: IrTypeOperator,
         typeOperand: IrType,
-        argument: IrExpression,
-        typeOperandClassifier: IrClassifierSymbol
+        typeOperandClassifier: IrClassifierSymbol,
+        argument: IrExpression
     ) : this(startOffset, endOffset, type, operator, typeOperand) {
         this.argument = argument
         this.typeOperandClassifier = typeOperandClassifier

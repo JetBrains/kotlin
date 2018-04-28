@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.putDefault
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -43,7 +42,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.lang.AssertionError
 
-class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+class DataClassMembersGenerator(
+    declarationGenerator: DeclarationGenerator
+) : DeclarationGeneratorExtension(declarationGenerator) {
+
     fun generate(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
         MyDataClassMethodGenerator(ktClassOrObject, irClass).generate()
     }
@@ -73,11 +75,23 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
             irFunction.putDefault(parameter, irExprBody(value))
         }
 
-        fun irThis(): IrExpression =
-            IrGetValueImpl(startOffset, endOffset, irFunction.dispatchReceiverParameter!!.symbol)
+        fun irThis(): IrExpression {
+            val irDispatchReceiverParameter = irFunction.dispatchReceiverParameter!!
+            return IrGetValueImpl(
+                startOffset, endOffset,
+                irDispatchReceiverParameter.type,
+                irDispatchReceiverParameter.symbol
+            )
+        }
 
-        fun irOther(): IrExpression =
-            IrGetValueImpl(startOffset, endOffset, irFunction.valueParameters[0].symbol)
+        fun irOther(): IrExpression {
+            val irFirstParameter = irFunction.valueParameters[0]
+            return IrGetValueImpl(
+                startOffset, endOffset,
+                irFirstParameter.type,
+                irFirstParameter.symbol
+            )
+        }
     }
 
     private inner class MyDataClassMethodGenerator(
@@ -105,7 +119,7 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                     ?: throw AssertionError("No definition for data class constructor parameter $parameter")
 
             buildMember(function, ktParameter) {
-                +irReturn(irGet(irThis(), getPropertyGetterSymbol(parameter)))
+                +irReturn(irGet(function.returnType!!.toIrType(), irThis(), getPropertyGetterSymbol(parameter)))
             }
         }
 
@@ -124,17 +138,18 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
 
             buildMember(function, declaration) { irFunction ->
                 function.valueParameters.forEach { parameter ->
-                    putDefault(parameter, irGet(irThis(), getPropertyGetterSymbol(parameter)))
+                    putDefault(parameter, irGet(parameter.type.toIrType(), irThis(), getPropertyGetterSymbol(parameter)))
                 }
                 +irReturn(
                     irCall(
                         constructorSymbol,
-                        dataClassConstructor.returnType,
+                        dataClassConstructor.returnType.toIrType(),
                         dataClassConstructor.typeParameters.associate { it to it.defaultType }
-                    ).mapValueParameters {
-                        irGet(irFunction.valueParameters[it.index].symbol)
+                    ).apply {
+                        mapValueParameters {
+                            irGet(irFunction.valueParameters[it.index].symbol)
+                        }
                     }
-                )
             }
         }
 

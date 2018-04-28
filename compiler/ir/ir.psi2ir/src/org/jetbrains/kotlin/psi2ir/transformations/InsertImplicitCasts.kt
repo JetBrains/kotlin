@@ -229,9 +229,13 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
                 ?: throw AssertionError("No declaration for target type: $targetType")
 
         return IrTypeOperatorCallImpl(
-            startOffset, endOffset,
-            targetType, typeOperator, targetType, this,
-            resolveScopedTypeParameter(typeDescriptor) ?: symbolTable.referenceClassifier(typeDescriptor)
+            startOffset,
+            endOffset,
+            targetType,
+            typeOperator,
+            targetType,
+            resolveScopedTypeParameter(typeDescriptor) ?: symbolTable.referenceClassifier(typeDescriptor),
+            this
         )
     }
 
@@ -243,8 +247,8 @@ class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symb
         else
             IrTypeOperatorCallImpl(
                 startOffset, endOffset, builtIns.unitType,
-                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, builtIns.unitType, this,
-                symbolTable.referenceClass(builtIns.unit)
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, builtIns.unitType, symbolTable.referenceClass(builtIns.unit),
+                this
             )
     }
 

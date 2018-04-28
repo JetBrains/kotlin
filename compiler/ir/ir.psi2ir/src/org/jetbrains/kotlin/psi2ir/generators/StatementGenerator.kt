@@ -58,7 +58,7 @@ class StatementGenerator(
 
     private val typeTranslator = TypeTranslator(context.moduleDescriptor, context.symbolTable)
 
-    private fun KotlinType.toIrType() = typeTranslator.translateType(this)
+    fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     fun generateStatement(ktElement: KtElement): IrStatement =
         ktElement.genStmt()
@@ -408,4 +408,5 @@ abstract class StatementGeneratorExtension(val statementGenerator: StatementGene
 
     fun KtExpression.genExpr() = statementGenerator.generateExpression(this)
     fun KtExpression.genStmt() = statementGenerator.generateStatement(this)
+    fun KotlinType.toIrType() = with(statementGenerator) { toIrType() }
 }

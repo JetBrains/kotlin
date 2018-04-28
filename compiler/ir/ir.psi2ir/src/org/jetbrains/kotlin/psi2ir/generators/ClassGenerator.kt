@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
+import org.jetbrains.kotlin.ir.expressions.putTypeArguments
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.util.StableDescriptorsComparator
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.isEnumClass
@@ -39,7 +41,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import java.lang.AssertionError
 
-class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+class ClassGenerator(
+    declarationGenerator: DeclarationGenerator
+) : DeclarationGeneratorExtension(declarationGenerator) {
+
     fun generateClass(ktClassOrObject: KtClassOrObject): IrClass {
         val descriptor = getOrFail(BindingContext.CLASS, ktClassOrObject)
         val startOffset = ktClassOrObject.startOffset
@@ -172,7 +177,10 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         val startOffset = irDelegate.startOffset
         val endOffset = irDelegate.endOffset
 
-        val irProperty = IrPropertyImpl(startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, false, delegated)
+        val irProperty = IrPropertyImpl(
+            startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER,
+            false, delegated, delegated.type.toIrType()
+        )
 
         irProperty.getter = generateDelegatedFunction(irDelegate, delegated.getter!!, overridden.getter!!)
 
@@ -216,30 +224,42 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
         val substitutedOverridden = substituteOverriddenDescriptorForDelegate(delegated, overridden)
         val returnType = substitutedOverridden.returnType!!
+        val irReturnType = returnType.toIrType()
         val irCall = IrCallImpl(
-            startOffset, endOffset, returnType,
+            startOffset, endOffset, irReturnType,
             context.symbolTable.referenceFunction(overridden.original),
             substitutedOverridden,
-            getTypeArgumentsForOverriddenDescriptorDelegatingCall(delegated, overridden)
-        )
+            substitutedOverridden.typeParametersCount
+        ).apply {
+            val typeArguments = getTypeArgumentsForOverriddenDescriptorDelegatingCall(delegated, overridden)
+            putTypeArguments(typeArguments) { it.toIrType() }
+        }
+        val dispatchReceiverParameter = irDelegatedFunction.dispatchReceiverParameter!!
+        val dispatchReceiverType = dispatchReceiverParameter.type
         irCall.dispatchReceiver =
                 IrGetFieldImpl(
-                    startOffset, endOffset, irDelegate.symbol,
-                    IrGetValueImpl(startOffset, endOffset, irDelegatedFunction.dispatchReceiverParameter!!.symbol)
+                    startOffset, endOffset,
+                    irDelegate.symbol,
+                    dispatchReceiverType,
+                    IrGetValueImpl(
+                        startOffset, endOffset,
+                        dispatchReceiverType,
+                        dispatchReceiverParameter.symbol
+                    )
                 )
         irCall.extensionReceiver =
                 irDelegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
-                    IrGetValueImpl(startOffset, endOffset, extensionReceiver.symbol)
+                    IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol)
                 }
         irCall.mapValueParameters { overriddenValueParameter ->
             val delegatedValueParameter = delegated.valueParameters[overriddenValueParameter.index]
             val irDelegatedValueParameter = irDelegatedFunction.getIrValueParameter(delegatedValueParameter)
-            IrGetValueImpl(startOffset, endOffset, irDelegatedValueParameter.symbol)
+            IrGetValueImpl(startOffset, endOffset, irDelegatedValueParameter.type, irDelegatedValueParameter.symbol)
         }
         if (KotlinBuiltIns.isUnit(returnType) || KotlinBuiltIns.isNothing(returnType)) {
             irBlockBody.statements.add(irCall)
         } else {
-            val irReturn = IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, irDelegatedFunction.symbol, irCall)
+            val irReturn = IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, irDelegatedFunction.symbol, irCall)
             irBlockBody.statements.add(irReturn)
         }
         return irBlockBody

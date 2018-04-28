@@ -68,8 +68,8 @@ class IrGetFieldImpl(
             this(
                 startOffset, endOffset,
                 IrFieldSymbolImpl(propertyDescriptor),
-                receiver,
                 type,
+                receiver,
                 origin,
                 createClassSymbolOrNull(superQualifier)
             )
@@ -78,8 +78,8 @@ class IrGetFieldImpl(
     constructor(
         startOffset: Int, endOffset: Int,
         symbol: IrFieldSymbol,
-        receiver: IrExpression?,
         type: IrType,
+        receiver: IrExpression?,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
     ) : this(startOffset, endOffset, symbol, type, origin, superQualifierSymbol) {

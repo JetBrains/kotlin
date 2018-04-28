@@ -46,18 +46,20 @@ fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, recei
 fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue =
     generateReceiver(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver)
 
-fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffset: Int, receiver: ReceiverValue): IntermediateValue =
-    if (receiver is TransientReceiver)
-        TransientReceiverValue(receiver.type)
-    else generateDelegatedValue(receiver.type) {
-        val receiverExpression = when (receiver) {
+fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffset: Int, receiver: ReceiverValue): IntermediateValue {
+    val irReceiverType = receiver.type.toIrType()
+
+    if (receiver is TransientReceiver) return TransientReceiverValue(irReceiverType)
+
+    return generateDelegatedValue(irReceiverType) {
+        val receiverExpression: IrExpression = when (receiver) {
             is ImplicitClassReceiver -> {
                 val receiverClassDescriptor = receiver.classDescriptor
                 if (shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor))
                     generateSingletonReference(receiverClassDescriptor, defaultStartOffset, defaultEndOffset, receiver.type)
                 else
                     IrGetValueImpl(
-                        defaultStartOffset, defaultEndOffset,
+                        defaultStartOffset, defaultEndOffset, irReceiverType,
                         context.symbolTable.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter)
                     )
             }
@@ -69,12 +71,12 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 generateExpression(receiver.expression)
             is ClassValueReceiver ->
                 IrGetObjectValueImpl(
-                    receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
+                    receiver.expression.startOffset, receiver.expression.endOffset, irReceiverType,
                     context.symbolTable.referenceClass(receiver.classQualifier.descriptor as ClassDescriptor)
                 )
             is ExtensionReceiver ->
                 IrGetValueImpl(
-                    defaultStartOffset, defaultStartOffset,
+                    defaultStartOffset, defaultStartOffset, irReceiverType,
                     context.symbolTable.referenceValueParameter(receiver.declarationDescriptor.extensionReceiverParameter!!)
                 )
             else ->
@@ -86,33 +88,37 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
         else
             OnceExpressionValue(receiverExpression)
     }
+}
 
 fun StatementGenerator.generateSingletonReference(
     descriptor: ClassDescriptor,
     startOffset: Int,
     endOffset: Int,
     type: KotlinType
-): IrDeclarationReference =
-    when {
+): IrDeclarationReference {
+    val irType = type.toIrType()
+
+    return when {
         DescriptorUtils.isObject(descriptor) ->
             IrGetObjectValueImpl(
-                startOffset, endOffset, type,
+                startOffset, endOffset, irType,
                 context.symbolTable.referenceClass(descriptor)
             )
         DescriptorUtils.isEnumEntry(descriptor) ->
             IrGetEnumValueImpl(
-                startOffset, endOffset, type,
+                startOffset, endOffset, irType,
                 context.symbolTable.referenceEnumEntry(descriptor)
             )
         else -> {
             val companionObjectDescriptor = descriptor.companionObjectDescriptor
                     ?: throw java.lang.AssertionError("Class value without companion object: $descriptor")
             IrGetObjectValueImpl(
-                startOffset, endOffset, type,
+                startOffset, endOffset, irType,
                 context.symbolTable.referenceClass(companionObjectDescriptor)
             )
         }
     }
+}
 
 private fun StatementGenerator.shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor: ClassDescriptor): Boolean {
     return receiverClassDescriptor.kind.isSingleton &&
@@ -126,6 +132,7 @@ private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverVal
     val ktReceiver = expressionReceiver.expression
     return IrGetValueImpl(
         ktReceiver.startOffset, ktReceiver.endOffset,
+        expressionReceiver.type.toIrType(),
         context.symbolTable.referenceValueParameter(classDescriptor.thisAsReceiverParameter)
     )
 }
@@ -192,7 +199,7 @@ private fun StatementGenerator.generateReceiverForCalleeImportedFromObject(
     calleeDescriptor: ImportedFromObjectCallableDescriptor<*>
 ): ExpressionValue {
     val objectDescriptor = calleeDescriptor.containingObject
-    val objectType = objectDescriptor.defaultType
+    val objectType = objectDescriptor.defaultType.toIrType()
     return generateExpressionValue(objectType) {
         IrGetObjectValueImpl(
             startOffset, endOffset, objectType,
@@ -219,7 +226,7 @@ fun StatementGenerator.generateVarargExpression(
     val varargElementType =
         valueParameter.varargElementType ?: throw AssertionError("Vararg argument for non-vararg parameter $valueParameter")
 
-    val irVararg = IrVarargImpl(varargStartOffset, varargEndOffset, valueParameter.type, varargElementType)
+    val irVararg = IrVarargImpl(varargStartOffset, varargEndOffset, valueParameter.type.toIrType(), varargElementType.toIrType())
 
     for (argument in varargArgument.arguments) {
         val ktArgumentExpression = argument.getArgumentExpression()

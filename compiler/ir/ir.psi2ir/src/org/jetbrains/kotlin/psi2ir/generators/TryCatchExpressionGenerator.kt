@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateTryCatch(ktTry: KtTryExpression): IrExpression {
-        val resultType = getInferredTypeWithImplicitCastsOrFail(ktTry)
+        val resultType = getInferredTypeWithImplicitCastsOrFail(ktTry).toIrType()
         val irTryCatch = IrTryImpl(ktTry.startOffset, ktTry.endOffset, resultType)
 
         irTryCatch.tryResult = ktTry.tryBlock.genExpr()

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
+import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -35,25 +36,25 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
-    fun generateAssignment(expression: KtBinaryExpression): IrExpression {
-        val ktLeft = expression.left!!
-        val irRhs = expression.right!!.genExpr()
+    fun generateAssignment(ktExpression: KtBinaryExpression): IrExpression {
+        val ktLeft = ktExpression.left!!
+        val irRhs = ktExpression.right!!.genExpr()
         val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, IrStatementOrigin.EQ)
         return irAssignmentReceiver.assign(irRhs)
     }
 
-    fun generateAugmentedAssignment(expression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
-        val opResolvedCall = getResolvedCall(expression)!!
-        val isSimpleAssignment = get(BindingContext.VARIABLE_REASSIGNMENT, expression) ?: false
-        val ktLeft = expression.left!!
-        val ktRight = expression.right!!
+    fun generateAugmentedAssignment(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
+        val opResolvedCall = getResolvedCall(ktExpression)!!
+        val isSimpleAssignment = get(BindingContext.VARIABLE_REASSIGNMENT, ktExpression) ?: false
+        val ktLeft = ktExpression.left!!
+        val ktRight = ktExpression.right!!
         val irAssignmentReceiver = generateAssignmentReceiver(ktLeft, origin)
 
         return irAssignmentReceiver.assign { irLValue ->
             val opCall = statementGenerator.pregenerateCallReceivers(opResolvedCall)
             opCall.setExplicitReceiverValue(irLValue)
             opCall.irValueArgumentsByIndex[0] = ktRight.genExpr()
-            val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, origin)
+            val irOpCall = CallGenerator(statementGenerator).generateCall(ktExpression, opCall, origin)
 
             if (isSimpleAssignment) {
                 // Set( Op( Get(), RHS ) )
@@ -65,35 +66,35 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         }
     }
 
-    fun generatePrefixIncrementDecrement(expression: KtPrefixExpression, origin: IrStatementOrigin): IrExpression {
-        val opResolvedCall = getResolvedCall(expression)!!
-        val ktBaseExpression = expression.baseExpression!!
+    fun generatePrefixIncrementDecrement(ktExpression: KtPrefixExpression, origin: IrStatementOrigin): IrExpression {
+        val opResolvedCall = getResolvedCall(ktExpression)!!
+        val ktBaseExpression = ktExpression.baseExpression!!
         val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, origin)
 
         return irAssignmentReceiver.assign { irLValue ->
-            irBlock(expression, origin, irLValue.type) {
+            irBlock(ktExpression.startOffset, ktExpression.endOffset, origin, irLValue.type) {
                 val opCall = statementGenerator.pregenerateCall(opResolvedCall)
                 opCall.setExplicitReceiverValue(irLValue)
-                val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, origin)
+                val irOpCall = CallGenerator(statementGenerator).generateCall(ktExpression, opCall, origin)
                 +irLValue.store(irOpCall)
                 +irLValue.load()
             }
         }
     }
 
-    fun generatePostfixIncrementDecrement(expression: KtPostfixExpression, origin: IrStatementOrigin): IrExpression {
-        val opResolvedCall = getResolvedCall(expression)!!
-        val ktBaseExpression = expression.baseExpression!!
+    fun generatePostfixIncrementDecrement(ktExpression: KtPostfixExpression, origin: IrStatementOrigin): IrExpression {
+        val opResolvedCall = getResolvedCall(ktExpression)!!
+        val ktBaseExpression = ktExpression.baseExpression!!
         val irAssignmentReceiver = generateAssignmentReceiver(ktBaseExpression, origin)
 
         return irAssignmentReceiver.assign { irLValue ->
-            irBlock(expression, origin, irLValue.type) {
+            irBlock(ktExpression.startOffset, ktExpression.endOffset, origin, irLValue.type) {
                 val temporary = irTemporary(irLValue.load())
                 val opCall = statementGenerator.pregenerateCall(opResolvedCall)
                 opCall.setExplicitReceiverValue(VariableLValue(startOffset, endOffset, temporary.symbol))
-                val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, origin)
+                val irOpCall = CallGenerator(statementGenerator).generateCall(ktExpression, opCall, origin)
                 +irLValue.store(irOpCall)
-                +irGet(temporary.symbol)
+                +irGet(temporary.type, temporary.symbol)
             }
         }
     }
@@ -162,9 +163,12 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
     ): AssignmentReceiver =
         if (isValInitializationInConstructor(descriptor, resolvedCall)) {
             val thisClass = getThisClass()
+            val thisAsReceiverParameter = thisClass.thisAsReceiverParameter
+            val thisType = thisAsReceiverParameter.type.toIrType()
             val irThis = IrGetValueImpl(
                 ktLeft.startOffset, ktLeft.endOffset,
-                context.symbolTable.referenceValueParameter(thisClass.thisAsReceiverParameter)
+                thisType,
+                context.symbolTable.referenceValueParameter(thisAsReceiverParameter)
             )
             createBackingFieldLValue(ktLeft, descriptor, RematerializableValue(irThis), null)
         } else {
