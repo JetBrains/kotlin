@@ -21,7 +21,6 @@ import com.intellij.codeInsight.editorActions.BackspaceHandlerDelegate
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
@@ -39,8 +38,8 @@ class KotlinRawStringBackspaceHandler : BackspaceHandlerDelegate() {
         val offset = editor.caretModel.offset
         val psiElement = file.findElementAt(offset) ?: return
 
-        psiElement.parentOfType(KtStringTemplateExpression::class)?.let {
-            if (it.text == "\"\"\"\"\"\"") {
+        psiElement.parent?.let {
+            if (it is KtStringTemplateExpression && it.text == "\"\"\"\"\"\"") {
                 if (editor.caretModel.offset == it.textOffset + 3) {
                     rangeMarker = editor.document.createRangeMarker(it.textRange)
                 }
@@ -54,6 +53,7 @@ class KotlinRawStringBackspaceHandler : BackspaceHandlerDelegate() {
             rangeMarker = null
             return true
         }
+
         return false
     }
 }

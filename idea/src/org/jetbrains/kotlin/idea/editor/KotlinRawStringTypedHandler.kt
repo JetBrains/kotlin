@@ -22,40 +22,46 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 class KotlinRawStringTypedHandler : TypedHandlerDelegate() {
     override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): Result {
+        if (c != '"') {
+            return Result.CONTINUE
+        }
         if (!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_QUOTE) {
             return Result.CONTINUE
         }
         if (file !is KtFile) {
             return Result.CONTINUE
         }
-        if (c != '"') {
-            return Result.CONTINUE
-        }
+
         // A quote is typed after 2 other quotes
         val offset = editor.caretModel.offset
-        // Check for caret at end of document
-        if (offset < editor.document.textLength) {
-            val psiElement = file.findElementAt(offset) ?: return Result.CONTINUE
-            if (PsiTreeUtil.getParentOfType(psiElement, KtStringTemplateExpression::class.java) != null) {
-                return Result.CONTINUE
-            }
+        if (offset < 2) {
+            return Result.CONTINUE
         }
 
-        val text = editor.document.text
-        if (offset >= 2)
-            if (text[offset - 1] == '"')
-                if (text[offset - 2] == '"') {
-                    editor.document.insertString(offset, "\"\"\"\"")
-                    editor.caretModel.currentCaret.moveToOffset(offset + 1)
-                    return Result.STOP
-                }
+        val openQuote = file.findElementAt(offset - 2)
+        if (openQuote == null || openQuote !is LeafPsiElement || openQuote.elementType != KtTokens.OPEN_QUOTE) {
+            return Result.CONTINUE
+        }
 
-        return Result.CONTINUE
+        val closeQuote = file.findElementAt(offset - 1)
+        if (closeQuote == null || closeQuote !is LeafPsiElement || closeQuote.elementType != KtTokens.CLOSING_QUOTE) {
+            return Result.CONTINUE
+        }
+
+        if (closeQuote.text != "\"") {
+            // Check it is not a multi-line quote
+            return Result.CONTINUE
+        }
+
+        editor.document.insertString(offset, "\"\"\"\"")
+        editor.caretModel.currentCaret.moveToOffset(offset + 1)
+
+        return Result.STOP
     }
 }

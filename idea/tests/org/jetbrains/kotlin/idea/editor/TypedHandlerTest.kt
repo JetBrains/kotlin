@@ -74,10 +74,46 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
             """val x = "$dollar{}]" """
     )
 
-    fun testAutoCloseRawString() = doCharTypeTest(
+    fun testAutoCloseRawStringInEnd() = doCharTypeTest(
             '"',
             """val x = ""<caret>""",
-            """val x = ""${'"'}"<caret>""${'"'}"""
+            """val x = ""${'"'}<caret>""${'"'}"""
+    )
+
+    fun testNoAutoCloseRawStringInEnd() = doCharTypeTest(
+            '"',
+            """val x = ""${'"'}<caret>""",
+            """val x = ""${'"'}""""
+    )
+
+    fun testAutoCloseRawStringInMiddle() = doCharTypeTest(
+            '"',
+            """
+            val x = ""<caret>
+            val y = 12
+            """.trimIndent(),
+            """
+            val x = ""${'"'}<caret>""${'"'}
+            val y = 12
+            """.trimIndent()
+    )
+
+    fun testNoAutoCloseBetweenMultiQuotes() = doCharTypeTest(
+            '"',
+            """val x = ""${'"'}<caret>${'"'}""/**/""",
+            """val x = ""${'"'}${'"'}<caret>""/**/"""
+    )
+
+    fun testNoAutoCloseBetweenMultiQuotes1() = doCharTypeTest(
+            '"',
+            """val x = ""${'"'}"<caret>"${'"'}/**/""",
+            """val x = ""${'"'}""<caret>${'"'}/**/"""
+    )
+
+    fun testNoAutoCloseAfterEscape() = doCharTypeTest(
+        '"',
+        """val x = "\""<caret>""",
+        """val x = "\""${'"'}<caret>""""
     )
 
     fun testAutoCloseBraceInFunctionDeclaration() = doCharTypeTest(
