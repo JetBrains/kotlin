@@ -30,12 +30,15 @@ import org.jetbrains.kotlin.backend.konan.ir.IrSuspensionPoint
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.utils.constructedClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -231,6 +234,18 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 element.acceptChildrenVoid(this)
             }
 
+            override fun visitConstructor(declaration: IrConstructor) {
+                val body = declaration.body
+                assert (body != null || declaration.symbol.constructedClass.kind == ClassKind.ANNOTATION_CLASS) {
+                    "Non-annotation class constructor has empty body"
+                }
+                DEBUG_OUTPUT(0) {
+                    println("Analysing function ${declaration.descriptor}")
+                    println("IR: ${ir2stringWhole(declaration)}")
+                }
+                analyze(declaration, body)
+            }
+
             override fun visitFunction(declaration: IrFunction) {
                 declaration.body?.let {
                     DEBUG_OUTPUT(0) {
@@ -251,10 +266,10 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 }
             }
 
-            private fun analyze(descriptor: DeclarationDescriptor, body: IrElement) {
+            private fun analyze(descriptor: DeclarationDescriptor, body: IrElement?) {
                 // Find all interesting expressions, variables and functions.
                 val visitor = ElementFinderVisitor()
-                body.acceptVoid(visitor)
+                body?.acceptVoid(visitor)
 
                 DEBUG_OUTPUT(0) {
                     println("FIRST PHASE")

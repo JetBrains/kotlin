@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
@@ -138,6 +135,8 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
         }
 
         private fun lowerConstructors(initializerMethodSymbol: IrSimpleFunctionSymbol?) {
+            if (irClass.kind == ClassKind.ANNOTATION_CLASS)
+                return
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
 
                 override fun visitClass(declaration: IrClass): IrStatement {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import java.io.OutputStream
 
 class KonanStringTable : StringTableImpl() {
 
@@ -53,5 +54,11 @@ class KonanStringTable : StringTableImpl() {
         } else {
             super.getLocalClassIdReplacement(descriptor)
         }
+    }
+
+    fun serializeTo(output: OutputStream) {
+        val (strings, qualifiedNames) = buildProto()
+        strings.writeDelimitedTo(output)
+        qualifiedNames.writeDelimitedTo(output)
     }
 }

@@ -2316,7 +2316,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         assert(irClass.isInterface)
         assert(irClass.isExternalObjCClass())
 
-        val annotation = irClass.annotations.findAnnotation(externalObjCClassFqName)!!
+        val annotation = irClass.descriptor.annotations.findAnnotation(externalObjCClassFqName)!!
         val protocolGetterName = annotation.getStringValue("protocolGetter")
         val protocolGetter = context.llvm.externalFunction(
                 protocolGetterName,

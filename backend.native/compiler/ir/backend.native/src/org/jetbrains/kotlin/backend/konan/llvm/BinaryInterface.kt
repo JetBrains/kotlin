@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -48,26 +49,26 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
  */
 internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
     // TODO: revise
-
-    if (this.annotations.findAnnotation(symbolNameAnnotation) != null) {
+    val descriptorAnnotations = this.descriptor.annotations
+    if (descriptorAnnotations.hasAnnotation(symbolNameAnnotation)) {
         // Treat any `@SymbolName` declaration as exported.
         return true
     }
-    if (this.annotations.findAnnotation(exportForCppRuntimeAnnotation) != null) {
+    if (descriptorAnnotations.hasAnnotation(exportForCppRuntimeAnnotation)) {
         // Treat any `@ExportForCppRuntime` declaration as exported.
         return true
     }
-    if (this.annotations.findAnnotation(cnameAnnotation) != null) {
+    if (descriptorAnnotations.hasAnnotation(cnameAnnotation)) {
         // Treat `@CName` declaration as exported.
         return true
     }
-    if (this.annotations.hasAnnotation(exportForCompilerAnnotation)) {
+    if (descriptorAnnotations.hasAnnotation(exportForCompilerAnnotation)) {
         return true
     }
-    if (this.annotations.hasAnnotation(publishedApiAnnotation)){
+    if (descriptorAnnotations.hasAnnotation(publishedApiAnnotation)){
         return true
     }
-    if (this.annotations.hasAnnotation(inlineExposedAnnotation)){
+    if (descriptorAnnotations.hasAnnotation(inlineExposedAnnotation)){
         return true
     }
 
@@ -202,16 +203,14 @@ internal val FunctionDescriptor.symbolName: String
         if (!this.isExported()) {
             throw AssertionError(this.descriptor.toString())
         }
-
-        this.annotations.findAnnotation(symbolNameAnnotation)?.let {
+        this.descriptor.annotations.findAnnotation(symbolNameAnnotation)?.let {
             if (this.isExternal) {
                 return getStringValue(it)!!
             } else {
                 // ignore; TODO: report compile error
             }
         }
-
-        this.annotations.findAnnotation(exportForCppRuntimeAnnotation)?.let {
+        this.descriptor.annotations.findAnnotation(exportForCppRuntimeAnnotation)?.let {
             val name = getStringValue(it) ?: this.name.asString()
             return name // no wrapping currently required
         }
@@ -234,12 +233,10 @@ internal val IrField.symbolName: String
     }
 
 private fun getStringValue(annotation: AnnotationDescriptor): String? {
-    annotation.allValueArguments.values.ifNotEmpty {
-        val stringValue = this.single() as StringValue
-        return stringValue.value
+    return annotation.allValueArguments.values.ifNotEmpty {
+        val stringValue = single() as? StringValue
+        stringValue?.value
     }
-
-    return null
 }
 
 // TODO: bring here dependencies of this method?

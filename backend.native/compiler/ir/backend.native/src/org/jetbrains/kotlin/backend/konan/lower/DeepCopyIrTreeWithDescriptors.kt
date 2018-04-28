@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
@@ -221,7 +222,8 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                     /* kind                  = */ oldDescriptor.kind,
                     /* supertypes            = */ listOf(newSuperClass.defaultType) + newInterfaces.map { it.defaultType },
                     /* source                = */ oldDescriptor.source,
-                    /* isExternal            = */ oldDescriptor.isExternal
+                    /* isExternal            = */ oldDescriptor.isExternal,
+                    /* storageManager        = */ LockBasedStorageManager.NO_LOCKS
             ) {
                 override fun getVisibility() = visibility
             }

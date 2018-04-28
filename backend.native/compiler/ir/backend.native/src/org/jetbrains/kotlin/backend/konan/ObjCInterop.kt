@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.annotations
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.getExternalObjCMethodInfo
-import org.jetbrains.kotlin.backend.konan.irasdescriptors.isReal
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -128,9 +129,9 @@ fun FunctionDescriptor.getObjCMethodInfo(): ObjCMethodInfo? = this.getObjCMethod
 fun IrFunction.isObjCBridgeBased(): Boolean {
     assert(this.isReal)
 
-    return this.annotations.hasAnnotation(objCMethodFqName) ||
-            this.annotations.hasAnnotation(objCFactoryFqName) ||
-            this.annotations.hasAnnotation(objCConstructorFqName)
+    return this.descriptor.annotations.hasAnnotation(objCMethodFqName) ||
+            this.descriptor.annotations.hasAnnotation(objCFactoryFqName) ||
+            this.descriptor.annotations.hasAnnotation(objCConstructorFqName)
 }
 
 /**
@@ -208,10 +209,10 @@ fun ConstructorDescriptor.getObjCInitMethod(): FunctionDescriptor? {
     }
 }
 
-fun IrConstructor.isObjCConstructor(): Boolean = this.annotations.hasAnnotation(objCConstructorFqName)
+fun IrConstructor.isObjCConstructor(): Boolean = this.descriptor.annotations.hasAnnotation(objCConstructorFqName)
 
 fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
-    return this.annotations.findAnnotation(objCConstructorFqName)?.let {
+    return this.descriptor.annotations.findAnnotation(objCConstructorFqName)?.let {
         val initSelector = it.getStringValue("initSelector")
         this.constructedClass.declarations.asSequence()
                 .filterIsInstance<IrSimpleFunction>()

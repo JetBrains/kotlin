@@ -101,7 +101,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
 
     private fun selectClassName(irClass: IrClass): String? {
         val exportObjCClassAnnotation =
-                irClass.annotations.findAnnotation(context.interopBuiltIns.exportObjCClass.fqNameSafe)
+                irClass.descriptor.annotations.findAnnotation(context.interopBuiltIns.exportObjCClass.fqNameSafe)
 
         return if (exportObjCClassAnnotation != null) {
             exportObjCClassAnnotation.getStringValueOrNull("name") ?: irClass.name.asString()
@@ -141,7 +141,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
             .filterIsInstance<IrSimpleFunction>()
             .mapNotNull {
                 val annotation =
-                        it.annotations.findAnnotation(context.interopBuiltIns.objCMethodImp.fqNameSafe) ?:
+                        it.descriptor.annotations.findAnnotation(context.interopBuiltIns.objCMethodImp.fqNameSafe) ?:
                                 return@mapNotNull null
 
                 ObjCMethodDesc(

@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -331,7 +332,8 @@ internal class SuspendFunctionsLowering(val context: Context): DeclarationContai
                     /* kind                  = */ ClassKind.CLASS,
                     /* superTypes            = */ superTypes,
                     /* source                = */ SourceElement.NO_SOURCE,
-                    /* isExternal            = */ false
+                    /* isExternal            = */ false,
+                    /* storageManager        = */ LockBasedStorageManager.NO_LOCKS
             )
             coroutineClass = IrClassImpl(
                     startOffset = irFunction.startOffset,

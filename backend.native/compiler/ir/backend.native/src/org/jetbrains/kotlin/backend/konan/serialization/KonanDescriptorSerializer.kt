@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization
 import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.backend.konan.descriptors.needsSerializedIr
 import org.jetbrains.kotlin.backend.konan.serialization.IrAwareExtension
+import org.jetbrains.kotlin.backend.konan.serialization.KonanStringTable
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -44,7 +46,6 @@ import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.metadata.serialization.*
@@ -540,7 +541,7 @@ class KonanDescriptorSerializer private constructor(
         }
 
         if (type.isSuspendFunctionType) {
-            val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type))
+            val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type, extension.releaseCoroutines()))
             functionType.flags = Flags.getTypeFlags(true)
             return functionType
         }
@@ -773,7 +774,7 @@ class KonanDescriptorSerializer private constructor(
         @JvmStatic
         fun serialize(message: MessageLite, stringTable: StringTable): ByteArray {
             return ByteArrayOutputStream().apply {
-                stringTable.serializeTo(this)
+                (stringTable as KonanStringTable).serializeTo(this)
                 message.writeTo(this)
             }.toByteArray()
         }

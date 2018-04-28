@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -208,7 +209,8 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     /* kind                  = */ ClassKind.CLASS,
                     /* superTypes            = */ superTypes,
                     /* source                = */ SourceElement.NO_SOURCE,
-                    /* isExternal            = */ false
+                    /* isExternal            = */ false,
+                    /* storageManager        = */ LockBasedStorageManager.NO_LOCKS
             ) {
                 override fun getVisibility() = Visibilities.PRIVATE
             }

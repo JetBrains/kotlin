@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 
 internal class TestProcessor (val context: KonanBackendContext) {
@@ -531,7 +532,8 @@ internal class TestProcessor (val context: KonanBackendContext) {
                         /* kind                  = */ ClassKind.CLASS,
                         /* superTypes            = */ listOf(superType),
                         /* source                = */ SourceElement.NO_SOURCE,
-                        /* isExternal            = */ false
+                        /* isExternal            = */ false,
+                        /* storageManager        = */ LockBasedStorageManager.NO_LOCKS
                 )
         )
     }

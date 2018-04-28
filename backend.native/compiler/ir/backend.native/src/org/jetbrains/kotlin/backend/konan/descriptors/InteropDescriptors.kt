@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
@@ -125,7 +126,7 @@ private class ForwardDeclarationsPackageFragmentDescriptor(
             return ClassDescriptorImpl(
                     this@ForwardDeclarationsPackageFragmentDescriptor,
                     name, Modality.FINAL, classKind,
-                    listOf(supertype), SourceElement.NO_SOURCE, false
+                    listOf(supertype), SourceElement.NO_SOURCE, false, LockBasedStorageManager.NO_LOCKS
             ).apply {
                 this.initialize(MemberScope.Empty, emptySet(), null)
             }

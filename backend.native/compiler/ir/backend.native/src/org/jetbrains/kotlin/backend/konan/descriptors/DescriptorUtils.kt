@@ -88,8 +88,9 @@ internal fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
 
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 
+// TODO: don't forget to remove descriptor access here.
 internal val FunctionDescriptor.isIntrinsic: Boolean
-    get() = this.annotations.hasAnnotation(intrinsicAnnotation)
+    get() = this.descriptor.annotations.hasAnnotation(intrinsicAnnotation)
 
 private val intrinsicTypes = setOf(
         "kotlin.Boolean", "kotlin.Char",

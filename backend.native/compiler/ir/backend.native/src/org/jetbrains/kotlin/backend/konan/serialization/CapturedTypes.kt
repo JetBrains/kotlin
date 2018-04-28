@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.*
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 private val konanInternalPackageName = FqName("konan.internal")
 private val fakeCapturedTypeClassName = Name.identifier("FAKE_CAPTURED_TYPE_CLASS")
@@ -36,7 +37,8 @@ internal fun createFakeClass(packageName: FqName, className: Name)
         /* isInner = */ false, 
         /* isExternal = */ false,
         className,
-        SourceElement.NO_SOURCE
+        SourceElement.NO_SOURCE,
+        LockBasedStorageManager.NO_LOCKS
     )
 
 // We do the trick similar to FAKE_CONTINUATION_CLASS_DESCRIPTOR.

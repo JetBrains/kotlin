@@ -522,8 +522,8 @@ internal object DataFlowIR {
                         val name = if (it.isExported()) it.symbolName else it.internalName
                         val numberOfParameters = it.allParameters.size + if (it.isSuspend) 1 else 0
                         if (it.module != irModule.descriptor || it.isExternal || (it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
-                            val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
-                            val pointsToAnnotation = it.annotations.findAnnotation(FQ_NAME_POINTS_TO)
+                            val escapesAnnotation = it.descriptor.annotations.findAnnotation(FQ_NAME_ESCAPES)
+                            val pointsToAnnotation = it.descriptor.annotations.findAnnotation(FQ_NAME_POINTS_TO)
                             @Suppress("UNCHECKED_CAST")
                             val escapesBitMask = (escapesAnnotation?.allValueArguments?.get(escapesWhoDescriptor.name) as? ConstantValue<Int>)?.value
                             @Suppress("UNCHECKED_CAST")

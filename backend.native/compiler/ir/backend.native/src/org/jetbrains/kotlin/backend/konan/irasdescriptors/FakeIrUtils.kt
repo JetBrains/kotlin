@@ -18,11 +18,17 @@ package org.jetbrains.kotlin.backend.konan.irasdescriptors
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.llvmSymbolOrigin
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCatch
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 // This file contains some IR utilities which actually use descriptors.
@@ -58,3 +64,4 @@ internal fun IrTypeOperatorCall.getTypeOperandClass(context: Context): IrClass? 
 
 internal fun IrCatch.getCatchParameterTypeClass(context: Context): IrClass? =
         context.ir.getClass(this.catchParameter.type)
+

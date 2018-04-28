@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.getTypeArgumentOrDefault
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -218,7 +220,7 @@ fun IrModuleFragment.referenceAllTypeExternalClassifiers(symbolTable: SymbolTabl
 
         override fun visitDeclaration(declaration: IrDeclaration) {
             super.visitDeclaration(declaration)
-            declaration.annotations.getAllAnnotations().forEach {
+            declaration.descriptor.annotations.getAllAnnotations().forEach {
                 handleClassReferences(it.annotation)
             }
         }

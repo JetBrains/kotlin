@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
@@ -53,7 +54,7 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
         val endOffset = enumClassDescriptor.endOffsetOrUndefined
 
         val implObjectDescriptor = ClassDescriptorImpl(enumClassDescriptor, "OBJECT".synthesizedName, Modality.FINAL,
-                ClassKind.OBJECT, listOf(context.builtIns.anyType), SourceElement.NO_SOURCE, false)
+                ClassKind.OBJECT, listOf(context.builtIns.anyType), SourceElement.NO_SOURCE, false, LockBasedStorageManager.NO_LOCKS)
 
         val valuesProperty = createEnumValuesField(enumClassDescriptor, implObjectDescriptor)
         val valuesField = IrFieldImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, valuesProperty)

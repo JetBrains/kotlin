@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
@@ -47,7 +48,7 @@ class KonanBuiltInClassDescriptorFactory(
         ClassDescriptorImpl(
                 computeContainingDeclaration(moduleDescriptor),
                 CLONEABLE_NAME, Modality.ABSTRACT, ClassKind.INTERFACE, listOf(moduleDescriptor.builtIns.anyType),
-                SourceElement.NO_SOURCE, /* isExternal = */ false
+                SourceElement.NO_SOURCE, /* isExternal = */ false, LockBasedStorageManager.NO_LOCKS
         ).apply {
             initialize(CloneableClassScope(storageManager, this), emptySet(), null)
         }
