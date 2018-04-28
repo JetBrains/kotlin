@@ -51,9 +51,11 @@ fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration?) {
     val renderer = object : DefaultPsiElementCellRenderer() {
         override fun getContainerText(element: PsiElement?, name: String?) = ""
     }
-    PsiElementListNavigator.openTargets(e,
-                                        actualDeclarations.toTypedArray(),
-                                        "Choose actual for ${declaration.name}",
-                                        "Actuals for ${declaration.name}",
-                                        renderer)
+    PsiElementListNavigator.openTargets(
+        e,
+        actualDeclarations.toTypedArray(),
+        "Choose actual for ${declaration.name}",
+        "Actuals for ${declaration.name}",
+        renderer
+    )
 }

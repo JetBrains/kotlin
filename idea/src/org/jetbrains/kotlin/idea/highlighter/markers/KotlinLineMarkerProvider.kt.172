@@ -56,7 +56,8 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
             if (element.canHaveSeparator()) {
                 val prevSibling = element.getPrevSiblingIgnoringWhitespaceAndComments()
                 if (prevSibling.canHaveSeparator() &&
-                    (element.wantsSeparator() || prevSibling?.wantsSeparator() == true)) {
+                    (element.wantsSeparator() || prevSibling?.wantsSeparator() == true)
+                ) {
                     return createLineSeparatorByElement(element)
                 }
             }
@@ -121,8 +122,7 @@ class KotlinLineMarkerProvider : LineMarkerProvider {
 
             if (element.isExpectDeclaration()) {
                 collectActualMarkers(element, result)
-            }
-            else if (element.isEffectivelyActual()) {
+            } else if (element.isEffectivelyActual()) {
                 collectExpectedMarkers(element, result)
             }
         }
@@ -135,11 +135,11 @@ private val OVERRIDDEN_MARK: Icon = AllIcons.Gutter.OverridenMethod
 private val IMPLEMENTED_MARK: Icon = AllIcons.Gutter.ImplementedMethod
 
 data class NavigationPopupDescriptor(
-        val targets: Collection<NavigatablePsiElement>,
-        val title: String,
-        val findUsagesTitle: String,
-        val renderer: ListCellRenderer<*>,
-        val updater: ListBackgroundUpdaterTask? = null
+    val targets: Collection<NavigatablePsiElement>,
+    val title: String,
+    val findUsagesTitle: String,
+    val renderer: ListCellRenderer<*>,
+    val updater: ListBackgroundUpdaterTask? = null
 ) {
     fun showPopup(e: MouseEvent?) {
         PsiElementListNavigator.openTargets(e, targets.toTypedArray(), title, findUsagesTitle, renderer, updater)
@@ -151,22 +151,22 @@ interface TestableLineMarkerNavigator {
 }
 
 private val SUBCLASSED_CLASS = MarkerType(
-        "SUBCLASSED_CLASS",
-        { getPsiClass(it)?.let { MarkerType.getSubclassedClassTooltip(it) } },
-        object : LineMarkerNavigator() {
-            override fun browse(e: MouseEvent?, element: PsiElement?) {
-                getPsiClass(element)?.let { MarkerType.navigateToSubclassedClass(e, it) }
-            }
-        })
+    "SUBCLASSED_CLASS",
+    { getPsiClass(it)?.let { MarkerType.getSubclassedClassTooltip(it) } },
+    object : LineMarkerNavigator() {
+        override fun browse(e: MouseEvent?, element: PsiElement?) {
+            getPsiClass(element)?.let { MarkerType.navigateToSubclassedClass(e, it) }
+        }
+    })
 
 private val OVERRIDDEN_FUNCTION = object : MarkerType(
-        "OVERRIDDEN_FUNCTION",
-        { getPsiMethod(it)?.let(::getOverriddenMethodTooltip) },
-        object : LineMarkerNavigator() {
-            override fun browse(e: MouseEvent?, element: PsiElement?) {
-                buildNavigateToOverriddenMethodPopup(e, element)?.showPopup(e)
-            }
-        }) {
+    "OVERRIDDEN_FUNCTION",
+    { getPsiMethod(it)?.let(::getOverriddenMethodTooltip) },
+    object : LineMarkerNavigator() {
+        override fun browse(e: MouseEvent?, element: PsiElement?) {
+            buildNavigateToOverriddenMethodPopup(e, element)?.showPopup(e)
+        }
+    }) {
 
     override fun getNavigationHandler(): GutterIconNavigationHandler<PsiElement> {
         val superHandler = super.getNavigationHandler()
@@ -181,13 +181,13 @@ private val OVERRIDDEN_FUNCTION = object : MarkerType(
 }
 
 private val OVERRIDDEN_PROPERTY = object : MarkerType(
-        "OVERRIDDEN_PROPERTY",
-        { it?.let { getOverriddenPropertyTooltip(it.parent as KtNamedDeclaration) } },
-        object : LineMarkerNavigator() {
-            override fun browse(e: MouseEvent?, element: PsiElement?) {
-                buildNavigateToPropertyOverriddenDeclarationsPopup(e, element)?.showPopup(e)
-            }
-        }) {
+    "OVERRIDDEN_PROPERTY",
+    { it?.let { getOverriddenPropertyTooltip(it.parent as KtNamedDeclaration) } },
+    object : LineMarkerNavigator() {
+        override fun browse(e: MouseEvent?, element: PsiElement?) {
+            buildNavigateToPropertyOverriddenDeclarationsPopup(e, element)?.showPopup(e)
+        }
+    }) {
 
     override fun getNavigationHandler(): GutterIconNavigationHandler<PsiElement> {
         val superHandler = super.getNavigationHandler()
@@ -205,26 +205,29 @@ private val PsiElement.markerDeclaration
     get() = (this as? KtDeclaration) ?: (parent as? KtDeclaration)
 
 private val PLATFORM_ACTUAL = MarkerType(
-        "PLATFORM_ACTUAL",
-        { it?.let { getPlatformActualTooltip(it.markerDeclaration) } },
-        object : LineMarkerNavigator() {
-            override fun browse(e: MouseEvent?, element: PsiElement?) {
-                element?.let { navigateToPlatformActual(e, it.markerDeclaration) }
-            }
+    "PLATFORM_ACTUAL",
+    { it?.let { getPlatformActualTooltip(it.markerDeclaration) } },
+    object : LineMarkerNavigator() {
+        override fun browse(e: MouseEvent?, element: PsiElement?) {
+            element?.let { navigateToPlatformActual(e, it.markerDeclaration) }
         }
+    }
 )
 
 private val EXPECTED_DECLARATION = MarkerType(
-        "EXPECTED_DECLARATION",
-        { it?.let { getExpectedDeclarationTooltip(it.markerDeclaration) } },
-        object : LineMarkerNavigator() {
-            override fun browse(e: MouseEvent?, element: PsiElement?) {
-                element?.let { navigateToExpectedDeclaration(it.markerDeclaration) }
-            }
+    "EXPECTED_DECLARATION",
+    { it?.let { getExpectedDeclarationTooltip(it.markerDeclaration) } },
+    object : LineMarkerNavigator() {
+        override fun browse(e: MouseEvent?, element: PsiElement?) {
+            element?.let { navigateToExpectedDeclaration(it.markerDeclaration) }
         }
+    }
 )
 
-private fun isImplementsAndNotOverrides(descriptor: CallableMemberDescriptor, overriddenMembers: Collection<CallableMemberDescriptor>): Boolean {
+private fun isImplementsAndNotOverrides(
+    descriptor: CallableMemberDescriptor,
+    overriddenMembers: Collection<CallableMemberDescriptor>
+): Boolean {
     return descriptor.modality != Modality.ABSTRACT && overriddenMembers.all { it.modality == Modality.ABSTRACT }
 }
 
@@ -288,8 +291,10 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
     result.add(lineMarkerInfo)
 }
 
-private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDeclaration>,
-                                               result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectOverriddenPropertyAccessors(
+    properties: Collection<KtNamedDeclaration>,
+    result: MutableCollection<LineMarkerInfo<*>>
+) {
     val mappingToJava = HashMap<PsiElement, KtNamedDeclaration>()
     for (property in properties) {
         if (property.isOverridable()) {
@@ -326,13 +331,15 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtNamedDec
 private val KtNamedDeclaration.expectOrActualAnchor
     get() =
         nameIdentifier
-        ?: (this as? KtConstructor<*>)?.let {
-            it.getConstructorKeyword() ?: it.getValueParameterList()?.leftParenthesis
-        }
-        ?: this
+                ?: (this as? KtConstructor<*>)?.let {
+                    it.getConstructorKeyword() ?: it.getValueParameterList()?.leftParenthesis
+                }
+                ?: this
 
-private fun collectActualMarkers(declaration: KtNamedDeclaration,
-                                 result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectActualMarkers(
+    declaration: KtNamedDeclaration,
+    result: MutableCollection<LineMarkerInfo<*>>
+) {
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
@@ -358,8 +365,10 @@ private fun collectActualMarkers(declaration: KtNamedDeclaration,
     result.add(lineMarkerInfo)
 }
 
-private fun collectExpectedMarkers(declaration: KtNamedDeclaration,
-                                   result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectExpectedMarkers(
+    declaration: KtNamedDeclaration,
+    result: MutableCollection<LineMarkerInfo<*>>
+) {
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()

@@ -51,8 +51,10 @@ class PlatformExpectedAnnotator : Annotator {
 
         val trace = BindingTraceContext()
         for (module in implementingModules) {
-            ExpectedActualDeclarationChecker.checkExpectedDeclarationHasActual(declaration, descriptor, trace, module,
-                                                                               ExpectActualTracker.DoNothing)
+            ExpectedActualDeclarationChecker.checkExpectedDeclarationHasActual(
+                declaration, descriptor, trace, module,
+                ExpectActualTracker.DoNothing
+            )
         }
 
         val suppressionCache = KotlinCacheService.getInstance(declaration.project).getSuppressionCache()
@@ -66,6 +68,6 @@ class PlatformExpectedAnnotator : Annotator {
 
     private fun isExpectedDeclaration(declaration: KtDeclaration): Boolean {
         return declaration.hasExpectModifier() ||
-               declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration)?.hasExpectModifier() == true
+                declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration)?.hasExpectModifier() == true
     }
 }
