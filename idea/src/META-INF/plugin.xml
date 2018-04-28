@@ -349,6 +349,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptModificationListener"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptModificationListener"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames"
+                    serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyNothingCallableNamesImpl"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>
@@ -2691,7 +2694,7 @@
                      level="WARNING"
                      language="kotlin"
     />
-    
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SortModifiersInspection"
                      displayName="Non-canonical modifier order"
                      groupPath="Kotlin"

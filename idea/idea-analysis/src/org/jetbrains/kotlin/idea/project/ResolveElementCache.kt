@@ -111,14 +111,6 @@ class ResolveElementCache(
             false
         )
 
-
-    private fun probablyNothingCallableNames(): ProbablyNothingCallableNames {
-        return object : ProbablyNothingCallableNames {
-            override fun functionNames() = KotlinProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project)
-            override fun propertyNames() = KotlinProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project)
-        }
-    }
-
     override fun resolveFunctionBody(function: KtNamedFunction) = getElementsAdditionalResolve(function, null, BodyResolveMode.FULL)
 
     fun resolvePrimaryConstructorParametersDefaultValues(ktClass: KtClass): BindingContext {
@@ -310,7 +302,6 @@ class ResolveElementCache(
                 statementFilterUsed = PartialBodyResolveFilter(
                     contextElements!!,
                     resolveElement as KtDeclaration,
-                    probablyNothingCallableNames(),
                     bodyResolveMode == BodyResolveMode.PARTIAL_FOR_COMPLETION
                 )
             }
