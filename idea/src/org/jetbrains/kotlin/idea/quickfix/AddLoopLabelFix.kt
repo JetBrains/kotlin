@@ -40,7 +40,7 @@ class AddLoopLabelFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val labelName = existingLabelName ?: getUniqueLabelName(collectUsedLabels(element))
+        val labelName = existingLabelName ?: getUniqueLabelName(element)
 
         val jumpWithLabel = KtPsiFactory(project).createExpression(jumpExpression.text + "@" + labelName)
         jumpExpression.replace(jumpWithLabel)
@@ -55,31 +55,6 @@ class AddLoopLabelFix(
         // TODO(yole) We should initiate in-place rename for the label here, but in-place rename for labels is not yet implemented
     }
 
-    private fun collectUsedLabels(element: KtElement): Set<String> {
-        val usedLabels = hashSetOf<String>()
-        element.acceptChildren(object : KtTreeVisitorVoid() {
-            override fun visitLabeledExpression(expression: KtLabeledExpression) {
-                super.visitLabeledExpression(expression)
-                usedLabels.add(expression.getLabelName()!!)
-            }
-        })
-        element.parents.forEach {
-            if (it is KtLabeledExpression) {
-                usedLabels.add(it.getLabelName()!!)
-            }
-        }
-        return usedLabels
-    }
-
-    private fun getUniqueLabelName(existingNames: Collection<String>): String {
-        var index = 0
-        var result = "loop"
-        while (result in existingNames) {
-            result = "loop${++index}"
-        }
-        return result
-    }
-
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.psiElement as? KtExpressionWithLabel
@@ -88,5 +63,33 @@ class AddLoopLabelFix(
             val loop = element?.getStrictParentOfType<KtLoopExpression>() ?: return null
             return AddLoopLabelFix(loop, element)
         }
+
+        private fun collectUsedLabels(element: KtElement): Set<String> {
+            val usedLabels = hashSetOf<String>()
+            element.acceptChildren(object : KtTreeVisitorVoid() {
+                override fun visitLabeledExpression(expression: KtLabeledExpression) {
+                    super.visitLabeledExpression(expression)
+                    usedLabels.add(expression.getLabelName()!!)
+                }
+            })
+            element.parents.forEach {
+                if (it is KtLabeledExpression) {
+                    usedLabels.add(it.getLabelName()!!)
+                }
+            }
+            return usedLabels
+        }
+
+        private fun getUniqueLabelName(existingNames: Collection<String>): String {
+            var index = 0
+            var result = "loop"
+            while (result in existingNames) {
+                result = "loop${++index}"
+            }
+            return result
+        }
+
+        fun getUniqueLabelName(loop: KtLoopExpression): String =
+            getUniqueLabelName(collectUsedLabels(loop))
     }
 }
