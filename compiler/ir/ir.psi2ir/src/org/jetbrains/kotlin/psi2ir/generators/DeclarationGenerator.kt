@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -31,8 +32,14 @@ import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.types.KotlinType
 
 class DeclarationGenerator(override val context: GeneratorContext) : Generator {
+
+    private val typeTranslator = TypeTranslator(context.moduleDescriptor, context.symbolTable)
+
+    fun KotlinType.toIrType() = typeTranslator.translateType(this)
+
     fun generateMemberDeclaration(ktDeclaration: KtDeclaration): IrDeclaration =
         when (ktDeclaration) {
             is KtNamedFunction ->
@@ -154,21 +161,27 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         }
     }
 
-    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtElement): IrProperty =
-        IrPropertyImpl(
-            ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
-            IrDeclarationOrigin.FAKE_OVERRIDE,
-            false,
-            propertyDescriptor,
+    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtElement): IrProperty {
+        val backingField =
             if (propertyDescriptor.getter == null)
                 context.symbolTable.declareField(
                     ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined, IrDeclarationOrigin.FAKE_OVERRIDE,
                     propertyDescriptor
                 )
-            else null,
+            else
+                null
+
+        return IrPropertyImpl(
+            ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
+            IrDeclarationOrigin.FAKE_OVERRIDE,
+            false,
+            propertyDescriptor,
+            propertyDescriptor.type.toIrType(),
+            backingField,
             propertyDescriptor.getter?.let { generateFakeOverrideFunction(it, ktElement) },
             propertyDescriptor.setter?.let { generateFakeOverrideFunction(it, ktElement) }
         )
+    }
 
     private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrSimpleFunction =
         FunctionGenerator(this).generateFakeOverrideFunction(functionDescriptor, ktElement)
@@ -183,6 +196,8 @@ abstract class DeclarationGeneratorExtension(val declarationGenerator: Declarati
                 builder(irDeclaration)
             }
         }
+
+    fun KotlinType.toIrType() = with(declarationGenerator) { toIrType() }
 }
 
 fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol) =

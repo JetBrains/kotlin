@@ -92,8 +92,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return IrTypeOperatorCallImpl(
             expression.startOffset, expression.endOffset, resultType, irOperator, rhsType,
-            expression.left.genExpr(),
-            context.symbolTable.referenceClassifier(rhsType.constructor.declarationDescriptor!!)
+            context.symbolTable.referenceClassifier(rhsType.constructor.declarationDescriptor!!),
+            expression.left.genExpr()
         )
     }
 
@@ -104,8 +104,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return IrTypeOperatorCallImpl(
             expression.startOffset, expression.endOffset, context.builtIns.booleanType, irOperator,
-            againstType, expression.leftHandSide.genExpr(),
-            context.symbolTable.referenceClassifier(againstType.constructor.declarationDescriptor!!)
+            againstType, context.symbolTable.referenceClassifier(againstType.constructor.declarationDescriptor!!),
+            expression.leftHandSide.genExpr()
         )
     }
 
