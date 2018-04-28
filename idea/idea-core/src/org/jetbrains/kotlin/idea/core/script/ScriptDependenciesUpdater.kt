@@ -38,7 +38,6 @@ import kotlinx.coroutines.experimental.CoroutineDispatcher
 import kotlinx.coroutines.experimental.asCoroutineDispatcher
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -302,13 +301,3 @@ var Application.isScriptDependenciesUpdaterDisabled by NotNullableUserDataProper
     Key.create("SCRIPT_DEPENDENCIES_UPDATER_DISABLED"),
     false
 )
-
-interface DefaultScriptDependenciesProvider {
-    fun defaultDependenciesFor(scriptFile: VirtualFile): ScriptDependencies?
-
-    companion object : ProjectExtensionDescriptor<DefaultScriptDependenciesProvider>(
-        "org.jetbrains.kotlin.defaultScriptDependenciesProvider",
-        DefaultScriptDependenciesProvider::class.java
-    )
-
-}

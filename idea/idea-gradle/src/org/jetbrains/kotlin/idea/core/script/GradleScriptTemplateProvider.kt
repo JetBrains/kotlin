@@ -24,7 +24,6 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import org.gradle.tooling.ProjectConnection
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
@@ -49,7 +48,6 @@ import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
-import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -341,19 +339,3 @@ fun topLevelSectionCodeTextTokens(script: CharSequence, sectionIdentifier: Strin
     TopLevelSectionTokensEnumerator(script, sectionIdentifier).asSequence()
         .filter { it.tokenType !in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET }
         .map { it.tokenSequence }
-
-
-private const val KOTLIN_BUILD_FILE_SUFFIX = ".gradle.kts"
-
-class GradleScriptDefaultDependenciesProvider(
-    private val scriptDependenciesCache: ScriptDependenciesCache
-) : DefaultScriptDependenciesProvider {
-    override fun defaultDependenciesFor(scriptFile: VirtualFile): ScriptDependencies? {
-        if (!scriptFile.name.endsWith(KOTLIN_BUILD_FILE_SUFFIX)) return null
-
-        return previouslyAnalyzedScriptsCombinedDependencies().takeUnless { it.classpath.isEmpty() }
-    }
-
-    private fun previouslyAnalyzedScriptsCombinedDependencies() =
-        scriptDependenciesCache.combineDependencies { it.name.endsWith(KOTLIN_BUILD_FILE_SUFFIX) }
-}
