@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.uast.*
@@ -98,7 +99,7 @@ internal fun KotlinType.toPsiType(source: UElement, element: KtElement, boxed: B
             else -> {
                 val typeConstructor = this.constructor
                 if (typeConstructor is IntegerValueTypeConstructor) {
-                    typeConstructor.supertypes.first().toPsiType(source, element, boxed)
+                    TypeUtils.getDefaultPrimitiveNumberType(typeConstructor).toPsiType(source, element, boxed)
                 } else {
                     null
                 }
