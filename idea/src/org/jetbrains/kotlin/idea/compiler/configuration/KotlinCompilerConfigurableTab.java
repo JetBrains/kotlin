@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
@@ -88,6 +89,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private ThreeStateCheckBox keepAliveCheckBox;
     private JCheckBox enablePreciseIncrementalCheckBox;
     private JComboBox moduleKindComboBox;
+    private JCheckBox scriptDependenciesAutoReload;
     private JTextField scriptTemplatesField;
     private JTextField scriptTemplatesClasspathField;
     private JLabel scriptTemplatesLabel;
@@ -426,6 +428,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                !getSelectedAPIVersionView().equals(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments)) ||
                !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArguments(commonCompilerArguments)) ||
                !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments()) ||
+               isModified(scriptDependenciesAutoReload, getScriptingSettings().isAutoReloadEnabled()) ||
                isModified(scriptTemplatesField, compilerSettings.getScriptTemplates()) ||
                isModified(scriptTemplatesClasspathField, compilerSettings.getScriptTemplatesClasspath()) ||
                isModified(copyRuntimeFilesCheckBox, compilerSettings.getCopyJsLibraryFiles()) ||
@@ -519,6 +522,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         compilerSettings.setCopyJsLibraryFiles(copyRuntimeFilesCheckBox.isSelected());
         compilerSettings.setOutputDirectoryForJsLibraryFiles(outputDirectory.getText());
 
+        getScriptingSettings().setAutoReloadEnabled(scriptDependenciesAutoReload.isSelected());
+
         if (compilerWorkspaceSettings != null) {
             compilerWorkspaceSettings.setPreciseIncrementalEnabled(enablePreciseIncrementalCheckBox.isSelected());
 
@@ -564,6 +569,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         apiVersionComboBox.setSelectedItem(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments));
         coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
+        scriptDependenciesAutoReload.setSelected(getScriptingSettings().isAutoReloadEnabled());
         scriptTemplatesField.setText(compilerSettings.getScriptTemplates());
         scriptTemplatesClasspathField.setText(compilerSettings.getScriptTemplatesClasspath());
         copyRuntimeFilesCheckBox.setSelected(compilerSettings.getCopyJsLibraryFiles());
@@ -697,6 +703,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     public void setCompilerSettings(CompilerSettings compilerSettings) {
         this.compilerSettings = compilerSettings;
+    }
+
+    @NotNull
+    private KotlinScriptingSettings getScriptingSettings() {
+        return KotlinScriptingSettings.Companion.getInstance(project);
     }
 
     private void createUIComponents() {

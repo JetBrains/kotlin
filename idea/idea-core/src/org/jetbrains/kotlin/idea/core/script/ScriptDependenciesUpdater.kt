@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.dependencies.FromFileAttributeScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesLoader
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.findScriptDefinition
@@ -94,6 +95,10 @@ class ScriptDependenciesUpdater(
                     }
                 }
                 requestUpdate(modifiedScripts)
+
+                if (KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled) {
+                    reloadModifiedScripts()
+                }
             }
         })
     }

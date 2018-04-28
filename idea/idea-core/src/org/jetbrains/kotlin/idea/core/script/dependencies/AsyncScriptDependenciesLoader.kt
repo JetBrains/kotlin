@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.core.script.dependencies
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.experimental.*
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.cancelOnDisposal
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.LegacyResolverWrapper
@@ -31,12 +32,14 @@ class AsyncScriptDependenciesLoader(
         lastRequest?.cancel()
         lastRequest = sendRequest().stampBy(file)
 
-        runBlocking {
-            lastRequest?.job?.actualJob?.join()
+        if (shouldUseBackgroundThread()) {
+            runBlocking {
+                lastRequest?.job?.actualJob?.join()
+            }
         }
     }
 
-    override fun shouldUseBackgroundThread() = true
+    override fun shouldUseBackgroundThread() = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
 
     private var lastRequest: ModStampedRequest? = null
 
