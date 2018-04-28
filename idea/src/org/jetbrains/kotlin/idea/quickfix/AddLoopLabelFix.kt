@@ -19,22 +19,21 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class AddLoopLabelFix(
-        loop: KtLoopExpression,
-        private val jumpExpression: KtExpressionWithLabel
-): KotlinQuickFixAction<KtLoopExpression>(loop) {
+    loop: KtLoopExpression,
+    private val jumpExpression: KtExpressionWithLabel
+) : KotlinQuickFixAction<KtLoopExpression>(loop) {
 
     private val existingLabelName = (loop.parent as? KtLabeledExpression)?.getLabelName()
 
     private val description =
-            if (existingLabelName != null) "Add '@$existingLabelName' to ${jumpExpression.text}"
-            else "Add label to loop"
+        if (existingLabelName != null) "Add '@$existingLabelName' to ${jumpExpression.text}"
+        else "Add label to loop"
 
     override fun getText() = description
     override fun getFamilyName() = text
@@ -81,7 +80,7 @@ class AddLoopLabelFix(
         return result
     }
 
-    companion object: KotlinSingleIntentionActionFactory() {
+    companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.psiElement as? KtExpressionWithLabel
             assert(element is KtBreakExpression || element is KtContinueExpression)
