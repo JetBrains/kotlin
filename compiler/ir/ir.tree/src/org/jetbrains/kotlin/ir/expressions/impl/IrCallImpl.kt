@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.typeArgumentsCount
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
@@ -54,7 +54,7 @@ class IrCallImpl(
         descriptor: FunctionDescriptor,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
-    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeArgumentsCount, origin, superQualifierSymbol)
+    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount, origin, superQualifierSymbol)
 
     @Deprecated("Creates unbound symbols")
     constructor(

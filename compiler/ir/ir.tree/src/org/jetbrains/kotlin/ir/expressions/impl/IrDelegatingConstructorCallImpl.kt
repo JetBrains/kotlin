@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -39,6 +40,14 @@ class IrDelegatingConstructorCallImpl(
         valueArgumentsCount = symbol.descriptor.valueParameters.size
     ),
     IrDelegatingConstructorCall {
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrConstructorSymbol,
+        descriptor: ClassConstructorDescriptor
+    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount)
 
     @Deprecated("Creates unbound symbol")
     constructor(

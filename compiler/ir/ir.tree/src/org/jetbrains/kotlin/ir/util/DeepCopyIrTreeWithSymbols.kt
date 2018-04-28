@@ -469,8 +469,8 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
             expression.type,
             expression.operator,
             expression.typeOperand,
-            expression.argument.transform(),
-            symbolRemapper.getReferencedClassifier(expression.typeOperandClassifier)
+            symbolRemapper.getReferencedClassifier(expression.typeOperandClassifier),
+            expression.argument.transform()
         )
 
     override fun visitWhen(expression: IrWhen): IrWhen =
