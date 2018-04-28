@@ -2066,6 +2066,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/compareToIntrinsicWithSideEffect.kt");
             }
 
+            @TestMetadata("concatWithTerminator.kt")
+            public void testConcatWithTerminator() throws Exception {
+                runTest("js/js.translator/testData/box/expression/evaluationOrder/concatWithTerminator.kt");
+            }
+
             @TestMetadata("dangerousInline.kt")
             public void testDangerousInline() throws Exception {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/dangerousInline.kt");
@@ -2074,6 +2079,16 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             @TestMetadata("dangerousInsideDangerous.kt")
             public void testDangerousInsideDangerous() throws Exception {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/dangerousInsideDangerous.kt");
+            }
+
+            @TestMetadata("deepExpression.kt")
+            public void testDeepExpression() throws Exception {
+                runTest("js/js.translator/testData/box/expression/evaluationOrder/deepExpression.kt");
+            }
+
+            @TestMetadata("delegationCtorWithExpression.kt")
+            public void testDelegationCtorWithExpression() throws Exception {
+                runTest("js/js.translator/testData/box/expression/evaluationOrder/delegationCtorWithExpression.kt");
             }
 
             @TestMetadata("elvisComplex.kt")
