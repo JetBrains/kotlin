@@ -99,7 +99,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         definitions = definitionsByContributor.values.flattenTo(mutableListOf()).asSequence()
         clearCache()
         // TODO: clear by script type/definition
-        ServiceManager.getService(project, ScriptDependenciesUpdater::class.java).clear()
+        ServiceManager.getService(project, ScriptDependenciesCache::class.java).clear()
     }
 
     private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> {
