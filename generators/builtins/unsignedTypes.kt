@@ -21,6 +21,8 @@ fun generateUnsignedTypes(
         generate(File(targetDir, "kotlin/${type.capitalized}.kt")) { UnsignedTypeGenerator(type, it) }
     }
 
+    generate(File(targetDir, "kotlin/UIterators.kt"), ::UnsignedIteratorsGenerator)
+
 
 }
 
@@ -170,4 +172,24 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         return maxByDomainCapacity(maxByDomainCapacity(type1, type2), UnsignedType.UINT)
     }
 
+}
+
+
+// TODO: reuse generator
+class UnsignedIteratorsGenerator(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun getPackage() = "kotlin.collections"
+    override fun generateBody() {
+        for (type in UnsignedType.values()) {
+            val s = type.capitalized
+            out.println("/** An iterator over a sequence of values of type `$s`. */")
+            out.println("public abstract class ${s}Iterator : Iterator<$s> {")
+            // TODO: Sort modifiers
+            out.println("    override final fun next() = next$s()")
+            out.println()
+            out.println("    /** Returns the next value in the sequence without boxing. */")
+            out.println("    public abstract fun next$s(): $s")
+            out.println("}")
+            out.println()
+        }
+    }
 }
