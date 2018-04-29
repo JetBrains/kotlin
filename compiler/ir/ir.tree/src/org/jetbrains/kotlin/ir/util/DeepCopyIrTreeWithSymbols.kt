@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import java.util.*
 
-inline fun <reified T : IrElement> T.deepCopyWithSymbols(): T {
+inline fun <reified T : IrElement> T.deepCopyWithSymbols(initialParent: IrDeclarationParent? = null): T {
     val remapper = DeepCopySymbolsRemapper()
     acceptVoid(remapper)
-    return transform(DeepCopyIrTreeWithSymbols(remapper), null).patchDeclarationParents() as T
+    return transform(DeepCopyIrTreeWithSymbols(remapper), null).patchDeclarationParents(initialParent) as T
 }
 
 
