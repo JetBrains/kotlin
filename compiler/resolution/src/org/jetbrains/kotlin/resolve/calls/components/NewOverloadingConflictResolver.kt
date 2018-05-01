@@ -61,7 +61,7 @@ class NewOverloadingConflictResolver(
                 } else {
                     val originalValueParameter = originalValueParameters[valueParameter.index]
                     for (valueArgument in resolvedValueArgument.arguments) {
-                        valueArgumentToParameterType[valueArgument] =
+                        valueArgumentToParameterType[valueArgument] = candidate.resolvedCall.argumentsWithConversion[valueArgument]?.convertedTypeByOriginParameter ?:
                                 valueArgument.getExpectedType(originalValueParameter, candidate.callComponents.languageVersionSettings)
                     }
                 }

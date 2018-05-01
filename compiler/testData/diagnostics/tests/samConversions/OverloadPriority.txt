@@ -1,0 +1,29 @@
+package
+
+public fun test(/*0*/ j: J): kotlin.Unit
+
+public interface Fn</*0*/ T : kotlin.Any!, /*1*/ R : kotlin.Any!> {
+    public abstract fun apply(/*0*/ t: T!): R!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Fn2</*0*/ T : kotlin.Any!, /*1*/ R : kotlin.Any!> : Fn<T!, R!> {
+    public abstract override /*1*/ /*fake_override*/ fun apply(/*0*/ t: T!): R!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface J {
+    public abstract fun bar(/*0*/ f: Fn2<kotlin.String!, kotlin.Any!>!): kotlin.Int
+    public abstract fun bar(/*0*/ f: Fn<kotlin.String!, kotlin.Any!>!): kotlin.String!
+    public abstract fun bas(/*0*/ f: Fn<kotlin.Any!, kotlin.Any!>!, /*1*/ o: kotlin.Any!): kotlin.String!
+    public abstract fun bas(/*0*/ f: Fn<kotlin.Any!, kotlin.String!>!, /*1*/ s: kotlin.String!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(/*0*/ f: Fn<kotlin.Any!, kotlin.Any!>!, /*1*/ s: kotlin.String!): kotlin.Int
+    public abstract fun foo(/*0*/ f: Fn<kotlin.String!, kotlin.Any!>!, /*1*/ o: kotlin.Any!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
