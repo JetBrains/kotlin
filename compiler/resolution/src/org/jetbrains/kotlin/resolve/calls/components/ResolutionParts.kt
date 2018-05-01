@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorMo
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -235,12 +236,17 @@ private fun KotlinResolutionCandidate.resolveKotlinArgument(
     candidateParameter: ParameterDescriptor?,
     isReceiver: Boolean
 ) {
-    val expectedType = candidateParameter?.let {
-        val argumentType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
-        val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
-        resolvedCall.substitutor.substituteKeepAnnotations(resultType)
-    }
+    val expectedType = candidateParameter?.let { prepareExpectedType(argument, candidateParameter) }
     addResolvedKtPrimitive(resolveKtPrimitive(csBuilder, argument, expectedType, this, isReceiver))
+}
+
+private fun KotlinResolutionCandidate.prepareExpectedType(
+    argument: KotlinCallArgument,
+    candidateParameter: ParameterDescriptor
+): UnwrappedType {
+    val argumentType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
+    val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
+    return resolvedCall.substitutor.substituteKeepAnnotations(resultType)
 }
 
 internal object CheckReceivers : ResolutionPart() {
@@ -288,7 +294,8 @@ internal object CheckInfixResolutionPart : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val candidateDescriptor = resolvedCall.candidateDescriptor
         if (callComponents.statelessCallbacks.isInfixCall(kotlinCall) &&
-            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)) {
+            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)
+        ) {
             addDiagnostic(InfixCallNoInfixModifier)
         }
     }
@@ -298,7 +305,8 @@ internal object CheckOperatorResolutionPart : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val candidateDescriptor = resolvedCall.candidateDescriptor
         if (callComponents.statelessCallbacks.isOperatorCall(kotlinCall) &&
-            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)) {
+            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)
+        ) {
             addDiagnostic(InvokeConventionCallNoOperatorModifier)
         }
     }
