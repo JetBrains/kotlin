@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.synthetic
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -59,6 +60,8 @@ class SamAdapterFunctionsScope(
         private val deprecationResolver: DeprecationResolver,
         private val lookupTracker: LookupTracker
 ) : SyntheticScope {
+    private val samViaSyntheticScopeDisabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+
     private val extensionForFunction =
             storageManager.createMemoizedFunctionWithNullableValues<FunctionDescriptor, FunctionDescriptor> { function ->
                 extensionForFunctionNotCached(function)
@@ -95,6 +98,8 @@ class SamAdapterFunctionsScope(
     }
 
     override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        if (samViaSyntheticScopeDisabled) return emptyList()
+
         var result: SmartList<FunctionDescriptor>? = null
         for (type in receiverTypes) {
             for (function in type.memberScope.getContributedFunctions(name, location)) {
@@ -134,6 +139,8 @@ class SamAdapterFunctionsScope(
     }
 
     override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
+        if (samViaSyntheticScopeDisabled) return emptyList()
+
         return receiverTypes.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { type ->
             type.memberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filterIsInstance<FunctionDescriptor>()
@@ -148,10 +155,14 @@ class SamAdapterFunctionsScope(
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> = emptyList()
 
     override fun getSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        if (samViaSyntheticScopeDisabled) return emptyList()
+
         return getSamFunctions(scope.getContributedFunctions(name, location), location)
     }
 
     override fun getSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+        if (samViaSyntheticScopeDisabled) return emptyList()
+
         val classifier = scope.getContributedClassifier(name, location) ?: return emptyList()
         recordSamLookupsToClassifier(classifier, location)
         return getAllSamConstructors(classifier)
@@ -166,16 +177,22 @@ class SamAdapterFunctionsScope(
     }
 
     override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor> {
+        if (samViaSyntheticScopeDisabled) return emptyList()
+
         return getSamFunctions(scope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS), location = null)
     }
 
     override fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor> {
+        if (samViaSyntheticScopeDisabled) return emptyList()
+
         return scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
                 .filterIsInstance<ClassifierDescriptor>()
                 .flatMap { getAllSamConstructors(it) }
     }
 
     override fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor? {
+        if (samViaSyntheticScopeDisabled) return null
+
         return when (constructor) {
             is JavaClassConstructorDescriptor -> createJavaSamAdapterConstructor(constructor)
             is TypeAliasConstructorDescriptor -> {
