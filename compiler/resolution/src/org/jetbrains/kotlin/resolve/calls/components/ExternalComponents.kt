@@ -50,3 +50,11 @@ interface KotlinResolutionCallbacks {
 
     val inferenceSession: InferenceSession
 }
+
+interface SamTypeTransformer {
+    fun getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType?
+
+    object Empty: SamTypeTransformer {
+        override fun getFunctionTypeForPossibleSamType(possibleSamType: UnwrappedType): UnwrappedType? = null
+    }
+}

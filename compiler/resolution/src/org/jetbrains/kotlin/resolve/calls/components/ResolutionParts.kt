@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.anySuperTypeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -28,7 +31,8 @@ internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
         val candidateDescriptor = resolvedCall.candidateDescriptor
 
         if (candidateDescriptor is ConstructorDescriptor &&
-            !callComponents.statelessCallbacks.isSuperOrDelegatingConstructorCall(resolvedCall.atom)) {
+            !callComponents.statelessCallbacks.isSuperOrDelegatingConstructorCall(resolvedCall.atom)
+        ) {
             if (candidateDescriptor.constructedClass.modality == Modality.ABSTRACT) {
                 addDiagnostic(InstantiationOfAbstractClass)
             }
@@ -246,7 +250,37 @@ private fun KotlinResolutionCandidate.prepareExpectedType(
 ): UnwrappedType {
     val argumentType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
     val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
-    return resolvedCall.substitutor.substituteKeepAnnotations(resultType)
+    val typeInTermsFreshTypes = resolvedCall.substitutor.substituteKeepAnnotations(resultType)
+    return applySAMConversionIfNeeded(typeInTermsFreshTypes, argument)
+}
+
+private fun KotlinResolutionCandidate.applySAMConversionIfNeeded(
+    expectedType: UnwrappedType,
+    argument: KotlinCallArgument
+): UnwrappedType {
+    val argumentIsFunctional = when (argument) {
+        is SimpleKotlinCallArgument -> argument.receiver.let { it.unstableType ?: it.stableType }.isSubtypeOfFunctionType()
+        is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
+        else -> false
+    }
+    if (!argumentIsFunctional) return expectedType
+
+    // todo: support case T <:> Runnable
+    if (csBuilder.isTypeVariable(expectedType)) return expectedType
+
+    val transformedType = callComponents.samTypeTransformer.getFunctionTypeForPossibleSamType(expectedType)
+
+    if (transformedType != null) {
+        // todo write information about SAM conversion for this parameter
+        return transformedType
+    }
+    return expectedType
+}
+
+private fun UnwrappedType.isSubtypeOfFunctionType() = anySuperTypeConstructor {
+    val kind = it.declarationDescriptor?.getFunctionalClassKind()
+    kind == FunctionClassDescriptor.Kind.Function ||
+            kind == FunctionClassDescriptor.Kind.SuspendFunction
 }
 
 internal object CheckReceivers : ResolutionPart() {

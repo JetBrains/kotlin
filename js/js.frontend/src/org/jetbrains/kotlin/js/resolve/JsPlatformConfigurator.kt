@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.OverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
+import org.jetbrains.kotlin.resolve.calls.components.SamTypeTransformer
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
@@ -63,6 +64,7 @@ object JsPlatformConfigurator : PlatformConfigurator(
         container.useInstance(NameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useInstance(SyntheticScopes.Empty)
+        container.useInstance(SamTypeTransformer.Empty)
         container.useInstance(JsTypeSpecificityComparator)
         container.useImpl<JsNameClashChecker>()
         container.useImpl<JsNameCharsChecker>()

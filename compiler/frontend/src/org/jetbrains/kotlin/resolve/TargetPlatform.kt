@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.resolve.calls.checkers.*
+import org.jetbrains.kotlin.resolve.calls.components.SamTypeTransformer
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
@@ -62,6 +63,7 @@ abstract class TargetPlatform(val platformName: String) {
             ) {
                 override fun configureModuleComponents(container: StorageComponentContainer) {
                     container.useInstance(SyntheticScopes.Empty)
+                    container.useInstance(SamTypeTransformer.Empty)
                     container.useInstance(TypeSpecificityComparator.NONE)
                 }
             }

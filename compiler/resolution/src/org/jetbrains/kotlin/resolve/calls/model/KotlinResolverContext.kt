@@ -42,7 +42,8 @@ class KotlinCallComponents(
     val constraintInjector: ConstraintInjector,
     val reflectionTypes: ReflectionTypes,
     val builtIns: KotlinBuiltIns,
-    val languageVersionSettings: LanguageVersionSettings
+    val languageVersionSettings: LanguageVersionSettings,
+    val samTypeTransformer: SamTypeTransformer
 )
 
 class SimpleCandidateFactory(
