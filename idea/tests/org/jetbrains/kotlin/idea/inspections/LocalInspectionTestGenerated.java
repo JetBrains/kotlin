@@ -2327,6 +2327,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/mayBeConstant/object.kt");
         }
 
+        @TestMetadata("objectLiteral.kt")
+        public void testObjectLiteral() throws Exception {
+            runTest("idea/testData/inspectionsLocal/mayBeConstant/objectLiteral.kt");
+        }
+
         @TestMetadata("override.kt")
         public void testOverride() throws Exception {
             runTest("idea/testData/inspectionsLocal/mayBeConstant/override.kt");

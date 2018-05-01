@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.propertyVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ErrorValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
@@ -62,7 +63,9 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
             ) {
                 return NONE
             }
+            val containingClassOrObject = this.containingClassOrObject
             if (!isTopLevel && containingClassOrObject !is KtObjectDeclaration) return NONE
+            if (containingClassOrObject?.isObjectLiteral() == true) return NONE
 
             val initializer = initializer
             // For some reason constant evaluation does not work for property.analyze()
