@@ -34,7 +34,8 @@ class TooLongCharLiteralToStringFix(
 
     companion object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val element = Errors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL.cast(diagnostic).psiElement
+            val element = diagnostic.psiElement as? KtConstantExpression ?: return null
+            if (element.text == "'\\'") return null
             return TooLongCharLiteralToStringFix(element = element)
         }
     }
