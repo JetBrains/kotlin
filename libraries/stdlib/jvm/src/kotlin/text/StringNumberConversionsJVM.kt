@@ -19,7 +19,7 @@ import kotlin.*
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun Byte.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
+public actual inline fun Byte.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
@@ -28,7 +28,7 @@ public inline fun Byte.toString(radix: Int): String = this.toInt().toString(chec
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun Short.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
+public actual inline fun Short.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
@@ -37,7 +37,7 @@ public inline fun Short.toString(radix: Int): String = this.toInt().toString(che
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun Int.toString(radix: Int): String = java.lang.Integer.toString(this, checkRadix(radix))
+public actual inline fun Int.toString(radix: Int): String = java.lang.Integer.toString(this, checkRadix(radix))
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].
@@ -46,7 +46,7 @@ public inline fun Int.toString(radix: Int): String = java.lang.Integer.toString(
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public inline fun Long.toString(radix: Int): String = java.lang.Long.toString(this, checkRadix(radix))
+public actual inline fun Long.toString(radix: Int): String = java.lang.Long.toString(this, checkRadix(radix))
 
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.

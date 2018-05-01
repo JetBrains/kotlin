@@ -234,6 +234,37 @@ expect fun String.toDoubleOrNull(): Double?
  */
 expect fun String.toFloatOrNull(): Float?
 
+/**
+ * Returns a string representation of this [Byte] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+expect fun Byte.toString(radix: Int): String
+
+/**
+ * Returns a string representation of this [Short] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+expect fun Short.toString(radix: Int): String
+
+/**
+ * Returns a string representation of this [Int] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+expect fun Int.toString(radix: Int): String
+
+/**
+ * Returns a string representation of this [Long] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+expect fun Long.toString(radix: Int): String
 
 @PublishedApi
 internal expect fun checkRadix(radix: Int): Int
