@@ -99,7 +99,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             @NotNull ConfigurationKind configurationKind,
             @Nullable File... javaSourceRoots
     ) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.emptyList(), "" , javaSourceRoots);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.emptyList(), TestJdkKind.MOCK_JDK, javaSourceRoots);
     }
 
     @NotNull
@@ -115,7 +115,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
-            @NotNull String coroutinesPackage,
+            @NotNull TestJdkKind testJdkKind,
             @Nullable File... javaSourceRoots
     ) {
         if (myEnvironment != null) {
@@ -124,7 +124,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind,
-                TestJdkKind.MOCK_JDK,
+                testJdkKind,
                 Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(javaSourceRoots),
                 testFilesWithConfigurationDirectives
