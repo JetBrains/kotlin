@@ -168,10 +168,10 @@ class ScriptCodegen private constructor(
 
             if (scriptDefinition.environmentVariables.isNotEmpty()) {
                 val envParamIndex = frameMap.enterTemp(AsmTypes.OBJECT_TYPE)
-                val mapType = Type.getObjectType("java/util/Map")
+                val mapType = PropertyCodegen.ScriptEnvPropertyAccessorStrategy.MAP_IFACE_TYPE
                 iv.load(0, classType)
                 iv.load(envParamIndex, mapType)
-                iv.putfield(classType.internalName, "environment", mapType.descriptor)
+                iv.putfield(classType.internalName, PropertyCodegen.ScriptEnvPropertyAccessorStrategy.MAP_FIELD_NAME, mapType.descriptor)
             }
 
             val codegen = ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this)
@@ -210,8 +210,8 @@ class ScriptCodegen private constructor(
             classBuilder.newField(
                 NO_ORIGIN,
                 ACC_PUBLIC or ACC_FINAL,
-                "environment",
-                Type.getObjectType("java/util/Map").descriptor,
+                PropertyCodegen.ScriptEnvPropertyAccessorStrategy.MAP_FIELD_NAME,
+                PropertyCodegen.ScriptEnvPropertyAccessorStrategy.MAP_IFACE_TYPE.descriptor,
                 null,
                 null
             )

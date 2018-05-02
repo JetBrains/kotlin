@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.basic
 
-import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.full.createInstance
 import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.TypedKey
@@ -18,15 +18,15 @@ open class AnnotationsBasedCompilationConfigurator(val environment: ScriptingEnv
 
     override val defaultConfiguration = run {
         val base = environment[ScriptingEnvironmentProperties.baseClass]
-        val cfg = base.annotations.filterIsInstance(KotlinScriptDefaultCompilationConfiguration::class.java).flatMap {
+        val cfg = base.annotations.filterIsInstance(KotlinScriptDefaultCompilationConfiguration::class.java).flatMap { ann ->
             val params = try {
-                it.compilationConfiguration.objectInstance ?: it.compilationConfiguration.primaryConstructor!!.callBy(emptyMap())
+                ann.compilationConfiguration.objectInstance ?: ann.compilationConfiguration.createInstance()
             } catch (e: Throwable) {
                 throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
             }
-            params.forEach {
-                if (it !is Pair<*, *> || it.first !is TypedKey<*>)
-                    throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: invalid parameter $it")
+            params.forEach { param ->
+                if (param !is Pair<*, *> || param.first !is TypedKey<*>)
+                    throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: invalid parameter $param")
             }
             params as List<Pair<TypedKey<*>, Any?>>
         }

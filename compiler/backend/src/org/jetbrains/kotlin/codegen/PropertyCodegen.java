@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.ScriptEnvironmentPropertyDescriptor;
+import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptEnvironmentPropertyDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -631,9 +631,9 @@ public class PropertyCodegen {
         }
     }
 
-    private static class ScriptEnvPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
-        public static final String MAP_IFACE_NAME = "java/util/Map";
-        public static final String MAP_FIELD_NAME = "environment";
+    static class ScriptEnvPropertyAccessorStrategy extends FunctionGenerationStrategy.CodegenBased {
+        public static final Type MAP_IFACE_TYPE = Type.getObjectType("java/util/Map");
+        public static final String MAP_FIELD_NAME = "$scriptEnvironment";
         private final PropertyAccessorDescriptor propertyAccessorDescriptor;
 
         public ScriptEnvPropertyAccessorStrategy(@NotNull GenerationState state, @NotNull PropertyAccessorDescriptor descriptor) {
@@ -645,20 +645,20 @@ public class PropertyCodegen {
         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
             InstructionAdapter v = codegen.v;
 
-            String intScriptName =
-                    state.getTypeMapper().mapClass((ClassifierDescriptor)(propertyAccessorDescriptor.getCorrespondingProperty().getContainingDeclaration())).getClassName();
-            v.visitVarInsn(Opcodes.ALOAD, 0);
-            v.visitFieldInsn(Opcodes.GETFIELD, intScriptName, MAP_FIELD_NAME, Type.getObjectType(MAP_IFACE_NAME).getDescriptor());
-            v.visitLdcInsn(propertyAccessorDescriptor.getCorrespondingProperty().getName().asString());
+            Type scriptType = state.getTypeMapper().mapOwner(propertyAccessorDescriptor);
+            String scriptInternalName = scriptType.getInternalName();
+            v.load(0, scriptType);
+            v.getfield(scriptInternalName, MAP_FIELD_NAME, MAP_IFACE_TYPE.getDescriptor());
+            v.aconst(propertyAccessorDescriptor.getCorrespondingProperty().getName().asString());
             if (propertyAccessorDescriptor instanceof PropertyGetterDescriptor) {
-                v.visitMethodInsn(Opcodes.INVOKEINTERFACE, MAP_IFACE_NAME, "get",
-                                  Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE), true);
+                v.invokeinterface(MAP_IFACE_TYPE.getInternalName(), "get",
+                                  Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE));
             }
             else {
                 Type valueType = state.getTypeMapper().mapType(propertyAccessorDescriptor.getCorrespondingProperty());
                 v.load(1, valueType);
                 StackValue.coerce(valueType, AsmTypes.OBJECT_TYPE, v);
-                v.visitMethodInsn(Opcodes.INVOKEINTERFACE, MAP_IFACE_NAME, "set",
+                v.visitMethodInsn(Opcodes.INVOKEINTERFACE, MAP_IFACE_TYPE.getInternalName(), "put",
                                   Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE), true);
             }
             Type returnType = state.getTypeMapper().mapReturnType(propertyAccessorDescriptor);

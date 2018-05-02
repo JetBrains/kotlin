@@ -412,7 +412,7 @@ class KotlinCoreEnvironment private constructor(
             setCompatibleBuild()
             // If not disabled explicitly, we should always support at least the standard script definition
             if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
-                !configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).contains(StandardScriptDefinition)
+                StandardScriptDefinition !in configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
             ) {
                 configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
             }

@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.script
 
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.KotlinFileType
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -34,7 +36,10 @@ interface ScriptDefinitionProvider {
     }
 }
 
-fun ScriptDefinitionProvider.findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? = findScriptDefinition(file.name)
+fun ScriptDefinitionProvider.findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? {
+    assert(!file.isDirectory) { "Do not expect directory in findScriptDefinition call: $file" }
+    return findScriptDefinition(file.name)
+}
 
 fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? =
     ScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
@@ -51,10 +56,9 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
     private var _cachedDefinitions: Sequence<KotlinScriptDefinition>? = null
     private val cachedDefinitions: Sequence<KotlinScriptDefinition>
         get() {
-            // assuming it is always called under read lock
-            assert(lock.readLockCount > 0)
+            assert(lock.readLockCount > 0) { "cachedDefinitions should only be used under the read lock" }
             if (_cachedDefinitions == null) lock.write {
-                _cachedDefinitions = CashingSequence(currentDefinitions.constrainOnce())
+                _cachedDefinitions = CachingSequence(currentDefinitions.constrainOnce())
             }
             return _cachedDefinitions!!
         }
@@ -75,38 +79,31 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
             cachedDefinitions.firstOrNull { it.isScript(fileName) }
         }
 
-    override fun isScript(fileName: String) =
-        if (nonScriptFileName(fileName)) false
-        else lock.read {
-            cachedDefinitions.any { it.isScript(fileName) }
-        }
+    override fun isScript(fileName: String) = findScriptDefinition(fileName) != null
 
     companion object {
         // TODO: find a common place for storing kotlin-related extensions and reuse values from it everywhere
-        protected val nonScriptFilenameSuffixes = arrayOf(".kt", ".java")
+        protected val nonScriptFilenameSuffixes = arrayOf(".${KotlinFileType.EXTENSION}", ".${JavaFileType.DEFAULT_EXTENSION}")
     }
 }
 
-private class CashingSequence<T>(from: Sequence<T>) : Sequence<T> {
+private class CachingSequence<T>(from: Sequence<T>) : Sequence<T> {
 
     private val lock = ReentrantReadWriteLock()
     private val sequenceIterator = from.iterator()
     private val cache = arrayListOf<T>()
 
-    private inner class CashingIterator : Iterator<T> {
+    private inner class CachingIterator : Iterator<T> {
 
-        private val cacheIterator: Iterator<T> = cache.iterator()
-        private var cacheRunOut = !cacheIterator.hasNext()
+        private var cacheCursor = 0
 
-        private fun cacheHasNext() = !cacheRunOut && (cacheIterator.hasNext().also { if (!it) cacheRunOut = true })
+        override fun hasNext(): Boolean = lock.read { cacheCursor < cache.size || sequenceIterator.hasNext() }
 
-        override fun hasNext(): Boolean = lock.read { cacheHasNext() || sequenceIterator.hasNext() }
-
-        override fun next(): T = lock.read {
-            if (cacheHasNext()) cacheIterator.next()
-            else sequenceIterator.next().also { lock.write { cache.add(it) } }
+        override fun next(): T = lock.write {
+            if (cacheCursor < cache.size) cache[cacheCursor++]
+            else sequenceIterator.next().also { cache.add(it) }
         }
     }
 
-    override fun iterator(): Iterator<T> = CashingIterator()
+    override fun iterator(): Iterator<T> = CachingIterator()
 }

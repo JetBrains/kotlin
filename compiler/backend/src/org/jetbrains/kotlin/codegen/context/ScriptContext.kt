@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.lazy.descriptors.ScriptEnvironmentDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.script.ScriptEnvironmentDescriptor
 import org.jetbrains.org.objectweb.asm.Type
 import kotlin.reflect.KClass
 
