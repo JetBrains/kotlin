@@ -2346,8 +2346,7 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
 
         @TestMetadata("deterministicNotNullChecks.kt")
         public void testDeterministicNotNullChecks() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/deterministicNotNullChecks.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/deterministicNotNullChecks.kt");
         }
 
         @TestMetadata("expressionValueIsNotNull.kt")
