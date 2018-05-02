@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContextOrStlib
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
@@ -26,93 +22,61 @@ import kotlin.script.experimental.api.ScriptCompileConfigurationProperties
 import kotlin.script.experimental.misc.invoke
 import kotlin.script.experimental.util.TypedKey
 
-/*
-   Note by Ilya Chernikov: I gave up attempts to reuse the main compilation and testing logic from CodegenTestCase: it is too rigid
-   and ad-hoc. I ended up reimplementing (with some copy/paste) a subset relevant for scripting, but in (I assume) much more composable
-   and generic way.
-   I suggest that we will start building a parallel implementation of the CodegenTestCase taking composability much more seriously,
-   avoiding shared state and other rotten OOP misfeatures as much as possible. This implementation could be a starting point, unless
-   we'll find something better, of course.
- */
-
 open class AbstractCustomScriptCodegenTest : CodegenTestCase() {
+    private lateinit var scriptDefinitions: List<String>
 
-    // TODO: add types to receivers, envVars and params
-    class ScriptTestFile(val file: File) {
+    override fun setUp() {
+        super.setUp()
 
-        val content by lazy { file.readText() }
-
-        val definitions: List<String> by lazy { extractAllSimpleValues("KOTLIN_SCRIPT_DEFINITION") }
-
-        val receivers: List<Any?> by lazy { extractAllSimpleValues("receiver") }
-
-        val environmentVars: Map<String, Any?> by lazy { extractAllKeyValPairs("envVar") }
-
-        val expected: Map<String, Any?> by lazy { extractAllKeyValPairs("expected") }
-
-        val scriptParams: List<Any> by lazy { extractAllSimpleValues("param") }
-
-        private fun extractAllSimpleValues(directive: String) =
-            Regex("//\\s*$directive:\\s*([^\\s]+)").findAll(content).map { it.groupValues[1] }.toList()
-
-        private fun extractAllKeyValPairs(directive: String) =
-            Regex("//\\s*$directive:\\s*([^\\s]+)\\s*=\\s*([^\\s]+)").findAll(content).map { it.groupValues[1] to it.groupValues[2] }.toMap()
+        configurationKind = ConfigurationKind.ALL
     }
 
-    fun createEnvironment(
-        kind: ConfigurationKind,
-        jdkKind: TestJdkKind,
-        scriptDefinitions: List<String>
-    ): KotlinCoreEnvironment {
-
-        val classpath =
-            if (scriptDefinitions.isNotEmpty()) {
-                scriptCompilationClasspathFromContextOrStlib("tests-common", "kotlin-stdlib").also {
-                    additionalDependencies = it
-                }
-            } else {
-                emptyList()
-            }
-
-        val configuration = KotlinTestUtils.newConfiguration(kind, jdkKind, classpath, emptyList())
-
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
         if (scriptDefinitions.isNotEmpty()) {
             configureScriptDefinitions(scriptDefinitions, configuration, MessageCollector.NONE, emptyMap())
         }
 
-        return KotlinCoreEnvironment.createForTests(
-            testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
-        ).also {
-            myEnvironment = it
-        }
+        configuration.addJvmClasspathRoots(additionalDependencies.orEmpty())
     }
 
-    override fun doTest(filename: String) {
-        val testFile = AbstractCustomScriptCodegenTest.ScriptTestFile(File(filename))
-        val environment = createEnvironment(ConfigurationKind.ALL, TestJdkKind.FULL_JDK, testFile.definitions)
-
-        val psiFile = KotlinTestUtils.createFile(testFile.file.name, testFile.content, environment.project).also {
-            val ranges = AnalyzingUtils.getSyntaxErrorRanges(it)
-            assert(ranges.isEmpty()) { "Syntax errors found in $filename: $ranges" }
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
+        if (files.size > 1) {
+            throw UnsupportedOperationException("Multiple files are not yet supported in this test")
         }
 
-        val classesFactory = generateClasses(listOf(psiFile))
-        if (classesFactory == null) {
-            fail("No class file was generated for: $name")
+        val file = files.single()
+        val content = file.content
+
+        scriptDefinitions = InTextDirectivesUtils.findListWithPrefixes(content, "KOTLIN_SCRIPT_DEFINITION:")
+        if (scriptDefinitions.isNotEmpty()) {
+            additionalDependencies = scriptCompilationClasspathFromContextOrStlib("tests-common", "kotlin-stdlib")
         }
+
+        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, files, TestJdkKind.FULL_JDK)
+
+        myFiles = CodegenTestFiles.create(file.name, content, myEnvironment.project)
 
         try {
-            val scriptClass = classesFactory!!.loadClass(psiFile.script!!.fqName.asString())
+            val scriptClass = generateClass(myFiles.psiFile.script!!.fqName.asString())
 
-            val scriptInstance = runScript(scriptClass, testFile.receivers, testFile.environmentVars, testFile.scriptParams)
+            // TODO: add types to receivers, envVars and params
+            val receivers = InTextDirectivesUtils.findListWithPrefixes(content, "receiver:")
+            val environmentVars = extractAllKeyValPairs(content, "envVar:")
+            val scriptParams = InTextDirectivesUtils.findListWithPrefixes(content, "param:")
+            val scriptInstance = runScript(scriptClass, receivers, environmentVars, scriptParams)
 
-            checkExpectedFields(testFile.expected, scriptClass, scriptInstance)
-
+            val expectedFields = extractAllKeyValPairs(content, "expected:")
+            checkExpectedFields(expectedFields, scriptClass, scriptInstance)
         } catch (e: Throwable) {
-            println(classesFactory!!.createText())
+            println(generateToText())
             throw e
         }
     }
+
+    private fun extractAllKeyValPairs(content: String, directive: String): Map<String, String> =
+        InTextDirectivesUtils.findListWithPrefixes(content, directive).associate { line ->
+            line.substringBefore('=') to line.substringAfter('=')
+        }
 
     private fun runScript(scriptClass: Class<*>, receivers: List<Any?>, environmentVars: Map<String, Any?>, scriptParams: List<Any>): Any? {
 
@@ -129,7 +93,7 @@ open class AbstractCustomScriptCodegenTest : CodegenTestCase() {
         return constructor.newInstance(*ctorParams.toTypedArray())
     }
 
-    protected fun checkExpectedFields(expectedFields: Map<String, Any?>, scriptClass: Class<*>, scriptInstance: Any?) {
+    private fun checkExpectedFields(expectedFields: Map<String, Any?>, scriptClass: Class<*>, scriptInstance: Any?) {
         Assert.assertFalse("expecting at least one expectation", expectedFields.isEmpty())
 
         for ((fieldName, expectedValue) in expectedFields) {
@@ -147,56 +111,6 @@ open class AbstractCustomScriptCodegenTest : CodegenTestCase() {
             field.isAccessible = true
             val resultString = field.get(scriptInstance)?.toString() ?: "null"
             Assert.assertEquals("comparing field $fieldName", expectedValue, resultString)
-        }
-    }
-
-    protected fun ClassFileFactory.makeClassloader(): ClassLoader =
-        GeneratedClassLoader(
-            this,
-            when {
-                configurationKind.withReflection -> ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
-                configurationKind.withCoroutines -> ForTestCompileRuntime.runtimeAndCoroutinesJarClassLoader()
-                else -> ForTestCompileRuntime.runtimeJarClassLoader()
-            },
-            *classPathURLs
-        )
-
-    protected fun ClassFileFactory.loadClass(name: String): Class<*> =
-        makeClassloader().also {
-            if (!verifyAllFilesWithAsm(this, it)) {
-                Assert.fail("Verification failed: see exceptions above")
-            }
-        }.loadClass(name)
-
-    protected fun generateClasses(psiFiles: List<KtFile>): ClassFileFactory? {
-        try {
-            val generationState = GenerationUtils.compileFiles(
-                psiFiles, myEnvironment, classBuilderFactory,
-                NoScopeRecordCliBindingTrace()
-            )
-            val classFileFactory = generationState.factory
-
-            if (verifyWithDex() && DxChecker.RUN_DX_CHECKER) {
-                DxChecker.check(classFileFactory)
-            }
-            return classFileFactory
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            System.err.println("Generating instructions as text...")
-            try {
-                if (classFileFactory == null) {
-                    System.err.println("Cannot generate text: exception was thrown during generation")
-                } else {
-                    System.err.println(classFileFactory.createText())
-                }
-            } catch (e1: Throwable) {
-                System.err.println("Exception thrown while trying to generate text, the actual exception follows:")
-                e1.printStackTrace()
-                System.err.println("-----------------------------------------------------------------------------")
-            }
-
-            Assert.fail("See exceptions above")
-            return null
         }
     }
 }

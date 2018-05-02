@@ -5,4 +5,4 @@
 
 val res = drop(4)
 
-// expected: res = cadabra
+// expected: res=cadabra
