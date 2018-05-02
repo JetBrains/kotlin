@@ -36,16 +36,18 @@ interface ScriptDefinitionProvider {
     }
 }
 
-fun ScriptDefinitionProvider.findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? {
-    assert(!file.isDirectory) { "Do not expect directory in findScriptDefinition call: $file" }
-    return findScriptDefinition(file.name)
-}
+fun ScriptDefinitionProvider.findScriptDefinition(file: VirtualFile): KotlinScriptDefinition? =
+    if (file.isDirectory) null
+    else findScriptDefinition(file.name)
+
 
 fun getScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? =
-    ScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
+    if (file.isDirectory) null
+    else ScriptDefinitionProvider.getInstance(project).findScriptDefinition(file)
 
 fun getScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? =
-    ScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile.name)
+    if (psiFile.isDirectory) null
+    else ScriptDefinitionProvider.getInstance(psiFile.project).findScriptDefinition(psiFile.name)
 
 abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
 
