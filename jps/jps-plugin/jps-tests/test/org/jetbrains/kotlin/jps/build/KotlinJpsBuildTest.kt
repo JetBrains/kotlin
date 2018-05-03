@@ -64,9 +64,6 @@ import org.jetbrains.kotlin.jps.model.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
-import org.jetbrains.kotlin.jps.platforms.KotlinJsModuleBuildTarget
-import org.jetbrains.kotlin.jps.platforms.clearKotlinModuleBuildTargetDataBindings
-import org.jetbrains.kotlin.jps.platforms.kotlinData
 import org.jetbrains.kotlin.jps.platforms.productionBuildTarget
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
@@ -181,8 +178,6 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         originalProjectDir = projDirPath.toFile()
         workDir = AbstractKotlinJpsBuildTestCase.copyTestDataToTmpDir(originalProjectDir)
         orCreateProjectDir
-
-        JpsUtils.resetCaches()
     }
 
     override fun tearDown() {
@@ -250,7 +245,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildAllModules().assertSuccessful()
 
         checkOutputFilesList()
-        checkWhen(touch("src/test1.kt"), null, k2jsOutput(PROJECT_NAME))
+        checkWhen(touch("src/test1.kt"), null, pathsToDelete = k2jsOutput(PROJECT_NAME))
     }
 
     private fun k2jsOutput(vararg moduleNames: String): Array<String> {
@@ -259,11 +254,11 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         myProject.modules.forEach {
             if (it.name in moduleNamesSet) {
-                val productionTarget = it.productionBuildTarget.kotlinData as KotlinJsModuleBuildTarget
-                list.add(toSystemIndependentName(productionTarget.outputFile.relativeTo(workDir).path))
-                list.add(toSystemIndependentName(productionTarget.outputMetaFile.relativeTo(workDir).path))
+                val outputDir = it.productionBuildTarget.outputDir!!
+                list.add(toSystemIndependentName(File("$outputDir/${it.name}.js").relativeTo(workDir).path))
+                list.add(toSystemIndependentName(File("$outputDir/${it.name}.meta.js").relativeTo(workDir).path))
 
-                val kjsmFiles = productionTarget.outputDir.walk()
+                val kjsmFiles = outputDir.walk()
                     .filter { it.isFile && it.extension.equals("kjsm", ignoreCase = true) }
 
                 list.addAll(kjsmFiles.map { toSystemIndependentName(it.relativeTo(workDir).path) })
@@ -1068,8 +1063,6 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     }
 
     protected fun checkWhen(actions: Array<Action>, pathsToCompile: Array<String>?, pathsToDelete: Array<String>?) {
-        clearKotlinModuleBuildTargetDataBindings()
-
         for (action in actions) {
             action.apply()
         }

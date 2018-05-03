@@ -34,12 +34,13 @@ import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import java.io.File
 import java.io.IOException
 
-class KotlinJvmModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : KotlinModuleBuilderTarget(jpsModuleBuildTarget) {
+class KotlinJvmModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
+    KotlinModuleBuilderTarget(compileContext, jpsModuleBuildTarget) {
+
     override fun compileModuleChunk(
         allCompiledFiles: MutableSet<File>,
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        context: CompileContext,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         environment: JpsCompilerEnvironment,
         filesToCompile: MultiMap<ModuleBuildTarget, File>,
@@ -111,7 +112,7 @@ class KotlinJvmModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotl
 
         var noSources = true
 
-        val targets = chunk.targets.mapNotNull { it.kotlinData as? KotlinJvmModuleBuildTarget }
+        val targets = chunk.targets.mapNotNull { this.context.kotlinBuildTargets[it] as? KotlinJvmModuleBuildTarget }
 
         val outputDirs = targets.map { it.outputDir }.toSet()
 

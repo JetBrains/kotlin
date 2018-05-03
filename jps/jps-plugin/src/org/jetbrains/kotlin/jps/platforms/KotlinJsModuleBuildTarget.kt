@@ -28,12 +28,13 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils.META_JS_SUFFIX
 import java.io.File
 import java.net.URI
 
-class KotlinJsModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : KotlinModuleBuilderTarget(jpsModuleBuildTarget) {
+class KotlinJsModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
+    KotlinModuleBuilderTarget(compileContext, jpsModuleBuildTarget) {
+
     override fun compileModuleChunk(
         allCompiledFiles: MutableSet<File>,
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        context: CompileContext,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         environment: JpsCompilerEnvironment,
         filesToCompile: MultiMap<ModuleBuildTarget, File>,
@@ -139,7 +140,7 @@ class KotlinJsModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) : Kotli
         result: MutableList<String>,
         isTests: Boolean
     ) {
-        val dependencyBuildTarget = ModuleBuildTarget(module, isTests).kotlinData
+        val dependencyBuildTarget = context.kotlinBuildTargets[ModuleBuildTarget(module, isTests)]
 
         if (dependencyBuildTarget != this@KotlinJsModuleBuildTarget &&
             dependencyBuildTarget is KotlinJsModuleBuildTarget &&
