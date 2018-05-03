@@ -214,7 +214,7 @@ public class CommonSupertypes {
         assert order != null;
 
         Set<TypeConstructor> notSource = new HashSet<>();
-        Map<TypeConstructor, Set<SimpleType>> result = new HashMap<>();
+        Map<TypeConstructor, Set<SimpleType>> result = new LinkedHashMap<>();
         for (TypeConstructor superConstructor : order) {
             if (!commonSuperclasses.contains(superConstructor)) {
                 continue;
@@ -381,7 +381,7 @@ public class CommonSupertypes {
                     @Override
                     public boolean beforeChildren(SimpleType current) {
                         Set<SimpleType> instances =
-                                constructorToAllInstances.computeIfAbsent(current.getConstructor(), k -> new HashSet<>());
+                                constructorToAllInstances.computeIfAbsent(current.getConstructor(), k -> new LinkedHashSet<>());
                         instances.add(current);
 
                         return true;
