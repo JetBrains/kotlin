@@ -22,8 +22,7 @@ import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.dump
@@ -55,8 +54,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
     private fun doGenerate() {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(descriptor, OwnerKind.IMPLEMENTATION)
         val isStatic = irFunction.isStatic
-        val frameMap = createFrameMapWithReceivers(classCodegen.state, descriptor, signature, isStatic)
-
+        val frameMap = createFrameMapWithReceivers(classCodegen.state, irFunction, signature)
 
         val flags = calculateMethodFlags(isStatic)
         val methodVisitor = createMethod(flags, signature)
@@ -90,7 +88,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
         return flags
     }
 
-    open protected fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
+    protected open fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
         return classCodegen.visitor.newMethod(
             irFunction.OtherOrigin,
             flags,
@@ -120,26 +118,21 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
 
 fun createFrameMapWithReceivers(
     state: GenerationState,
-    function: FunctionDescriptor,
-    signature: JvmMethodSignature,
-    isStatic: Boolean
-): FrameMap {
-    val frameMap = FrameMap()
-    if (!isStatic) {
-        val descriptorForThis =
-            if (function is ClassConstructorDescriptor)
-                function.containingDeclaration.thisAsReceiverParameter
-            else
-                function.dispatchReceiverParameter
-
-        frameMap.enter(descriptorForThis, AsmTypes.OBJECT_TYPE)
+    irFunction: IrFunction,
+    signature: JvmMethodSignature
+): IrFrameMap {
+    val frameMap = IrFrameMap()
+    if (irFunction is IrConstructor) {
+        frameMap.enter((irFunction.parent as IrClass).thisReceiver!!, AsmTypes.OBJECT_TYPE)
+    } else if (irFunction.dispatchReceiverParameter != null) {
+        frameMap.enter(irFunction.dispatchReceiverParameter!!, AsmTypes.OBJECT_TYPE)
     }
 
     for (parameter in signature.valueParameters) {
         if (parameter.kind == JvmMethodParameterKind.RECEIVER) {
-            val receiverParameter = function.extensionReceiverParameter
-            if (receiverParameter != null) {
-                frameMap.enter(receiverParameter, state.typeMapper.mapType(receiverParameter))
+            val receiverParameter = irFunction.extensionReceiverParameter
+            if (receiverParameter?.descriptor != null) {
+                frameMap.enter(receiverParameter, state.typeMapper.mapType(receiverParameter.descriptor))
             } else {
                 frameMap.enterTemp(parameter.asmType)
             }
@@ -148,8 +141,8 @@ fun createFrameMapWithReceivers(
         }
     }
 
-    for (parameter in function.valueParameters) {
-        frameMap.enter(parameter, state.typeMapper.mapType(parameter))
+    for (parameter in irFunction.valueParameters) {
+        frameMap.enter(parameter, state.typeMapper.mapType(parameter.type))
     }
 
     return frameMap
