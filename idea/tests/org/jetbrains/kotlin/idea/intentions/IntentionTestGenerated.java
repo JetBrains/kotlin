@@ -12476,6 +12476,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitType"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("anonymousFunctionInitializer.kt")
+        public void testAnonymousFunctionInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/anonymousFunctionInitializer.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("anonymousFunctionInitializer2.kt")
+        public void testAnonymousFunctionInitializer2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/anonymousFunctionInitializer2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("anonymousFunctionInitializer3.kt")
+        public void testAnonymousFunctionInitializer3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/anonymousFunctionInitializer3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("funNoBody.kt")
         public void testFunNoBody() throws Exception {
             runTest("idea/testData/intentions/removeExplicitType/funNoBody.kt");
@@ -12489,6 +12507,36 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("hasAnnotation.kt")
         public void testHasAnnotation() throws Exception {
             runTest("idea/testData/intentions/removeExplicitType/hasAnnotation.kt");
+        }
+
+        @TestMetadata("lambdaInitializer.kt")
+        public void testLambdaInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/lambdaInitializer.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaInitializer2.kt")
+        public void testLambdaInitializer2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/lambdaInitializer2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaInitializer3.kt")
+        public void testLambdaInitializer3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/lambdaInitializer3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaInitializer4.kt")
+        public void testLambdaInitializer4() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/lambdaInitializer4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaInitializer5.kt")
+        public void testLambdaInitializer5() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/lambdaInitializer5.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("notOnParameterOfFunctionType.kt")

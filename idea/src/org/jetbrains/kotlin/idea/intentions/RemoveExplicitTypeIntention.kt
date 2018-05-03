@@ -49,10 +49,25 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
                 if (element.isSetterParameter) return typeReference.textRange
             }
 
-            val initializer = (element as? KtDeclarationWithInitializer)?.initializer
             if (element !is KtProperty && element !is KtNamedFunction) return null
-            (element as? KtNamedFunction)?.let {
-                if (it.hasBlockBody() && (element.descriptor as? FunctionDescriptor)?.returnType?.isUnit()?.not() != false) return null
+
+            if (element is KtNamedFunction
+                && element.hasBlockBody()
+                && (element.descriptor as? FunctionDescriptor)?.returnType?.isUnit()?.not() != false
+            ) return null
+
+            val initializer = (element as? KtDeclarationWithInitializer)?.initializer
+
+            if (element is KtProperty && (initializer is KtLambdaExpression || initializer is KtNamedFunction)) {
+                val functionType = element.typeReference?.typeElement as? KtFunctionType
+                if (functionType?.parameters?.isNotEmpty() == true) {
+                    val valueParameters = when (initializer) {
+                        is KtLambdaExpression -> initializer.valueParameters
+                        is KtNamedFunction -> initializer.valueParameters
+                        else -> emptyList()
+                    }
+                    if (valueParameters.isEmpty() || valueParameters.any { it.typeReference == null }) return null
+                }
             }
 
             return when {
