@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolvedDependency
@@ -86,8 +87,20 @@ internal fun findKotlinScriptJvmClasspath(project: Project): List<File> =
 internal fun findKotlinReflectClasspath(project: Project): List<File> =
         findKotlinModuleJar(project, KOTLIN_REFLECT_EXPECTED_CLASS, KOTLIN_REFLECT)
 
-internal fun findToolsJar(): File? =
-        Class.forName("com.sun.tools.javac.util.Context")?.let(::findJarByClass)
+internal fun findToolsJar(): File? {
+    val javacUtilContextClass =
+        try {
+            Class.forName("com.sun.tools.javac.util.Context")
+        } catch (classNotFound: ClassNotFoundException) {
+            val javaHome = System.getProperty("java.home") // current Java installation path
+            throw GradleException(
+                "Kotlin could not find the required JDK tools in the Java installation ${javaHome?.let { "'$it' " }.orEmpty()}" +
+                        "used by Gradle. Make sure Gradle is running on a JDK, not JRE.",
+                classNotFound
+            )
+        }
+    return javacUtilContextClass?.let(::findJarByClass)
+}
 
 internal fun findCoroutinesClasspath(): List<File> {
     val classLoader = Thread.currentThread().contextClassLoader
