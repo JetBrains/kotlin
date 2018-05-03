@@ -3368,6 +3368,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantUnitExpression/labeledReturnAnyInValueArgument.kt");
         }
 
+        @TestMetadata("labeledReturnAnyWithParameters.kt")
+        public void testLabeledReturnAnyWithParameters() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/labeledReturnAnyWithParameters.kt");
+        }
+
         @TestMetadata("labeledReturnGenericType.kt")
         public void testLabeledReturnGenericType() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantUnitExpression/labeledReturnGenericType.kt");
@@ -3416,6 +3421,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("returnAsAny.kt")
         public void testReturnAsAny() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantUnitExpression/returnAsAny.kt");
+        }
+
+        @TestMetadata("returnAsNullableAny.kt")
+        public void testReturnAsNullableAny() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantUnitExpression/returnAsNullableAny.kt");
         }
     }
 
