@@ -6,10 +6,9 @@
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="181.2784.17" until-build="181.*"/>
+  <idea-version since-build="181.3007.1" until-build="181.3007.999"/>
 
   <depends>com.intellij.modules.platform</depends>
-  <depends>com.intellij.modules.remoteServers</depends>
 
   <!-- required for Kotlin/Native plugin -->
   <depends optional="true">org.jetbrains.kotlin.native.platform.deps</depends>
