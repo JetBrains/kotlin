@@ -10858,6 +10858,31 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/typeMismatch/expectedParameterTypeMismatchLongNameRuntime.kt");
         }
 
+        @TestMetadata("functionExtensionType.kt")
+        public void testFunctionExtensionType() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/functionExtensionType.kt");
+        }
+
+        @TestMetadata("functionNestedType.kt")
+        public void testFunctionNestedType() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/functionNestedType.kt");
+        }
+
+        @TestMetadata("functionNestedType2.kt")
+        public void testFunctionNestedType2() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/functionNestedType2.kt");
+        }
+
+        @TestMetadata("functionReflectType.kt")
+        public void testFunctionReflectType() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/functionReflectType.kt");
+        }
+
+        @TestMetadata("functionType.kt")
+        public void testFunctionType() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/functionType.kt");
+        }
+
         @TestMetadata("hasNextFunctionReturnTypeMismatch.kt")
         public void testHasNextFunctionReturnTypeMismatch() throws Exception {
             runTest("idea/testData/quickfix/typeMismatch/hasNextFunctionReturnTypeMismatch.kt");
