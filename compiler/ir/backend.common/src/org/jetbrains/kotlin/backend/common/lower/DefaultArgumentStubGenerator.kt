@@ -161,20 +161,9 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
             irFunction.valueParameters.forEach {
                 it.defaultValue = null
             }
-            return if (functionDescriptor is ClassConstructorDescriptor)
-                listOf(irFunction, IrConstructorImpl(
-                        startOffset = irFunction.startOffset,
-                        endOffset   = irFunction.endOffset,
-                        descriptor  = descriptor as ClassConstructorDescriptor,
-                        origin      = DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER,
-                        body        = body).apply { createParameterDeclarations() })
-            else
-                listOf(irFunction, IrFunctionImpl(
-                        startOffset = irFunction.startOffset,
-                        endOffset   = irFunction.endOffset,
-                        descriptor  = descriptor,
-                        origin      = DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER,
-                        body        = body).apply { createParameterDeclarations() })
+
+            newIrFunction.body = body
+            return listOf(irFunction, newIrFunction)
         }
         return listOf(irFunction)
     }
