@@ -9,6 +9,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.DirtyFilesHolder
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
+import com.intellij.openapi.compiler.CompileContext as JpsCompileContext
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.ModuleBuildTarget
@@ -21,14 +22,13 @@ import org.jetbrains.kotlin.jps.model.k2MetadataCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerSettings
 import java.io.File
 
-class KotlinCommonModuleBuildTarget(jpsModuleBuildTarget: ModuleBuildTarget) :
-    KotlinModuleBuilderTarget(jpsModuleBuildTarget) {
+class KotlinCommonModuleBuildTarget(compileContext: CompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
+    KotlinModuleBuilderTarget(compileContext, jpsModuleBuildTarget) {
 
     override fun compileModuleChunk(
         allCompiledFiles: MutableSet<File>,
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        context: CompileContext,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         environment: JpsCompilerEnvironment,
         filesToCompile: MultiMap<ModuleBuildTarget, File>,

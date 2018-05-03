@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.jps.platforms
 
-import org.jetbrains.annotations.TestOnly
+import com.intellij.openapi.util.Key
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
+import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.java.JpsJavaModuleType
 import org.jetbrains.jps.model.library.JpsOrderRootType
@@ -26,50 +27,68 @@ val JpsModule.productionBuildTarget
 val JpsModule.testBuildTarget
     get() = ModuleBuildTarget(this, true)
 
-private val kotlinBuildTargetsData = ConcurrentHashMap<ModuleBuildTarget, KotlinModuleBuilderTarget>()
+private val kotlinBuildTargetsCompileContextKey = Key<KotlinBuildTargets>("kotlinBuildTargets")
 
-val ModuleBuildTarget.kotlinData: KotlinModuleBuilderTarget?
+val CompileContext.kotlinBuildTargets: KotlinBuildTargets
     get() {
-        if (module.moduleType != JpsJavaModuleType.INSTANCE) return null
+        val value = getUserData(kotlinBuildTargetsCompileContextKey)
+        if (value != null) return value
 
-        return kotlinBuildTargetsData.computeIfAbsent(this) {
-            when (module.targetPlatform ?: detectTargetPlatform()) {
-                is TargetPlatformKind.Common -> KotlinCommonModuleBuildTarget(this)
-                is TargetPlatformKind.JavaScript -> KotlinJsModuleBuildTarget(this)
-                is TargetPlatformKind.Jvm -> KotlinJvmModuleBuildTarget(this)
+        synchronized(this) {
+            val actualValue = getUserData(kotlinBuildTargetsCompileContextKey)
+            if (actualValue != null) return actualValue
+
+            val newValue = KotlinBuildTargets(this)
+            putUserData(kotlinBuildTargetsCompileContextKey, newValue)
+            return newValue
+        }
+    }
+
+class KotlinBuildTargets internal constructor(val compileContext: CompileContext) {
+    private val byJpsModuleBuildTarget = ConcurrentHashMap<ModuleBuildTarget, KotlinModuleBuilderTarget>()
+    private val isKotlinJsStdlibJar = ConcurrentHashMap<String, Boolean>()
+
+    @JvmName("getNullable")
+    operator fun get(target: ModuleBuildTarget?): KotlinModuleBuilderTarget? {
+        if (target == null) return null
+        return get(target)
+    }
+
+    operator fun get(target: ModuleBuildTarget): KotlinModuleBuilderTarget? {
+        if (target.module.moduleType != JpsJavaModuleType.INSTANCE) return null
+
+        return byJpsModuleBuildTarget.computeIfAbsent(target) {
+            when (target.module.targetPlatform ?: detectTargetPlatform(target)) {
+                is TargetPlatformKind.Common -> KotlinCommonModuleBuildTarget(compileContext, target)
+                is TargetPlatformKind.JavaScript -> KotlinJsModuleBuildTarget(compileContext, target)
+                is TargetPlatformKind.Jvm -> KotlinJvmModuleBuildTarget(compileContext, target)
             }
         }
     }
 
-/**
- * Compatibility for KT-14082
- * todo: remove when all projects migrated to facets
- */
-private fun ModuleBuildTarget.detectTargetPlatform(): TargetPlatformKind<*> {
-    if (hasJsStdLib()) return TargetPlatformKind.JavaScript
+    /**
+     * Compatibility for KT-14082
+     * todo: remove when all projects migrated to facets
+     */
+    private fun detectTargetPlatform(target: ModuleBuildTarget): TargetPlatformKind<*> {
+        if (hasJsStdLib(target)) return TargetPlatformKind.JavaScript
 
-    return TargetPlatformKind.DEFAULT_PLATFORM
-}
-
-private val IS_KOTLIN_JS_STDLIB_JAR_CACHE = ConcurrentHashMap<String, Boolean>()
-
-private fun ModuleBuildTarget.hasJsStdLib(): Boolean {
-    KotlinJvmModuleBuildTarget(this).allDependencies.libraries.forEach { library ->
-        for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
-            val url = root.url
-
-            val isKotlinJsLib = IS_KOTLIN_JS_STDLIB_JAR_CACHE.computeIfAbsent(url) {
-                LibraryUtils.isKotlinJavascriptStdLibrary(JpsPathUtil.urlToFile(url))
-            }
-
-            if (isKotlinJsLib) return true
-        }
+        return TargetPlatformKind.DEFAULT_PLATFORM
     }
 
-    return false
-}
+    private fun hasJsStdLib(target: ModuleBuildTarget): Boolean {
+        KotlinJvmModuleBuildTarget(compileContext, target).allDependencies.libraries.forEach { library ->
+            for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
+                val url = root.url
 
-@TestOnly
-internal fun clearKotlinModuleBuildTargetDataBindings() {
-    kotlinBuildTargetsData.clear()
+                val isKotlinJsLib = isKotlinJsStdlibJar.computeIfAbsent(url) {
+                    LibraryUtils.isKotlinJavascriptStdLibrary(JpsPathUtil.urlToFile(url))
+                }
+
+                if (isKotlinJsLib) return true
+            }
+        }
+
+        return false
+    }
 }

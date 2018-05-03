@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.platforms.KotlinJsModuleBuildTarget
-import org.jetbrains.kotlin.jps.platforms.kotlinData
+import org.jetbrains.kotlin.jps.platforms.kotlinBuildTargets
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.name.FqName
@@ -213,7 +213,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val allVersions = cacheVersionsProvider.allVersions(targets)
         val actions = allVersions.map { it.checkVersion() }.toMutableSet()
 
-        if (chunk.representativeTarget().kotlinData !is KotlinJsModuleBuildTarget) {
+        val kotlinModuleBuilderTarget = context.kotlinBuildTargets[chunk.representativeTarget()]
+        if (kotlinModuleBuilderTarget !is KotlinJsModuleBuildTarget) {
             val args = compilerArgumentsForChunk(chunk)
             val currentBuildMetaInfo = JvmBuildMetaInfo(args)
 
@@ -309,7 +310,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         fsOperations: FSOperationsHelper
     ): ModuleLevelBuilder.ExitCode {
         // Workaround for Android Studio
-        if (!JavaBuilder.IS_ENABLED[context, true] && !JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
+        val isJsModule = context.kotlinBuildTargets[chunk.representativeTarget()] is KotlinJsModuleBuildTarget
+        if (!JavaBuilder.IS_ENABLED[context, true] && !isJsModule) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled")
             return NOTHING_DONE
         }
@@ -377,7 +379,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.info("Compiled successfully")
         }
 
-        val generatedFiles = getGeneratedFiles(chunk, environment.outputItemsCollector)
+        val generatedFiles = getGeneratedFiles(context, chunk, environment.outputItemsCollector)
 
         registerOutputItems(outputConsumer, generatedFiles)
         saveVersions(context, chunk, commonArguments)
@@ -391,7 +393,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             rebuildAfterCacheVersionChanged.clean(target)
         }
 
-        chunk.representativeTarget().kotlinData?.doAfterBuild()
+        chunk.targets.forEach {
+            context.kotlinBuildTargets[it]?.doAfterBuild()
+        }
 
         updateJavaMappings(chunk, context, dirtyFilesHolder, filesToCompile, generatedFiles, incrementalCaches)
 
@@ -497,7 +501,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
         cacheVersionsProvider.allVersions(targets).forEach { it.saveIfNeeded() }
 
-        if (!JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
+        val isJsModule = context.kotlinBuildTargets[chunk.representativeTarget()] is KotlinJsModuleBuildTarget
+        if (!isJsModule) {
             val jvmBuildMetaInfo = JvmBuildMetaInfo(commonArguments)
             val serializedMetaInfo = JvmBuildMetaInfo.serializeToString(jvmBuildMetaInfo)
 
@@ -549,9 +554,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
         }
 
-        val isDoneSomething = representativeTarget.kotlinData?.compileModuleChunk(
-            allCompiledFiles, chunk, commonArguments, context,
-            dirtyFilesHolder, environment, filesToCompile, fsOperations
+        val kotlinModuleBuilderTarget = context.kotlinBuildTargets[representativeTarget]
+        val isDoneSomething = kotlinModuleBuilderTarget?.compileModuleChunk(
+            allCompiledFiles, chunk, commonArguments, dirtyFilesHolder,
+            environment, filesToCompile, fsOperations
         ) ?: false
 
         return if (isDoneSomething) environment.outputItemsCollector else null
@@ -567,7 +573,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             register(LookupTracker::class.java, lookupTracker)
             register(
                 IncrementalCompilationComponents::class.java,
-                IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { it.key.kotlinData!!.targetId })
+                IncrementalCompilationComponentsImpl(incrementalCaches.mapKeys { context.kotlinBuildTargets[it.key]!!.targetId })
             )
             register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
                 override fun checkCanceled() {
@@ -617,6 +623,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     }
 
     private fun getGeneratedFiles(
+        context: CompileContext,
         chunk: ModuleChunk,
         outputItemCollector: OutputItemsCollectorImpl
     ): Map<ModuleBuildTarget, List<GeneratedFile>> {
@@ -624,7 +631,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val sourceToTarget = HashMap<File, ModuleBuildTarget>()
         if (chunk.targets.size > 1) {
             for (target in chunk.targets) {
-                target.kotlinData?.sources?.forEach {
+                context.kotlinBuildTargets[target]?.sources?.forEach {
                     sourceToTarget[it] = target
                 }
             }

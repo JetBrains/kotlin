@@ -32,7 +32,7 @@ import java.io.File
 /**
  * Properties and actions for Kotlin test / production module build target.
  */
-abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTarget) {
+abstract class KotlinModuleBuilderTarget(val context: CompileContext, val jpsModuleBuildTarget: ModuleBuildTarget) {
     val module: JpsModule
         get() = jpsModuleBuildTarget.module
 
@@ -66,8 +66,8 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
             val result = mutableListOf<KotlinModuleBuilderTarget>()
 
             if (isTests) {
-                result.addIfNotNull(module.productionBuildTarget.kotlinData)
-                result.addIfNotNull(relatedProductionModule?.productionBuildTarget?.kotlinData)
+                result.addIfNotNull(context.kotlinBuildTargets[module.productionBuildTarget])
+                result.addIfNotNull(context.kotlinBuildTargets[relatedProductionModule?.productionBuildTarget])
             }
 
             return result.filter { it.sources.isNotEmpty() }
@@ -95,7 +95,7 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
 
         return allDependencies.modules
             .filter { it.name in implementedModuleNames }
-            .map { ModuleBuildTarget(it, isTests).kotlinData!! }
+            .map { context.kotlinBuildTargets[ModuleBuildTarget(it, isTests)]!! }
     }
 
     val sources by lazy {
@@ -134,7 +134,6 @@ abstract class KotlinModuleBuilderTarget(val jpsModuleBuildTarget: ModuleBuildTa
         allCompiledFiles: MutableSet<File>,
         chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
-        context: CompileContext,
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         environment: JpsCompilerEnvironment,
         filesToCompile: MultiMap<ModuleBuildTarget, File>,
