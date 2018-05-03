@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -86,12 +88,12 @@ class BlockInfo private constructor(val parent: BlockInfo?) {
     }
 }
 
-class VariableInfo(val descriptor: VariableDescriptor, val index: Int, val type: Type, val startLabel: Label)
+class VariableInfo(val declaration: IrVariable, val index: Int, val type: Type, val startLabel: Label)
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 class ExpressionCodegen(
         val irFunction: IrFunction,
-        val frame: FrameMap,
+        val frame: IrFrameMap,
         val mv: InstructionAdapter,
         val classCodegen: ClassCodegen
 ) : IrElementVisitor<StackValue, BlockInfo>, BaseExpressionCodegen {
@@ -148,11 +150,11 @@ class ExpressionCodegen(
     private fun writeLocalVariablesInTable(info: BlockInfo) {
         val endLabel = markNewLabel()
         info.variables.forEach {
-            mv.visitLocalVariable(it.descriptor.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index)
+            mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index)
         }
 
         info.variables.reversed().forEach {
-            frame.leave(it.descriptor)
+            frame.leave(it.declaration.symbol)
         }
     }
 
@@ -293,14 +295,14 @@ class ExpressionCodegen(
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): StackValue {
         val varType = typeMapper.mapType(declaration.descriptor)
-        val index = frame.enter(declaration.descriptor, varType)
+        val index = frame.enter(declaration.symbol, varType)
 
         declaration.initializer?.apply {
             StackValue.local(index, varType).store(gen(this, varType, data), mv)
         }
 
         val info = VariableInfo(
-                declaration.descriptor,
+                declaration,
                 index,
                 varType,
                 markNewLabel()
@@ -320,7 +322,7 @@ class ExpressionCodegen(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: BlockInfo): StackValue {
-        return generateLocal(expression.descriptor, expression.asmType)
+        return generateLocal(expression.symbol, expression.asmType)
     }
 
     private fun generateFieldValue(expression: IrFieldAccessExpression, data: BlockInfo): StackValue {
@@ -349,15 +351,23 @@ class ExpressionCodegen(
         return none()
     }
 
-    private fun generateLocal(descriptor: CallableDescriptor, type: Type): StackValue {
-        val index = findLocalIndex(descriptor)
+    private fun generateLocal(symbol: IrSymbol, type: Type): StackValue {
+        val index = findLocalIndex(symbol)
         StackValue.local(index, type).put(type, mv)
         return onStack(type)
     }
 
-    private fun findLocalIndex(descriptor: CallableDescriptor): Int {
-        return frame.getIndex(descriptor).apply {
-            if (this < 0) throw AssertionError("Non-mapped local variable descriptor: $descriptor")
+    private fun findLocalIndex(irSymbol: IrSymbol): Int {
+        return frame.getIndex(irSymbol).apply {
+            if (this < 0) {
+                if (irFunction.dispatchReceiverParameter != null) {
+                    (irFunction.parent as? IrClass)?.takeIf { it.thisReceiver?.symbol == irSymbol }?.let { return 0 }
+                }
+                throw AssertionError(
+                    "Non-mapped local declaration: " +
+                            "${if (irSymbol.isBound) irSymbol.owner.dump() else irSymbol.descriptor} \n in ${irFunction.dump()}"
+                )
+            }
         }
     }
 
@@ -371,7 +381,7 @@ class ExpressionCodegen(
 
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): StackValue {
         val value = expression.value.accept(this, data)
-        StackValue.local(findLocalIndex(expression.descriptor), expression.descriptor.asmType).store(value, mv)
+        StackValue.local(findLocalIndex(expression.symbol), expression.descriptor.asmType).store(value, mv)
         return none()
     }
 
@@ -729,13 +739,13 @@ class ExpressionCodegen(
             val clauseStart = markNewLabel()
             val descriptor = clause.parameter
             val descriptorType = descriptor.asmType
-            val index = frame.enter(descriptor, descriptorType)
+            val index = frame.enter(clause.catchParameter, descriptorType)
             mv.store(index, descriptorType)
 
             val catchBody = clause.result
             gen(catchBody, catchBody.asmType, data)
 
-            frame.leave(descriptor)
+            frame.leave(clause.catchParameter)
 
             val clauseEnd = markNewLabel()
 
@@ -1014,7 +1024,7 @@ class ExpressionCodegen(
         return getOrCreateCallGenerator(descriptor, memberAccessExpression, mappings, false)
     }
 
-    override val frameMap: FrameMap
+    override val frameMap: IrFrameMap
         get() = frame
     override val visitor: InstructionAdapter
         get() = mv
