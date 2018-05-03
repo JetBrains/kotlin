@@ -101,6 +101,9 @@ public inline class UShort internal constructor(private val data: Short) : Compa
     /** Decrements this value. */
     public operator fun dec(): UShort = TODO()
 
+    /** Creates a range from this value to the specified [other] value. */
+    public operator fun rangeTo(other: UShort): UIntRange = UIntRange(this.toUInt(), other.toUInt())
+
     /** Performs a bitwise AND operation between the two values. */
     public infix fun and(other: UShort): UShort = UShort(this.data and other.data)
     /** Performs a bitwise OR operation between the two values. */

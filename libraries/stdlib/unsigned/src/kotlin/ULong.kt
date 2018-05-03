@@ -101,6 +101,9 @@ public inline class ULong internal constructor(private val data: Long) : Compara
     /** Decrements this value. */
     public operator fun dec(): ULong = TODO()
 
+    /** Creates a range from this value to the specified [other] value. */
+    public operator fun rangeTo(other: ULong): ULongRange = ULongRange(this, other)
+
     /** Shifts this value left by the [bitCount] number of bits. */
     public infix fun shl(bitCount: Int): ULong = ULong(data shl bitCount)
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */

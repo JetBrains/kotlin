@@ -101,6 +101,9 @@ public inline class UByte internal constructor(private val data: Byte) : Compara
     /** Decrements this value. */
     public operator fun dec(): UByte = TODO()
 
+    /** Creates a range from this value to the specified [other] value. */
+    public operator fun rangeTo(other: UByte): UIntRange = UIntRange(this.toUInt(), other.toUInt())
+
     /** Performs a bitwise AND operation between the two values. */
     public infix fun and(other: UByte): UByte = UByte(this.data and other.data)
     /** Performs a bitwise OR operation between the two values. */

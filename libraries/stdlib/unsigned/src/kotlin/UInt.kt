@@ -101,6 +101,9 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
     /** Decrements this value. */
     public operator fun dec(): UInt = TODO()
 
+    /** Creates a range from this value to the specified [other] value. */
+    public operator fun rangeTo(other: UInt): UIntRange = UIntRange(this, other)
+
     /** Shifts this value left by the [bitCount] number of bits. */
     public infix fun shl(bitCount: Int): UInt = UInt(data shl bitCount)
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */

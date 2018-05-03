@@ -22,6 +22,10 @@ fun generateUnsignedTypes(
         generate(File(targetDir, "kotlin/${type.capitalized}Array.kt")) { UnsignedArrayGenerator(type, it) }
     }
 
+    for (type in listOf(UnsignedType.UINT, UnsignedType.ULONG)) {
+        generate(File(targetDir, "kotlin/${type.capitalized}Range.kt")) { UnsignedRangeGenerator(type, it) }
+    }
+
     generate(File(targetDir, "kotlin/UIterators.kt"), ::UnsignedIteratorsGenerator)
 
 
@@ -116,7 +120,12 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateRangeTo() {
-        // TODO("not implemented")
+        val rangeElementType = maxByDomainCapacity(type, UnsignedType.UINT)
+        val rangeType = rangeElementType.capitalized + "Range"
+        fun convert(name: String) = if (rangeElementType == type) name else "$name.to${rangeElementType.capitalized}()"
+        out.println("    /** Creates a range from this value to the specified [other] value. */")
+        out.println("    public operator fun rangeTo(other: $className): $rangeType = $rangeType(${convert("this")}, ${convert("other")})")
+        out.println()
     }
 
 
@@ -244,4 +253,129 @@ public fun $arrayTypeOf(vararg elements: $elementType): $arrayType {
 }"""
         )
     }
+}
+
+class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    val elementType = type.capitalized
+    val signedType = type.asSigned.capitalized
+    val stepType = signedType
+
+    override fun getPackage(): String = "kotlin.ranges"
+
+    override fun generateBody() {
+        fun hashCodeConversion(name: String, isSigned: Boolean = false) =
+            if (type == UnsignedType.ULONG) "($name xor ($name ${if (isSigned) "u" else ""}shr 32))" else name
+
+        out.println(
+            """
+
+import kotlin.internal.*
+
+/**
+ * A range of values of type `$elementType`.
+ */
+public class ${elementType}Range(start: $elementType, endInclusive: $elementType) : ${elementType}Progression(start, endInclusive, 1), ClosedRange<${elementType}> {
+    override val start: $elementType get() = first
+    override val endInclusive: $elementType get() = last
+
+    override fun contains(value: $elementType): Boolean = first <= value && value <= last
+
+    override fun isEmpty(): Boolean = first > last
+
+    override fun equals(other: Any?): Boolean =
+        other is ${elementType}Range && (isEmpty() && other.isEmpty() ||
+                first == other.first && last == other.last)
+
+    override fun hashCode(): Int =
+        if (isEmpty()) -1 else (31 * ${hashCodeConversion("first")}.toInt() + ${hashCodeConversion("last")}.toInt())
+
+    override fun toString(): String = "${'$'}first..${'$'}last"
+
+    companion object {
+        /** An empty range of values of type $elementType. */
+        public val EMPTY: ${elementType}Range = ${elementType}Range($elementType.MAX_VALUE, $elementType.MIN_VALUE)
+    }
+}
+
+/**
+ * A progression of values of type `$elementType`.
+ */
+public open class ${elementType}Progression
+internal constructor(
+    start: $elementType,
+    endInclusive: $elementType,
+    step: $stepType
+) : Iterable<$elementType> {
+    init {
+        if (step == 0.to$stepType()) throw kotlin.IllegalArgumentException("Step must be non-zero")
+    }
+
+    /**
+     * The first element in the progression.
+     */
+    public val first: $elementType = start
+
+    /**
+     * The last element in the progression.
+     */
+    public val last: $elementType = getProgressionLastElement(start, endInclusive, step)
+
+    /**
+     * The step of the progression.
+     */
+    public val step: $stepType = step
+
+    override fun iterator(): ${elementType}Iterator = ${elementType}ProgressionIterator(first, last, step)
+
+    /** Checks if the progression is empty. */
+    public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
+
+    override fun equals(other: Any?): Boolean =
+        other is ${elementType}Progression && (isEmpty() && other.isEmpty() ||
+                first == other.first && last == other.last && step == other.step)
+
+    override fun hashCode(): Int =
+        if (isEmpty()) -1 else (31 * (31 * ${hashCodeConversion("first")}.toInt() + ${hashCodeConversion("last")}.toInt()) + ${hashCodeConversion("step", isSigned = true)}.toInt())
+
+    override fun toString(): String = if (step > 0) "${'$'}first..${'$'}last step ${'$'}step" else "${'$'}first downTo ${'$'}last step ${'$'}{-step}"
+
+    companion object {
+        /**
+         * Creates ${elementType}Progression within the specified bounds of a closed range.
+
+         * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
+         * In order to go backwards the [step] must be negative.
+         */
+        public fun fromClosedRange(rangeStart: $elementType, rangeEnd: $elementType, step: $stepType): ${elementType}Progression = ${elementType}Progression(rangeStart, rangeEnd, step)
+    }
+}
+
+
+/**
+ * An iterator over a progression of values of type `$elementType`.
+ * @property step the number by which the value is incremented on each step.
+ */
+private class ${elementType}ProgressionIterator(first: $elementType, last: $elementType, step: $stepType) : ${elementType}Iterator() {
+    private val finalElement = last
+    private var hasNext: Boolean = if (step > 0) first <= last else first >= last
+    private val step = step.to$elementType() // use 2-complement math for negative steps
+    private var next = if (hasNext) first else finalElement
+
+    override fun hasNext(): Boolean = hasNext
+
+    override fun next$elementType(): $elementType {
+        val value = next
+        if (value == finalElement) {
+            if (!hasNext) throw kotlin.NoSuchElementException()
+            hasNext = false
+        } else {
+            next += step
+        }
+        return value
+    }
+}
+"""
+        )
+    }
+
 }
