@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -40,6 +41,9 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
     private val kotlinJvmInternalPackage = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.jvm.internal"))
     private val refNamespaceClass =
         KnownClassDescriptor.createClass(Name.identifier("Ref"), kotlinJvmInternalPackage, listOf(builtIns.anyType))
+
+    //TODO: avoid tracking symbols
+    private val sharedVariableDescriptorToSymbol = mutableMapOf<VariableDescriptor, IrVariableSymbol>()
 
     private class PrimitiveRefDescriptorsProvider(type: KotlinType, refClass: ClassDescriptor) {
         val refType: KotlinType = refClass.defaultType
@@ -154,12 +158,14 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
             sharedVariableDescriptor, refConstructorCall
         )
 
+        sharedVariableDescriptorToSymbol[sharedVariableDescriptor] = sharedVariableDeclaration.symbol
+
         val initializer = originalDeclaration.initializer ?: return sharedVariableDeclaration
 
         val sharedVariableInitialization = IrSetFieldImpl(
             initializer.startOffset, initializer.endOffset,
             elementPropertyDescriptor,
-            IrGetValueImpl(initializer.startOffset, initializer.endOffset, sharedVariableDescriptor),
+            IrGetValueImpl(initializer.startOffset, initializer.endOffset, sharedVariableDeclaration.symbol),
             initializer
         )
 
@@ -179,7 +185,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
         IrGetFieldImpl(
             originalGet.startOffset, originalGet.endOffset,
             getElementFieldDescriptor(originalGet.descriptor.type),
-            IrGetValueImpl(originalGet.startOffset, originalGet.endOffset, sharedVariableDescriptor),
+            IrGetValueImpl(originalGet.startOffset, originalGet.endOffset, sharedVariableDescriptorToSymbol[sharedVariableDescriptor]!!),
             originalGet.origin
         )
 
@@ -187,7 +193,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
         IrSetFieldImpl(
             originalSet.startOffset, originalSet.endOffset,
             getElementFieldDescriptor(originalSet.descriptor.type),
-            IrGetValueImpl(originalSet.startOffset, originalSet.endOffset, sharedVariableDescriptor),
+            IrGetValueImpl(originalSet.startOffset, originalSet.endOffset, sharedVariableDescriptorToSymbol[sharedVariableDescriptor]!!),
             originalSet.value,
             originalSet.origin
         )
