@@ -1,6 +1,6 @@
 apply plugin: 'konan'
 
-konan.targets = ['macbook', 'linux', 'raspberrypi']
+konan.targets = ['macbook', 'linux', 'raspberrypi', 'mingw']
 
 def konanUserDir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
 
@@ -24,6 +24,10 @@ konanArtifacts {
         target 'raspberrypi', {
             includeDirs "$konanUserDir/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
         }
+
+        target 'mingw', {
+            includeDirs "${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/include/SDL2"
+        }
     }
 
     program ('tetris') {
@@ -44,6 +48,10 @@ konanArtifacts {
         target 'raspberrypi', {
             linkerOpts '-lSDL2'
         }
+
+        target 'mingw', {
+            linkerOpts "-L${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/lib -lSDL2 -mwindows"
+        }
     }
 }
 
@@ -53,6 +61,12 @@ compileKonan {
             copy {
                 from 'src/main/resources'
                 into task.artifact.parentFile
+            }
+            if (task.name.endsWith('Mingw_x64')) {
+                copy {
+                    from "${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/bin/SDL2.dll"
+                    into task.artifact.parentFile
+                }
             }
         }
     }
