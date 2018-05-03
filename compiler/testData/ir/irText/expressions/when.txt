@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/when.kt
               then: CONST String type=kotlin.String value=A
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
-                typeOperand: UNBOUND: class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence, java.io.Serializable
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags:
                 GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value=String
             BRANCH

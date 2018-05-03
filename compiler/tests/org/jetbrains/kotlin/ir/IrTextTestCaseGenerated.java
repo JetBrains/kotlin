@@ -1256,6 +1256,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/regressions/integerCoercionToT.kt");
         }
 
+        @TestMetadata("kt24114.kt")
+        public void testKt24114() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/kt24114.kt");
+        }
+
         @TestMetadata("typeAliasCtorForGenericClass.kt")
         public void testTypeAliasCtorForGenericClass() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/typeAliasCtorForGenericClass.kt");
