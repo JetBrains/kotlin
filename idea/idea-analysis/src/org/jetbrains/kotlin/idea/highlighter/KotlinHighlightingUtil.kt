@@ -22,12 +22,14 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.scriptDependencies
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isInContent
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.getScriptDefinition
+import kotlin.script.experimental.dependencies.ScriptReport
 import kotlin.script.experimental.location.ScriptExpectedLocation
 
 object KotlinHighlightingUtil {
@@ -66,6 +68,7 @@ object KotlinHighlightingUtil {
     private fun shouldHighlightScript(ktFile: KtFile): Boolean {
         if (ScratchFileService.isInScratchRoot(ktFile.virtualFile)) return true
         if (ktFile.virtualFile.scriptDependencies == null) return false
+        if (ktFile.getUserData(IdeScriptReportSink.Reports)?.any { it.severity == ScriptReport.Severity.FATAL } == true) return false
 
         val scriptScope = getScriptDefinition(ktFile)?.scriptExpectedLocations ?: return false
         return when {

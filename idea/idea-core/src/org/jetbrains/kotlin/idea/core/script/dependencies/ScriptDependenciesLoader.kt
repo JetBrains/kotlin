@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.script.*
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
-import kotlin.script.experimental.dependencies.ScriptReport
 
 abstract class ScriptDependenciesLoader(
     protected val file: VirtualFile,
@@ -77,11 +76,11 @@ abstract class ScriptDependenciesLoader(
         val newDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
         if (cache[file] != newDependencies) {
             if (shouldShowNotification() && cache[file] != null && !ApplicationManager.getApplication().isUnitTestMode) {
-                file.addScriptDependenciesNotificationPanel(result, project) {
-                    saveDependencies(result)
+                file.addScriptDependenciesNotificationPanel(newDependencies, project) {
+                    saveDependencies(newDependencies)
                 }
             } else {
-                saveDependencies(result)
+                saveDependencies(newDependencies)
             }
         } else {
             if (shouldShowNotification()) {
@@ -92,20 +91,14 @@ abstract class ScriptDependenciesLoader(
         loaders.remove(file)
     }
 
-    private fun saveDependencies(result: DependenciesResolver.ResolveResult) {
+    private fun saveDependencies(dependencies: ScriptDependencies) {
         if (shouldShowNotification()) {
             file.removeScriptDependenciesNotificationPanel(project)
         }
 
-        val newDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: ScriptDependencies.Empty
-
-        val rootsChanged = cache.hasNotCachedRoots(newDependencies)
-        if (cache.save(file, newDependencies)) {
-            if (result.reports.any { it.severity == ScriptReport.Severity.FATAL }) {
-                file.scriptDependencies = null
-            } else {
-                file.scriptDependencies = newDependencies
-            }
+        val rootsChanged = cache.hasNotCachedRoots(dependencies)
+        if (cache.save(file, dependencies)) {
+            file.scriptDependencies = dependencies
         }
 
         if (rootsChanged) {
