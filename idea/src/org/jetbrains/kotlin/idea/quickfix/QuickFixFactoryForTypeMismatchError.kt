@@ -19,7 +19,11 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
+import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -41,14 +45,28 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isInterface
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
 //TODO: should use change signature to deal with cases of multiple overridden descriptors
 class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
+
+    private fun KotlinType.dropParameterNameAnnotations(): KotlinType {
+        return KotlinTypeFactory.simpleNotNullType(annotations, constructor.declarationDescriptor as ClassDescriptor, arguments.map {
+            TypeProjectionImpl(
+                it.projectionKind,
+                it.type.replaceAnnotations(AnnotationsImpl(it.type.annotations.filter { it !is BuiltInAnnotationDescriptor }))
+            )
+        })
+    }
+
+    private fun KotlinType.reflectToRegularFunctionType(): KotlinType {
+        val isTypeAnnotatedWithExtensionFunctionType = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null
+        val parameterCount = if (isTypeAnnotatedWithExtensionFunctionType) arguments.size - 2 else arguments.size - 1
+        return KotlinTypeFactory.simpleNotNullType(annotations, builtIns.getFunction(parameterCount), arguments)
+    }
 
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val actions = LinkedList<IntentionAction>()
@@ -142,6 +160,22 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             }
         }
 
+        fun <D : KtCallableDeclaration> addChangeTypeFix(
+            callable: D,
+            expressionType: KotlinType,
+            createFix: (D, KotlinType) -> KotlinQuickFixAction<KtCallableDeclaration>
+        ) {
+            val scope = callable.getResolutionScope(context, callable.getResolutionFacade())
+            val typeToInsert = expressionType.approximateWithResolvableType(scope, false)
+            if (typeToInsert.constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.KFunction) {
+                val reflectType = typeToInsert.dropParameterNameAnnotations()
+                actions.add(createFix(callable, reflectType.reflectToRegularFunctionType()))
+                actions.add(createFix(callable, reflectType))
+            } else {
+                actions.add(createFix(callable, typeToInsert))
+            }
+        }
+
         // Property initializer type mismatch property type:
         val property = PsiTreeUtil.getParentOfType(diagnosticElement, KtProperty::class.java)
         if (property != null) {
@@ -150,9 +184,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             if (QuickFixUtil.canEvaluateTo(initializer, diagnosticElement)
                 || getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(getter, diagnosticElement)
             ) {
-                val scope = property.getResolutionScope(context, property.getResolutionFacade())
-                val typeToInsert = expressionType.approximateWithResolvableType(scope, false)
-                actions.add(ChangeVariableTypeFix(property, typeToInsert))
+                addChangeTypeFix(property, expressionType, ::ChangeVariableTypeFix)
             }
         }
 
@@ -165,9 +197,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         else
             PsiTreeUtil.getParentOfType(diagnosticElement, KtFunction::class.java, true)
         if (function is KtFunction && QuickFixUtil.canFunctionOrGetterReturnExpression(function, diagnosticElement)) {
-            val scope = function.getResolutionScope(context, function.getResolutionFacade())
-            val typeToInsert = expressionType.approximateWithResolvableType(scope, false)
-            actions.add(ChangeCallableReturnTypeFix.ForEnclosing(function, typeToInsert))
+            addChangeTypeFix(function, expressionType, ChangeCallableReturnTypeFix::ForEnclosing)
         }
 
         // Fixing overloaded operators:
