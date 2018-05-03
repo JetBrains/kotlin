@@ -1332,8 +1332,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, obj)                // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.
 
-        val result = call(context.llvm.isInstanceFunction, args)                       // Check if dst is subclass of src.
-        return LLVMBuildTrunc(functionGenerationContext.builder, result, kInt1, "")!!             // Truncate result to boolean
+        return call(context.llvm.isInstanceFunction, args)                       // Check if dst is subclass of src.
     }
 
     private fun genInstanceOfObjC(obj: LLVMValueRef, dstClass: IrClass): LLVMValueRef {
@@ -1345,13 +1344,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         return if (dstClass.isObjCClass()) {
             if (dstClass.isInterface) {
-                val isMeta = if (dstClass.isObjCMetaClass()) Int8(1) else Int8(0)
+                val isMeta = if (dstClass.isObjCMetaClass()) kTrue else kFalse
                 call(
                         context.llvm.Kotlin_Interop_DoesObjectConformToProtocol,
                         listOf(
                                 objCObject,
                                 genGetObjCProtocol(dstClass),
-                                isMeta.llvm
+                                isMeta
                         )
                 )
             } else {
@@ -1360,7 +1359,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         listOf(objCObject, genGetObjCClass(dstClass))
                 )
             }.let {
-                functionGenerationContext.icmpNe(it, Int8(0).llvm)
+                functionGenerationContext.icmpNe(it, kFalse)
             }
 
 

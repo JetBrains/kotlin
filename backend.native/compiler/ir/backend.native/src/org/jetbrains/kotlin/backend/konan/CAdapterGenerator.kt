@@ -757,7 +757,13 @@ internal class CAdapterGenerator(
         #ifdef __cplusplus
         extern "C" {
         #endif""".trimIndent())
-        output("typedef unsigned char   ${prefix}_KBoolean;")
+        output("""
+        #ifdef __cplusplus
+        typedef bool            ${prefix}_KBoolean;
+        #else
+        typedef _Bool           ${prefix}_KBoolean;
+        #endif
+        """.trimIndent())
         output("typedef char            ${prefix}_KByte;")
         output("typedef unsigned short  ${prefix}_KChar;")
         output("typedef short           ${prefix}_KShort;")

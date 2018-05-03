@@ -36,7 +36,7 @@
 #include "TypeInfo.h"
 
 // Note that almost all types are signed.
-typedef uint8_t KBoolean;
+typedef bool KBoolean;
 typedef int8_t  KByte;
 typedef uint16_t KChar;
 typedef int16_t KShort;

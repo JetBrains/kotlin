@@ -35,7 +35,6 @@ class LldbTests {
         [..] at main.kt:5
     """)
 
-    //FIXME: Boolean and Int are wrong
     @Test
     fun `can inspect values of primitive types`() = lldbTest("""
         fun main(args: Array<String>) {
@@ -54,7 +53,7 @@ class LldbTests {
             (int) b = 2
             (long) c = -3
             (unsigned char) d = 'c'
-            (void) e = <Unable to determine byte size.>
+            (bool) e = true
     """)
 
     @Test
