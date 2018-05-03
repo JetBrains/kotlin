@@ -1,9 +1,9 @@
 package = ffmpeg
 headers = libavcodec/avcodec.h libavformat/avformat.h libavutil/pixfmt.h libavutil/opt.h \
-          libswscale/swscale.h libavresample/avresample.h
+          libswscale/swscale.h libswresample/swresample.h
 headerFilter = libavcodec/** libavformat/** libavutil/** \
-          libswscale/** libavresample/**
-linkerOpts = -lavutil -lavformat -lavcodec -lswscale -lavresample
+          libswscale/** libswresample/**
+linkerOpts = -lavutil -lavformat -lavcodec -lswscale -lswresample
 ---
 
 static void av_buffer_unref2(AVBufferRef* ref) {
@@ -21,7 +21,7 @@ static void avformat_free_context2(AVFormatContext* ref) {
     avformat_free_context(&copy);
 }
 
-static void avresample_free2(AVAudioResampleContext* ref) {
-    AVAudioResampleContext* copy = ref;
-    avresample_free(&copy);
+static void swr_free2(SwrContext* ref) {
+    SwrContext* copy = ref;
+    swr_free(&copy);
 }

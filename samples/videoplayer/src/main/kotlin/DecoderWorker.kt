@@ -190,8 +190,8 @@ private class AudioDecoder(
         disposable(create = ::av_frame_alloc, dispose = ::av_frame_unref).pointed
     private val resampledAudioFrame: AVFrame =
         disposable(create = ::av_frame_alloc, dispose = ::av_frame_unref).pointed
-    private val resampleContext: CPointer<AVAudioResampleContext> =
-        disposable(create = ::avresample_alloc_context, dispose = ::avresample_free2)
+    private val resampleContext: CPointer<SwrContext> =
+        disposable(create = ::swr_alloc, dispose = ::swr_free2)
 
     private val audioQueue = Queue<AudioFrame>(100)
 
@@ -214,7 +214,7 @@ private class AudioDecoder(
             setResampleOpt("in_sample_fmt", sample_fmt)
             setResampleOpt("out_sample_fmt", output.sampleFormat)
         }
-        avresample_open(resampleContext)
+        swr_init(resampleContext)
     }
 
     private fun setResampleOpt(name: String, value: Int) =
@@ -248,7 +248,7 @@ private class AudioDecoder(
             val size = avcodec_decode_audio4(audioCodecContext.ptr, audioFrame.ptr, frameFinished.ptr, packet.ptr)
             if (frameFinished.value != 0) {
                 // Put audio frame to decoder's queue.
-                avresample_convert_frame(resampleContext, resampledAudioFrame.ptr, audioFrame.ptr).checkAVError()
+                swr_convert_frame(resampleContext, resampledAudioFrame.ptr, audioFrame.ptr).checkAVError()
                 with (resampledAudioFrame) {
                     val audioFrameSize = av_samples_get_buffer_size(null, channels, nb_samples, format, 1)
                     val buffer = av_buffer_alloc(audioFrameSize)!!
