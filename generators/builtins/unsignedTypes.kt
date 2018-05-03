@@ -19,6 +19,7 @@ fun generateUnsignedTypes(
 ) {
     for (type in UnsignedType.values()) {
         generate(File(targetDir, "kotlin/${type.capitalized}.kt")) { UnsignedTypeGenerator(type, it) }
+        generate(File(targetDir, "kotlin/${type.capitalized}Array.kt")) { UnsignedArrayGenerator(type, it) }
     }
 
     generate(File(targetDir, "kotlin/UIterators.kt"), ::UnsignedIteratorsGenerator)
@@ -191,5 +192,56 @@ class UnsignedIteratorsGenerator(out: PrintWriter) : BuiltInsSourceGenerator(out
             out.println("}")
             out.println()
         }
+    }
+}
+
+class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    val elementType = type.capitalized
+    val arrayType = elementType + "Array"
+    val arrayTypeOf = elementType.toLowerCase() + "ArrayOf"
+    val storageElementType = type.asSigned.capitalized
+    val storageArrayType = storageElementType + "Array"
+    override fun generateBody() {
+        out.println("public inline class $arrayType internal constructor(private val storage: $storageArrayType) : Collection<$elementType> {")
+        out.println(
+            """
+    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    public operator fun get(index: Int): $elementType = storage[index].to$elementType()
+
+    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+    public operator fun set(index: Int, value: $elementType) {
+        storage[index] = value.to$storageElementType()
+    }
+
+    /** Returns the number of elements in the array. */
+    public override val size: Int get() = storage.size
+
+    /** Creates an iterator over the elements of the array. */
+    public override operator fun iterator(): ${elementType}Iterator = Iterator(storage)
+
+    private class Iterator(private val array: $storageArrayType) : ${elementType}Iterator() {
+        private var index = 0
+        override fun hasNext() = index < array.size
+        override fun next$elementType() = if (index < array.size) array[index++].to$elementType() else throw NoSuchElementException(index.toString())
+    }
+
+    override fun contains(element: $elementType): Boolean = storage.contains(element.to$storageElementType())
+
+    override fun containsAll(elements: Collection<$elementType>): Boolean = elements.all { storage.contains(it.to$storageElementType()) }
+
+    override fun isEmpty(): Boolean = this.storage.size == 0"""
+        )
+
+        out.println("}")
+
+        out.println("""
+public /*inline*/ fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
+    return $arrayType($storageArrayType(size) { index -> init(index).to$storageElementType() })
+}
+
+public fun $arrayTypeOf(vararg elements: $elementType): $arrayType {
+    return $arrayType(elements.size) { index -> elements[index] }
+}"""
+        )
     }
 }
