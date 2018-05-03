@@ -53,10 +53,8 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
 
     private fun doGenerate() {
         val signature = classCodegen.typeMapper.mapSignatureWithGeneric(descriptor, OwnerKind.IMPLEMENTATION)
-        val isStatic = irFunction.isStatic
-        val frameMap = createFrameMapWithReceivers(classCodegen.state, irFunction, signature)
 
-        val flags = calculateMethodFlags(isStatic)
+        val flags = calculateMethodFlags(irFunction.isStatic)
         val methodVisitor = createMethod(flags, signature)
 
         FunctionCodegen.generateMethodAnnotations(descriptor, signature.asmMethod, methodVisitor, classCodegen, state.typeMapper)
@@ -68,6 +66,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
             return
         }
 
+        val frameMap = createFrameMapWithReceivers(classCodegen.state, irFunction, signature)
         ExpressionCodegen(irFunction, frameMap, InstructionAdapter(methodVisitor), classCodegen).generate()
     }
 
@@ -116,7 +115,7 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
     }
 }
 
-fun createFrameMapWithReceivers(
+private fun createFrameMapWithReceivers(
     state: GenerationState,
     irFunction: IrFunction,
     signature: JvmMethodSignature
