@@ -28,28 +28,28 @@ public inline class ULong internal constructor(private val data: Long) : Compara
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: UByte): Int = TODO()
+    public operator fun compareTo(other: UByte): Int = this.compareTo(other.toULong())
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: UShort): Int = TODO()
+    public operator fun compareTo(other: UShort): Int = this.compareTo(other.toULong())
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public operator fun compareTo(other: UInt): Int = TODO()
+    public operator fun compareTo(other: UInt): Int = this.compareTo(other.toULong())
 
     /**
      * Compares this value with the specified value for order.
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override operator fun compareTo(other: ULong): Int = TODO()
+    public override operator fun compareTo(other: ULong): Int = ulongCompare(this.data, other.data)
 
     /** Adds the other value to this value. */
     public operator fun plus(other: UByte): ULong = TODO()
