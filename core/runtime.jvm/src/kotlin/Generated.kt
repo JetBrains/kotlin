@@ -5,4 +5,4 @@ package kotlin
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-internal annotation class Generated
+annotation class Generated
