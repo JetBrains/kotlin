@@ -111,7 +111,17 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             val returnType = getOperatorReturnType(type, otherType)
 
             out.println("    /** $doc */")
-            out.println("    public operator fun $name(other: ${otherType.capitalized}): ${returnType.capitalized} = TODO()")
+            out.print("    public operator fun $name(other: ${otherType.capitalized}): ${returnType.capitalized} = ")
+            if (type == otherType && type == returnType) {
+                when (name) {
+                    "plus", "minus", "times" -> out.println("$className(this.data.$name(other.data))")
+                    "div" -> out.println("${type.capitalized.toLowerCase()}Divide(this, other)")
+                    "rem" -> out.println("${type.capitalized.toLowerCase()}Remainder(this, other)")
+                    else -> error(name)
+                }
+            } else {
+                out.println("${convert("this", type, returnType)}.$name(${convert("other", otherType, returnType)})")
+            }
         }
         out.println()
     }
@@ -119,9 +129,10 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
     private fun generateUnaryOperators() {
         for ((name, doc) in GeneratePrimitives.unaryOperators) {
-            if (name in listOf("unaryPlus", "unaryMinus")) continue // TODO: Decide if unaryPlus and unaryMinus are needed
+            if (name in listOf("unaryPlus", "unaryMinus")) continue
             out.println("    /** $doc */")
-            out.println("    public operator fun $name(): $className = TODO()")
+            out.println("    public operator fun $name(): $className = $className(data.$name())")
+
         }
         out.println()
     }

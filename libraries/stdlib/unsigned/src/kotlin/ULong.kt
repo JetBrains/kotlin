@@ -52,54 +52,54 @@ public inline class ULong internal constructor(private val data: Long) : Compara
     public override operator fun compareTo(other: ULong): Int = ulongCompare(this.data, other.data)
 
     /** Adds the other value to this value. */
-    public operator fun plus(other: UByte): ULong = TODO()
+    public operator fun plus(other: UByte): ULong = this.plus(other.toULong())
     /** Adds the other value to this value. */
-    public operator fun plus(other: UShort): ULong = TODO()
+    public operator fun plus(other: UShort): ULong = this.plus(other.toULong())
     /** Adds the other value to this value. */
-    public operator fun plus(other: UInt): ULong = TODO()
+    public operator fun plus(other: UInt): ULong = this.plus(other.toULong())
     /** Adds the other value to this value. */
-    public operator fun plus(other: ULong): ULong = TODO()
+    public operator fun plus(other: ULong): ULong = ULong(this.data.plus(other.data))
 
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: UByte): ULong = TODO()
+    public operator fun minus(other: UByte): ULong = this.minus(other.toULong())
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: UShort): ULong = TODO()
+    public operator fun minus(other: UShort): ULong = this.minus(other.toULong())
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: UInt): ULong = TODO()
+    public operator fun minus(other: UInt): ULong = this.minus(other.toULong())
     /** Subtracts the other value from this value. */
-    public operator fun minus(other: ULong): ULong = TODO()
+    public operator fun minus(other: ULong): ULong = ULong(this.data.minus(other.data))
 
     /** Multiplies this value by the other value. */
-    public operator fun times(other: UByte): ULong = TODO()
+    public operator fun times(other: UByte): ULong = this.times(other.toULong())
     /** Multiplies this value by the other value. */
-    public operator fun times(other: UShort): ULong = TODO()
+    public operator fun times(other: UShort): ULong = this.times(other.toULong())
     /** Multiplies this value by the other value. */
-    public operator fun times(other: UInt): ULong = TODO()
+    public operator fun times(other: UInt): ULong = this.times(other.toULong())
     /** Multiplies this value by the other value. */
-    public operator fun times(other: ULong): ULong = TODO()
+    public operator fun times(other: ULong): ULong = ULong(this.data.times(other.data))
 
     /** Divides this value by the other value. */
-    public operator fun div(other: UByte): ULong = TODO()
+    public operator fun div(other: UByte): ULong = this.div(other.toULong())
     /** Divides this value by the other value. */
-    public operator fun div(other: UShort): ULong = TODO()
+    public operator fun div(other: UShort): ULong = this.div(other.toULong())
     /** Divides this value by the other value. */
-    public operator fun div(other: UInt): ULong = TODO()
+    public operator fun div(other: UInt): ULong = this.div(other.toULong())
     /** Divides this value by the other value. */
-    public operator fun div(other: ULong): ULong = TODO()
+    public operator fun div(other: ULong): ULong = ulongDivide(this, other)
 
     /** Calculates the remainder of dividing this value by the other value. */
-    public operator fun rem(other: UByte): ULong = TODO()
+    public operator fun rem(other: UByte): ULong = this.rem(other.toULong())
     /** Calculates the remainder of dividing this value by the other value. */
-    public operator fun rem(other: UShort): ULong = TODO()
+    public operator fun rem(other: UShort): ULong = this.rem(other.toULong())
     /** Calculates the remainder of dividing this value by the other value. */
-    public operator fun rem(other: UInt): ULong = TODO()
+    public operator fun rem(other: UInt): ULong = this.rem(other.toULong())
     /** Calculates the remainder of dividing this value by the other value. */
-    public operator fun rem(other: ULong): ULong = TODO()
+    public operator fun rem(other: ULong): ULong = ulongRemainder(this, other)
 
     /** Increments this value. */
-    public operator fun inc(): ULong = TODO()
+    public operator fun inc(): ULong = ULong(data.inc())
     /** Decrements this value. */
-    public operator fun dec(): ULong = TODO()
+    public operator fun dec(): ULong = ULong(data.dec())
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: ULong): ULongRange = ULongRange(this, other)
