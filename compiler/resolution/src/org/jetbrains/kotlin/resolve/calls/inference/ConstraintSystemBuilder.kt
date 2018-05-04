@@ -38,6 +38,7 @@ interface ConstraintSystemOperation {
 
     fun isProperType(type: UnwrappedType): Boolean
     fun isTypeVariable(type: UnwrappedType): Boolean
+    fun isPostponedTypeVariable(typeVariable: NewTypeVariable): Boolean
 
     fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor>
 }

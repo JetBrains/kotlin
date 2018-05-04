@@ -188,6 +188,11 @@ class NewConstraintSystemImpl(
         return notFixedTypeVariables.containsKey(type.constructor)
     }
 
+    override fun isPostponedTypeVariable(typeVariable: NewTypeVariable): Boolean {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        return typeVariable in postponedTypeVariables
+    }
+
     // ConstraintInjector.Context
     override val allTypeVariables: Map<TypeConstructor, NewTypeVariable>
         get() {
