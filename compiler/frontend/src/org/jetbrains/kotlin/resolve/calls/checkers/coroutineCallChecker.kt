@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
@@ -156,9 +157,19 @@ private fun checkRestrictsSuspension(
     if (!enclosingSuspendReceiverValue.isRestrictsSuspensionReceiver()) return
 
     // member of suspend receiver
-    if (enclosingSuspendReceiverValue sameInstance resolvedCall.dispatchReceiver) return
+    val (dispatchReceiver, extensionReceiver) = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
+        require(resolvedCall is NewResolvedCallImpl<*>) {
+            "Resolved call with enabled new inference should be instance of NewResolvedCallImpl"
+        }
 
-    if (enclosingSuspendReceiverValue sameInstance resolvedCall.extensionReceiver &&
+        resolvedCall.originalDispatchReceiver() to resolvedCall.originalExtensionReceiver()
+    } else {
+        resolvedCall.dispatchReceiver to resolvedCall.extensionReceiver
+    }
+
+    if (enclosingSuspendReceiverValue sameInstance dispatchReceiver) return
+
+    if (enclosingSuspendReceiverValue sameInstance extensionReceiver &&
         resolvedCall.candidateDescriptor.extensionReceiverParameter!!.value.isRestrictsSuspensionReceiver()) return
 
     context.trace.report(Errors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL.on(reportOn))

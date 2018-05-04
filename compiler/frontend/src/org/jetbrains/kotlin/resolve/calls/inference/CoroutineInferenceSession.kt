@@ -153,9 +153,6 @@ class CoroutineInferenceSession(
 
         val nonFixedTypesToResultSubstitutor = ComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)
 
-        val lambdaAtomCompleter = createResolvedAtomCompleter(nonFixedTypesToResultSubstitutor, topLevelCallContext)
-        lambdaAtomCompleter.completeAll(lambda)
-
         for (completedCall in suspendCompletedCalls + normalCompletedCalls) {
             val resultCallAtom = completedCall.callResolutionResult.resultCallAtom
             val call = resultCallAtom.atom.getResolvedPsiKotlinCall<CallableDescriptor>(trace) ?: continue
@@ -167,6 +164,9 @@ class CoroutineInferenceSession(
                 completedCall.context, trace, resultCallAtom, resultingDescriptor, commonSystem.diagnostics
             )
         }
+
+        val lambdaAtomCompleter = createResolvedAtomCompleter(nonFixedTypesToResultSubstitutor, topLevelCallContext)
+        lambdaAtomCompleter.completeAll(lambda)
     }
 
     private fun updateCall(

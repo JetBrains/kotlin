@@ -7091,6 +7091,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
             }
 
+            @TestMetadata("ifExpressionInsideCoroutine.kt")
+            public void testIfExpressionInsideCoroutine_1_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/ifExpressionInsideCoroutine.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines.experimental");
+            }
+
+            @TestMetadata("ifExpressionInsideCoroutine.kt")
+            public void testIfExpressionInsideCoroutine_1_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/ifExpressionInsideCoroutine.kt");
+                doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
+            }
+
             @TestMetadata("inlineTwoReceivers.kt")
             public void testInlineTwoReceivers_1_2() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/inlineTwoReceivers.kt");
