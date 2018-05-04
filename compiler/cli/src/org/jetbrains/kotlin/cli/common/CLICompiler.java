@@ -69,7 +69,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     @Override
     public ExitCode execImpl(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
         CommonCompilerPerformanceManager performanceManager = getPerformanceManager();
-        if (arguments.getReportPerf()) {
+        if (arguments.getReportPerf() || arguments.getDumpPerf() != null) {
             performanceManager.enableCollectingPerformanceStatistics();
         }
 
@@ -99,6 +99,10 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
                     performanceManager.getMeasurementResults().forEach(
                             it -> configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(INFO, "PERF: " + it.render(), null)
                     );
+                }
+
+                if (arguments.getDumpPerf() != null) {
+                    performanceManager.dumpPerformanceReport(new File(arguments.getDumpPerf()));
                 }
 
                 return groupingCollector.hasErrors() ? COMPILATION_ERROR : code;

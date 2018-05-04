@@ -153,6 +153,13 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
     var reportPerf: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xdump-perf",
+        valueDescription = "<path>",
+        description = "Dump detailed performance statistics to the specified file"
+    )
+    var dumpPerf: String? by FreezableVar(null)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)

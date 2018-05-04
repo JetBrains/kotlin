@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.common
 
 import org.jetbrains.kotlin.util.PerformanceCounter
+import java.io.File
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
@@ -53,6 +54,10 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         measurements += CodeGenerationMeasurement(lines, files, TimeUnit.NANOSECONDS.toMillis(time), additionalDescription)
     }
 
+    fun dumpPerformanceReport(destination: File) {
+        destination.writeBytes(createPerformanceReport())
+    }
+
     private fun recordGcTime() {
         if (!isEnabled) return
 
@@ -76,4 +81,9 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private fun recordPerfCountersMeasurements() {
         PerformanceCounter.report { s -> measurements += PerformanceCounterMeasurement(s) }
     }
+
+    private fun createPerformanceReport(): ByteArray = buildString {
+        appendln("$presentableName performance report")
+        measurements.map { it.render() }.sorted().forEach { appendln(it) }
+    }.toByteArray()
 }
