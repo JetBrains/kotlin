@@ -18849,6 +18849,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/smartCasts/elvisRHS.kt");
             }
 
+            @TestMetadata("enumEntryMembers_after.kt")
+            public void testEnumEntryMembers_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/enumEntryMembers_after.kt");
+            }
+
+            @TestMetadata("enumEntryMembers_before.kt")
+            public void testEnumEntryMembers_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/enumEntryMembers_before.kt");
+            }
+
             @TestMetadata("equals.kt")
             public void testEquals() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/equals.kt");
