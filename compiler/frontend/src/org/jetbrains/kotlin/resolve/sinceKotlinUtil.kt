@@ -27,9 +27,10 @@ sealed class SinceKotlinAccessibility {
 }
 
 fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(languageVersionSettings: LanguageVersionSettings): SinceKotlinAccessibility {
-    val version =
+    val value =
         if (this is CallableMemberDescriptor && !kind.isReal) getSinceKotlinVersionByOverridden(this)
         else getOwnSinceKotlinVersion()
+    val version = value?.apiVersion
 
     // Allow access in the following cases:
     // 1) There's no @SinceKotlin annotation for this descriptor
@@ -37,7 +38,7 @@ fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(languageVersionSe
     // 3) The value as a version is not greater than our API version
     if (version == null || version <= languageVersionSettings.apiVersion) return SinceKotlinAccessibility.Accessible
 
-    val wasExperimentalFqNames = with(ExperimentalUsageChecker) { loadWasExperimentalMarkerFqNames() }
+    val wasExperimentalFqNames = value.wasExperimentalMarkerFqNames
     if (wasExperimentalFqNames.isNotEmpty()) {
         return SinceKotlinAccessibility.NotAccessibleButWasExperimental(version, wasExperimentalFqNames)
     }
@@ -45,34 +46,59 @@ fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(languageVersionSe
     return SinceKotlinAccessibility.NotAccessible(version)
 }
 
+private data class SinceKotlinValue(
+    val apiVersion: ApiVersion,
+    val wasExperimentalMarkerFqNames: List<FqName>
+)
+
 /**
  * @return null if there are no overridden members or if there's at least one declaration in the hierarchy not annotated with [SinceKotlin],
  *         or the minimal value of the version from all declarations annotated with [SinceKotlin] otherwise.
  */
-private fun getSinceKotlinVersionByOverridden(descriptor: CallableMemberDescriptor): ApiVersion? {
-    return DescriptorUtils.getAllOverriddenDeclarations(descriptor).map { it.getOwnSinceKotlinVersion() ?: return null }.min()
+private fun getSinceKotlinVersionByOverridden(descriptor: CallableMemberDescriptor): SinceKotlinValue? {
+    // TODO: combine wasExperimentalMarkerFqNames in case of several members with the same minimal API version
+    return DescriptorUtils.getAllOverriddenDeclarations(descriptor).map { it.getOwnSinceKotlinVersion() ?: return null }
+        .minBy { it.apiVersion }
 }
 
-private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): ApiVersion? {
+/**
+ * @return the maximal value of API version required by the declaration or any of its "associated" declarations (class for constructor,
+ *         property for accessor, underlying class for type alias) along with experimental marker FQ names mentioned in the @WasExperimental
+ */
+private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): SinceKotlinValue? {
+    var result: SinceKotlinValue? = null
+
     // TODO: use-site targeted annotations
-    fun DeclarationDescriptor.loadAnnotationValue(): ApiVersion? =
-        (annotations.findAnnotation(SINCE_KOTLIN_FQ_NAME)?.allValueArguments?.values?.singleOrNull()?.value as? String)
+    fun DeclarationDescriptor.consider() {
+        val apiVersion = (annotations.findAnnotation(SINCE_KOTLIN_FQ_NAME)?.allValueArguments?.values?.singleOrNull()?.value as? String)
             ?.let(ApiVersion.Companion::parse)
+        if (apiVersion != null) {
+            // TODO: combine wasExperimentalMarkerFqNames in case of several associated declarations with the same maximal API version
+            if (result == null || apiVersion > result!!.apiVersion) {
+                result = SinceKotlinValue(
+                    apiVersion,
+                    with(ExperimentalUsageChecker) { loadWasExperimentalMarkerFqNames() }
+                )
+            }
+        }
+    }
 
-    val ownVersion = loadAnnotationValue()
-    val ctorClass = (this as? ConstructorDescriptor)?.containingDeclaration?.loadAnnotationValue()
-    val property = (this as? PropertyAccessorDescriptor)?.correspondingProperty?.loadAnnotationValue()
+    this.consider()
 
-    val typeAliasDescriptor = (this as? TypeAliasDescriptor) ?: (this as? TypeAliasConstructorDescriptor)?.typeAliasDescriptor
-    ?: (this as? FakeCallableDescriptorForTypeAliasObject)?.typeAliasDescriptor
+    (this as? ConstructorDescriptor)?.containingDeclaration?.consider()
+    (this as? PropertyAccessorDescriptor)?.correspondingProperty?.consider()
 
-    val typeAlias = typeAliasDescriptor?.loadAnnotationValue()
+    val typeAlias = this as? TypeAliasDescriptor
+            ?: (this as? TypeAliasConstructorDescriptor)?.typeAliasDescriptor
+            ?: (this as? FakeCallableDescriptorForTypeAliasObject)?.typeAliasDescriptor
+
+    typeAlias?.consider()
 
     // We should check only the upper-most classifier ('A' in 'A<B<C>>') to guarantee binary compatibility.
-    val underlyingClass = typeAliasDescriptor?.classDescriptor?.loadAnnotationValue()
+    typeAlias?.classDescriptor?.consider()
 
-    val underlyingConstructor = (this as? TypeAliasConstructorDescriptor)?.underlyingConstructorDescriptor?.loadAnnotationValue()
-    val underlyingObject = (this as? FakeCallableDescriptorForTypeAliasObject)?.getReferencedObject()?.loadAnnotationValue()
+    (this as? TypeAliasConstructorDescriptor)?.underlyingConstructorDescriptor?.consider()
+    (this as? FakeCallableDescriptorForTypeAliasObject)?.getReferencedObject()?.consider()
 
-    return listOfNotNull(ownVersion, ctorClass, property, typeAlias, underlyingClass, underlyingConstructor, underlyingObject).max()
+    return result
 }
