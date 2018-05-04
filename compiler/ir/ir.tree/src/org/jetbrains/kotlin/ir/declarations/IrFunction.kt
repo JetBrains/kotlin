@@ -30,6 +30,7 @@ interface IrFunction : IrDeclaration, IrTypeParametersContainer, IrSymbolOwner, 
 
     val visibility: Visibility
     val isInline: Boolean // NB: there's an inline constructor for Array and each primitive array class
+    val isExternal: Boolean
     val returnType: KotlinType
 
     var dispatchReceiverParameter: IrValueParameter?

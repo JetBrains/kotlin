@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/member.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
-    PROPERTY name:testMember type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
+    PROPERTY name:testMember type:kotlin.String visibility:public modality:FINAL flags:delegated,val
       FIELD DELEGATE name:testMember$delegate type:Delegate visibility:private flags:final
         EXPRESSION_BODY
           CALL 'provideDelegate(Any?, Any?): Delegate' type=Delegate origin=null

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.types.KotlinType
 
 class IrConstructorImpl(
@@ -33,9 +34,10 @@ class IrConstructorImpl(
     override val symbol: IrConstructorSymbol,
     visibility: Visibility,
     returnType: KotlinType,
-    isInline: Boolean
+    isInline: Boolean,
+    isExternal: Boolean
 ) :
-    IrFunctionBase(startOffset, endOffset, origin, visibility, isInline, returnType),
+    IrFunctionBase(startOffset, endOffset, origin, visibility, isInline, isExternal, returnType),
     IrConstructor {
 
     constructor(
@@ -48,7 +50,8 @@ class IrConstructorImpl(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.visibility,
         symbol.descriptor.returnType,
-        symbol.descriptor.isInline
+        symbol.descriptor.isInline,
+        symbol.descriptor.isEffectivelyExternal()
     ) {
         this.body = body
     }

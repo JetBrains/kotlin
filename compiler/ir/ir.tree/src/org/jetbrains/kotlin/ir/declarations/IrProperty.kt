@@ -33,6 +33,7 @@ interface IrProperty : IrDeclaration {
     val isConst: Boolean
     val isLateinit: Boolean
     val isDelegated: Boolean
+    val isExternal: Boolean
 
     val typeParameters: MutableList<IrTypeParameter>
 

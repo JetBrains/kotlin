@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='getValue(Any?, Any) on String: String'
         GET_VAR 'this@getValue: String' type=kotlin.String origin=null
-  PROPERTY name:testO type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
+  PROPERTY name:testO type:kotlin.String visibility:public modality:FINAL flags:delegated,val
     FIELD DELEGATE name:testO$delegate type:kotlin.String visibility:private flags:final
       EXPRESSION_BODY
         CALL 'provideDelegate(Any?, Any) on MyClass: String' type=kotlin.String origin=null
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
             $receiver: GET_FIELD '`testO$delegate`: String' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'testO: String' field=null getter='<get-testO>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-  PROPERTY name:testK type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
+  PROPERTY name:testK type:kotlin.String visibility:public modality:FINAL flags:delegated,val
     FIELD DELEGATE name:testK$delegate type:kotlin.String visibility:private flags:final
       EXPRESSION_BODY
         CONST String type=kotlin.String value=K

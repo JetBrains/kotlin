@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/constExpressionsInAnnotationArguments.kt
-  PROPERTY name:ONE type:kotlin.Int visibility:public modality:FINAL flags:constmval
+  PROPERTY name:ONE type:kotlin.Int visibility:public modality:FINAL flags:const,val
     FIELD PROPERTY_BACKING_FIELD name:ONE type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1

@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test6>(): Int'
           GET_FIELD 'test6: Int' type=kotlin.Int origin=null
-  PROPERTY name:test7 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
+  PROPERTY name:test7 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
     FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private flags:final
       EXPRESSION_BODY
         CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
             $receiver: GET_FIELD '`test7$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: PROPERTY_REFERENCE 'test7: Int' field=null getter='<get-test7>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-  PROPERTY name:test8 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmvar
+  PROPERTY name:test8 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
     FIELD DELEGATE name:test8$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ visibility:private flags:final
       EXPRESSION_BODY
         CALL 'hashMapOf(): HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null

@@ -393,7 +393,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           overridden:
             UNBOUND: fun toString(): kotlin.String
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractCollection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!> flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake flags:final
         FUN FAKE_OVERRIDE name:finishToArray visibility:invisible_fake modality:OPEN <T> (p0:kotlin.Array<(out) T!>!, p1:kotlin.collections.(Mutable)Iterator<*>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
           overridden:
@@ -560,7 +560,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           overridden:
             UNBOUND: fun toString(): kotlin.String
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractCollection<K!> flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake flags:final
         FUN FAKE_OVERRIDE name:finishToArray visibility:invisible_fake modality:OPEN <T> (p0:kotlin.Array<(out) T!>!, p1:kotlin.collections.(Mutable)Iterator<*>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
           overridden:
@@ -727,7 +727,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           overridden:
             UNBOUND: fun toString(): kotlin.String
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractCollection<V!> flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake flags:final
         FUN FAKE_OVERRIDE name:finishToArray visibility:invisible_fake modality:OPEN <T> (p0:kotlin.Array<(out) T!>!, p1:kotlin.collections.(Mutable)Iterator<*>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
           overridden:
@@ -917,19 +917,19 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           FUN FAKE_OVERRIDE name:eq visibility:invisible_fake modality:OPEN <> (p0:kotlin.Any!, p1:kotlin.Any!) returnType:Boolean flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Any! flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Any! flags:
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_INITIAL_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_INITIAL_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_INITIAL_CAPACITY type:kotlin.Int visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_LOAD_FACTOR type:kotlin.Float visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_LOAD_FACTOR type:kotlin.Float visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_LOAD_FACTOR type:kotlin.Float visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAXIMUM_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAXIMUM_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:MAXIMUM_CAPACITY type:kotlin.Int visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_TREEIFY_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_TREEIFY_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:MIN_TREEIFY_CAPACITY type:kotlin.Int visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:TREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:TREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:TREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:UNTREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:UNTREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:UNTREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ flags:final
       FUN FAKE_OVERRIDE name:hash visibility:public/*package*/ modality:FINAL <> (p0:kotlin.Any!) returnType:Int flags:
         overridden:
@@ -1261,21 +1261,21 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           FIELD IR_EXTERNAL_DECLARATION_STUB name:fence type:kotlin.Int visibility:public/*package*/ flags:final
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:index type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
           FIELD IR_EXTERNAL_DECLARATION_STUB name:index type:kotlin.Int visibility:public/*package*/ flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:CONCURRENT type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:CONCURRENT type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:CONCURRENT type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DISTINCT type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DISTINCT type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:DISTINCT type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:IMMUTABLE type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:IMMUTABLE type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:IMMUTABLE type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:NONNULL type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:NONNULL type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:NONNULL type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ORDERED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ORDERED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:ORDERED type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:SIZED type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SORTED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SORTED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:SORTED type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SUBSIZED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SUBSIZED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:SUBSIZED type:kotlin.Int visibility:public flags:final
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:KeySpliterator modality:FINAL visibility:public/*package*/ flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.KeySpliterator<K, V> flags:
@@ -1358,21 +1358,21 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           FIELD IR_EXTERNAL_DECLARATION_STUB name:fence type:kotlin.Int visibility:public/*package*/ flags:final
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:index type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
           FIELD IR_EXTERNAL_DECLARATION_STUB name:index type:kotlin.Int visibility:public/*package*/ flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:CONCURRENT type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:CONCURRENT type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:CONCURRENT type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DISTINCT type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DISTINCT type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:DISTINCT type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:IMMUTABLE type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:IMMUTABLE type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:IMMUTABLE type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:NONNULL type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:NONNULL type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:NONNULL type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ORDERED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ORDERED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:ORDERED type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:SIZED type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SORTED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SORTED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:SORTED type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SUBSIZED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SUBSIZED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:SUBSIZED type:kotlin.Int visibility:public flags:final
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:TreeNode modality:FINAL visibility:public/*package*/ flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap.TreeNode<K, V> flags:
@@ -1583,21 +1583,21 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           FIELD IR_EXTERNAL_DECLARATION_STUB name:fence type:kotlin.Int visibility:public/*package*/ flags:final
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:index type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:var
           FIELD IR_EXTERNAL_DECLARATION_STUB name:index type:kotlin.Int visibility:public/*package*/ flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:CONCURRENT type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:CONCURRENT type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:CONCURRENT type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DISTINCT type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DISTINCT type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:DISTINCT type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:IMMUTABLE type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:IMMUTABLE type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:IMMUTABLE type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:NONNULL type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:NONNULL type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:NONNULL type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ORDERED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ORDERED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:ORDERED type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:SIZED type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SORTED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SORTED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:SORTED type:kotlin.Int visibility:public flags:final
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SUBSIZED type:kotlin.Int visibility:public modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SUBSIZED type:kotlin.Int visibility:public modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:SUBSIZED type:kotlin.Int visibility:public flags:final
       FUN IR_EXTERNAL_DECLARATION_STUB name:capacity visibility:public/*package*/ modality:FINAL <> ($this:java.util.HashMap<K, V>) returnType:Int flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.HashMap<K, V> flags:
@@ -1788,7 +1788,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           overridden:
             UNBOUND: fun toString(): kotlin.String
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractCollection<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!> flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake flags:final
         FUN FAKE_OVERRIDE name:finishToArray visibility:invisible_fake modality:OPEN <T> (p0:kotlin.Array<(out) T!>!, p1:kotlin.collections.(Mutable)Iterator<*>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
           overridden:
@@ -1957,7 +1957,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           overridden:
             UNBOUND: fun toString(): kotlin.String
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractCollection<K!> flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake flags:final
         FUN FAKE_OVERRIDE name:finishToArray visibility:invisible_fake modality:OPEN <T> (p0:kotlin.Array<(out) T!>!, p1:kotlin.collections.(Mutable)Iterator<*>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
           overridden:
@@ -2126,7 +2126,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           overridden:
             UNBOUND: fun toString(): kotlin.String
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractCollection<V!> flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_ARRAY_SIZE type:kotlin.Int visibility:invisible_fake flags:final
         FUN FAKE_OVERRIDE name:finishToArray visibility:invisible_fake modality:OPEN <T> (p0:kotlin.Array<(out) T!>!, p1:kotlin.collections.(Mutable)Iterator<*>!) returnType:(kotlin.Array<(T..T?)>..kotlin.Array<out (T..T?)>?) flags:
           overridden:
@@ -2281,19 +2281,19 @@ MODULE_FRAGMENT name:<dependencies of test-module>
           FUN IR_EXTERNAL_DECLARATION_STUB name:eq visibility:private modality:OPEN <> (p0:kotlin.Any!, p1:kotlin.Any!) returnType:Boolean flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Any! flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p1 index:1 type:kotlin.Any! flags:
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_INITIAL_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_INITIAL_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_INITIAL_CAPACITY type:kotlin.Int visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_LOAD_FACTOR type:kotlin.Float visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_LOAD_FACTOR type:kotlin.Float visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:DEFAULT_LOAD_FACTOR type:kotlin.Float visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAXIMUM_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAXIMUM_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:MAXIMUM_CAPACITY type:kotlin.Int visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_TREEIFY_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_TREEIFY_CAPACITY type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:MIN_TREEIFY_CAPACITY type:kotlin.Int visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:TREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:TREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:TREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ flags:final
-      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:UNTREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:constmval
+      PROPERTY IR_EXTERNAL_DECLARATION_STUB name:UNTREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ modality:FINAL flags:const,val
         FIELD IR_EXTERNAL_DECLARATION_STUB name:UNTREEIFY_THRESHOLD type:kotlin.Int visibility:public/*package*/ flags:final
       FUN IR_EXTERNAL_DECLARATION_STUB name:hash visibility:public/*package*/ modality:FINAL <> (p0:kotlin.Any!) returnType:Int flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:p0 index:0 type:kotlin.Any! flags:
@@ -2378,7 +2378,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
             FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
             UNBOUND: fun toString(): kotlin.String
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap.SimpleEntry<K, V> flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private flags:final
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:SimpleImmutableEntry modality:OPEN visibility:public flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap.SimpleImmutableEntry<K, V> flags:
@@ -2427,7 +2427,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
             FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
             UNBOUND: fun toString(): kotlin.String
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:java.util.AbstractMap.SimpleImmutableEntry<K, V> flags:
-        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private modality:FINAL flags:constmval
+        PROPERTY IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private modality:FINAL flags:const,val
           FIELD IR_EXTERNAL_DECLARATION_STUB name:serialVersionUID type:kotlin.Long visibility:private flags:final
       FUN FAKE_OVERRIDE name:compute visibility:public modality:OPEN <> ($this:kotlin.collections.MutableMap<K!, V!>, p0:K!, p1:java.util.function.BiFunction<in K!, in V?, out V?>) returnType:V? flags:
         overridden:

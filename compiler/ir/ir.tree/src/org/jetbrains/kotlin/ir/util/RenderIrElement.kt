@@ -60,12 +60,16 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     "flags:${renderSimpleFunctionFlags()}"
         }
 
+    private fun renderFlagsList(vararg flags: String?) =
+        flags.filterNotNull().joinToString(separator = ",")
+
     private fun IrSimpleFunction.renderSimpleFunctionFlags(): String =
-        listOfNotNull(
+        renderFlagsList(
             "tailrec".takeIf { isTailrec },
             "inline".takeIf { isInline },
+            "external".takeIf { isExternal },
             "suspend".takeIf { isSuspend }
-        ).joinToString(separator = ",")
+        )
 
     private fun IrFunction.renderTypeParameters(): String =
         typeParameters.joinToString(separator = ", ", prefix = "<", postfix = ">") { it.name.toString() }
@@ -84,8 +88,14 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
                     "returnType:${returnType.render()} " +
-                    "flags:${if (isInline) "inline" else ""}"
+                    "flags:${renderConstructorFlags()}"
         }
+
+    private fun IrConstructor.renderConstructorFlags() =
+        renderFlagsList(
+            "inline".takeIf { isInline },
+            "external".takeIf { isExternal }
+        )
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
         declaration.run {
@@ -95,12 +105,13 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
     private fun IrProperty.renderPropertyFlags() =
-        listOfNotNull(
+        renderFlagsList(
+            "external".takeIf { isExternal },
             "const".takeIf { isConst },
             "lateinit".takeIf { isLateinit },
             "delegated".takeIf { isDelegated },
             if (isVar) "var" else "val"
-        ).joinToString(separator = "m")
+        )
 
     override fun visitField(declaration: IrField, data: Nothing?): String =
         "FIELD ${declaration.renderOriginIfNonTrivial()}" +
@@ -108,7 +119,10 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 "flags:${declaration.renderFieldFlags()}"
 
     private fun IrField.renderFieldFlags() =
-        if (isFinal) "final" else ""
+        renderFlagsList(
+            "final".takeIf { isFinal },
+            "external".takeIf { isExternal }
+        )
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
         declaration.run {
@@ -118,7 +132,11 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
     private fun IrClass.renderClassFlags() =
-        listOfNotNull("companion".takeIf { isCompanion }, "data".takeIf { isData }).joinToString(separator = ",")
+        renderFlagsList(
+            "companion".takeIf { isCompanion },
+            "data".takeIf { isData },
+            "external".takeIf { isExternal }
+        )
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
         "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}${declaration.descriptor.ref()} type=${declaration.descriptor.underlyingType.render()}"
@@ -128,11 +146,11 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 "name:${declaration.name} type:${declaration.type.render()} flags:${declaration.renderVariableFlags()}"
 
     private fun IrVariable.renderVariableFlags(): String =
-        listOfNotNull(
+        renderFlagsList(
             "const".takeIf { isConst },
             "lateinit".takeIf { isLateinit },
             if (isVar) "var" else "val"
-        ).joinToString(separator = " ")
+        )
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
         "ENUM_ENTRY ${declaration.renderOriginIfNonTrivial()}name:${declaration.name}"
@@ -158,11 +176,11 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         }
 
     private fun IrValueParameter.renderValueParameterFlags(): String =
-        listOfNotNull(
+        renderFlagsList(
             "vararg".takeIf { varargElementType != null },
             "crossinline".takeIf { isCrossinline },
             "noinline".takeIf { isNoinline }
-        ).joinToString(separator = ",")
+        )
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
         declaration.run {

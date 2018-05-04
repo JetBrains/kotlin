@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/topLevel.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  PROPERTY name:testTopLevel type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
+  PROPERTY name:testTopLevel type:kotlin.String visibility:public modality:FINAL flags:delegated,val
     FIELD DELEGATE name:testTopLevel$delegate type:Delegate visibility:private flags:final
       EXPRESSION_BODY
         CALL 'provideDelegate(Any?, Any?): Delegate' type=Delegate origin=null

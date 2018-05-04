@@ -39,10 +39,11 @@ class IrFunctionImpl(
     override val modality: Modality,
     returnType: KotlinType,
     isInline: Boolean,
+    isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean
 ) :
-    IrFunctionBase(startOffset, endOffset, origin, visibility, isInline, returnType),
+    IrFunctionBase(startOffset, endOffset, origin, visibility, isInline, isExternal, returnType),
     IrSimpleFunction {
 
     constructor(
@@ -57,6 +58,7 @@ class IrFunctionImpl(
         symbol.descriptor.modality,
         symbol.descriptor.returnType!!,
         symbol.descriptor.isInline,
+        symbol.descriptor.isExternal,
         symbol.descriptor.isTailrec,
         symbol.descriptor.isSuspend
     )

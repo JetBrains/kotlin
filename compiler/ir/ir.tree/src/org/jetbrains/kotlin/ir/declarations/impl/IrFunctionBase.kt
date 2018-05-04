@@ -34,6 +34,7 @@ abstract class IrFunctionBase(
     origin: IrDeclarationOrigin,
     override val visibility: Visibility,
     override val isInline: Boolean,
+    override val isExternal: Boolean,
     override val returnType: KotlinType
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrFunction {
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()

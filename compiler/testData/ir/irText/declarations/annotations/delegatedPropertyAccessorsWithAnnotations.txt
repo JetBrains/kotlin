@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
+  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
     FIELD DELEGATE name:test1$delegate type:Cell visibility:private flags:final
       EXPRESSION_BODY
         CALL 'constructor Cell(Int)' type=Cell origin=null
@@ -99,7 +99,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
             $this: GET_FIELD '`test1$delegate`: Cell' type=Cell origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
             kProp: PROPERTY_REFERENCE 'test1: Int' field=null getter='<get-test1>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-  PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmvar
+  PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegated,var
     FIELD DELEGATE name:test2$delegate type:Cell visibility:private flags:final
       EXPRESSION_BODY
         CALL 'constructor Cell(Int)' type=Cell origin=null

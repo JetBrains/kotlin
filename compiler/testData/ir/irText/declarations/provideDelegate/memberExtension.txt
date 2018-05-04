@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any) on String: Host.StringDelegate'
           CALL 'constructor StringDelegate(String)' type=Host.StringDelegate origin=null
             s: GET_VAR 'this@provideDelegate: String' type=kotlin.String origin=null
-    PROPERTY name:plusK type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
+    PROPERTY name:plusK type:kotlin.String visibility:public modality:FINAL flags:delegated,val
       FIELD DELEGATE name:plusK$delegate type:Host.StringDelegate visibility:private flags:final
         EXPRESSION_BODY
           CALL 'provideDelegate(Any?, Any) on String: Host.StringDelegate' type=Host.StringDelegate origin=null

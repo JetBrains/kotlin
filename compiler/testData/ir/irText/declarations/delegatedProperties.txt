@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/delegatedProperties.kt
-  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
+  PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
     FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private flags:final
       EXPRESSION_BODY
         CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
           RETURN type=kotlin.Nothing from='<get-map>(): MutableMap<String, Any>'
             GET_FIELD 'map: MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
-    PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
+    PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegated,val
       FIELD DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private flags:final
         EXPRESSION_BODY
           CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
                 receiver: GET_VAR 'this@C: C' type=C origin=null
               thisRef: GET_VAR 'this@C: C' type=C origin=null
               property: PROPERTY_REFERENCE 'test2: Int' field=null getter='<get-test2>(): Int' setter=null type=kotlin.reflect.KProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-    PROPERTY name:test3 type:kotlin.Any visibility:public modality:FINAL flags:delegatedmvar
+    PROPERTY name:test3 type:kotlin.Any visibility:public modality:FINAL flags:delegated,var
       FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private flags:final
         EXPRESSION_BODY
           CALL '<get-map>(): MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=GET_PROPERTY
@@ -99,7 +99,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  PROPERTY name:test4 type:kotlin.Any visibility:public modality:FINAL flags:delegatedmvar
+  PROPERTY name:test4 type:kotlin.Any visibility:public modality:FINAL flags:delegated,var
     FIELD DELEGATE name:test4$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */ visibility:private flags:final
       EXPRESSION_BODY
         CALL 'hashMapOf(): HashMap<String, Any> /* = HashMap<String, Any> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */ origin=null
