@@ -16,8 +16,12 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.resolve
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 
 class SerializableProperty(val descriptor: PropertyDescriptor, val isConstructorParameterWithDefault: Boolean) {
     val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
@@ -27,7 +31,14 @@ class SerializableProperty(val descriptor: PropertyDescriptor, val isConstructor
     val serializableWith = descriptor.annotations.serializableWith?.let { checkSerializerNullability(type, it) }
     val optional = descriptor.annotations.serialOptional
     val transient = descriptor.annotations.serialTransient
-    val annotations = descriptor.annotations
-            .mapNotNull { it.type.toClassDescriptor }
-            .filter { it.annotations.hasAnnotation(serialInfoFqName) }
+    val annotationsWithArguments: List<Triple<ClassDescriptor, List<ValueArgument>, List<ValueParameterDescriptor>>> =
+        descriptor.annotations.asSequence()
+            .filter { it.type.toClassDescriptor?.annotations?.hasAnnotation(serialInfoFqName) == true }
+            .filterIsInstance<LazyAnnotationDescriptor>()
+            .mapNotNull { annDesc ->
+                annDesc.type.toClassDescriptor?.let {
+                    Triple(it, annDesc.annotationEntry.valueArguments, it.unsubstitutedPrimaryConstructor?.valueParameters.orEmpty())
+                }
+            }
+            .toList()
 }

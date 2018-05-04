@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.annotationVarsAndDesc
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.typeArgPrefix
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorBySerializer
@@ -89,14 +88,13 @@ class SerializerCodegenImpl(
                 aconst(property.name)
                 invokevirtual(descImplType.internalName, "addElement", "(Ljava/lang/String;)V", false)
                 // pushing annotations
-                for (annotationClass in property.annotations) {
+                for ((annotationClass, args, consParams) in property.annotationsWithArguments) {
                     load(classDescVar, descImplType)
                     val implType = codegen.typeMapper.mapType(annotationClass).internalName + "\$" + KSerializerDescriptorResolver.IMPL_NAME.identifier
                     // new Annotation$Impl(...)
                     anew(Type.getObjectType(implType))
                     dup()
                     val sb = StringBuilder("(")
-                    val (args, consParams) = property.annotationVarsAndDesc(annotationClass)
                     for (i in consParams.indices) {
                         val decl = args[i]
                         val desc = consParams[i]

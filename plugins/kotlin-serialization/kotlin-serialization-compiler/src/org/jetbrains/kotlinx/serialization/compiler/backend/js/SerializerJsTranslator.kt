@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.annotationVarsAndDesc
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
@@ -75,8 +74,7 @@ class SerializerJsTranslator(declaration: KtPureClassOrObject,
             val call = JsInvocation(JsNameRef(context.getNameForDescriptor(addFunc), serialClassDescRef), JsStringLiteral(prop.name))
             translator.addInitializerStatement(call.makeStmt())
             // serialDesc.pushAnnotation(...)
-            for (annotationClass in prop.annotations) {
-                val (args, _) = prop.annotationVarsAndDesc(annotationClass)
+            for ((annotationClass , args, _) in prop.annotationsWithArguments) {
                 val argExprs = args.map { arg ->
                     Translation.translateAsExpression(arg.getArgumentExpression()!!, context)
                 }
