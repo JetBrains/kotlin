@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
 import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedLambdaAtom
 import org.jetbrains.kotlin.resolve.calls.tower.*
-import org.jetbrains.kotlin.types.NonFixedType
+import org.jetbrains.kotlin.types.StubType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
@@ -38,7 +38,7 @@ class CoroutineInferenceSession(
     callComponents: KotlinCallComponents,
     builtIns: KotlinBuiltIns,
     private val topLevelCallContext: BasicCallResolutionContext,
-    private val stubsForPostponedVariables: Map<NewTypeVariable, NonFixedType>,
+    private val stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
     private val trace: BindingTrace,
     private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     private val expressionTypingServices: ExpressionTypingServices,

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintS
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.types.NonFixedType
+import org.jetbrains.kotlin.types.StubType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -273,14 +273,14 @@ class NewConstraintSystemImpl(
         return buildCurrentSubstitutor(emptyMap())
     }
 
-    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructor, NonFixedType>): NewTypeSubstitutor {
+    override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructor, StubType>): NewTypeSubstitutor {
         checkState(State.BUILDING, State.COMPLETION)
         return storage.buildCurrentSubstitutor(additionalBindings)
     }
 
-    override fun bindingStubsForPostponedVariables(): Map<NewTypeVariable, NonFixedType> {
+    override fun bindingStubsForPostponedVariables(): Map<NewTypeVariable, StubType> {
         checkState(State.BUILDING, State.COMPLETION)
-        return storage.postponedTypeVariables.associate { it to NonFixedType(it.freshTypeConstructor, it.defaultType.isMarkedNullable) }
+        return storage.postponedTypeVariables.associate { it to StubType(it.freshTypeConstructor, it.defaultType.isMarkedNullable) }
     }
 
     override fun currentStorage(): ConstraintStorage {

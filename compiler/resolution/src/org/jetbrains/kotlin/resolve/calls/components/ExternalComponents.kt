@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.NonFixedType
+import org.jetbrains.kotlin.types.StubType
 import org.jetbrains.kotlin.types.UnwrappedType
 
 // stateless component
@@ -37,7 +36,7 @@ interface KotlinResolutionCallbacks {
         receiverType: UnwrappedType?,
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?, // null means, that return type is not proper i.e. it depends on some type variables
-        stubsForPostponedVariables: Map<NewTypeVariable, NonFixedType>
+        stubsForPostponedVariables: Map<NewTypeVariable, StubType>
     ): Pair<List<KotlinCallArgument>, InferenceSession?>
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)

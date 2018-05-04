@@ -86,7 +86,7 @@ class KotlinResolutionCallbacksImpl(
         receiverType: UnwrappedType?,
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?,
-        stubsForPostponedVariables: Map<NewTypeVariable, NonFixedType>
+        stubsForPostponedVariables: Map<NewTypeVariable, StubType>
     ): Pair<List<KotlinCallArgument>, InferenceSession?> {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
         val outerCallContext = psiCallArgument.outerCallContext

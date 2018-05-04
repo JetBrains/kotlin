@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 // This type is used as a stub for postponed type variables, which are important for coroutine inference
-class NonFixedType(
+class StubType(
     private val originalTypeVariable: TypeConstructor,
     override val isMarkedNullable: Boolean,
     override val constructor: TypeConstructor =
@@ -32,7 +32,7 @@ class NonFixedType(
         return if (newNullability == isMarkedNullable)
             this
         else
-            NonFixedType(originalTypeVariable, newNullability, constructor, memberScope)
+            StubType(originalTypeVariable, newNullability, constructor, memberScope)
     }
 
     override fun toString(): String {
