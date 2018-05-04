@@ -41,9 +41,12 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
                 zip.close()
             }
 
-            assertTasksExecuted(listOf(
-                    ":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin",
-                    ":app:kaptGenerateStubsKotlin", ":app:kaptKotlin"))
+            assertTasksExecuted(
+                ":processor:kaptGenerateStubsKotlin",
+                ":processor:kaptKotlin",
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin"
+            )
         }
 
         project.projectDir.getFileByName("Test.kt").modify { text ->
@@ -53,8 +56,8 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertTasksUpToDate(listOf(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin", ":app:kaptKotlin"))
-            assertTasksExecuted(listOf(":app:kaptGenerateStubsKotlin"))
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin", ":app:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin")
         }
 
         project.projectDir.getFileByName("Test.kt").modify { text ->
@@ -63,8 +66,8 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertTasksUpToDate(listOf(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin"))
-            assertTasksExecuted(listOf(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin"))
+            assertTasksUpToDate(":processor:kaptGenerateStubsKotlin", ":processor:kaptKotlin")
+            assertTasksExecuted(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
         }
     }
 

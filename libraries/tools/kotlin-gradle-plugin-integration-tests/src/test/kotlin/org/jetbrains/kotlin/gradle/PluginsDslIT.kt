@@ -15,7 +15,7 @@ class PluginsDslIT : BaseGradleIT() {
         val project = projectWithMavenLocalPlugins("allopenPluginsDsl")
         project.build("build") {
             assertSuccessful()
-            assertTasksExecuted(listOf(":compileKotlin"))
+            assertTasksExecuted(":compileKotlin")
         }
     }
 
@@ -24,7 +24,7 @@ class PluginsDslIT : BaseGradleIT() {
         val project = projectWithMavenLocalPlugins("applyToSubprojects")
         project.build("build") {
             assertSuccessful()
-            assertTasksExecuted(listOf(":subproject:compileKotlin"))
+            assertTasksExecuted(":subproject:compileKotlin")
         }
     }
 

@@ -95,7 +95,7 @@ class UpToDateIT : BaseGradleIT() {
         }
 
         override fun checkAfterRebuild(compiledProject: CompiledProject) = with(compiledProject) {
-            assertTasksExecuted(listOf(":compileKotlin", ":kaptGenerateStubsKotlin", ":kaptKotlin"))
+            assertTasksExecuted(":compileKotlin", ":kaptGenerateStubsKotlin", ":kaptKotlin")
         }
     }
 
@@ -115,7 +115,7 @@ class UpToDateIT : BaseGradleIT() {
         }
 
         override fun checkAfterRebuild(compiledProject: CompiledProject) = with(compiledProject) {
-            assertTasksExecuted(listOf(":compileKotlin"))
+            assertTasksExecuted(":compileKotlin")
         }
     }
 
@@ -140,7 +140,7 @@ class UpToDateIT : BaseGradleIT() {
         }
 
         override fun checkAfterRebuild(compiledProject: CompiledProject) = with(compiledProject) {
-            assertTasksExecuted(listOf(":compileKotlin"))
+            assertTasksExecuted(":compileKotlin")
             Assert.assertTrue(helloWorldKtClass.exists())
         }
     }
@@ -181,7 +181,7 @@ class UpToDateIT : BaseGradleIT() {
         }
 
         override fun checkAfterRebuild(compiledProject: CompiledProject) = with(compiledProject) {
-            assertTasksExecuted(listOf(":compileKotlin"))
+            assertTasksExecuted(":compileKotlin")
         }
     }
 }

@@ -387,10 +387,18 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksExecuted(vararg tasks: String) {
+        assertTasksExecuted(tasks.toList())
+    }
+
     fun CompiledProject.assertTasksUpToDate(tasks: Iterable<String>) {
         for (task in tasks) {
             assertContains("$task UP-TO-DATE")
         }
+    }
+
+    fun CompiledProject.assertTasksUpToDate(vararg tasks: String) {
+        assertTasksUpToDate(tasks.toList())
     }
 
     fun CompiledProject.getOutputForTask(taskName: String): String {

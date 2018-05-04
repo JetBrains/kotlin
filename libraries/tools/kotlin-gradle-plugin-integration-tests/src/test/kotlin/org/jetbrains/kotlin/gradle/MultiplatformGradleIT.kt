@@ -144,16 +144,16 @@ class MultiplatformGradleIT : BaseGradleIT() {
         jvmProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
         build("build") {
             assertSuccessful()
-            assertTasksExecuted(listOf(compileJvmTask))
-            assertTasksUpToDate(listOf(compileCommonTask, compileJsTask))
+            assertTasksExecuted(compileJvmTask)
+            assertTasksUpToDate(compileCommonTask, compileJsTask)
         }
 
         val jsProjectDir = File(projectDir, "libJs")
         jsProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
         build("build") {
             assertSuccessful()
-            assertTasksExecuted(listOf(compileJsTask))
-            assertTasksUpToDate(listOf(compileCommonTask, compileJvmTask))
+            assertTasksExecuted(compileJsTask)
+            assertTasksUpToDate(compileCommonTask, compileJvmTask)
         }
     }
 
@@ -198,7 +198,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
         build("build") {
             assertSuccessful()
-            assertTasksExecuted(listOf(":lib:compileKotlinCommon", ":libJvm:compileKotlin", ":libJs:compileKotlin2Js"))
+            assertTasksExecuted(":lib:compileKotlinCommon", ":libJvm:compileKotlin", ":libJs:compileKotlin2Js")
         }
     }
 

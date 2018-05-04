@@ -229,7 +229,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertTasksExecuted(listOf(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava"))
+            assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava")
 
             // generated sources
             assertFileExists("$generatedSrc/foo/bar/UseBar_MembersInjector.java")
