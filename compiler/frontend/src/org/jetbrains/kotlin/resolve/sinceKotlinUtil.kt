@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 
 sealed class SinceKotlinAccessibility {
     object Accessible : SinceKotlinAccessibility()
@@ -74,10 +77,7 @@ private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): SinceKotlinValue? 
         if (apiVersion != null) {
             // TODO: combine wasExperimentalMarkerClasses in case of several associated declarations with the same maximal API version
             if (result == null || apiVersion > result!!.apiVersion) {
-                result = SinceKotlinValue(
-                    apiVersion,
-                    with(ExperimentalUsageChecker) { loadWasExperimentalMarkerClasses() }
-                )
+                result = SinceKotlinValue(apiVersion, loadWasExperimentalMarkerClasses())
             }
         }
     }
@@ -100,4 +100,18 @@ private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): SinceKotlinValue? 
     (this as? FakeCallableDescriptorForTypeAliasObject)?.getReferencedObject()?.consider()
 
     return result
+}
+
+private fun Annotated.loadWasExperimentalMarkerClasses(): List<ClassDescriptor> {
+    val wasExperimental = annotations.findAnnotation(ExperimentalUsageChecker.WAS_EXPERIMENTAL_FQ_NAME)
+    if (wasExperimental != null) {
+        val annotationClasses = wasExperimental.allValueArguments[ExperimentalUsageChecker.WAS_EXPERIMENTAL_ANNOTATION_CLASS]
+        if (annotationClasses is ArrayValue) {
+            return annotationClasses.value.mapNotNull { annotationClass ->
+                (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor as? ClassDescriptor
+            }
+        }
+    }
+
+    return emptyList()
 }

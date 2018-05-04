@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -64,9 +63,9 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
     companion object {
         val EXPERIMENTAL_FQ_NAME = FqName("kotlin.Experimental")
         internal val USE_EXPERIMENTAL_FQ_NAME = FqName("kotlin.UseExperimental")
-        private val WAS_EXPERIMENTAL_FQ_NAME = FqName("kotlin.WasExperimental")
+        internal val WAS_EXPERIMENTAL_FQ_NAME = FqName("kotlin.WasExperimental")
         internal val USE_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
-        private val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
+        internal val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
 
         private val LEVEL = Name.identifier("level")
         private val WARNING_LEVEL = Name.identifier("WARNING")
@@ -176,20 +175,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 if (predicate(element)) return true
                 element = element.parent ?: return false
             }
-        }
-
-        internal fun Annotated.loadWasExperimentalMarkerClasses(): List<ClassDescriptor> {
-            val wasExperimental = annotations.findAnnotation(WAS_EXPERIMENTAL_FQ_NAME)
-            if (wasExperimental != null) {
-                val annotationClasses = wasExperimental.allValueArguments[WAS_EXPERIMENTAL_ANNOTATION_CLASS]
-                if (annotationClasses is ArrayValue) {
-                    return annotationClasses.value.mapNotNull { annotationClass ->
-                        (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor as? ClassDescriptor
-                    }
-                }
-            }
-
-            return emptyList()
         }
 
         fun checkCompilerArguments(
