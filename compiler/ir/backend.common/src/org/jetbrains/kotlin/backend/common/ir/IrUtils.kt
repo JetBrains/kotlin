@@ -54,11 +54,12 @@ fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDescriptor): 
     return when (this) {
         is CallableMemberDescriptor ->
             copy(
-                    /* newOwner      = */ owner,
-                    /* modality      = */ modality,
-                    /* visibility    = */ visibility,
-                    /* kind          = */ CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-                    /* copyOverrides = */ true).apply {
+                /* newOwner      = */ owner,
+                /* modality      = */ modality,
+                /* visibility    = */ visibility,
+                /* kind          = */ CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+                /* copyOverrides = */ true
+            ).apply {
                 overriddenDescriptors += this@createFakeOverrideDescriptor
             }
         else -> null
@@ -67,22 +68,26 @@ fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDescriptor): 
 
 fun FunctionDescriptor.createOverriddenDescriptor(owner: ClassDescriptor, final: Boolean = true): FunctionDescriptor {
     return this.newCopyBuilder()
-            .setOwner(owner)
-            .setCopyOverrides(true)
-            .setModality(if (final) Modality.FINAL else Modality.OPEN)
-            .setDispatchReceiverParameter(owner.thisAsReceiverParameter)
-            .build()!!.apply {
+        .setOwner(owner)
+        .setCopyOverrides(true)
+        .setModality(if (final) Modality.FINAL else Modality.OPEN)
+        .setDispatchReceiverParameter(owner.thisAsReceiverParameter)
+        .build()!!.apply {
         overriddenDescriptors += this@createOverriddenDescriptor
     }
 }
 
-fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructorDescriptor: ClassConstructorDescriptor, isPrimary: Boolean = false)
+fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(
+    superConstructorDescriptor: ClassConstructorDescriptor,
+    isPrimary: Boolean = false
+)
         : ClassConstructorDescriptor {
     val constructorDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
-            /* containingDeclaration = */ this,
-            /* annotations           = */ Annotations.EMPTY,
-            /* isPrimary             = */ isPrimary,
-            /* source                = */ SourceElement.NO_SOURCE)
+        /* containingDeclaration = */ this,
+        /* annotations           = */ Annotations.EMPTY,
+        /* isPrimary             = */ isPrimary,
+        /* source                = */ SourceElement.NO_SOURCE
+    )
     val valueParameters = superConstructorDescriptor.valueParameters.map {
         it.copy(constructorDescriptor, it.name, it.index)
     }
@@ -91,26 +96,29 @@ fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructor
     return constructorDescriptor
 }
 
-fun IrClass.addSimpleDelegatingConstructor(superConstructorSymbol: IrConstructorSymbol,
-                                                    constructorDescriptor: ClassConstructorDescriptor,
-                                                    origin: IrDeclarationOrigin)
+fun IrClass.addSimpleDelegatingConstructor(
+    superConstructorSymbol: IrConstructorSymbol,
+    constructorDescriptor: ClassConstructorDescriptor,
+    origin: IrDeclarationOrigin
+)
         : IrConstructor {
 
     return IrConstructorImpl(startOffset, endOffset, origin, constructorDescriptor).also { constructor ->
         constructor.createParameterDeclarations()
 
-        constructor.body = IrBlockBodyImpl(startOffset, endOffset,
-                listOf(
-                        IrDelegatingConstructorCallImpl(
-                                startOffset, endOffset,
-                                superConstructorSymbol, superConstructorSymbol.descriptor
-                        ).apply {
-                            constructor.valueParameters.forEachIndexed { idx, parameter ->
-                                putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.symbol))
-                            }
-                        },
-                        IrInstanceInitializerCallImpl(startOffset, endOffset, this.symbol)
-                )
+        constructor.body = IrBlockBodyImpl(
+            startOffset, endOffset,
+            listOf(
+                IrDelegatingConstructorCallImpl(
+                    startOffset, endOffset,
+                    superConstructorSymbol, superConstructorSymbol.descriptor
+                ).apply {
+                    constructor.valueParameters.forEachIndexed { idx, parameter ->
+                        putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.symbol))
+                    }
+                },
+                IrInstanceInitializerCallImpl(startOffset, endOffset, this.symbol)
+            )
         )
 
         constructor.parent = this
@@ -118,9 +126,11 @@ fun IrClass.addSimpleDelegatingConstructor(superConstructorSymbol: IrConstructor
     }
 }
 
-fun CommonBackendContext.createArrayOfExpression(arrayElementType: KotlinType,
-                                             arrayElements: List<IrExpression>,
-                                             startOffset: Int, endOffset: Int): IrExpression {
+fun CommonBackendContext.createArrayOfExpression(
+    arrayElementType: KotlinType,
+    arrayElements: List<IrExpression>,
+    startOffset: Int, endOffset: Int
+): IrExpression {
 
     val genericArrayOfFunSymbol = ir.symbols.arrayOf
     val genericArrayOfFun = genericArrayOfFunSymbol.descriptor

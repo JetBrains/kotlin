@@ -67,12 +67,10 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
         if (JvmCodegenUtil.isConstOrHasJvmFieldAnnotation(property)) {
             return if (descriptor is PropertyGetterDescriptor) {
                 substituteGetter(descriptor, expression)
-            }
-            else {
+            } else {
                 substituteSetter(descriptor, expression)
             }
-        }
-        else if (property is SyntheticJavaPropertyDescriptor) {
+        } else if (property is SyntheticJavaPropertyDescriptor) {
             expression.dispatchReceiver = expression.extensionReceiver
             expression.extensionReceiver = null
         }
@@ -81,24 +79,24 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
 
     private fun substituteSetter(descriptor: PropertyAccessorDescriptor, expression: IrCall): IrSetFieldImpl {
         return IrSetFieldImpl(
-                expression.startOffset,
-                expression.endOffset,
-                descriptor.correspondingProperty,
-                expression.dispatchReceiver,
-                expression.getValueArgument(descriptor.valueParameters.lastIndex)!!,
-                expression.origin,
-                expression.superQualifier
+            expression.startOffset,
+            expression.endOffset,
+            descriptor.correspondingProperty,
+            expression.dispatchReceiver,
+            expression.getValueArgument(descriptor.valueParameters.lastIndex)!!,
+            expression.origin,
+            expression.superQualifier
         )
     }
 
     private fun substituteGetter(descriptor: PropertyGetterDescriptor, expression: IrCall): IrGetFieldImpl {
         return IrGetFieldImpl(
-                expression.startOffset,
-                expression.endOffset,
-                descriptor.correspondingProperty,
-                expression.dispatchReceiver,
-                expression.origin,
-                expression.superQualifier
+            expression.startOffset,
+            expression.endOffset,
+            descriptor.correspondingProperty,
+            expression.dispatchReceiver,
+            expression.origin,
+            expression.superQualifier
         )
     }
 }

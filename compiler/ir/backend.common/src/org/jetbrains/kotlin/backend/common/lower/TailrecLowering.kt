@@ -70,8 +70,10 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
                     it to irTemporary(irGet(variable), nameHint = it.suggestVariableName()).symbol
                 }
 
-                val transformer = BodyTransformer(builder, irFunction, loop,
-                        parameterToNew, parameterToVariable, tailRecursionCalls)
+                val transformer = BodyTransformer(
+                    builder, irFunction, loop,
+                    parameterToNew, parameterToVariable, tailRecursionCalls
+                )
 
                 oldBody.statements.forEach {
                     +it.transform(transformer, null)
@@ -84,12 +86,12 @@ private fun lowerTailRecursionCalls(context: BackendContext, irFunction: IrFunct
 }
 
 private class BodyTransformer(
-        val builder: IrBuilderWithScope,
-        val irFunction: IrFunction,
-        val loop: IrLoop,
-        val parameterToNew: Map<IrValueParameterSymbol, IrValueSymbol>,
-        val parameterToVariable: Map<IrValueParameterSymbol, IrVariableSymbol>,
-        val tailRecursionCalls: Set<IrCall>
+    val builder: IrBuilderWithScope,
+    val irFunction: IrFunction,
+    val loop: IrLoop,
+    val parameterToNew: Map<IrValueParameterSymbol, IrValueSymbol>,
+    val parameterToVariable: Map<IrValueParameterSymbol, IrVariableSymbol>,
+    val tailRecursionCalls: Set<IrCall>
 ) : IrElementTransformerVoid() {
 
     val parameters = irFunction.explicitParameters
@@ -128,24 +130,23 @@ private class BodyTransformer(
         // For each unspecified argument set the corresponding variable to default:
         parameters.filter { it !in specifiedParameters }.forEach { parameter ->
 
-            val originalDefaultValue = parameter.owner.defaultValue?.expression ?:
-                    throw Error("no argument specified for $parameter")
+            val originalDefaultValue = parameter.owner.defaultValue?.expression ?: throw Error("no argument specified for $parameter")
 
             // Copy default value, mapping parameters to variables containing freshly computed arguments:
             val defaultValue = originalDefaultValue
-                    .deepCopyWithVariables()
-                    .transform(object : IrElementTransformerVoid() {
+                .deepCopyWithVariables()
+                .transform(object : IrElementTransformerVoid() {
 
-                        override fun visitGetValue(expression: IrGetValue): IrExpression {
-                            expression.transformChildrenVoid(this)
+                    override fun visitGetValue(expression: IrGetValue): IrExpression {
+                        expression.transformChildrenVoid(this)
 
-                            val variableSymbol = parameterToVariable[expression.symbol] ?: return expression
-                            return IrGetValueImpl(
-                                    expression.startOffset, expression.endOffset,
-                                    variableSymbol, expression.origin
-                            )
-                        }
-                    }, data = null)
+                        val variableSymbol = parameterToVariable[expression.symbol] ?: return expression
+                        return IrGetValueImpl(
+                            expression.startOffset, expression.endOffset,
+                            variableSymbol, expression.origin
+                        )
+                    }
+                }, data = null)
 
             +irSetVar(parameterToVariable[parameter]!!, defaultValue)
         }

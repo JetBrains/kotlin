@@ -56,22 +56,22 @@ interface StubContext {
 }
 
 class StubCodegenContext(
-        contextDescriptor: ClassDescriptor,
-        parentContext: CodegenContext<*>?,
-        override val irClassContext: IrClassContext
-) :StubContext, CodegenContext<DeclarationDescriptor>(
-        if (contextDescriptor is FileClassDescriptor) contextDescriptor.containingDeclaration else contextDescriptor,
-        OwnerKind.IMPLEMENTATION, parentContext, null,
-        if (contextDescriptor is FileClassDescriptor) null else contextDescriptor,
-        null
+    contextDescriptor: ClassDescriptor,
+    parentContext: CodegenContext<*>?,
+    override val irClassContext: IrClassContext
+) : StubContext, CodegenContext<DeclarationDescriptor>(
+    if (contextDescriptor is FileClassDescriptor) contextDescriptor.containingDeclaration else contextDescriptor,
+    OwnerKind.IMPLEMENTATION, parentContext, null,
+    if (contextDescriptor is FileClassDescriptor) null else contextDescriptor,
+    null
 )
 
 class ClassStubContext(
-        contextDescriptor: ClassDescriptor,
-        parentContext: CodegenContext<*>?,
-        override val irClassContext: IrClassContext,
-        typeMapper: KotlinTypeMapper
-) : StubContext, ClassContext( typeMapper, contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext, null)
+    contextDescriptor: ClassDescriptor,
+    parentContext: CodegenContext<*>?,
+    override val irClassContext: IrClassContext,
+    typeMapper: KotlinTypeMapper
+) : StubContext, ClassContext(typeMapper, contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext, null)
 
 class ContextAnnotator(val state: GenerationState) : ClassLowerWithContext() {
 
@@ -89,8 +89,7 @@ class ContextAnnotator(val state: GenerationState) : ClassLowerWithContext() {
         val descriptor = irClass.descriptor
         val newContext: CodegenContext<*> = if (descriptor is FileClassDescriptor) {
             StubCodegenContext(descriptor, data.parent?.codegenContext, data)
-        }
-        else {
+        } else {
             ClassStubContext(descriptor, data.parent?.codegenContext, data, state.typeMapper)
         }
         newContext.apply {
@@ -137,12 +136,15 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
         val codegenContext = data.codegenContext
         val accessors = codegenContext.accessors
         val allAccessors =
-                (
-                        accessors.filterIsInstance<FunctionDescriptor>() +
-                        accessors.filterIsInstance<AccessorForPropertyDescriptor>().flatMap {
-                            listOfNotNull(if (it.isWithSyntheticGetterAccessor) it.getter else null, if (it.isWithSyntheticSetterAccessor) it.setter else null)
-                        }
-                ).filterIsInstance<AccessorForCallableDescriptor<*>>()
+            (
+                    accessors.filterIsInstance<FunctionDescriptor>() +
+                            accessors.filterIsInstance<AccessorForPropertyDescriptor>().flatMap {
+                                listOfNotNull(
+                                    if (it.isWithSyntheticGetterAccessor) it.getter else null,
+                                    if (it.isWithSyntheticSetterAccessor) it.setter else null
+                                )
+                            }
+                    ).filterIsInstance<AccessorForCallableDescriptor<*>>()
 
         val irClassToAddAccessor = data.irClass
         allAccessors.forEach { accessor ->
@@ -157,30 +159,55 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
     }
 
     companion object {
-        fun createSyntheticAccessorCallForFunction(superResult: IrElement, expression: IrMemberAccessExpression, codegenContext: CodegenContext<*>?, context: JvmBackendContext): IrElement {
+        fun createSyntheticAccessorCallForFunction(
+            superResult: IrElement,
+            expression: IrMemberAccessExpression,
+            codegenContext: CodegenContext<*>?,
+            context: JvmBackendContext
+        ): IrElement {
 
             val descriptor = expression.descriptor
             if (descriptor is FunctionDescriptor && !expression.usesDefaultArguments()) {
-                val directAccessor = codegenContext!!.accessibleDescriptor(JvmCodegenUtil.getDirectMember(descriptor), (expression as? IrCall)?.superQualifier)
+                val directAccessor = codegenContext!!.accessibleDescriptor(
+                    JvmCodegenUtil.getDirectMember(descriptor),
+                    (expression as? IrCall)?.superQualifier
+                )
                 val accessor = Companion.actualAccessor(descriptor, directAccessor)
 
                 if (accessor is AccessorForCallableDescriptor<*> && descriptor !is AccessorForCallableDescriptor<*>) {
                     val isConstructor = descriptor is ConstructorDescriptor
                     val accessorOwner = accessor.containingDeclaration as ClassOrPackageFragmentDescriptor
                     val accessorForIr =
-                            accessorToIrAccessorDescriptor(isConstructor, accessor, context, descriptor, accessorOwner) //TODO change call
+                        accessorToIrAccessorDescriptor(isConstructor, accessor, context, descriptor, accessorOwner) //TODO change call
 
                     val call =
-                            if (isConstructor && expression is IrDelegatingConstructorCall)
-                                IrDelegatingConstructorCallImpl(expression.startOffset, expression.endOffset, accessorForIr as ClassConstructorDescriptor)
-                            else IrCallImpl(expression.startOffset, expression.endOffset, accessorForIr, emptyMap(), expression.origin/*TODO super*/)
+                        if (isConstructor && expression is IrDelegatingConstructorCall)
+                            IrDelegatingConstructorCallImpl(
+                                expression.startOffset,
+                                expression.endOffset,
+                                accessorForIr as ClassConstructorDescriptor
+                            )
+                        else IrCallImpl(
+                            expression.startOffset,
+                            expression.endOffset,
+                            accessorForIr,
+                            emptyMap(),
+                            expression.origin/*TODO super*/
+                        )
                     //copyAllArgsToValueParams(call, expression)
                     val receiverAndArgs = expression.receiverAndArgs()
                     receiverAndArgs.forEachIndexed { i, irExpression ->
                         call.putValueArgument(i, irExpression)
                     }
                     if (isConstructor) {
-                        call.putValueArgument(receiverAndArgs.size, IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.ir.symbols.defaultConstructorMarker.descriptor.defaultType))
+                        call.putValueArgument(
+                            receiverAndArgs.size,
+                            IrConstImpl.constNull(
+                                UNDEFINED_OFFSET,
+                                UNDEFINED_OFFSET,
+                                context.ir.symbols.defaultConstructorMarker.descriptor.defaultType
+                            )
+                        )
                     }
                     return call
                 }
@@ -188,12 +215,21 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
             return superResult
         }
 
-        private fun accessorToIrAccessorDescriptor(isConstructor: Boolean, accessor: CallableMemberDescriptor, context: JvmBackendContext, descriptor: FunctionDescriptor, accessorOwner: ClassOrPackageFragmentDescriptor): FunctionDescriptor {
+        private fun accessorToIrAccessorDescriptor(
+            isConstructor: Boolean,
+            accessor: CallableMemberDescriptor,
+            context: JvmBackendContext,
+            descriptor: FunctionDescriptor,
+            accessorOwner: ClassOrPackageFragmentDescriptor
+        ): FunctionDescriptor {
             return if (isConstructor)
                 (accessor as AccessorForConstructorDescriptor).constructorDescriptorWithMarker(
-                        context.ir.symbols.defaultConstructorMarker.descriptor.defaultType
+                    context.ir.symbols.defaultConstructorMarker.descriptor.defaultType
                 )
-            else descriptor.toStatic(accessorOwner, Name.identifier(context.state.typeMapper.mapAsmMethod(accessor as FunctionDescriptor).name))
+            else descriptor.toStatic(
+                accessorOwner,
+                Name.identifier(context.state.typeMapper.mapAsmMethod(accessor as FunctionDescriptor).name)
+            )
         }
 
         fun addAccessorToClass(accessor: AccessorForCallableDescriptor<*>, irClassToAddAccessor: IrClass, context: JvmBackendContext) {
@@ -203,7 +239,8 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
             val accessorForIr = accessorToIrAccessorDescriptor(
                 isConstructor, accessor, context,
                 accessor.calleeDescriptor as? FunctionDescriptor ?: return,
-                accessorOwner)
+                accessorOwner
+            )
             val syntheticFunction = if (isConstructor) IrConstructorImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 accessorForIr as ClassConstructorDescriptor, body
@@ -255,28 +292,56 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
             var offset = 0
             val delegateTo = call.descriptor
             delegateTo.dispatchReceiverParameter?.let {
-                call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
+                call.dispatchReceiver =
+                        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
             }
 
             delegateTo.extensionReceiverParameter?.let {
-                call.extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
+                call.extensionReceiver =
+                        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
             }
 
             call.descriptor.valueParameters.forEachIndexed { i, _ ->
-                call.putValueArgument(i, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[i + offset].symbol))
+                call.putValueArgument(
+                    i,
+                    IrGetValueImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        syntheticFunction.valueParameters[i + offset].symbol
+                    )
+                )
             }
         }
 
         private fun AccessorForConstructorDescriptor.constructorDescriptorWithMarker(marker: KotlinType) =
             ClassConstructorDescriptorImpl.createSynthesized(containingDeclaration, annotations, false, source).also {
                 it.initialize(
-                        DescriptorUtils.getReceiverParameterType(extensionReceiverParameter),
-                        dispatchReceiverParameter,
-                        emptyList()/*TODO*/,
-                        calleeDescriptor.valueParameters.map { it.copy(this, it.name, it.index) } + ValueParameterDescriptorImpl.createWithDestructuringDeclarations(it, null, calleeDescriptor.valueParameters.size, Annotations.EMPTY, Name.identifier("marker"), marker, false, false, false, null, SourceElement.NO_SOURCE, null),
-                        calleeDescriptor.returnType,
-                        Modality.FINAL,
-                        Visibilities.LOCAL
+                    DescriptorUtils.getReceiverParameterType(extensionReceiverParameter),
+                    dispatchReceiverParameter,
+                    emptyList()/*TODO*/,
+                    calleeDescriptor.valueParameters.map {
+                        it.copy(
+                            this,
+                            it.name,
+                            it.index
+                        )
+                    } + ValueParameterDescriptorImpl.createWithDestructuringDeclarations(
+                        it,
+                        null,
+                        calleeDescriptor.valueParameters.size,
+                        Annotations.EMPTY,
+                        Name.identifier("marker"),
+                        marker,
+                        false,
+                        false,
+                        false,
+                        null,
+                        SourceElement.NO_SOURCE,
+                        null
+                    ),
+                    calleeDescriptor.returnType,
+                    Modality.FINAL,
+                    Visibilities.LOCAL
                 )
             }
     }
