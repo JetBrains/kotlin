@@ -21,9 +21,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -34,14 +33,14 @@ import org.jetbrains.kotlin.types.Variance
 
 class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPackage: PackageFragmentDescriptor) : SharedVariablesManager {
 
-    override fun createSharedVariableDescriptor(variableDescriptor: VariableDescriptor): VariableDescriptor =
-        LocalVariableDescriptor(
+    override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
+        val variableDescriptor = originalDeclaration.descriptor
+        val sharedVariableDescriptor = LocalVariableDescriptor(
             variableDescriptor.containingDeclaration, variableDescriptor.annotations, variableDescriptor.name,
             getSharedVariableType(variableDescriptor.type),
             false, false, variableDescriptor.isLateInit, variableDescriptor.source
         )
 
-    override fun defineSharedValue(sharedVariableDescriptor: VariableDescriptor, originalDeclaration: IrVariable): IrStatement {
         val valueType = originalDeclaration.descriptor.type
         val boxConstructor = closureBoxConstructorTypeDescriptor
         val boxConstructorSymbol = closureBoxConstructorTypeSymbol
@@ -71,26 +70,28 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
         )
     }
 
-    override fun getSharedValue(sharedVariableDescriptor: VariableDescriptor, originalGet: IrGetValue): IrExpression =
+    override fun defineSharedValue(originalDeclaration: IrVariable, sharedVariableDeclaration: IrVariable) = sharedVariableDeclaration
+
+    override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue): IrExpression =
         IrGetFieldImpl(
             originalGet.startOffset, originalGet.endOffset,
             closureBoxFieldSymbol,
             IrGetValueImpl(
                 originalGet.startOffset,
                 originalGet.endOffset,
-                symbolForDescriptor(sharedVariableDescriptor)
+                sharedVariableSymbol
             ),
             originalGet.origin
         )
 
-    override fun setSharedValue(sharedVariableDescriptor: VariableDescriptor, originalSet: IrSetVariable): IrExpression =
+    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetVariable): IrExpression =
         IrSetFieldImpl(
             originalSet.startOffset, originalSet.endOffset,
             closureBoxFieldSymbol,
             IrGetValueImpl(
                 originalSet.startOffset,
                 originalSet.endOffset,
-                symbolForDescriptor(sharedVariableDescriptor)
+                sharedVariableSymbol
             ),
             originalSet.value,
             originalSet.origin
@@ -191,8 +192,4 @@ class JsSharedVariablesManager(val builtIns: KotlinBuiltIns, val jsInterinalPack
 
     private fun getSharedVariableType(type: KotlinType) = getRefType(type)
 
-    private val variableSymbols = mutableMapOf<VariableDescriptor, IrValueSymbol>()
-
-    private fun symbolForDescriptor(sharedVariableDescriptor: VariableDescriptor): IrValueSymbol =
-        variableSymbols.getOrPut(sharedVariableDescriptor, { IrVariableSymbolImpl(sharedVariableDescriptor) })
 }

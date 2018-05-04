@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.backend.jvm.descriptors
 
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.KnownClassDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.SharedVariablesManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
@@ -41,9 +43,6 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
     private val kotlinJvmInternalPackage = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.jvm.internal"))
     private val refNamespaceClass =
         KnownClassDescriptor.createClass(Name.identifier("Ref"), kotlinJvmInternalPackage, listOf(builtIns.anyType))
-
-    //TODO: avoid tracking symbols
-    private val sharedVariableDescriptorToSymbol = mutableMapOf<VariableDescriptor, IrVariableSymbol>()
 
     private class PrimitiveRefDescriptorsProvider(type: KotlinType, refClass: ClassDescriptor) {
         val refType: KotlinType = refClass.defaultType
@@ -128,14 +127,14 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
 
     private val objectRefDescriptorsProvider = ObjectRefDescriptorsProvider()
 
-    override fun createSharedVariableDescriptor(variableDescriptor: VariableDescriptor): VariableDescriptor =
-        LocalVariableDescriptor(
+    override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
+        val variableDescriptor = originalDeclaration.descriptor
+        val sharedVariableDescriptor = LocalVariableDescriptor(
             variableDescriptor.containingDeclaration, variableDescriptor.annotations, variableDescriptor.name,
             getSharedVariableType(variableDescriptor.type),
             false, false, variableDescriptor.isLateInit, variableDescriptor.source
         )
 
-    override fun defineSharedValue(sharedVariableDescriptor: VariableDescriptor, originalDeclaration: IrVariable): IrStatement {
         val valueType = originalDeclaration.descriptor.type
         val primitiveRefDescriptorsProvider = primitiveRefDescriptorProviders[getPrimitiveType(valueType)]
 
@@ -146,21 +145,28 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
             if (primitiveRefDescriptorsProvider != null) null
             else mapOf(objectRefDescriptorsProvider.constructorTypeParameter to valueType)
 
-        val elementPropertyDescriptor =
-            primitiveRefDescriptorsProvider?.elementField ?: objectRefDescriptorsProvider.genericElementField
 
         val refConstructorCall = IrCallImpl(
             originalDeclaration.startOffset, originalDeclaration.endOffset,
             refConstructor, refConstructorTypeArguments
         )
-        val sharedVariableDeclaration = IrVariableImpl(
+        return IrVariableImpl(
             originalDeclaration.startOffset, originalDeclaration.endOffset, originalDeclaration.origin,
             sharedVariableDescriptor, refConstructorCall
         )
+    }
 
-        sharedVariableDescriptorToSymbol[sharedVariableDescriptor] = sharedVariableDeclaration.symbol
-
+    override fun defineSharedValue(
+        originalDeclaration: IrVariable,
+        sharedVariableDeclaration: IrVariable
+    ): IrStatement {
         val initializer = originalDeclaration.initializer ?: return sharedVariableDeclaration
+
+        val valueType = originalDeclaration.descriptor.type
+        val primitiveRefDescriptorsProvider = primitiveRefDescriptorProviders[getPrimitiveType(valueType)]
+
+        val elementPropertyDescriptor =
+            primitiveRefDescriptorsProvider?.elementField ?: objectRefDescriptorsProvider.genericElementField
 
         val sharedVariableInitialization = IrSetFieldImpl(
             initializer.startOffset, initializer.endOffset,
@@ -181,19 +187,27 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
         return primitiveRefDescriptorsProvider?.elementField ?: objectRefDescriptorsProvider.genericElementField
     }
 
-    override fun getSharedValue(sharedVariableDescriptor: VariableDescriptor, originalGet: IrGetValue): IrExpression =
+    override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue): IrExpression =
         IrGetFieldImpl(
             originalGet.startOffset, originalGet.endOffset,
             getElementFieldDescriptor(originalGet.descriptor.type),
-            IrGetValueImpl(originalGet.startOffset, originalGet.endOffset, sharedVariableDescriptorToSymbol[sharedVariableDescriptor]!!),
+            IrGetValueImpl(
+                originalGet.startOffset,
+                originalGet.endOffset,
+                sharedVariableSymbol
+            ),
             originalGet.origin
         )
 
-    override fun setSharedValue(sharedVariableDescriptor: VariableDescriptor, originalSet: IrSetVariable): IrExpression =
+    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetVariable): IrExpression =
         IrSetFieldImpl(
             originalSet.startOffset, originalSet.endOffset,
             getElementFieldDescriptor(originalSet.descriptor.type),
-            IrGetValueImpl(originalSet.startOffset, originalSet.endOffset, sharedVariableDescriptorToSymbol[sharedVariableDescriptor]!!),
+            IrGetValueImpl(
+                originalSet.startOffset,
+                originalSet.endOffset,
+                sharedVariableSymbol
+            ),
             originalSet.value,
             originalSet.origin
         )
