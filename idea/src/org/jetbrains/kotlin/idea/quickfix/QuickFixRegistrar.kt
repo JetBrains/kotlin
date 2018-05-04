@@ -546,5 +546,10 @@ class QuickFixRegistrar : QuickFixContributor {
 
         JVM_DEFAULT_REQUIRED_FOR_OVERRIDE.registerFactory(AddJvmDefaultAnnotation)
         NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT.registerFactory(AddJvmDefaultAnnotation)
+
+        EXPERIMENTAL_API_USAGE.registerFactory(ExperimentalFixesFactory)
+        EXPERIMENTAL_API_USAGE_ERROR.registerFactory(ExperimentalFixesFactory)
+        EXPERIMENTAL_OVERRIDE.registerFactory(ExperimentalFixesFactory)
+        EXPERIMENTAL_OVERRIDE_ERROR.registerFactory(ExperimentalFixesFactory)
     }
 }
