@@ -9,7 +9,23 @@ import org.junit.Test
 class KaptIncrementalNoStubsIT : KaptIncrementalBaseIT(shouldUseStubs = false)
 class KaptIncrementalWithStubsIT : KaptIncrementalBaseIT(shouldUseStubs = true)
 
-class Kapt3Incremental : KaptIncrementalBaseIT(shouldUseStubs = false, useKapt3 = true)
+class Kapt3Incremental : KaptIncrementalBaseIT(shouldUseStubs = false, useKapt3 = true) {
+    @Test
+    fun testAddNewLine() {
+        val project = Project("simple", directoryPrefix = "kapt2")
+
+        project.build("clean", "build") {
+            assertSuccessful()
+        }
+
+        project.projectFile("test.kt").modify { "\n$it" }
+        project.build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":kaptGenerateStubsKotlin", ":compileJava", ":compileKotlin")
+            assertTasksUpToDate(":kaptKotlin")
+        }
+    }
+}
 
 abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: Boolean = false) : BaseGradleIT() {
     init {
@@ -277,10 +293,7 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
 
     private fun CompiledProject.assertKapt3FullyExecuted() {
         if (useKapt3) {
-            assertNotContains(
-                ":kaptKotlin UP-TO-DATE",
-                ":kaptGenerateStubsKotlin UP-TO-DATE"
-            )
+            assertTasksExecuted(":kaptKotlin", ":kaptGenerateStubsKotlin")
         }
     }
 
