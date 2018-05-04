@@ -27,10 +27,12 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
 import com.intellij.util.Alarm
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.dependencies.FromFileAttributeScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesLoader
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.findScriptDefinition
@@ -63,6 +65,9 @@ class ScriptDependenciesUpdater(
         project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
             override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
                 val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
+                val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
+
+                if (!ScriptDefinitionsManager.getInstance(project).isInExpectedLocation(ktFile, scriptDef)) return
                 ScriptDependenciesLoader.updateDependencies(file, scriptDef, project, shouldNotifyRootsChanged = true)
             }
         })
@@ -86,6 +91,9 @@ class ScriptDependenciesUpdater(
                 }
 
                 val scriptDef = scriptDefinitionProvider.findScriptDefinition(file) ?: return
+                val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
+
+                if (!ScriptDefinitionsManager.getInstance(project).isInExpectedLocation(ktFile, scriptDef)) return
 
                 scriptsQueue.cancelAllRequests()
 

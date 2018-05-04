@@ -16,21 +16,17 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.ide.projectView.impl.ProjectRootsUtil.isInTestSource
-import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.scriptDependencies
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isInContent
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.getScriptDefinition
 import kotlin.script.experimental.dependencies.ScriptReport
-import kotlin.script.experimental.location.ScriptExpectedLocation
 
 object KotlinHighlightingUtil {
     fun shouldHighlight(psiElement: PsiElement): Boolean {
@@ -66,25 +62,12 @@ object KotlinHighlightingUtil {
 
     @Suppress("DEPRECATION")
     private fun shouldHighlightScript(ktFile: KtFile): Boolean {
-        if (ScratchFileService.isInScratchRoot(ktFile.virtualFile)) return true
         if (ktFile.virtualFile.scriptDependencies == null) return false
-        if (ktFile.getUserData(IdeScriptReportSink.Reports)?.any { it.severity == ScriptReport.Severity.FATAL } == true) return false
-
-        val scriptScope = getScriptDefinition(ktFile)?.scriptExpectedLocations ?: return false
-        return when {
-            scriptScope.contains(ScriptExpectedLocation.Everywhere) -> true
-            scriptScope.contains(ScriptExpectedLocation.Project)
-                    && ProjectRootManager.getInstance(ktFile.project).fileIndex.isInContent(ktFile.virtualFile) -> true
-            scriptScope.contains(ScriptExpectedLocation.TestsOnly)
-                    && isInTestSource(ktFile) -> true
-            else -> return isInContent(
-                ktFile,
-                scriptScope.contains(ScriptExpectedLocation.SourcesOnly),
-                scriptScope.contains(ScriptExpectedLocation.Libraries),
-                scriptScope.contains(ScriptExpectedLocation.Libraries),
-                scriptScope.contains(ScriptExpectedLocation.Libraries)
-            )
+        if (ktFile.virtualFile.getUserData(IdeScriptReportSink.Reports)?.any { it.severity == ScriptReport.Severity.FATAL } == true) {
+            return false
         }
 
+        val scriptDefinition = getScriptDefinition(ktFile) ?: return false
+        return ScriptDefinitionsManager.getInstance(ktFile.project).isInExpectedLocation(ktFile, scriptDefinition)
     }
 }
