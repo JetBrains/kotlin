@@ -395,11 +395,6 @@ void DeinitInstanceBody(const TypeInfo* typeInfo, void* body);
 OBJ_GETTER(InitInstance, ObjHeader** location, const TypeInfo* type_info,
            void (*ctor)(ObjHeader*));
 
-// Returns true iff the object has space reserved in its tail for special purposes.
-bool HasReservedObjectTail(ObjHeader* obj) RUNTIME_NOTHROW;
-// Returns the pointer to the reserved space, `HasReservedObjectTail(obj)` must be true.
-void* GetReservedObjectTail(ObjHeader* obj) RUNTIME_NOTHROW;
-
 // Weak reference operations.
 // Atomically clears counter object reference.
 void WeakReferenceCounterClear(ObjHeader* counter);
