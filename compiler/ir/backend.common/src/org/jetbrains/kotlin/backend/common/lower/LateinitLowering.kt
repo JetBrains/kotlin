@@ -48,7 +48,7 @@ class LateinitLowering(
 
             private fun transformGetter(backingFieldSymbol: IrFieldSymbol, getter: IrFunction) {
                 val type = backingFieldSymbol.descriptor.type
-                assert(!KotlinBuiltIns.isPrimitiveType(type), { "'lateinit' modifier is not allowed on primitive types" })
+                assert(!KotlinBuiltIns.isPrimitiveType(type)) { "'lateinit' modifier is not allowed on primitive types" }
                 val startOffset = getter.startOffset
                 val endOffset = getter.endOffset
                 val irBuilder = context.createIrBuilder(getter.symbol, startOffset, endOffset)

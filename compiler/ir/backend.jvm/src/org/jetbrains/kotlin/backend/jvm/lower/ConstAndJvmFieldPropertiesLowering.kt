@@ -40,10 +40,6 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
         irFile.transformChildrenVoid(this)
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
-        return super.visitDeclaration(declaration)
-    }
-
     override fun visitProperty(declaration: IrProperty): IrStatement {
         if (JvmCodegenUtil.isConstOrHasJvmFieldAnnotation(declaration.descriptor)) {
             /*Safe or need copy?*/
@@ -53,15 +49,8 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
         return super.visitProperty(declaration)
     }
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
-        return super.visitMemberAccess(expression)
-    }
-
     override fun visitCall(expression: IrCall): IrExpression {
-        val descriptor = expression.descriptor
-        if (descriptor !is PropertyAccessorDescriptor) {
-            return super.visitCall(expression)
-        }
+        val descriptor = expression.descriptor as? PropertyAccessorDescriptor ?: return super.visitCall(expression)
 
         val property = descriptor.correspondingProperty
         if (JvmCodegenUtil.isConstOrHasJvmFieldAnnotation(property)) {

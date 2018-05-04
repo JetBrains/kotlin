@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 
 interface DescriptorsFactory {
     fun getFieldDescriptorForEnumEntry(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor
-    fun getOuterThisFieldDescriptor(classDescriptor: ClassDescriptor): PropertyDescriptor
+    fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor
     fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: ClassConstructorDescriptor): IrConstructorSymbol
     fun getFieldDescriptorForObjectInstance(objectDescriptor: ClassDescriptor): PropertyDescriptor
 }

@@ -159,9 +159,7 @@ class ClassCodegen private constructor(
         // for each enclosing class and for each immediate member
         val classDescriptor = classForInnerClassRecord()
         if (classDescriptor != null) {
-            if (parentClassCodegen != null) {
-                parentClassCodegen.innerClasses.add(classDescriptor)
-            }
+            parentClassCodegen?.innerClasses?.add(classDescriptor)
 
             var codegen: ClassCodegen? = this
             while (codegen != null) {

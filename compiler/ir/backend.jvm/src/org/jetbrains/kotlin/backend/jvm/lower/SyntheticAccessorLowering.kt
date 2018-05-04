@@ -81,9 +81,6 @@ class ContextAnnotator(val state: GenerationState) : ClassLowerWithContext() {
     private val IrClassContext.codegenContext: CodegenContext<*>
         get() = context2Codegen[this]!!
 
-    private val ClassDescriptor.codegenContext: CodegenContext<*>
-        get() = class2Codegen[this]!!
-
 
     override fun lowerBefore(irClass: IrClass, data: IrClassContext) {
         val descriptor = irClass.descriptor
@@ -172,7 +169,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
                     JvmCodegenUtil.getDirectMember(descriptor),
                     (expression as? IrCall)?.superQualifier
                 )
-                val accessor = Companion.actualAccessor(descriptor, directAccessor)
+                val accessor = actualAccessor(descriptor, directAccessor)
 
                 if (accessor is AccessorForCallableDescriptor<*> && descriptor !is AccessorForCallableDescriptor<*>) {
                     val isConstructor = descriptor is ConstructorDescriptor

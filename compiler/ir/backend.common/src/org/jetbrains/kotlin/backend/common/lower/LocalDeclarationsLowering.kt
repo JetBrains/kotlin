@@ -149,7 +149,7 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
         }
 
         override fun toString(): String =
-            "LocalClassContext for ${descriptor}"
+            "LocalClassContext for $descriptor"
     }
 
     private inner class LocalDeclarationsTransformer(val memberDeclaration: IrDeclaration) {
@@ -270,14 +270,12 @@ class LocalDeclarationsLowering(val context: BackendContext, val localNameProvid
                 val oldCallee = expression.descriptor.original
                 val newCallee = transformedDeclarations[oldCallee] as IrConstructorSymbol? ?: return expression
 
-                val newExpression = IrDelegatingConstructorCallImpl(
+                return IrDelegatingConstructorCallImpl(
                     expression.startOffset, expression.endOffset,
                     newCallee,
                     newCallee.descriptor,
                     remapTypeArguments(expression, newCallee.descriptor)
                 ).fillArguments(expression)
-
-                return newExpression
             }
 
             private fun <T : IrMemberAccessExpression> T.fillArguments(oldExpression: IrMemberAccessExpression): T {

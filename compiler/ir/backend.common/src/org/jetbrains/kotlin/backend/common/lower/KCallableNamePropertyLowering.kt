@@ -50,7 +50,8 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
 
         //TODO rewrite checking
         val directMember = DescriptorUtils.getDirectMember(expression.descriptor)
-        if (!((directMember.containingDeclaration as? ClassDescriptor)?.defaultType?.isKFunctionType ?: false)) return expression
+        val classDescriptor = directMember.containingDeclaration as? ClassDescriptor ?: return expression
+        if (!classDescriptor.defaultType.isKFunctionType) return expression
         if (directMember.name.asString() != "name") return expression
 
         val receiver = callableReference.dispatchReceiver ?: callableReference.extensionReceiver
