@@ -2,6 +2,7 @@ package
 
 package test {
     public fun f1(/*0*/ e: kotlin.Experimental): kotlin.Unit
+    public fun f10(/*0*/ m: test.Marker.NestedClass): kotlin.Unit
     public fun f2(/*0*/ u: kotlin.UseExperimental?): kotlin.Unit
     public fun f3(/*0*/ e: test.Experimental0 /* = kotlin.Experimental */): kotlin.Unit
     public fun f4(/*0*/ u: test.UseExperimental0 /* = kotlin.UseExperimental */): kotlin.Unit
@@ -23,6 +24,21 @@ package test {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion {
+            private constructor Companion()
+            public const final val value: kotlin.Int = 42
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final class NestedClass {
+            public constructor NestedClass()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
     }
 
     public final annotation class VarargKClasses : kotlin.Annotation {

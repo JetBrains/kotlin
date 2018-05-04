@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -246,7 +245,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 else -> null
             }
             if (targetClass != null && targetClass.loadExperimentalityForMarkerAnnotation() != null) {
-                if (!element.isUsageAsAnnotationOrQualifier() &&
+                if (!element.isUsageAsAnnotationOrImport() &&
                     !element.isUsageAsUseExperimentalArgument(context.trace.bindingContext)
                 ) {
                     context.trace.report(
@@ -261,12 +260,12 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 context.trace.report(Errors.EXPERIMENTAL_IS_NOT_ENABLED.on(element))
             }
 
-            if (!element.isUsageAsAnnotationOrQualifier()) {
+            if (!element.isUsageAsAnnotationOrImport() && !element.isUsageAsQualifier()) {
                 context.trace.report(Errors.EXPERIMENTAL_CAN_ONLY_BE_USED_AS_ANNOTATION.on(element))
             }
         }
 
-        private fun PsiElement.isUsageAsAnnotationOrQualifier(): Boolean {
+        private fun PsiElement.isUsageAsAnnotationOrImport(): Boolean {
             val parent = parent
 
             if (parent is KtUserType) {
@@ -275,14 +274,16 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                         parent.parent.parent.parent is KtAnnotationEntry
             }
 
+            return parent is KtDotQualifiedExpression && parent.parent is KtImportDirective
+        }
+
+        private fun PsiElement.isUsageAsQualifier(): Boolean {
             if (this is KtSimpleNameExpression) {
                 val qualifier = getTopmostParentQualifiedExpressionForSelector() ?: this
                 if ((qualifier.parent as? KtDotQualifiedExpression)?.receiverExpression == qualifier) {
                     return true
                 }
             }
-
-            if (getParentOfType<KtImportDirective>(true) != null) return true
 
             return false
         }

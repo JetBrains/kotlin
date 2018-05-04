@@ -1,5 +1,7 @@
+// !LANGUAGE: +NestedClassesInAnnotations
 // !USE_EXPERIMENTAL: kotlin.Experimental
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// FILE: api.kt
 
 package test
 
@@ -43,7 +45,13 @@ fun f5() {}
 // Usages of markers as types should be errors
 
 @Experimental
-annotation class Marker
+annotation class Marker {
+    class NestedClass
+
+    companion object {
+        const val value = 42
+    }
+}
 
 fun f6(m: <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>) {}
 fun f7(): List<<!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>>? = null
@@ -52,3 +60,18 @@ fun f8(): test.<!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_
 typealias Marker0 = <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>
 
 fun f9(m: <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker0<!>) {}
+
+
+// Usages of markers as qualifiers are errors as well (we can lift this restriction for select cases)
+
+fun f10(m: <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>.NestedClass) {
+    <!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>.value
+}
+
+// FILE: usage-from-other-file.kt
+
+// Usages of markers in import statements should be OK, but not as qualifiers to import their nested classes
+
+import test.Marker
+import test.<!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>.NestedClass
+import test.<!EXPERIMENTAL_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_USE_EXPERIMENTAL!>Marker<!>.Companion
