@@ -252,11 +252,12 @@ fun getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialType
 }
 
 fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType, asmType: Type): ClassDescriptor? {
-    return if (kType.requiresPolymorphism()) findPolymorphicSerializer(module)
-    else kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
-         ?: findStandardAsmTypeSerializer(module, asmType) // otherwise see if there is a standard serializer
-         ?: findEnumTypeSerializer(module, kType)
-         ?: module.findClassAcrossModuleDependencies(contextSerializerId)
+    if (kType.requiresPolymorphism()) return findPolymorphicSerializer(module)
+    if (KotlinBuiltIns.isArray(kType)) return module.findClassAcrossModuleDependencies(referenceArraySerializerId)
+    return kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
+            ?: findStandardAsmTypeSerializer(module, asmType) // otherwise see if there is a standard serializer
+            ?: findEnumTypeSerializer(module, kType)
+            ?: module.findClassAcrossModuleDependencies(contextSerializerId)
 }
 
 fun findStandardAsmTypeSerializer(module: ModuleDescriptor, asmType: Type): ClassDescriptor? {

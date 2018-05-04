@@ -75,9 +75,10 @@ fun getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
 }
 
 fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
-    return if (kType.requiresPolymorphism()) findPolymorphicSerializer(module)
-    else if (kType.isTypeParameter()) return null
-    else kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
+    if (kType.requiresPolymorphism()) return findPolymorphicSerializer(module)
+    if (kType.isTypeParameter()) return null
+    if (KotlinBuiltIns.isArray(kType)) return module.findClassAcrossModuleDependencies(referenceArraySerializerId)
+    return kType.typeSerializer.toClassDescriptor // check for serializer defined on the type
             ?: findStandardKotlinTypeSerializer(module, kType) // otherwise see if there is a standard serializer
             ?: findEnumTypeSerializer(module, kType)
             ?: module.findClassAcrossModuleDependencies(contextSerializerId)
@@ -142,10 +143,3 @@ fun KtPureClassOrObject.anonymousInitializers() = declarations
     .filterIsInstance<KtAnonymousInitializer>()
     .mapNotNull { it.body }
     .toList()
-
-fun SerializableProperty.annotationVarsAndDesc(annotationClass: ClassDescriptor): Pair<List<ValueArgument>, List<ValueParameterDescriptor>> {
-    val args: List<ValueArgument> = (this.descriptor.annotations.findAnnotation(annotationClass.fqNameSafe) as? LazyAnnotationDescriptor)?.annotationEntry?.valueArguments.orEmpty()
-    val consParams = annotationClass.unsubstitutedPrimaryConstructor?.valueParameters.orEmpty()
-    if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
-    return args to consParams
-}
