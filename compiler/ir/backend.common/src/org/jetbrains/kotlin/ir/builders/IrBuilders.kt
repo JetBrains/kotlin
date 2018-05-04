@@ -29,26 +29,26 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.types.KotlinType
 
 fun IrBuilderWithScope.irWhile(origin: IrStatementOrigin? = null) =
-        IrWhileLoopImpl(startOffset, endOffset, context.builtIns.unitType, origin)
+    IrWhileLoopImpl(startOffset, endOffset, context.irBuiltIns.unitType, origin)
 
 fun IrBuilderWithScope.irBreak(loop: IrLoop) =
-        IrBreakImpl(startOffset, endOffset, context.builtIns.nothingType, loop)
+    IrBreakImpl(startOffset, endOffset, context.irBuiltIns.nothingType, loop)
 
 fun IrBuilderWithScope.irContinue(loop: IrLoop) =
-        IrContinueImpl(startOffset, endOffset, context.builtIns.nothingType, loop)
+    IrContinueImpl(startOffset, endOffset, context.irBuiltIns.nothingType, loop)
 
-fun IrBuilderWithScope.irTrue() = IrConstImpl.boolean(startOffset, endOffset, context.builtIns.booleanType, true)
+fun IrBuilderWithScope.irTrue() = IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, true)
 
-fun IrBuilderWithScope.irFalse() = IrConstImpl.boolean(startOffset, endOffset, context.builtIns.booleanType, false)
+fun IrBuilderWithScope.irFalse() = IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, false)
 
 fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol, typeArguments: Map<TypeParameterDescriptor, KotlinType>) =
-        IrCallImpl(this.startOffset, this.endOffset, symbol, symbol.descriptor.substitute(typeArguments), typeArguments)
+    IrCallImpl(this.startOffset, this.endOffset, symbol, symbol.descriptor.substitute(typeArguments), typeArguments)
 
 fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol, typeArguments: List<KotlinType>) =
     irCall(symbol, symbol.descriptor.typeParameters.zip(typeArguments).toMap())
 
 fun IrBuilderWithScope.irGetObject(classSymbol: IrClassSymbol) =
-        IrGetObjectValueImpl(startOffset, endOffset, classSymbol.owner.defaultType, classSymbol)
+    IrGetObjectValueImpl(startOffset, endOffset, classSymbol.owner.defaultType, classSymbol)
 
 fun IrBuilderWithScope.irGetField(receiver: IrExpression?, symbol: IrFieldSymbol) =
-        IrGetFieldImpl(startOffset, endOffset, symbol, receiver)
+    IrGetFieldImpl(startOffset, endOffset, symbol, receiver)
