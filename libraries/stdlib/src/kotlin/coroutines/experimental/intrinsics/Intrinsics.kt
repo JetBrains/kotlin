@@ -53,26 +53,6 @@ public inline fun <T> Continuation<T>.intercepted(): Continuation<T> =
     throw NotImplementedError("Implementation of intercepted is intrinsic")
 
 /**
- * Continuation context of current coroutine.
- *
- * This allows the user code to not pass an extra [CoroutineContext] parameter in basic coroutine builders
- * like [launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/launch.html)
- * and [async](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.experimental/async.html),
- * but still provide easy access to coroutine context.
- */
-@SinceKotlin("1.2")
-@Suppress("WRONG_MODIFIER_TARGET")
-@Deprecated(
-    "Use kotlin.coroutines.experimental.coroutineContext instead",
-    ReplaceWith("kotlin.coroutines.experimental.coroutineContext"),
-    DeprecationLevel.ERROR
-)
-public suspend inline val coroutineContext: CoroutineContext
-    get() {
-        throw NotImplementedError("Implemented as intrinsic")
-    }
-
-/**
  * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that
  * the execution was suspended and will not return any result immediately.
  */
