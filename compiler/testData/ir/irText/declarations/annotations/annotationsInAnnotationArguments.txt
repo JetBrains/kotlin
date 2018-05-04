@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:A1 flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A1) returnType:Int flags:
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (a:A1) returnType:A2 flags:
       VALUE_PARAMETER name:a index:0 type:A1 flags:
     PROPERTY name:a type:A1 visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:a type:A1 visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:a type:A1 visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter a: A1' type=A1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:A2) returnType:A1 flags:
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (xs:kotlin.Array<A1>) returnType:AA flags:
       VALUE_PARAMETER name:xs index:0 type:kotlin.Array<A1> flags:
     PROPERTY name:xs type:kotlin.Array<A1> visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<A1> visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<A1> visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter xs: Array<A1>' type=kotlin.Array<A1> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:AA) returnType:Array<A1> flags:

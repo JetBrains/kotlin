@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       RETURN type=kotlin.Nothing from='foo(): String'
         CONST String type=kotlin.String value=
   PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> () returnType:Int flags:
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         RETURN type=kotlin.Nothing from='<get-x>(): Int'
           GET_FIELD 'x: Int' type=kotlin.Int origin=null
   PROPERTY name:test1 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         CONST String type=kotlin.String value=
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:String flags:
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): String'
           GET_FIELD 'test1: String' type=kotlin.String origin=null
   PROPERTY name:test2 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         CONST String type=kotlin.String value=abc
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:String flags:
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         RETURN type=kotlin.Nothing from='<get-test2>(): String'
           GET_FIELD 'test2: String' type=kotlin.String origin=null
   PROPERTY name:test3 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         CONST String type=kotlin.String value=
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:String flags:
@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         RETURN type=kotlin.Nothing from='<get-test3>(): String'
           GET_FIELD 'test3: String' type=kotlin.String origin=null
   PROPERTY name:test4 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         CONST String type=kotlin.String value=abc
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:String flags:
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         RETURN type=kotlin.Nothing from='<get-test4>(): String'
           GET_FIELD 'test4: String' type=kotlin.String origin=null
   PROPERTY name:test5 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         STRING_CONCATENATION type=kotlin.String
           CONST String type=kotlin.String value=
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         RETURN type=kotlin.Nothing from='<get-test5>(): String'
           GET_FIELD 'test5: String' type=kotlin.String origin=null
   PROPERTY name:test6 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         STRING_CONCATENATION type=kotlin.String
           CALL '<get-test1>(): String' type=kotlin.String origin=GET_PROPERTY
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         RETURN type=kotlin.Nothing from='<get-test6>(): String'
           GET_FIELD 'test6: String' type=kotlin.String origin=null
   PROPERTY name:test7 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test7 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test7 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         STRING_CONCATENATION type=kotlin.String
           CALL '<get-test1>(): String' type=kotlin.String origin=GET_PROPERTY
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         RETURN type=kotlin.Nothing from='<get-test7>(): String'
           GET_FIELD 'test7: String' type=kotlin.String origin=null
   PROPERTY name:test8 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test8 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test8 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         STRING_CONCATENATION type=kotlin.String
           CALL 'foo(): String' type=kotlin.String origin=null
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
         RETURN type=kotlin.Nothing from='<get-test8>(): String'
           GET_FIELD 'test8: String' type=kotlin.String origin=null
   PROPERTY name:test9 type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         STRING_CONCATENATION type=kotlin.String
           CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY

@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/kt16904.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     PROPERTY name:x type:B visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:B visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:B visibility:public flags:final
         EXPRESSION_BODY
           CALL 'constructor B()' type=B origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:B flags:
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/kt16904.kt
             GET_FIELD 'x: B' type=B origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
     PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
@@ -138,7 +138,7 @@ FILE fqName:<root> fileName:/kt16904.kt
           receiver: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
           value: CONST Int type=kotlin.Int value=42
     PROPERTY FAKE_OVERRIDE name:field type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD FAKE_OVERRIDE name:field type:kotlin.Int visibility:public
+      FIELD FAKE_OVERRIDE name:field type:kotlin.Int visibility:public flags:final
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

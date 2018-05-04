@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   PROPERTY name:test1 type:kotlin.Any visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Any visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Any visibility:public flags:final
       EXPRESSION_BODY
         BLOCK type=test1.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): Any'
           GET_FIELD 'test1: Any' type=kotlin.Any origin=null
   PROPERTY name:test2 type:IFoo visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:IFoo visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:IFoo visibility:public flags:final
       EXPRESSION_BODY
         BLOCK type=test2.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:

@@ -93,7 +93,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         RETURN type=kotlin.Nothing from='f() on Boolean: Int'
           CONST Int type=kotlin.Int value=3
     PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=4
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:

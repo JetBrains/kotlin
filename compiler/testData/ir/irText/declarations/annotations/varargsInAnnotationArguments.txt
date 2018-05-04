@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (xs:kotlin.IntArray) returnType:A1 flags:
       VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int flags:vararg
     PROPERTY name:xs type:kotlin.IntArray visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter vararg xs: Int' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:A1) returnType:IntArray flags:
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out kotlin.String>) returnType:A2 flags:
       VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String flags:vararg
     PROPERTY name:xs type:kotlin.Array<out kotlin.String> visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter vararg xs: String' type=kotlin.Array<out kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:A2) returnType:Array<out String> flags:
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out A1>) returnType:AA flags:
       VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out A1> varargElementType:A1 flags:vararg
     PROPERTY name:xs type:kotlin.Array<out A1> visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out A1> visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out A1> visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter vararg xs: A1' type=kotlin.Array<out A1> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:AA) returnType:Array<out A1> flags:

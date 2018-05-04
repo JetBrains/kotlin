@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -36,12 +37,21 @@ class IrFieldImpl(
     override val symbol: IrFieldSymbol,
     override val name: Name,
     override val type: KotlinType,
-    override val visibility: Visibility
+    override val visibility: Visibility,
+    override val isFinal: Boolean
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrField {
+
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrFieldSymbol, isFinal: Boolean) :
+            this(
+                startOffset, endOffset, origin, symbol,
+                symbol.descriptor.name, symbol.descriptor.type, symbol.descriptor.visibility,
+                isFinal
+            )
+
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, symbol: IrFieldSymbol) :
             this(
                 startOffset, endOffset, origin, symbol,
-                symbol.descriptor.name, symbol.descriptor.type, symbol.descriptor.visibility
+                symbol.descriptor.modality == Modality.FINAL
             )
 
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor) :

@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
       $this: VALUE_PARAMETER name:<this> type:A<T> flags:
       BLOCK_BODY
     PROPERTY name:bar type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:A<T>) returnType:Int flags:
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   PROPERTY name:test1 type:kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> visibility:public flags:final
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:KFunction1<A<String>, Unit> flags:
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): KFunction1<A<String>, Unit>'
           GET_FIELD 'test1: KFunction1<A<String>, Unit>' type=kotlin.reflect.KFunction1<A<kotlin.String>, kotlin.Unit> origin=null
   PROPERTY name:test2 type:kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> visibility:public flags:final
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'bar: Int' field=null getter='<get-bar>(): Int' setter=null type=kotlin.reflect.KProperty1<A<kotlin.String>, kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:KProperty1<A<String>, Int> flags:

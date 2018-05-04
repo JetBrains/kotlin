@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     PROPERTY name:runA type:A.(kotlin.String) -> kotlin.Unit visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:runA type:A.(kotlin.String) -> kotlin.Unit visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:runA type:A.(kotlin.String) -> kotlin.Unit visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter runA: A.(String) -> Unit = ...' type=A.(kotlin.String) -> kotlin.Unit origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-runA> visibility:public modality:FINAL <> ($this:A) returnType:[@kotlin.ExtensionFunctionType] Function2<A, String, Unit> flags:
@@ -138,7 +138,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
     PROPERTY name:x type:kotlin.Any visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Any = ...' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:B) returnType:Any flags:

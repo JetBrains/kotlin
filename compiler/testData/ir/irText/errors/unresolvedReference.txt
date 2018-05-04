@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/unresolvedReference.kt
   PROPERTY name:test1 type:[ERROR : Type for unresolved] visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:[ERROR : Type for unresolved] visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:[ERROR : Type for unresolved] visibility:public flags:final
       EXPRESSION_BODY
         ERROR_CALL '' type=[ERROR : ]
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:[ERROR : Type for unresolved] flags:
@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/unresolvedReference.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): [ERROR : Type for unresolved]'
           GET_FIELD 'test1: [ERROR : Type for unresolved]' type=[ERROR : Type for unresolved] origin=null
   PROPERTY name:test2 type:[ERROR : Unresolved] visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:[ERROR : Unresolved] visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:[ERROR : Unresolved] visibility:public flags:final
       EXPRESSION_BODY
         ERROR_CALL '' type=[ERROR : ]
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:[ERROR : Unresolved] flags:
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/unresolvedReference.kt
         RETURN type=kotlin.Nothing from='<get-test2>(): [ERROR : Unresolved]'
           GET_FIELD 'test2: [ERROR : Unresolved]' type=[ERROR : Unresolved] origin=null
   PROPERTY name:test3 type:[ERROR : Type for 42.unresolved(56)] visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:[ERROR : Type for 42.unresolved(56)] visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:[ERROR : Type for 42.unresolved(56)] visibility:public flags:final
       EXPRESSION_BODY
         ERROR_CALL '' type=[ERROR : ]
           receiver: CONST Int type=kotlin.Int value=42
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/unresolvedReference.kt
         RETURN type=kotlin.Nothing from='<get-test3>(): [ERROR : Type for 42.unresolved(56)]'
           GET_FIELD 'test3: [ERROR : Type for 42.unresolved(56)]' type=[ERROR : Type for 42.unresolved(56)] origin=null
   PROPERTY name:test4 type:[ERROR : Type for 42 *] visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:[ERROR : Type for 42 *] visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:[ERROR : Type for 42 *] visibility:public flags:final
       EXPRESSION_BODY
         ERROR_EXPR '' type=[ERROR : ]
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:[ERROR : Type for 42 *] flags:

@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
   PROPERTY name:test1 type:kotlin.Long visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Long visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Long visibility:public flags:final
       EXPRESSION_BODY
         CONST Long type=kotlin.Long value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Long flags:
@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): Long'
           GET_FIELD 'test1: Long' type=kotlin.Long origin=null
   PROPERTY name:test2 type:kotlin.Short visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Short visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Short visibility:public flags:final
       EXPRESSION_BODY
         CONST Short type=kotlin.Short value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Short flags:
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
         RETURN type=kotlin.Nothing from='<get-test2>(): Short'
           GET_FIELD 'test2: Short' type=kotlin.Short origin=null
   PROPERTY name:test3 type:kotlin.Byte visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Byte visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Byte visibility:public flags:final
       EXPRESSION_BODY
         CONST Byte type=kotlin.Byte value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:Byte flags:
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
         RETURN type=kotlin.Nothing from='<get-test3>(): Byte'
           GET_FIELD 'test3: Byte' type=kotlin.Byte origin=null
   PROPERTY name:test4 type:kotlin.Long visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Long visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Long visibility:public flags:final
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
           typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Long modality:FINAL visibility:public flags:
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
         RETURN type=kotlin.Nothing from='<get-test4>(): Long'
           GET_FIELD 'test4: Long' type=kotlin.Long origin=null
   PROPERTY name:test5 type:kotlin.Short visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Short visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Short visibility:public flags:final
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Short origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
           typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Short modality:FINAL visibility:public flags:
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
         RETURN type=kotlin.Nothing from='<get-test5>(): Short'
           GET_FIELD 'test5: Short' type=kotlin.Short origin=null
   PROPERTY name:test6 type:kotlin.Byte visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Byte visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Byte visibility:public flags:final
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Byte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
           typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Byte modality:FINAL visibility:public flags:
@@ -104,7 +104,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestImplicitArguments'
     PROPERTY name:x type:kotlin.Long visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Long visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Long visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Long = ...' type=kotlin.Long origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestImplicitArguments) returnType:Long flags:

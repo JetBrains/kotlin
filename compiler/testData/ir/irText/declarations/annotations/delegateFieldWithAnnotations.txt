@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
-    FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private
+    FIELD DELEGATE name:test1$delegate type:kotlin.Lazy<kotlin.Int> visibility:private flags:final
       annotations:
         CALL 'constructor Ann()' type=Ann origin=null
       EXPRESSION_BODY

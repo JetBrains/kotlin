@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Const'
       PROPERTY name:number type:kotlin.Double visibility:public modality:FINAL flags:val
-        FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Double visibility:public
+        FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Double visibility:public flags:final
           EXPRESSION_BODY
             GET_VAR 'value-parameter number: Double' type=kotlin.Double origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-number> visibility:public modality:FINAL <> ($this:Expr.Const) returnType:Double flags:
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Sum'
       PROPERTY name:e1 type:Expr visibility:public modality:FINAL flags:val
-        FIELD PROPERTY_BACKING_FIELD name:e1 type:Expr visibility:public
+        FIELD PROPERTY_BACKING_FIELD name:e1 type:Expr visibility:public flags:final
           EXPRESSION_BODY
             GET_VAR 'value-parameter e1: Expr' type=Expr origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e1> visibility:public modality:FINAL <> ($this:Expr.Sum) returnType:Expr flags:
@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
               GET_FIELD 'e1: Expr' type=Expr origin=null
                 receiver: GET_VAR 'this@Sum: Sum' type=Expr.Sum origin=null
       PROPERTY name:e2 type:Expr visibility:public modality:FINAL flags:val
-        FIELD PROPERTY_BACKING_FIELD name:e2 type:Expr visibility:public
+        FIELD PROPERTY_BACKING_FIELD name:e2 type:Expr visibility:public flags:final
           EXPRESSION_BODY
             GET_VAR 'value-parameter e2: Expr' type=Expr origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e2> visibility:public modality:FINAL <> ($this:Expr.Sum) returnType:Expr flags:

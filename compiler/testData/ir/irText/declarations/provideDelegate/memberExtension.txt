@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='StringDelegate'
       PROPERTY name:s type:kotlin.String visibility:public modality:FINAL flags:val
-        FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:public
+        FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:public flags:final
           EXPRESSION_BODY
             GET_VAR 'value-parameter s: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:Host.StringDelegate) returnType:String flags:
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
           CALL 'constructor StringDelegate(String)' type=Host.StringDelegate origin=null
             s: GET_VAR 'this@provideDelegate: String' type=kotlin.String origin=null
     PROPERTY name:plusK type:kotlin.String visibility:public modality:FINAL flags:delegatedmval
-      FIELD DELEGATE name:plusK$delegate type:Host.StringDelegate visibility:private
+      FIELD DELEGATE name:plusK$delegate type:Host.StringDelegate visibility:private flags:final
         EXPRESSION_BODY
           CALL 'provideDelegate(Any?, Any) on String: Host.StringDelegate' type=Host.StringDelegate origin=null
             $this: GET_VAR 'this@Host: Host' type=Host origin=null
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
               receiver: GET_VAR 'this@plusK: String' type=kotlin.String origin=null
               p: PROPERTY_REFERENCE 'plusK: String on String' field=null getter='<get-plusK>() on String: String' setter=null type=kotlin.reflect.KProperty2<kotlin.String, Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY name:ok type:kotlin.String visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           CALL '<get-plusK>() on String: String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Host: Host' type=Host origin=null

@@ -21,5 +21,6 @@ interface IrField : IrSymbolDeclaration<IrFieldSymbol> {
     val name: Name
     val type: KotlinType
     val visibility: Visibility
+    val isFinal: Boolean
     var initializer: IrExpressionBody?
 }

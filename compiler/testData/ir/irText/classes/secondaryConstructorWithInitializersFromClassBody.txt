@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
     superClasses:
       CLASS CLASS name:Base modality:OPEN visibility:public flags:
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestProperty) returnType:Int flags:
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
     superClasses:
       CLASS CLASS name:Base modality:OPEN visibility:public flags:
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestInitBlock) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:TestInitBlock flags:
         BLOCK_BODY

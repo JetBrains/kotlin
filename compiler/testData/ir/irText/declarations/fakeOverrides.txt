@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
           <T>: String
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY name:bar type:kotlin.Int visibility:public modality:OPEN flags:val
-      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public flags:
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:Test1) returnType:Int flags:

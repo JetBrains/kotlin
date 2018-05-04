@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test) returnType:Int flags:
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Test: Test' type=Test origin=null
     PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public flags:final
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:Test flags:
         BLOCK_BODY

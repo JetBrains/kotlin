@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
-    FIELD DELEGATE name:Test$IBase$delegate type:IBase<TT> visibility:private
+    FIELD DELEGATE name:Test$IBase$delegate type:IBase<TT> visibility:private flags:final
       EXPRESSION_BODY
         GET_VAR 'value-parameter impl: IBase<TT>' type=IBase<TT> origin=null
     FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <X> ($this:Test<TT>, t:TT, x:X) returnType:Unit flags:

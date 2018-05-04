@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
       $this: VALUE_PARAMETER name:<this> type:A flags:
       BLOCK_BODY
     PROPERTY name:bar type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
     $receiver: VALUE_PARAMETER name:<this> type:A flags:
     BLOCK_BODY
   PROPERTY name:test1 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public flags:final
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
           $this: CALL 'constructor A()' type=A origin=null
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): KFunction0<Unit>'
           GET_FIELD 'test1: KFunction0<Unit>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
   PROPERTY name:test2 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty0<kotlin.Int> visibility:public flags:final
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'bar: Int' field=null getter='<get-bar>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
           $this: CALL 'constructor A()' type=A origin=null
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/boundCallableReferences.kt
         RETURN type=kotlin.Nothing from='<get-test2>(): KProperty0<Int>'
           GET_FIELD 'test2: KProperty0<Int>' type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
   PROPERTY name:test3 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public flags:final
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'qux() on A: Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
           $receiver: CALL 'constructor A()' type=A origin=null

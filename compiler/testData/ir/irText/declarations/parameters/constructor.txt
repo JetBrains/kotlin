@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/constructor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY name:x type:T1 visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:T1 visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:T1 visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: T1' type=T1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test1<T1, T2>) returnType:T1 flags:
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/constructor.kt
             GET_FIELD 'x: T1' type=T1 origin=null
               receiver: GET_VAR 'this@Test1: Test1<T1, T2>' type=Test1<T1, T2> origin=null
     PROPERTY name:y type:T2 visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:y type:T2 visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:y type:T2 visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: T2' type=T2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test1<T1, T2>) returnType:T2 flags:
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/constructor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
     PROPERTY name:y type:kotlin.String visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test2) returnType:String flags:
@@ -82,7 +82,7 @@ FILE fqName:<root> fileName:/constructor.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='TestInner'
       PROPERTY name:z type:Z visibility:public modality:FINAL flags:val
-        FIELD PROPERTY_BACKING_FIELD name:z type:Z visibility:public
+        FIELD PROPERTY_BACKING_FIELD name:z type:Z visibility:public flags:final
           EXPRESSION_BODY
             GET_VAR 'value-parameter z: Z' type=Z origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:Test2.TestInner<Z>) returnType:Z flags:
@@ -139,7 +139,7 @@ FILE fqName:<root> fileName:/constructor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test3'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test3) returnType:Int flags:
@@ -149,7 +149,7 @@ FILE fqName:<root> fileName:/constructor.kt
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
     PROPERTY name:y type:kotlin.String visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String = ...' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test3) returnType:String flags:
@@ -184,7 +184,7 @@ FILE fqName:<root> fileName:/constructor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test4'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test4<T>) returnType:Int flags:

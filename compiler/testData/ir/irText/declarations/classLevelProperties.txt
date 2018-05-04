@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
     PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
           RETURN type=kotlin.Nothing from='<get-test2>(): Int'
             CONST Int type=kotlin.Int value=0
     PROPERTY name:test3 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
             receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     PROPERTY name:test4 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
             receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     PROPERTY name:test5 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
             receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     PROPERTY name:test6 type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN name:<get-test6> visibility:public modality:FINAL <> ($this:C) returnType:Int flags:
@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
             GET_FIELD 'test6: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@C: C' type=C origin=null
     PROPERTY name:test7 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
-      FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private
+      FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private flags:final
         EXPRESSION_BODY
           CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: Int
@@ -106,7 +106,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
               thisRef: GET_VAR 'this@C: C' type=C origin=null
               property: PROPERTY_REFERENCE 'test7: Int' field=null getter='<get-test7>(): Int' setter=null type=kotlin.reflect.KProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY name:test8 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmvar
-      FIELD DELEGATE name:test8$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ visibility:private
+      FIELD DELEGATE name:test8$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ visibility:private flags:final
         EXPRESSION_BODY
           CALL 'hashMapOf(): HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
             <K>: String

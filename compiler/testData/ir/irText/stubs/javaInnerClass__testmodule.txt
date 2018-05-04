@@ -6,7 +6,7 @@ MODULE_FRAGMENT name:<test-module>
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J flags:
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public modality:FINAL flags:var
-        FIELD IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public
+        FIELD IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public flags:final
       FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> ($this:J) returnType:Unit flags:
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J flags:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:JInner modality:OPEN visibility:public flags:
@@ -16,7 +16,7 @@ MODULE_FRAGMENT name:<test-module>
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> ($this:J) returnType:J.JInner flags:
           $outer: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:z type:kotlin.Int visibility:public modality:FINAL flags:var
-          FIELD IR_EXTERNAL_DECLARATION_STUB name:z type:kotlin.Int visibility:public
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:z type:kotlin.Int visibility:public flags:final
         FUN IR_EXTERNAL_DECLARATION_STUB name:foo visibility:public modality:OPEN <> ($this:J.JInner) returnType:Unit flags:
           $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J.JInner flags:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

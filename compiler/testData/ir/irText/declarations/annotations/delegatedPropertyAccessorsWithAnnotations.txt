@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:A flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:String flags:
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Cell'
     PROPERTY name:value type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:Cell) returnType:Int flags:
@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmval
-    FIELD DELEGATE name:test1$delegate type:Cell visibility:private
+    FIELD DELEGATE name:test1$delegate type:Cell visibility:private flags:final
       EXPRESSION_BODY
         CALL 'constructor Cell(Int)' type=Cell origin=null
           value: CONST Int type=kotlin.Int value=1
@@ -100,7 +100,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
             thisRef: CONST Null type=kotlin.Nothing? value=null
             kProp: PROPERTY_REFERENCE 'test1: Int' field=null getter='<get-test1>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:delegatedmvar
-    FIELD DELEGATE name:test2$delegate type:Cell visibility:private
+    FIELD DELEGATE name:test2$delegate type:Cell visibility:private flags:final
       EXPRESSION_BODY
         CALL 'constructor Cell(Int)' type=Cell origin=null
           value: CONST Int type=kotlin.Int value=2

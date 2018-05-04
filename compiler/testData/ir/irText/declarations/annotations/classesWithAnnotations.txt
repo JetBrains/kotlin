@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnn) returnType:String flags:

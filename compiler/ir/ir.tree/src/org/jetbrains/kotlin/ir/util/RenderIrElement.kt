@@ -104,7 +104,11 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
     override fun visitField(declaration: IrField, data: Nothing?): String =
         "FIELD ${declaration.renderOriginIfNonTrivial()}" +
-                "name:${declaration.name} type:${declaration.type.render()} visibility:${declaration.visibility}"
+                "name:${declaration.name} type:${declaration.type.render()} visibility:${declaration.visibility} " +
+                "flags:${declaration.renderFieldFlags()}"
+
+    private fun IrField.renderFieldFlags() =
+        if (isFinal) "final" else ""
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
         declaration.run {

@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:TestAnn) returnType:String flags:
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   PROPERTY name:testVal type:kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public flags:final
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
           x: CONST String type=kotlin.String value=testVal.field
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
         RETURN type=kotlin.Nothing from='<get-testVal>(): String'
           GET_FIELD 'testVal: String' type=kotlin.String origin=null
   PROPERTY name:testVar type:kotlin.String visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public flags:final
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
           x: CONST String type=kotlin.String value=testVar.field

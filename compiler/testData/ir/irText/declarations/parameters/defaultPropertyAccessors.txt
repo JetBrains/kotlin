@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
   PROPERTY name:test1 type:kotlin.Int visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:Int flags:
@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
           GET_FIELD 'test1: Int' type=kotlin.Int origin=null
   PROPERTY name:test2 type:kotlin.Int visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:Int flags:
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
     PROPERTY name:testMember1 type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:testMember1 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:testMember1 type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testMember1> visibility:public modality:FINAL <> ($this:Host) returnType:Int flags:
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
             GET_FIELD 'testMember1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@Host: Host' type=Host origin=null
     PROPERTY name:testMember2 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:testMember2 type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testMember2> visibility:public modality:FINAL <> ($this:Host) returnType:Int flags:
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='InPrimaryCtor'
     PROPERTY name:testInPrimaryCtor1 type:T visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor1 type:T visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor1 type:T visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter testInPrimaryCtor1: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testInPrimaryCtor1> visibility:public modality:FINAL <> ($this:InPrimaryCtor<T>) returnType:T flags:
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/defaultPropertyAccessors.kt
             GET_FIELD 'testInPrimaryCtor1: T' type=T origin=null
               receiver: GET_VAR 'this@InPrimaryCtor: InPrimaryCtor<T>' type=InPrimaryCtor<T> origin=null
     PROPERTY name:testInPrimaryCtor2 type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:testInPrimaryCtor2 type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter testInPrimaryCtor2: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testInPrimaryCtor2> visibility:public modality:FINAL <> ($this:InPrimaryCtor<T>) returnType:Int flags:

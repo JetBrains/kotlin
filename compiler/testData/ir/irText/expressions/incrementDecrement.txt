@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/incrementDecrement.kt
   PROPERTY name:p type:kotlin.Int visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:Int flags:
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         SET_FIELD 'p: Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   PROPERTY name:arr type:kotlin.IntArray visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:arr type:kotlin.IntArray visibility:public flags:final
       EXPRESSION_BODY
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int

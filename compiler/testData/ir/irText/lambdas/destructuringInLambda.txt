@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR 'this@A: A' type=A origin=null
     PROPERTY name:y type:kotlin.Int visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:A) returnType:Int flags:
@@ -140,7 +140,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
         RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value=true
   PROPERTY name:fn type:(A) -> kotlin.Int visibility:public modality:FINAL flags:var
-    FIELD PROPERTY_BACKING_FIELD name:fn type:(A) -> kotlin.Int visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:fn type:(A) -> kotlin.Int visibility:public flags:final
       EXPRESSION_BODY
         BLOCK type=(A) -> kotlin.Int origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<name for destructuring parameter 0>:A) returnType:Int flags:

@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/delegatedImplementationWithExplicitOverride.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
-    FIELD DELEGATE name:C$IFooBar$delegate type:FooBarImpl visibility:private
+    FIELD DELEGATE name:C$IFooBar$delegate type:FooBarImpl visibility:private flags:final
       EXPRESSION_BODY
         GET_OBJECT 'FooBarImpl' type=FooBarImpl
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:C) returnType:Unit flags:

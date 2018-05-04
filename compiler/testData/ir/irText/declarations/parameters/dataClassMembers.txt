@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     PROPERTY name:x type:T visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:x type:T visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x type:T visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test<T>) returnType:T flags:
@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
             GET_FIELD 'x: T' type=T origin=null
               receiver: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
     PROPERTY name:y type:kotlin.String visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public flags:final
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String = ...' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Test<T>) returnType:String flags:

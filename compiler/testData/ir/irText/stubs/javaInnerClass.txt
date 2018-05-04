@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor J()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
     PROPERTY name:test type:J.JInner visibility:public modality:FINAL flags:val
-      FIELD PROPERTY_BACKING_FIELD name:test type:J.JInner visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:test type:J.JInner visibility:public flags:final
         EXPRESSION_BODY
           CALL 'constructor JInner()' type=J.JInner origin=null
             $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
             GET_FIELD 'test: J.JInner' type=J.JInner origin=null
               receiver: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
     PROPERTY FAKE_OVERRIDE name:x type:kotlin.Int visibility:public modality:FINAL flags:var
-      FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public
+      FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public flags:final
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:J) returnType:Unit flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> ($this:J) returnType:Unit flags:

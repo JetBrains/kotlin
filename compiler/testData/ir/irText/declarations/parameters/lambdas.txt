@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/lambdas.kt
   PROPERTY name:test1 type:(kotlin.String) -> kotlin.String visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:(kotlin.String) -> kotlin.String visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:(kotlin.String) -> kotlin.String visibility:public flags:final
       EXPRESSION_BODY
         BLOCK type=(kotlin.String) -> kotlin.String origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:String flags:
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/lambdas.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): (String) -> String'
           GET_FIELD 'test1: (String) -> String' type=(kotlin.String) -> kotlin.String origin=null
   PROPERTY name:test2 type:kotlin.Any.(kotlin.Any) -> kotlin.Any visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Any.(kotlin.Any) -> kotlin.Any visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Any.(kotlin.Any) -> kotlin.Any visibility:public flags:final
       EXPRESSION_BODY
         BLOCK type=kotlin.Any.(kotlin.Any) -> kotlin.Int origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Any, it:kotlin.Any) returnType:Int flags:
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/lambdas.kt
         RETURN type=kotlin.Nothing from='<get-test2>(): Any.(Any) -> Any'
           GET_FIELD 'test2: Any.(Any) -> Any' type=kotlin.Any.(kotlin.Any) -> kotlin.Any origin=null
   PROPERTY name:test3 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public flags:final
       EXPRESSION_BODY
         BLOCK type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.Int) returnType:Unit flags:
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/lambdas.kt
         RETURN type=kotlin.Nothing from='<get-test3>(): (Int, Int) -> Unit'
           GET_FIELD 'test3: (Int, Int) -> Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=null
   PROPERTY name:test4 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:(kotlin.Int, kotlin.Int) -> kotlin.Unit visibility:public flags:final
       EXPRESSION_BODY
         BLOCK type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=ANONYMOUS_FUNCTION
           FUN name:<no name provided> visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.Int) returnType:Unit flags:
