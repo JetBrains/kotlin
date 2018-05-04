@@ -19,6 +19,7 @@ public final class Constructor {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+@kotlin.UseExperimental(markerClass = {api.E::class}) public typealias TypeAlias = api.Foo
 
 package api {
 

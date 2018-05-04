@@ -52,3 +52,6 @@ fun expression(): String {
     val s = @UseExperimental(E::class) Foo().s
     return s
 }
+
+@UseExperimental(E::class)
+typealias TypeAlias = Foo
