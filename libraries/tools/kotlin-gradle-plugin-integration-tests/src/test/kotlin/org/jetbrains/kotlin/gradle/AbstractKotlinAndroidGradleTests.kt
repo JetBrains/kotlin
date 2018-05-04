@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.util.VersionNumber
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
@@ -10,7 +9,9 @@ import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
+class KotlinAndroidGradleIT :
+    AbstractKotlinAndroidGradleTests(gradleVersion = GradleVersionRequired.AtLeast("3.4"), androidGradlePluginVersion = "2.3.0")
+
 class KotlinAndroidWithJackGradleIT : AbstractKotlinAndroidWithJackGradleTests(androidGradlePluginVersion = "2.3.+")
 
 // TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
@@ -31,17 +32,17 @@ abstract class KotlinAndroid3GradleIT(
         File(project.projectDir, "Lib/build.gradle").modify { text ->
             // Change the applied plugin to com.android.feature
             text.replace("com.android.library", "com.android.feature")
-                    .replace("compileSdkVersion 22", "compileSdkVersion 26")
-                    .apply { assert(!equals(text)) }
+                .replace("compileSdkVersion 22", "compileSdkVersion 26")
+                .apply { assert(!equals(text)) }
         }
 
         // Check that Kotlin tasks were created for both lib and feature variants:
         val kotlinTaskNames =
-                listOf("Debug", "Release").flatMap { buildType ->
-                    listOf("Flavor1", "Flavor2").flatMap { flavor ->
-                        listOf("", "Feature").map { isFeature -> ":Lib:compile$flavor$buildType${isFeature}Kotlin" }
-                    }
+            listOf("Debug", "Release").flatMap { buildType ->
+                listOf("Flavor1", "Flavor2").flatMap { flavor ->
+                    listOf("", "Feature").map { isFeature -> ":Lib:compile$flavor$buildType${isFeature}Kotlin" }
                 }
+            }
 
         project.build(":Lib:assemble") {
             assertSuccessful()
@@ -56,8 +57,10 @@ abstract class AbstractKotlinAndroidGradleTests(
 ) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = KotlinTestUtils.findAndroidSdk(),
-                                             androidGradlePluginVersion = androidGradlePluginVersion)
+        super.defaultBuildOptions().copy(
+            androidHome = KotlinTestUtils.findAndroidSdk(),
+            androidGradlePluginVersion = androidGradlePluginVersion
+        )
 
     @Test
     fun testSimpleCompile() {
@@ -132,11 +135,13 @@ abstract class AbstractKotlinAndroidGradleTests(
         }
 
         val getSomethingKt = project.projectDir.walk().filter { it.isFile && it.name.endsWith("getSomething.kt") }.first()
-        getSomethingKt.writeText("""
+        getSomethingKt.writeText(
+            """
 package foo
 
 fun getSomething() = 10
-""")
+"""
+        )
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
@@ -149,8 +154,8 @@ fun getSomething() = 10
     fun testIncrementalBuildWithNoChanges() {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val tasksToExecute = arrayOf(
-                ":app:compileDebugKotlin",
-                ":app:compileDebugJavaWithJavac"
+            ":app:compileDebugKotlin",
+            ":app:compileDebugJavaWithJavac"
         )
 
         project.build("assembleDebug") {
@@ -174,8 +179,12 @@ fun getSomething() = 10
         }
 
         val androidModuleKt = project.projectDir.getFileByName("AndroidModule.kt")
-        androidModuleKt.modify { it.replace("fun provideApplicationContext(): Context {",
-                                            "fun provideApplicationContext(): Context? {") }
+        androidModuleKt.modify {
+            it.replace(
+                "fun provideApplicationContext(): Context {",
+                "fun provideApplicationContext(): Context? {"
+            )
+        }
         // rebuilt because DaggerApplicationComponent.java was regenerated
         val baseApplicationKt = project.projectDir.getFileByName("BaseApplication.kt")
         // rebuilt because BuildConfig.java was regenerated (timestamp was changed)
@@ -183,11 +192,13 @@ fun getSomething() = 10
 
         project.build(":app:assembleDebug", options = options) {
             assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(
+            assertCompiledKotlinSources(
+                project.relativize(
                     androidModuleKt,
                     baseApplicationKt,
                     useBuildConfigJavaKt
-            ))
+                )
+            )
         }
     }
 
@@ -231,7 +242,7 @@ fun getSomething() = 10
         project.build("assembleDebug", options = options) {
             assertSuccessful()
             val affectedSources = project.projectDir.getFilesByNames(
-                    "MyActivity.kt", "noLayoutUsages.kt"
+                "MyActivity.kt", "noLayoutUsages.kt"
             )
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths)
@@ -304,14 +315,16 @@ fun getSomething() = 10
 
 
 abstract class AbstractKotlinAndroidWithJackGradleTests(
-        private val androidGradlePluginVersion: String
+    private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
     fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = KotlinTestUtils.findAndroidSdk(),
-                    androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18()))
+        super.defaultBuildOptions().copy(
+            androidHome = KotlinTestUtils.findAndroidSdk(),
+            androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18())
+        )
 
     @Test
     fun testSimpleCompile() {

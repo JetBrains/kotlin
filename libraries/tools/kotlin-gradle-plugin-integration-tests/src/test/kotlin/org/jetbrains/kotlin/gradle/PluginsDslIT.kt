@@ -33,12 +33,13 @@ class PluginsDslIT : BaseGradleIT() {
         val project = projectWithMavenLocalPlugins("applyAllPlugins")
 
         val kotlinPluginClasses = setOf(
-                "org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper",
-                "org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin",
-                "org.jetbrains.kotlin.allopen.gradle.AllOpenGradleSubplugin",
-                "org.jetbrains.kotlin.allopen.gradle.SpringGradleSubplugin",
-                "org.jetbrains.kotlin.noarg.gradle.NoArgGradleSubplugin",
-                "org.jetbrains.kotlin.noarg.gradle.KotlinJpaSubplugin")
+            "org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper",
+            "org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin",
+            "org.jetbrains.kotlin.allopen.gradle.AllOpenGradleSubplugin",
+            "org.jetbrains.kotlin.allopen.gradle.SpringGradleSubplugin",
+            "org.jetbrains.kotlin.noarg.gradle.NoArgGradleSubplugin",
+            "org.jetbrains.kotlin.noarg.gradle.KotlinJpaSubplugin"
+        )
 
         project.build("build") {
             assertSuccessful()
@@ -81,12 +82,12 @@ class PluginsDslIT : BaseGradleIT() {
         }
 
         result.projectDir.walkTopDown()
-                .filter { it.isFile && it.name == "build.gradle" }
-                .forEach { buildGradle ->
-                    buildGradle.modify { text ->
-                        text.replace(PLUGIN_MARKER_VERSION_PLACEHOLDER, MARKER_VERSION)
-                    }
+            .filter { it.isFile && it.name == "build.gradle" }
+            .forEach { buildGradle ->
+                buildGradle.modify { text ->
+                    text.replace(PLUGIN_MARKER_VERSION_PLACEHOLDER, MARKER_VERSION)
                 }
+            }
 
         return result
     }
@@ -97,10 +98,7 @@ class PluginsDslIT : BaseGradleIT() {
 private object MavenLocalUrlProvider {
     /** The URL that points to the Gradle's mavenLocal() repository. */
     val mavenLocalUrl by lazy {
-        val path = propertyMavenLocalRepoPath ?:
-                homeSettingsLocalRepoPath ?:
-                m2HomeSettingsLocalRepoPath ?:
-                defaultM2RepoPath
+        val path = propertyMavenLocalRepoPath ?: homeSettingsLocalRepoPath ?: m2HomeSettingsLocalRepoPath ?: defaultM2RepoPath
         File(path).toURI().toString()
     }
 

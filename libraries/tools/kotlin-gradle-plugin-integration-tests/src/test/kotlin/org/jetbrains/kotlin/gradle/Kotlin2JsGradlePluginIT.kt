@@ -20,15 +20,16 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertReportExists()
 
             assertContains(
-                    ":libraryProject:jarSources",
-                    ":mainProject:compileKotlin2Js",
-                    ":libraryProject:compileKotlin2Js"
+                ":libraryProject:jarSources",
+                ":mainProject:compileKotlin2Js",
+                ":libraryProject:compileKotlin2Js"
             )
 
-            listOf("mainProject/web/js/app.js",
-                    "mainProject/web/js/lib/kotlin.js",
-                    "libraryProject/build/kotlin2js/main/test-library.js",
-                    "mainProject/web/js/app.js.map"
+            listOf(
+                "mainProject/web/js/app.js",
+                "mainProject/web/js/lib/kotlin.js",
+                "libraryProject/build/kotlin2js/main/test-library.js",
+                "mainProject/web/js/app.js.map"
             ).forEach { assertFileExists(it) }
         }
 
@@ -67,8 +68,10 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             val jarPath = "build/libs/kotlin2JsNoOutputFileProject.jar"
             assertFileExists(jarPath)
             val jar = ZipFile(fileInWorkingDir(jarPath))
-            assertEquals(1, jar.entries().asSequence().count { it.name == "kotlin2JsNoOutputFileProject.js" },
-                         "The jar should contain an entry `kotlin2JsNoOutputFileProject.js` with no duplicates")
+            assertEquals(
+                1, jar.entries().asSequence().count { it.name == "kotlin2JsNoOutputFileProject.js" },
+                "The jar should contain an entry `kotlin2JsNoOutputFileProject.js` with no duplicates"
+            )
         }
     }
 
@@ -83,8 +86,10 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             val jarPath = "build/libs/kotlin2JsModuleKind.jar"
             assertFileExists(jarPath)
             val jar = ZipFile(fileInWorkingDir(jarPath))
-            assertEquals(1, jar.entries().asSequence().count { it.name == "app.js" },
-                         "The jar should contain an entry `app.js` with no duplicates")
+            assertEquals(
+                1, jar.entries().asSequence().count { it.name == "app.js" },
+                "The jar should contain an entry `app.js` with no duplicates"
+            )
         }
     }
 
@@ -116,8 +121,8 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertSuccessful()
 
             assertContains(
-                    ":compileKotlin2Js",
-                    ":compileTestKotlin2Js"
+                ":compileKotlin2Js",
+                ":compileTestKotlin2Js"
             )
 
             assertFileExists("build/kotlin2js/main/module.js")
@@ -142,8 +147,8 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertSuccessful()
 
             assertContains(
-                    ":compileKotlin2Js",
-                    ":compileIntegrationTestKotlin2Js"
+                ":compileKotlin2Js",
+                ":compileIntegrationTestKotlin2Js"
             )
 
             assertFileExists("build/kotlin2js/main/module.js")
@@ -152,8 +157,10 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             val jarPath = "build/libs/kotlin2JsProjectWithCustomSourceset-inttests.jar"
             assertFileExists(jarPath)
             val jar = ZipFile(fileInWorkingDir(jarPath))
-            assertEquals(1, jar.entries().asSequence().count { it.name == "module-inttests.js" },
-                         "The jar should contain an entry `module-inttests.js` with no duplicates")
+            assertEquals(
+                1, jar.entries().asSequence().count { it.name == "module-inttests.js" },
+                "The jar should contain an entry `module-inttests.js` with no duplicates"
+            )
         }
     }
 
@@ -238,9 +245,9 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.setupWorkingDir()
         File(project.projectDir, "mainProject/build.gradle").modify {
             it + "\n" +
-            "runDceKotlinJs.dceOptions.outputDirectory = \"\${buildDir}/min\"\n" +
-            "runRhino.args = [\"-f\", \"min/kotlin.js\", \"-f\", \"min/examplelib.js\", \"-f\", \"min/exampleapp.js\"," +
-                "\"-f\", \"../check.js\"]\n"
+                    "runDceKotlinJs.dceOptions.outputDirectory = \"\${buildDir}/min\"\n" +
+                    "runRhino.args = [\"-f\", \"min/kotlin.js\", \"-f\", \"min/examplelib.js\", \"-f\", \"min/exampleapp.js\"," +
+                    "\"-f\", \"../check.js\"]\n"
         }
 
         project.build("runRhino") {
@@ -262,7 +269,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.setupWorkingDir()
         File(project.projectDir, "mainProject/build.gradle").modify {
             it + "\n" +
-            "runDceKotlinJs.dceOptions.devMode = true\n"
+                    "runDceKotlinJs.dceOptions.devMode = true\n"
         }
 
         project.build("runRhino") {

@@ -113,7 +113,8 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
         }
     }
 
-    @Test fun testApplyPluginFromBuildSrc() {
+    @Test
+    fun testApplyPluginFromBuildSrc() {
         val project = Project("kotlinProjectWithBuildSrc", gradleVersion)
         project.setupWorkingDir()
         File(project.projectDir, "buildSrc/build.gradle").modify { it.replace("\$kotlin_version", KOTLIN_VERSION) }
@@ -135,8 +136,10 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
     fun testJavaLibraryCompatibility() {
         val project = Project("javaLibraryProject", gradleVersion)
 
-        Assume.assumeTrue("The java-library plugin is supported only in Gradle 3.4+ (current: $gradleVersion)",
-                project.testGradleVersionAtLeast("3.4"))
+        Assume.assumeTrue(
+            "The java-library plugin is supported only in Gradle 3.4+ (current: $gradleVersion)",
+            project.testGradleVersionAtLeast("3.4")
+        )
 
         val compileKotlinTasks = listOf(":libA:compileKotlin", ":libB:compileKotlin", ":app:compileKotlin")
         project.build("build") {
@@ -149,8 +152,8 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
         for (path in listOf("libA/src/main/kotlin/HelloA.kt", "libB/src/main/kotlin/HelloB.kt", "app/src/main/kotlin/App.kt")) {
             File(project.projectDir, path).modify { original ->
                 original.replace("helloA", "helloA1")
-                        .replace("helloB", "helloB1")
-                        .apply { assert(!equals(original)) }
+                    .replace("helloB", "helloB1")
+                    .apply { assert(!equals(original)) }
             }
         }
 

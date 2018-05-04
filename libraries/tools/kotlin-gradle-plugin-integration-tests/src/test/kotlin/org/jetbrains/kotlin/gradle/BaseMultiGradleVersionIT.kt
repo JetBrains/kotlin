@@ -7,7 +7,8 @@ import org.junit.runners.Parameterized.Parameters
 
 @RunWith(Parameterized::class)
 abstract class BaseMultiGradleVersionIT : BaseGradleIT() {
-    @Parameter lateinit var gradleVersionString: String
+    @Parameter
+    lateinit var gradleVersionString: String
 
     protected val gradleVersion get() = GradleVersionRequired.Exact(gradleVersionString)
 

@@ -11,7 +11,7 @@ class KaptIncrementalWithStubsIT : KaptIncrementalBaseIT(shouldUseStubs = true)
 
 class Kapt3Incremental : KaptIncrementalBaseIT(shouldUseStubs = false, useKapt3 = true)
 
-abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: Boolean = false): BaseGradleIT() {
+abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: Boolean = false) : BaseGradleIT() {
     init {
         if (useKapt3) {
             assert(!shouldUseStubs)
@@ -46,10 +46,10 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
         }
 
     private val annotatedElements =
-            arrayOf("A", "funA", "valA", "funUtil", "valUtil", "B", "funB", "valB", "useB")
+        arrayOf("A", "funA", "valA", "funUtil", "valUtil", "B", "funB", "valB", "useB")
 
     override fun defaultBuildOptions(): BuildOptions =
-            super.defaultBuildOptions().copy(incremental = true)
+        super.defaultBuildOptions().copy(incremental = true)
 
     @Test
     fun testBasic() {
@@ -65,12 +65,16 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE",
-                           ":compileJava UP-TO-DATE")
+            assertContains(
+                ":compileKotlin UP-TO-DATE",
+                ":compileJava UP-TO-DATE"
+            )
 
             if (useKapt3) {
-                assertContains(":kaptKotlin UP-TO-DATE",
-                               ":kaptGenerateStubsKotlin UP-TO-DATE")
+                assertContains(
+                    ":kaptKotlin UP-TO-DATE",
+                    ":kaptGenerateStubsKotlin UP-TO-DATE"
+                )
             }
 
             if (shouldUseStubs) {
@@ -171,7 +175,7 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
             }
         }
 
-        with (project.projectDir) {
+        with(project.projectDir) {
             getFileByName("B.kt").delete()
             getFileByName("useB.kt").delete()
         }
@@ -222,14 +226,14 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
                 assertCompiledKotlinSources(project.relativize(bKt, useBKt), tasks = listOf("kaptGenerateStubsKotlin"))
 
                 // java removal is detected
-                assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()),
-                        tasks = listOf("compileKotlin"))
-            }
-            else if (shouldUseStubs) {
+                assertCompiledKotlinSources(
+                    project.relativize(project.projectDir.allKotlinFiles()),
+                    tasks = listOf("compileKotlin")
+                )
+            } else if (shouldUseStubs) {
                 // java removal is detected
                 assertCompiledKotlinSources(project.relativize(project.projectDir.allKotlinFiles()))
-            }
-            else {
+            } else {
                 val useBKt = project.projectDir.getFileByName("useB.kt")
                 assertCompiledKotlinSources(project.relativize(bKt, useBKt))
             }
@@ -258,12 +262,14 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
     }
 
     private fun CompiledProject.assertCompiledKotlinSourcesHandleKapt3(
-            sources: Iterable<String>,
-            weakTesting: Boolean = false
+        sources: Iterable<String>,
+        weakTesting: Boolean = false
     ) {
         if (useKapt3) {
-            assertCompiledKotlinSources(sources, weakTesting,
-                    tasks = listOf("compileKotlin", "kaptGenerateStubsKotlin"))
+            assertCompiledKotlinSources(
+                sources, weakTesting,
+                tasks = listOf("compileKotlin", "kaptGenerateStubsKotlin")
+            )
         } else {
             assertCompiledKotlinSources(sources, weakTesting)
         }
@@ -271,8 +277,10 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
 
     private fun CompiledProject.assertKapt3FullyExecuted() {
         if (useKapt3) {
-            assertNotContains(":kaptKotlin UP-TO-DATE",
-                    ":kaptGenerateStubsKotlin UP-TO-DATE")
+            assertNotContains(
+                ":kaptKotlin UP-TO-DATE",
+                ":kaptGenerateStubsKotlin UP-TO-DATE"
+            )
         }
     }
 
@@ -300,8 +308,7 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
 
         if (shouldUseStubs) {
             assertContains(usingStubs)
-        }
-        else {
+        } else {
             assertNotContains(usingStubs)
         }
     }

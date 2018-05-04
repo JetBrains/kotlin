@@ -28,7 +28,7 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class KotlinGradleIT: BaseGradleIT() {
+class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testCrossCompile() {
@@ -42,7 +42,12 @@ class KotlinGradleIT: BaseGradleIT() {
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE", ":compileDeployKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
+            assertContains(
+                ":compileKotlin UP-TO-DATE",
+                ":compileTestKotlin UP-TO-DATE",
+                ":compileDeployKotlin UP-TO-DATE",
+                ":compileJava UP-TO-DATE"
+            )
         }
     }
 
@@ -98,7 +103,7 @@ class KotlinGradleIT: BaseGradleIT() {
         val MEMORY_MAX_GROWTH_LIMIT_KB = 500
         val BUILD_COUNT = 15
         val reportMemoryUsage = "-Dkotlin.gradle.test.report.memory.usage=true"
-        val options =  BaseGradleIT.BuildOptions(withDaemon = true)
+        val options = BaseGradleIT.BuildOptions(withDaemon = true)
 
         fun exitTestDaemon() {
             project.build(userVariantArg, reportMemoryUsage, "exit", options = options) {
@@ -113,7 +118,7 @@ class KotlinGradleIT: BaseGradleIT() {
             project.build(userVariantArg, reportMemoryUsage, "clean", "build", options = options) {
                 assertSuccessful()
                 val matches = "\\[KOTLIN\\]\\[PERF\\] Used memory after build: (\\d+) kb \\(difference since build start: ([+-]?\\d+) kb\\)"
-                        .toRegex().find(output)
+                    .toRegex().find(output)
                 assert(matches != null && matches.groups.size == 3) { "Used memory after build is not reported by plugin" }
                 reportedMemory = matches!!.groupValues[1].toInt()
             }
@@ -131,15 +136,16 @@ class KotlinGradleIT: BaseGradleIT() {
             val totalMaximum = usedMemory.max()!!
 
             val maxGrowth = totalMaximum - establishedMaximum
-            assertTrue(maxGrowth <= MEMORY_MAX_GROWTH_LIMIT_KB,
-                    "Maximum used memory over series of builds growth $maxGrowth (from $establishedMaximum to $totalMaximum) kb > $MEMORY_MAX_GROWTH_LIMIT_KB kb")
+            assertTrue(
+                maxGrowth <= MEMORY_MAX_GROWTH_LIMIT_KB,
+                "Maximum used memory over series of builds growth $maxGrowth (from $establishedMaximum to $totalMaximum) kb > $MEMORY_MAX_GROWTH_LIMIT_KB kb"
+            )
 
             // testing that nothing remains locked by daemon, see KT-9440
             project.build(userVariantArg, "clean", options = BaseGradleIT.BuildOptions(withDaemon = true)) {
                 assertSuccessful()
             }
-        }
-        finally {
+        } finally {
             exitTestDaemon()
         }
     }
@@ -194,8 +200,10 @@ class KotlinGradleIT: BaseGradleIT() {
         project.build("build", options = options) {
             assertSuccessful()
             assertNoWarnings()
-            val affectedSources = project.projectDir.getFilesByNames("Greeter.kt", "KotlinGreetingJoiner.kt",
-                    "TestGreeter.kt", "TestKotlinGreetingJoiner.kt")
+            val affectedSources = project.projectDir.getFilesByNames(
+                "Greeter.kt", "KotlinGreetingJoiner.kt",
+                "TestGreeter.kt", "TestKotlinGreetingJoiner.kt"
+            )
             assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
         }
     }
@@ -511,7 +519,7 @@ class KotlinGradleIT: BaseGradleIT() {
 
         fun updateBuildGradle(langVersion: String, apiVersion: String) {
             buildGradle.writeText(
-                    """
+                """
                 $buildGradleContentCopy
 
                 compileKotlin {
@@ -520,7 +528,8 @@ class KotlinGradleIT: BaseGradleIT() {
                         apiVersion = '$apiVersion'
                     }
                 }
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
 
         assert(buildGradleContentCopy.indexOf("languageVersion") < 0) { "build.gradle should not contain 'languageVersion'" }
@@ -605,17 +614,20 @@ class KotlinGradleIT: BaseGradleIT() {
 
             // Check that the Java source in a non-full-depth package structure was located correctly:
             checkBytecodeContains(
-                    File(project.projectDir, kotlinClassesDir() + "my/pack/name/app/MyApp.class"),
-                    "my/pack/name/util/JUtil.util")
+                File(project.projectDir, kotlinClassesDir() + "my/pack/name/app/MyApp.class"),
+                "my/pack/name/util/JUtil.util"
+            )
         }
     }
 
     @Test
     fun testDisableSeparateClassesDirs() {
 
-        fun CompiledProject.check(copyClassesToJavaOutput: Boolean?,
-                                  expectBuildCacheWarning: Boolean,
-                                  expectGradleLowVersionWarning: Boolean) {
+        fun CompiledProject.check(
+            copyClassesToJavaOutput: Boolean?,
+            expectBuildCacheWarning: Boolean,
+            expectGradleLowVersionWarning: Boolean
+        ) {
 
             val separateDirPath = kotlinClassesDir() + "demo/KotlinGreetingJoiner.class"
             val singleDirPath = javaClassesDir() + "demo/KotlinGreetingJoiner.class"
@@ -645,20 +657,26 @@ class KotlinGradleIT: BaseGradleIT() {
 
         Project("simpleProject", GradleVersionRequired.Exact("4.0")).apply {
             build("build") {
-                check(copyClassesToJavaOutput = false,
-                        expectBuildCacheWarning = false,
-                        expectGradleLowVersionWarning = false)
+                check(
+                    copyClassesToJavaOutput = false,
+                    expectBuildCacheWarning = false,
+                    expectGradleLowVersionWarning = false
+                )
             }
             File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
             build("clean", "build") {
-                check(copyClassesToJavaOutput = true,
-                        expectBuildCacheWarning = false,
-                        expectGradleLowVersionWarning = false)
+                check(
+                    copyClassesToJavaOutput = true,
+                    expectBuildCacheWarning = false,
+                    expectGradleLowVersionWarning = false
+                )
             }
             build("clean", "build", options = defaultBuildOptions().copy(withBuildCache = true)) {
-                check(copyClassesToJavaOutput = true,
-                        expectBuildCacheWarning = true,
-                        expectGradleLowVersionWarning = false)
+                check(
+                    copyClassesToJavaOutput = true,
+                    expectBuildCacheWarning = true,
+                    expectGradleLowVersionWarning = false
+                )
             }
             projectDir.deleteRecursively()
         }
@@ -667,9 +685,11 @@ class KotlinGradleIT: BaseGradleIT() {
             setupWorkingDir()
             File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
             build("build") {
-                check(copyClassesToJavaOutput = null,
-                        expectBuildCacheWarning = false,
-                        expectGradleLowVersionWarning = true)
+                check(
+                    copyClassesToJavaOutput = null,
+                    expectBuildCacheWarning = false,
+                    expectGradleLowVersionWarning = true
+                )
             }
         }
     }
@@ -678,7 +698,8 @@ class KotlinGradleIT: BaseGradleIT() {
     fun testSrcDirTaskDependency() {
         Project("simpleProject", GradleVersionRequired.AtLeast("4.1")).apply {
             setupWorkingDir()
-            File(projectDir, "build.gradle").appendText("""${'\n'}
+            File(projectDir, "build.gradle").appendText(
+                """${'\n'}
                 task generateSources {
                     outputs.dir('generated')
                     doLast {
@@ -692,10 +713,13 @@ class KotlinGradleIT: BaseGradleIT() {
                     }
                 }
                 sourceSets.main.java.srcDir(tasks.generateSources)
-                """.trimIndent())
-            File(projectDir, "src/main/kotlin/helloWorld.kt").appendText("""${'\n'}
+                """.trimIndent()
+            )
+            File(projectDir, "src/main/kotlin/helloWorld.kt").appendText(
+                """${'\n'}
                 fun usageOfGeneratedSource() = test.TestClass()
-                """.trimIndent())
+                """.trimIndent()
+            )
 
             build("build") {
                 assertSuccessful()
@@ -712,7 +736,8 @@ class KotlinGradleIT: BaseGradleIT() {
             File(projectDir, additionalSrcDir).mkdirs()
             File(projectDir, "$additionalSrcDir/additionalSource.kt").writeText("fun hello() = 123")
 
-            File(projectDir, "build.gradle").appendText("""${'\n'}
+            File(projectDir, "build.gradle").appendText(
+                """${'\n'}
                 task sourcesJar(type: Jar) {
                     from sourceSets.main.allSource
                     classifier 'source'
@@ -720,7 +745,8 @@ class KotlinGradleIT: BaseGradleIT() {
                 }
 
                 sourceSets.main.kotlin.srcDir('$additionalSrcDir') // test that additional srcDir is included
-                """.trimIndent())
+                """.trimIndent()
+            )
 
             build("sourcesJar") {
                 assertSuccessful()

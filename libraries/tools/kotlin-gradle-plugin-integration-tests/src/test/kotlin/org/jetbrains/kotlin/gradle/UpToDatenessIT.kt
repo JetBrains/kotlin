@@ -10,26 +10,36 @@ import java.io.File
 class UpToDateIT : BaseGradleIT() {
     @Test
     fun testLanguageVersionChange() {
-        testMutations(*propertyMutationChain("compileKotlin.kotlinOptions.languageVersion",
-                                             "null", "'1.1'", "'1.0'", "null"))
+        testMutations(
+            *propertyMutationChain(
+                "compileKotlin.kotlinOptions.languageVersion",
+                "null", "'1.1'", "'1.0'", "null"
+            )
+        )
     }
 
     @Test
     fun testApiVersionChange() {
-        testMutations(*propertyMutationChain("compileKotlin.kotlinOptions.apiVersion",
-                                             "null", "'1.1'", "'1.0'", "null"))
+        testMutations(
+            *propertyMutationChain(
+                "compileKotlin.kotlinOptions.apiVersion",
+                "null", "'1.1'", "'1.0'", "null"
+            )
+        )
     }
 
     @Test
     fun testOther() {
-        testMutations(emptyMutation,
-                      OptionMutation("compileKotlin.kotlinOptions.jvmTarget", "'1.6'", "'1.8'"),
-                      OptionMutation("compileKotlin.kotlinOptions.freeCompilerArgs", "[]", "['-Xallow-kotlin-package']"),
-                      OptionMutation("kotlin.experimental.coroutines", "'error'", "'enable'"),
-                      OptionMutation("archivesBaseName", "'someName'", "'otherName'"),
-                      subpluginOptionMutation,
-                      externalOutputMutation,
-                      compilerClasspathMutation)
+        testMutations(
+            emptyMutation,
+            OptionMutation("compileKotlin.kotlinOptions.jvmTarget", "'1.6'", "'1.8'"),
+            OptionMutation("compileKotlin.kotlinOptions.freeCompilerArgs", "[]", "['-Xallow-kotlin-package']"),
+            OptionMutation("kotlin.experimental.coroutines", "'error'", "'enable'"),
+            OptionMutation("archivesBaseName", "'someName'", "'otherName'"),
+            subpluginOptionMutation,
+            externalOutputMutation,
+            compilerClasspathMutation
+        )
     }
 
     private fun testMutations(vararg mutations: ProjectMutation) {
@@ -44,8 +54,7 @@ class UpToDateIT : BaseGradleIT() {
                 try {
                     assertSuccessful()
                     it.checkAfterRebuild(this)
-                }
-                catch (e: Throwable) {
+                } catch (e: Throwable) {
                     throw RuntimeException("Mutation '${it.name}' has failed", e)
                 }
             }
@@ -103,11 +112,13 @@ class UpToDateIT : BaseGradleIT() {
         override val name: String get() = "subpluginOptionMutation"
 
         override fun initProject(project: Project) = with(project) {
-            buildGradle.appendText("\n" + """
+            buildGradle.appendText(
+                "\n" + """
                 buildscript { dependencies { classpath "org.jetbrains.kotlin:kotlin-allopen:${'$'}kotlin_version" } }
                 apply plugin: "kotlin-allopen"
                 allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
 
         override fun mutateProject(project: Project) = with(project) {
@@ -131,7 +142,7 @@ class UpToDateIT : BaseGradleIT() {
                 if (testGradleVersionAtLeast("4.0"))
                     project.classesDir()
                 else
-                    // Before 4.0, we should delete the classes from the temporary dir to make compileKotlin rerun:
+                // Before 4.0, we should delete the classes from the temporary dir to make compileKotlin rerun:
                     "build/kotlin-classes/main/"
 
             helloWorldKtClass = File(projectDir, kotlinOutputPath + "demo/KotlinGreetingJoiner.class")
@@ -155,12 +166,12 @@ class UpToDateIT : BaseGradleIT() {
     }
 
     private fun propertyMutationChain(path: String, vararg values: String): Array<ProjectMutation> =
-            arrayListOf<ProjectMutation>().apply {
-                for (i in 1..values.lastIndex) {
-                    add(OptionMutation(path, values[i - 1], values[i], shouldInit = i == 1))
-                }
+        arrayListOf<ProjectMutation>().apply {
+            for (i in 1..values.lastIndex) {
+                add(OptionMutation(path, values[i - 1], values[i], shouldInit = i == 1))
+            }
 
-            }.toTypedArray()
+        }.toTypedArray()
 
     private inner class OptionMutation(
         private val path: String,

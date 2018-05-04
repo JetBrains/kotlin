@@ -33,12 +33,14 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":lib:compileKotlinCommon",
-                           ":lib:compileTestKotlinCommon",
-                           ":libJvm:compileKotlin",
-                           ":libJvm:compileTestKotlin",
-                           ":libJs:compileKotlin2Js",
-                           ":libJs:compileTestKotlin2Js")
+            assertContains(
+                ":lib:compileKotlinCommon",
+                ":lib:compileTestKotlinCommon",
+                ":libJvm:compileKotlin",
+                ":libJvm:compileTestKotlin",
+                ":libJs:compileKotlin2Js",
+                ":libJs:compileTestKotlin2Js"
+            )
             assertFileExists("lib/build/classes/kotlin/main/foo/PlatformClass.kotlin_metadata")
             assertFileExists("lib/build/classes/kotlin/test/foo/PlatformTest.kotlin_metadata")
             assertFileExists("libJvm/build/classes/kotlin/main/foo/PlatformClass.class")
@@ -73,8 +75,9 @@ class MultiplatformGradleIT : BaseGradleIT() {
             setupWorkingDir()
 
             File(projectDir, "lib/build.gradle").appendText(
-                    "\ncompileKotlinCommon.kotlinOptions.freeCompilerArgs = ['-Xno-inline']" +
-                    "\ncompileKotlinCommon.kotlinOptions.suppressWarnings = true")
+                "\ncompileKotlinCommon.kotlinOptions.freeCompilerArgs = ['-Xno-inline']" +
+                        "\ncompileKotlinCommon.kotlinOptions.suppressWarnings = true"
+            )
 
             build("build") {
                 assertSuccessful()
@@ -98,7 +101,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
             // Remove the root project buildscript dependency, needed for the same purpose:
             File(projectDir, "build.gradle").modify {
                 it.replace("classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:\$kotlin_version\"", "")
-                        .apply { assert(!equals(it)) }
+                    .apply { assert(!equals(it)) }
             }
 
             // Instead, add the dependencies directly to the subprojects buildscripts:
@@ -205,7 +208,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
     @Test
     fun testCommonModuleAsTransitiveDependency() = with(Project("multiplatformProject")) {
         setupWorkingDir()
-        gradleBuildScript("libJvm").appendText("""
+        gradleBuildScript("libJvm").appendText(
+            """
             ${'\n'}
             task printCompileConfiguration(type: DefaultTask) {
                 doFirst {
@@ -214,7 +218,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
                     }
                 }
             }
-            """.trimIndent())
+            """.trimIndent()
+        )
 
         build("printCompileConfiguration") {
             assertSuccessful()
@@ -242,7 +247,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
         setupWorkingDir()
         val successMarker = "Found JavaCompile task:"
 
-        gradleBuildScript("lib").appendText("\n" + """
+        gradleBuildScript("lib").appendText(
+            "\n" + """
             afterEvaluate {
                 println('$successMarker ' + tasks.getByName('compileJava').path)
                 println('$successMarker ' + tasks.getByName('compileTestJava').path)

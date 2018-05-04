@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 
-class KaptIT: BaseGradleIT() {
+class KaptIT : BaseGradleIT() {
 
     @Test
     fun testSimple() {

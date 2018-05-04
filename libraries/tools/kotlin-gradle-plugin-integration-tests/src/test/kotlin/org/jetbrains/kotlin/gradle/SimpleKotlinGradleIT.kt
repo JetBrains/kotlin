@@ -17,14 +17,19 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertContains("Finished executing kotlin compiler using daemon strategy")
             assertTrue {
                 fileInWorkingDir("build/reports/tests/classes/demo.TestSource.html").exists() ||
-                fileInWorkingDir("build/reports/tests/test/classes/demo.TestSource.html").exists()
+                        fileInWorkingDir("build/reports/tests/test/classes/demo.TestSource.html").exists()
             }
             assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE", ":compileDeployKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
+            assertContains(
+                ":compileKotlin UP-TO-DATE",
+                ":compileTestKotlin UP-TO-DATE",
+                ":compileDeployKotlin UP-TO-DATE",
+                ":compileJava UP-TO-DATE"
+            )
         }
     }
 
@@ -60,6 +65,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertContains("This type is sealed")
         }
     }
+
     @Test
     fun testJvmTarget() {
         Project("jvmTarget").build("build") {
@@ -115,13 +121,17 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertTrue(openClass.exists())
             assertTrue(closedClass.exists())
 
-            checkBytecodeContains(openClass,
-                    "public class test/OpenClass {",
-                    "public method()V")
+            checkBytecodeContains(
+                openClass,
+                "public class test/OpenClass {",
+                "public method()V"
+            )
 
-            checkBytecodeContains(closedClass,
-                    "public final class test/ClosedClass {",
-                    "public final method()V")
+            checkBytecodeContains(
+                closedClass,
+                "public final class test/ClosedClass {",
+                "public final method()V"
+            )
         }
     }
 
@@ -136,13 +146,17 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertTrue(openClass.exists())
             assertTrue(closedClass.exists())
 
-            checkBytecodeContains(openClass,
-                    "public class test/OpenClass {",
-                    "public method()V")
+            checkBytecodeContains(
+                openClass,
+                "public class test/OpenClass {",
+                "public method()V"
+            )
 
-            checkBytecodeContains(closedClass,
-                    "public final class test/ClosedClass {",
-                    "public final method()V")
+            checkBytecodeContains(
+                closedClass,
+                "public final class test/ClosedClass {",
+                "public final method()V"
+            )
         }
     }
 
