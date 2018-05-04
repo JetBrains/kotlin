@@ -52,7 +52,7 @@ annotation class UseExperimental(
 )
 
 
-@Target(CLASS, PROPERTY, CONSTRUCTOR, FUNCTION)
+@Target(CLASS, PROPERTY, CONSTRUCTOR, FUNCTION, TYPEALIAS)
 @Retention(BINARY)
 internal annotation class WasExperimental(
     vararg val markerClass: KClass<out Annotation>

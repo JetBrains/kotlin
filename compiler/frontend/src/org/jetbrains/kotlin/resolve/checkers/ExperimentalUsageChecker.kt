@@ -56,7 +56,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
     }
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val experimentalities = resolvedCall.resultingDescriptor.loadExperimentalities(moduleAnnotationsResolver)
+        val experimentalities =
+            resolvedCall.resultingDescriptor.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
         reportNotAcceptedExperimentalities(experimentalities, reportOn, context)
     }
 
@@ -89,7 +90,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         }
 
         private fun DeclarationDescriptor.loadExperimentalities(
-            moduleAnnotationsResolver: ModuleAnnotationsResolver
+            moduleAnnotationsResolver: ModuleAnnotationsResolver,
+            languageVersionSettings: LanguageVersionSettings
         ): Set<Experimentality> {
             val result = SmartSet.create<Experimentality>()
 
@@ -97,9 +99,16 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 result.addIfNotNull(annotation.annotationClass?.loadExperimentalityForMarkerAnnotation())
             }
 
+            if (annotations.any { it.fqName == WAS_EXPERIMENTAL_FQ_NAME }) {
+                val accessibility = checkSinceKotlinVersionAccessibility(languageVersionSettings)
+                if (accessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
+                    result.addAll(accessibility.markerClasses.map { it.loadExperimentalityForMarkerAnnotation() })
+                }
+            }
+
             val container = containingDeclaration
             if (container is ClassDescriptor && this !is ConstructorDescriptor) {
-                result.addAll(container.loadExperimentalities(moduleAnnotationsResolver))
+                result.addAll(container.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings))
             }
 
             for (moduleAnnotationClassId in moduleAnnotationsResolver.getAnnotationsOnContainingModule(this)) {
@@ -169,13 +178,13 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             }
         }
 
-        internal fun Annotated.loadWasExperimentalMarkerFqNames(): List<FqName> {
+        internal fun Annotated.loadWasExperimentalMarkerClasses(): List<ClassDescriptor> {
             val wasExperimental = annotations.findAnnotation(WAS_EXPERIMENTAL_FQ_NAME)
             if (wasExperimental != null) {
                 val annotationClasses = wasExperimental.allValueArguments[WAS_EXPERIMENTAL_ANNOTATION_CLASS]
                 if (annotationClasses is ArrayValue) {
                     return annotationClasses.value.mapNotNull { annotationClass ->
-                        (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor?.fqNameSafe
+                        (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor as? ClassDescriptor
                     }
                 }
             }
@@ -243,7 +252,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 }
             }
 
-            val experimentalities = targetDescriptor.loadExperimentalities(moduleAnnotationsResolver)
+            val experimentalities = targetDescriptor.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
             reportNotAcceptedExperimentalities(experimentalities, element, context)
 
             val targetClass = when (targetDescriptor) {
@@ -311,7 +320,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             if (descriptor !is CallableMemberDescriptor) return
 
             val experimentalOverridden = descriptor.overriddenDescriptors.flatMap { member ->
-                member.loadExperimentalities(moduleAnnotationsResolver).map { experimentality -> experimentality to member }
+                member.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
+                    .map { experimentality -> experimentality to member }
             }.toMap()
 
             for ((experimentality, member) in experimentalOverridden) {

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 
@@ -18,7 +17,7 @@ sealed class SinceKotlinAccessibility {
 
     data class NotAccessibleButWasExperimental(
         val version: ApiVersion,
-        val annotationFqNames: List<FqName>
+        val markerClasses: List<ClassDescriptor>
     ) : SinceKotlinAccessibility()
 
     data class NotAccessible(
@@ -38,7 +37,7 @@ fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(languageVersionSe
     // 3) The value as a version is not greater than our API version
     if (version == null || version <= languageVersionSettings.apiVersion) return SinceKotlinAccessibility.Accessible
 
-    val wasExperimentalFqNames = value.wasExperimentalMarkerFqNames
+    val wasExperimentalFqNames = value.wasExperimentalMarkerClasses
     if (wasExperimentalFqNames.isNotEmpty()) {
         return SinceKotlinAccessibility.NotAccessibleButWasExperimental(version, wasExperimentalFqNames)
     }
@@ -48,7 +47,7 @@ fun DeclarationDescriptor.checkSinceKotlinVersionAccessibility(languageVersionSe
 
 private data class SinceKotlinValue(
     val apiVersion: ApiVersion,
-    val wasExperimentalMarkerFqNames: List<FqName>
+    val wasExperimentalMarkerClasses: List<ClassDescriptor>
 )
 
 /**
@@ -56,7 +55,7 @@ private data class SinceKotlinValue(
  *         or the minimal value of the version from all declarations annotated with [SinceKotlin] otherwise.
  */
 private fun getSinceKotlinVersionByOverridden(descriptor: CallableMemberDescriptor): SinceKotlinValue? {
-    // TODO: combine wasExperimentalMarkerFqNames in case of several members with the same minimal API version
+    // TODO: combine wasExperimentalMarkerClasses in case of several members with the same minimal API version
     return DescriptorUtils.getAllOverriddenDeclarations(descriptor).map { it.getOwnSinceKotlinVersion() ?: return null }
         .minBy { it.apiVersion }
 }
@@ -73,11 +72,11 @@ private fun DeclarationDescriptor.getOwnSinceKotlinVersion(): SinceKotlinValue? 
         val apiVersion = (annotations.findAnnotation(SINCE_KOTLIN_FQ_NAME)?.allValueArguments?.values?.singleOrNull()?.value as? String)
             ?.let(ApiVersion.Companion::parse)
         if (apiVersion != null) {
-            // TODO: combine wasExperimentalMarkerFqNames in case of several associated declarations with the same maximal API version
+            // TODO: combine wasExperimentalMarkerClasses in case of several associated declarations with the same maximal API version
             if (result == null || apiVersion > result!!.apiVersion) {
                 result = SinceKotlinValue(
                     apiVersion,
-                    with(ExperimentalUsageChecker) { loadWasExperimentalMarkerFqNames() }
+                    with(ExperimentalUsageChecker) { loadWasExperimentalMarkerClasses() }
                 )
             }
         }

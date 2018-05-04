@@ -227,8 +227,8 @@ class DeprecationResolver(
         if (sinceKotlinAccessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
             if (call != null && bindingContext != null) {
                 return with(ExperimentalUsageChecker) {
-                    sinceKotlinAccessibility.annotationFqNames.any { fqName ->
-                        !call.callElement.isExperimentalityAccepted(fqName, languageVersionSettings, bindingContext)
+                    sinceKotlinAccessibility.markerClasses.any { classDescriptor ->
+                        !call.callElement.isExperimentalityAccepted(classDescriptor.fqNameSafe, languageVersionSettings, bindingContext)
                     }
                 }
             }
