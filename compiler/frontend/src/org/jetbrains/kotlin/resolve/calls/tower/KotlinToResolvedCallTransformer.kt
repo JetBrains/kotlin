@@ -534,9 +534,6 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
     override fun getSmartCastDispatchReceiverType(): KotlinType? = smartCastDispatchReceiverType
 
-    internal fun originalExtensionReceiver(): ReceiverValue? = resolvedCallAtom.extensionReceiverArgument?.receiver?.receiverValue
-    internal fun originalDispatchReceiver(): ReceiverValue? = resolvedCallAtom.dispatchReceiverArgument?.receiver?.receiverValue
-
     fun updateExtensionReceiverWithSmartCastIfNeeded(smartCastExtensionReceiverType: KotlinType) {
         if (extensionReceiver is ImplicitClassReceiver) {
             extensionReceiver = CastImplicitClassReceiver(

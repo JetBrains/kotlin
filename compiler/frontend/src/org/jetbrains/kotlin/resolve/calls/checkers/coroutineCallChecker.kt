@@ -157,19 +157,9 @@ private fun checkRestrictsSuspension(
     if (!enclosingSuspendReceiverValue.isRestrictsSuspensionReceiver()) return
 
     // member of suspend receiver
-    val (dispatchReceiver, extensionReceiver) = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
-        require(resolvedCall is NewResolvedCallImpl<*>) {
-            "Resolved call with enabled new inference should be instance of NewResolvedCallImpl"
-        }
+    if (enclosingSuspendReceiverValue sameInstance resolvedCall.dispatchReceiver?.original) return
 
-        resolvedCall.originalDispatchReceiver() to resolvedCall.originalExtensionReceiver()
-    } else {
-        resolvedCall.dispatchReceiver to resolvedCall.extensionReceiver
-    }
-
-    if (enclosingSuspendReceiverValue sameInstance dispatchReceiver) return
-
-    if (enclosingSuspendReceiverValue sameInstance extensionReceiver &&
+    if (enclosingSuspendReceiverValue sameInstance resolvedCall.extensionReceiver?.original &&
         resolvedCall.candidateDescriptor.extensionReceiverParameter!!.value.isRestrictsSuspensionReceiver()) return
 
     context.trace.report(Errors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL.on(reportOn))
