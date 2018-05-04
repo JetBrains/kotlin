@@ -19,7 +19,7 @@ fun URI.relativeTo(uri: URI): URI {
         }
 
         // Compute common prefix
-        val commonPartsSize = bParts.zip(cParts).count { (basePart, childPart) -> basePart == childPart }
+        val commonPartsSize = bParts.zip(cParts).takeWhile { (basePart, childPart) -> basePart == childPart }.count()
         bParts.drop(commonPartsSize).joinTo(this, separator = "") { "../" }
         cParts.drop(commonPartsSize).joinTo(this, separator = "/")
     }
