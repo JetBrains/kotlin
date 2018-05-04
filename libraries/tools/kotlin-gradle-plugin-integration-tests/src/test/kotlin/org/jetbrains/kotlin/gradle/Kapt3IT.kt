@@ -42,8 +42,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project.build("build") {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
             assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
@@ -57,8 +56,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project.build("build") {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
             val javaClassesDir = javaClassesDir()
@@ -74,8 +72,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE")
-            assertContains(":compileJava UP-TO-DATE")
+            assertTasksUpToDate(":compileKotlin", ":compileJava")
         }
     }
 
@@ -88,8 +85,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project.build("clean", "build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertClassFilesNotContain(javaClassesDir, "ExampleSourceAnnotation")
         }
 
@@ -97,8 +93,9 @@ open class Kapt3IT : Kapt3BaseIT() {
         project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin")
+            // there are no actual changes in Java sources, generated sources, Kotlin classes
+            assertTasksUpToDate(":compileJava")
             assertClassFilesNotContain(javaClassesDir, "ExampleSourceAnnotation")
         }
 
@@ -106,9 +103,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         javaClassesDir.deleteRecursively()
         project.build("build", options = options) {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE")
-            assertContains(":kaptGenerateStubsKotlin UP-TO-DATE")
-            assertContains(":kaptKotlin UP-TO-DATE")
+            assertTasksUpToDate(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
             assertClassFilesNotContain(javaClassesDir, "ExampleSourceAnnotation")
         }
@@ -119,7 +114,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         val project = Project("simple", directoryPrefix = "kapt2")
         project.build("build", options = defaultBuildOptions().copy(incremental = false)) {
             assertSuccessful()
-            assertContains(":kaptGenerateStubsKotlin")
+            assertTasksExecuted(":kaptGenerateStubsKotlin")
             assertNotContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
         }
     }
@@ -161,8 +156,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project.build("build") {
             assertSuccessful()
             assertKaptSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
 
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
@@ -181,8 +175,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
 
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")

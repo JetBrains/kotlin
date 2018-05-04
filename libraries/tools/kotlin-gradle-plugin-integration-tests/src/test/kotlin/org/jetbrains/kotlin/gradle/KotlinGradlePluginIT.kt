@@ -37,16 +37,16 @@ class KotlinGradleIT : BaseGradleIT() {
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
-            assertContains(
-                ":compileKotlin UP-TO-DATE",
-                ":compileTestKotlin UP-TO-DATE",
-                ":compileDeployKotlin UP-TO-DATE",
-                ":compileJava UP-TO-DATE"
+            assertTasksUpToDate(
+                ":compileKotlin",
+                ":compileTestKotlin",
+                ":compileDeployKotlin",
+                ":compileJava"
             )
         }
     }
@@ -82,13 +82,13 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
             assertFileExists(kotlinClassesDir() + "META-INF/kotlinProject.kotlin_module")
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
             assertNotContains("Forcing System.gc")
         }
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE")
+            assertTasksUpToDate(":compileKotlin", ":compileTestKotlin")
         }
     }
 
@@ -168,7 +168,7 @@ class KotlinGradleIT : BaseGradleIT() {
         Project("classpathTest").build("build") {
             assertSuccessful()
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
         }
     }
 
@@ -177,7 +177,7 @@ class KotlinGradleIT : BaseGradleIT() {
         Project("multiprojectClassPathTest").build("build") {
             assertSuccessful()
             assertReportExists("subproject")
-            assertContains(":subproject:compileKotlin", ":subproject:compileTestKotlin")
+            assertTasksExecuted(":subproject:compileKotlin", ":subproject:compileTestKotlin")
             checkKotlinGradleBuildServices()
         }
     }
@@ -210,23 +210,15 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testSimpleMultiprojectIncremental() {
-        fun Project.modify(body: Project.() -> Unit): Project {
-            this.body()
-            return this
-        }
-
         val incremental = defaultBuildOptions().copy(incremental = true)
 
         Project("multiprojectWithDependency").build("assemble", options = incremental) {
             assertSuccessful()
             assertReportExists("projA")
-            assertContains(":projA:compileKotlin")
-            assertNotContains("projA:compileKotlin UP-TO-DATE")
             assertReportExists("projB")
-            assertContains(":projB:compileKotlin")
-            assertNotContains("projB:compileKotlin UP-TO-DATE")
+            assertTasksExecuted(":projA:compileKotlin", ":projB:compileKotlin")
         }
-        Project("multiprojectWithDependency").modify {
+        Project("multiprojectWithDependency").apply {
             val oldSrc = File(this.projectDir, "projA/src/main/kotlin/a.kt")
             val newSrc = File(this.projectDir, "projA/src/main/kotlin/a.kt.new")
             assertTrue { oldSrc.exists() }
@@ -235,11 +227,8 @@ class KotlinGradleIT : BaseGradleIT() {
         }.build("assemble", options = incremental) {
             assertSuccessful()
             assertReportExists("projA")
-            assertContains(":projA:compileKotlin")
-            assertNotContains("projA:compileKotlin UP-TO-DATE")
             assertReportExists("projB")
-            assertContains(":projB:compileKotlin")
-            assertNotContains("projB:compileKotlin UP-TO-DATE")
+            assertTasksExecuted(":projA:compileKotlin", ":projB:compileKotlin")
         }
     }
 
@@ -248,7 +237,8 @@ class KotlinGradleIT : BaseGradleIT() {
         Project("kotlinInJavaRoot").build("build") {
             assertSuccessful()
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin")
+            assertContains(":compileTestKotlin NO-SOURCE")
         }
     }
 
@@ -319,7 +309,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE")
+            assertTasksUpToDate(":compileKotlin")
         }
     }
 
@@ -470,7 +460,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
         project.build("build", "install") {
             assertSuccessful()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
             val pomLines = File(project.projectDir, "build/poms/pom-default.xml").readLines()
             val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
             val versionLine = pomLines[stdlibVersionLineNumber]

@@ -15,7 +15,6 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains()
             assertContainsRegex("""-processorpath \S*.build.tmp.kapt.main.wrappers""".toRegex())
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertClassFilesNotContain(File(project.projectDir, "build/classes"), "ExampleSourceAnnotation")
@@ -104,8 +103,7 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
         }
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin")
-            assertNotContains(":compileJava UP-TO-DATE")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             if (expectIncrementalCompilation)
                 assertNotContains("not incremental") else
                 assertContains("not incremental")
@@ -128,7 +126,7 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
         Project("internalTest", gradleVersion).build("build") {
             assertSuccessful()
             assertReportExists()
-            assertContains(":compileKotlin", ":compileTestKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
         }
     }
 

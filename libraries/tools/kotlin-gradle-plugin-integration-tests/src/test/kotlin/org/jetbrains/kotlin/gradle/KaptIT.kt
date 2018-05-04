@@ -16,8 +16,7 @@ class KaptIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertContains("kapt: Class file stubs are not used")
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
@@ -45,8 +44,7 @@ class KaptIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
         }
 
@@ -63,8 +61,7 @@ class KaptIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertContains("kapt: Using class file stubs")
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
             assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
@@ -90,8 +87,7 @@ class KaptIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertContains("kapt: Using class file stubs")
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
             assertFileExists(javaClassesDir() + "example/TestClassGenerated.class")
         }
@@ -99,16 +95,15 @@ class KaptIT : BaseGradleIT() {
 
     @Test
     fun testSimpleIncrementalBuild() {
-        doTestIncrementalBuild("kaptSimple", arrayOf(":compileKotlin", ":compileJava"))
+        doTestIncrementalBuild("kaptSimple", listOf(":compileKotlin", ":compileJava"))
     }
 
     @Test
     fun testStubsIncrementalBuild() {
-        doTestIncrementalBuild("kaptStubs", arrayOf(":compileKotlin", ":compileJava", ":compileKotlinAfterJava"))
+        doTestIncrementalBuild("kaptStubs", listOf(":compileKotlin", ":compileJava", ":compileKotlinAfterJava"))
     }
 
-    private fun doTestIncrementalBuild(projectName: String, compileTasks: Array<String>) {
-        val compileTasksUpToDate = compileTasks.map { it + " UP-TO-DATE" }.toTypedArray()
+    private fun doTestIncrementalBuild(projectName: String, compileTasks: List<String>) {
         val project = Project(projectName, GradleVersionRequired.Exact("3.5"))
         project.allowOriginalKapt()
 
@@ -119,27 +114,25 @@ class KaptIT : BaseGradleIT() {
         project.projectDir.getFileByName("test.kt").appendText(" ")
         project.build("build") {
             assertSuccessful()
-            assertContains(*compileTasks)
-            assertNotContains(*compileTasksUpToDate)
+            assertTasksExecuted(compileTasks)
         }
 
         repeat(2) {
             project.build("build") {
                 assertSuccessful()
-                assertContains(*compileTasksUpToDate)
+                assertTasksUpToDate(compileTasks)
             }
         }
 
         project.build("clean", "build") {
             assertSuccessful()
-            assertContains(*compileTasks)
-            assertNotContains(*compileTasksUpToDate)
+            assertTasksExecuted(compileTasks)
         }
 
         repeat(2) {
             project.build("build") {
                 assertSuccessful()
-                assertContains(*compileTasksUpToDate)
+                assertTasksUpToDate(compileTasks)
             }
         }
     }
@@ -152,8 +145,7 @@ class KaptIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertContains("kapt: Using class file stubs")
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists(kotlinClassesDir() + "example/TestClass.class")
@@ -183,8 +175,7 @@ class KaptIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertContains("kapt: Using class file stubs")
-            assertContains(":compileKotlin")
-            assertContains(":compileJava")
+            assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/tmp/kapt/main/wrappers/annotations.main.txt")
             assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
             assertFileExists("build/tmp/kapt/main/kotlinGenerated/TestClass.kt")

@@ -65,20 +65,20 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
 
         project.build("build") {
             assertSuccessful()
-            assertContains(
-                ":compileKotlin UP-TO-DATE",
-                ":compileJava UP-TO-DATE"
+            assertTasksUpToDate(
+                ":compileKotlin",
+                ":compileJava"
             )
 
             if (useKapt3) {
-                assertContains(
-                    ":kaptKotlin UP-TO-DATE",
-                    ":kaptGenerateStubsKotlin UP-TO-DATE"
+                assertTasksUpToDate(
+                    ":kaptKotlin",
+                    ":kaptGenerateStubsKotlin"
                 )
             }
 
             if (shouldUseStubs) {
-                assertContains(":compileKotlinAfterJava UP-TO-DATE")
+                assertTasksUpToDate(":compileKotlinAfterJava")
             }
         }
     }
@@ -106,8 +106,8 @@ abstract class KaptIncrementalBaseIT(val shouldUseStubs: Boolean, val useKapt3: 
             checkStubUsage()
 
             if (useKapt3) {
-                assertNotContains(":kaptGenerateStubsKotlin UP-TO-DATE")
-                assertContains(":kaptKotlin UP-TO-DATE")
+                assertTasksExecuted(":kaptGenerateStubsKotlin")
+                assertTasksUpToDate(":kaptKotlin")
             }
         }
     }

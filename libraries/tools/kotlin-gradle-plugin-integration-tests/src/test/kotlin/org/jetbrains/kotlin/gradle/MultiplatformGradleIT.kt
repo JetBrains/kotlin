@@ -33,7 +33,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(
+            assertTasksExecuted(
                 ":lib:compileKotlinCommon",
                 ":lib:compileTestKotlinCommon",
                 ":libJvm:compileKotlin",

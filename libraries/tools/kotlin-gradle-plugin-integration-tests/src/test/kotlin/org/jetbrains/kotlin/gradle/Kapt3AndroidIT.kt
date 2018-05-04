@@ -47,8 +47,7 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
 
         project.build("build", options = options) {
             assertSuccessful()
-            assertContains(":compileReleaseKotlin UP-TO-DATE")
-            assertContains(":compileReleaseJavaWithJavac UP-TO-DATE")
+            assertTasksUpToDate(":compileReleaseKotlin", ":compileReleaseJavaWithJavac")
         }
     }
 

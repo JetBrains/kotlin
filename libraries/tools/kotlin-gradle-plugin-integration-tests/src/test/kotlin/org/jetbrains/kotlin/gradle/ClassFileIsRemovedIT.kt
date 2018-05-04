@@ -59,7 +59,7 @@ class ClassFileIsRemovedIT : BaseGradleIT() {
         // check that class removal does not trigger rebuild
         project.build("build", options = buildOptions) {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
+            assertTasksUpToDate(":compileKotlin", ":compileJava")
         }
     }
 }

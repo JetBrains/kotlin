@@ -19,16 +19,16 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
                 fileInWorkingDir("build/reports/tests/classes/demo.TestSource.html").exists() ||
                         fileInWorkingDir("build/reports/tests/test/classes/demo.TestSource.html").exists()
             }
-            assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
-            assertContains(
-                ":compileKotlin UP-TO-DATE",
-                ":compileTestKotlin UP-TO-DATE",
-                ":compileDeployKotlin UP-TO-DATE",
-                ":compileJava UP-TO-DATE"
+            assertTasksUpToDate(
+                ":compileKotlin",
+                ":compileTestKotlin",
+                ":compileDeployKotlin",
+                ":compileJava"
             )
         }
     }
@@ -39,7 +39,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":compileKotlin")
+            assertTasksExecuted(":compileKotlin")
             assertNotContains("""w: [^\r\n]*?\.kt""".toRegex())
         }
     }
@@ -91,14 +91,14 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
             assertContains("ExampleSubplugin loaded")
             assertContains("Project component registration: exampleValue")
-            assertContains(":compileKotlin")
+            assertTasksExecuted(":compileKotlin")
         }
 
         project.build("compileKotlin", "build") {
             assertSuccessful()
             assertContains("ExampleSubplugin loaded")
             assertNotContains("Project component registration: exampleValue")
-            assertContains(":compileKotlin UP-TO-DATE")
+            assertTasksUpToDate(":compileKotlin")
         }
     }
 

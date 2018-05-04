@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
@@ -46,7 +47,7 @@ abstract class KotlinAndroid3GradleIT(
 
         project.build(":Lib:assemble") {
             assertSuccessful()
-            assertContains(*kotlinTaskNames.toTypedArray())
+            assertTasksExecuted(*kotlinTaskNames.toTypedArray())
         }
     }
 }
@@ -112,15 +113,21 @@ abstract class AbstractKotlinAndroidGradleTests(
 
     @Test
     fun testAssembleAndroidTestFirst() {
-        val project = Project("AndroidProject", gradleVersion)
+        val project = Project("AndroidProject", gradleVersion, minLogLevel = LogLevel.INFO)
 
         // Execute 'assembleAndroidTest' first, without 'build' side effects
         project.build("assembleAndroidTest") {
             assertSuccessful()
             if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+                val tasks = ArrayList<String>().apply {
+                    for (subProject in listOf("Android", "Lib")) {
+                        for (flavor in listOf("Flavor1", "Flavor2")) {
+                            add(":$subProject:copy${flavor}DebugKotlinClasses")
+                        }
+                    }
+                }
                 // with the new AGP we don't need copy classes tasks
-                assertContains(":copyFlavor1DebugKotlinClasses")
-                assertContains(":copyFlavor2DebugKotlinClasses")
+                assertTasksExecuted(tasks)
             }
         }
     }
@@ -153,19 +160,19 @@ fun getSomething() = 10
     @Test
     fun testIncrementalBuildWithNoChanges() {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
-        val tasksToExecute = arrayOf(
+        val tasksToExecute = listOf(
             ":app:compileDebugKotlin",
             ":app:compileDebugJavaWithJavac"
         )
 
         project.build("assembleDebug") {
             assertSuccessful()
-            assertContains(*tasksToExecute)
+            assertTasksExecuted(tasksToExecute)
         }
 
         project.build("assembleDebug") {
             assertSuccessful()
-            assertContains(*tasksToExecute.map { it + " UP-TO-DATE" }.toTypedArray())
+            assertTasksUpToDate(tasksToExecute)
         }
     }
 
@@ -287,7 +294,7 @@ fun getSomething() = 10
 
         project.build("build") {
             assertSuccessful()
-            assertContains(
+            assertTasksExecuted(
                 ":lib:compileKotlinCommon",
                 ":lib:compileTestKotlinCommon",
                 ":libJvm:compileKotlin",

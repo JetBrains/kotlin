@@ -19,7 +19,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertSuccessful()
             assertReportExists()
 
-            assertContains(
+            assertTasksExecuted(
                 ":libraryProject:jarSources",
                 ":mainProject:compileKotlin2Js",
                 ":libraryProject:compileKotlin2Js"
@@ -35,7 +35,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
 
         project.build("build") {
             assertSuccessful()
-            assertContains(":mainProject:compileKotlin2Js UP-TO-DATE")
+            assertTasksUpToDate(":mainProject:compileKotlin2Js")
             assertContainsRegex(":libraryProject:compileTestKotlin2Js (UP-TO-DATE|NO-SOURCE)".toRegex())
         }
 
@@ -64,7 +64,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build("jar") {
             assertSuccessful()
 
-            assertContains(":compileKotlin2Js")
+            assertTasksExecuted(":compileKotlin2Js")
             val jarPath = "build/libs/kotlin2JsNoOutputFileProject.jar"
             assertFileExists(jarPath)
             val jar = ZipFile(fileInWorkingDir(jarPath))
@@ -82,7 +82,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build(":jar") {
             assertSuccessful()
 
-            assertContains(":compileKotlin2Js")
+            assertTasksExecuted(":compileKotlin2Js")
             val jarPath = "build/libs/kotlin2JsModuleKind.jar"
             assertFileExists(jarPath)
             val jar = ZipFile(fileInWorkingDir(jarPath))
@@ -120,7 +120,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
 
-            assertContains(
+            assertTasksExecuted(
                 ":compileKotlin2Js",
                 ":compileTestKotlin2Js"
             )
@@ -146,7 +146,7 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
 
-            assertContains(
+            assertTasksExecuted(
                 ":compileKotlin2Js",
                 ":compileIntegrationTestKotlin2Js"
             )
