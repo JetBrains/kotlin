@@ -22,14 +22,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
@@ -41,13 +38,13 @@ class LateinitLowering(
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitProperty(declaration: IrProperty): IrStatement {
-                if (declaration.descriptor.isLateInit && declaration.descriptor.kind.isReal)
-                    transformGetter(declaration.backingField!!.symbol, declaration.getter!!)
+                if (declaration.isLateinit && declaration.origin != IrDeclarationOrigin.FAKE_OVERRIDE)
+                    transformGetter(declaration.backingField!!, declaration.getter!!)
                 return declaration
             }
 
-            private fun transformGetter(backingFieldSymbol: IrFieldSymbol, getter: IrFunction) {
-                val type = backingFieldSymbol.descriptor.type
+            private fun transformGetter(backingField: IrField, getter: IrFunction) {
+                val type = backingField.type
                 assert(!KotlinBuiltIns.isPrimitiveType(type)) { "'lateinit' modifier is not allowed on primitive types" }
                 val startOffset = getter.startOffset
                 val endOffset = getter.endOffset
@@ -55,14 +52,14 @@ class LateinitLowering(
                 irBuilder.run {
                     val block = irBlock(type)
                     val resultVar = scope.createTemporaryVariable(
-                        irGetField(getter.dispatchReceiverParameter?.let { irGet(it.symbol) }, backingFieldSymbol)
+                        irGetField(getter.dispatchReceiverParameter?.let { irGet(it.symbol) }, backingField.symbol)
                     )
                     block.statements.add(resultVar)
                     val throwIfNull = irIfThenElse(
                         context.builtIns.nothingType,
                         irNotEquals(irGet(resultVar.symbol), irNull()),
                         irReturn(irGet(resultVar.symbol)),
-                        throwUninitializedPropertyAccessException(backingFieldSymbol)
+                        throwUninitializedPropertyAccessException(backingField)
                     )
                     block.statements.add(throwIfNull)
                     getter.body = IrExpressionBodyImpl(startOffset, endOffset, block)
@@ -71,7 +68,7 @@ class LateinitLowering(
         })
     }
 
-    private fun IrBuilderWithScope.throwUninitializedPropertyAccessException(backingFieldSymbol: IrFieldSymbol) =
+    private fun IrBuilderWithScope.throwUninitializedPropertyAccessException(backingField: IrField) =
         irCall(throwErrorFunction).apply {
             if (generateParameterNameInAssertion) {
                 putValueArgument(
@@ -80,7 +77,7 @@ class LateinitLowering(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
                         context.builtIns.stringType,
-                        backingFieldSymbol.descriptor.name.asString()
+                        backingField.name.asString()
                     )
                 )
             }
