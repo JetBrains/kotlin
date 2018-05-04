@@ -5,36 +5,17 @@
 
 package kotlin.internal
 
-import kotlin.jvm.JvmName
-
-
-// a mod b (in arithmetical sense)
-
-@JvmName("umod")
-private fun mod(a: UInt, b: Int): Int = (a % b.toUInt()).toInt()
-
-private fun mod(a: Int, b: Int): Int {
-    val mod = a % b
-    return if (mod >= 0) mod else mod + b
-}
-
-@JvmName("umod")
-private fun mod(a: ULong, b: Long): Long = (a % b.toULong()).toLong()
-
-private fun mod(a: Long, b: Long): Long {
-    val mod = a % b
-    return if (mod >= 0) mod else mod + b
-}
-
-
-
 // (a - b) mod c
-private fun differenceModulo(a: UInt, b: UInt, c: Int): UInt {
-    return mod(mod(a, c) - mod(b, c), c).toUInt()
+private fun differenceModulo(a: UInt, b: UInt, c: UInt): UInt {
+    val ac = a % c
+    val bc = b % c
+    return if (ac >= bc) ac - bc else ac - bc + c
 }
 
-private fun differenceModulo(a: ULong, b: ULong, c: Long): ULong {
-    return mod(mod(a, c) - mod(b, c), c).toULong()
+private fun differenceModulo(a: ULong, b: ULong, c: ULong): ULong {
+    val ac = a % c
+    val bc = b % c
+    return if (ac >= bc) ac - bc else ac - bc + c
 }
 
 /**
@@ -55,8 +36,8 @@ private fun differenceModulo(a: ULong, b: ULong, c: Long): ULong {
  */
 @PublishedApi
 internal fun getProgressionLastElement(start: UInt, end: UInt, step: Int): UInt = when {
-    step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step)
-    step < 0 -> if (start <= end) end else end + differenceModulo(start, end, -step)
+    step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step.toUInt())
+    step < 0 -> if (start <= end) end else end + differenceModulo(start, end, (-step).toUInt())
     else -> throw kotlin.IllegalArgumentException("Step is zero.")
 }
 
@@ -78,7 +59,7 @@ internal fun getProgressionLastElement(start: UInt, end: UInt, step: Int): UInt 
  */
 @PublishedApi
 internal fun getProgressionLastElement(start: ULong, end: ULong, step: Long): ULong = when {
-    step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step)
-    step < 0 -> if (start <= end) end else end + differenceModulo(start, end, -step)
+    step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step.toULong())
+    step < 0 -> if (start <= end) end else end + differenceModulo(start, end, (-step).toULong())
     else -> throw kotlin.IllegalArgumentException("Step is zero.")
 }
