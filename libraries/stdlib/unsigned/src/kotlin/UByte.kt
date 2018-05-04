@@ -113,19 +113,19 @@ public inline class UByte internal constructor(private val data: Byte) : Compara
     /** Inverts the bits in this value. */
     public fun inv(): UByte = UByte(data.inv())
 
-    public fun toByte(): Byte = TODO()
-    public fun toShort(): Short = TODO()
-    public fun toInt(): Int = TODO()
-    public fun toLong(): Long = TODO()
+    public fun toByte(): Byte = data
+    public fun toShort(): Short = data.toShort() and 0xFF
+    public fun toInt(): Int = data.toInt() and 0xFF
+    public fun toLong(): Long = data.toLong() and 0xFF
 
-    public fun toUByte(): UByte = TODO()
-    public fun toUShort(): UShort = TODO()
-    public fun toUInt(): UInt = TODO()
-    public fun toULong(): ULong = TODO()
+    public fun toUByte(): UByte = this
+    public fun toUShort(): UShort = data.toUShort()
+    public fun toUInt(): UInt = data.toUInt()
+    public fun toULong(): ULong = data.toULong()
 
 }
 
-public fun Byte.toUByte(): UByte = UByte(this.toByte())
+public fun Byte.toUByte(): UByte = UByte(this)
 public fun Short.toUByte(): UByte = UByte(this.toByte())
 public fun Int.toUByte(): UByte = UByte(this.toByte())
 public fun Long.toUByte(): UByte = UByte(this.toByte())

@@ -117,19 +117,19 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
     /** Inverts the bits in this value. */
     public fun inv(): UInt = UInt(data.inv())
 
-    public fun toByte(): Byte = TODO()
-    public fun toShort(): Short = TODO()
-    public fun toInt(): Int = TODO()
-    public fun toLong(): Long = TODO()
+    public fun toByte(): Byte = data.toByte()
+    public fun toShort(): Short = data.toShort()
+    public fun toInt(): Int = data
+    public fun toLong(): Long = data.toLong() and 0xFFFF_FFFF
 
-    public fun toUByte(): UByte = TODO()
-    public fun toUShort(): UShort = TODO()
-    public fun toUInt(): UInt = TODO()
-    public fun toULong(): ULong = TODO()
+    public fun toUByte(): UByte = data.toUByte()
+    public fun toUShort(): UShort = data.toUShort()
+    public fun toUInt(): UInt = this
+    public fun toULong(): ULong = data.toULong()
 
 }
 
-public fun Byte.toUInt(): UInt = UInt(this.toInt())
-public fun Short.toUInt(): UInt = UInt(this.toInt())
-public fun Int.toUInt(): UInt = UInt(this.toInt())
+public fun Byte.toUInt(): UInt = UInt(this.toInt() and 0xFF)
+public fun Short.toUInt(): UInt = UInt(this.toInt() and 0xFFFF)
+public fun Int.toUInt(): UInt = UInt(this)
 public fun Long.toUInt(): UInt = UInt(this.toInt())

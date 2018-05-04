@@ -117,19 +117,19 @@ public inline class ULong internal constructor(private val data: Long) : Compara
     /** Inverts the bits in this value. */
     public fun inv(): ULong = ULong(data.inv())
 
-    public fun toByte(): Byte = TODO()
-    public fun toShort(): Short = TODO()
-    public fun toInt(): Int = TODO()
-    public fun toLong(): Long = TODO()
+    public fun toByte(): Byte = data.toByte()
+    public fun toShort(): Short = data.toShort()
+    public fun toInt(): Int = data.toInt()
+    public fun toLong(): Long = data
 
-    public fun toUByte(): UByte = TODO()
-    public fun toUShort(): UShort = TODO()
-    public fun toUInt(): UInt = TODO()
-    public fun toULong(): ULong = TODO()
+    public fun toUByte(): UByte = data.toUByte()
+    public fun toUShort(): UShort = data.toUShort()
+    public fun toUInt(): UInt = data.toUInt()
+    public fun toULong(): ULong = this
 
 }
 
-public fun Byte.toULong(): ULong = ULong(this.toLong())
-public fun Short.toULong(): ULong = ULong(this.toLong())
-public fun Int.toULong(): ULong = ULong(this.toLong())
-public fun Long.toULong(): ULong = ULong(this.toLong())
+public fun Byte.toULong(): ULong = ULong(this.toLong() and 0xFF)
+public fun Short.toULong(): ULong = ULong(this.toLong() and 0xFFFF)
+public fun Int.toULong(): ULong = ULong(this.toLong() and 0xFFFF_FFFF)
+public fun Long.toULong(): ULong = ULong(this)

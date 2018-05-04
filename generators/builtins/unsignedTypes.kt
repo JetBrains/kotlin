@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.builtins.unsigned
 
 
 import org.jetbrains.kotlin.generators.builtins.UnsignedType
+import org.jetbrains.kotlin.generators.builtins.convert
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
 import org.jetbrains.kotlin.generators.builtins.ranges.GeneratePrimitives
 import java.io.File
@@ -160,13 +161,19 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     private fun generateMemberConversions() {
         for (otherType in UnsignedType.values()) {
             val signed = otherType.asSigned.capitalized
-            out.println("    public fun to$signed(): $signed = TODO()")
+            out.print("    public fun to$signed(): $signed = ")
+            out.println(when {
+                otherType < type -> "data.to$signed()"
+                otherType == type -> "data"
+                else -> "data.to$signed() and ${type.mask}"
+            })
         }
         out.println()
 
         for (otherType in UnsignedType.values()) {
             val name = otherType.capitalized
-            out.println("    public fun to$name(): $name = TODO()")
+            out.print("    public fun to$name(): $name = ")
+            out.println(if (type == otherType) "this" else "data.to${otherType.capitalized}()")
         }
         out.println()
     }
@@ -175,7 +182,12 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         for (otherType in UnsignedType.values()) {
             val otherSigned = otherType.asSigned.capitalized
             val thisSigned = type.asSigned.capitalized
-            out.println("public fun $otherSigned.to$className(): $className = $className(this.to$thisSigned())")
+            out.print("public fun $otherSigned.to$className(): $className = ")
+            out.println(when {
+                otherType < type -> "$className(this.to$thisSigned() and ${otherType.mask})"
+                otherType == type -> "$className(this)"
+                else -> "$className(this.to$thisSigned())"
+            })
         }
     }
 

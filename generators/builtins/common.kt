@@ -44,6 +44,9 @@ enum class UnsignedType {
 
     val capitalized: String get() = name.substring(0, 2) + name.substring(2).toLowerCase()
     val asSigned: PrimitiveType = PrimitiveType.valueOf(name.substring(1))
+
+    val byteSize = (1 shl ordinal)
+    val mask = "0x${List(byteSize) { "FF" }.chunked(2).joinToString("_") { it.joinToString("") }}"
 }
 
 enum class ProgressionKind {
