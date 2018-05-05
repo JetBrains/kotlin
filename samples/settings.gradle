@@ -1,5 +1,6 @@
 // NOTE: If a new sample uses only platform libs,
 // please add it into the 'buildSamplesWithPlatfromLibs' task in build.gradle.
+enableFeaturePreview('GRADLE_METADATA')
 include ':csvparser'
 include ':gitchurn'
 include ':globalState'

@@ -280,7 +280,8 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         // TODO: Remove them when an API for env vars is provided.
         KONAN_CONFIGURATION_BUILD_DIR  ("konan.configuration.build.dir"),
         KONAN_DEBUGGING_SYMBOLS        ("konan.debugging.symbols"),
-        KONAN_OPTIMIZATIONS_ENABLE     ("konan.optimizations.enable")
+        KONAN_OPTIMIZATIONS_ENABLE     ("konan.optimizations.enable"),
+        KONAN_PUBLICATION_ENABLED      ("konan.publication.enabled")
     }
 
     companion object {
@@ -310,6 +311,11 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.tasks.create(KONAN_GENERATE_CMAKE_TASK_NAME, KonanGenerateCMakeTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
         val container = project.extensions.create(KonanArtifactContainer::class.java, ARTIFACTS_CONTAINER_NAME, KonanArtifactContainer::class.java, project)
+        val isPublicationEnabled = project.gradle.services.get(FeaturePreviews::class.java).isFeatureEnabled(FeaturePreviews.Feature.GRADLE_METADATA)
+        project.setProperty(ProjectProperty.KONAN_PUBLICATION_ENABLED, isPublicationEnabled)
+        if (!isPublicationEnabled) {
+            project.logger.warn("feature GRADLE_METADATA is not enabled: publication is disabled")
+        }
 
         // Set additional project properties like konan.home, konan.build.targets etc.
         if (!project.hasProperty(ProjectProperty.KONAN_HOME)) {
@@ -348,10 +354,12 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
             }
         }
         //project.gradle.experimentalFeatures.enable()
-        project.gradle.services.get(FeaturePreviews::class.java).enableFeature(FeaturePreviews.Feature.GRADLE_METADATA)
+
         // Enable multiplatform support
         project.pluginManager.apply(KotlinNativePlatformPlugin::class.java)
         project.afterEvaluate {
+            if (!isPublicationEnabled)
+                return@afterEvaluate
             project.pluginManager.withPlugin("maven-publish") {
                 container.all {
                     val buildingConfig = it
