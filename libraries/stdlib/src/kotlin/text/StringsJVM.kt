@@ -362,7 +362,6 @@ public inline fun String.toLowerCase(locale: java.util.Locale): String = (this a
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the specified locale.
- * @sample samples.text.Strings.stringToUpperCase
  */
 @kotlin.internal.InlineOnly
 public inline fun String.toUpperCase(locale: java.util.Locale): String = (this as java.lang.String).toUpperCase(locale)
