@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -20,8 +19,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 object InlineClassDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.InlineClasses)) return
-
         if (declaration !is KtClass) return
         if (descriptor !is ClassDescriptor || !descriptor.isInline) return
         if (descriptor.kind != ClassKind.CLASS) return
