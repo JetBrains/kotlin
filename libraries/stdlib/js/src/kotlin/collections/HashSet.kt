@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT HashSet
@@ -23,21 +12,21 @@ package kotlin.collections
 /**
  * The implementation of the [MutableSet] interface, backed by a [HashMap] instance.
  */
-public open class HashSet<E> : AbstractMutableSet<E> {
+public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
 
     private val map: HashMap<E, Any>
 
     /**
      * Constructs a new empty [HashSet].
      */
-    constructor() {
+    actual constructor() {
         map = HashMap<E, Any>()
     }
 
     /**
      * Constructs a new [HashSet] filled with the elements of the specified collection.
      */
-    constructor(elements: Collection<E>) {
+    actual constructor(elements: Collection<E>) {
         map = HashMap<E, Any>(elements.size)
         addAll(elements)
     }
@@ -50,9 +39,11 @@ public open class HashSet<E> : AbstractMutableSet<E> {
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    constructor(initialCapacity: Int, loadFactor: Float = 0.0f) {
+    actual constructor(initialCapacity: Int, loadFactor: Float) {
         map = HashMap<E, Any>(initialCapacity, loadFactor)
     }
+
+    actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 
     /**
      * Protected constructor to specify the underlying map. This is used by
@@ -64,12 +55,12 @@ public open class HashSet<E> : AbstractMutableSet<E> {
         this.map = map
     }
 
-    override fun add(element: E): Boolean {
+    actual override fun add(element: E): Boolean {
         val old = map.put(element, this)
         return old == null
     }
 
-    override fun clear() {
+    actual override fun clear() {
         map.clear()
     }
 
@@ -77,15 +68,15 @@ public open class HashSet<E> : AbstractMutableSet<E> {
 //        return HashSet<E>(this)
 //    }
 
-    override operator fun contains(element: E): Boolean = map.containsKey(element)
+    actual override operator fun contains(element: E): Boolean = map.containsKey(element)
 
-    override fun isEmpty(): Boolean = map.isEmpty()
+    actual override fun isEmpty(): Boolean = map.isEmpty()
 
-    override fun iterator(): MutableIterator<E> = map.keys.iterator()
+    actual override fun iterator(): MutableIterator<E> = map.keys.iterator()
 
-    override fun remove(element: E): Boolean = map.remove(element) != null
+    actual override fun remove(element: E): Boolean = map.remove(element) != null
 
-    override val size: Int get() = map.size
+    actual override val size: Int get() = map.size
 
 }
 

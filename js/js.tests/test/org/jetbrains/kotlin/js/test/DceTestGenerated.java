@@ -21,43 +21,41 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class DceTestGenerated extends AbstractDceTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInDce() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), TargetBackend.JS, true);
     }
 
     @TestMetadata("amd.js")
     public void testAmd() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/amd.js");
-        doTest(fileName);
+        runTest("js/js.translator/testData/dce/amd.js");
     }
 
     @TestMetadata("arrayAccess.js")
     public void testArrayAccess() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/arrayAccess.js");
-        doTest(fileName);
+        runTest("js/js.translator/testData/dce/arrayAccess.js");
     }
 
     @TestMetadata("commonjs.js")
     public void testCommonjs() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/commonjs.js");
-        doTest(fileName);
+        runTest("js/js.translator/testData/dce/commonjs.js");
     }
 
     @TestMetadata("cycle.js")
     public void testCycle() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/cycle.js");
-        doTest(fileName);
+        runTest("js/js.translator/testData/dce/cycle.js");
     }
 
     @TestMetadata("localVarAndFunction.js")
     public void testLocalVarAndFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/localVarAndFunction.js");
-        doTest(fileName);
+        runTest("js/js.translator/testData/dce/localVarAndFunction.js");
     }
 
     @TestMetadata("typeOf.js")
     public void testTypeOf() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/typeOf.js");
-        doTest(fileName);
+        runTest("js/js.translator/testData/dce/typeOf.js");
     }
 }

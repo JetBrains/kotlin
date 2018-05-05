@@ -73,7 +73,7 @@ fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     )
 }
 
-fun ValueParameterDescriptor.checkExpectedParameter(checker: (ValueParameterDescriptor) -> Boolean) : Boolean {
+private fun ValueParameterDescriptor.checkExpectedParameter(checker: (ValueParameterDescriptor) -> Boolean): Boolean {
     val function = containingDeclaration
     if (function is FunctionDescriptor && function.isActual) {
         with(ExpectedActualResolver) {
@@ -85,29 +85,29 @@ fun ValueParameterDescriptor.checkExpectedParameter(checker: (ValueParameterDesc
 }
 
 /**
- * The following two properties describe two different situations:
+ * The following two properties describe two different situations.
  *
  * Consider hierarchy:
- * expect open class A { foo(p = 1) }
- * expect open class B  : A { foo(p) }
  *
- * actual open class A { foo(p) }
- * actual open class B : A { foo(p) }
+ *     expect open class A { fun foo(p: Int = 1) }
+ *     expect open class B : A { fun foo(p: Int) }
+ *
+ *     actual open class A { actual fun foo(p: Int) }
+ *     actual open class B : A { actual fun foo(p: Int) }
  *
  * For parameter `p` of method `foo`:
- * `Any` property returns `true` for both actual A and B
- * `Corresponding` property returns `true` only for `actual A` because `expect B` declaration doesn't have an default value
+ * `isActualParameterWithAnyExpectedDefault` returns `true` for both actual A and B
+ * `isActualParameterWithCorrespondingExpectedDefault` returns `true` for actual A, but `false` for actual B because expect B declaration
+ *     doesn't have a default value
  */
-
 val ValueParameterDescriptor.isActualParameterWithAnyExpectedDefault: Boolean
-    get() {
-        return checkExpectedParameter { it.hasDefaultValue() }
-    }
+    get() = checkExpectedParameter { it.hasDefaultValue() }
 
+/**
+ * @see isActualParameterWithAnyExpectedDefault
+ */
 val ValueParameterDescriptor.isActualParameterWithCorrespondingExpectedDefault: Boolean
-    get() {
-        return checkExpectedParameter { it.declaresDefaultValue() }
-    }
+    get() = checkExpectedParameter { it.declaresDefaultValue() }
 
 private fun KotlinCallArgument.isArrayAssignedAsNamedArgumentInAnnotation(
     parameter: ParameterDescriptor,

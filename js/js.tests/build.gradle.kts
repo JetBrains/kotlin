@@ -49,17 +49,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val testDistProjects = listOf(
-        "", // for root project
-        ":kotlin-stdlib:jvm-minimal-for-test",
-        ":kotlin-compiler",
-        ":kotlin-script-runtime",
-        ":kotlin-stdlib",
-        ":kotlin-daemon-client",
-        ":kotlin-ant")
-
 projectTest {
-    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    dependsOn(":dist")
+    jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
@@ -70,7 +62,7 @@ projectTest {
 testsJar {}
 
 projectTest("quickTest") {
-    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.js.skipMinificationTest", "true")
     doFirst {

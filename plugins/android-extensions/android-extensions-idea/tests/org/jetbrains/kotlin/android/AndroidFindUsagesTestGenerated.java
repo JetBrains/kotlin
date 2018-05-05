@@ -21,67 +21,61 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidFindUsagesTestGenerated extends AbstractAndroidFindUsagesTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInFindUsages() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/findUsages"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("fqNameInAttr")
     public void testFqNameInAttr() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/fqNameInAttr/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/fqNameInAttr/");
     }
 
     @TestMetadata("fqNameInAttrFragment")
     public void testFqNameInAttrFragment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/fqNameInAttrFragment/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/fqNameInAttrFragment/");
     }
 
     @TestMetadata("fqNameInTag")
     public void testFqNameInTag() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/fqNameInTag/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/fqNameInTag/");
     }
 
     @TestMetadata("fqNameInTagFragment")
     public void testFqNameInTagFragment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/fqNameInTagFragment/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/fqNameInTagFragment/");
     }
 
     @TestMetadata("multiFile")
     public void testMultiFile() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/multiFile/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/multiFile/");
     }
 
     @TestMetadata("multiFileFragment")
     public void testMultiFileFragment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/multiFileFragment/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/multiFileFragment/");
     }
 
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/simple/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/simple/");
     }
 
     @TestMetadata("simpleFragment")
     public void testSimpleFragment() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/simpleFragment/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/simpleFragment/");
     }
 
     @TestMetadata("simpleView")
     public void testSimpleView() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/simpleView/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/simpleView/");
     }
 
     @TestMetadata("wrongIdFormat")
     public void testWrongIdFormat() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/wrongIdFormat/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/findUsages/wrongIdFormat/");
     }
 }

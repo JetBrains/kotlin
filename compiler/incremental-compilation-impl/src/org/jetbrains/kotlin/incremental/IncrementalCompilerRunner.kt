@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
 import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
+import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.parsing.util.classesFqNames
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
 import java.util.*

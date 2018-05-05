@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_WITHOUT_CHECK: JS
+// DONT_RUN_GENERATED_CODE: JS
 
 tailrec fun foo(x: Int) {
     if (x == 0) return

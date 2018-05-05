@@ -30,25 +30,23 @@ import kotlin.reflect.KProperty
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 var VirtualFile.scriptDependencies: ScriptDependencies? by ScriptDependenciesProperty()
-private val scriptDependencies = FileAttribute("kotlin-script-dependencies", 3, false)
+private val scriptDependencies = FileAttribute("kotlin-script-dependencies", 4, false)
 
 private class ScriptDependenciesProperty {
 
     operator fun setValue(file: VirtualFile, property: KProperty<*>, newValue: ScriptDependencies?) {
         if (file !is VirtualFileWithId) return
 
-        if (newValue != null) {
-            val output = scriptDependencies.writeAttribute(file)
-            output.use {
-                with(newValue) {
-                    with(output) {
-                        writeFileList(classpath)
-                        writeStringList(imports)
-                        writeNullable(javaHome, DataOutput::writeFile)
-                        writeFileList(scripts)
-                        writeFileList(sources)
+        val output = scriptDependencies.writeAttribute(file)
+        output.use {
+            it.writeNullable(newValue) { value ->
+                with(value) {
+                    writeFileList(classpath)
+                    writeStringList(imports)
+                    writeNullable(javaHome, DataOutput::writeFile)
+                    writeFileList(scripts)
+                    writeFileList(sources)
 
-                    }
                 }
             }
         }
@@ -59,8 +57,8 @@ private class ScriptDependenciesProperty {
 
         val input = scriptDependencies.readAttribute(file)
         return input?.use {
-            with(input) {
-                return ScriptDependencies(
+            it.readNullable {
+                ScriptDependencies(
                     classpath = readFileList(),
                     imports = readStringList(),
                     javaHome = readNullable(DataInput::readFile),

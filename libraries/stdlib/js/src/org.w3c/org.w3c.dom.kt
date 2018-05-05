@@ -1,9 +1,10 @@
 /*
- * Generated file
- * DO NOT EDIT
- * 
- * See libraries/tools/idl2k for details
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * that can be found in the license/LICENSE.txt file.
  */
+
+// NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
+// See libraries/tools/idl2k for details
 
 @file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.dom
@@ -1358,6 +1359,9 @@ public external abstract class ValidityState {
     open val valid: Boolean
 }
 
+/**
+ * Exposes the JavaScript [HTMLDetailsElement](https://developer.mozilla.org/en/docs/Web/API/HTMLDetailsElement) to Kotlin
+ */
 public external abstract class HTMLDetailsElement : HTMLElement {
     open var open: Boolean
 }
@@ -2277,6 +2281,9 @@ public external abstract class PluginArray : ItemArrayLike<Plugin> {
 @kotlin.internal.InlineOnly inline operator fun PluginArray.get(index: Int): Plugin? = asDynamic()[index]
 @kotlin.internal.InlineOnly inline operator fun PluginArray.get(name: String): Plugin? = asDynamic()[name]
 
+/**
+ * Exposes the JavaScript [MimeTypeArray](https://developer.mozilla.org/en/docs/Web/API/MimeTypeArray) to Kotlin
+ */
 public external abstract class MimeTypeArray : ItemArrayLike<MimeType> {
     override val length: Int
     override fun item(index: Int): MimeType?
@@ -2299,6 +2306,9 @@ public external abstract class Plugin : ItemArrayLike<MimeType> {
 @kotlin.internal.InlineOnly inline operator fun Plugin.get(index: Int): MimeType? = asDynamic()[index]
 @kotlin.internal.InlineOnly inline operator fun Plugin.get(name: String): MimeType? = asDynamic()[name]
 
+/**
+ * Exposes the JavaScript [MimeType](https://developer.mozilla.org/en/docs/Web/API/MimeType) to Kotlin
+ */
 public external abstract class MimeType {
     open val type: String
     open val description: String
@@ -2901,6 +2911,9 @@ public external interface ChildNode {
     fun remove(): Unit
 }
 
+/**
+ * Exposes the JavaScript [Slotable](https://developer.mozilla.org/en/docs/Web/API/Slotable) to Kotlin
+ */
 public external interface Slotable {
     val assignedSlot: HTMLSlotElement?
 }
@@ -3529,6 +3542,9 @@ public external interface DOMRectList : ItemArrayLike<DOMRect> {
 }
 @kotlin.internal.InlineOnly inline operator fun DOMRectList.get(index: Int): DOMRect? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [DOMQuad](https://developer.mozilla.org/en/docs/Web/API/DOMQuad) to Kotlin
+ */
 public external open class DOMQuad {
     constructor(p1: DOMPointInit = definedExternally, p2: DOMPointInit = definedExternally, p3: DOMPointInit = definedExternally, p4: DOMPointInit = definedExternally)
     constructor(rect: DOMRectInit)
@@ -3679,6 +3695,9 @@ public external abstract class MediaQueryList : EventTarget {
     fun removeListener(listener: ((Event) -> Unit)?): Unit
 }
 
+/**
+ * Exposes the JavaScript [MediaQueryListEvent](https://developer.mozilla.org/en/docs/Web/API/MediaQueryListEvent) to Kotlin
+ */
 public external open class MediaQueryListEvent(type: String, eventInitDict: MediaQueryListEventInit = definedExternally) : Event {
     open val media: String
     open val matches: Boolean
@@ -3785,6 +3804,9 @@ public inline fun ConvertCoordinateOptions(fromBox: CSSBoxType? = CSSBoxType.BOR
     return o
 }
 
+/**
+ * Exposes the JavaScript [GeometryUtils](https://developer.mozilla.org/en/docs/Web/API/GeometryUtils) to Kotlin
+ */
 public external interface GeometryUtils {
     fun getBoxQuads(options: BoxQuadOptions = definedExternally): Array<DOMQuad>
     fun convertQuadFromNode(quad: dynamic, from: dynamic, options: ConvertCoordinateOptions = definedExternally): DOMQuad

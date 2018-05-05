@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AntConfiguration">
-    <buildFile url="file://$PROJECT_DIR$/update_dependencies.xml" />
-    <buildFile url="file://$PROJECT_DIR$/TeamCityBuild.xml">
-      <maximumHeapSize value="512" />
-    </buildFile>
-    <buildFile url="file://$PROJECT_DIR$/idea-runner/runner.xml" />
     <buildFile url="file://$PROJECT_DIR$/libraries/build-docs.xml">
       <maximumHeapSize value="1024" />
-      <properties>
-        <property name="dokka.path" value="../../dokka" />
-      </properties>
     </buildFile>
-    <buildFile url="file://$PROJECT_DIR$/TeamCityRelay.xml" />
   </component>
 </project>

@@ -138,7 +138,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         return getModuleDep(moduleName, depName, ModuleOrderEntry.class);
     }
 
-    private ModuleRootManager getRootManager(String module) {
+    protected ModuleRootManager getRootManager(String module) {
         return ModuleRootManager.getInstance(getModule(module));
     }
 

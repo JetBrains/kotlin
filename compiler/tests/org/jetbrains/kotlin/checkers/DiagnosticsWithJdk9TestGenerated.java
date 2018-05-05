@@ -21,13 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class DiagnosticsWithJdk9TestGenerated extends AbstractDiagnosticsWithJdk9Test {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInTestsWithJava9() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava9"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("kt11167.kt")
     public void testKt11167() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava9/kt11167.kt");
-        doTest(fileName);
+        runTest("compiler/testData/diagnostics/testsWithJava9/kt11167.kt");
     }
 }

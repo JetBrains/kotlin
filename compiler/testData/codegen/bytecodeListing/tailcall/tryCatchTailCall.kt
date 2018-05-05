@@ -1,3 +1,4 @@
+// COMMON_COROUTINES_TEST
 suspend fun catchException(): String {
     try {
         return suspendWithException()

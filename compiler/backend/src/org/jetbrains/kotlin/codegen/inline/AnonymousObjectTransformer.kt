@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
@@ -20,10 +9,10 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_IMPL_ASM_TYPE
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
+import org.jetbrains.kotlin.codegen.coroutines.coroutineImplAsmType
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
@@ -55,6 +44,7 @@ class AnonymousObjectTransformer(
     private var sourceInfo: String? = null
     private var debugInfo: String? = null
     private lateinit var sourceMapper: SourceMapper
+    private val languageVersionSettings = inliningContext.state.languageVersionSettings
 
     override fun doTransform(parentRemapper: FieldRemapper): InlineResult {
         val innerClassNodes = ArrayList<InnerClassNode>()
@@ -65,7 +55,7 @@ class AnonymousObjectTransformer(
         createClassReader().accept(object : ClassVisitor(API, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
-                if (COROUTINE_IMPL_ASM_TYPE.internalName == superName) {
+                if (languageVersionSettings.coroutineImplAsmType().internalName == superName) {
                     inliningContext.isContinuation = true
                 }
             }
@@ -238,7 +228,7 @@ class AnonymousObjectTransformer(
                 val data = header.data
                 val strings = header.strings
                 if (data != null && strings != null) {
-                    AsmUtil.writeAnnotationData(av, data, strings.asList())
+                    AsmUtil.writeAnnotationData(av, data, strings)
                 }
                 return@action
             }
@@ -454,6 +444,7 @@ class AnonymousObjectTransformer(
                 ), original.access, original.name, original.desc, null, null,
                 obtainClassBuilderForCoroutineState = { builder },
                 lineNumber = 0, // <- TODO
+                languageVersionSettings = languageVersionSettings,
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 containingClassInternalName = builder.thisName,
                 isForNamedFunction = false
@@ -480,6 +471,7 @@ class AnonymousObjectTransformer(
                 ), original.access, original.name, original.desc, null, null,
                 obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
                 lineNumber = 0, // <- TODO
+                languageVersionSettings = languageVersionSettings,
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 containingClassInternalName = builder.thisName,
                 isForNamedFunction = true,

@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public abstract class CompositeFIF implements FunctionIntrinsicFactory {
 
     @Nullable
     @Override
-    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor) {
+    public FunctionIntrinsic getIntrinsic(@NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
         for (Pair<Predicate<FunctionDescriptor>, FunctionIntrinsic> entry : patternsAndIntrinsics) {
             if (entry.first.test(descriptor)) {
                 return entry.second;

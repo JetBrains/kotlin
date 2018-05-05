@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.text
@@ -53,12 +42,25 @@ expect class Regex {
     fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String
     fun replaceFirst(input: CharSequence, replacement: String): String
 
-    // TODO: requires optional parameters
-    @Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+    /**
+     * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
+     *
+     * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
+     * @return An instance of [MatchResult] if match was found or `null` otherwise.
+     */
     fun find(input: CharSequence, startIndex: Int = 0): MatchResult?
-    @Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+
+    /**
+     * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
+     */
     fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult>
-    @Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+
+    /**
+     * Splits the [input] CharSequence around matches of this regular expression.
+     *
+     * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
+     * Zero by default means no limit is set.
+     */
     fun split(input: CharSequence, limit: Int = 0): List<String>
 
     companion object {
@@ -103,16 +105,33 @@ public expect fun String.decapitalize(): String
 public expect fun CharSequence.repeat(n: Int): String
 
 
-// TODO: requires optional parameters (and named!)
-@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+/**
+ * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ */
 expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
-@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+
+/**
+ * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
+ * with the specified [newValue] string.
+ */
 expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
-@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+
+/**
+ * Returns a new string with the first occurrence of [oldChar] replaced with [newChar].
+ */
 expect fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
-@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+
+/**
+ * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
+ * with the specified [newValue] string.
+ */
 expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
-@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
+
+/**
+ * Returns `true` if this string is equal to [other], optionally ignoring character case.
+ *
+ * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
+ */
 expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
 
 // From stringsCode.kt
@@ -121,9 +140,20 @@ internal inline expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
 internal inline expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
 expect fun CharSequence.isBlank(): Boolean
-@Suppress("EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER")
-expect fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean
-
+/**
+ * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
+ * @param thisOffset the start offset in this char sequence of the substring to compare.
+ * @param other the string against a substring of which the comparison is performed.
+ * @param otherOffset the start offset in the other char sequence of the substring to compare.
+ * @param length the length of the substring to compare.
+ */
+expect fun CharSequence.regionMatches(
+    thisOffset: Int,
+    other: CharSequence,
+    otherOffset: Int,
+    length: Int,
+    ignoreCase: Boolean = false
+): Boolean
 
 
 /**
@@ -207,4 +237,5 @@ expect fun String.toFloatOrNull(): Float?
 
 @PublishedApi
 internal expect fun checkRadix(radix: Int): Int
+
 internal expect fun digitOf(char: Char, radix: Int): Int

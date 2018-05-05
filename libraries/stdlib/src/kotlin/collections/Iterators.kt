@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
 
@@ -22,7 +27,7 @@ public fun <T> Iterator<T>.withIndex(): Iterator<IndexedValue<T>> = IndexingIter
  * Performs the given [operation] on each element of this [Iterator].
  * @sample samples.collections.Iterators.forEachIterator
  */
-public inline fun <T> Iterator<T>.forEach(operation: (T) -> Unit) : Unit {
+public inline fun <T> Iterator<T>.forEach(operation: (T) -> Unit): Unit {
     for (element in this) operation(element)
 }
 

@@ -22,7 +22,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
-abstract public class KotlinCompletionTestCase extends CompletionTestCase {
+abstract public class KotlinCompletionTestCase extends CompletionTestCaseWrapper {
     @Override
     protected void setUp() throws Exception {
         super.setUp();

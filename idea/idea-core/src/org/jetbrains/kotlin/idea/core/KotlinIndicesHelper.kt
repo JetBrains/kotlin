@@ -26,10 +26,10 @@ import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaFieldDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -441,7 +441,7 @@ class KotlinIndicesHelper(
                 if (!method.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (filterOutPrivate && method.hasModifierProperty(PsiModifier.PRIVATE)) continue
                 if (method.containingClass?.parent !is PsiFile) continue // only top-level classes
-                val descriptor = method.getJavaMethodDescriptor(resolutionFacade) ?: continue
+                val descriptor = method.getJavaMemberDescriptor(resolutionFacade) ?: continue
                 val container = descriptor.containingDeclaration as? ClassDescriptor ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                     processor(descriptor)
@@ -464,7 +464,7 @@ class KotlinIndicesHelper(
             for (field in shortNamesCache.getFieldsByName(name, scopeWithoutKotlin).filterNot { it is KtLightElement<*, *> }) {
                 if (!field.hasModifierProperty(PsiModifier.STATIC)) continue
                 if (filterOutPrivate && field.hasModifierProperty(PsiModifier.PRIVATE)) continue
-                val descriptor = field.getJavaFieldDescriptor() ?: continue
+                val descriptor = field.getJavaMemberDescriptor() ?: continue
                 if (descriptorKindFilter.accepts(descriptor) && descriptorFilter(descriptor)) {
                     processor(descriptor)
                 }

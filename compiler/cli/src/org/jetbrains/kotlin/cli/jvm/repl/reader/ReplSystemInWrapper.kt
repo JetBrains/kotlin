@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.jvm.repl.reader
 
 import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
-import org.jetbrains.kotlin.cli.jvm.repl.writer.END_LINE
 import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -78,12 +77,10 @@ class ReplSystemInWrapper(
         val xmlInput = byteBuilder.toString()
         val unescapedXml = parseXml(xmlInput)
 
-        val resultLine = if (isReplScriptExecuting)
+        return if (isReplScriptExecuting)
             unescapeLineBreaks(unescapedXml)
         else
             unescapedXml
-
-        return "$resultLine$END_LINE"
     }
 
     private fun resetBufferIfNeeded() {

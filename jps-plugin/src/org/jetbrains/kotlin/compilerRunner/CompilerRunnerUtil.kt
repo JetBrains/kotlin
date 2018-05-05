@@ -104,7 +104,7 @@ object CompilerRunnerUtil {
         environment: JpsCompilerEnvironment,
         files: Set<File>
     ): Set<String> = withCompilerClassloader(environment) { classLoader ->
-        val klass = Class.forName("org.jetbrains.kotlin.parsing.util.ParseFileUtilsKt", true, classLoader)
+        val klass = Class.forName("org.jetbrains.kotlin.incremental.parsing.ParseFileUtilsKt", true, classLoader)
         val method = klass.getMethod("classesFqNames", Set::class.java)
         @Suppress("UNCHECKED_CAST")
         method.invoke(klass, files) as? Set<String>

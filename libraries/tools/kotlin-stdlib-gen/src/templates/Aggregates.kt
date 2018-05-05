@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package templates
@@ -37,10 +26,9 @@ object Aggregates : TemplateGroupBase() {
         doc {
             """
             Returns `true` if all ${f.element.pluralize()} match the given [predicate].
-
-            @sample samples.collections.Collections.Aggregates.all
             """
         }
+        sample("samples.collections.Collections.Aggregates.all")
         returns("Boolean")
         body {
             """
@@ -64,10 +52,9 @@ object Aggregates : TemplateGroupBase() {
         doc {
             """
             Returns `true` if no ${f.element.pluralize()} match the given [predicate].
-
-            @sample samples.collections.Collections.Aggregates.noneWithPredicate
             """
         }
+        sample("samples.collections.Collections.Aggregates.noneWithPredicate")
         returns("Boolean")
         body {
             """
@@ -89,10 +76,9 @@ object Aggregates : TemplateGroupBase() {
         doc {
             """
             Returns `true` if the ${f.collection} has no ${f.element.pluralize()}.
-
-            @sample samples.collections.Collections.Aggregates.none
             """
         }
+        sample("samples.collections.Collections.Aggregates.none")
         returns("Boolean")
         body {
             "return !iterator().hasNext()"
@@ -119,10 +105,9 @@ object Aggregates : TemplateGroupBase() {
         doc {
             """
             Returns `true` if at least one ${f.element} matches the given [predicate].
-
-            @sample samples.collections.Collections.Aggregates.anyWithPredicate
             """
         }
+        sample("samples.collections.Collections.Aggregates.anyWithPredicate")
         returns("Boolean")
         body {
             """
@@ -144,10 +129,9 @@ object Aggregates : TemplateGroupBase() {
         doc {
             """
             Returns `true` if ${f.collection} has at least one ${f.element}.
-
-            @sample samples.collections.Collections.Aggregates.any
             """
         }
+        sample("samples.collections.Collections.Aggregates.any")
         returns("Boolean")
         body {
             "return iterator().hasNext()"
@@ -630,7 +614,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         typeParam("S")
-        typeParam("T: S")
+        typeParam("T : S")
         returns("S")
         body {
             """
@@ -703,7 +687,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         typeParam("S")
-        typeParam("T: S")
+        typeParam("T : S")
         returns("S")
         body {
             """
@@ -764,7 +748,7 @@ object Aggregates : TemplateGroupBase() {
 
         doc { "Accumulates value starting with the first ${f.element} and applying [operation] from left to right to current accumulator value and each ${f.element}." }
         typeParam("S")
-        typeParam("T: S")
+        typeParam("T : S")
         returns("S")
         body {
             """
@@ -820,7 +804,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
         doc { "Accumulates value starting with last ${f.element} and applying [operation] from right to left to each ${f.element} and current accumulator value." }
         typeParam("S")
-        typeParam("T: S")
+        typeParam("T : S")
         returns("S")
         body {
             """

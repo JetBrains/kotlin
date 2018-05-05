@@ -37,14 +37,18 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
 
-class InitializersLowering(val context: CommonBackendContext, val declarationOrigin: IrDeclarationOrigin) : ClassLoweringPass {
+class InitializersLowering(
+    val context: CommonBackendContext,
+    val declarationOrigin: IrDeclarationOrigin,
+    private val clinitNeeded: Boolean
+) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val classInitializersBuilder = ClassInitializersBuilder(irClass)
         irClass.acceptChildrenVoid(classInitializersBuilder)
 
         classInitializersBuilder.transformInstanceInitializerCallsInConstructors(irClass)
 
-        classInitializersBuilder.createStaticInitializationMethod(irClass)
+        if (clinitNeeded) classInitializersBuilder.createStaticInitializationMethod(irClass)
     }
 
     private inner class ClassInitializersBuilder(val irClass: IrClass) : IrElementVisitorVoid {
@@ -60,22 +64,23 @@ class InitializersLowering(val context: CommonBackendContext, val declarationOri
             val irFieldInitializer = declaration.initializer?.expression ?: return
 
             val receiver =
-                    if (declaration.descriptor.dispatchReceiverParameter != null) // TODO isStaticField
-                        IrGetValueImpl(irFieldInitializer.startOffset, irFieldInitializer.endOffset,
-                                       irClass.descriptor.thisAsReceiverParameter)
-                    else null
+                if (declaration.descriptor.dispatchReceiverParameter != null) // TODO isStaticField
+                    IrGetValueImpl(
+                        irFieldInitializer.startOffset, irFieldInitializer.endOffset,
+                        irClass.thisReceiver!!.symbol
+                    )
+                else null
             val irSetField = IrSetFieldImpl(
-                    irFieldInitializer.startOffset, irFieldInitializer.endOffset,
-                    declaration.descriptor,
-                    receiver,
-                    irFieldInitializer,
-                    null, null
+                irFieldInitializer.startOffset, irFieldInitializer.endOffset,
+                declaration.symbol,
+                receiver,
+                irFieldInitializer,
+                null, null
             )
 
             if (DescriptorUtils.isStaticDeclaration(declaration.descriptor)) {
                 staticInitializerStatements.add(irSetField)
-            }
-            else {
+            } else {
                 instanceInitializerStatements.add(irSetField)
             }
         }
@@ -100,15 +105,17 @@ class InitializersLowering(val context: CommonBackendContext, val declarationOri
                 SourceElement.NO_SOURCE
             )
             staticInitializerDescriptor.initialize(
-                    null, null, emptyList(), emptyList(),
-                    irClass.descriptor.builtIns.unitType,
-                    Modality.FINAL, Visibilities.PUBLIC
+                null, null, emptyList(), emptyList(),
+                irClass.descriptor.builtIns.unitType,
+                Modality.FINAL, Visibilities.PUBLIC
             )
             irClass.declarations.add(
-                    IrFunctionImpl(irClass.startOffset, irClass.endOffset, declarationOrigin,
-                                   staticInitializerDescriptor,
-                                   IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,
-                                                   staticInitializerStatements.map { it.copy() }))
+                IrFunctionImpl(
+                    irClass.startOffset, irClass.endOffset, declarationOrigin,
+                    staticInitializerDescriptor,
+                    IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,
+                                    staticInitializerStatements.map { it.copy() })
+                )
             )
         }
     }

@@ -21,31 +21,83 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInDecompiledTextJvm() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("Modifiers")
     public void testModifiers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/Modifiers/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledTextJvm/Modifiers/");
     }
 
     @TestMetadata("MultifileClass")
     public void testMultifileClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/MultifileClass/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledTextJvm/MultifileClass/");
     }
 
     @TestMetadata("TestKt")
     public void testTestKt() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/TestKt/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledTextJvm/TestKt/");
     }
 
     @TestMetadata("TypeAliases")
     public void testTypeAliases() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/TypeAliases/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledTextJvm/TypeAliases/");
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledTextJvm/Modifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Modifiers extends AbstractJvmDecompiledTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInModifiers() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm/Modifiers"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledTextJvm/MultifileClass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MultifileClass extends AbstractJvmDecompiledTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMultifileClass() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm/MultifileClass"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledTextJvm/TestKt")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TestKt extends AbstractJvmDecompiledTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTestKt() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm/TestKt"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledTextJvm/TypeAliases")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeAliases extends AbstractJvmDecompiledTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeAliases() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJvm/TypeAliases"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
     }
 }

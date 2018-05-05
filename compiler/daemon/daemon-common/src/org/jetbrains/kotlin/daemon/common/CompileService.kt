@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.parsing.util.classesFqNames
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote

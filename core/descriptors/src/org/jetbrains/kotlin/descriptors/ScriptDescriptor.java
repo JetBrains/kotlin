@@ -29,4 +29,7 @@ public interface ScriptDescriptor extends ClassDescriptor {
 
     @NotNull
     List<ClassDescriptor> getImplicitReceivers();
+
+    @NotNull
+    List<PropertyDescriptor> getScriptEnvironmentProperties();
 }

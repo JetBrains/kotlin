@@ -73,8 +73,8 @@ class KotlinAwareDelegatingMoveDestination(
         }
         filesToProcess.flatMap {it.declarations}.forEach { it.accept(extraElementCollector) }
 
-        val progressIndicator = ProgressManager.getInstance().progressIndicator
-        progressIndicator?.pushState()
+        val progressIndicator = ProgressManager.getInstance().progressIndicator!!
+        progressIndicator.pushState()
 
         val extraUsages = ArrayList<UsageInfo>()
         try {
@@ -87,7 +87,7 @@ class KotlinAwareDelegatingMoveDestination(
             }
         }
         finally {
-            progressIndicator?.popState()
+            progressIndicator.popState()
         }
 
         filesToProcess.forEach {

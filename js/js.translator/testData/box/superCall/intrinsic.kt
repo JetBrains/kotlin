@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1141
 class A(val x: Int) {
     override fun equals(other: Any?): Boolean = other is A && other.x == x

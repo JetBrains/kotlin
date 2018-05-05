@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.metadata
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
@@ -38,6 +39,8 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
 class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
+    private val performanceManager: K2MetadataCompilerPerformanceManager = K2MetadataCompilerPerformanceManager()
+
     override fun createArguments() = K2MetadataCompilerArguments()
 
     override fun setupPlatformSpecificArgumentsAndServices(
@@ -99,10 +102,14 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
     // TODO: update this once a launcher script for K2MetadataCompiler is available
     override fun executableScriptFileName(): String = "kotlinc"
 
+    override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
+
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
             doMain(K2MetadataCompiler(), args)
         }
     }
+
+    private class K2MetadataCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to Metadata compiler")
 }

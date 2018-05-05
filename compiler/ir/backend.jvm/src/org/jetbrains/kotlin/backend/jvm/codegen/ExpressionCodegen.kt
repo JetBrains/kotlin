@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -49,7 +51,7 @@ import java.util.*
 
 open class ExpressionInfo(val expression: IrExpression)
 
-class LoopInfo(val loop: IrLoop, val continueLabel: Label, val breakLabel: Label): ExpressionInfo(loop)
+class LoopInfo(val loop: IrLoop, val continueLabel: Label, val breakLabel: Label) : ExpressionInfo(loop)
 
 class TryInfo(val tryBlock: IrTry) : ExpressionInfo(tryBlock) {
     val gaps = mutableListOf<Label>()
@@ -69,7 +71,7 @@ class BlockInfo private constructor(val parent: BlockInfo?) {
     }
 
     fun removeInfo(info: ExpressionInfo) {
-        assert (peek() == info)
+        assert(peek() == info)
         pop()
     }
 
@@ -86,14 +88,14 @@ class BlockInfo private constructor(val parent: BlockInfo?) {
     }
 }
 
-class VariableInfo(val descriptor: VariableDescriptor, val index: Int, val type: Type, val startLabel: Label)
+class VariableInfo(val declaration: IrVariable, val index: Int, val type: Type, val startLabel: Label)
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 class ExpressionCodegen(
-        val irFunction: IrFunction,
-        val frame: FrameMap,
-        val mv: InstructionAdapter,
-        val classCodegen: ClassCodegen
+    val irFunction: IrFunction,
+    val frame: IrFrameMap,
+    val mv: InstructionAdapter,
+    val classCodegen: ClassCodegen
 ) : IrElementVisitor<StackValue, BlockInfo>, BaseExpressionCodegen {
 
     /*TODO*/
@@ -116,8 +118,7 @@ class ExpressionCodegen(
         if (returnType == Type.VOID_TYPE) {
             //for implicit return
             mv.areturn(Type.VOID_TYPE)
-        }
-        else if (irFunction.body is IrExpressionBody) {
+        } else if (irFunction.body is IrExpressionBody) {
             mv.areturn(returnType)
         }
         writeLocalVariablesInTable(info)
@@ -125,8 +126,7 @@ class ExpressionCodegen(
     }
 
     override fun visitBlockBody(body: IrBlockBody, data: BlockInfo): StackValue {
-        return body.statements.fold(none()) {
-            _, exp ->
+        return body.statements.fold(none()) { _, exp ->
             exp.accept(this, data)
         }
     }
@@ -136,8 +136,7 @@ class ExpressionCodegen(
         return super.visitBlock(expression, info).apply {
             if (!expression.isTransparentScope) {
                 writeLocalVariablesInTable(info)
-            }
-            else {
+            } else {
                 info.variables.forEach {
                     data.variables.add(it)
                 }
@@ -148,17 +147,16 @@ class ExpressionCodegen(
     private fun writeLocalVariablesInTable(info: BlockInfo) {
         val endLabel = markNewLabel()
         info.variables.forEach {
-            mv.visitLocalVariable(it.descriptor.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index)
+            mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, it.startLabel, endLabel, it.index)
         }
 
         info.variables.reversed().forEach {
-            frame.leave(it.descriptor)
+            frame.leave(it.declaration.symbol)
         }
     }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo): StackValue {
-        val result = expression.statements.fold(none()) {
-            _, exp ->
+        val result = expression.statements.fold(none()) { _, exp ->
             //coerceNotToUnit(r.type, Type.VOID_TYPE)
             exp.accept(this, data)
         }
@@ -190,7 +188,7 @@ class ExpressionCodegen(
     }
 
     fun generateNewArray(
-            expression: IrCall, data: BlockInfo
+        expression: IrCall, data: BlockInfo
     ): StackValue {
         val args = expression.descriptor.valueParameters
         assert(args.size == 1 || args.size == 2) { "Unknown constructor called: " + args.size + " arguments" }
@@ -221,9 +219,9 @@ class ExpressionCodegen(
         val receiver = expression.dispatchReceiver
         receiver?.apply {
             callGenerator.genValueAndPut(
-                    null, this,
-                    if (isSuperCall) receiver.asmType else callable.dispatchReceiverType!!,
-                    -1, this@ExpressionCodegen, data
+                null, this,
+                if (isSuperCall) receiver.asmType else callable.dispatchReceiverType!!,
+                -1, this@ExpressionCodegen, data
             )
         }
 
@@ -241,7 +239,13 @@ class ExpressionCodegen(
                     callGenerator.genValueAndPut(parameterDescriptor, arg, parameterType, i, this@ExpressionCodegen, data)
                 }
                 parameterDescriptor.hasDefaultValue() -> {
-                    callGenerator.putValueIfNeeded(parameterType, StackValue.createDefaultValue(parameterType), ValueKind.DEFAULT_PARAMETER, i, this@ExpressionCodegen)
+                    callGenerator.putValueIfNeeded(
+                        parameterType,
+                        StackValue.createDefaultValue(parameterType),
+                        ValueKind.DEFAULT_PARAMETER,
+                        i,
+                        this@ExpressionCodegen
+                    )
                     defaultMask.mark(i)
                 }
                 else -> {
@@ -252,21 +256,22 @@ class ExpressionCodegen(
                     // while its lower bound may be Nothing-typed after approximation
                     val type = typeMapper.mapType(parameterDescriptor.type.upperIfFlexible())
                     callGenerator.putValueIfNeeded(
-                            parameterType,
-                            StackValue.operation(type) {
-                                it.aconst(0)
-                                it.newarray(correctElementType(type))
-                            },
-                            ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen)
+                        parameterType,
+                        StackValue.operation(type) {
+                            it.aconst(0)
+                            it.newarray(correctElementType(type))
+                        },
+                        ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen
+                    )
                 }
             }
         }
 
         callGenerator.genCall(
-                callable,
-                defaultMask.generateOnStackIfNeeded(callGenerator, expression.descriptor is ConstructorDescriptor, this),
-                this,
-                expression
+            callable,
+            defaultMask.generateOnStackIfNeeded(callGenerator, expression.descriptor is ConstructorDescriptor, this),
+            this,
+            expression
         )
 
         val returnType = expression.descriptor.returnType
@@ -293,17 +298,17 @@ class ExpressionCodegen(
 
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): StackValue {
         val varType = typeMapper.mapType(declaration.descriptor)
-        val index = frame.enter(declaration.descriptor, varType)
+        val index = frame.enter(declaration.symbol, varType)
 
         declaration.initializer?.apply {
             StackValue.local(index, varType).store(gen(this, varType, data), mv)
         }
 
         val info = VariableInfo(
-                declaration.descriptor,
-                index,
-                varType,
-                markNewLabel()
+            declaration,
+            index,
+            varType,
+            markNewLabel()
         )
         data.variables.add(info)
 
@@ -320,7 +325,7 @@ class ExpressionCodegen(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: BlockInfo): StackValue {
-        return generateLocal(expression.descriptor, expression.asmType)
+        return generateLocal(expression.symbol, expression.asmType)
     }
 
     private fun generateFieldValue(expression: IrFieldAccessExpression, data: BlockInfo): StackValue {
@@ -349,15 +354,23 @@ class ExpressionCodegen(
         return none()
     }
 
-    private fun generateLocal(descriptor: CallableDescriptor, type: Type): StackValue {
-        val index = findLocalIndex(descriptor)
+    private fun generateLocal(symbol: IrSymbol, type: Type): StackValue {
+        val index = findLocalIndex(symbol)
         StackValue.local(index, type).put(type, mv)
         return onStack(type)
     }
 
-    private fun findLocalIndex(descriptor: CallableDescriptor): Int {
-        return frame.getIndex(descriptor).apply {
-            if (this < 0) throw AssertionError("Non-mapped local variable descriptor: $descriptor")
+    private fun findLocalIndex(irSymbol: IrSymbol): Int {
+        return frame.getIndex(irSymbol).apply {
+            if (this < 0) {
+                if (irFunction.dispatchReceiverParameter != null) {
+                    (irFunction.parent as? IrClass)?.takeIf { it.thisReceiver?.symbol == irSymbol }?.let { return 0 }
+                }
+                throw AssertionError(
+                    "Non-mapped local declaration: " +
+                            "${if (irSymbol.isBound) irSymbol.owner.dump() else irSymbol.descriptor} \n in ${irFunction.dump()}"
+                )
+            }
         }
     }
 
@@ -371,7 +384,7 @@ class ExpressionCodegen(
 
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): StackValue {
         val value = expression.value.accept(this, data)
-        StackValue.local(findLocalIndex(expression.descriptor), expression.descriptor.asmType).store(value, mv)
+        StackValue.local(findLocalIndex(expression.symbol), expression.descriptor.asmType).store(value, mv)
         return none()
     }
 
@@ -425,8 +438,7 @@ class ExpressionCodegen(
                 if (arrayOfReferences) {
                     mv.checkcast(type)
                 }
-            }
-            else {
+            } else {
                 val owner: String
                 val addDescriptor: String
                 val toArrayDescriptor: String
@@ -434,9 +446,9 @@ class ExpressionCodegen(
                     owner = "kotlin/jvm/internal/SpreadBuilder"
                     addDescriptor = "(Ljava/lang/Object;)V"
                     toArrayDescriptor = "([Ljava/lang/Object;)[Ljava/lang/Object;"
-                }
-                else {
-                    val spreadBuilderClassName = AsmUtil.asmPrimitiveTypeToLangPrimitiveType(elementType)!!.typeName.identifier + "SpreadBuilder"
+                } else {
+                    val spreadBuilderClassName =
+                        AsmUtil.asmPrimitiveTypeToLangPrimitiveType(elementType)!!.typeName.identifier + "SpreadBuilder"
                     owner = "kotlin/jvm/internal/" + spreadBuilderClassName
                     addDescriptor = "(" + elementType.descriptor + ")V"
                     toArrayDescriptor = "()" + type.descriptor
@@ -451,8 +463,7 @@ class ExpressionCodegen(
                     if (argument is IrSpreadElement) {
                         gen(argument.expression, OBJECT_TYPE, data)
                         mv.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V", false)
-                    }
-                    else {
+                    } else {
                         gen(argument, elementType, data)
                         mv.invokevirtual(owner, "add", addDescriptor, false)
                     }
@@ -463,22 +474,25 @@ class ExpressionCodegen(
                     newArrayInstruction(outType)
                     mv.invokevirtual(owner, "toArray", toArrayDescriptor, false)
                     mv.checkcast(type)
-                }
-                else {
+                } else {
                     mv.invokevirtual(owner, "toArray", toArrayDescriptor, false)
                 }
             }
-        }
-        else {
+        } else {
             mv.iconst(size)
             newArrayInstruction(expression.type)
             val elementKotlinType = outType.constructor.builtIns.getArrayElementType(outType)
-            for ((i, element)  in expression.elements.withIndex()) {
+            for ((i, element) in expression.elements.withIndex()) {
                 mv.dup()
                 StackValue.constant(i, Type.INT_TYPE).put(Type.INT_TYPE, mv)
                 val rightSide = gen(element, elementType, data)
                 StackValue
-                    .arrayElement(elementType, elementKotlinType, StackValue.onStack(elementType, outType), StackValue.onStack(Type.INT_TYPE))
+                    .arrayElement(
+                        elementType,
+                        elementKotlinType,
+                        StackValue.onStack(elementType, outType),
+                        StackValue.onStack(Type.INT_TYPE)
+                    )
                     .store(rightSide, mv)
             }
         }
@@ -493,8 +507,7 @@ class ExpressionCodegen(
 //                    ReifiedTypeInliner.OperationKind.NEW_ARRAY
 //            )
             mv.newarray(boxType(elementJetType.asmType))
-        }
-        else {
+        } else {
             val type = typeMapper.mapType(arrayType)
             mv.newarray(correctElementType(type))
         }
@@ -592,8 +605,10 @@ class ExpressionCodegen(
                 gen(expression.argument, asmType, data)
                 mv.dup()
                 mv.visitLdcInsn("TODO provide message for IMPLICIT_NOTNULL") /*TODO*/
-                mv.invokestatic("kotlin/jvm/internal/Intrinsics", "checkExpressionValueIsNotNull",
-                               "(Ljava/lang/Object;Ljava/lang/String;)V", false)
+                mv.invokestatic(
+                    "kotlin/jvm/internal/Intrinsics", "checkExpressionValueIsNotNull",
+                    "(Ljava/lang/Object;Ljava/lang/String;)V", false
+                )
             }
 
             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> {
@@ -653,9 +668,9 @@ class ExpressionCodegen(
     }
 
     private fun generateBreakOrContinueExpression(
-            expression: IrBreakContinue,
-            afterBreakContinueLabel: Label,
-            data: BlockInfo
+        expression: IrBreakContinue,
+        afterBreakContinueLabel: Label,
+        data: BlockInfo
     ) {
         if (data.isEmpty()) {
             throw UnsupportedOperationException("Target label for break/continue not found")
@@ -722,27 +737,34 @@ class ExpressionCodegen(
         val tryRegions = getCurrentTryIntervals(tryInfo, tryBlockStart, tryBlockEnd)
 
         val tryCatchBlockEnd = Label()
-        genFinallyBlockOrGoto(tryInfo,  tryCatchBlockEnd, null, data)
+        genFinallyBlockOrGoto(tryInfo, tryCatchBlockEnd, null, data)
 
         val catches = aTry.catches
         for (clause in catches) {
             val clauseStart = markNewLabel()
             val descriptor = clause.parameter
             val descriptorType = descriptor.asmType
-            val index = frame.enter(descriptor, descriptorType)
+            val index = frame.enter(clause.catchParameter, descriptorType)
             mv.store(index, descriptorType)
 
             val catchBody = clause.result
             gen(catchBody, catchBody.asmType, data)
 
-            frame.leave(descriptor)
+            frame.leave(clause.catchParameter)
 
             val clauseEnd = markNewLabel()
 
-            mv.visitLocalVariable(descriptor.name.asString(), descriptorType.descriptor, null, clauseStart, clauseEnd,
-                                 index)
+            mv.visitLocalVariable(
+                descriptor.name.asString(), descriptorType.descriptor, null, clauseStart, clauseEnd,
+                index
+            )
 
-            genFinallyBlockOrGoto(tryInfo, if (clause != catches.last() || finallyExpression != null) tryCatchBlockEnd else null, null, data)
+            genFinallyBlockOrGoto(
+                tryInfo,
+                if (clause != catches.last() || finallyExpression != null) tryCatchBlockEnd else null,
+                null,
+                data
+            )
 
             generateExceptionTable(clauseStart, tryRegions, descriptorType.internalName)
         }
@@ -780,9 +802,9 @@ class ExpressionCodegen(
     }
 
     private fun getCurrentTryIntervals(
-            finallyBlockStackElement: TryInfo?,
-            blockStart: Label,
-            blockEnd: Label
+        finallyBlockStackElement: TryInfo?,
+        blockStart: Label,
+        blockEnd: Label
     ): List<Label> {
         val gapsInBlock = if (finallyBlockStackElement != null) ArrayList<Label>(finallyBlockStackElement.gaps) else emptyList<Label>()
         assert(gapsInBlock.size % 2 == 0)
@@ -804,10 +826,10 @@ class ExpressionCodegen(
     }
 
     private fun genFinallyBlockOrGoto(
-            tryInfo: TryInfo?,
-            tryCatchBlockEnd: Label?,
-            afterJumpLabel: Label?,
-            data: BlockInfo
+        tryInfo: TryInfo?,
+        tryCatchBlockEnd: Label?,
+        afterJumpLabel: Label?,
+        data: BlockInfo
     ) {
         if (tryInfo != null) {
             assert(tryInfo.gaps.size % 2 == 0) { "Finally block gaps are inconsistent" }
@@ -847,8 +869,7 @@ class ExpressionCodegen(
                 doFinallyOnReturn(afterReturnLabel, data)
                 localForReturnValue.put(returnType, mv)
                 frame.leaveTemp(returnType)
-            }
-            else {
+            } else {
                 doFinallyOnReturn(afterReturnLabel, data)
             }
         }
@@ -896,8 +917,7 @@ class ExpressionCodegen(
         if (classReference !is IrClassReference /* && DescriptorUtils.isObjectQualifier(classReference.descriptor)*/) {
             assert(classReference is IrGetClass)
             JavaClassProperty.generateImpl(mv, gen((classReference as IrGetClass).argument, data))
-        }
-        else {
+        } else {
             val type = classReference.classType
             if (TypeUtils.isTypeParameter(type)) {
                 assert(TypeUtils.isReifiedTypeParameter(type)) { "Non-reified type parameter under ::class should be rejected by type checker: " + type }
@@ -930,7 +950,11 @@ class ExpressionCodegen(
     private fun resolveToCallable(irCall: IrMemberAccessExpression, isSuper: Boolean): Callable {
         val intrinsic = intrinsics.getIntrinsic(irCall.descriptor.original as CallableMemberDescriptor)
         if (intrinsic != null) {
-            return intrinsic.toCallable(irCall, typeMapper.mapSignatureSkipGeneric(irCall.descriptor as FunctionDescriptor), classCodegen.context)
+            return intrinsic.toCallable(
+                irCall,
+                typeMapper.mapSignatureSkipGeneric(irCall.descriptor as FunctionDescriptor),
+                classCodegen.context
+            )
         }
 
         var descriptor = irCall.descriptor
@@ -945,8 +969,7 @@ class ExpressionCodegen(
             val propertyDescriptor = JvmCodegenUtil.getDirectMember(descriptor) as SyntheticJavaPropertyDescriptor
             descriptor = if (descriptor is PropertyGetterDescriptor) {
                 propertyDescriptor.getMethod
-            }
-            else {
+            } else {
                 propertyDescriptor.setMethod!!
             }
         }
@@ -961,10 +984,10 @@ class ExpressionCodegen(
 
 
     private fun getOrCreateCallGenerator(
-            descriptor: CallableDescriptor,
-            element: IrMemberAccessExpression?,
-            typeParameterMappings: TypeParameterMappings?,
-            isDefaultCompilation: Boolean
+        descriptor: CallableDescriptor,
+        element: IrMemberAccessExpression?,
+        typeParameterMappings: TypeParameterMappings?,
+        isDefaultCompilation: Boolean
     ): IrCallGenerator {
         if (element == null) return IrCallGenerator.DefaultCallGenerator
 
@@ -977,13 +1000,15 @@ class ExpressionCodegen(
         val original = unwrapInitialSignatureDescriptor(DescriptorUtils.unwrapFakeOverride(descriptor.original as FunctionDescriptor))
         return if (isDefaultCompilation) {
             TODO()
-        }
-        else {
+        } else {
             IrInlineCodegen(this, state, original, typeParameterMappings!!, IrSourceCompilerForInline(state, element, this))
         }
     }
 
-    internal fun getOrCreateCallGenerator(memberAccessExpression: IrMemberAccessExpression, descriptor: CallableDescriptor): IrCallGenerator {
+    internal fun getOrCreateCallGenerator(
+        memberAccessExpression: IrMemberAccessExpression,
+        descriptor: CallableDescriptor
+    ): IrCallGenerator {
         val typeArguments = descriptor.original.typeParameters.keysToMap { memberAccessExpression.getTypeArgumentOrDefault(it) }
 
         val mappings = TypeParameterMappings()
@@ -1001,12 +1026,11 @@ class ExpressionCodegen(
                 val asmType = typeMapper.mapTypeParameter(approximatedType, signatureWriter)
 
                 mappings.addParameterMappingToType(
-                        key.name.identifier, approximatedType, asmType, signatureWriter.toString(), isReified
+                    key.name.identifier, approximatedType, asmType, signatureWriter.toString(), isReified
                 )
-            }
-            else {
+            } else {
                 mappings.addParameterMappingForFurtherReification(
-                        key.name.identifier, type, typeParameterAndReificationArgument.second, isReified
+                    key.name.identifier, type, typeParameterAndReificationArgument.second, isReified
                 )
             }
         }
@@ -1014,7 +1038,7 @@ class ExpressionCodegen(
         return getOrCreateCallGenerator(descriptor, memberAccessExpression, mappings, false)
     }
 
-    override val frameMap: FrameMap
+    override val frameMap: IrFrameMap
         get() = frame
     override val visitor: InstructionAdapter
         get() = mv
@@ -1031,7 +1055,12 @@ class ExpressionCodegen(
         //TODO
     }
 
-    override fun pushClosureOnStack(classDescriptor: ClassDescriptor, putThis: Boolean, callGenerator: CallGenerator, functionReferenceReceiver: StackValue?) {
+    override fun pushClosureOnStack(
+        classDescriptor: ClassDescriptor,
+        putThis: Boolean,
+        callGenerator: CallGenerator,
+        functionReferenceReceiver: StackValue?
+    ) {
         //TODO
     }
 
@@ -1053,7 +1082,13 @@ fun DefaultCallArgs.generateOnStackIfNeeded(callGenerator: IrCallGenerator, isCo
         }
 
         val parameterType = if (isConstructor) AsmTypes.DEFAULT_CONSTRUCTOR_MARKER else AsmTypes.OBJECT_TYPE
-        callGenerator.putValueIfNeeded(parameterType, StackValue.constant(null, parameterType), ValueKind.METHOD_HANDLE_IN_DEFAULT, -1, codegen)
+        callGenerator.putValueIfNeeded(
+            parameterType,
+            StackValue.constant(null, parameterType),
+            ValueKind.METHOD_HANDLE_IN_DEFAULT,
+            -1,
+            codegen
+        )
     }
     return toInts.isNotEmpty()
 }

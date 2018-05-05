@@ -83,7 +83,7 @@ object LongOperationFIF : FunctionIntrinsicFactory {
     fun wrapIntrinsicIfPresent(intrinsic: BaseBinaryIntrinsic?, toLeft: (JsExpression) -> JsExpression, toRight: (JsExpression) -> JsExpression): FunctionIntrinsic? =
         if (intrinsic != null) BaseBinaryIntrinsic() { left, right -> intrinsic.applyFun(toLeft(left), toRight(right)) }  else null
 
-   override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
+   override fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {
        val operationName = descriptor.name.asString()
        return when {
            LONG_EQUALS_ANY.test(descriptor) || LONG_BINARY_OPERATION_LONG.test(descriptor) || LONG_BIT_SHIFTS.test(descriptor) ->

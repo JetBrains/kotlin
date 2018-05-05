@@ -86,7 +86,9 @@ public class JsConfig {
             @Nullable List<JsModuleDescriptor<KotlinJavaScriptLibraryParts>> metadataCache,
             @Nullable Set<String> librariesToSkip) {
         this.project = project;
-        this.configuration = configuration;
+        this.configuration = configuration.copy();
+        CommonConfigurationKeysKt.setLanguageVersionSettings(this.configuration, new ReleaseCoroutinesDisabledLanguageVersionSettings(
+                CommonConfigurationKeysKt.getLanguageVersionSettings(this.configuration)));
         this.metadataCache = metadataCache;
         this.librariesToSkip = librariesToSkip;
     }
@@ -219,6 +221,10 @@ public class JsConfig {
                 if (!modules.add(moduleName)) {
                     report.warning("Module \"" + moduleName + "\" is defined in more than one file");
                 }
+            }
+
+            if (modules.contains(getModuleId())) {
+                report.warning("Module \"" + getModuleId() + "\" depends on module with the same name");
             }
 
             Set<String> friendLibsSet = new HashSet<>(getFriends());

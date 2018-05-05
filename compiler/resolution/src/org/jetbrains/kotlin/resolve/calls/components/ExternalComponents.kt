@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
+import org.jetbrains.kotlin.types.StubType
 import org.jetbrains.kotlin.types.UnwrappedType
 
 // stateless component
@@ -22,6 +25,7 @@ interface KotlinResolutionStatelessCallbacks {
     fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean
     fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower
     fun getVariableCandidateIfInvoke(functionCall: KotlinCall): KotlinResolutionCandidate?
+    fun isCoroutineCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean
 }
 
 // This components hold state (trace). Work with this carefully.
@@ -31,8 +35,9 @@ interface KotlinResolutionCallbacks {
         isSuspend: Boolean,
         receiverType: UnwrappedType?,
         parameters: List<UnwrappedType>,
-        expectedReturnType: UnwrappedType? // null means, that return type is not proper i.e. it depends on some type variables
-    ): List<KotlinCallArgument>
+        expectedReturnType: UnwrappedType?, // null means, that return type is not proper i.e. it depends on some type variables
+        stubsForPostponedVariables: Map<NewTypeVariable, StubType>
+    ): Pair<List<KotlinCallArgument>, InferenceSession?>
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 

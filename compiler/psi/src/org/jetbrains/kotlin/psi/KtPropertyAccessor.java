@@ -91,6 +91,10 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
 
     @Override
     public boolean hasBlockBody() {
+        KotlinPropertyAccessorStub stub = getStub();
+        if (stub != null) {
+            return stub.hasBlockBody();
+        }
         return getEqualsToken() == null;
     }
 

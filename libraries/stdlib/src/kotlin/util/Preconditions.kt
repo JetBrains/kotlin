@@ -1,5 +1,11 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("PreconditionsKt")
+
 package kotlin
 
 import kotlin.internal.contracts.*
@@ -37,7 +43,7 @@ public inline fun require(value: Boolean, lazyMessage: () -> Any): Unit {
  * Throws an [IllegalArgumentException] if the [value] is null. Otherwise returns the not null value.
  */
 @kotlin.internal.InlineOnly
-public inline fun <T:Any> requireNotNull(value: T?): T {
+public inline fun <T : Any> requireNotNull(value: T?): T {
     contract {
         returns() implies (value != null)
     }
@@ -51,7 +57,7 @@ public inline fun <T:Any> requireNotNull(value: T?): T {
  * @sample samples.misc.Preconditions.failRequireWithLazyMessage
  */
 @kotlin.internal.InlineOnly
-public inline fun <T:Any> requireNotNull(value: T?, lazyMessage: () -> Any): T {
+public inline fun <T : Any> requireNotNull(value: T?, lazyMessage: () -> Any): T {
     contract {
         returns() implies (value != null)
     }
@@ -100,7 +106,7 @@ public inline fun check(value: Boolean, lazyMessage: () -> Any): Unit {
  * @sample samples.misc.Preconditions.failCheckWithLazyMessage
  */
 @kotlin.internal.InlineOnly
-public inline fun <T:Any> checkNotNull(value: T?): T = checkNotNull(value) { "Required value was null." }
+public inline fun <T : Any> checkNotNull(value: T?): T = checkNotNull(value) { "Required value was null." }
 
 /**
  * Throws an [IllegalStateException] with the result of calling [lazyMessage]  if the [value] is null. Otherwise
@@ -109,7 +115,7 @@ public inline fun <T:Any> checkNotNull(value: T?): T = checkNotNull(value) { "Re
  * @sample samples.misc.Preconditions.failCheckWithLazyMessage
  */
 @kotlin.internal.InlineOnly
-public inline fun <T:Any> checkNotNull(value: T?, lazyMessage: () -> Any): T {
+public inline fun <T : Any> checkNotNull(value: T?, lazyMessage: () -> Any): T {
     contract {
         returns() implies (value != null)
     }

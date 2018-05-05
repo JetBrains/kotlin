@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInWriteFlags() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
@@ -29,6 +33,10 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInCallableReference() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -37,32 +45,32 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInVisibility() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("functionReference.kt")
             public void testFunctionReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/callableReference/visibility/functionReference.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/callableReference/visibility/functionReference.kt");
             }
 
             @TestMetadata("functionReferenceInInlineFunction.kt")
             public void testFunctionReferenceInInlineFunction() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/callableReference/visibility/functionReferenceInInlineFunction.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/callableReference/visibility/functionReferenceInInlineFunction.kt");
             }
 
             @TestMetadata("propertyReference.kt")
             public void testPropertyReference() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/callableReference/visibility/propertyReference.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/callableReference/visibility/propertyReference.kt");
             }
 
             @TestMetadata("propertyReferenceInInlineFunction.kt")
             public void testPropertyReferenceInInlineFunction() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/callableReference/visibility/propertyReferenceInInlineFunction.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/callableReference/visibility/propertyReferenceInInlineFunction.kt");
             }
         }
     }
@@ -71,6 +79,10 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Class extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInClass() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -79,62 +91,57 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AccessFlags extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInAccessFlags() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/accessFlags"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("defaultImpls.kt")
             public void testDefaultImpls() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/defaultImpls.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/accessFlags/defaultImpls.kt");
             }
 
             @TestMetadata("innerSealed.kt")
             public void testInnerSealed() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/innerSealed.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/accessFlags/innerSealed.kt");
             }
 
             @TestMetadata("mappingWhen.kt")
             public void testMappingWhen() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/mappingWhen.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/accessFlags/mappingWhen.kt");
             }
 
             @TestMetadata("objectLiteral.kt")
             public void testObjectLiteral() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/objectLiteral.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/accessFlags/objectLiteral.kt");
             }
 
             @TestMetadata("publicFinalClass.kt")
             public void testPublicFinalClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/publicFinalClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/accessFlags/publicFinalClass.kt");
             }
 
             @TestMetadata("publicFinalInnerClass.kt")
             public void testPublicFinalInnerClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/publicFinalInnerClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/accessFlags/publicFinalInnerClass.kt");
             }
 
             @TestMetadata("publicInnerInterface.kt")
             public void testPublicInnerInterface() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/publicInnerInterface.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/accessFlags/publicInnerInterface.kt");
             }
 
             @TestMetadata("publicInterface.kt")
             public void testPublicInterface() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/publicInterface.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/accessFlags/publicInterface.kt");
             }
 
             @TestMetadata("simpleFilePackageFacade.kt")
             public void testSimpleFilePackageFacade() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/accessFlags/simpleFilePackageFacade.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/accessFlags/simpleFilePackageFacade.kt");
             }
         }
 
@@ -142,38 +149,37 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("class.kt")
             public void testClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/class.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/deprecatedFlag/class.kt");
             }
 
             @TestMetadata("classObject.kt")
             public void testClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/classObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/deprecatedFlag/classObject.kt");
             }
 
             @TestMetadata("enumClass.kt")
             public void testEnumClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/enumClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/deprecatedFlag/enumClass.kt");
             }
 
             @TestMetadata("innerClass.kt")
             public void testInnerClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/innerClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/deprecatedFlag/innerClass.kt");
             }
 
             @TestMetadata("trait.kt")
             public void testTrait() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/deprecatedFlag/trait.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/class/deprecatedFlag/trait.kt");
             }
         }
 
@@ -181,6 +187,10 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInVisibility() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
@@ -189,56 +199,52 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Internal extends AbstractWriteFlagsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInInternal() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/internal"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("class.kt")
                 public void testClass() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/class.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/internal/class.kt");
                 }
 
                 @TestMetadata("enum.kt")
                 public void testEnum() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/enum.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/internal/enum.kt");
                 }
 
                 @TestMetadata("innerClass.kt")
                 public void testInnerClass() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/innerClass.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/internal/innerClass.kt");
                 }
 
                 @TestMetadata("innerEnum.kt")
                 public void testInnerEnum() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/innerEnum.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/internal/innerEnum.kt");
                 }
 
                 @TestMetadata("innerObject.kt")
                 public void testInnerObject() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/innerObject.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/internal/innerObject.kt");
                 }
 
                 @TestMetadata("innerTrait.kt")
                 public void testInnerTrait() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/innerTrait.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/internal/innerTrait.kt");
                 }
 
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/object.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/internal/object.kt");
                 }
 
                 @TestMetadata("trait.kt")
                 public void testTrait() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/internal/trait.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/internal/trait.kt");
                 }
             }
 
@@ -246,56 +252,52 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Private extends AbstractWriteFlagsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInPrivate() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/private"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("class.kt")
                 public void testClass() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/class.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/private/class.kt");
                 }
 
                 @TestMetadata("enum.kt")
                 public void testEnum() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/enum.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/private/enum.kt");
                 }
 
                 @TestMetadata("innerClass.kt")
                 public void testInnerClass() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/innerClass.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/private/innerClass.kt");
                 }
 
                 @TestMetadata("innerEnum.kt")
                 public void testInnerEnum() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/innerEnum.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/private/innerEnum.kt");
                 }
 
                 @TestMetadata("innerObject.kt")
                 public void testInnerObject() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/innerObject.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/private/innerObject.kt");
                 }
 
                 @TestMetadata("innerTrait.kt")
                 public void testInnerTrait() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/innerTrait.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/private/innerTrait.kt");
                 }
 
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/object.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/private/object.kt");
                 }
 
                 @TestMetadata("trait.kt")
                 public void testTrait() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/private/trait.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/private/trait.kt");
                 }
             }
 
@@ -303,56 +305,52 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Public extends AbstractWriteFlagsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInPublic() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/class/visibility/public"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("class.kt")
                 public void testClass() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/class.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/public/class.kt");
                 }
 
                 @TestMetadata("enum.kt")
                 public void testEnum() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/enum.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/public/enum.kt");
                 }
 
                 @TestMetadata("innerClass.kt")
                 public void testInnerClass() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/innerClass.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/public/innerClass.kt");
                 }
 
                 @TestMetadata("innerEnum.kt")
                 public void testInnerEnum() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/innerEnum.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/public/innerEnum.kt");
                 }
 
                 @TestMetadata("innerObject.kt")
                 public void testInnerObject() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/innerObject.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/public/innerObject.kt");
                 }
 
                 @TestMetadata("innerTrait.kt")
                 public void testInnerTrait() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/innerTrait.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/public/innerTrait.kt");
                 }
 
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/object.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/public/object.kt");
                 }
 
                 @TestMetadata("trait.kt")
                 public void testTrait() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/class/visibility/public/trait.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/class/visibility/public/trait.kt");
                 }
             }
         }
@@ -362,6 +360,10 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DelegatedProperty extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInDelegatedProperty() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -370,14 +372,17 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInVisibility() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/delegatedProperty/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("privateSet.kt")
             public void testPrivateSet() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/delegatedProperty/visibility/privateSet.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/delegatedProperty/visibility/privateSet.kt");
             }
         }
     }
@@ -386,6 +391,10 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Function extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInFunction() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -394,26 +403,27 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassObjectPrivate extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInClassObjectPrivate() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/classObjectPrivate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("privateFun.kt")
             public void testPrivateFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/classObjectPrivate/privateFun.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/classObjectPrivate/privateFun.kt");
             }
 
             @TestMetadata("privateVal.kt")
             public void testPrivateVal() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/classObjectPrivate/privateVal.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/classObjectPrivate/privateVal.kt");
             }
 
             @TestMetadata("privateVar.kt")
             public void testPrivateVar() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/classObjectPrivate/privateVar.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/classObjectPrivate/privateVar.kt");
             }
         }
 
@@ -421,32 +431,32 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Constructors extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInConstructors() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/constructors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("classObject.kt")
             public void testClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/constructors/classObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/constructors/classObject.kt");
             }
 
             @TestMetadata("objectInClass.kt")
             public void testObjectInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/constructors/objectInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/constructors/objectInClass.kt");
             }
 
             @TestMetadata("objectLiteral.kt")
             public void testObjectLiteral() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/constructors/objectLiteral.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/constructors/objectLiteral.kt");
             }
 
             @TestMetadata("topLevelObject.kt")
             public void testTopLevelObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/constructors/topLevelObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/constructors/topLevelObject.kt");
             }
         }
 
@@ -454,80 +464,72 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("emptyGetter.kt")
             public void testEmptyGetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/emptyGetter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/emptyGetter.kt");
             }
 
             @TestMetadata("emptySetter.kt")
             public void testEmptySetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/emptySetter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/emptySetter.kt");
             }
 
             @TestMetadata("extentionFun.kt")
             public void testExtentionFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/extentionFun.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/extentionFun.kt");
             }
 
             @TestMetadata("funInClass.kt")
             public void testFunInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/funInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/funInClass.kt");
             }
 
             @TestMetadata("funInClassObject.kt")
             public void testFunInClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/funInClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/funInClassObject.kt");
             }
 
             @TestMetadata("getter.kt")
             public void testGetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/getter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/getter.kt");
             }
 
             @TestMetadata("getterAnnotationOnProperty.kt")
             public void testGetterAnnotationOnProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/getterAnnotationOnProperty.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/getterAnnotationOnProperty.kt");
             }
 
             @TestMetadata("getterForPropertyInConstructor.kt")
             public void testGetterForPropertyInConstructor() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/getterForPropertyInConstructor.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/getterForPropertyInConstructor.kt");
             }
 
             @TestMetadata("setter.kt")
             public void testSetter() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/setter.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/setter.kt");
             }
 
             @TestMetadata("setterAnnotationOnProperty.kt")
             public void testSetterAnnotationOnProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/setterAnnotationOnProperty.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/setterAnnotationOnProperty.kt");
             }
 
             @TestMetadata("setterForPropertyInConstructor.kt")
             public void testSetterForPropertyInConstructor() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/setterForPropertyInConstructor.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/setterForPropertyInConstructor.kt");
             }
 
             @TestMetadata("topLevelFun.kt")
             public void testTopLevelFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/deprecatedFlag/topLevelFun.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/deprecatedFlag/topLevelFun.kt");
             }
         }
 
@@ -535,38 +537,37 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WithDefaultArguments extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInWithDefaultArguments() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/function/withDefaultArguments"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("funInClass.kt")
             public void testFunInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/funInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/withDefaultArguments/funInClass.kt");
             }
 
             @TestMetadata("funInClassObject.kt")
             public void testFunInClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/funInClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/withDefaultArguments/funInClassObject.kt");
             }
 
             @TestMetadata("inlineOnlyFunInClass.kt")
             public void testInlineOnlyFunInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/inlineOnlyFunInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/withDefaultArguments/inlineOnlyFunInClass.kt");
             }
 
             @TestMetadata("reifiedFunInClass.kt")
             public void testReifiedFunInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/reifiedFunInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/withDefaultArguments/reifiedFunInClass.kt");
             }
 
             @TestMetadata("topLevelFun.kt")
             public void testTopLevelFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/function/withDefaultArguments/topLevelFun.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/function/withDefaultArguments/topLevelFun.kt");
             }
         }
     }
@@ -575,26 +576,27 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Hidden extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInHidden() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/hidden"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("function.kt")
         public void testFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/hidden/function.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/hidden/function.kt");
         }
 
         @TestMetadata("propertyGetter.kt")
         public void testPropertyGetter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/hidden/propertyGetter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/hidden/propertyGetter.kt");
         }
 
         @TestMetadata("propertySetter.kt")
         public void testPropertySetter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/hidden/propertySetter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/hidden/propertySetter.kt");
         }
     }
 
@@ -602,26 +604,27 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Inline extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInInline() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("lostInnerClass.kt")
         public void testLostInnerClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/inline/lostInnerClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/inline/lostInnerClass.kt");
         }
 
         @TestMetadata("lostInnerClass2.kt")
         public void testLostInnerClass2() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/inline/lostInnerClass2.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/inline/lostInnerClass2.kt");
         }
 
         @TestMetadata("lostInnerClass3.kt")
         public void testLostInnerClass3() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/inline/lostInnerClass3.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/inline/lostInnerClass3.kt");
         }
     }
 
@@ -629,6 +632,10 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InnerClass extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInInnerClass() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -637,44 +644,42 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInVisibility() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/innerClass/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("internal.kt")
             public void testInternal() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/internal.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/innerClass/visibility/internal.kt");
             }
 
             @TestMetadata("internalClassObject.kt")
             public void testInternalClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/internalClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/innerClass/visibility/internalClassObject.kt");
             }
 
             @TestMetadata("private.kt")
             public void testPrivate() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/private.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/innerClass/visibility/private.kt");
             }
 
             @TestMetadata("privateClassObject.kt")
             public void testPrivateClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/privateClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/innerClass/visibility/privateClassObject.kt");
             }
 
             @TestMetadata("public.kt")
             public void testPublic() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/public.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/innerClass/visibility/public.kt");
             }
 
             @TestMetadata("publicClassObject.kt")
             public void testPublicClassObject() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/innerClass/visibility/publicClassObject.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/innerClass/visibility/publicClassObject.kt");
             }
         }
     }
@@ -683,20 +688,22 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Lambda extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInLambda() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/lambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("lambdaInInlineFunction.kt")
         public void testLambdaInInlineFunction() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lambda/lambdaInInlineFunction.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/lambda/lambdaInInlineFunction.kt");
         }
 
         @TestMetadata("simpleLambda.kt")
         public void testSimpleLambda() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lambda/simpleLambda.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/lambda/simpleLambda.kt");
         }
     }
 
@@ -704,26 +711,27 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Lateinit extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInLateinit() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/lateinit"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("lateinitGetter.kt")
         public void testLateinitGetter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lateinit/lateinitGetter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/lateinit/lateinitGetter.kt");
         }
 
         @TestMetadata("lateinitProperty.kt")
         public void testLateinitProperty() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lateinit/lateinitProperty.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/lateinit/lateinitProperty.kt");
         }
 
         @TestMetadata("lateinitPropertyNoSetter.kt")
         public void testLateinitPropertyNoSetter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lateinit/lateinitPropertyNoSetter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/writeFlags/lateinit/lateinitPropertyNoSetter.kt");
         }
     }
 
@@ -731,6 +739,10 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Property extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInProperty() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -739,6 +751,10 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassObject extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInClassObject() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
@@ -747,110 +763,97 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Class extends AbstractWriteFlagsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInClass() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("delegatedProtectedVar.kt")
                 public void testDelegatedProtectedVar() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/delegatedProtectedVar.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/delegatedProtectedVar.kt");
                 }
 
                 @TestMetadata("delegatedPublicVal.kt")
                 public void testDelegatedPublicVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/delegatedPublicVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/delegatedPublicVal.kt");
                 }
 
                 @TestMetadata("internalVal.kt")
                 public void testInternalVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/internalVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/internalVal.kt");
                 }
 
                 @TestMetadata("internalVar.kt")
                 public void testInternalVar() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/internalVar.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/internalVar.kt");
                 }
 
                 @TestMetadata("internalVarPrivateSet.kt")
                 public void testInternalVarPrivateSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/internalVarPrivateSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/internalVarPrivateSet.kt");
                 }
 
                 @TestMetadata("noBackingField.kt")
                 public void testNoBackingField() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/noBackingField.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/noBackingField.kt");
                 }
 
                 @TestMetadata("privateVal.kt")
                 public void testPrivateVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/privateVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/privateVal.kt");
                 }
 
                 @TestMetadata("privateVar.kt")
                 public void testPrivateVar() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/privateVar.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/privateVar.kt");
                 }
 
                 @TestMetadata("protectedVal.kt")
                 public void testProtectedVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/protectedVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/protectedVal.kt");
                 }
 
                 @TestMetadata("protectedVarPrivateSet.kt")
                 public void testProtectedVarPrivateSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/protectedVarPrivateSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/protectedVarPrivateSet.kt");
                 }
 
                 @TestMetadata("publicVal.kt")
                 public void testPublicVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/publicVal.kt");
                 }
 
                 @TestMetadata("publicValNonDefault.kt")
                 public void testPublicValNonDefault() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicValNonDefault.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/publicValNonDefault.kt");
                 }
 
                 @TestMetadata("publicVar.kt")
                 public void testPublicVar() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVar.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/publicVar.kt");
                 }
 
                 @TestMetadata("publicVarNonDefault.kt")
                 public void testPublicVarNonDefault() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVarNonDefault.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/publicVarNonDefault.kt");
                 }
 
                 @TestMetadata("publicVarPrivateSet.kt")
                 public void testPublicVarPrivateSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVarPrivateSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/publicVarPrivateSet.kt");
                 }
 
                 @TestMetadata("publicVarProtectedSet.kt")
                 public void testPublicVarProtectedSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVarProtectedSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/publicVarProtectedSet.kt");
                 }
 
                 @TestMetadata("publicVarPublicSet.kt")
                 public void testPublicVarPublicSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/class/publicVarPublicSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/class/publicVarPublicSet.kt");
                 }
             }
 
@@ -858,32 +861,32 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Rename extends AbstractWriteFlagsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInRename() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/rename"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("constructorAndClassObject.kt")
                 public void testConstructorAndClassObject() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/rename/constructorAndClassObject.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/rename/constructorAndClassObject.kt");
                 }
 
                 @TestMetadata("delegatedAndDelegated.kt")
                 public void testDelegatedAndDelegated() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/rename/delegatedAndDelegated.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/rename/delegatedAndDelegated.kt");
                 }
 
                 @TestMetadata("delegatedAndProperty.kt")
                 public void testDelegatedAndProperty() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/rename/delegatedAndProperty.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/rename/delegatedAndProperty.kt");
                 }
 
                 @TestMetadata("propertyAndProperty.kt")
                 public void testPropertyAndProperty() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/rename/propertyAndProperty.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/rename/propertyAndProperty.kt");
                 }
             }
 
@@ -891,128 +894,112 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Trait extends AbstractWriteFlagsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
                 public void testAllFilesPresentInTrait() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/classObject/trait"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
                 @TestMetadata("delegatedProtectedVar.kt")
                 public void testDelegatedProtectedVar() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/delegatedProtectedVar.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/delegatedProtectedVar.kt");
                 }
 
                 @TestMetadata("delegatedPublicVal.kt")
                 public void testDelegatedPublicVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/delegatedPublicVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/delegatedPublicVal.kt");
                 }
 
                 @TestMetadata("internalConstVal.kt")
                 public void testInternalConstVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/internalConstVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/internalConstVal.kt");
                 }
 
                 @TestMetadata("internalVal.kt")
                 public void testInternalVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/internalVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/internalVal.kt");
                 }
 
                 @TestMetadata("internalVar.kt")
                 public void testInternalVar() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/internalVar.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/internalVar.kt");
                 }
 
                 @TestMetadata("internalVarPrivateSet.kt")
                 public void testInternalVarPrivateSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/internalVarPrivateSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/internalVarPrivateSet.kt");
                 }
 
                 @TestMetadata("noBackingField.kt")
                 public void testNoBackingField() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/noBackingField.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/noBackingField.kt");
                 }
 
                 @TestMetadata("privateVal.kt")
                 public void testPrivateVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/privateVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/privateVal.kt");
                 }
 
                 @TestMetadata("privateVar.kt")
                 public void testPrivateVar() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/privateVar.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/privateVar.kt");
                 }
 
                 @TestMetadata("protectedConstVal.kt")
                 public void testProtectedConstVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/protectedConstVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/protectedConstVal.kt");
                 }
 
                 @TestMetadata("protectedVal.kt")
                 public void testProtectedVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/protectedVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/protectedVal.kt");
                 }
 
                 @TestMetadata("protectedVarPrivateSet.kt")
                 public void testProtectedVarPrivateSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/protectedVarPrivateSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/protectedVarPrivateSet.kt");
                 }
 
                 @TestMetadata("publicConstVal.kt")
                 public void testPublicConstVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicConstVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/publicConstVal.kt");
                 }
 
                 @TestMetadata("publicVal.kt")
                 public void testPublicVal() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVal.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/publicVal.kt");
                 }
 
                 @TestMetadata("publicValNonDefault.kt")
                 public void testPublicValNonDefault() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicValNonDefault.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/publicValNonDefault.kt");
                 }
 
                 @TestMetadata("publicVar.kt")
                 public void testPublicVar() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVar.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/publicVar.kt");
                 }
 
                 @TestMetadata("publicVarNonDefault.kt")
                 public void testPublicVarNonDefault() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVarNonDefault.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/publicVarNonDefault.kt");
                 }
 
                 @TestMetadata("publicVarPrivateSet.kt")
                 public void testPublicVarPrivateSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVarPrivateSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/publicVarPrivateSet.kt");
                 }
 
                 @TestMetadata("publicVarProtectedSet.kt")
                 public void testPublicVarProtectedSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVarProtectedSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/publicVarProtectedSet.kt");
                 }
 
                 @TestMetadata("publicVarPublicSet.kt")
                 public void testPublicVarPublicSet() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/publicVarPublicSet.kt");
-                    doTest(fileName);
+                    runTest("compiler/testData/writeFlags/property/classObject/trait/publicVarPublicSet.kt");
                 }
             }
         }
@@ -1021,20 +1008,22 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DeprecatedFlag extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInDeprecatedFlag() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/deprecatedFlag"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("propertyInClass.kt")
             public void testPropertyInClass() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/deprecatedFlag/propertyInClass.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/property/deprecatedFlag/propertyInClass.kt");
             }
 
             @TestMetadata("topLevelProperty.kt")
             public void testTopLevelProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/deprecatedFlag/topLevelProperty.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/property/deprecatedFlag/topLevelProperty.kt");
             }
         }
 
@@ -1042,26 +1031,27 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SyntheticAnnotationsMethod extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInSyntheticAnnotationsMethod() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("privateProperty.kt")
             public void testPrivateProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/privateProperty.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/privateProperty.kt");
             }
 
             @TestMetadata("protectedProperty.kt")
             public void testProtectedProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/protectedProperty.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/protectedProperty.kt");
             }
 
             @TestMetadata("publicProperty.kt")
             public void testPublicProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/publicProperty.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/publicProperty.kt");
             }
         }
 
@@ -1069,26 +1059,27 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Visibility extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInVisibility() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("internal.kt")
             public void testInternal() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/visibility/internal.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/property/visibility/internal.kt");
             }
 
             @TestMetadata("private.kt")
             public void testPrivate() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/visibility/private.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/property/visibility/private.kt");
             }
 
             @TestMetadata("public.kt")
             public void testPublic() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/visibility/public.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/property/visibility/public.kt");
             }
         }
     }
@@ -1097,6 +1088,10 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Typealias extends AbstractWriteFlagsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInTypealias() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/typealias"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
@@ -1105,20 +1100,22 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SyntheticAnnotationsMethod extends AbstractWriteFlagsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
             public void testAllFilesPresentInSyntheticAnnotationsMethod() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("privateTypealias.kt")
             public void testPrivateTypealias() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod/privateTypealias.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod/privateTypealias.kt");
             }
 
             @TestMetadata("publicTypealias.kt")
             public void testPublicTypealias() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod/publicTypealias.kt");
-                doTest(fileName);
+                runTest("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod/publicTypealias.kt");
             }
         }
     }

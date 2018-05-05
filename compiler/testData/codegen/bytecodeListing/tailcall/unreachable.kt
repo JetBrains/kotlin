@@ -1,3 +1,4 @@
+// COMMON_COROUTINES_TEST
 suspend fun empty() {}
 suspend fun withoutReturn() {
     empty()

@@ -1,11 +1,12 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.binding;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
@@ -14,13 +15,13 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
 import org.jetbrains.kotlin.cfg.WhenChecker;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -171,6 +173,29 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     @Override
     public void visitKtElement(@NotNull KtElement element) {
         super.visitKtElement(element);
+
+        if (!classBuilderMode.generateBodies) {
+            if (element instanceof KtFile) {
+                KotlinFileStub stub = ((KtFile) element).getStub();
+                if (stub != null) {
+                    for (StubElement stubElement : stub.getChildrenStubs()) {
+                        stubElement.getPsi().accept(this);
+                    }
+                    return;
+                }
+            }
+
+            if (element instanceof KtElementImplStub<?> && ((KtElementImplStub) element).getStub() != null) {
+                StubElement<?> stub = ((KtElementImplStub<?>) element).getStub();
+                if (stub != null) {
+                    for (StubElement stubElement : stub.getChildrenStubs()) {
+                        stubElement.getPsi().accept(this);
+                    }
+                    return;
+                }
+            }
+        }
+
         element.acceptChildren(this);
     }
 
@@ -193,7 +218,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     @Override
     public void visitKtFile(@NotNull KtFile file) {
         nameStack.push(AsmUtil.internalNameByFqNameWithoutInnerClasses(file.getPackageFqName()));
-        file.acceptChildren(this);
+        visitKtElement(file);
         nameStack.pop();
     }
 
@@ -308,7 +333,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (CoroutineUtilKt.isSuspendLambda(functionDescriptor)) {
             SimpleFunctionDescriptor jvmSuspendFunctionView =
                     CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                            (SimpleFunctionDescriptor) functionDescriptor
+                            (SimpleFunctionDescriptor) functionDescriptor,
+                            languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
                     );
 
             bindingTrace.record(
@@ -506,10 +532,12 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         String nameForClassOrPackageMember = getNameForClassOrPackageMember(functionDescriptor);
 
-        if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
+        if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend() &&
+            !functionDescriptor.getVisibility().equals(Visibilities.LOCAL)) {
             SimpleFunctionDescriptor jvmSuspendFunctionView =
                     CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
-                            (SimpleFunctionDescriptor) functionDescriptor
+                            (SimpleFunctionDescriptor) functionDescriptor,
+                            languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
                     );
 
             // This is a very subtle place (hack).
@@ -563,11 +591,30 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         else {
             String name = inventAnonymousClassName();
             ClassDescriptor classDescriptor = recordClassForFunction(function, functionDescriptor, name, null);
-            recordClosure(classDescriptor, name);
+            MutableClosure closure = recordClosure(classDescriptor, name);
 
             classStack.push(classDescriptor);
-            functionsStack.push(functionDescriptor);
             nameStack.push(name);
+
+            if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
+                SimpleFunctionDescriptor jvmSuspendFunctionView =
+                        CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
+                                (SimpleFunctionDescriptor) functionDescriptor,
+                                languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+                                /*bindingContext*/ null,
+                                /*dropSuspend*/ true
+                        );
+
+                bindingTrace.record(
+                        CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW,
+                        functionDescriptor,
+                        jvmSuspendFunctionView
+                );
+                closure.setSuspend(true);
+                closure.setSuspendLambda();
+            }
+
+            functionsStack.push(functionDescriptor);
             super.visitNamedFunction(function);
             functionsStack.pop();
             nameStack.pop();

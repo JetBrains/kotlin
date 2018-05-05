@@ -25,6 +25,7 @@ import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
 import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.lang.annotation.HighlightSeverity.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -32,7 +33,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.script.experimental.dependencies.ScriptReport
@@ -93,7 +93,7 @@ class ScriptExternalHighlightingPass(
             ScriptReport.Severity.ERROR -> ERROR
             ScriptReport.Severity.WARNING -> WARNING
             ScriptReport.Severity.INFO -> INFORMATION
-            ScriptReport.Severity.DEBUG -> if (KotlinInternalMode.enabled) INFORMATION else null
+            ScriptReport.Severity.DEBUG -> if (ApplicationManager.getApplication().isInternal) INFORMATION else null
         }
     }
 

@@ -21,19 +21,47 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JsDecompiledTextFromJsMetadataTestGenerated extends AbstractJsDecompiledTextFromJsMetadataTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInDecompiledTextJs() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
     }
 
     @TestMetadata("TestPackage")
     public void testTestPackage() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJs/TestPackage/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledTextJs/TestPackage/");
     }
 
     @TestMetadata("TypeAliases")
     public void testTypeAliases() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJs/TypeAliases/");
-        doTest(fileName);
+        runTest("idea/testData/decompiler/decompiledTextJs/TypeAliases/");
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledTextJs/TestPackage")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TestPackage extends AbstractJsDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTestPackage() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs/TestPackage"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/decompiler/decompiledTextJs/TypeAliases")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeAliases extends AbstractJsDecompiledTextFromJsMetadataTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeAliases() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledTextJs/TypeAliases"), Pattern.compile("^([^\\.]+)$"), TargetBackend.JS, true);
+        }
     }
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT LinkedHashMap
@@ -27,7 +16,7 @@ import kotlin.collections.MutableMap.MutableEntry
  *
  * The insertion order is preserved by maintaining a doubly-linked list of all of its entries.
  */
-public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
+public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
 
     /**
      * The entry we use includes next/prev pointers for a doubly-linked circular
@@ -146,8 +135,7 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
         if (this.next === this) {
             // if this is single element, remove head
             head = null
-        }
-        else {
+        } else {
             if (head === this) {
                 // if this is first element, move head to next
                 head = next
@@ -169,7 +157,7 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
     /**
      * Constructs an empty [LinkedHashMap] instance.
      */
-    constructor() : super()  {
+    actual constructor() : super() {
         map = HashMap<K, ChainEntry<K, V>>()
     }
 
@@ -186,19 +174,21 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    constructor(initialCapacity: Int, loadFactor: Float = 0f) : super(initialCapacity, loadFactor) {
+    actual constructor(initialCapacity: Int, loadFactor: Float) : super(initialCapacity, loadFactor) {
         map = HashMap<K, ChainEntry<K, V>>()
     }
+
+    actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 
     /**
      * Constructs an instance of [LinkedHashMap] filled with the contents of the specified [original] map.
      */
-    constructor(original: Map<out K, V>) {
+    actual constructor(original: Map<out K, V>) {
         map = HashMap<K, ChainEntry<K, V>>()
         this.putAll(original)
     }
 
-    override fun clear() {
+    actual override fun clear() {
         map.clear()
         head = null
     }
@@ -208,9 +198,10 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
 //        return LinkedHashMap(this)
 //    }
 
-    override fun containsKey(key: K): Boolean = map.containsKey(key)
 
-    override fun containsValue(value: V): Boolean {
+    actual override fun containsKey(key: K): Boolean = map.containsKey(key)
+
+    actual override fun containsValue(value: V): Boolean {
         var node: ChainEntry<K, V> = head ?: return false
         do {
             if (node.value == value) {
@@ -224,22 +215,21 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
 
     override fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
 
-    override operator fun get(key: K): V? = map.get(key)?.value
+    actual override operator fun get(key: K): V? = map.get(key)?.value
 
-    override fun put(key: K, value: V): V? {
+    actual override fun put(key: K, value: V): V? {
         val old = map.get(key)
         if (old == null) {
             val newEntry = ChainEntry(key, value)
             map.put(key, newEntry)
             newEntry.addToEnd()
             return null
-        }
-        else {
+        } else {
             return old.setValue(value)
         }
     }
 
-    override fun remove(key: K): V? {
+    actual override fun remove(key: K): V? {
         val entry = map.remove(key)
         if (entry != null) {
             entry.remove()
@@ -248,7 +238,7 @@ public open class LinkedHashMap<K, V> : HashMap<K, V>, Map<K, V> {
         return null
     }
 
-    override val size: Int get() = map.size
+    actual override val size: Int get() = map.size
 
 }
 

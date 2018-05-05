@@ -21,55 +21,51 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ModuleXmlParserTestGenerated extends AbstractModuleXmlParserTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInModules_xml() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/modules.xml"), Pattern.compile("^(.+)\\.xml$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("allOnce.xml")
     public void testAllOnce() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/allOnce.xml");
-        doTest(fileName);
+        runTest("compiler/testData/modules.xml/allOnce.xml");
     }
 
     @TestMetadata("comments.xml")
     public void testComments() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/comments.xml");
-        doTest(fileName);
+        runTest("compiler/testData/modules.xml/comments.xml");
     }
 
     @TestMetadata("empty.xml")
     public void testEmpty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/empty.xml");
-        doTest(fileName);
+        runTest("compiler/testData/modules.xml/empty.xml");
     }
 
     @TestMetadata("emptyModule.xml")
     public void testEmptyModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/emptyModule.xml");
-        doTest(fileName);
+        runTest("compiler/testData/modules.xml/emptyModule.xml");
     }
 
     @TestMetadata("manyTimes.xml")
     public void testManyTimes() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/manyTimes.xml");
-        doTest(fileName);
+        runTest("compiler/testData/modules.xml/manyTimes.xml");
     }
 
     @TestMetadata("onlySources.xml")
     public void testOnlySources() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/onlySources.xml");
-        doTest(fileName);
+        runTest("compiler/testData/modules.xml/onlySources.xml");
     }
 
     @TestMetadata("twoModules.xml")
     public void testTwoModules() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/twoModules.xml");
-        doTest(fileName);
+        runTest("compiler/testData/modules.xml/twoModules.xml");
     }
 
     @TestMetadata("typeTestModule.xml")
     public void testTypeTestModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/modules.xml/typeTestModule.xml");
-        doTest(fileName);
+        runTest("compiler/testData/modules.xml/typeTestModule.xml");
     }
 }

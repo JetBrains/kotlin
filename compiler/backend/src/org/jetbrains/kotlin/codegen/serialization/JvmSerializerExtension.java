@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.serialization;
@@ -24,6 +13,7 @@ import org.jetbrains.kotlin.codegen.FakeDescriptorsForReferencesKt;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -61,6 +51,7 @@ public class JvmSerializerExtension extends SerializerExtension {
     private final boolean useTypeTable;
     private final String moduleName;
     private final ClassBuilderMode classBuilderMode;
+    private final boolean isReleaseCoroutines;
 
     public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull GenerationState state) {
         this.bindings = bindings;
@@ -71,6 +62,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         this.useTypeTable = state.getUseTypeTableInSerializer();
         this.moduleName = state.getModuleName();
         this.classBuilderMode = state.getClassBuilderMode();
+        this.isReleaseCoroutines = state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines);
     }
 
     @NotNull
@@ -144,16 +136,14 @@ public class JvmSerializerExtension extends SerializerExtension {
     @Override
     public void serializeType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder proto) {
         // TODO: don't store type annotations in our binary metadata on Java 8, use *TypeAnnotations attributes instead
-        for (AnnotationDescriptor annotation : type.getAnnotations()) {
+        for (AnnotationDescriptor annotation : DescriptorUtilsKt.getNonSourceAnnotations(type)) {
             proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation));
         }
     }
 
     @Override
-    public void serializeTypeParameter(
-            @NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto
-    ) {
-        for (AnnotationDescriptor annotation : typeParameter.getAnnotations()) {
+    public void serializeTypeParameter(@NotNull TypeParameterDescriptor typeParameter, @NotNull ProtoBuf.TypeParameter.Builder proto) {
+        for (AnnotationDescriptor annotation : DescriptorUtilsKt.getNonSourceAnnotations(typeParameter)) {
             proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation));
         }
     }
@@ -312,5 +302,10 @@ public class JvmSerializerExtension extends SerializerExtension {
             }
             return builder.build();
         }
+    }
+
+    @Override
+    public boolean releaseCoroutines() {
+        return isReleaseCoroutines;
     }
 }

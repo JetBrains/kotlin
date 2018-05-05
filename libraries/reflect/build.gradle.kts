@@ -38,7 +38,7 @@ configurations.getByName("compileOnly").extendsFrom(shadows)
 val mainJar by configurations.creating
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib"))
 
     proguardDeps(project(":kotlin-stdlib"))
     proguardDeps(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = File(property("JDK_16") as String))))

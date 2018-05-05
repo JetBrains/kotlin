@@ -24,6 +24,8 @@ sourceSets {
         kotlin {
             srcDir 'test'
             if(!System.properties.'idea.active') {
+                srcDir '../jvm/test'
+                srcDir '../common/test'
                 srcDir '../test'
                 srcDir '../jre7/test'
             }
@@ -60,7 +62,7 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable", "-Xmulti-platform"]
 }
 
 kotlin.experimental.coroutines 'enable'

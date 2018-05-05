@@ -25,6 +25,7 @@ import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
+import org.jetbrains.kotlin.script.findScriptDefinition
 import java.io.File
 import kotlin.script.experimental.dependencies.ScriptDependencies
 

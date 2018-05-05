@@ -21,91 +21,81 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KotlinMavenInspectionTestGenerated extends AbstractKotlinMavenInspectionTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInMaven_inspections() throws Exception {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/idea-maven/testData/maven-inspections"), Pattern.compile("^([\\w\\-]+).xml$"), TargetBackend.ANY);
     }
 
     @TestMetadata("bothCompileAndTestCompileInTheSameExecution.xml")
     public void testBothCompileAndTestCompileInTheSameExecution() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/bothCompileAndTestCompileInTheSameExecution.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/bothCompileAndTestCompileInTheSameExecution.xml");
     }
 
     @TestMetadata("dependencyWithNoExecution.xml")
     public void testDependencyWithNoExecution() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/dependencyWithNoExecution.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/dependencyWithNoExecution.xml");
     }
 
     @TestMetadata("deprecatedJre.xml")
     public void testDeprecatedJre() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/deprecatedJre.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/deprecatedJre.xml");
     }
 
     @TestMetadata("deprecatedJreWithDependencyManagement.xml")
     public void testDeprecatedJreWithDependencyManagement() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/deprecatedJreWithDependencyManagement.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/deprecatedJreWithDependencyManagement.xml");
     }
 
     @TestMetadata("ideAndMavenVersions.xml")
     public void testIdeAndMavenVersions() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/ideAndMavenVersions.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/ideAndMavenVersions.xml");
     }
 
     @TestMetadata("ideAndMavenVersionsSuppression.xml")
     public void testIdeAndMavenVersionsSuppression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/ideAndMavenVersionsSuppression.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/ideAndMavenVersionsSuppression.xml");
     }
 
     @TestMetadata("kotlinTestWithJunit.xml")
     public void testKotlinTestWithJunit() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/kotlinTestWithJunit.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/kotlinTestWithJunit.xml");
     }
 
     @TestMetadata("missingDependencies.xml")
     public void testMissingDependencies() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/missingDependencies.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/missingDependencies.xml");
     }
 
     @TestMetadata("noExecutions.xml")
     public void testNoExecutions() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/noExecutions.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/noExecutions.xml");
     }
 
     @TestMetadata("oldVersionWithJre.xml")
     public void testOldVersionWithJre() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/oldVersionWithJre.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/oldVersionWithJre.xml");
     }
 
     @TestMetadata("sameVersionPluginLibrary.xml")
     public void testSameVersionPluginLibrary() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/sameVersionPluginLibrary.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/sameVersionPluginLibrary.xml");
     }
 
     @TestMetadata("sameVersionPluginLibrarySuppression.xml")
     public void testSameVersionPluginLibrarySuppression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/sameVersionPluginLibrarySuppression.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/sameVersionPluginLibrarySuppression.xml");
     }
 
     @TestMetadata("wrongJsExecution.xml")
     public void testWrongJsExecution() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/wrongJsExecution.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/wrongJsExecution.xml");
     }
 
     @TestMetadata("wrongPhaseExecution.xml")
     public void testWrongPhaseExecution() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-maven/testData/maven-inspections/wrongPhaseExecution.xml");
-        doTest(fileName);
+        runTest("idea/idea-maven/testData/maven-inspections/wrongPhaseExecution.xml");
     }
 }

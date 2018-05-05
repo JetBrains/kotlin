@@ -3,7 +3,7 @@ class B extends A {
         System.out.println(getFoo());
     }
 
-    public String getFoo() {
+    private String getFoo() {
         return "foo";
     }
 }

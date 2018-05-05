@@ -32,14 +32,12 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             addModules: List<String> = emptyList(),
             manifest: Manifest? = null
     ): File {
-        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return File("<test-skipped>")
-
         val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
-                "-jdk-home", jdk9Home.path,
-                "-jvm-target", "1.8",
-                "-Xmodule-path=$paths"
+            "-jdk-home", KotlinTestUtils.getJdk9Home().path,
+            "-jvm-target", "1.8",
+            "-Xmodule-path=$paths"
         )
         if (addModules.isNotEmpty()) {
             kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
@@ -160,11 +158,10 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     fun testSpecifyPathToModuleInfoInArguments() {
         val a = module("moduleA")
 
-        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return
         val kotlinOptions = mutableListOf(
-                "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
-                "-jdk-home", jdk9Home.path,
-                "-Xmodule-path=${a.path}"
+            "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
+            "-jdk-home", KotlinTestUtils.getJdk9Home().path,
+            "-Xmodule-path=${a.path}"
         )
         compileLibrary(
                 "moduleB",
@@ -175,8 +172,6 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     fun testMultiReleaseLibrary() {
-        val jdk9Home = KotlinTestUtils.getJdk9HomeIfPossible() ?: return
-
         val librarySrc = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, "library"))
         val libraryOut = File(tmpdir, "out")
         KotlinTestUtils.compileJavaFilesExternallyWithJava9(librarySrc, listOf("-d", libraryOut.path))
@@ -186,7 +181,9 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         File(libraryOut, "module-info.class").renameTo(File(libraryOut9, "module-info.class"))
 
         // Use the name other from 'library' to prevent it from being loaded as an automatic module if module-info.class is not found
-        val libraryJar = createMultiReleaseJar(jdk9Home, File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut9)
+        val libraryJar = createMultiReleaseJar(
+            KotlinTestUtils.getJdk9Home(), File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut9
+        )
 
         module("main", listOf(libraryJar))
     }

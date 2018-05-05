@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.utils.Printer;
 
@@ -343,7 +344,7 @@ public class ErrorUtils {
         public ErrorClassDescriptor(@NotNull Name name) {
             super(getErrorModule(), name,
                   Modality.OPEN, ClassKind.CLASS, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE,
-                  /* isExternal = */ false
+                  /* isExternal = */ false, LockBasedStorageManager.NO_LOCKS
             );
 
             ClassConstructorDescriptorImpl

@@ -1254,19 +1254,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         boolean isLeftFunctionLiteral = ArgumentTypeResolver.isFunctionLiteralArgument(left, context);
         boolean isLeftCallableReference = ArgumentTypeResolver.isCallableReferenceArgument(left, context);
         if (leftTypeInfo == null && (isLeftFunctionLiteral || isLeftCallableReference)) {
-            DiagnosticFactory0<PsiElement> diagnosticFactory =
-                    isLeftFunctionLiteral ? USELESS_ELVIS_ON_LAMBDA_EXPRESSION : USELESS_ELVIS_ON_CALLABLE_REFERENCE;
-            context.trace.report(diagnosticFactory.on(expression.getOperationReference()));
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;
         KotlinType leftType = leftTypeInfo.getType();
-        if (isKnownToBeNotNull(left, leftType, context)) {
-            context.trace.report(USELESS_ELVIS.on(expression, leftType));
-        }
-        else if (KtPsiUtil.isNullConstant(right) && leftType != null && !FlexibleTypesKt.isNullabilityFlexible(leftType)) {
-            context.trace.report(USELESS_ELVIS_RIGHT_IS_NULL.on(expression));
-        }
         KotlinTypeInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
         if (rightTypeInfo == null && ArgumentTypeResolver.isFunctionLiteralOrCallableReference(right, context)) {
             // the type is computed later in call completer according to the '?:' semantics as a function

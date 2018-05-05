@@ -56,7 +56,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
             )
         }
 
-        private val typeConstructor = ClassTypeConstructorImpl(this, typeParameters, setOf(module.builtIns.anyType))
+        private val typeConstructor = ClassTypeConstructorImpl(this, typeParameters, setOf(module.builtIns.anyType), storageManager)
 
         override fun getKind() = ClassKind.CLASS
         override fun getModality() = Modality.FINAL

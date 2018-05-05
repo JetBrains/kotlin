@@ -4,7 +4,7 @@ plugins {
 
 description = 'Kotlin Standard Library for JS'
 
-apply plugin: 'kotlin2js'
+apply plugin: 'kotlin-platform-js'
 apply plugin: 'idea'
 
 configureDist(project)
@@ -13,12 +13,12 @@ configurePublishing(project)
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
-def commonSrcDir = "${buildDir}/common-sources"
-def commonTestSrcDir = "${buildDir}/common-test-sources"
+def commonSrcDir = "${projectDir}/../src/kotlin"
+def commonSrcDir2 = "${projectDir}/../common/src"
+
 def builtinsDir = "${rootDir}/core/builtins"
 def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
 def experimentalJsModuleName = 'kotlin-experimental'
-def jsSrcGeneratedDir = "${rootDir}/js/js.libraries/src/core/generated" // to be removed soon
 def jsSrcDir = "src"
 def jsTestSrcDir = "test"
 def jsSrcJsDir = "${jsSrcDir}/js"
@@ -44,8 +44,6 @@ sourceSets {
         kotlin {
             srcDir builtinsSrcDir
             srcDir jsSrcDir
-            srcDir jsSrcGeneratedDir
-            srcDir commonSrcDir
         }
     }
 
@@ -58,7 +56,6 @@ sourceSets {
 
     test {
         kotlin {
-            srcDir commonTestSrcDir
             srcDir jsTestSrcDir
         }
     }
@@ -66,14 +63,14 @@ sourceSets {
 
 configurations {
     merger
+    commonSources
 }
 dependencies {
+    expectedBy project(":kotlin-stdlib-common")
+    commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
     testCompile project(':kotlin-test:kotlin-test-js')
     merger project(":tools:kotlin-stdlib-js-merger")
 }
-
-createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
-createPreprocessorTask(project, "Test", "${projectDir}/../test", commonTestSrcDir)
 
 task prepareComparableSource(type: Copy) {
     doFirst {
@@ -135,13 +132,12 @@ compileBuiltinsKotlin2Js {
 }
 
 compileKotlin2Js {
-    dependsOn preprocessSourcesMain, prepareBuiltinsSources
+    dependsOn prepareBuiltinsSources
     kotlinOptions {
         outputFile = "${buildDir}/classes/main/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
-        freeCompilerArgs += ["-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir].collect { file(it).absoluteFile }.
-                join(File.pathSeparator)]
+        freeCompilerArgs += ["-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir, commonSrcDir2].collect { file(it).absoluteFile }.join(File.pathSeparator)]
     }
 }
 
@@ -158,7 +154,6 @@ compileExperimentalKotlin2Js {
 }
 
 compileTestKotlin2Js {
-    dependsOn preprocessSourcesTest
     kotlinOptions {
         moduleKind = "umd"
     }
@@ -179,10 +174,10 @@ task compileJs(type: JavaExec) {
 
     main = "org.jetbrains.kotlin.js.FileMergerKt"
     doFirst {
-        args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path } +
-               (compileBuiltinsKotlin2Js.outputs.files.collect { it.path } +
-                compileKotlin2Js.outputs.files.collect { it.path } +
-                compileExperimentalKotlin2Js.outputs.files.collect { it.path }).findAll {
+        args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
+               (compileBuiltinsKotlin2Js.outputs.files.collect { it.path }.sort() +
+                compileKotlin2Js.outputs.files.collect { it.path }.sort() /* +
+                compileExperimentalKotlin2Js.outputs.files.collect { it.path }.sort() */).findAll {
                    it.endsWith(".js") && !it.endsWith(".meta.js")
                }
     }
@@ -218,7 +213,7 @@ task compileJs(type: JavaExec) {
             if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
         }
 
-        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, jsSrcGeneratedDir, builtinsSrcDir, commonSrcDir, projectDir, experimentalSrcDir]
+        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir, experimentalSrcDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
             def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text
@@ -228,9 +223,9 @@ task compileJs(type: JavaExec) {
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
 
-        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text +
+        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text /* +
                                       file(compileExperimentalKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text
-                                              .replaceFirst(experimentalJsModuleName, 'kotlin')
+                                              .replaceFirst(experimentalJsModuleName, 'kotlin') */
     }
 }
 
@@ -245,7 +240,7 @@ task mergedJar(type: Jar, dependsOn: classes) {
     classifier = null
     manifestAttributes(manifest, project, 'Main')
 
-    // TODO: Use standard implementation title after js stdlib detector becomes more flexible
+    // TODO: Use standard implementation title after js stdlib detector becomes more flexible (KT-17655)
     Properties properties = new Properties()
     new File("${rootDir}/resources/kotlinManifest.properties").withInputStream {
         properties.load(it)
@@ -282,6 +277,22 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     }
 }
 
+task distSourcesJar(type: Jar) {
+    dependsOn(sourcesJar, configurations.commonSources)
+    baseName = 'dist-kotlin-stdlib-js'
+    version = null
+    classifier = 'sources'
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    from zipTree(sourcesJar.outputs.files.singleFile)
+
+    from(zipTree(configurations.commonSources.singleFile)) {
+        it.includeEmptyDirs = false
+        exclude 'META-INF/*'
+        into 'common'
+    }
+}
+
+
 
 artifacts {
     runtime mergedJar
@@ -297,7 +308,8 @@ task distJs(type: Copy) {
 
 dist {
     dependsOn distJs
-    [mergedJar, sourcesJar].forEach {
+    [mergedJar, distSourcesJar].forEach {
+        rename("dist-", "")
         from(it)
         // legacy
         from(it) {

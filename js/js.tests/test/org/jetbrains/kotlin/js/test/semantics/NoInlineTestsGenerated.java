@@ -21,49 +21,46 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class NoInlineTestsGenerated extends AbstractNoInlineTests {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInNoInline() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/noInline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
     }
 
     @TestMetadata("extensionReceiver.kt")
     public void testExtensionReceiver() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/extensionReceiver.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/noInline/extensionReceiver.kt");
     }
 
     @TestMetadata("lambdaAsGeneric.kt")
     public void testLambdaAsGeneric() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/lambdaAsGeneric.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/noInline/lambdaAsGeneric.kt");
     }
 
     @TestMetadata("lambdaAsNonFunction.kt")
     public void testLambdaAsNonFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/lambdaAsNonFunction.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/noInline/lambdaAsNonFunction.kt");
     }
 
     @TestMetadata("noInline.kt")
     public void testNoInline() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/noInline.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/noInline/noInline.kt");
     }
 
     @TestMetadata("noInlineLambdaChain.kt")
     public void testNoInlineLambdaChain() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/noInlineLambdaChain.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/noInline/noInlineLambdaChain.kt");
     }
 
     @TestMetadata("noInlineLambdaChainWithCapturedInline.kt")
     public void testNoInlineLambdaChainWithCapturedInline() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/noInlineLambdaChainWithCapturedInline.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/noInline/noInlineLambdaChainWithCapturedInline.kt");
     }
 
     @TestMetadata("withoutInline.kt")
     public void testWithoutInline() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/noInline/withoutInline.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/noInline/withoutInline.kt");
     }
 }

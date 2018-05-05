@@ -116,7 +116,12 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
 
-    val modules = modules.toSet()
+    private val moduleInfoToResolvableInfo: Map<M, M> =
+        modules.flatMap { module -> module.flatten().map { modulePart -> modulePart to module } }.toMap() as Map<M, M>
+
+    init {
+        assert(moduleInfoToResolvableInfo.values.toSet() == modules.toSet())
+    }
 
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -148,7 +153,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val resolverByModuleDescriptor = mutableMapOf<ModuleDescriptor, ResolverForModule>()
 
     override val allModules: Collection<M> by lazy {
-        this.modules + delegateResolver.allModules
+        this.moduleInfoToResolvableInfo.keys + delegateResolver.allModules
     }
 
     override val name: String
@@ -212,19 +217,18 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     }
 
     private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
-        if (module in modules) {
-            return projectContext.storageManager.compute {
-                var moduleData = descriptorByModule.getOrPut(module) {
-                    createModuleDescriptor(module)
-                }
-                if (moduleData.isOutOfDate()) {
-                    moduleData = recreateModuleDescriptor(module)
-                }
-                moduleData.moduleDescriptor
-            }
-        }
+        val moduleFromThisResolver = moduleInfoToResolvableInfo[module]
+                ?: return delegateResolver.descriptorForModule(module) as ModuleDescriptorImpl
 
-        return delegateResolver.descriptorForModule(module) as ModuleDescriptorImpl
+        return projectContext.storageManager.compute {
+            var moduleData = descriptorByModule.getOrPut(moduleFromThisResolver) {
+                createModuleDescriptor(moduleFromThisResolver)
+            }
+            if (moduleData.isOutOfDate()) {
+                moduleData = recreateModuleDescriptor(moduleFromThisResolver)
+            }
+            moduleData.moduleDescriptor
+        }
     }
 
     private fun recreateModuleDescriptor(module: M): ModuleData {
@@ -253,7 +257,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     }
 }
 
-data class ModuleContent<out M: ModuleInfo>(
+data class ModuleContent<out M : ModuleInfo>(
     val moduleInfo: M,
     val syntheticFiles: Collection<KtFile>,
     val moduleContentScope: GlobalSearchScope
@@ -288,6 +292,15 @@ interface ModuleInfo {
     companion object {
         val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
     }
+}
+
+interface CombinedModuleInfo : ModuleInfo {
+    val containedModules: List<ModuleInfo>
+}
+
+fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
+    is CombinedModuleInfo -> listOf(this) + containedModules
+    else -> listOf(this)
 }
 
 interface TrackableModuleInfo : ModuleInfo {

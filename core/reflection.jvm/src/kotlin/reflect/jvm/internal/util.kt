@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirementTable
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.reflect.KVisibility

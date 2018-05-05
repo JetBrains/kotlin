@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.symbols.*
-
-val IrFunctionSymbol.parameterCount get() = descriptor.valueParameters.size
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 val IrFunctionSymbol.kind get() = descriptor.kind
 
@@ -29,3 +32,11 @@ val IrClassSymbol.kind get() = descriptor.kind
 val IrClassSymbol.modality get() = descriptor.modality
 
 val IrClassSymbol.isAny get() = KotlinBuiltIns.isAny(descriptor)
+
+fun ModuleDescriptor.getFunctions(fqName: FqName): List<FunctionDescriptor> {
+    return getFunctions(fqName.parent(), fqName.shortName())
+}
+
+fun ModuleDescriptor.getFunctions(packageFqName: FqName, name: Name): List<FunctionDescriptor> {
+    return getPackage(packageFqName).memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).toList()
+}

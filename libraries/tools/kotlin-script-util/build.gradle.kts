@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib"))
     compile(project(":kotlin-script-runtime"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:daemon-common"))
@@ -24,7 +24,7 @@ dependencies {
     testRuntime("org.sonatype.aether:aether-api:1.13.1")
     testRuntime("org.apache.maven:maven-core:3.0.3")
     compileOnly(intellijDep()) { includeJars("openapi", "util") }
-    testCompile(intellijDep()) { includeJars("openapi", "util") }
+    testCompile(intellijDep()) { includeJars("openapi", "platform-api", "util") }
 }
 
 projectTest {

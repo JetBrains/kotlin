@@ -25,10 +25,7 @@ class JvmDefaultSuperCallChecker : CallChecker {
         val resultingDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
         if (!resultingDescriptor.hasJvmDefaultAnnotation()) return
 
-        val containingDeclaration = DescriptorUtils.unwrapFakeOverrideToAnyDeclaration(resultingDescriptor).containingDeclaration
-        if (DescriptorUtils.isInterface(containingDeclaration) ||
-            DescriptorUtils.isAnnotationClass(containingDeclaration)
-        ) {
+        if (DescriptorUtils.isInterface(resultingDescriptor.containingDeclaration)) {
             context.trace.report(ErrorsJvm.USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL.on(reportOn))
         }
     }

@@ -12,10 +12,9 @@ fun test(x: Int, y: Int): String {
     return result
 }
 
-fun box(): String {
-    if (test(9, 10) != "c")
-        return "Failures"
-    return "OK"
+fun infiniteLoop() {
+    while(true) {}
 }
 
 // 2 GOTO L7
+// 1 GOTO L1

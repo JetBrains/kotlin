@@ -89,10 +89,13 @@ ext.manifestAttributes = { Manifest manifest, Project project, String component 
                 'Kotlin-Runtime-Component': component,
                 'Kotlin-Version': project.kotlinLanguageVersion
         }
+        // TODO: enable as soon as this doesn't cause D8/DX to crash
+        /*
         if (multiRelease) {
             attributes \
                 'Multi-Release': 'true'
         }
+        */
     }
 }
 
@@ -213,16 +216,4 @@ ext.configurePublishing = { Project project ->
         task publish(dependsOn: uploadArchives)
     }
 
-}
-
-ext.createPreprocessorTask = { Project project, def name, def sourceDir, def targetDir, def profile = "JS" ->
-    return project.tasks.create("preprocessSources$name", JavaExec) {
-//        dependsOn(rootProject.prepareBootstrap)
-        inputs.dir(sourceDir)
-        outputs.dir(targetDir)
-        classpath = rootProject.configurations.bootstrapCompile
-//        classpath = project.files(bootstrapCompilerFile)
-        main = "org.jetbrains.kotlin.preprocessor.PreprocessorCLI"
-        args = [sourceDir, targetDir, profile]
-    }
 }

@@ -1,10 +1,11 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 class A<T : String> {
     suspend fun foo() {}
@@ -29,5 +30,5 @@ fun box(): String {
         result = A<String>().bar()
     }
 
-    return if (result == "(kotlin.coroutines.experimental.Continuation<T>) -> kotlin.Any?") "OK" else "Fail: $result"
+    return if (result == "(COROUTINES_PACKAGE.Continuation<T>) -> kotlin.Any?") "OK" else "Fail: $result"
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.io
@@ -98,16 +87,16 @@ private var output = run {
 private inline fun String(value: Any?): String = js("String")(value)
 
 /** Prints a newline to the standard output stream. */
-public fun println() {
+public actual fun println() {
     output.println()
 }
 
 /** Prints the given message and newline to the standard output stream. */
-public fun println(message: Any?) {
+public actual fun println(message: Any?) {
     output.println(message)
 }
 
 /** Prints the given message to the standard output stream. */
-public fun print(message: Any?) {
+public actual fun print(message: Any?) {
     output.print(message)
 }

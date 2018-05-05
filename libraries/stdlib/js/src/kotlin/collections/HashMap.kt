@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT AbstractHashMap
@@ -20,7 +9,6 @@
 
 package kotlin.collections
 
-import kotlin.collections.Map.Entry
 import kotlin.collections.MutableMap.MutableEntry
 
 /**
@@ -28,7 +16,7 @@ import kotlin.collections.MutableMap.MutableEntry
  *
  * This implementation makes no guarantees regarding the order of enumeration of [keys], [values] and [entries] collections.
  */
-public open class HashMap<K, V> : AbstractMutableMap<K, V> {
+public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K, V> {
 
     private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {
 
@@ -68,7 +56,7 @@ public open class HashMap<K, V> : AbstractMutableMap<K, V> {
     /**
      * Constructs an empty [HashMap] instance.
      */
-    constructor() : this(InternalHashCodeMap(EqualityComparator.HashCode))
+    actual constructor() : this(InternalHashCodeMap(EqualityComparator.HashCode))
 
     /**
      * Constructs an empty [HashMap] instance.
@@ -78,45 +66,49 @@ public open class HashMap<K, V> : AbstractMutableMap<K, V> {
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    constructor(initialCapacity: Int, loadFactor: Float = 0f) : this() {
+    actual constructor(initialCapacity: Int, loadFactor: Float) : this() {
         // This implementation of HashMap has no need of load factors or capacities.
         require(initialCapacity >= 0) { "Negative initial capacity" }
         require(loadFactor >= 0) { "Non-positive load factor" }
     }
 
+    actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
+
+
     /**
      * Constructs an instance of [HashMap] filled with the contents of the specified [original] map.
      */
-    constructor(original: Map<out K, V>) : this() {
+    actual constructor(original: Map<out K, V>) : this() {
         this.putAll(original)
     }
 
-    override fun clear() {
+    actual override fun clear() {
         internalMap.clear()
 //        structureChanged(this)
     }
 
-    override fun containsKey(key: K): Boolean = internalMap.contains(key)
+    actual override fun containsKey(key: K): Boolean = internalMap.contains(key)
 
-    override fun containsValue(value: V): Boolean = internalMap.any { equality.equals(it.value, value) }
+    actual override fun containsValue(value: V): Boolean = internalMap.any { equality.equals(it.value, value) }
 
     private var _entries: MutableSet<MutableMap.MutableEntry<K, V>>? = null
-    override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() {
-        if (_entries == null) {
-            _entries = createEntrySet()
+    actual override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+        get() {
+            if (_entries == null) {
+                _entries = createEntrySet()
+            }
+            return _entries!!
         }
-        return _entries!!
-    }
 
     protected open fun createEntrySet(): MutableSet<MutableMap.MutableEntry<K, V>> = EntrySet()
 
-    override operator fun get(key: K): V? = internalMap.get(key)
+    actual override operator fun get(key: K): V? = internalMap.get(key)
 
-    override fun put(key: K, value: V): V? = internalMap.put(key, value)
+    actual override fun put(key: K, value: V): V? = internalMap.put(key, value)
 
-    override fun remove(key: K): V? = internalMap.remove(key)
+    actual override fun remove(key: K): V? = internalMap.remove(key)
 
-    override val size: Int get() = internalMap.size
+    actual override val size: Int get() = internalMap.size
 
 }
 

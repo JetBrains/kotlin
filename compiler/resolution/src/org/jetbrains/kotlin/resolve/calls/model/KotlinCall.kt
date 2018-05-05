@@ -43,27 +43,32 @@ fun KotlinCall.checkCallInvariants() {
     explicitReceiver.safeAs<SimpleKotlinCallArgument>()?.checkReceiverInvariants()
     dispatchReceiverForInvokeExtension.safeAs<SimpleKotlinCallArgument>()?.checkReceiverInvariants()
 
-    if (callKind != KotlinCallKind.FUNCTION) {
-        assert(externalArgument == null) {
-            "External argument is not allowed not for function call: $externalArgument."
-        }
-        assert(argumentsInParenthesis.isEmpty()) {
-            "Arguments in parenthesis should be empty for not function call: $this "
-        }
-        assert(dispatchReceiverForInvokeExtension == null) {
-            "Dispatch receiver for invoke should be null for not function call: $dispatchReceiverForInvokeExtension"
-        }
-    } else {
-        assert(externalArgument == null || !externalArgument!!.isSpread) {
-            "External argument cannot nave spread element: $externalArgument"
+    when (callKind) {
+        KotlinCallKind.FUNCTION, KotlinCallKind.INVOKE -> {
+            assert(externalArgument == null || !externalArgument!!.isSpread) {
+                "External argument cannot nave spread element: $externalArgument"
+            }
+            assert(externalArgument?.argumentName == null) {
+                "Illegal external argument with name: $externalArgument"
+            }
+            assert(dispatchReceiverForInvokeExtension == null || !dispatchReceiverForInvokeExtension!!.isSafeCall) {
+                "Dispatch receiver for invoke cannot be safe: $dispatchReceiverForInvokeExtension"
+            }
         }
 
-        assert(externalArgument?.argumentName == null) {
-            "Illegal external argument with name: $externalArgument"
+        KotlinCallKind.VARIABLE -> {
+            assert(externalArgument == null) {
+                "External argument is not allowed not for function call: $externalArgument."
+            }
+            assert(argumentsInParenthesis.isEmpty()) {
+                "Arguments in parenthesis should be empty for not function call: $this "
+            }
+            assert(dispatchReceiverForInvokeExtension == null) {
+                "Dispatch receiver for invoke should be null for not function call: $dispatchReceiverForInvokeExtension"
+            }
+
         }
 
-        assert(dispatchReceiverForInvokeExtension == null || !dispatchReceiverForInvokeExtension!!.isSafeCall) {
-            "Dispatch receiver for invoke cannot be safe: $dispatchReceiverForInvokeExtension"
-        }
+        KotlinCallKind.UNSUPPORTED -> error("Call with UNSUPPORTED kind")
     }
 }

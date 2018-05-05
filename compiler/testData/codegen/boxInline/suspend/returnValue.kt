@@ -1,8 +1,9 @@
 // FILE: inlined.kt
+// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 inline suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
     x.resume(v)
@@ -16,8 +17,9 @@ suspend inline fun complexSuspend(crossinline c: suspend () -> String): String {
 }
 
 // FILE: inleneSite.kt
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+// COMMON_COROUTINES_TEST
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object: Continuation<Unit> {

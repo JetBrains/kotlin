@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenForLambda;
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
-import org.jetbrains.kotlin.codegen.coroutines.ResolvedCallWithRealDescriptor;
+import org.jetbrains.kotlin.codegen.coroutines.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
 import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.*;
@@ -877,7 +875,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     constantValue.append(String.valueOf(compileTimeConstant.getValue()));
                 }
                 else {
-                    result.add(new StringTemplateEntry.Constant(constantValue.toString()));
+                    String accumulatedConstantValue = constantValue.toString();
+                    if (accumulatedConstantValue.length() > 0) {
+                        result.add(new StringTemplateEntry.Constant(accumulatedConstantValue));
+                    }
                     constantValue.setLength(0);
 
                     result.add(new StringTemplateEntry.Expression(entryExpression));
@@ -1238,7 +1239,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Nullable
     public StackValue genCoroutineInstanceForSuspendLambda(@NotNull FunctionDescriptor suspendFunction) {
-        if (!(suspendFunction instanceof AnonymousFunctionDescriptor)) return null;
+        if (!CoroutineCodegenUtilKt.isSuspendLambdaOrLocalFunction(suspendFunction)) return null;
 
         ClassDescriptor suspendLambdaClassDescriptor = bindingContext.get(CodegenBinding.CLASS_FOR_CALLABLE, suspendFunction);
         assert suspendLambdaClassDescriptor != null : "Coroutine class descriptor should not be null";
@@ -2239,9 +2240,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
         ResolvedCallWithRealDescriptor callWithRealDescriptor =
-                CoroutineCodegenUtilKt.replaceSuspensionFunctionWithRealDescriptor(
-                        resolvedCall, state.getProject(), state.getBindingContext()
-                );
+                CoroutineCodegenUtilKt.replaceSuspensionFunctionWithRealDescriptor(resolvedCall, state);
         if (callWithRealDescriptor != null) {
             prepareCoroutineArgumentForSuspendCall(resolvedCall, callWithRealDescriptor.getFakeContinuationExpression());
             return invokeFunction(callWithRealDescriptor.getResolvedCall(), receiver);
@@ -2354,7 +2353,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull CallGenerator callGenerator,
             @NotNull ArgumentGenerator argumentGenerator
     ) {
-        boolean isSuspendNoInlineCall = CoroutineCodegenUtilKt.isSuspendNoInlineCall(resolvedCall, this);
+        boolean isSuspendNoInlineCall =
+                CoroutineCodegenUtilKt.isSuspendNoInlineCall(resolvedCall, this, state.getLanguageVersionSettings());
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
         if (!(callableMethod instanceof IntrinsicWithSpecialReceiver)) {
             putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspendNoInlineCall, isConstructor);
@@ -2505,7 +2505,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor original =
                 CoroutineCodegenUtilKt.getOriginalSuspendFunctionView(
                         unwrapInitialSignatureDescriptor(DescriptorUtils.unwrapFakeOverride((FunctionDescriptor) descriptor.getOriginal())),
-                        bindingContext
+                        bindingContext, state
                 );
         if (isDefaultCompilation) {
             return new InlineCodegenForDefaultBody(original, this, state, new PsiSourceCompilerForInline(this, callElement));
@@ -3585,9 +3585,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
 
             ResolvedCallWithRealDescriptor callWithRealDescriptor =
-                    CoroutineCodegenUtilKt.replaceSuspensionFunctionWithRealDescriptor(
-                            resolvedCall, state.getProject(), state.getBindingContext()
-                    );
+                    CoroutineCodegenUtilKt.replaceSuspensionFunctionWithRealDescriptor(resolvedCall, state);
             if (callWithRealDescriptor != null) {
                 prepareCoroutineArgumentForSuspendCall(resolvedCall, callWithRealDescriptor.getFakeContinuationExpression());
                 resolvedCall = callWithRealDescriptor.getResolvedCall();

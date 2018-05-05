@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.lambdaExpressionVisitor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -42,6 +43,7 @@ class MoveSuspiciousCallableReferenceIntoParenthesesInspection : AbstractKotlinI
                         if (expectedType.isBuiltinFunctionalType) {
                             val returnType = expectedType.getReturnTypeFromFunctionType()
                             if (returnType.isBuiltinFunctionalTypeOrSubtype) return
+                            if (parentResolvedCall.call.callElement.getParentCall(context) != null) return
                         }
                     }
                 }

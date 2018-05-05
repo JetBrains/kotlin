@@ -21,79 +21,71 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CodeInsightActionTestGenerated extends AbstractCodeInsightActionTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInSecondaryConstructors() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/codeInsight/generate/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("empty.kt")
     public void testEmpty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/empty.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/empty.kt");
     }
 
     @TestMetadata("emptyExists.kt")
     public void testEmptyExists() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/emptyExists.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/emptyExists.kt");
     }
 
     @TestMetadata("javaSupers.kt")
     public void testJavaSupers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/javaSupers.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/javaSupers.kt");
     }
 
     @TestMetadata("javaSupersWithGenerics.kt")
     public void testJavaSupersWithGenerics() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/javaSupersWithGenerics.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/javaSupersWithGenerics.kt");
     }
 
     @TestMetadata("primaryExists.kt")
     public void testPrimaryExists() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/primaryExists.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/primaryExists.kt");
     }
 
     @TestMetadata("properties.kt")
     public void testProperties() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/properties.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/properties.kt");
     }
 
     @TestMetadata("propertiesWithSupers.kt")
     public void testPropertiesWithSupers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/propertiesWithSupers.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/propertiesWithSupers.kt");
     }
 
     @TestMetadata("supers.kt")
     public void testSupers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/supers.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/supers.kt");
     }
 
     @TestMetadata("supersAllExist.kt")
     public void testSupersAllExist() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/supersAllExist.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/supersAllExist.kt");
     }
 
     @TestMetadata("supersSomeExist.kt")
     public void testSupersSomeExist() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/supersSomeExist.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/supersSomeExist.kt");
     }
 
     @TestMetadata("supersWithGenerics.kt")
     public void testSupersWithGenerics() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/supersWithGenerics.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/supersWithGenerics.kt");
     }
 
     @TestMetadata("supersWithVarargs.kt")
     public void testSupersWithVarargs() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/secondaryConstructors/supersWithVarargs.kt");
-        doTest(fileName);
+        runTest("idea/testData/codeInsight/generate/secondaryConstructors/supersWithVarargs.kt");
     }
 }

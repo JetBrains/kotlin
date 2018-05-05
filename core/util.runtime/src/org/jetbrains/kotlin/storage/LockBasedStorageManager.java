@@ -146,6 +146,11 @@ public class LockBasedStorageManager implements StorageManager {
             protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
                 return RecursionDetectedResult.value(onRecursiveCall);
             }
+
+            @Override
+            protected String presentableName() {
+                return "RecursionTolerantLazyValue";
+            }
         };
     }
 
@@ -170,6 +175,11 @@ public class LockBasedStorageManager implements StorageManager {
             protected void postCompute(@NotNull T value) {
                 postCompute.invoke(value);
             }
+
+            @Override
+            protected String presentableName() {
+                return "LazyValueWithPostCompute";
+            }
         };
     }
 
@@ -188,6 +198,11 @@ public class LockBasedStorageManager implements StorageManager {
             protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
                 return RecursionDetectedResult.value(onRecursiveCall);
             }
+
+            @Override
+            protected String presentableName() {
+                return "RecursionTolerantNullableLazyValue";
+            }
         };
     }
 
@@ -200,6 +215,11 @@ public class LockBasedStorageManager implements StorageManager {
             @Override
             protected void postCompute(@Nullable T value) {
                 postCompute.invoke(value);
+            }
+
+            @Override
+            protected String presentableName() {
+                return "NullableLazyValueWithPostCompute";
             }
         };
     }
@@ -270,7 +290,18 @@ public class LockBasedStorageManager implements StorageManager {
         RECURSION_WAS_DETECTED
     }
 
-    // Being static is memory optimization to prevent capturing outer-class reference at each level of inheritance hierarchy
+    /**
+     * Important thread-safety note!
+     *
+     * This implementation publishes value **BEFORE** calling postCompute on it.
+     *
+     * It means that thread-safety of actions in postCompute() and recursion prevention
+     * rely *solely* on the `storageManager.lock()`.
+     *
+     * And yes, there are a LockBasedStorageManager.NO_LOCKS, which doesn't have lock at all,
+     * so if you have some `StorageManager` (or even if it is an instanceof `LockBasedStorageManager`),
+     * thread-safety of produced lazy values still not guaranteed.
+     */
     private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
         private final LockBasedStorageManager storageManager;
         private final Function0<? extends T> computable;
@@ -355,6 +386,15 @@ public class LockBasedStorageManager implements StorageManager {
 
         protected void postCompute(T value) {
             // Doing something in post-compute helps prevent infinite recursion
+        }
+
+        @NotNull
+        public String renderDebugInformation() {
+            return presentableName() + ", storageManager=" + storageManager;
+        }
+
+        protected String presentableName() {
+            return this.getClass().getName();
         }
     }
 

@@ -108,6 +108,13 @@ fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     return oldCallExpression.replace(newCallExpression) as KtCallExpression
 }
 
+fun KtLambdaExpression.moveFunctionLiteralOutsideParenthesesIfPossible() {
+    val call = ((parent as? KtValueArgument)?.parent as? KtValueArgumentList)?.parent as? KtCallExpression ?: return
+    if (call.canMoveLambdaOutsideParentheses()) {
+        call.moveFunctionLiteralOutsideParentheses()
+    }
+}
+
 private fun shouldLambdaParameterBeNamed(args: List<ValueArgument>, callExpr: KtCallExpression): Boolean {
     if (args.any { it.isNamed() }) return true
     val calee = (callExpr.calleeExpression?.mainReference?.resolve() as? KtFunction) ?: return true

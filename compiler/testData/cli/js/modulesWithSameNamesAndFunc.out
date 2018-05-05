@@ -1,0 +1,2 @@
+warning: module "m" depends on module with the same name
+OK

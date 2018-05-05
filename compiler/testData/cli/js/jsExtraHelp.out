@@ -2,9 +2,11 @@ Usage: kotlinc-js <options> <source files>
 where advanced options include:
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
+  -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
+  -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
   -Xeffect-system            Enable experimental language feature: effect system
   -Xexperimental=<fq.name>   Enable and propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
@@ -16,8 +18,8 @@ where advanced options include:
   -Xplugin=<path>            Load plugins from the given classpath
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata
-  -Xrepeat=<count>           Repeat compilation (for performance analysis)
   -Xreport-output-files      Report source to output files mapping
+  -Xreport-perf              Report detailed performance statistics
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
   -Xuse-experimental=<fq.name> Enable usages of COMPILATION-affecting experimental API for marker annotation with the given fully qualified name
 

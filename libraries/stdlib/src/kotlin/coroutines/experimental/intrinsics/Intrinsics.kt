@@ -31,7 +31,7 @@ import kotlin.coroutines.experimental.*
 @kotlin.internal.InlineOnly
 @Suppress("UNUSED_PARAMETER")
 public suspend inline fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
-        suspendCoroutineUninterceptedOrReturn { cont -> block(cont.intercepted()) }
+    suspendCoroutineUninterceptedOrReturn { cont -> block(cont.intercepted()) }
 
 /**
  * Obtains the current continuation instance inside suspend functions and either suspends
@@ -42,7 +42,7 @@ public suspend inline fun <T> suspendCoroutineOrReturn(crossinline block: (Conti
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
-        throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
+    throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
 
 /**
  * Intercept continuation with [ContinuationInterceptor].
@@ -50,7 +50,7 @@ public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline 
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun <T> Continuation<T>.intercepted(): Continuation<T> =
-        throw NotImplementedError("Implementation of intercepted is intrinsic")
+    throw NotImplementedError("Implementation of intercepted is intrinsic")
 
 /**
  * Continuation context of current coroutine.

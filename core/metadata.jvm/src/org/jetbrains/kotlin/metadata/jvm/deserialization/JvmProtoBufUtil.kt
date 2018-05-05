@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.metadata.jvm.deserialization
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.protobuf.MessageLite
 import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
 object JvmProtoBufUtil {
@@ -45,6 +48,16 @@ object JvmProtoBufUtil {
 
     private fun InputStream.readNameResolver(strings: Array<String>): JvmNameResolver =
         JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(this, EXTENSION_REGISTRY), strings)
+
+    /**
+     * Serializes [message] and [stringTable] into a string array which must be further written to [Metadata.d1]
+     */
+    @JvmStatic
+    fun writeData(message: MessageLite, stringTable: JvmStringTable): Array<String> =
+        BitEncoding.encodeBytes(ByteArrayOutputStream().apply {
+            stringTable.serializeTo(this)
+            message.writeTo(this)
+        }.toByteArray())
 
     // returns JVM signature in the format: "equals(Ljava/lang/Object;)Z"
     fun getJvmMethodSignature(

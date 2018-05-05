@@ -2,13 +2,14 @@
 // IGNORE_BACKEND: JVM
 // WITH_COROUTINES
 // WITH_RUNTIME
+// COMMON_COROUTINES_TEST
 
 // MODULE: lib(support)
 // FILE: lib.kt
 
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 var continuation: () -> Unit = { }
 var log = ""
@@ -46,8 +47,8 @@ fun builder(c: suspend () -> Unit) {
 // MODULE: main(lib)
 // FILE: main.kt
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 suspend fun baz() {
     val a = A("A")

@@ -40,8 +40,8 @@ class Sequences {
             class LinkedValue<T>(val value: T, val next: LinkedValue<T>? = null)
 
             fun <T> LinkedValue<T>?.asSequence(): Sequence<LinkedValue<T>> = generateSequence(
-                    seedFunction = { this },
-                    nextFunction = { it.next }
+                seedFunction = { this },
+                nextFunction = { it.next }
             )
 
             fun <T> LinkedValue<T>?.valueSequence(): Sequence<T> = asSequence().map { it.value }
@@ -116,7 +116,7 @@ class Sequences {
                 var terms = Pair(0, 1)
 
                 // this sequence is infinite
-                while(true) {
+                while (true) {
                     yield(terms.first)
                     terms = Pair(terms.second, terms.first + terms.second)
                 }
@@ -187,6 +187,23 @@ class Sequences {
 
             val averagedNoPartialWindows = dataPoints.windowed(size = 4, step = 1).map { it.average() }
             assertPrints(averagedNoPartialWindows.toList(), "[17.0, 19.25, 20.75, 19.75, 15.5, 12.0]")
+        }
+
+        @Sample
+        fun zip() {
+            val sequenceA = ('a'..'z').asSequence()
+            val sequenceB = generateSequence(1) { it * 2 + 1 }
+
+            assertPrints((sequenceA zip sequenceB).take(4).toList(), "[(a, 1), (b, 3), (c, 7), (d, 15)]")
+        }
+
+        @Sample
+        fun zipWithTransform() {
+            val sequenceA = ('a'..'z').asSequence()
+            val sequenceB = generateSequence(1) { it * 2 + 1 }
+
+            val result = sequenceA.zip(sequenceB) { a, b -> "$a/$b" }
+            assertPrints(result.take(4).toList(), "[a/1, b/3, c/7, d/15]")
         }
     }
 

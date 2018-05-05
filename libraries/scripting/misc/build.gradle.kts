@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.Coroutines
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 jvmTarget = "1.6"
@@ -19,9 +20,15 @@ sourceSets {
 
 kotlin.experimental.coroutines = Coroutines.ENABLE
 
+val jar = runtimeJar()
+val sourcesJar = sourcesJar()
+val javadocJar = javadocJar()
+
 dist()
 
-ideaPlugin()
+ideaPlugin {
+    from(jar, sourcesJar)
+}
 
 standardPublicJars()
 

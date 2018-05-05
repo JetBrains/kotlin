@@ -1,3 +1,6 @@
+// !CHECK_HIGHLIGHTING
+package foo
+
 expect class My {
 
     fun foo(): Int
@@ -19,5 +22,4 @@ expect class His {
     fun foo(): Int
 
     fun bar(arg: Int): Boolean
-
 }

@@ -9,14 +9,24 @@ interface B{
     }
 }
 
-class <!JVM_DEFAULT_THROUGH_INHERITANCE!>C<!> : A, B {
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>interface AB<!>: A, B
+
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>interface BA<!>: B, A
+
+class C : A, B {
     override fun test() {
         super<B>.test()
     }
 }
 
-class <!JVM_DEFAULT_THROUGH_INHERITANCE!>D<!> : B, A {
+class D : B, A {
     override fun test() {
+        super<B>.test()
+    }
+}
+
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class E<!>: B, A {
+    fun foo() {
         super<B>.test()
     }
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT LinkedHashSet
@@ -25,21 +14,22 @@ package kotlin.collections
  *
  * This implementation preserves the insertion order of elements during the iteration.
  */
-public open class LinkedHashSet<E> : HashSet<E> {
+public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
 
     internal constructor(map: LinkedHashMap<E, Any>) : super(map)
 
     /**
      * Constructs a new empty [LinkedHashSet].
      */
-    constructor() : super(LinkedHashMap<E, Any>())
+    actual constructor() : super(LinkedHashMap<E, Any>())
 
     /**
      * Constructs a new [LinkedHashSet] filled with the elements of the specified collection.
      */
-    constructor(elements: Collection<E>) : super(LinkedHashMap<E, Any>()) {
+    actual constructor(elements: Collection<E>) : super(LinkedHashMap<E, Any>()) {
         addAll(elements)
     }
+
     /**
      * Constructs a new empty [LinkedHashSet].
      *
@@ -48,7 +38,9 @@ public open class LinkedHashSet<E> : HashSet<E> {
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    constructor(initialCapacity: Int, loadFactor: Float = 0.0f) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
+    actual constructor(initialCapacity: Int, loadFactor: Float) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
+
+    actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 
 //    public override fun clone(): Any {
 //        return LinkedHashSet(this)

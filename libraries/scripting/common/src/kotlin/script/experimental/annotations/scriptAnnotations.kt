@@ -42,3 +42,8 @@ annotation class KotlinScriptEvaluator(
     val evaluator: KClass<out ScriptEvaluator<*>>
 )
 
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class KotlinScriptDefaultCompilationConfiguration(
+    val compilationConfiguration: KClass<out List<*>> // object or class filled in 0-ary constructor
+)

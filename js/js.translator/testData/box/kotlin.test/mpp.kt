@@ -1,5 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // EXPECTED_REACHABLE_NODES: 1173
+// IGNORE_BACKEND: JS_IR
 
 // FILE: lib.kt
 import kotlin.test.Test

@@ -64,14 +64,19 @@ fun HierarchicalScope.collectDescriptorsFiltered(
 
 @Deprecated("Use getContributedProperties instead")
 fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
-    return findFirstFromMeAndParent {
-        when {
-            it is LexicalScopeWrapper -> it.delegate.findLocalVariable(name)
+    return findFirstFromMeAndParent { originalScope ->
+        // Unpacking LexicalScopeWrapper may be important to check that it is not ImportingScope
+        val possiblyUnpackedScope = when (originalScope) {
+            is LexicalScopeWrapper -> originalScope.delegate
+            else -> originalScope
+        }
 
-            it !is ImportingScope && it !is LexicalChainedScope -> it.getContributedVariables(
-                name,
-                NoLookupLocation.WHEN_GET_LOCAL_VARIABLE
-            ).singleOrNull() /* todo check this*/
+        when {
+            possiblyUnpackedScope !is ImportingScope && possiblyUnpackedScope !is LexicalChainedScope ->
+                possiblyUnpackedScope.getContributedVariables(
+                    name,
+                    NoLookupLocation.WHEN_GET_LOCAL_VARIABLE
+                ).singleOrNull() /* todo check this*/
 
             else -> null
         }
@@ -93,7 +98,10 @@ fun DeclarationDescriptor.canBeResolvedWithoutDeprecation(
     return false
 }
 
-fun HierarchicalScope.findFirstClassifierWithDeprecationStatus(name: Name, location: LookupLocation): DescriptorWithDeprecation<ClassifierDescriptor>? {
+fun HierarchicalScope.findFirstClassifierWithDeprecationStatus(
+    name: Name,
+    location: LookupLocation
+): DescriptorWithDeprecation<ClassifierDescriptor>? {
     return findFirstFromMeAndParent { it.getContributedClassifierIncludeDeprecated(name, location) }
 }
 
@@ -246,7 +254,10 @@ fun LexicalScope.createScopeForDestructuring(newReceiver: ReceiverParameterDescr
     )
 }
 
-private class LexicalScopeWrapper(val delegate: LexicalScope, val newImportingScopeChain: ImportingScope) : LexicalScope by delegate {
+private class LexicalScopeWrapper(
+    val delegate: LexicalScope,
+    private val newImportingScopeChain: ImportingScope
+) : LexicalScope by delegate {
     init {
         assert(delegate !is LexicalScopeWrapper) {
             "Do not wrap again to avoid performance issues"

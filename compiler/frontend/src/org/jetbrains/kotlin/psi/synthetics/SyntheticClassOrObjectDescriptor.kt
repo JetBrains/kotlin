@@ -50,13 +50,21 @@ class SyntheticClassOrObjectDescriptor(
     val syntheticDeclaration: KtPureClassOrObject = SyntheticDeclaration(parentClassOrObject, name.asString())
 
     private val thisDescriptor: SyntheticClassOrObjectDescriptor get() = this // code readability
+
+    private lateinit var typeParameters: List<TypeParameterDescriptor>
     private val typeConstructor = SyntheticTypeConstructor(c.storageManager)
     private val resolutionScopesSupport = ClassResolutionScopesSupport(thisDescriptor, c.storageManager, c.languageVersionSettings, { outerScope })
     private val syntheticSupertypes =
         mutableListOf<KotlinType>().apply { c.syntheticResolveExtension.addSyntheticSupertypes(thisDescriptor, this) }
     private val unsubstitutedMemberScope =
         LazyClassMemberScope(c, SyntheticClassMemberDeclarationProvider(syntheticDeclaration), this, c.trace)
-    private val unsubstitutedPrimaryConstructor = createUnsubstitutedPrimaryConstructor(constructorVisibility)
+    private val _unsubstitutedPrimaryConstructor =
+        c.storageManager.createLazyValue { createUnsubstitutedPrimaryConstructor(constructorVisibility) }
+
+    @JvmOverloads
+    fun initialize(typeParameters: List<TypeParameterDescriptor> = emptyList()) {
+        this.typeParameters = typeParameters
+    }
 
     override val annotations: Annotations get() = Annotations.EMPTY
 
@@ -70,11 +78,11 @@ class SyntheticClassOrObjectDescriptor(
     override fun isExpect() = false
     override fun isActual() = false
 
-    override fun getCompanionObjectDescriptor() = null
+    override fun getCompanionObjectDescriptor(): ClassDescriptorWithResolutionScopes? = null
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
-    override fun getUnsubstitutedPrimaryConstructor() = unsubstitutedPrimaryConstructor
-    override fun getConstructors() = listOf(unsubstitutedPrimaryConstructor)
-    override fun getDeclaredTypeParameters() = emptyList<TypeParameterDescriptor>()
+    override fun getUnsubstitutedPrimaryConstructor() = _unsubstitutedPrimaryConstructor()
+    override fun getConstructors() = listOf(_unsubstitutedPrimaryConstructor())
+    override fun getDeclaredTypeParameters() = typeParameters
     override fun getStaticScope() = MemberScope.Empty
     override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
@@ -110,7 +118,7 @@ class SyntheticClassOrObjectDescriptor(
     }
 
     private inner class SyntheticTypeConstructor(storageManager: StorageManager) : AbstractClassTypeConstructor(storageManager) {
-        override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
+        override fun getParameters(): List<TypeParameterDescriptor> = typeParameters
         override fun isDenotable(): Boolean = true
         override fun getDeclarationDescriptor(): ClassDescriptor = thisDescriptor
         override fun computeSupertypes(): Collection<KotlinType> = syntheticSupertypes

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1394
 // KT-5192 JS compiler fails to generate correct code for List implementation
 package foo

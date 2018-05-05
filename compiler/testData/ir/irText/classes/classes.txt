@@ -62,6 +62,7 @@ FILE fqName:<root> fileName:/classes.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnnotationClass flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestAnnotationClass flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:

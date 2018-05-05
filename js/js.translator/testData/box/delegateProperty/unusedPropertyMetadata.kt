@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1131
 // PROPERTY_NOT_USED: PropertyMetadata
 import kotlin.reflect.KProperty

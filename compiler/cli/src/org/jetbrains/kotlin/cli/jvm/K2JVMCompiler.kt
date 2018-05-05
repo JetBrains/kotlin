@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CLITool
-import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
@@ -46,26 +43,29 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.StandardScriptDefinition
-import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.lang.management.ManagementFactory
-import java.util.concurrent.TimeUnit
+import java.util.*
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
+
+    private val performanceManager: K2JVMCompilerPerformanceManager = K2JVMCompilerPerformanceManager()
+
     override fun doExecute(
         arguments: K2JVMCompilerArguments,
         configuration: CompilerConfiguration,
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode {
-        PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf)
-
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         configureJdkHome(arguments, configuration, messageCollector).let {
             if (it != OK) return it
+        }
+
+        if (arguments.disableStandardScript) {
+            configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, true)
         }
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
@@ -203,12 +203,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     if (!it) return COMPILATION_ERROR
                 }
             }
-
-            if (arguments.reportPerf) {
-                reportGCTime(configuration)
-                reportCompilationTime(configuration)
-                PerformanceCounter.report { s -> reportPerf(configuration, s) }
-            }
+            
             return OK
         } catch (e: CompilationException) {
             messageCollector.report(
@@ -220,35 +215,45 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
     }
 
+    override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
+
     private fun loadPlugins(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration): ExitCode {
         val pluginClasspaths = arguments.pluginClasspaths?.toMutableList() ?: ArrayList()
         val pluginOptions = arguments.pluginOptions?.toMutableList() ?: ArrayList()
-        val isEmbeddable =
-            try {
-                this::class.java.classLoader.loadClass("com.intellij.mock.MockProject") == null
-            } catch (_: ClassNotFoundException) {
-                true
-            } catch (_: NoClassDefFoundError) {
-                true
-            }
 
-        if (!isEmbeddable && pluginClasspaths.none { File(it).name == PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR }) {
-            // if scripting plugin is not enabled explicitly (probably from another path) try to enable it implicitly
-            val libPath = paths?.libPath ?: File(".")
-            val pluginJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR)
-            val scriptingJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_COMMON_JAR)
-            val scriptingJvmJar = File(libPath, PathUtil.KOTLIN_SCRIPTING_JVM_JAR)
-            if (pluginJar.exists() && scriptingJar.exists() && scriptingJvmJar.exists()) {
-                pluginClasspaths.addAll(listOf(pluginJar.canonicalPath, scriptingJar.canonicalPath, scriptingJvmJar.canonicalPath))
-                if (arguments.scriptTemplates?.isNotEmpty() == true) {
-                    pluginOptions.add("-P")
-                    pluginOptions.add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates!!.joinToString(",")}")
-                }
-                if (arguments.scriptResolverEnvironment?.isNotEmpty() == true) {
-                    pluginOptions.add("-P")
-                    pluginOptions.add("plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment!!.joinToString(",")}")
+        if (!arguments.disableDefaultScriptingPlugin) {
+            val explicitOrLoadedScriptingPlugin =
+                pluginClasspaths.any { File(it).name == PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR } ||
+                        try {
+                            PluginCliParser::class.java.classLoader.loadClass("org.jetbrains.kotlin.extensions.ScriptingCompilerConfigurationExtension")
+                            true
+                        } catch (_: Throwable) {
+                            false
+                        }
+            // if scripting plugin is not enabled explicitly (probably from another path) and not in the classpath already,
+            // try to find and enable it implicitly
+            if (!explicitOrLoadedScriptingPlugin) {
+                val libPath = paths?.libPath?.takeIf { it.exists() } ?: File(".")
+                with(PathUtil) {
+                    val jars = arrayOf(KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR)
+                        .mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
+                    if (jars.size == 3) {
+                        pluginClasspaths.addAll(jars)
+                    }
                 }
             }
+            if (arguments.scriptTemplates?.isNotEmpty() == true) {
+                pluginOptions.add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates!!.joinToString(",")}")
+            }
+            if (arguments.scriptResolverEnvironment?.isNotEmpty() == true) {
+                pluginOptions.add(
+                    "plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment!!.joinToString(
+                        ","
+                    )}"
+                )
+            }
+        } else {
+            pluginOptions.add("plugin:kotlin.scripting:disable=true")
         }
         return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, configuration)
     }
@@ -287,11 +292,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        if (initStartNanos != 0L) {
-            val initNanos = System.nanoTime() - initStartNanos
-            reportPerf(configuration, "INIT: Compiler initialized in " + TimeUnit.NANOSECONDS.toMillis(initNanos) + " ms")
-            initStartNanos = 0L
-        }
+        performanceManager.notifyCompilerInitialized()
 
         return if (messageCollector.hasErrors()) null else environment
     }
@@ -330,44 +331,12 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun executableScriptFileName(): String = "kotlinc-jvm"
 
+    private class K2JVMCompilerPerformanceManager : CommonCompilerPerformanceManager("Kotlin to JVM Compiler")
+
     companion object {
-        private var initStartNanos = System.nanoTime()
-        // allows to track GC time for each run when repeated compilation is used
-        private val elapsedGCTime = hashMapOf<String, Long>()
-        private var elapsedJITTime = 0L
-
-        fun resetInitStartTime() {
-            if (initStartNanos == 0L) {
-                initStartNanos = System.nanoTime()
-            }
-        }
-
         @JvmStatic
         fun main(args: Array<String>) {
             CLITool.doMain(K2JVMCompiler(), args)
-        }
-
-        fun reportPerf(configuration: CompilerConfiguration, message: String) {
-            if (!configuration.getBoolean(CLIConfigurationKeys.REPORT_PERF)) return
-
-            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(INFO, "PERF: $message")
-        }
-
-        fun reportGCTime(configuration: CompilerConfiguration) {
-            ManagementFactory.getGarbageCollectorMXBeans().forEach {
-                val currentTime = it.collectionTime
-                val elapsedTime = elapsedGCTime.getOrElse(it.name) { 0 }
-                val time = currentTime - elapsedTime
-                reportPerf(configuration, "GC time for ${it.name} is $time ms")
-                elapsedGCTime[it.name] = currentTime
-            }
-        }
-
-        fun reportCompilationTime(configuration: CompilerConfiguration) {
-            val bean = ManagementFactory.getCompilationMXBean() ?: return
-            val currentTime = bean.totalCompilationTime
-            reportPerf(configuration, "JIT time is ${currentTime - elapsedJITTime} ms")
-            elapsedJITTime = currentTime
         }
 
         private fun putAdvancedOptions(configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments) {
@@ -405,7 +374,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
 
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
-            configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf)
             configuration.put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
             configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, arguments.addCompilerBuiltIns)
             configuration.put(JVMConfigurationKeys.CREATE_BUILT_INS_FROM_MODULE_DEPENDENCIES, arguments.loadBuiltInsFromDependencies)

@@ -124,9 +124,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var constructorCallNormalizationMode: String? by FreezableVar(JVMConstructorCallNormalizationMode.DEFAULT.description)
 
-    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
-    var reportPerf: Boolean by FreezableVar(false)
-
     @Argument(
         value = "-Xbuild-file",
         deprecatedName = "-module",
@@ -230,6 +227,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xenable-jvm-default", description = "Allow to use '@JvmDefault' for JVM default method support")
     var enableJvmDefault: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
+    var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xdisable-standard-script", description = "Disable standard kotlin script support")
+    var disableStandardScript: Boolean by FreezableVar(false)
 
     // Paths to output directories for friend modules.
     var friendPaths: Array<String>? by FreezableVar(null)

@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ArrayUtil;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
@@ -243,7 +245,8 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (state.getDeprecationProvider().isDeprecatedHidden(functionDescriptor)) {
+        if (state.getDeprecationProvider().isDeprecatedHidden(functionDescriptor) ||
+            (functionDescriptor.isSuspend()) && functionDescriptor.getVisibility().equals(Visibilities.PRIVATE)) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
@@ -506,7 +509,7 @@ public class AsmUtil {
         });
     }
 
-    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
+    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget, boolean isInterface) {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
@@ -517,7 +520,7 @@ public class AsmUtil {
             }
         }
         else if (type.getSort() == Type.OBJECT) {
-            iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
+            iv.invokevirtual((isInterface ? AsmTypes.OBJECT_TYPE : type).getInternalName(), "hashCode", "()I", false);
         }
         else if (type.getSort() == Type.BOOLEAN) {
             Label end = new Label();
@@ -889,11 +892,11 @@ public class AsmUtil {
     public static void writeAnnotationData(
             @NotNull AnnotationVisitor av, @NotNull MessageLite message, @NotNull JvmStringTable stringTable
     ) {
-        writeAnnotationData(av, BitEncoding.encodeBytes(DescriptorSerializer.serialize(message, stringTable)), stringTable.getStrings());
+        writeAnnotationData(av, JvmProtoBufUtil.writeData(message, stringTable), ArrayUtil.toStringArray(stringTable.getStrings()));
     }
 
     public static void writeAnnotationData(
-            @NotNull AnnotationVisitor av, @NotNull String[] data, @NotNull List<String> strings
+            @NotNull AnnotationVisitor av, @NotNull String[] data, @NotNull String[] strings
     ) {
         AnnotationVisitor dataVisitor = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
         for (String string : data) {

@@ -20,6 +20,7 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.ProjectWizardUtil
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.externalSystem.model.project.ProjectId
+import com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -27,12 +28,12 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.ComboBox
-import com.intellij.ui.DocumentAdapter
+import com.intellij.openapi.ui.MessageType
 import com.intellij.ui.layout.CCFlags
 import com.intellij.ui.layout.LCFlags
 import com.intellij.ui.layout.panel
+import org.jetbrains.kotlin.idea.util.onTextChange
 import javax.swing.*
-import javax.swing.event.DocumentEvent
 
 class KotlinGradleMultiplatformWizardStep(
     private val builder: KotlinGradleMultiplatformModuleBuilder,
@@ -59,6 +60,7 @@ class KotlinGradleMultiplatformWizardStep(
     private val panel: JPanel
     private var syncEditing: Boolean = true
     private var inSyncUpdate: Boolean = false
+    private var showErrorBalloons: Boolean = true
 
     init {
         val baseDir = wizardContext.projectFileDirectory
@@ -69,24 +71,36 @@ class KotlinGradleMultiplatformWizardStep(
 
         updateDerivedModuleNames()
 
-        rootModuleNameComponent.document.addDocumentListener(object : DocumentAdapter() {
-            override fun textChanged(e: DocumentEvent?) {
-                if (syncEditing) {
+        rootModuleNameComponent.onTextChange {
+            val rootModuleError = getRootModuleError()
+            showErrorBalloonIfNeeded(rootModuleNameComponent, rootModuleError)
+            if (syncEditing) {
+                showErrorBalloons = false
+                try {
                     updateDerivedModuleNames()
-                }
-            }
-        })
-
-        val stopSyncEditingListener = object : DocumentAdapter() {
-            override fun textChanged(e: DocumentEvent?) {
-                if (!inSyncUpdate) {
-                    syncEditing = false
+                } finally {
+                    showErrorBalloons = true
+                    if (rootModuleError == null) {
+                        showCommonModuleErrorIfNeeded()
+                        showJvmModuleErrorIfNeeded()
+                        showJsModuleErrorIfNeeded()
+                    }
                 }
             }
         }
-        commonModuleNameComponent.document.addDocumentListener(stopSyncEditingListener)
-        jvmModuleNameComponent.document.addDocumentListener(stopSyncEditingListener)
-        jsModuleNameComponent.document.addDocumentListener(stopSyncEditingListener)
+
+        commonModuleNameComponent.onTextChange {
+            stopSyncEditing()
+            showCommonModuleErrorIfNeeded()
+        }
+        jvmModuleNameComponent.onTextChange {
+            stopSyncEditing()
+            showJvmModuleErrorIfNeeded()
+        }
+        jsModuleNameComponent.onTextChange {
+            stopSyncEditing()
+            showJsModuleErrorIfNeeded()
+        }
 
         jdkComboBox.selectedJdk = jdkModel.projectSdk
 
@@ -113,6 +127,68 @@ class KotlinGradleMultiplatformWizardStep(
             row { JLabel("")(CCFlags.pushY, CCFlags.growY) }
         }
         panel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
+    }
+
+    private fun showJsModuleErrorIfNeeded() {
+        showErrorBalloonIfNeeded(jsModuleNameComponent, getJsModuleError())
+    }
+
+    private fun showJvmModuleErrorIfNeeded() {
+        showErrorBalloonIfNeeded(jvmModuleNameComponent, getJvmModuleError())
+    }
+
+    private fun showCommonModuleErrorIfNeeded() {
+        showErrorBalloonIfNeeded(commonModuleNameComponent, getCommonModuleError())
+    }
+
+    private fun showErrorBalloonIfNeeded(component: JComponent, errorMessage: String?) {
+        if (showErrorBalloons && errorMessage != null) {
+            ExternalSystemUiUtil.showBalloon(component, MessageType.ERROR, errorMessage)
+        }
+    }
+
+    private fun stopSyncEditing() {
+        if (!inSyncUpdate) {
+            syncEditing = false
+        }
+    }
+
+    private fun getRootModuleError() = if (rootModuleName.isEmpty()) "Please specify the root module name" else null
+
+    private fun getCommonModuleError() = when {
+        !commonModuleIsRoot && commonModuleName.isEmpty() ->
+            "Please specify the common module name"
+
+        commonModuleName.isNotEmpty() &&
+                (commonModuleName == rootModuleName || commonModuleName == jvmModuleName || commonModuleName == jsModuleName) ->
+            "The common module name should be distinct"
+
+        else ->
+            null
+    }
+
+    private fun getJvmModuleError() = when {
+        jvmCheckBox.isSelected && jvmModuleName.isEmpty() ->
+            "Please specify the JVM module name"
+
+        jvmModuleName.isNotEmpty() &&
+                (jvmModuleName == rootModuleName || jvmModuleName == commonModuleName || jvmModuleName == jsModuleName) ->
+            "The JVM module name should be distinct"
+
+        else ->
+            null
+    }
+
+    private fun getJsModuleError()  = when {
+        jsCheckBox.isSelected && jsModuleName.isEmpty() ->
+            "Please specify the JS module name"
+
+        jsModuleName.isNotEmpty() &&
+                (jsModuleName == rootModuleName || jsModuleName == commonModuleName || jsModuleName == jvmModuleName) ->
+            "The JS module name should be distinct"
+
+        else ->
+            null
     }
 
     private fun updateDerivedModuleNames() {
@@ -154,29 +230,7 @@ class KotlinGradleMultiplatformWizardStep(
         get() = if (jsCheckBox.isSelected) jsModuleNameComponent.text else ""
 
     override fun validate(): Boolean {
-        if (rootModuleName.isEmpty()) {
-            throw ConfigurationException("Please specify the root module name")
-        }
-        if (!commonModuleIsRoot && commonModuleName.isEmpty()) {
-            throw ConfigurationException("Please specify the common module name")
-        }
-        if (jvmCheckBox.isSelected && jvmModuleName.isEmpty()) {
-            throw ConfigurationException("Please specify the JVM module name")
-        }
-        if (jsCheckBox.isSelected && jsModuleName.isEmpty()) {
-            throw ConfigurationException("Please specify the JS module name")
-        }
-        if (commonModuleName.isNotEmpty()
-            && (commonModuleName == rootModuleName || commonModuleName == jvmModuleName || commonModuleName == jsModuleName)
-        ) {
-            throw ConfigurationException("The common module name should be distinct")
-        }
-        if (jvmModuleName.isNotEmpty() && (jvmModuleName == rootModuleName || jvmModuleName == jsModuleName)) {
-            throw ConfigurationException("The JVM module name should be distinct")
-        }
-        if (jsModuleName.isNotEmpty() && jsModuleName == rootModuleName) {
-            throw ConfigurationException("The IS module name should be distinct")
-        }
-        return true
+        val errorMessage = getRootModuleError() ?: getCommonModuleError() ?: getJvmModuleError() ?: getJsModuleError() ?: return true
+        throw ConfigurationException(errorMessage)
     }
 }

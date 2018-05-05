@@ -1,20 +1,10 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.coroutines.experimental
+
 import kotlin.coroutines.experimental.intrinsics.*
 
 @JsName("CoroutineImpl")
@@ -49,24 +39,25 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
 
 private val UNDECIDED: Any? = Any()
 private val RESUMED: Any? = Any()
+
 private class Fail(val exception: Throwable)
 
 @PublishedApi
-internal class SafeContinuation<in T>
-internal constructor(
-        private val delegate: Continuation<T>,
-        initialResult: Any?
+internal actual class SafeContinuation<in T>
+internal actual constructor(
+    private val delegate: Continuation<T>,
+    initialResult: Any?
 ) : Continuation<T> {
 
     @PublishedApi
-    internal constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
+    internal actual constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
 
-    public override val context: CoroutineContext
+    public actual override val context: CoroutineContext
         get() = delegate.context
 
     private var result: Any? = initialResult
 
-    override fun resume(value: T) {
+    actual override fun resume(value: T) {
         when {
             result === UNDECIDED -> {
                 result = value
@@ -81,7 +72,7 @@ internal constructor(
         }
     }
 
-    override fun resumeWithException(exception: Throwable) {
+    actual override fun resumeWithException(exception: Throwable) {
         when {
             result === UNDECIDED -> {
                 result = Fail(exception)
@@ -97,7 +88,7 @@ internal constructor(
     }
 
     @PublishedApi
-    internal fun getResult(): Any? {
+    internal actual fun getResult(): Any? {
         if (result === UNDECIDED) {
             result = COROUTINE_SUSPENDED
         }

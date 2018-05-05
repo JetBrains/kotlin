@@ -34,42 +34,27 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.upperIfFlexible
-import java.util.*
 
 fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement, symbolTable: SymbolTable) {
     element.transformChildren(InsertImplicitCasts(builtIns, symbolTable), null)
 }
 
 class InsertImplicitCasts(private val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) : IrElementTransformerVoid() {
-    private val typeParameterScopes = ArrayDeque<Map<TypeParameterDescriptor, IrTypeParameterSymbol>>()
+
+    private val typeParameterResolver = ScopedTypeParametersResolver()
 
     private inline fun <T> runInTypeParameterScope(typeParametersContainer: IrTypeParametersContainer, fn: () -> T): T {
-        enterTypeParameterScope(typeParametersContainer)
+        typeParameterResolver.enterTypeParameterScope(typeParametersContainer)
         val result = fn()
-        leaveTypeParameterScope()
+        typeParameterResolver.leaveTypeParameterScope()
         return result
     }
 
-    private fun enterTypeParameterScope(typeParametersContainer: IrTypeParametersContainer) {
-        typeParameterScopes.addFirst(
-            typeParametersContainer.typeParameters.associate {
-                it.descriptor to it.symbol
-            }
-        )
-    }
-
-    private fun leaveTypeParameterScope() {
-        typeParameterScopes.removeFirst()
-    }
-
-    private fun resolveScopedTypeParameter(classifier: ClassifierDescriptor): IrTypeParameterSymbol? {
-        if (classifier !is TypeParameterDescriptor) return null
-        for (scope in typeParameterScopes) {
-            val local = scope[classifier]
-            if (local != null) return local
-        }
-        return null
-    }
+    private fun resolveScopedTypeParameter(classifier: ClassifierDescriptor): IrTypeParameterSymbol? =
+        if (classifier is TypeParameterDescriptor)
+            typeParameterResolver.resolveScopedTypeParameter(classifier)
+        else
+            null
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression =
         expression.transformPostfix {

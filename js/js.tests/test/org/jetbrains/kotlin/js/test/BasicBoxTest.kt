@@ -70,8 +70,10 @@ abstract class BasicBoxTest(
         protected val pathToTestDir: String,
         testGroupOutputDirPrefix: String,
         pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
+        private val typedArraysEnabled: Boolean = true,
         private val generateSourceMap: Boolean = false,
-        private val generateNodeJsRunner: Boolean = true
+        private val generateNodeJsRunner: Boolean = true,
+        private val targetBackend: TargetBackend = TargetBackend.JS
 ) : KotlinTestWithEnvironment() {
     val additionalCommonFileDirectories = mutableListOf<String>()
 
@@ -88,16 +90,24 @@ abstract class BasicBoxTest(
         doTest(filePath, "OK", MainCallParameters.noCall())
     }
 
-    fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters) {
+    fun doTestWithCoroutinesPackageReplacement(filePath: String, packageName: String) {
+        if (packageName == "kotlin.coroutines") return // TODO: Support JS in kotlin-stdlib-coroutines
+        doTest(filePath, "OK", MainCallParameters.noCall(), packageName)
+    }
+
+    fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, packageName: String = "") {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
-        val fileContent = KotlinTestUtils.doLoadFile(file)
+        var fileContent = KotlinTestUtils.doLoadFile(file)
+        if (packageName.isNotEmpty()) {
+            fileContent = fileContent.replace("COROUTINES_PACKAGE", packageName)
+        }
 
         val outputPrefixFile = getOutputPrefixFile(filePath)
         val outputPostfixFile = getOutputPostfixFile(filePath)
 
         TestFileFactoryImpl().use { testFactory ->
-            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true)
+            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true, "")
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .map { it.name to it }.toMap()
@@ -160,14 +170,18 @@ abstract class BasicBoxTest(
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
                              additionalCommonFiles
 
-            if (generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
+            val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
+
+            if (!dontRunGeneratedCode && generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
                 val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
                 val ignored = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.JS, file)
                 val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, ignored, testPackage)
                 FileUtil.writeToFile(File(nodeRunnerName), nodeRunnerText)
             }
 
-            runGeneratedCode(allJsFiles, mainModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+            if (!dontRunGeneratedCode) {
+                runGeneratedCode(allJsFiles, mainModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+            }
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
 
@@ -201,16 +215,19 @@ abstract class BasicBoxTest(
                 }
 
                 val outputDirForMinification = getOutputDir(file, testGroupOutputDirForMinification)
-                minifyAndRun(
-                    workDir = File(outputDirForMinification, file.nameWithoutExtension),
-                    allJsFiles = allJsFiles,
-                    generatedJsFiles = generatedJsFiles,
-                    expectedResult = expectedResult,
-                    testModuleName = mainModuleName,
-                    testPackage = testPackage,
-                    testFunction = testFunction,
-                    withModuleSystem = withModuleSystem,
-                    minificationThresholdChecker =  thresholdChecker)
+
+                if (!dontRunGeneratedCode) {
+                    minifyAndRun(
+                        workDir = File(outputDirForMinification, file.nameWithoutExtension),
+                        allJsFiles = allJsFiles,
+                        generatedJsFiles = generatedJsFiles,
+                        expectedResult = expectedResult,
+                        testModuleName = mainModuleName,
+                        testPackage = testPackage,
+                        testFunction = testFunction,
+                        withModuleSystem = withModuleSystem,
+                        minificationThresholdChecker =  thresholdChecker)
+                }
             }
         }
     }
@@ -524,7 +541,7 @@ abstract class BasicBoxTest(
         })
     }
 
-    private fun createPsiFile(fileName: String): KtFile {
+    protected fun createPsiFile(fileName: String): KtFile {
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
@@ -565,6 +582,8 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, module.sourceMapSourceEmbedding)
+
+        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, typedArraysEnabled)
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }

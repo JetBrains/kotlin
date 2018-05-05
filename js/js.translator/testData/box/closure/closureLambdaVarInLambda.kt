@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1116
 // KT-4263 Wrong capturing a function literal variable
 

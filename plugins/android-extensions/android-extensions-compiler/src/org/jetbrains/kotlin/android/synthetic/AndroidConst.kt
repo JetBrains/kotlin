@@ -49,6 +49,8 @@ object AndroidConst {
     val SUPPORT_V4_PACKAGE = "android.support.v4"
     val SUPPORT_FRAGMENT_FQNAME = "$SUPPORT_V4_PACKAGE.app.Fragment"
     val SUPPORT_FRAGMENT_ACTIVITY_FQNAME = "$SUPPORT_V4_PACKAGE.app.FragmentActivity"
+    val ANDROIDX_SUPPORT_FRAGMENT_FQNAME = "androidx.fragment.app.Fragment"
+    val ANDROIDX_SUPPORT_FRAGMENT_ACTIVITY_FQNAME = "androidx.fragment.app.FragmentActivity"
 
     val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "blink")
 

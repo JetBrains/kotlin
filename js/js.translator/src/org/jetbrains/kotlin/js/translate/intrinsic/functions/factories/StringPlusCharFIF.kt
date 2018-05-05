@@ -41,7 +41,7 @@ object StringPlusCharFIF : FunctionIntrinsicFactory {
         }
     }
 
-    override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
+    override fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {
         val fqName = descriptor.fqNameUnsafe.asString()
         if (fqName != "kotlin.String.plus" && fqName != "kotlin.plus") return null
 

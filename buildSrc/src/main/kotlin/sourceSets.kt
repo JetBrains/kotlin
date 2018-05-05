@@ -11,14 +11,11 @@ inline fun Project.sourceSets(crossinline body: SourceSetsBuilder.() -> Unit) =
 
 class SourceSetsBuilder(val project: Project) {
 
-    inline operator fun String.invoke(crossinline body: SourceSet.() -> Unit) {
+    inline operator fun String.invoke(crossinline body: SourceSet.() -> Unit): SourceSet {
         val sourceSetName = this
-        project.configure<JavaPluginConvention>
-        {
-            sourceSets.matching { it.name == sourceSetName }.forEach {
-                none()
-                it.body()
-            }
+        return project.the<JavaPluginConvention>().sourceSets.maybeCreate(sourceSetName).apply {
+            none()
+            body()
         }
     }
 }

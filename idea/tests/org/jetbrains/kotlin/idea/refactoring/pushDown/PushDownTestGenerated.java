@@ -23,10 +23,13 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class K2K extends AbstractPushDownTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doKotlinTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         @TestMetadata("accidentalOverrides.kt")
         public void testAccidentalOverrides() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/accidentalOverrides.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/accidentalOverrides.kt");
         }
 
         public void testAllFilesPresentInK2K() throws Exception {
@@ -35,116 +38,97 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
 
         @TestMetadata("clashingMembers.kt")
         public void testClashingMembers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/clashingMembers.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/clashingMembers.kt");
         }
 
         @TestMetadata("classToInterface.kt")
         public void testClassToInterface() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/classToInterface.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/classToInterface.kt");
         }
 
         @TestMetadata("conflictingSuperCall.kt")
         public void testConflictingSuperCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/conflictingSuperCall.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/conflictingSuperCall.kt");
         }
 
         @TestMetadata("dropVisibilityOnGeneratedOverride.kt")
         public void testDropVisibilityOnGeneratedOverride() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/dropVisibilityOnGeneratedOverride.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/dropVisibilityOnGeneratedOverride.kt");
         }
 
         @TestMetadata("finalClass.kt")
         public void testFinalClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/finalClass.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/finalClass.kt");
         }
 
         @TestMetadata("implicitCompanionUsages.kt")
         public void testImplicitCompanionUsages() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/implicitCompanionUsages.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/implicitCompanionUsages.kt");
         }
 
         @TestMetadata("liftPrivate.kt")
         public void testLiftPrivate() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/liftPrivate.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/liftPrivate.kt");
         }
 
         @TestMetadata("noCaret.kt")
         public void testNoCaret() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/noCaret.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/noCaret.kt");
         }
 
         @TestMetadata("objectDeclaration.kt")
         public void testObjectDeclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/objectDeclaration.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/objectDeclaration.kt");
         }
 
         @TestMetadata("outsideOfClass.kt")
         public void testOutsideOfClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/outsideOfClass.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/outsideOfClass.kt");
         }
 
         @TestMetadata("pushClassMembers.kt")
         public void testPushClassMembers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/pushClassMembers.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/pushClassMembers.kt");
         }
 
         @TestMetadata("pushClassMembersAndMakeAbstract.kt")
         public void testPushClassMembersAndMakeAbstract() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/pushClassMembersAndMakeAbstract.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/pushClassMembersAndMakeAbstract.kt");
         }
 
         @TestMetadata("pushClassMembersWithGenerics.kt")
         public void testPushClassMembersWithGenerics() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/pushClassMembersWithGenerics.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/pushClassMembersWithGenerics.kt");
         }
 
         @TestMetadata("pushInterfaceMembers.kt")
         public void testPushInterfaceMembers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/pushInterfaceMembers.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/pushInterfaceMembers.kt");
         }
 
         @TestMetadata("pushInterfaceMembersAndMakeAbstract.kt")
         public void testPushInterfaceMembersAndMakeAbstract() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/pushInterfaceMembersAndMakeAbstract.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/pushInterfaceMembersAndMakeAbstract.kt");
         }
 
         @TestMetadata("pushMembersUsingPrivates.kt")
         public void testPushMembersUsingPrivates() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/pushMembersUsingPrivates.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/pushMembersUsingPrivates.kt");
         }
 
         @TestMetadata("pushMembersWithExternalUsages.kt")
         public void testPushMembersWithExternalUsages() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/pushMembersWithExternalUsages.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/pushMembersWithExternalUsages.kt");
         }
 
         @TestMetadata("pushSuperInterfaces.kt")
         public void testPushSuperInterfaces() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/pushSuperInterfaces.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/pushSuperInterfaces.kt");
         }
 
         @TestMetadata("pushSuperInterfacesWithGenerics.kt")
         public void testPushSuperInterfacesWithGenerics() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2k/pushSuperInterfacesWithGenerics.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2k/pushSuperInterfacesWithGenerics.kt");
         }
     }
 
@@ -152,14 +136,17 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class K2J extends AbstractPushDownTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doKotlinTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInK2J() throws Exception {
             KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/k2j"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY);
         }
 
         @TestMetadata("kotlinToJava.kt")
         public void testKotlinToJava() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/k2j/kotlinToJava.kt");
-            doKotlinTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/k2j/kotlinToJava.kt");
         }
     }
 
@@ -167,32 +154,32 @@ public class PushDownTestGenerated extends AbstractPushDownTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class J2K extends AbstractPushDownTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doJavaTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInJ2K() throws Exception {
             KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pushDown/j2k"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY);
         }
 
         @TestMetadata("fromClass.java")
         public void testFromClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/j2k/fromClass.java");
-            doJavaTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/j2k/fromClass.java");
         }
 
         @TestMetadata("fromClassAndMakeAbstract.java")
         public void testFromClassAndMakeAbstract() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/j2k/fromClassAndMakeAbstract.java");
-            doJavaTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/j2k/fromClassAndMakeAbstract.java");
         }
 
         @TestMetadata("fromClassUsageConflicts.java")
         public void testFromClassUsageConflicts() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/j2k/fromClassUsageConflicts.java");
-            doJavaTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/j2k/fromClassUsageConflicts.java");
         }
 
         @TestMetadata("fromInterface.java")
         public void testFromInterface() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pushDown/j2k/fromInterface.java");
-            doJavaTest(fileName);
+            runTest("idea/testData/refactoring/pushDown/j2k/fromInterface.java");
         }
     }
 }

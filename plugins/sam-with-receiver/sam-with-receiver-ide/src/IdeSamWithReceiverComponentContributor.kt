@@ -29,14 +29,13 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.caches.project.ModuleProductionSourceInfo
-import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesInfo
 import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.PLUGIN_ID
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverResolverExtension
-import java.util.*
 
 class IdeSamWithReceiverComponentContributor(val project: Project) : StorageComponentContainerContributor {
     private companion object {
@@ -68,7 +67,7 @@ class IdeSamWithReceiverComponentContributor(val project: Project) : StorageComp
         val annotations =
                 when (moduleInfo) {
                     is ScriptModuleInfo -> moduleInfo.scriptDefinition.annotationsForSamWithReceivers
-                    is ScriptDependenciesModuleInfo -> moduleInfo.scriptModuleInfo?.scriptDefinition?.annotationsForSamWithReceivers
+                    is ScriptDependenciesInfo.ForFile -> moduleInfo.scriptModuleInfo.scriptDefinition?.annotationsForSamWithReceivers
                     is ModuleProductionSourceInfo -> getAnnotationsForModule(moduleInfo.module)
                     else -> null
                 } ?: return

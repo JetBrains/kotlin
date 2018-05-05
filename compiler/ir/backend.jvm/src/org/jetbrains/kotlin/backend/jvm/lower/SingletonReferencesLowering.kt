@@ -32,12 +32,12 @@ class SingletonReferencesLowering(val context: JvmBackendContext) : BodyLowering
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue): IrExpression {
-        val enumValueFieldDescriptor = context.specialDescriptorsFactory.getFieldDescriptorForEnumEntry(expression.descriptor)
+        val enumValueFieldDescriptor = context.descriptorsFactory.getFieldDescriptorForEnumEntry(expression.descriptor)
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, enumValueFieldDescriptor)
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-        val instanceFieldDescriptor = context.specialDescriptorsFactory.getFieldDescriptorForObjectInstance(expression.descriptor)
+        val instanceFieldDescriptor = context.descriptorsFactory.getFieldDescriptorForObjectInstance(expression.descriptor)
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, instanceFieldDescriptor)
     }
 }

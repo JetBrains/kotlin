@@ -1,2 +1,1 @@
-Getter for property  bar uses property foo which will be inaccessible after move
 Property foo uses property bar which will be inaccessible after move

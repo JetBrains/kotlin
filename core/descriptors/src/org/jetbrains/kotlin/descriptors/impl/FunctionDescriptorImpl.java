@@ -172,6 +172,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.hasSynthesizedParameterNames = hasSynthesizedParameterNames;
     }
 
+    public void setExtensionReceiverParameter(@NotNull ReceiverParameterDescriptor extensionReceiverParameter) {
+        this.extensionReceiverParameter = extensionReceiverParameter;
+    }
+
     @Nullable
     @Override
     public ReceiverParameterDescriptor getExtensionReceiverParameter() {
@@ -372,6 +376,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
         private Boolean newHasSynthesizedParameterNames = null;
         protected boolean justForTypeSubstitution = false;
+        private boolean dropSuspend = false;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -497,6 +502,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         @NotNull
         public CopyConfiguration setDropOriginalInContainingParts() {
             this.dropOriginalInContainingParts = true;
+            return this;
+        }
+
+        @Override
+        @NotNull
+        public CopyConfiguration setDropSuspend() {
+            this.dropSuspend = true;
             return this;
         }
 
@@ -664,7 +676,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setExternal(isExternal);
         substitutedDescriptor.setInline(isInline);
         substitutedDescriptor.setTailrec(isTailrec);
-        substitutedDescriptor.setSuspend(isSuspend);
+        if (configuration.dropSuspend) {
+            substitutedDescriptor.setSuspend(false);
+        } else {
+            substitutedDescriptor.setSuspend(isSuspend);
+        }
         substitutedDescriptor.setExpect(isExpect);
         substitutedDescriptor.setActual(isActual);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);

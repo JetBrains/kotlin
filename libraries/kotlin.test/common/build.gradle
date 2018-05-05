@@ -26,3 +26,11 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+
+compileKotlinCommon {
+    kotlinOptions {
+        freeCompilerArgs = [
+                "-module-name", project.name
+        ]
+    }
+}

@@ -27,8 +27,12 @@ class KotlinConstraintSystemCompleter(
     interface Context : VariableFixationFinder.Context, ResultTypeResolver.Context {
         override val notFixedTypeVariables: Map<TypeConstructor, VariableWithConstraints>
 
+        override val postponedTypeVariables: List<NewTypeVariable>
+
         // type can be proper if it not contains not fixed type variables
         fun canBeProper(type: UnwrappedType): Boolean
+
+        fun containsOnlyFixedOrPostponedVariables(type: UnwrappedType): Boolean
 
         // mutable operations
         fun addError(error: KotlinCallDiagnostic)
@@ -43,10 +47,27 @@ class KotlinConstraintSystemCompleter(
         topLevelType: UnwrappedType,
         analyze: (PostponedResolvedAtom) -> Unit
     ) {
+        runCompletion(c, completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext = false, analyze = analyze)
+    }
+
+    fun completeConstraintSystem(c: Context, topLevelType: UnwrappedType) {
+        runCompletion(c, ConstraintSystemCompletionMode.FULL, emptyList(), topLevelType, collectVariablesFromContext = true) {
+            error("Shouldn't be called in complete constraint system mode")
+        }
+    }
+
+    private fun runCompletion(
+        c: Context,
+        completionMode: ConstraintSystemCompletionMode,
+        topLevelAtoms: List<ResolvedAtom>,
+        topLevelType: UnwrappedType,
+        collectVariablesFromContext: Boolean,
+        analyze: (PostponedResolvedAtom) -> Unit
+    ) {
         while (true) {
             if (analyzePostponeArgumentIfPossible(c, topLevelAtoms, analyze)) continue
 
-            val allTypeVariables = getOrderedAllTypeVariables(c, topLevelAtoms)
+            val allTypeVariables = getOrderedAllTypeVariables(c, collectVariablesFromContext, topLevelAtoms)
             val postponedKtPrimitives = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
             val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
                 c, allTypeVariables, postponedKtPrimitives, completionMode, topLevelType
@@ -75,6 +96,10 @@ class KotlinConstraintSystemCompleter(
         if (completionMode == ConstraintSystemCompletionMode.FULL) {
             // force resolution for all not-analyzed argument's
             getOrderedNotAnalyzedPostponedArguments(topLevelAtoms).forEach(analyze)
+
+            if (c.notFixedTypeVariables.isNotEmpty() && c.postponedTypeVariables.isEmpty()) {
+                runCompletion(c, completionMode, topLevelAtoms, topLevelType, analyze)
+            }
         }
     }
 
@@ -130,7 +155,13 @@ class KotlinConstraintSystemCompleter(
         return notAnalyzedArguments
     }
 
-    private fun getOrderedAllTypeVariables(c: Context, topLevelAtoms: List<ResolvedAtom>): List<TypeConstructor> {
+    private fun getOrderedAllTypeVariables(
+        c: Context,
+        collectVariablesFromContext: Boolean,
+        topLevelAtoms: List<ResolvedAtom>
+    ): List<TypeConstructor> {
+        if (collectVariablesFromContext) return c.notFixedTypeVariables.keys.toList()
+
         fun ResolvedAtom.process(to: LinkedHashSet<TypeConstructor>) {
             val typeVariables = when (this) {
                 is ResolvedCallAtom -> substitutor.freshVariables
@@ -166,7 +197,7 @@ class KotlinConstraintSystemCompleter(
     private fun canWeAnalyzeIt(c: Context, argument: PostponedResolvedAtom): Boolean {
         if (argument.analyzed) return false
 
-        return argument.inputTypes.all { c.canBeProper(it) }
+        return argument.inputTypes.all { c.containsOnlyFixedOrPostponedVariables(it) }
     }
 
     private fun fixVariable(
@@ -176,9 +207,15 @@ class KotlinConstraintSystemCompleter(
         postponedResolveKtPrimitives: List<PostponedResolvedAtom>
     ) {
         val direction = TypeVariableDirectionCalculator(c, postponedResolveKtPrimitives, topLevelType).getDirection(variableWithConstraints)
+        fixVariable(c, variableWithConstraints, direction)
+    }
 
+    fun fixVariable(
+        c: Context,
+        variableWithConstraints: VariableWithConstraints,
+        direction: TypeVariableDirectionCalculator.ResolveDirection
+    ) {
         val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
-
         c.fixVariable(variableWithConstraints.typeVariable, resultType)
     }
 }

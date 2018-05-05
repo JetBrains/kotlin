@@ -29,9 +29,10 @@ import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
+import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement, JvmDeclarationUElement {
+abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments, UElement, JvmDeclarationUElement {
 
     final override val uastParent: UElement? by lz {
         givenParent ?: convertParent()
@@ -100,6 +101,10 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
 
         if (psi is KtSuperTypeCallEntry) {
             parent = parent?.parent
+        }
+
+        if (parent is KtPropertyDelegate) {
+            parent = parent.parent
         }
 
         val result = doConvertParent(this, parent)
@@ -194,8 +199,10 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
     return null
 }
 
-abstract class KotlinAbstractUExpression(givenParent: UElement?)
-    : KotlinAbstractUElement(givenParent), UExpression, JvmDeclarationUElement {
+abstract class KotlinAbstractUExpression(givenParent: UElement?) :
+    KotlinAbstractUElement(givenParent),
+    UExpression,
+    JvmDeclarationUElement {
 
     override val javaPsi: PsiElement? = null
 

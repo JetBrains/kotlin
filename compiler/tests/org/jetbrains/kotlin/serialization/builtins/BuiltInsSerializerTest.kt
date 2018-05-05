@@ -104,4 +104,12 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     fun testVarArgs() {
         doTest("annotationArguments/varargs.kt")
     }
+
+    fun testSourceRetainedAnnotation() {
+        doTest("sourceRetainedAnnotation.kt")
+    }
+
+    fun testBinaryRetainedAnnotation() {
+        doTest("binaryRetainedAnnotation.kt")
+    }
 }

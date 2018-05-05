@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.KnownTypeParameterConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
@@ -21,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -194,6 +193,22 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
     }
 }
 
+internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        for ((argument, parameter) in resolvedCall.argumentToCandidateParameter) {
+            if (!callComponents.statelessCallbacks.isCoroutineCall(argument, parameter)) continue
+            val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
+
+            for (freshVariable in resolvedCall.substitutor.freshVariables) {
+                if (csBuilder.isPostponedTypeVariable(freshVariable)) continue
+                if (receiverType.contains { it.constructor == freshVariable.originalTypeParameter.typeConstructor }) {
+                    csBuilder.markPostponedVariable(freshVariable)
+                }
+            }
+        }
+    }
+}
+
 internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
     private fun KotlinResolutionCandidate.hasError(): Nothing =
         error(
@@ -205,7 +220,11 @@ internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         when (resolvedCall.explicitReceiverKind) {
             NO_EXPLICIT_RECEIVER -> if (kotlinCall.explicitReceiver is SimpleKotlinCallArgument || kotlinCall.dispatchReceiverForInvokeExtension != null) hasError()
-            DISPATCH_RECEIVER, EXTENSION_RECEIVER -> if (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension != null) hasError()
+            DISPATCH_RECEIVER, EXTENSION_RECEIVER ->
+                if (kotlinCall.callKind == KotlinCallKind.INVOKE && kotlinCall.dispatchReceiverForInvokeExtension == null ||
+                    kotlinCall.callKind != KotlinCallKind.INVOKE &&
+                    (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension != null)
+                ) hasError()
             BOTH_RECEIVERS -> if (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension == null) hasError()
         }
     }

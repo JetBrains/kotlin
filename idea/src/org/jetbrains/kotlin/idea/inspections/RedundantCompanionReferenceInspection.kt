@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 
 class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -31,7 +32,7 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             val grandParent = parent.parent as? KtQualifiedExpression
             if (grandParent != null) {
                 val grandParentDescriptor = grandParent.resolveToCall()?.resultingDescriptor ?: return
-                if (grandParentDescriptor is ConstructorDescriptor) return
+                if (grandParentDescriptor is ConstructorDescriptor || grandParentDescriptor is FakeCallableDescriptorForObject) return
             }
 
             holder.registerProblem(

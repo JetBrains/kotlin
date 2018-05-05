@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin
@@ -25,6 +14,8 @@ expect interface Comparator<T> {
     fun compare(a: T, b: T): Int
 }
 
+// TODO: Satisfied with SAM-constructor for Comparator interface in JVM
+@Suppress("NO_ACTUAL_FOR_EXPECT")
 expect inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T>
 
 // From kotlin.kt
@@ -85,8 +76,9 @@ public expect fun Float.Companion.fromBits(bits: Int): Float
 
 // From concurrent.kt
 
-@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
-public typealias Volatile = kotlin.jvm.Volatile
+// TODO: promote to error? Otherwise it gets to JVM part
+//@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
+//public typealias Volatile = kotlin.jvm.Volatile
 
 public expect inline fun <R> synchronized(lock: Any, block: () -> R): R
 

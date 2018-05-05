@@ -569,12 +569,12 @@ class DelegatedPropertyResolver(
             )
         }
 
-        val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, inferenceSession)
+        val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, inferenceSession, context = null)
         inferenceSession.resolveCandidates(resolutionCallbacks)
 
         val resolvedDelegateType = extractResolvedDelegateType(delegateExpression, trace)
 
-        return AnonymousTypeSubstitutor.safeSubstitute(resolvedDelegateType.unwrap())
+        return TypeSubstitutor.create(AnonymousTypeSubstitutor).safeSubstitute(resolvedDelegateType, Variance.INVARIANT).unwrap()
     }
 
     private fun extractResolvedDelegateType(delegateExpression: KtExpression, trace: BindingTrace): KotlinType {
@@ -703,11 +703,11 @@ class DelegatedPropertyResolver(
     }
 }
 
-private object AnonymousTypeSubstitutor : NewTypeSubstitutor {
-    override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
-        val declarationDescriptor = constructor.declarationDescriptor
+private object AnonymousTypeSubstitutor : TypeConstructorSubstitution() {
+    override fun get(key: TypeConstructor): TypeProjection? {
+        val declarationDescriptor = key.declarationDescriptor
         if (declarationDescriptor is ClassifierDescriptor && DescriptorUtils.isAnonymousObject(declarationDescriptor)) {
-            return constructor.supertypes.firstOrNull()?.unwrap()
+            return key.supertypes.firstOrNull()?.let(::TypeProjectionImpl)
         }
 
         return null

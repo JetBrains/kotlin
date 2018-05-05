@@ -28,10 +28,10 @@ class CollectionTest {
 
     @Test fun stream() {
         assertEquals(
-                data.flatMap { it.asIterable() },
-                data.stream()
-                        .flatMap { it.chars().boxed().map { it.toChar() } }
-                        .collect(Collectors.toList()))
+            data.flatMap { it.asIterable() },
+            data.stream()
+                .flatMap { it.chars().boxed().map { it.toChar() } }
+                .collect(Collectors.toList()))
 
         assertEquals(data, data.parallelStream().toList())
     }

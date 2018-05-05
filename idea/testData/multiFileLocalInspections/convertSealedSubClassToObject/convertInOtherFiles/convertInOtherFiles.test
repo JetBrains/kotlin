@@ -1,0 +1,5 @@
+{
+  "mainFile": "Seal.kt",
+  "inspectionClass": "org.jetbrains.kotlin.idea.inspections.CanSealedSubClassBeObjectInspection",
+  "fix": "Convert Sealed Sub-class to Object"
+}

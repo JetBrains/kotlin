@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.util.*
 
 enum class ModuleKind {
@@ -73,6 +74,8 @@ fun Module.configureAs(kind: ModuleKind) {
 }
 
 fun KtFile.dumpTextWithErrors(): String {
+    val text = text
+    if (InTextDirectivesUtils.isDirectiveDefined(text, "// DISABLE-ERRORS")) return text
     val diagnostics = analyzeWithContent().diagnostics
     val errors = diagnostics.filter { it.severity == Severity.ERROR }
     if (errors.isEmpty()) return text

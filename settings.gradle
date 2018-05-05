@@ -20,7 +20,6 @@ include ":kotlin-build-common",
         ":kotlin-preloader",
         ":kotlin-runner",
         ":compiler:container",
-        ":compiler:conditional-preprocessor",
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:psi",
@@ -118,6 +117,7 @@ include ":kotlin-build-common",
         ":prepare:formatter",
         ":prepare:ide-lazy-resolver",
         ":prepare:idea-plugin",
+        ":prepare:cidr-plugin",
         ":android-lint",
         ":kotlin-compiler",
         ":kotlin-compiler-embeddable",
@@ -193,7 +193,7 @@ project(':kotlin-test:kotlin-test-testng').projectDir = "$rootDir/libraries/kotl
 project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
 project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
 project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
-project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" as File
+project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
 project(':kotlin-stdlib-js').projectDir = "$rootDir/libraries/stdlib/js" as File
 project(':kotlin-stdlib-jre7').projectDir = "$rootDir/libraries/stdlib/jre7" as File
 project(':kotlin-stdlib-jre8').projectDir = "$rootDir/libraries/stdlib/jre8" as File

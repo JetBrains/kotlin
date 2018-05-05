@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.text
 
 import test.*
@@ -150,25 +155,32 @@ class StringNumberConversionTest {
     }
 }
 
+internal fun doubleTotalOrderEquals(a: Double?, b: Double?): Boolean = (a as Any?) == b
 
-internal fun <T : Any> compareConversion(convertOrFail: (String) -> T,
-                                        convertOrNull: (String) -> T?,
-                                        equality: (T, T?) -> Boolean = { a, b -> a == b },
-                                        assertions: ConversionContext<T>.() -> Unit) {
+internal fun <T : Any> compareConversion(
+    convertOrFail: (String) -> T,
+    convertOrNull: (String) -> T?,
+    equality: (T, T?) -> Boolean = { a, b -> a == b },
+    assertions: ConversionContext<T>.() -> Unit
+) {
     ConversionContext(convertOrFail, convertOrNull, equality).assertions()
 }
 
 
-internal fun <T : Any> compareConversionWithRadix(convertOrFail: String.(Int) -> T,
-                                                 convertOrNull: String.(Int) -> T?,
-                                                 assertions: ConversionWithRadixContext<T>.() -> Unit) {
+internal fun <T : Any> compareConversionWithRadix(
+    convertOrFail: String.(Int) -> T,
+    convertOrNull: String.(Int) -> T?,
+    assertions: ConversionWithRadixContext<T>.() -> Unit
+) {
     ConversionWithRadixContext(convertOrFail, convertOrNull).assertions()
 }
 
 
-internal class ConversionContext<T: Any>(val convertOrFail: (String) -> T,
-                                        val convertOrNull: (String) -> T?,
-                                        val equality: (T, T?) -> Boolean) {
+internal class ConversionContext<T : Any>(
+    val convertOrFail: (String) -> T,
+    val convertOrNull: (String) -> T?,
+    val equality: (T, T?) -> Boolean
+) {
 
     private fun assertEquals(expected: T, actual: T?, input: String, operation: String) {
         assertTrue(equality(expected, actual), "Expected $operation('$input') to produce $expected but was $actual")
@@ -185,8 +197,10 @@ internal class ConversionContext<T: Any>(val convertOrFail: (String) -> T,
     }
 }
 
-internal class ConversionWithRadixContext<T: Any>(val convertOrFail: (String, Int) -> T,
-                                                 val convertOrNull: (String, Int) -> T?) {
+internal class ConversionWithRadixContext<T : Any>(
+    val convertOrFail: (String, Int) -> T,
+    val convertOrNull: (String, Int) -> T?
+) {
     fun assertProduces(radix: Int, input: String, output: T) {
         assertEquals(output, convertOrFail(input.removeLeadingPlusOnJava6(), radix))
         assertEquals(output, convertOrNull(input, radix))

@@ -15,7 +15,7 @@ class ResolveTest {
 
     @Test
     fun testResolveJunit() {
-        val res = evalFile(File("testData/hello-maven-resolve-junit.kts"))
+        val res = evalFile(File("testData/hello-maven-resolve-junit.scriptwithdeps.kts"))
 
         Assert.assertTrue(
             "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
@@ -25,7 +25,7 @@ class ResolveTest {
 
     @Test
     fun testUnresolvedJunit() {
-        val res = evalFile(File("testData/hello-unresolved-junit.kts"))
+        val res = evalFile(File("testData/hello-unresolved-junit.scriptwithdeps.kts"))
 
         Assert.assertTrue(
             "test failed - expecting a failure with the message \"Unresolved reference: junit\" but received " +
@@ -36,7 +36,7 @@ class ResolveTest {
 
     @Test
     fun testResolveError() {
-        val res = evalFile(File("testData/hello-maven-resolve-error.kts"))
+        val res = evalFile(File("testData/hello-maven-resolve-error.scriptwithdeps.kts"))
 
         Assert.assertTrue(
             "test failed - expecting a failure with the message \"Unknown set of arguments to maven resolver: abracadabra\" but received " +

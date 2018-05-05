@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT AbstractList
@@ -26,19 +15,19 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the list. The list is invariant on its element type.
  */
-public abstract class AbstractMutableList<E> protected constructor() : AbstractMutableCollection<E>(), MutableList<E> {
+public actual abstract class AbstractMutableList<E> protected actual constructor() : AbstractMutableCollection<E>(), MutableList<E> {
     protected var modCount: Int = 0
 
     abstract override fun add(index: Int, element: E): Unit
     abstract override fun removeAt(index: Int): E
     abstract override fun set(index: Int, element: E): E
 
-    override fun add(element: E): Boolean {
+    actual override fun add(element: E): Boolean {
         add(size, element)
         return true
     }
 
-    override fun addAll(index: Int, elements: Collection<E>): Boolean {
+    actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
         var _index = index
         var changed = false
         for (e in elements) {
@@ -48,19 +37,19 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
         return changed
     }
 
-    override fun clear() {
+    actual override fun clear() {
         removeRange(0, size)
     }
 
-    override fun removeAll(elements: Collection<E>): Boolean = removeAll { it in elements }
-    override fun retainAll(elements: Collection<E>): Boolean = removeAll { it !in elements }
+    actual override fun removeAll(elements: Collection<E>): Boolean = removeAll { it in elements }
+    actual override fun retainAll(elements: Collection<E>): Boolean = removeAll { it !in elements }
 
 
-    override fun iterator(): MutableIterator<E> = IteratorImpl()
+    actual override fun iterator(): MutableIterator<E> = IteratorImpl()
 
-    override fun contains(element: E): Boolean = indexOf(element) >= 0
+    actual override fun contains(element: E): Boolean = indexOf(element) >= 0
 
-    override fun indexOf(element: E): Int {
+    actual override fun indexOf(element: E): Int {
         for (index in 0..lastIndex) {
             if (get(index) == element) {
                 return index
@@ -69,7 +58,7 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
         return -1
     }
 
-    override fun lastIndexOf(element: E): Int {
+    actual override fun lastIndexOf(element: E): Int {
         for (index in lastIndex downTo 0) {
             if (get(index) == element) {
                 return index
@@ -78,11 +67,11 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
         return -1
     }
 
-    override fun listIterator(): MutableListIterator<E> = listIterator(0)
-    override fun listIterator(index: Int): MutableListIterator<E> = ListIteratorImpl(index)
+    actual override fun listIterator(): MutableListIterator<E> = listIterator(0)
+    actual override fun listIterator(index: Int): MutableListIterator<E> = ListIteratorImpl(index)
 
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = SubList(this, fromIndex, toIndex)
+    actual override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> = SubList(this, fromIndex, toIndex)
 
     /**
      * Removes the range of elements from this list starting from [fromIndex] and ending with but not including [toIndex].
@@ -131,7 +120,7 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
         }
 
         override fun remove() {
-            check(last != -1) { "Call next() or previous() before removing element from the iterator."}
+            check(last != -1) { "Call next() or previous() before removing element from the iterator." }
 
             removeAt(last)
             index = last
@@ -169,7 +158,7 @@ public abstract class AbstractMutableList<E> protected constructor() : AbstractM
         }
 
         override fun set(element: E) {
-            check(last != -1) { "Call next() or previous() before updating element value with the iterator."}
+            check(last != -1) { "Call next() or previous() before updating element value with the iterator." }
             this@AbstractMutableList[last] = element
         }
     }

@@ -21,13 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidUsageHighlightingTestGenerated extends AbstractAndroidUsageHighlightingTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInUsageHighlighting() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/usageHighlighting"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/usageHighlighting/simple/");
-        doTest(fileName);
+        runTest("plugins/android-extensions/android-extensions-idea/testData/android/usageHighlighting/simple/");
     }
 }

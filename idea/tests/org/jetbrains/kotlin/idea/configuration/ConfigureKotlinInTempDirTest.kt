@@ -28,30 +28,13 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.junit.Assert
 import java.io.File
 import java.io.IOException
+import java.nio.file.Path
 
-open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
-    @Throws(IOException::class)
-    override fun getIprFile(): File {
-        val tempDir = FileUtil.generateRandomTemporaryPath()
-        FileUtil.createTempDirectory("temp", null)
-
-        FileUtil.copyDir(File(projectRoot), tempDir)
-
-        val projectRoot = tempDir.path
-
-        val projectFilePath = projectRoot + "/projectFile.ipr"
-        if (!File(projectFilePath).exists()) {
-            val dotIdeaPath = projectRoot + "/.idea"
-            Assert.assertTrue("Project file or '.idea' dir should exists in " + projectRoot, File(dotIdeaPath).exists())
-            return File(projectRoot)
-        }
-        return File(projectFilePath)
-    }
-
+open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest() {
     @Throws(IOException::class)
     fun testNoKotlincExistsNoSettingsRuntime10() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
-        application.doNotSave(false)
+        application.isSaveAllowed = true
         Assert.assertEquals(LanguageVersion.KOTLIN_1_0, module.languageVersionSettings.languageVersion)
         Assert.assertEquals(LanguageVersion.KOTLIN_1_0, myProject.getLanguageVersionSettings(null).languageVersion)
         application.saveAll()
@@ -60,7 +43,7 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
 
     fun testNoKotlincExistsNoSettingsLatestRuntime() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
-        application.doNotSave(false)
+        application.isSaveAllowed = true
         Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
         Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
         application.saveAll()
@@ -69,7 +52,7 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
 
     fun testKotlincExistsNoSettingsLatestRuntimeNoVersionAutoAdvance() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
-        application.doNotSave(false)
+        application.isSaveAllowed = true
         Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
         Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
@@ -82,7 +65,7 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
 
     fun testDropKotlincOnVersionAutoAdvance() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
-        application.doNotSave(false)
+        application.isSaveAllowed = true
         Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
             autoAdvanceLanguageVersion = true
@@ -117,7 +100,7 @@ open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
     fun testLoadAndSaveProjectWithV2FacetConfig() {
         val moduleFileContentBefore = String(module.moduleFile!!.contentsToByteArray())
         val application = ApplicationManager.getApplication() as ApplicationImpl
-        application.doNotSave(false)
+        application.isSaveAllowed = true
         application.saveAll()
         val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
         Assert.assertEquals(moduleFileContentBefore, moduleFileContentAfter)

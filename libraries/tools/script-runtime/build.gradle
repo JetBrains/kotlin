@@ -9,7 +9,7 @@ configurePublishing(project)
 project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
 dependencies {
-    compileOnly project(':kotlin-stdlib')
+    compileOnly project(path: ':kotlin-stdlib', configuration: 'distJar')
 }
 
 configurations {

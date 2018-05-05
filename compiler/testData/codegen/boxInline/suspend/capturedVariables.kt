@@ -1,7 +1,8 @@
 // FILE: test.kt
+// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 
-import kotlin.coroutines.experimental.*
+import COROUTINES_PACKAGE.*
 
 suspend inline fun test1(c: suspend () -> Unit) {
     c()
@@ -13,9 +14,10 @@ suspend inline fun test2(crossinline c: suspend () -> Unit) {
 }
 
 // FILE: box.kt
+// COMMON_COROUTINES_TEST
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object: Continuation<Unit> {

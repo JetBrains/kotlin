@@ -84,7 +84,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(NO_REFLECTION_IN_CLASS_PATH, "Call uses reflection API which is not found in compilation classpath. " +
                                              "Make sure you have kotlin-reflect.jar in the classpath");
 
-        MAP.put(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
+        MAP.put(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can call default methods via super only within @JvmDefault members. Please annotate the containing interface member with @JvmDefault");
         MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using non-JVM static members protected in the superclass companion is unsupported yet");
 
         MAP.put(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
@@ -140,6 +140,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of '@JvmDefault' is only allowed if the flag -Xenable-jvm-default is enabled");
         MAP.put(JVM_DEFAULT_THROUGH_INHERITANCE, "Inheritance from an interface with '@JvmDefault' members is only allowed if the flag -Xenable-jvm-default is enabled");
         MAP.put(USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL, "Super calls of '@JvmDefault' members are only allowed if the flag -Xenable-jvm-default is enabled");
+        MAP.put(NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT, "Non-@JvmDefault interface method cannot override default Java method. Please annotate this method with @JvmDefault");
     }
 
     @NotNull
