@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.getModificationStamp
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -23,9 +25,12 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         if (descriptor !is ClassDescriptor || !descriptor.isInline) return
         if (descriptor.kind != ClassKind.CLASS) return
 
+        val inlineKeyword = declaration.modifierList?.getModifier(KtTokens.INLINE_KEYWORD)
+        require(inlineKeyword != null) { "Declaration of inline class must have 'inline' keyword" }
+
         val trace = context.trace
         if (!DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            trace.report(Errors.INLINE_CLASS_NOT_TOP_LEVEL.on(declaration))
+            trace.report(Errors.INLINE_CLASS_NOT_TOP_LEVEL.on(inlineKeyword))
             return
         }
 
@@ -37,7 +42,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
         val primaryConstructor = declaration.primaryConstructor
         if (primaryConstructor == null) {
-            trace.report(Errors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS.on(declaration))
+            trace.report(Errors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS.on(inlineKeyword))
             return
         }
 
