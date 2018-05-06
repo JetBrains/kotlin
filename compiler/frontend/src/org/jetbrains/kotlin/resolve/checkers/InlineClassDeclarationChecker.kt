@@ -5,19 +5,15 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassInitializer
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.isInlineClass
 
 object InlineClassDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -80,5 +76,18 @@ object InlineClassDeclarationChecker : DeclarationChecker {
     private fun isParameterAcceptableForInlineClass(parameter: KtParameter): Boolean {
         val isOpen = parameter.modalityModifier()?.node?.elementType == KtTokens.OPEN_KEYWORD
         return parameter.hasValOrVar() && !parameter.isMutable && !parameter.isVarArg && !parameter.hasDefaultValue() && !isOpen
+    }
+}
+
+class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (declaration !is KtProperty) return
+        if (descriptor !is PropertyDescriptor) return
+
+        if (!descriptor.containingDeclaration.isInlineClass()) return
+
+        if (context.trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == true) {
+            context.trace.report(Errors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS.on(declaration))
+        }
     }
 }

@@ -10693,6 +10693,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfPublicPrimaryConstructorForInlineClass.kt");
             }
 
+            @TestMetadata("propertiesWithBackingFieldsInsideInlineClass.kt")
+            public void testPropertiesWithBackingFieldsInsideInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/propertiesWithBackingFieldsInsideInlineClass.kt");
+            }
+
             @TestMetadata("varargsOnParametersOfInlineClassType.kt")
             public void testVarargsOnParametersOfInlineClassType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/varargsOnParametersOfInlineClassType.kt");
