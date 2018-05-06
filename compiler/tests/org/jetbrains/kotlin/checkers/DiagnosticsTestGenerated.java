@@ -10692,6 +10692,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             public void testPresenceOfPublicPrimaryConstructorForInlineClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfPublicPrimaryConstructorForInlineClass.kt");
             }
+
+            @TestMetadata("varargsOnParametersOfInlineClassType.kt")
+            public void testVarargsOnParametersOfInlineClassType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/varargsOnParametersOfInlineClassType.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/inner")
