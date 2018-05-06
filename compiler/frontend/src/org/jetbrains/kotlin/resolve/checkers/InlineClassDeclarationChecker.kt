@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.getModificationStamp
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 object InlineClassDeclarationChecker : DeclarationChecker {
@@ -43,6 +45,12 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         val primaryConstructor = declaration.primaryConstructor
         if (primaryConstructor == null) {
             trace.report(Errors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS.on(inlineKeyword))
+            return
+        }
+
+        val primaryConstructorVisibility = descriptor.unsubstitutedPrimaryConstructor?.visibility
+        if (primaryConstructorVisibility != null && primaryConstructorVisibility != Visibilities.PUBLIC) {
+            trace.report(Errors.NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS.on(primaryConstructor.visibilityModifier() ?: inlineKeyword))
             return
         }
 

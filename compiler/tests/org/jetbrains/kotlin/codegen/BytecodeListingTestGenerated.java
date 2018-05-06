@@ -284,11 +284,6 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         public void testShapeOfInlineClassWithPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrimitive.kt");
         }
-
-        @TestMetadata("shapeOfInlineClassWithPrivateConstructor.kt")
-        public void testShapeOfInlineClassWithPrivateConstructor() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrivateConstructor.kt");
-        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/specialBridges")
