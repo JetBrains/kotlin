@@ -630,6 +630,7 @@ public class DefaultErrorMessages {
         MAP.put(NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS, "Primary constructor of inline class must be public");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Inline class primary constructor must have only final read-only (val) property parameter");
+        MAP.put(INLINE_CLASS_WITH_INITIALIZER, "Inline class cannot have initializer block");
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, "Variance annotations are only allowed for type parameters of classes and interfaces");
         MAP.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters");

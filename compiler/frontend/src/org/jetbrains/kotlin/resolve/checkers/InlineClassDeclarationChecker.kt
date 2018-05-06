@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassInitializer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.getModificationStamp
-import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -64,6 +62,17 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
         if (!isParameterAcceptableForInlineClass(baseParameter)) {
             trace.report(Errors.INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.on(baseParameter))
+            return
+        }
+
+        val anonymousInitializers = declaration.getAnonymousInitializers()
+        if (anonymousInitializers.isNotEmpty()) {
+            for (anonymousInitializer in anonymousInitializers) {
+                if (anonymousInitializer is KtClassInitializer) {
+                    trace.report(Errors.INLINE_CLASS_WITH_INITIALIZER.on(anonymousInitializer.initKeyword))
+                }
+            }
+
             return
         }
     }

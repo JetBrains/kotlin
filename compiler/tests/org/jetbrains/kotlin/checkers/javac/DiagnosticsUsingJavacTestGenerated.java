@@ -10683,6 +10683,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeclarationCheck.kt");
             }
 
+            @TestMetadata("presenceOfInitializerBlockInsideInlineClass.kt")
+            public void testPresenceOfInitializerBlockInsideInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfInitializerBlockInsideInlineClass.kt");
+            }
+
             @TestMetadata("presenceOfPublicPrimaryConstructorForInlineClass.kt")
             public void testPresenceOfPublicPrimaryConstructorForInlineClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/presenceOfPublicPrimaryConstructorForInlineClass.kt");
