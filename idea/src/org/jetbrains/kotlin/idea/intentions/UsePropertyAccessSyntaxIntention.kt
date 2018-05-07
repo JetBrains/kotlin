@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.shouldNotConvertToProperty
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -143,6 +144,8 @@ class UsePropertyAccessSyntaxIntention :
 
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
         val property = findSyntheticProperty(function, resolutionFacade.getFrontendService(SyntheticScopes::class.java)) ?: return null
+
+        if (KtTokens.KEYWORDS.types.any { it.toString() == property.name.asString() }) return null
 
         val dataFlowInfo = bindingContext.getDataFlowInfoBefore(callee)
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
