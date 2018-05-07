@@ -43,12 +43,12 @@
         </action>
 
         <action id="CreateIncrementalCompilationBackup"
-                class="org.jetbrains.kotlin.idea.internal.makeBackup.CreateIncrementalCompilationBackup">
+                class="org.jetbrains.kotlin.idea.internal.makeBackup.CreateIncrementalCompilationBackup" internal="true">
             <add-to-group group-id="KotlinInternalGroup"/>
         </action>
 
         <action id="ReactivePostOpenProjectActionsAction" class="org.jetbrains.kotlin.idea.actions.internal.ReactivePostOpenProjectActionsAction"
-                text="Kotlin Project Post-Open Activity">
+                text="Kotlin Project Post-Open Activity" internal="true">
             <add-to-group group-id="KotlinInternalGroup"/>
         </action>
     </actions>
