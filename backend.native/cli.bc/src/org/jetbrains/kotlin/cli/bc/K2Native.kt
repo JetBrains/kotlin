@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLITool
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -37,7 +38,13 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.KotlinPaths
 
+private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
+
+    private val performanceManager by lazy {
+        K2NativeCompilerPerformanceManager()
+    }
+    override fun getPerformanceManager(): CommonCompilerPerformanceManager = performanceManager
 
     override fun doExecute(@NotNull arguments: K2NativeCompilerArguments,
                            @NotNull configuration: CompilerConfiguration,
