@@ -111,6 +111,9 @@
                                  implementationClass="org.jetbrains.kotlin.idea.debugger.surroundWith.KotlinDebuggerExpressionSurroundDescriptor"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
+
+        <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService"
+                        serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.uast">
