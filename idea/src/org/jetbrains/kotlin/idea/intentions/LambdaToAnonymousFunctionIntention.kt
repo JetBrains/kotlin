@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFold
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
@@ -26,12 +26,7 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
 ) {
 
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
-        val argument = element.getParentOfTypesAndPredicate(true, KtValueArgumentList::class.java, KtLambdaArgument::class.java) { true }
-                ?: return false
-
-        val callElement = argument.parent as? KtCallElement ?: return false
-        if (callElement.getCalleeExpressionIfAny() !is KtNameReferenceExpression) return false
-
+        if (element.getStrictParentOfType<KtValueArgument>() == null) return false
         val descriptor = element.functionLiteral.descriptor as? AnonymousFunctionDescriptor ?: return false
         return descriptor.valueParameters.none { it.name.isSpecial }
     }
@@ -42,7 +37,10 @@ class LambdaToAnonymousFunctionIntention : SelfTargetingIntention<KtLambdaExpres
         val descriptor = functionLiteral.descriptor as? AnonymousFunctionDescriptor ?: return
         val psiFactory = KtPsiFactory(element)
 
-        bodyExpression.collectDescendantsOfType<KtReturnExpression>().forEach { it.labeledExpression?.delete() }
+        val context = element.analyze(BodyResolveMode.PARTIAL)
+        bodyExpression.collectDescendantsOfType<KtReturnExpression>().forEach {
+            if (it.getTargetFunctionDescriptor(context) == descriptor) it.labeledExpression?.delete()
+        }
 
         val extension = descriptor.extensionReceiverParameter?.type?.let { "$it." } ?: ""
         val params = descriptor.valueParameters.joinToString { "${it.name}: ${it.type}" }
