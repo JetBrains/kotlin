@@ -793,7 +793,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     private object ParallelStartParams {
-        const val threads = 5
+        const val threads = 32
         const val performCompilation = false
         const val connectionFailedErr = -100
     }
@@ -807,7 +807,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val logFiles = arrayOfNulls<File>(ParallelStartParams.threads)
         val daemonInfos = arrayOfNulls<Pair<CompileService.CallResult<String>?, Int?>>(ParallelStartParams.threads)
 
-        val daemonOptions = makeTestDaemonOptions(getTestName(true), 1000)
+        val daemonOptions = makeTestDaemonOptions(getTestName(true), 100)
 
         fun connectThread(threadNo: Int) = async(newSingleThreadContext(name = "daemonConnect$threadNo")) {
             // (name = "daemonConnect$threadNo")

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.runWithTimeout
 import java.io.File
 import java.rmi.registry.LocateRegistry
+import java.util.logging.Logger
 
 /*
 1) walkDaemonsAsync = walkDaemons + some async calls inside (also some used classes changed *** -> ***Async)
@@ -26,8 +27,8 @@ private const val ORPHANED_RUN_FILE_AGE_THRESHOLD_MS = 1000000L
 
 data class DaemonWithMetadataAsync(val daemon: CompileServiceClientSide, val runFile: File, val jvmOptions: DaemonJVMOptions)
 
-val log = "client utils"//Logger.getLogger("client utils")
-internal fun String.info(msg: String) = println("[$this] : $msg")
+val log = Logger.getLogger("client utils")
+internal fun String.info(msg: String) = {}()//log.info("[$this] : $msg")
 
 private suspend fun <T, R : Any> List<T>.mapNotNullAsync(transform: suspend (T) -> R?): List<R> =
     this
@@ -61,7 +62,7 @@ fun walkDaemonsAsync(
                 // all actions process concurrently
                 log.info("\n<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>\n")
                 log.info("(port = $port, file = $file)")
-                println("(port = $port, file = $file)")
+                log.info("(port = $port, file = $file)")
                 log.info("fileToCompareTimestamp = $fileToCompareTimestamp")
                 log.info("port != null : ${port != null}")
                 log.info("port in RANGE : ${(port ?: -1) in 1..(MAX_PORT_NUMBER - 1)}")
@@ -162,7 +163,7 @@ private suspend fun tryConnectToDaemonBySockets(
         log.info("OK - daemon($port) connected to server!!!")
         return daemon
     } catch (e: Throwable) {
-        report(DaemonReportCategory.INFO, "cannot find or connect to socket")
+        report(DaemonReportCategory.INFO, "kcannot find or connect to socket")
     }
     return null
 }

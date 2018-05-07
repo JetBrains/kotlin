@@ -143,10 +143,12 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
 
     private class CloseMessage : WriteActorQuery
 
-    private suspend fun tryPrint(b: Byte, writeChannel: ByteWriteChannel) {
+    private suspend fun tryPrint(b: ByteArray, writeChannel: ByteWriteChannel) {
         if (!writeChannel.isClosedForWrite) {
             try {
-                writeChannel.writeByte(b)
+                b.forEach {
+                    writeChannel.writeByte(it)
+                }
             } catch (e: IOException) {
                 log.info("failed to print message, ${e.message}")
             }
@@ -164,9 +166,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
                         writeChannel.close()
                     }
                     is ByteData -> {
-                        message.toByteArray().forEach {
-                            tryPrint(it, writeChannel)
-                        }
+                        tryPrint(message.toByteArray(), writeChannel)
                         if (!writeChannel.isClosedForWrite) {
                             try {
                                 writeChannel.flush()

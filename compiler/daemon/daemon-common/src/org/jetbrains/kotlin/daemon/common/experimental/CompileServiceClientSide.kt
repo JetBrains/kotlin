@@ -53,9 +53,9 @@ class CompileServiceClientSideImpl(
         servicesFacade: CompilerServicesFacadeBaseClientSide,
         compilationResults: CompilationResultsClientSide
     ): CallResult<Int> {
-        println("override fun compile(")
+        log.info("override fun compile(")
         val id = sendMessage(CompileMessage(sessionId, compilerArguments, compilationOptions, servicesFacade, compilationResults))
-        println("override fun compile(: id = $id")
+        log.info("override fun compile(: id = $id")
         return readMessage(id)
     }
 
@@ -119,7 +119,8 @@ class CompileServiceClientSideImpl(
     }
 
     override suspend fun registerClient(aliveFlagPath: String?): CallResult<Nothing> {
-        println("registerClient")
+        log.info("registerClient")
+        println("client's fun registerClient")
         val id = sendMessage(RegisterClientMessage(aliveFlagPath))
         return readMessage(id)
     }
@@ -149,11 +150,11 @@ class CompileServiceClientSideImpl(
 
     override suspend fun shutdown(): CallResult<Nothing> {
         val id = sendMessage(ShutdownMessage())
-        println("ShutdownMessage_id = $id")
+        log.info("ShutdownMessage_id = $id")
         val res = readMessage<CallResult<*>>(id)
-        println("ShutdownMessage_res : $res")
+        log.info("ShutdownMessage_res : $res")
         val resAs = res as CallResult<Nothing>
-        println("resAs : ${resAs}")
+        log.info("resAs : ${resAs}")
         return resAs
     }
 
