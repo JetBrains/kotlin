@@ -69,13 +69,11 @@ private val REPLACE_WITH_IMPORTS_NAME = Name.identifier("imports")
 
 private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
 
-fun MemberDescriptor.isInlineOnlyOrReifiable(checkInlineOnly: Boolean = true): Boolean =
-        this is CallableMemberDescriptor &&
-        (isReifiable() || DescriptorUtils.getDirectMember(this).isReifiable() || (checkInlineOnly && isInlineOnly()))
+fun MemberDescriptor.isInlineOnlyOrReifiable(): Boolean =
+        this is CallableMemberDescriptor && (isReifiable() || DescriptorUtils.getDirectMember(this).isReifiable() || isInlineOnly())
 
-@JvmOverloads
-fun MemberDescriptor.isEffectivelyInlineOnly(checkInlineOnly: Boolean = true): Boolean =
-        isInlineOnlyOrReifiable(checkInlineOnly) || safeAs<FunctionDescriptor>()?.let { it.isSuspend && it.isInline } == true
+fun MemberDescriptor.isEffectivelyInlineOnly(): Boolean =
+        isInlineOnlyOrReifiable() || safeAs<FunctionDescriptor>()?.let { it.isSuspend && it.isInline } == true
 
 fun MemberDescriptor.isInlineOnly(): Boolean {
     if (this !is FunctionDescriptor ||
