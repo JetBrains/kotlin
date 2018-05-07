@@ -27,10 +27,18 @@ interface DefaultImplsClassDescriptor : ClassDescriptor {
 }
 
 class DefaultImplsClassDescriptorImpl(
-        name: Name,
-        override val correspondingInterface: ClassDescriptor,
-        sourceElement: SourceElement
-) : DefaultImplsClassDescriptor, KnownClassDescriptor(name, correspondingInterface, sourceElement, ClassKind.CLASS, Modality.FINAL, Visibilities.PUBLIC, Annotations.EMPTY) {
+    name: Name,
+    override val correspondingInterface: ClassDescriptor,
+    sourceElement: SourceElement
+) : DefaultImplsClassDescriptor, KnownClassDescriptor(
+    name,
+    correspondingInterface,
+    sourceElement,
+    ClassKind.CLASS,
+    Modality.FINAL,
+    Visibilities.PUBLIC,
+    Annotations.EMPTY
+) {
     init {
         initialize(emptyList(), listOf(correspondingInterface.module.builtIns.anyType))
     }
