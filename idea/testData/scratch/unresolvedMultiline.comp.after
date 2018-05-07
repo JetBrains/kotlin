@@ -1,3 +1,3 @@
-foo.forEach {    // ERROR: Unresolved reference: foo; Cannot choose among the following candidates without completing type inference:
+foo.forEach {    // ERROR: Unresolved reference: foo; Cannot choose among the following candidates wi...
     1 + 1
 }
