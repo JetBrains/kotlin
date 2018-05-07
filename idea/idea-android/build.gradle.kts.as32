@@ -72,3 +72,8 @@ projectTest {
 
 testsJar {}
 
+runtimeJar {
+    archiveName = "android-ide.jar"
+}
+
+ideaPlugin()
