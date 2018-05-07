@@ -159,7 +159,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
 
-        val pkg = JavaPsiFacade.getInstance(getTestProject()).findPackage("renameTest")
+        val pkg = JavaPsiFacade.getInstance(getTestProject()).findPackage("renameTest")!!
         val rename = RefactoringFactory.getInstance(getTestProject()).createRename(pkg, "afterRenameTest")
         rename.run()
 

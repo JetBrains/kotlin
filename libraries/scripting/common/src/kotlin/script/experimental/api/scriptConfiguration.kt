@@ -25,6 +25,7 @@ interface ScriptCompilationConfigurator {
         scriptSource: ScriptSource,
         configuration: ScriptCompileConfiguration,
         processedScriptData: ProcessedScriptData = ProcessedScriptData()
-    ): ResultWithDiagnostics<ScriptCompileConfiguration>
+    ): ResultWithDiagnostics<ScriptCompileConfiguration> =
+        defaultConfiguration.asSuccess()
 }
 

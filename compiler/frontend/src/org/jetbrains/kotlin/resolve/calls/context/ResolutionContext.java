@@ -146,6 +146,14 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     }
 
     @NotNull
+    public Context replaceInferenceSession(@NotNull InferenceSession newInferenceSession) {
+        if (newInferenceSession == inferenceSession) return self();
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, statementFilter,
+                      collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
+                      newInferenceSession);
+    }
+
+    @NotNull
     public Context replaceExpectedType(@Nullable KotlinType newExpectedType) {
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();

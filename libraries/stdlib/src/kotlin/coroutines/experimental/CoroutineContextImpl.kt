@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.coroutines.experimental
@@ -56,7 +45,7 @@ internal class CombinedContext(val left: CoroutineContext, val element: Element)
     }
 
     public override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
-            operation(left.fold(initial, operation), element)
+        operation(left.fold(initial, operation), element)
 
     public override fun minusKey(key: Key<*>): CoroutineContext {
         element[key]?.let { return left }
@@ -69,10 +58,10 @@ internal class CombinedContext(val left: CoroutineContext, val element: Element)
     }
 
     private fun size(): Int =
-            if (left is CombinedContext) left.size() + 1 else 2
+        if (left is CombinedContext) left.size() + 1 else 2
 
     private fun contains(element: Element): Boolean =
-            get(element.key) == element
+        get(element.key) == element
 
     private fun containsAll(context: CombinedContext): Boolean {
         var cur = context
@@ -88,12 +77,12 @@ internal class CombinedContext(val left: CoroutineContext, val element: Element)
     }
 
     override fun equals(other: Any?): Boolean =
-            this === other || other is CombinedContext && other.size() == size() && other.containsAll(this)
+        this === other || other is CombinedContext && other.size() == size() && other.containsAll(this)
 
     override fun hashCode(): Int = left.hashCode() + element.hashCode()
 
     override fun toString(): String =
-            "[" + fold("") { acc, element ->
-                if (acc.isEmpty()) element.toString() else acc + ", " + element
-            } + "]"
+        "[" + fold("") { acc, element ->
+            if (acc.isEmpty()) element.toString() else acc + ", " + element
+        } + "]"
 }

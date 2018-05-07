@@ -69,6 +69,10 @@ class IncorporationConstraintPosition(val from: ConstraintPosition, val initialC
     override fun toString() = "Incorporate $initialConstraint from position $from"
 }
 
+class CoroutinePosition() : ConstraintPosition() {
+    override fun toString(): String = "for coroutine call"
+}
+
 @Deprecated("Should be used only in SimpleConstraintSystemImpl")
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 

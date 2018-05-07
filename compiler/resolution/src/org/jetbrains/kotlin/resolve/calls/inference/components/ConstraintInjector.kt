@@ -38,6 +38,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
         var maxTypeDepthFromInitialConstraints: Int
         val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints>
+        val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType>
 
         fun addInitialConstraint(initialConstraint: InitialConstraint)
         fun addError(error: KotlinCallDiagnostic)

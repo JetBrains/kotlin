@@ -429,11 +429,11 @@ public class KotlinTestUtils {
 
     private static void deleteOnShutdown(File file) {
         if (filesToDelete.isEmpty()) {
-            ShutDownTracker.getInstance().registerShutdownTask(() -> ShutDownTracker.invokeAndWait(true, true, () -> {
+            ShutDownTracker.getInstance().registerShutdownTask(() -> {
                 for (File victim : filesToDelete) {
                     FileUtil.delete(victim);
                 }
-            }));
+            });
         }
 
         filesToDelete.add(file);
@@ -709,6 +709,11 @@ public class KotlinTestUtils {
         public Void createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
             return null;
         }
+    }
+
+    @NotNull
+    public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
+        return createTestFiles(testFileName, expectedText, factory, false, "");
     }
 
     @NotNull

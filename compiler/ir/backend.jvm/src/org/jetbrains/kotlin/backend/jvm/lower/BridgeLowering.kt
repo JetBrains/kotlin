@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.*
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
@@ -89,8 +90,8 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
         val functions = irClass.declarations.filterIsInstance<IrFunction>().filterNot {
             val descriptor = it.descriptor
             descriptor is ConstructorDescriptor ||
-            DescriptorUtils.isStaticDeclaration(descriptor) ||
-            !descriptor.kind.isReal
+                    DescriptorUtils.isStaticDeclaration(descriptor) ||
+                    !descriptor.kind.isReal
         }
 
         functions.forEach {
@@ -105,8 +106,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                     if (!memberDescriptor.kind.isReal && findInterfaceImplementation(memberDescriptor) == null) {
                         if (memberDescriptor is FunctionDescriptor) {
                             generateBridges(memberDescriptor, irClass)
-                        }
-                        else if (memberDescriptor is PropertyDescriptor) {
+                        } else if (memberDescriptor is PropertyDescriptor) {
                             val getter = memberDescriptor.getter
                             if (getter != null) {
                                 generateBridges(getter, irClass)
@@ -133,44 +133,47 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
         val bridgesToGenerate: Set<Bridge<SignatureAndDescriptor>>
         if (!isSpecial) {
             bridgesToGenerate = generateBridgesForFunctionDescriptor(
-                    descriptor,
-                    getSignatureMapper(typeMapper),
-                    DECLARATION_AND_DEFINITION_CHECKER
+                descriptor,
+                getSignatureMapper(typeMapper),
+                DECLARATION_AND_DEFINITION_CHECKER
             )
             if (!bridgesToGenerate.isEmpty()) {
                 val origin = if (descriptor.kind == DECLARATION) getSourceFromDescriptor(descriptor) else null
-                val isSpecialBridge = BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) != null
+                val isSpecialBridge =
+                    BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor) != null
 
                 for (bridge in bridgesToGenerate) {
                     irClass.declarations.add(createBridge(origin, descriptor, bridge.from, bridge.to, isSpecialBridge, false))
                 }
             }
-        }
-        else {
+        } else {
             val specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
-                    descriptor,
-                    getSignatureMapper(typeMapper),
-                    DECLARATION_AND_DEFINITION_CHECKER
+                descriptor,
+                getSignatureMapper(typeMapper),
+                DECLARATION_AND_DEFINITION_CHECKER
             )
 
             if (!specials.isEmpty()) {
                 val origin = if (descriptor.kind == DECLARATION) getSourceFromDescriptor(descriptor) else null
                 for (bridge in specials) {
-                    irClass.declarations.add(createBridge(
+                    irClass.declarations.add(
+                        createBridge(
                             origin, descriptor, bridge.from, bridge.to,
-                            bridge.isSpecial, bridge.isDelegateToSuper))
+                            bridge.isSpecial, bridge.isDelegateToSuper
+                        )
+                    )
                 }
             }
 
             if (!descriptor.kind.isReal && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION)) {
-                descriptor.getOverriddenBuiltinReflectingJvmDescriptor<CallableMemberDescriptor>() ?:
-                error("Expect to find overridden descriptors for $descriptor")
+                descriptor.getOverriddenBuiltinReflectingJvmDescriptor<CallableMemberDescriptor>()
+                        ?: error("Expect to find overridden descriptors for $descriptor")
 
                 if (!isThereOverriddenInKotlinClass(descriptor)) {
                     val flags = Opcodes.ACC_ABSTRACT or getVisibilityAccessFlag(descriptor)
                     val bridgeDescriptor = JvmFunctionDescriptorImpl(
-                            descriptor.containingDeclaration as ClassDescriptor, null, Annotations.EMPTY,
-                            descriptor.name, CallableMemberDescriptor.Kind.SYNTHESIZED, descriptor.source, flags
+                        descriptor.containingDeclaration as ClassDescriptor, null, Annotations.EMPTY,
+                        descriptor.name, CallableMemberDescriptor.Kind.SYNTHESIZED, descriptor.source, flags
                     )
                     val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptor)
                     irClass.declarations.add(irFunction)
@@ -180,46 +183,63 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
     }
 
     private fun createBridge(
-            origin: PsiElement?,
-            descriptor: FunctionDescriptor,
-            bridge: SignatureAndDescriptor,
-            delegateTo: SignatureAndDescriptor,
-            isSpecialBridge: Boolean,
-            isStubDeclarationWithDelegationToSuper: Boolean
+        origin: PsiElement?,
+        descriptor: FunctionDescriptor,
+        bridge: SignatureAndDescriptor,
+        delegateTo: SignatureAndDescriptor,
+        isSpecialBridge: Boolean,
+        isStubDeclarationWithDelegationToSuper: Boolean
     ): IrFunction {
         val isSpecialOrDelegationToSuper = isSpecialBridge || isStubDeclarationWithDelegationToSuper
-        val flags = ACC_PUBLIC or ACC_BRIDGE or (if (!isSpecialOrDelegationToSuper) ACC_SYNTHETIC else 0) or if (isSpecialBridge) ACC_FINAL else 0 // TODO.
+        val flags =
+            ACC_PUBLIC or ACC_BRIDGE or (if (!isSpecialOrDelegationToSuper) ACC_SYNTHETIC else 0) or if (isSpecialBridge) ACC_FINAL else 0 // TODO.
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
         //here some 'isSpecialBridge' magic
         val bridgeDescriptor = JvmFunctionDescriptorImpl(
-                containingClass, null, Annotations.EMPTY, Name.identifier(bridge.method.name),
-                CallableMemberDescriptor.Kind.SYNTHESIZED, descriptor.source, flags
+            containingClass, null, Annotations.EMPTY, Name.identifier(bridge.method.name),
+            CallableMemberDescriptor.Kind.SYNTHESIZED, descriptor.source, flags
         )
 
         bridgeDescriptor.initialize(
-                null, containingClass.thisAsReceiverParameter, emptyList(),
-                bridge.descriptor.valueParameters.map { it.copy(bridgeDescriptor, it.name, it.index) },
-                bridge.descriptor.returnType, Modality.OPEN, descriptor.visibility
+            null, containingClass.thisAsReceiverParameter, emptyList(),
+            bridge.descriptor.valueParameters.map { it.copy(bridgeDescriptor, it.name, it.index) },
+            bridge.descriptor.returnType, Modality.OPEN, descriptor.visibility
         )
 
         val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptor)
+        irFunction.createParameterDeclarations()
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
             //TODO
             //MemberCodegen.markLineNumberForDescriptor(owner.getThisDescriptor(), iv)
             if (delegateTo.method.argumentTypes.isNotEmpty() && isSpecialBridge) {
-                generateTypeCheckBarrierIfNeeded(descriptor, bridgeDescriptor, delegateTo.method.argumentTypes)
+                generateTypeCheckBarrierIfNeeded(descriptor, bridgeDescriptor, irFunction, delegateTo.method.argumentTypes)
             }
 
             val implementation = if (isSpecialBridge) delegateTo.descriptor.copyAsDeclaration() else delegateTo.descriptor
-            val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                  implementation,
-                                  null, JvmLoweredStatementOrigin.BRIDGE_DELEGATION, null)
-            call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, containingClass.thisAsReceiverParameter, JvmLoweredStatementOrigin.BRIDGE_DELEGATION)
-            bridgeDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
-                call.putValueArgument(i, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueParameterDescriptor, JvmLoweredStatementOrigin.BRIDGE_DELEGATION))
+            val call = IrCallImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                implementation,
+                null, JvmLoweredStatementOrigin.BRIDGE_DELEGATION, null
+            )
+            call.dispatchReceiver = IrGetValueImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                irFunction.dispatchReceiverParameter!!.symbol,
+                JvmLoweredStatementOrigin.BRIDGE_DELEGATION
+            )
+            irFunction.valueParameters.mapIndexed { i, valueParameter ->
+                call.putValueArgument(
+                    i,
+                    IrGetValueImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        valueParameter.symbol,
+                        JvmLoweredStatementOrigin.BRIDGE_DELEGATION
+                    )
+                )
             }
-            +IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridgeDescriptor, call)
+            +IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.symbol, call)
         }.apply {
             irFunction.body = this
         }
@@ -228,25 +248,32 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
     }
 
     private fun IrBlockBodyBuilder.generateTypeCheckBarrierIfNeeded(
-            overrideDescriptor: FunctionDescriptor,
-            bridgeDescriptor: FunctionDescriptor,
-            delegateParameterTypes: Array<Type>?
+        overrideDescriptor: FunctionDescriptor,
+        bridgeDescriptor: FunctionDescriptor,
+        bridgeFunction: IrFunction,
+        delegateParameterTypes: Array<Type>?
     ) {
-        val typeSafeBarrierDescription = BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(overrideDescriptor) ?: return
+        val typeSafeBarrierDescription =
+            BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(overrideDescriptor) ?: return
 
-        BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(overrideDescriptor) ?:
-        error("Overridden built-in method should not be null for " + overrideDescriptor)
+        BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(overrideDescriptor)
+                ?: error("Overridden built-in method should not be null for $overrideDescriptor")
 
         val conditions = bridgeDescriptor.valueParameters.withIndex().filter { (i, parameterDescriptor) ->
             typeSafeBarrierDescription.checkParameter(i) ||
-            !(delegateParameterTypes == null || OBJECT_TYPE == delegateParameterTypes[i]) ||
-            !TypeUtils.isNullableType(parameterDescriptor.type)
-        }.map { (i, parameterDescriptor) ->
-            val checkValue = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameterDescriptor, JvmLoweredStatementOrigin.BRIDGE_DELEGATION)
+                    !(delegateParameterTypes == null || OBJECT_TYPE == delegateParameterTypes[i]) ||
+                    !TypeUtils.isNullableType(parameterDescriptor.type)
+        }.map { (i, _) ->
+            val checkValue =
+                IrGetValueImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    bridgeFunction.valueParameters[i].symbol,
+                    JvmLoweredStatementOrigin.BRIDGE_DELEGATION
+                )
             if (delegateParameterTypes == null || OBJECT_TYPE == delegateParameterTypes[i]) {
                 irNotEquals(checkValue, irNull())
-            }
-            else {
+            } else {
                 irIs(checkValue, overrideDescriptor.valueParameters[i].type)
             }
         }
@@ -258,13 +285,14 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
             +irIfThen(irNot(condition), irBlock {
                 +irReturn(
-                        when (typeSafeBarrierDescription) {
-                            MAP_GET_OR_DEFAULT -> irGet(IrVariableSymbolImpl(bridgeDescriptor.valueParameters[1]))
-                            BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.NULL -> irNull()
-                            INDEX -> IrConstImpl.int(
-                                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.builtIns.intType, typeSafeBarrierDescription.defaultValue as Int)
-                            FALSE -> irFalse()
-                        }
+                    when (typeSafeBarrierDescription) {
+                        MAP_GET_OR_DEFAULT -> irGet(IrVariableSymbolImpl(bridgeDescriptor.valueParameters[1]))
+                        BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.NULL -> irNull()
+                        INDEX -> IrConstImpl.int(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.builtIns.intType, typeSafeBarrierDescription.defaultValue as Int
+                        )
+                        FALSE -> irFalse()
+                    }
                 )
             }
             )
@@ -276,14 +304,15 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
     companion object {
         fun getSignatureMapper(typeMapper: KotlinTypeMapper): Function1<FunctionDescriptor, SignatureAndDescriptor> {
             return fun(descriptor: FunctionDescriptor) =
-                    SignatureAndDescriptor(typeMapper.mapAsmMethod(descriptor), descriptor)
+                SignatureAndDescriptor(typeMapper.mapAsmMethod(descriptor), descriptor)
         }
 
         fun FunctionDescriptor.copyAsDeclaration(): FunctionDescriptor {
             val isGetter = this is PropertyGetterDescriptor
             val isAccessor = this is PropertyAccessorDescriptor
             val directMember = getDirectMember(this)
-            val copy = directMember.copy(directMember.containingDeclaration, directMember.modality, directMember.visibility, DECLARATION, false)
+            val copy =
+                directMember.copy(directMember.containingDeclaration, directMember.modality, directMember.visibility, DECLARATION, false)
             if (isAccessor) {
                 val property = copy as PropertyDescriptor
                 return if (isGetter) property.getter!! else property.setter!!

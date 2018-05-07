@@ -8,5 +8,5 @@ class B {
     annotation class C
 }
 
-@Experimental(Experimental.Level.ERROR, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.ERROR)
 annotation class D

@@ -1533,6 +1533,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("applyInsideCoroutine.kt")
+            public void testApplyInsideCoroutine() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/applyInsideCoroutine.kt");
+            }
+
             @TestMetadata("correctMember.kt")
             public void testCorrectMember() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/correctMember.kt");
@@ -1581,6 +1586,16 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("simpleGenerator.kt")
             public void testSimpleGenerator() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/simpleGenerator.kt");
+            }
+
+            @TestMetadata("suspendCallsWithErrors.kt")
+            public void testSuspendCallsWithErrors() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/suspendCallsWithErrors.kt");
+            }
+
+            @TestMetadata("suspendCallsWrongUpperBound.kt")
+            public void testSuspendCallsWrongUpperBound() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/suspendCallsWrongUpperBound.kt");
             }
 
             @TestMetadata("typeFromReceiver.kt")
@@ -2077,14 +2092,14 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/annotation.kt");
         }
 
-        @TestMetadata("bodyUsageInSameModule.kt")
-        public void testBodyUsageInSameModule() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/bodyUsageInSameModule.kt");
-        }
-
         @TestMetadata("bodyUsages.kt")
         public void testBodyUsages() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/bodyUsages.kt");
+        }
+
+        @TestMetadata("bodyUsagesAndInline.kt")
+        public void testBodyUsagesAndInline() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/bodyUsagesAndInline.kt");
         }
 
         @TestMetadata("classMembers.kt")
@@ -2095,11 +2110,6 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("classMembersOverlyExperimental.kt")
         public void testClassMembersOverlyExperimental() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/classMembersOverlyExperimental.kt");
-        }
-
-        @TestMetadata("compilationVsLinkageVsRuntime.kt")
-        public void testCompilationVsLinkageVsRuntime() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/compilationVsLinkageVsRuntime.kt");
         }
 
         @TestMetadata("constVal.kt")
@@ -2117,14 +2127,14 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/errors.kt");
         }
 
+        @TestMetadata("experimentalIsNotEnabled.kt")
+        public void testExperimentalIsNotEnabled() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalIsNotEnabled.kt");
+        }
+
         @TestMetadata("experimentalOnWholeModule.kt")
         public void testExperimentalOnWholeModule() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalOnWholeModule.kt");
-        }
-
-        @TestMetadata("experimentalWithNoImpact.kt")
-        public void testExperimentalWithNoImpact() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalWithNoImpact.kt");
         }
 
         @TestMetadata("incorrectTargetsForExperimentalAnnotation.kt")
@@ -2135,11 +2145,6 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("incorrectUseExperimental.kt")
         public void testIncorrectUseExperimental() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/incorrectUseExperimental.kt");
-        }
-
-        @TestMetadata("indirectBodyUsageInAnotherModule.kt")
-        public void testIndirectBodyUsageInAnotherModule() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/indirectBodyUsageInAnotherModule.kt");
         }
 
         @TestMetadata("override.kt")
@@ -2170,6 +2175,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("useExperimentalOnFile.kt")
         public void testUseExperimentalOnFile() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/useExperimentalOnFile.kt");
+        }
+
+        @TestMetadata("useExperimentalOnFileWithVeryExperimentalMarker.kt")
+        public void testUseExperimentalOnFileWithVeryExperimentalMarker() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/useExperimentalOnFileWithVeryExperimentalMarker.kt");
         }
 
         @TestMetadata("useExperimentalOnWholeModule.kt")
@@ -2399,6 +2409,24 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("isInitialized.kt")
         public void testIsInitialized() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/lateinit/isInitialized.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/multiplatform")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Multiplatform extends AbstractDiagnosticsTestWithStdLib {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMultiplatform() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/multiplatform"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("jvmOverloads.kt")
+        public void testJvmOverloads() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/jvmOverloads.kt");
         }
     }
 

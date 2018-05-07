@@ -10,21 +10,17 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.name.Name
 
-// TODO don't use JsDynamicScope
-val dummyScope = JsDynamicScope
-
-fun Name.toJsName() =
-    // TODO sanitize
-    dummyScope.declareName(asString())
-
-fun jsVar(name: Name, initializer: IrExpression?, context: JsGenerationContext): JsVars {
+fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
     val jsInitializer = initializer?.accept(IrElementToJsExpressionTransformer(), context)
-    return JsVars(JsVars.JsVar(name.toJsName(), jsInitializer))
+    return JsVars(JsVars.JsVar(name, jsInitializer))
 }
 
-fun <T : JsNode, D : JsGenerationContext> IrWhen.toJsNode(tr: BaseIrElementToJsNodeTransformer<T, D>, data: D, node: (JsExpression, T, T?) -> T): T? =
+fun <T : JsNode, D : JsGenerationContext> IrWhen.toJsNode(
+    tr: BaseIrElementToJsNodeTransformer<T, D>,
+    data: D,
+    node: (JsExpression, T, T?) -> T
+): T? =
     branches.foldRight<IrBranch, T?>(null) { br, n ->
         val body = br.result.accept(tr, data)
         if (br is IrElseBranch) body
@@ -41,24 +37,18 @@ fun prototypeOf(classNameRef: JsExpression) = JsNameRef(Namer.PROTOTYPE_NAME, cl
 fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
     val functionScope = JsFunctionScope(context.currentScope, "scope for ${name ?: "annon"}")
     val functionContext = context.newDeclaration(functionScope, declaration)
+    val functionParams = declaration.valueParameters.map { functionContext.getNameForSymbol(it.symbol) }
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
     val function = JsFunction(functionScope, body, "member function ${name ?: "annon"}")
 
     function.name = name
 
-    fun JsFunction.addParameter(parameterName: String) {
-        val parameter = function.scope.declareName(parameterName)
+    fun JsFunction.addParameter(parameter: JsName) {
         parameters.add(JsParameter(parameter))
     }
 
-    declaration.extensionReceiverParameter?.let { function.addParameter("\$receiver") }
-    declaration.valueParameters.forEach {
-        if (it.name.isSpecial) {
-            function.addParameter(context.staticContext.getSpecialNameString(it.name.asString()))
-        } else {
-            function.addParameter(it.name.asString())
-        }
-    }
+    declaration.extensionReceiverParameter?.let { function.addParameter(functionContext.getNameForSymbol(it.symbol)) }
+    functionParams.forEach { function.addParameter(it) }
 
     return function
 }
@@ -73,3 +63,5 @@ fun translateCallArguments(expression: IrMemberAccessExpression, context: JsGene
         result
     }
 }
+
+val IrFunction.isStatic: Boolean get() = this.dispatchReceiverParameter == null

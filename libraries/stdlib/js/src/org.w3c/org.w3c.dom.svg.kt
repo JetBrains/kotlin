@@ -1,9 +1,10 @@
 /*
- * Generated file
- * DO NOT EDIT
- * 
- * See libraries/tools/idl2k for details
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
+ * that can be found in the license/LICENSE.txt file.
  */
+
+// NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
+// See libraries/tools/idl2k for details
 
 @file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.dom.svg
@@ -280,6 +281,9 @@ public external abstract class SVGStringList {
 @kotlin.internal.InlineOnly inline operator fun SVGStringList.get(index: Int): String? = asDynamic()[index]
 @kotlin.internal.InlineOnly inline operator fun SVGStringList.set(index: Int, newItem: String): Unit { asDynamic()[index] = newItem; }
 
+/**
+ * Exposes the JavaScript [SVGUnitTypes](https://developer.mozilla.org/en/docs/Web/API/SVGUnitTypes) to Kotlin
+ */
 public external interface SVGUnitTypes {
 
     companion object {
@@ -302,6 +306,9 @@ public external interface SVGFitToViewBox {
     val preserveAspectRatio: SVGAnimatedPreserveAspectRatio
 }
 
+/**
+ * Exposes the JavaScript [SVGZoomAndPan](https://developer.mozilla.org/en/docs/Web/API/SVGZoomAndPan) to Kotlin
+ */
 public external interface SVGZoomAndPan {
     var zoomAndPan: Short
 
@@ -312,6 +319,9 @@ public external interface SVGZoomAndPan {
     }
 }
 
+/**
+ * Exposes the JavaScript [SVGURIReference](https://developer.mozilla.org/en/docs/Web/API/SVGURIReference) to Kotlin
+ */
 public external interface SVGURIReference {
     val href: SVGAnimatedString
 }
@@ -373,6 +383,9 @@ public external abstract class SVGDefsElement : SVGGraphicsElement {
 public external abstract class SVGDescElement : SVGElement {
 }
 
+/**
+ * Exposes the JavaScript [SVGMetadataElement](https://developer.mozilla.org/en/docs/Web/API/SVGMetadataElement) to Kotlin
+ */
 public external abstract class SVGMetadataElement : SVGElement {
 }
 
@@ -654,6 +667,9 @@ public external abstract class SVGTextElement : SVGTextPositioningElement {
 public external abstract class SVGTSpanElement : SVGTextPositioningElement {
 }
 
+/**
+ * Exposes the JavaScript [SVGTextPathElement](https://developer.mozilla.org/en/docs/Web/API/SVGTextPathElement) to Kotlin
+ */
 public external abstract class SVGTextPathElement : SVGTextContentElement, SVGURIReference {
     open val startOffset: SVGAnimatedLength
     open val method: SVGAnimatedEnumeration
@@ -713,6 +729,9 @@ public external abstract class SVGMarkerElement : SVGElement, SVGFitToViewBox {
     }
 }
 
+/**
+ * Exposes the JavaScript [SVGSolidcolorElement](https://developer.mozilla.org/en/docs/Web/API/SVGSolidcolorElement) to Kotlin
+ */
 public external abstract class SVGSolidcolorElement : SVGElement {
 }
 

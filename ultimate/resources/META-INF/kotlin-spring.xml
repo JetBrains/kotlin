@@ -3,16 +3,8 @@
 
       <multiHostInjector implementation="org.jetbrains.kotlin.idea.spring.el.KotlinSpringELInjector"/>
 
-      <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.spring.lineMarking.KotlinSpringClassAnnotator"/>
       <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.spring.lineMarking.KotlinSpringModelDependenciesLineMarkerProvider"/>
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.spring.inspections.KotlinFinalClassOrFunSpringInspection"
-                       displayName="Final Kotlin class or function with Spring annotation"
-                       groupBundle="resources.messages.SpringBundle"
-                       groupKey="inspection.group.code"
-                       groupPath="Spring,Spring Core"
-                       enabledByDefault="false"
-                       level="WARNING"/>
       <localInspection language="kotlin"
                        displayName="Spring Facet Code Configuration (Kotlin)"
                        groupBundle="resources.messages.SpringBundle"
@@ -29,14 +21,6 @@
                        enabledByDefault="true"
                        level="WARNING"
                        implementationClass="org.jetbrains.kotlin.idea.spring.inspections.SpringKotlinAutowiredMembersInspection"/>
-      <localInspection language="kotlin"
-                       displayName="Autowiring for Bean Class (Kotlin)"
-                       groupBundle="resources.messages.SpringBundle"
-                       groupKey="inspection.group.code"
-                       groupPath="Spring,Spring Core"
-                       enabledByDefault="true"
-                       level="ERROR"
-                       implementationClass="org.jetbrains.kotlin.idea.spring.inspections.SpringKotlinAutowiringInspection"/>
       <localInspection language="kotlin"
                        displayName="@ComponentScan setup (Kotlin)"
                        groupBundle="resources.messages.SpringBundle"

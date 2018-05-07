@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.rethrow
 import org.junit.Assert
 import java.io.File
@@ -20,7 +21,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
 
     @Throws(Exception::class)
     override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, files, coroutinesPackage, javaFilesDir)
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, files, TestJdkKind.MOCK_JDK, javaFilesDir)
         loadMultiFiles(files)
 
         if (isMultiFileTest(files) && !InTextDirectivesUtils.isDirectiveDefined(wholeFile.readText(), "TREAT_AS_ONE_FILE")) {

@@ -1,18 +1,16 @@
-// !API_VERSION: 1.3
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// MODULE: api
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.WARNING)
 @Target(AnnotationTarget.CLASS)
 annotation class E
 
 @E
 open class Foo(val s: String = "")
 
-// MODULE: usage(api)
 // FILE: usage.kt
 
 import api.*

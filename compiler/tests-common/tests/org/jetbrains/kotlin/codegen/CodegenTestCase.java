@@ -99,7 +99,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             @NotNull ConfigurationKind configurationKind,
             @Nullable File... javaSourceRoots
     ) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.emptyList(), "" , javaSourceRoots);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind, Collections.emptyList(), TestJdkKind.MOCK_JDK, javaSourceRoots);
     }
 
     @NotNull
@@ -115,7 +115,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     protected final void createEnvironmentWithMockJdkAndIdeaAnnotations(
             @NotNull ConfigurationKind configurationKind,
             @NotNull List<TestFile> testFilesWithConfigurationDirectives,
-            @NotNull String coroutinesPackage,
+            @NotNull TestJdkKind testJdkKind,
             @Nullable File... javaSourceRoots
     ) {
         if (myEnvironment != null) {
@@ -124,7 +124,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind,
-                TestJdkKind.MOCK_JDK,
+                testJdkKind,
                 Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(javaSourceRoots),
                 testFilesWithConfigurationDirectives
@@ -150,6 +150,13 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         setCustomDefaultJvmTarget(configuration);
 
         return configuration;
+    }
+
+    protected static void updateConfigurationByDirectivesInTestFiles(
+            @NotNull List<TestFile> testFilesWithConfigurationDirectives,
+            @NotNull CompilerConfiguration configuration
+    ) {
+        updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, "");
     }
 
     protected static void updateConfigurationByDirectivesInTestFiles(
@@ -511,7 +518,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         return true;
     }
 
-    private static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {
+    protected static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {
         boolean noErrors = true;
         for (OutputFile file : ClassFileUtilsKt.getClassFiles(factory)) {
             noErrors &= verifyWithAsm(file, loader);

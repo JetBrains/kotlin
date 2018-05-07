@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package kotlin.properties
 
 import kotlin.*
@@ -14,7 +19,7 @@ public object Delegates {
      *
      * @sample samples.properties.Delegates.notNullDelegate
      */
-    public fun <T: Any> notNull(): ReadWriteProperty<Any?, T> = NotNullVar()
+    public fun <T : Any> notNull(): ReadWriteProperty<Any?, T> = NotNullVar()
 
     /**
      * Returns a property delegate for a read/write property that calls a specified callback function when changed.
@@ -25,7 +30,8 @@ public object Delegates {
      *  @sample samples.properties.Delegates.observableDelegate
      */
     public inline fun <T> observable(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Unit):
-        ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
+            ReadWriteProperty<Any?, T> =
+        object : ObservableProperty<T>(initialValue) {
             override fun afterChange(property: KProperty<*>, oldValue: T, newValue: T) = onChange(property, oldValue, newValue)
         }
 
@@ -42,14 +48,15 @@ public object Delegates {
      *  @sample samples.properties.Delegates.throwVetoableDelegate
      */
     public inline fun <T> vetoable(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Boolean):
-        ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
+            ReadWriteProperty<Any?, T> =
+        object : ObservableProperty<T>(initialValue) {
             override fun beforeChange(property: KProperty<*>, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
         }
 
 }
 
 
-private class NotNullVar<T: Any>() : ReadWriteProperty<Any?, T> {
+private class NotNullVar<T : Any>() : ReadWriteProperty<Any?, T> {
     private var value: T? = null
 
     public override fun getValue(thisRef: Any?, property: KProperty<*>): T {

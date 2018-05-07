@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
+import org.jetbrains.kotlin.idea.test.findFileWithCaret
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -32,11 +33,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
     }
 
     private fun doQuickFixTest() {
-        val allFilesInProject = project.allKotlinFiles()
-        val actionFile = allFilesInProject.single { file ->
-            file.text.contains("// \"")
-        }
-
+        val actionFile = project.findFileWithCaret()
         configureByExistingFile(actionFile.virtualFile!!)
 
         val actionFileText = actionFile.text
@@ -80,8 +77,8 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
         val afterFiles = projectDirectory.walkTopDown().filter { it.path.endsWith(".after") }.toList()
 
         for (editedFile in project.allKotlinFiles()) {
-            val afterFileInTmpProject = editedFile.containingDirectory?.findFile(file.name + ".after") ?: continue
-            val afterFileInTestData = afterFiles.single {
+            val afterFileInTmpProject = editedFile.containingDirectory?.findFile(editedFile.name + ".after") ?: continue
+            val afterFileInTestData = afterFiles.filter { it.name == afterFileInTmpProject.name } .single {
                 it.readText() == File(afterFileInTmpProject.virtualFile.path).readText()
             }
 

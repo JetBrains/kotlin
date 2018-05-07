@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:Suppress("NAMED_ARGUMENTS_NOT_ALLOWED") // for common tests
 package test.text
 
@@ -182,7 +187,7 @@ class RegexTest {
     @Test fun replaceEvaluator() {
         val input = "/12/456/7890/"
         val pattern = "\\d+".toRegex()
-        assertEquals("/2/3/4/", pattern.replace(input, { it.value.length.toString() } ))
+        assertEquals("/2/3/4/", pattern.replace(input, { it.value.length.toString() }))
     }
 
 

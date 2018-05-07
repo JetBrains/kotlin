@@ -86,8 +86,9 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
 }
 
 fun computeVariants(
-        project: Project, position: XSourcePosition,
-        kotlinBreakpointType: KotlinLineBreakpointType
+    project: Project,
+    position: XSourcePosition,
+    kotlinBreakpointType: KotlinLineBreakpointType
 ): List<JavaLineBreakpointType.JavaBreakpointVariant> {
     val file = PsiManager.getInstance(project).findFile(position.file) as? KtFile ?: return emptyList()
 
@@ -100,21 +101,24 @@ fun computeVariants(
     val elementAt = pos.elementAt.parentsWithSelf.firstIsInstance<KtElement>()
     val mainMethod = KotlinLineBreakpointType.getContainingMethod(elementAt)
     if (mainMethod != null) {
-        result.add(kotlinBreakpointType.KotlinLineBreakpointVariant(
-                XSourcePositionImpl.createByElement(mainMethod),
-                CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset)))
+        result.add(
+            kotlinBreakpointType.LineJavaBreakpointVariant(
+                position,
+                CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset),
+                -1
+            )
+        )
     }
 
     lambdas.forEachIndexed { ordinal, lambda ->
         val positionImpl = XSourcePositionImpl.createByElement(lambda.bodyExpression)
 
         if (positionImpl != null) {
-            result.add(kotlinBreakpointType.KotlinLambdaBreakpointVariant(positionImpl, lambda, ordinal))
+            result.add(kotlinBreakpointType.LambdaJavaBreakpointVariant(positionImpl, lambda, ordinal))
         }
     }
 
-    val allBreakpoint = (kotlinBreakpointType as JavaLineBreakpointType).JavaBreakpointVariant(position)
-    result.addFirst(allBreakpoint)
+    result.add(kotlinBreakpointType.JavaBreakpointVariant(position))
 
     return result
 }

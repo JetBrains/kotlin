@@ -240,6 +240,8 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
         override fun isScript(fileName: String): Boolean =
             fileName.endsWith(".gradle.kts")
+
+        override fun toString(): String = "ErrorGradleScriptDefinition"
     }
 
     private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {

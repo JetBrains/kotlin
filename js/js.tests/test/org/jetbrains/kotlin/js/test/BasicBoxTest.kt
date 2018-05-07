@@ -436,9 +436,8 @@ abstract class BasicBoxTest(
         testPackage: String?,
         testFunction: String
     ) {
-        val filteredUnits = units.filter { it !is TranslationUnit.SourceFile || !it.file.virtualFilePath.endsWith("js/js.translator/testData/_commonFiles/fail_hacked.kt") }
         val translator = K2JSTranslator(config)
-        val translationResult = translator.translateUnits(ExceptionThrowingReporter, filteredUnits, mainCallParameters)
+        val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
 
         if (translationResult !is TranslationResult.Success) {
             val outputStream = ByteArrayOutputStream()
@@ -477,7 +476,7 @@ abstract class BasicBoxTest(
             incrementalData.header = incrementalService.headerMetadata
         }
 
-        processJsProgram(translationResult.program, filteredUnits.filterIsInstance<TranslationUnit.SourceFile>().map { it.file })
+        processJsProgram(translationResult.program, units.filterIsInstance<TranslationUnit.SourceFile>().map { it.file })
         checkSourceMap(outputFile, translationResult.program, remap)
     }
 
@@ -542,7 +541,7 @@ abstract class BasicBoxTest(
         })
     }
 
-    private fun createPsiFile(fileName: String): KtFile {
+    protected fun createPsiFile(fileName: String): KtFile {
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 

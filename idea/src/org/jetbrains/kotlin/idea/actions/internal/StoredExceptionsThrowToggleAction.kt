@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.actions.internal
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
+import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.utils.WrappedValues
 
 
@@ -33,6 +34,6 @@ class StoredExceptionsThrowToggleAction : ToggleAction("Internal: toggle throwin
     override fun update(e: AnActionEvent) {
         super.update(e)
 
-        e.presentation.isEnabled = KotlinInternalMode.enabled
+        e.presentation.isEnabled = ApplicationManager.getApplication().isInternal
     }
 }

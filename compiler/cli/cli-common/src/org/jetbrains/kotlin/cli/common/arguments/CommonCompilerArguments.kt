@@ -71,14 +71,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(value = "-Xno-inline", description = "Disable method inlining")
     var noInline: Boolean by FreezableVar(false)
 
-    // TODO Remove in 1.0
-    @Argument(
-            value = "-Xrepeat",
-            valueDescription = "<count>",
-            description = "Repeat compilation (for performance analysis)"
-    )
-    var repeat: String? by FreezableVar(null)
-
     @Argument(
             value = "-Xskip-metadata-version-check",
             description = "Load classes with bad metadata version anyway (incl. pre-release classes)"
@@ -157,6 +149,16 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         description = "Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types"
     )
     var properIeee754Comparisons by FreezableVar(false)
+
+    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
+    var reportPerf: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xdump-perf",
+        valueDescription = "<path>",
+        description = "Dump detailed performance statistics to the specified file"
+    )
+    var dumpPerf: String? by FreezableVar(null)
 
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {

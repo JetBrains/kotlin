@@ -22,9 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.ClassFileViewProvider
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
@@ -80,10 +78,7 @@ private fun createJavaFileStub(project: Project, packageFqName: FqName, files: C
     val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
     javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
 
-    val manager = PsiManager.getInstance(project)
-
-    val virtualFile = getRepresentativeVirtualFile(files)
-    val fakeFile = object : ClsFileImpl(ClassFileViewProvider(manager, virtualFile)) {
+    val fakeFile = object : ClsFileImpl(files.first().viewProvider) {
         override fun getStub() = javaFileStub
 
         override fun getPackageName() = packageFqName.asString()
@@ -119,10 +114,6 @@ private fun createJavaFileStub(project: Project, packageFqName: FqName, files: C
 
     javaFileStub.psi = fakeFile
     return javaFileStub
-}
-
-private fun getRepresentativeVirtualFile(files: Collection<KtFile>): VirtualFile {
-    return files.first().viewProvider.virtualFile
 }
 
 private fun logErrorWithOSInfo(cause: Throwable?, fqName: FqName, virtualFile: VirtualFile?) {

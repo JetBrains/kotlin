@@ -1,10 +1,15 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.collections
 
 import test.*
 import kotlin.reflect.KProperty1
 import kotlin.test.*
 
-public fun <T> compare(expected: T, actual: T, block:CompareContext<T>.() -> Unit) {
+public fun <T> compare(expected: T, actual: T, block: CompareContext<T>.() -> Unit) {
     CompareContext(expected, actual).block()
 }
 
@@ -21,7 +26,11 @@ public class CompareContext<out T>(public val expected: T, public val actual: T)
     public fun <P> propertyEquals(message: String = "", getter: T.() -> P) {
         assertEquals(expected.getter(), actual.getter(), message)
     }
-    public fun propertyFails(getter: T.() -> Unit) { assertFailEquals({expected.getter()}, {actual.getter()}) }
+
+    public fun propertyFails(getter: T.() -> Unit) {
+        assertFailEquals({ expected.getter() }, { actual.getter() })
+    }
+
     public fun <P> compareProperty(getter: T.() -> P, block: CompareContext<P>.() -> Unit) {
         compare(expected.getter(), actual.getter(), block)
     }

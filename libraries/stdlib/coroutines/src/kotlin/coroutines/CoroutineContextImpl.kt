@@ -46,7 +46,7 @@ internal class CombinedContext(val left: CoroutineContext, val element: Element)
     }
 
     public override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
-            operation(left.fold(initial, operation), element)
+        operation(left.fold(initial, operation), element)
 
     public override fun minusKey(key: Key<*>): CoroutineContext {
         element[key]?.let { return left }
@@ -59,10 +59,10 @@ internal class CombinedContext(val left: CoroutineContext, val element: Element)
     }
 
     private fun size(): Int =
-            if (left is CombinedContext) left.size() + 1 else 2
+        if (left is CombinedContext) left.size() + 1 else 2
 
     private fun contains(element: Element): Boolean =
-            get(element.key) == element
+        get(element.key) == element
 
     private fun containsAll(context: CombinedContext): Boolean {
         var cur = context
@@ -78,12 +78,12 @@ internal class CombinedContext(val left: CoroutineContext, val element: Element)
     }
 
     override fun equals(other: Any?): Boolean =
-            this === other || other is CombinedContext && other.size() == size() && other.containsAll(this)
+        this === other || other is CombinedContext && other.size() == size() && other.containsAll(this)
 
     override fun hashCode(): Int = left.hashCode() + element.hashCode()
 
     override fun toString(): String =
-            "[" + fold("") { acc, element ->
-                if (acc.isEmpty()) element.toString() else acc + ", " + element
-            } + "]"
+        "[" + fold("") { acc, element ->
+            if (acc.isEmpty()) element.toString() else acc + ", " + element
+        } + "]"
 }

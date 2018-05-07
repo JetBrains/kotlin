@@ -186,11 +186,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/experimentalNested.args");
         }
 
-        @TestMetadata("experimentalRuntimeScope.args")
-        public void testExperimentalRuntimeScope() throws Exception {
-            runTest("compiler/testData/cli/jvm/experimentalRuntimeScope.args");
-        }
-
         @TestMetadata("experimentalUnresolved.args")
         public void testExperimentalUnresolved() throws Exception {
             runTest("compiler/testData/cli/jvm/experimentalUnresolved.args");

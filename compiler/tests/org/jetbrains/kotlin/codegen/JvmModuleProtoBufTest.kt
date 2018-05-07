@@ -97,9 +97,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
     fun testExperimental() {
         doTest(
             "/moduleProtoBuf/experimental", extraOptions = listOf(
-                "-Xskip-runtime-version-check",
-                "-language-version",
-                "1.3",
+                "-Xuse-experimental=kotlin.Experimental",
                 "-Xexperimental=org.foo.A",
                 "-Xexperimental=org.foo.B.C",
                 "-Xuse-experimental=org.foo.D"

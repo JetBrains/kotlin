@@ -34,8 +34,6 @@ object ExperimentalMarkerDeclarationAnnotationChecker : AdditionalAnnotationChec
                     checkUseExperimentalUsage(annotationClasses, trace, entry)
                 }
                 ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME -> {
-                    val impact = (annotation.allValueArguments[ExperimentalUsageChecker.IMPACT] as? ArrayValue)?.value
-                    checkExperimentalUsage(impact, trace, entry)
                     isAnnotatedWithExperimental = true
                 }
             }
@@ -54,22 +52,13 @@ object ExperimentalMarkerDeclarationAnnotationChecker : AdditionalAnnotationChec
 
         for (annotationClass in annotationClasses) {
             val classDescriptor =
-                (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor as? ClassDescriptor
-                        ?: continue
+                (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor as? ClassDescriptor ?: continue
             val experimentality = with(ExperimentalUsageChecker) {
                 classDescriptor.loadExperimentalityForMarkerAnnotation()
             }
             if (experimentality == null) {
                 trace.report(Errors.USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER.on(entry, classDescriptor.fqNameSafe))
-            } else if (!experimentality.isCompilationOnly) {
-                trace.report(Errors.USE_EXPERIMENTAL_ARGUMENT_HAS_NON_COMPILATION_IMPACT.on(entry, experimentality.annotationFqName))
             }
-        }
-    }
-
-    private fun checkExperimentalUsage(impact: List<ConstantValue<*>>?, trace: BindingTrace, entry: KtAnnotationEntry) {
-        if (impact != null && impact.isEmpty()) {
-            trace.report(Errors.EXPERIMENTAL_ANNOTATION_WITH_NO_IMPACT.on(entry))
         }
     }
 
@@ -78,7 +67,7 @@ object ExperimentalMarkerDeclarationAnnotationChecker : AdditionalAnnotationChec
             entries.associate { entry -> entry to trace.bindingContext.get(BindingContext.ANNOTATION, entry) }
                 .entries
                 .firstOrNull { (_, descriptor) -> descriptor != null && descriptor.fqName == KotlinBuiltIns.FQ_NAMES.target }
-                ?: return
+                    ?: return
         val (entry, descriptor) = targetEntry
         val allowedTargets = AnnotationChecker.loadAnnotationTargets(descriptor!!) ?: return
         val wrongTargets = allowedTargets.intersect(WRONG_TARGETS_FOR_MARKER)

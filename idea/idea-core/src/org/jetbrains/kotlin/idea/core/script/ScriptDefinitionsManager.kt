@@ -29,10 +29,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptTemplatesProvider
+import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -40,8 +37,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -53,14 +48,12 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-class ScriptDefinitionsManager(private val project: Project) : ScriptDefinitionProvider {
-    private val lock = ReentrantReadWriteLock()
+class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
     private var definitionsByContributor = mutableMapOf<ScriptDefinitionContributor, List<KotlinScriptDefinition>>()
-    private var definitions: List<KotlinScriptDefinition> = emptyList()
+    private var definitions: Sequence<KotlinScriptDefinition>? = null
 
     fun reloadDefinitionsBy(contributor: ScriptDefinitionContributor) = lock.write {
-        val notLoadedYet = definitions.isEmpty()
-        if (notLoadedYet) return
+        if (definitions == null) return // not loaded yet
 
         if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
 
@@ -70,32 +63,19 @@ class ScriptDefinitionsManager(private val project: Project) : ScriptDefinitionP
     }
 
     fun getDefinitionsBy(contributor: ScriptDefinitionContributor): List<KotlinScriptDefinition> = lock.write {
-        val notLoadedYet = definitions.isEmpty()
-        if (notLoadedYet) return emptyList()
+        if (definitions == null) return emptyList() // not loaded yet
 
         if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
 
         return definitionsByContributor[contributor] ?: emptyList()
     }
 
-    private fun currentDefinitions(): List<KotlinScriptDefinition> {
-        val hasDefinitions = definitions.isNotEmpty()
-        when {
-            hasDefinitions -> return definitions
-            else -> {
+    override val currentDefinitions: Sequence<KotlinScriptDefinition>
+        get() =
+            definitions ?: kotlin.run {
                 reloadScriptDefinitions()
-                return definitions
+                definitions!!
             }
-        }
-    }
-
-    override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? = lock.read {
-        currentDefinitions().firstOrNull { it.isScript(fileName) }
-    }
-
-    override fun isScript(fileName: String) = lock.read {
-        currentDefinitions().any { it.isScript(fileName) }
-    }
 
     private fun getContributors(): List<ScriptDefinitionContributor> {
         @Suppress("DEPRECATION")
@@ -115,7 +95,9 @@ class ScriptDefinitionsManager(private val project: Project) : ScriptDefinitionP
     }
 
     private fun updateDefinitions() {
-        definitions = definitionsByContributor.values.flattenTo(mutableListOf())
+        assert(lock.isWriteLocked) { "updateDefinitions should only be called under the write lock" }
+        definitions = definitionsByContributor.values.flattenTo(mutableListOf()).asSequence()
+        clearCache()
         // TODO: clear by script type/definition
         ServiceManager.getService(project, ScriptDependenciesUpdater::class.java).clear()
     }

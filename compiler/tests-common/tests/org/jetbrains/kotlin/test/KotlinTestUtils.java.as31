@@ -712,6 +712,11 @@ public class KotlinTestUtils {
     }
 
     @NotNull
+    public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
+        return createTestFiles(testFileName, expectedText, factory, false, "");
+    }
+
+    @NotNull
     public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory, String coroutinesPackage) {
         return createTestFiles(testFileName, expectedText, factory, false, coroutinesPackage);
     }

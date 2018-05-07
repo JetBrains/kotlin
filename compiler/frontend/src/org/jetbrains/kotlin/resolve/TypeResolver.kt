@@ -192,7 +192,7 @@ class TypeResolver(
         var result: PossiblyBareType? = null
 
         val hasSuspendModifier = outerModifierList?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: false
-        val suspendModifier = outerModifierList?.getModifier(KtTokens.SUSPEND_KEYWORD)
+        val suspendModifier by lazy { outerModifierList?.getModifier(KtTokens.SUSPEND_KEYWORD) }
         if (hasSuspendModifier && !typeElement.canHaveFunctionTypeModifiers()) {
             c.trace.report(Errors.WRONG_MODIFIER_TARGET.on(suspendModifier!!, KtTokens.SUSPEND_KEYWORD, "non-functional type"))
         } else if (hasSuspendModifier) {

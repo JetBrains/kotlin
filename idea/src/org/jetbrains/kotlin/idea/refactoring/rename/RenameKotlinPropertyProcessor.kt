@@ -196,11 +196,10 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
 
     override fun findCollisions(
             element: PsiElement,
-            newName: String?,
+            newName: String,
             allRenames: MutableMap<out PsiElement, String>,
             result: MutableList<UsageInfo>
     ) {
-        if (newName == null) return
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return
         val descriptor = declaration.unsafeResolveToDescriptor() as VariableDescriptor
 
@@ -237,8 +236,8 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
-    override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement? {
-        val namedUnwrappedElement = element?.namedUnwrappedElement ?: return null
+    override fun substituteElementToRename(element: PsiElement, editor: Editor?): PsiElement? {
+        val namedUnwrappedElement = element.namedUnwrappedElement ?: return null
 
         val callableDeclaration = namedUnwrappedElement as? KtCallableDeclaration
                                   ?: throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
@@ -293,7 +292,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         override fun copy() = this
     }
 
-    override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+    override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         super.prepareRenaming(element, newName, allRenames, scope)
 
         val namedUnwrappedElement = element.namedUnwrappedElement
@@ -303,7 +302,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
         }
 
-        val newPropertyName = if (newName != null && element is KtLightMethod) propertyNameByAccessor(newName, element) else newName
+        val newPropertyName = if (element is KtLightMethod) propertyNameByAccessor(newName, element) else newName
 
         val (getterJvmName, setterJvmName) = getJvmNames(namedUnwrappedElement)
 
