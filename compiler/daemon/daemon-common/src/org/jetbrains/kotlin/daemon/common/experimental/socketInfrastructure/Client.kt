@@ -39,7 +39,7 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
 ) : Client<ServerType> {
 
     val log: Logger
-        @Transient get() = Logger.getLogger("default client($serverPort)")
+        @Transient get() = Logger.getLogger("default client($serverPort)").also { it.setUseParentHandlers(false); }
 
     @kotlin.jvm.Transient
     lateinit var input: ByteReadChannelWrapper
@@ -106,13 +106,13 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
     }
 
     override suspend fun <T> readMessage(id: Int): T {
-        println("readMessage with_id$id")
+        log.info("readMessage with_id$id")
         val result = CompletableDeferred<MessageReply<*>>()
-        println("result : $result with_id$id")
+        log.info("result : $result with_id$id")
         readActor.send(ExpectReplyQuery(id, result))
-        println("sent with_id$id")
+        log.info("sent with_id$id")
         val actualResult = result.await().reply
-        println("actualResult : $actualResult with_id$id")
+        log.info("actualResult : $actualResult with_id$id")
         if (actualResult is IOException) {
             throw actualResult
         }

@@ -5,7 +5,11 @@ import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import kotlinx.coroutines.experimental.withTimeoutOrNull
-import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.AUTH_TIMEOUT_IN_MILLISECONDS
+import org.jetbrains.kotlin.daemon.common.experimental.FIRST_HANDSHAKE_BYTE_TOKEN
+import org.jetbrains.kotlin.daemon.common.experimental.ServerSocketWrapper
+import org.jetbrains.kotlin.daemon.common.experimental.log
+import java.io.IOException
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
@@ -46,7 +50,7 @@ interface Server<out T : ServerBase> : ServerBase {
                 log.info_and_print("!EndConnectionMessage!")
                 Server.State.CLOSED
             }
-            is Server.ServerDownMessage<in T> -> Server.State.DOWNING
+            is Server.ServerDownMessage<in T> -> Server.State.CLOSED
             else -> Server.State.ERROR
         }
 
@@ -67,7 +71,12 @@ interface Server<out T : ServerBase> : ServerBase {
         loop@
         while (true) {
             log.info_and_print("   reading message from ($client)")
-            val message = input.nextObject().await()
+            val message = try {
+                input.nextObject().await()
+            } catch (e: IOException) {
+                downClient(client)
+                break@loop
+            }
             if (message !is Server.AnyMessage<*>) {
                 log.info_and_print("contrafact message")
                 finalState = Server.State.ERROR

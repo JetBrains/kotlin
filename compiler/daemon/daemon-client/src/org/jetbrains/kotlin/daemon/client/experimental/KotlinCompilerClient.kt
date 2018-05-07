@@ -26,6 +26,7 @@ import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
+import java.util.logging.Logger
 import kotlin.concurrent.thread
 
 data class CompileServiceSession(val compileService: CompileServiceClientSide, val sessionId: Int)
@@ -38,8 +39,8 @@ object KotlinCompilerClient {
 
     val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
 
-    private val log = "KotlinCompilerClient"//Logger.getLogger("KotlinCompilerClient")
-    private fun String.info(msg: String) = println("[$this] : $msg")
+    private val log = Logger.getLogger("KotlinCompilerClient")
+    private fun String.info(msg: String) = {}()//log.info("[$this] : $msg")
 
     fun getOrCreateClientFlagFile(daemonOptions: DaemonOptions): File =
     // for jps property is passed from IDEA to JPS in KotlinBuildProcessParametersProvider
@@ -101,6 +102,7 @@ object KotlinCompilerClient {
 
             fun CompileServiceClientSide.leaseImpl(): Deferred<CompileServiceSession?> = async {
                 // the newJVMOptions could be checked here for additional parameters, if needed
+                log.info("trying registerClient")
                 println("trying registerClient")
                 registerClient(clientAliveFlagFile.absolutePath)
                 reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
@@ -114,10 +116,10 @@ object KotlinCompilerClient {
                         }
             }
 
-            println("++cur: ${Thread.currentThread().name}")
+            log.info("++cur: ${Thread.currentThread().name}")
 
             ensureServerHostnameIsSetUp()
-            println("cur: ${Thread.currentThread().name}")
+            log.info("cur: ${Thread.currentThread().name}")
             val (service, newJVMOptions) =
                     tryFindSuitableDaemonOrNewOpts(
                         File(daemonOptions.runFilesPath),
@@ -419,7 +421,7 @@ object KotlinCompilerClient {
         registryDir.mkdirs()
         val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
         val aliveWithMetadata = try {
-            println("walkDaemonsAsync...")
+            log.info("walkDaemonsAsync...")
             walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report).await().also {
                 log.info(
                     "daemons (${it.size}): ${it.map { "daemon(params : " + it.jvmOptions.jvmParams.joinToString(", ") + ")" }.joinToString(
@@ -430,7 +432,7 @@ object KotlinCompilerClient {
         } finally {
             timestampMarker.delete()
         }
-        println("daemons : ${aliveWithMetadata.map { it.daemon::class.java.name }}")
+        log.info("daemons : ${aliveWithMetadata.map { it.daemon::class.java.name }}")
         log.info("aliveWithMetadata: ${aliveWithMetadata.map { it.daemon::class.java.name }}")
         val comparator = compareBy<DaemonWithMetadataAsync, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
             .thenBy {
