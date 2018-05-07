@@ -26,3 +26,9 @@ sourceSets {
     }
     "test" {}
 }
+
+runtimeJar {
+    archiveName = "android-lint.jar"
+}
+
+ideaPlugin()
