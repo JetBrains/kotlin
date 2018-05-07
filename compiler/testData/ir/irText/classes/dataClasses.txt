@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:Test1 flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:Test1 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
       VALUE_PARAMETER name:z index:2 type:kotlin.Any flags:
@@ -187,7 +187,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Any?) returnType:Test2 flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Any?) returnType:Test2 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -294,7 +294,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test3 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (d:kotlin.Double, dn:kotlin.Double?, f:kotlin.Float, df:kotlin.Float?) returnType:Test3 flags:
+    CONSTRUCTOR visibility:public <> (d:kotlin.Double, dn:kotlin.Double?, f:kotlin.Float, df:kotlin.Float?) returnType:Test3 flags:primary
       VALUE_PARAMETER name:d index:0 type:kotlin.Double flags:
       VALUE_PARAMETER name:dn index:1 type:kotlin.Double? flags:
       VALUE_PARAMETER name:f index:2 type:kotlin.Float flags:

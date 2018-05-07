@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
     TYPE_PARAMETER name:Q index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (q:Q) returnType:A<Q> flags:
+    CONSTRUCTOR visibility:public <> (q:Q) returnType:A<Q> flags:primary
       VALUE_PARAMETER name:q index:0 type:Q flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

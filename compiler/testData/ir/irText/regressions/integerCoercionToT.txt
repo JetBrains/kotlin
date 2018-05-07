@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:CInt32VarX<T> flags:
+    CONSTRUCTOR visibility:public <> () returnType:CInt32VarX<T> flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='CInt32VarX'
@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IdType flags:
     superClasses:
       CLASS INTERFACE name:CPointed modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:IdType flags:
+    CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:IdType flags:primary
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

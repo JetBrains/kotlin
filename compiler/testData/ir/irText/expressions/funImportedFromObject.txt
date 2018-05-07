@@ -3,7 +3,7 @@ FILE fqName:test fileName:/funImportedFromObject.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Host flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:test.Host flags:
+    CONSTRUCTOR visibility:private <> () returnType:test.Host flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
@@ -34,3 +34,4 @@ FILE fqName:test fileName:/funImportedFromObject.kt
         CALL 'foo(): String' type=kotlin.String origin=null
           <reified T>: Any
           $this: GET_OBJECT 'Host' type=test.Host
+

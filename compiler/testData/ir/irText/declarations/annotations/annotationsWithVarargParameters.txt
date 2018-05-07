@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/annotationsWithVarargParameters.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out kotlin.String>) returnType:A flags:
+    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<out kotlin.String>) returnType:A flags:primary
       VALUE_PARAMETER name:xs index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String flags:vararg
     PROPERTY name:xs type:kotlin.Array<out kotlin.String> visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<out kotlin.String> visibility:public flags:final
@@ -46,3 +46,4 @@ FILE fqName:<root> fileName:/annotationsWithVarargParameters.kt
       CALL 'constructor A(vararg String)' type=A origin=null
         xs: VARARG type=Array<out String> varargElementType=String
     BLOCK_BODY
+

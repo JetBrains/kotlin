@@ -94,7 +94,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     private fun IrConstructor.renderConstructorFlags() =
         renderFlagsList(
             "inline".takeIf { isInline },
-            "external".takeIf { isExternal }
+            "external".takeIf { isExternal },
+            "primary".takeIf { isPrimary }
         )
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =

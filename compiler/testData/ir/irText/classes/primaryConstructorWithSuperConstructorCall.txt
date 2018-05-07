@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Base flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Base flags:
+    CONSTRUCTOR visibility:public <> () returnType:Base flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base'
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestImplicitPrimaryConstructor flags:
     superClasses:
       CLASS CLASS name:Base modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:TestImplicitPrimaryConstructor flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestImplicitPrimaryConstructor flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestImplicitPrimaryConstructor'
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestExplicitPrimaryConstructor flags:
     superClasses:
       CLASS CLASS name:Base modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:TestExplicitPrimaryConstructor flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestExplicitPrimaryConstructor flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestExplicitPrimaryConstructor'
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestWithDelegatingConstructor flags:
     superClasses:
       CLASS CLASS name:Base modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:TestWithDelegatingConstructor flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:TestWithDelegatingConstructor flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       VALUE_PARAMETER name:y index:1 type:kotlin.Int flags:
       BLOCK_BODY

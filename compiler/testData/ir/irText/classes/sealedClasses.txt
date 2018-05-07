@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Expr flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:Expr flags:
+    CONSTRUCTOR visibility:private <> () returnType:Expr flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Expr'
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Expr.Const flags:
       superClasses:
         CLASS CLASS name:Expr modality:SEALED visibility:public flags:
-      CONSTRUCTOR visibility:public <> (number:kotlin.Double) returnType:Expr.Const flags:
+      CONSTRUCTOR visibility:public <> (number:kotlin.Double) returnType:Expr.Const flags:primary
         VALUE_PARAMETER name:number index:0 type:kotlin.Double flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Expr.Sum flags:
       superClasses:
         CLASS CLASS name:Expr modality:SEALED visibility:public flags:
-      CONSTRUCTOR visibility:public <> (e1:Expr, e2:Expr) returnType:Expr.Sum flags:
+      CONSTRUCTOR visibility:public <> (e1:Expr, e2:Expr) returnType:Expr.Sum flags:primary
         VALUE_PARAMETER name:e1 index:0 type:Expr flags:
         VALUE_PARAMETER name:e2 index:1 type:Expr flags:
         BLOCK_BODY
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Expr.NotANumber flags:
       superClasses:
         CLASS CLASS name:Expr modality:SEALED visibility:public flags:
-      CONSTRUCTOR visibility:private <> () returnType:Expr.NotANumber flags:
+      CONSTRUCTOR visibility:private <> () returnType:Expr.NotANumber flags:primary
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
           INSTANCE_INITIALIZER_CALL classDescriptor='NotANumber'

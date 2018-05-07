@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/multipleAnnotationsInSquareBrackets.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:A1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:A1 flags:primary
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/multipleAnnotationsInSquareBrackets.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:A2 flags:
+    CONSTRUCTOR visibility:public <> () returnType:A2 flags:primary
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/multipleAnnotationsInSquareBrackets.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A3 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:A3 flags:
+    CONSTRUCTOR visibility:public <> () returnType:A3 flags:primary
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -59,3 +59,4 @@ FILE fqName:<root> fileName:/multipleAnnotationsInSquareBrackets.kt
       CALL 'constructor A2()' type=A2 origin=null
       CALL 'constructor A3()' type=A3 origin=null
     BLOCK_BODY
+

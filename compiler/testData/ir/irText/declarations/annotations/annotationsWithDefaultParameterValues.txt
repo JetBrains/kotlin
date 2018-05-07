@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.String, y:kotlin.Int) returnType:A flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String, y:kotlin.Int) returnType:A flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
         EXPRESSION_BODY
           CONST String type=kotlin.String value=
@@ -68,3 +68,4 @@ FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
     annotations:
       CALL 'constructor A(String = ..., Int = ...)' type=A origin=null
     BLOCK_BODY
+

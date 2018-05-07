@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:X1 flags:
+    CONSTRUCTOR visibility:private <> () returnType:X1 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='X1'
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X1.X2 flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:private <> () returnType:X1.X2 flags:
+      CONSTRUCTOR visibility:private <> () returnType:X1.X2 flags:primary
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='X2'
@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X1.X2.X3 flags:
         superClasses:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:X1.X2.X3 flags:
+        CONSTRUCTOR visibility:private <> () returnType:X1.X2.X3 flags:primary
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
             INSTANCE_INITIALIZER_CALL classDescriptor='X3'
@@ -189,7 +189,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (s:kotlin.Int) returnType:B flags:
+    CONSTRUCTOR visibility:public <> (s:kotlin.Int) returnType:B flags:primary
       VALUE_PARAMETER name:s index:0 type:kotlin.Int flags:
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
@@ -230,7 +230,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:Host flags:
+    CONSTRUCTOR visibility:private <> () returnType:Host flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'

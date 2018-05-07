@@ -2794,7 +2794,7 @@ MODULE_FRAGMENT name:<dependencies of test-module>
         UNBOUND: interface Serializable
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:A index:0 variance:out upperBounds:[kotlin.Any?]
       TYPE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:B index:1 variance:out upperBounds:[kotlin.Any?]
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (first:A, second:B) returnType:kotlin.Pair<A, B> flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> (first:A, second:B) returnType:kotlin.Pair<A, B> flags:primary
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:first index:0 type:A flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:second index:1 type:B flags:
       FUN IR_EXTERNAL_DECLARATION_STUB name:copy visibility:public modality:FINAL <> ($this:kotlin.Pair<A, B>, first:A, second:B) returnType:Pair<A, B> flags:

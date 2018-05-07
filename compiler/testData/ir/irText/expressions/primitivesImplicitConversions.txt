@@ -93,7 +93,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestImplicitArguments flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Long) returnType:TestImplicitArguments flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Long) returnType:TestImplicitArguments flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Long flags:
         EXPRESSION_BODY
           TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long

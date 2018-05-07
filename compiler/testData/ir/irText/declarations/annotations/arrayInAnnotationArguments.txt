@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnnWithIntArray flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.IntArray) returnType:TestAnnWithIntArray flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.IntArray) returnType:TestAnnWithIntArray flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.IntArray flags:
     PROPERTY name:x type:kotlin.IntArray visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:public flags:final
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnnWithStringArray flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Array<kotlin.String>) returnType:TestAnnWithStringArray flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Array<kotlin.String>) returnType:TestAnnWithStringArray flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Array<kotlin.String> flags:
     PROPERTY name:x type:kotlin.Array<kotlin.String> visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Array<kotlin.String> visibility:public flags:final
@@ -83,3 +83,4 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
           CONST String type=kotlin.String value=e
           CONST String type=kotlin.String value=f
     BLOCK_BODY
+

@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (value:T) returnType:Cell<T> flags:
+    CONSTRUCTOR visibility:public <> (value:T) returnType:Cell<T> flags:primary
       VALUE_PARAMETER name:value index:0 type:T flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -41,3 +41,4 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
         CALL 'constructor Cell(Int)' type=Cell<kotlin.Int> origin=null
           <T>: Int
           value: CONST Int type=kotlin.Int value=42
+

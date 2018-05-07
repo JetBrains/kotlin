@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:Host flags:
+    CONSTRUCTOR visibility:private <> () returnType:Host flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host.StringDelegate flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> (s:kotlin.String) returnType:Host.StringDelegate flags:
+      CONSTRUCTOR visibility:public <> (s:kotlin.String) returnType:Host.StringDelegate flags:primary
         VALUE_PARAMETER name:s index:0 type:kotlin.String flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

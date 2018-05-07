@@ -35,7 +35,8 @@ class IrConstructorImpl(
     visibility: Visibility,
     returnType: KotlinType,
     isInline: Boolean,
-    isExternal: Boolean
+    isExternal: Boolean,
+    override val isPrimary: Boolean
 ) :
     IrFunctionBase(startOffset, endOffset, origin, visibility, isInline, isExternal, returnType),
     IrConstructor {
@@ -51,7 +52,8 @@ class IrConstructorImpl(
         symbol.descriptor.visibility,
         symbol.descriptor.returnType,
         symbol.descriptor.isInline,
-        symbol.descriptor.isEffectivelyExternal()
+        symbol.descriptor.isEffectivelyExternal(),
+        symbol.descriptor.isPrimary
     ) {
         this.body = body
     }

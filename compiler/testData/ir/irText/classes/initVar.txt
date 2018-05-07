@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/initVar.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInitVarFromParameter flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:TestInitVarFromParameter flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:TestInitVarFromParameter flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/initVar.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInitVarInClass flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:TestInitVarInClass flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestInitVarInClass flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarInClass'
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/initVar.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInitVarInInitBlock flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:TestInitVarInInitBlock flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestInitVarInInitBlock flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarInInitBlock'
@@ -121,7 +121,7 @@ FILE fqName:<root> fileName:/initVar.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInitVarWithCustomSetter flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:TestInitVarWithCustomSetter flags:
+    CONSTRUCTOR visibility:public <> () returnType:TestInitVarWithCustomSetter flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarWithCustomSetter'

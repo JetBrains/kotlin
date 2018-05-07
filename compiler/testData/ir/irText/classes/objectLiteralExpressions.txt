@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test1.<no name provided> flags:
             superClasses:
               CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-            CONSTRUCTOR visibility:public <> () returnType:test1.<no name provided> flags:
+            CONSTRUCTOR visibility:public <> () returnType:test1.<no name provided> flags:primary
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test2.<no name provided> flags:
             superClasses:
               CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public flags:
-            CONSTRUCTOR visibility:public <> () returnType:test2.<no name provided> flags:
+            CONSTRUCTOR visibility:public <> () returnType:test2.<no name provided> flags:primary
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Outer flags:
+    CONSTRUCTOR visibility:public <> () returnType:Outer flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.Inner flags:
       superClasses:
         CLASS INTERFACE name:IFoo modality:ABSTRACT visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.Inner flags:
+      CONSTRUCTOR visibility:public <> ($this:Outer) returnType:Outer.Inner flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Outer flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -128,7 +128,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer.test3.<no name provided> flags:
               superClasses:
                 CLASS CLASS name:Inner modality:ABSTRACT visibility:public flags:
-              CONSTRUCTOR visibility:public <> () returnType:Outer.test3.<no name provided> flags:
+              CONSTRUCTOR visibility:public <> () returnType:Outer.test3.<no name provided> flags:primary
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
                     $this: GET_VAR 'this@Outer: Outer' type=Outer origin=null
@@ -176,7 +176,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test4.<no name provided> flags:
             superClasses:
               CLASS CLASS name:Inner modality:ABSTRACT visibility:public flags:
-            CONSTRUCTOR visibility:public <> () returnType:test4.<no name provided> flags:
+            CONSTRUCTOR visibility:public <> () returnType:test4.<no name provided> flags:primary
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
                   $this: GET_VAR 'this@test4: Outer' type=Outer origin=null

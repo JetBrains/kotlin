@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (runA:A.(kotlin.String) -> kotlin.Unit) returnType:A flags:
+    CONSTRUCTOR visibility:public <> (runA:A.(kotlin.String) -> kotlin.Unit) returnType:A flags:primary
       VALUE_PARAMETER name:runA index:0 type:A.(kotlin.String) -> kotlin.Unit flags:
         EXPRESSION_BODY
           BLOCK type=A.(kotlin.String) -> kotlin.Unit origin=LAMBDA
@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Any) returnType:B flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Any) returnType:B flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Any flags:
         EXPRESSION_BODY
           BLOCK type=B.<init>.<no name provided> origin=OBJECT_LITERAL
@@ -116,7 +116,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:B.<init>.<no name provided> flags:
               superClasses:
                 CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-              CONSTRUCTOR visibility:public <> () returnType:B.<init>.<no name provided> flags:
+              CONSTRUCTOR visibility:public <> () returnType:B.<init>.<no name provided> flags:primary
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                   INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Base flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Base flags:
+    CONSTRUCTOR visibility:public <> () returnType:Base flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base'
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test flags:
     superClasses:
       CLASS CLASS name:Base modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:Test flags:
+    CONSTRUCTOR visibility:private <> () returnType:Test flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'

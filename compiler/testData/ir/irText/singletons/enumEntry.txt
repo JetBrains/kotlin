@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/enumEntry.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:Z flags:
+    CONSTRUCTOR visibility:private <> () returnType:Z flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: Z
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/enumEntry.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z.ENTRY flags:
         superClasses:
           CLASS ENUM_CLASS name:Z modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:Z.ENTRY flags:
+        CONSTRUCTOR visibility:private <> () returnType:Z.ENTRY flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Z()'
             INSTANCE_INITIALIZER_CALL classDescriptor='ENTRY'
@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/enumEntry.kt
           $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z.ENTRY.A flags:
           superClasses:
             CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-          CONSTRUCTOR visibility:public <> () returnType:Z.ENTRY.A flags:
+          CONSTRUCTOR visibility:public <> () returnType:Z.ENTRY.A flags:primary
             BLOCK_BODY
               DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
               INSTANCE_INITIALIZER_CALL classDescriptor='A'

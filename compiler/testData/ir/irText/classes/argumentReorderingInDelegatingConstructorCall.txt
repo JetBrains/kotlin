@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Base flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:Base flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.Int) returnType:Base flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       VALUE_PARAMETER name:y index:1 type:kotlin.Int flags:
       BLOCK_BODY
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
     superClasses:
       CLASS CLASS name:Base modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (xx:kotlin.Int, yy:kotlin.Int) returnType:Test1 flags:
+    CONSTRUCTOR visibility:public <> (xx:kotlin.Int, yy:kotlin.Int) returnType:Test1 flags:primary
       VALUE_PARAMETER name:xx index:0 type:kotlin.Int flags:
       VALUE_PARAMETER name:yy index:1 type:kotlin.Int flags:
       BLOCK_BODY

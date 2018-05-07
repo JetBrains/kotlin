@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/primaryConstructorParameterWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Ann flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Ann flags:
+    CONSTRUCTOR visibility:public <> () returnType:Ann flags:primary
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/primaryConstructorParameterWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         annotations:
           CALL 'constructor Ann()' type=Ann origin=null
@@ -51,3 +51,4 @@ FILE fqName:<root> fileName:/primaryConstructorParameterWithAnnotations.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

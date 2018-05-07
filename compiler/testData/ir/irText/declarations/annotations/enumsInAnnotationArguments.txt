@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:En flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:En flags:
+    CONSTRUCTOR visibility:private <> () returnType:En flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: En
@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnn flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:En) returnType:TestAnn flags:
+    CONSTRUCTOR visibility:public <> (x:En) returnType:TestAnn flags:primary
       VALUE_PARAMETER name:x index:0 type:En flags:
     PROPERTY name:x type:En visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:En visibility:public flags:final
@@ -95,3 +95,4 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
       CALL 'constructor TestAnn(En)' type=TestAnn origin=null
         x: GET_ENUM 'A' type=En
     BLOCK_BODY
+

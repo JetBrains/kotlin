@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:A flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:A flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
@@ -52,3 +52,4 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
                 $receiver: GET_VAR '`test$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
                 property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'test: Int' delegate='`test$delegate`: Lazy<Int>' getter='<get-test>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+

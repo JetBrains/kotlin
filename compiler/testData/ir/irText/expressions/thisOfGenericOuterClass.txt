@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:T) returnType:Outer<T> flags:
+    CONSTRUCTOR visibility:public <> (x:T) returnType:Outer<T> flags:primary
       VALUE_PARAMETER name:x index:0 type:T flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer<T>.Inner flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Outer<T>, y:kotlin.Int) returnType:Outer<T>.Inner flags:
+      CONSTRUCTOR visibility:public <> ($this:Outer<T>, y:kotlin.Int) returnType:Outer<T>.Inner flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Outer<T> flags:
         VALUE_PARAMETER name:y index:0 type:kotlin.Int flags:
         BLOCK_BODY
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.<no name provided> flags:
             superClasses:
               CLASS CLASS name:Inner modality:OPEN visibility:public flags:
-            CONSTRUCTOR visibility:public <> () returnType:test.<no name provided> flags:
+            CONSTRUCTOR visibility:public <> () returnType:test.<no name provided> flags:primary
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Inner(Int)'
                   $this: GET_VAR 'this@test: Outer<Int>' type=Outer<kotlin.Int> origin=null

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/local.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Delegate flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:Delegate flags:
+    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:Delegate flags:primary
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -43,7 +43,7 @@ FILE fqName:<root> fileName:/local.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:DelegateProvider flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:DelegateProvider flags:
+    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:DelegateProvider flags:primary
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/delegatedImplementationWithExplicitOverride.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:FooBarImpl flags:
     superClasses:
       CLASS INTERFACE name:IFooBar modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:FooBarImpl flags:
+    CONSTRUCTOR visibility:private <> () returnType:FooBarImpl flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='FooBarImpl'
@@ -55,7 +55,7 @@ FILE fqName:<root> fileName:/delegatedImplementationWithExplicitOverride.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
     superClasses:
       CLASS INTERFACE name:IFooBar modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:C flags:
+    CONSTRUCTOR visibility:public <> () returnType:C flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'

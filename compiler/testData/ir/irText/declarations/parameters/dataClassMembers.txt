@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:T, y:kotlin.String) returnType:Test<T> flags:
+    CONSTRUCTOR visibility:public <> (x:T, y:kotlin.String) returnType:Test<T> flags:primary
       VALUE_PARAMETER name:x index:0 type:T flags:
       VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
         EXPRESSION_BODY

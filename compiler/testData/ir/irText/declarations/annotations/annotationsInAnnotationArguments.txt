@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:A1 flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:A1 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     PROPERTY name:x type:kotlin.Int visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (a:A1) returnType:A2 flags:
+    CONSTRUCTOR visibility:public <> (a:A1) returnType:A2 flags:primary
       VALUE_PARAMETER name:a index:0 type:A1 flags:
     PROPERTY name:a type:A1 visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:a type:A1 visibility:public flags:final
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:AA flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<A1>) returnType:AA flags:
+    CONSTRUCTOR visibility:public <> (xs:kotlin.Array<A1>) returnType:AA flags:primary
       VALUE_PARAMETER name:xs index:0 type:kotlin.Array<A1> flags:
     PROPERTY name:xs type:kotlin.Array<A1> visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.Array<A1> visibility:public flags:final
@@ -98,3 +98,4 @@ FILE fqName:<root> fileName:/annotationsInAnnotationArguments.kt
           CALL 'constructor A1(Int)' type=A1 origin=null
             x: CONST Int type=kotlin.Int value=2
     BLOCK_BODY
+

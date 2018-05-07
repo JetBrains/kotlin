@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnn flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
@@ -80,3 +80,4 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
       BLOCK_BODY
         SET_FIELD 'test4: String' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: String' type=kotlin.String origin=null
+

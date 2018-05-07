@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:TestEnum1 flags:
+    CONSTRUCTOR visibility:private <> () returnType:TestEnum1 flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: TestEnum1
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum2 flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum2 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum3 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:TestEnum3 flags:
+    CONSTRUCTOR visibility:private <> () returnType:TestEnum3 flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: TestEnum3
@@ -146,7 +146,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum3.TEST flags:
         superClasses:
           CLASS ENUM_CLASS name:TestEnum3 modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:TestEnum3.TEST flags:
+        CONSTRUCTOR visibility:private <> () returnType:TestEnum3.TEST flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum3()'
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST'
@@ -248,7 +248,7 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum4 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum4 flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum4 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -270,7 +270,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum4.TEST1 flags:
         superClasses:
           CLASS ENUM_CLASS name:TestEnum4 modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:TestEnum4.TEST1 flags:
+        CONSTRUCTOR visibility:private <> () returnType:TestEnum4.TEST1 flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)'
               x: CONST Int type=kotlin.Int value=1
@@ -333,7 +333,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum4.TEST2 flags:
         superClasses:
           CLASS ENUM_CLASS name:TestEnum4 modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:TestEnum4.TEST2 flags:
+        CONSTRUCTOR visibility:private <> () returnType:TestEnum4.TEST2 flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum4(Int)'
               x: CONST Int type=kotlin.Int value=2
@@ -455,7 +455,7 @@ FILE fqName:<root> fileName:/enum.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum5 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum5 flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:TestEnum5 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0

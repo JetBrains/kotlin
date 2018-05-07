@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.IntArray) returnType:C flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.IntArray) returnType:C flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.IntArray flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

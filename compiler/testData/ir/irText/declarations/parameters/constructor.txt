@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/constructor.kt
     TYPE_PARAMETER name:T2 index:1 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:T1, y:T2) returnType:Test1<T1, T2> flags:
+    CONSTRUCTOR visibility:public <> (x:T1, y:T2) returnType:Test1<T1, T2> flags:primary
       VALUE_PARAMETER name:x index:0 type:T1 flags:
       VALUE_PARAMETER name:y index:1 type:T2 flags:
       BLOCK_BODY
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/constructor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String) returnType:Test2 flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String) returnType:Test2 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
       BLOCK_BODY
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/constructor.kt
       TYPE_PARAMETER name:Z index:0 variance: upperBounds:[kotlin.Any?]
         superClassifiers:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Test2, z:Z) returnType:Test2.TestInner<Z> flags:
+      CONSTRUCTOR visibility:public <> ($this:Test2, z:Z) returnType:Test2.TestInner<Z> flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Test2 flags:
         VALUE_PARAMETER name:z index:0 type:Z flags:
         BLOCK_BODY
@@ -130,7 +130,7 @@ FILE fqName:<root> fileName:/constructor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test3 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String) returnType:Test3 flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String) returnType:Test3 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
         EXPRESSION_BODY
@@ -178,7 +178,7 @@ FILE fqName:<root> fileName:/constructor.kt
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test4<T> flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test4<T> flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

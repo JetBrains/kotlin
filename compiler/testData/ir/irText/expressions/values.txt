@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/values.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Enum flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:Enum flags:
+    CONSTRUCTOR visibility:private <> () returnType:Enum flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: Enum
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/values.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:A flags:
+    CONSTRUCTOR visibility:private <> () returnType:A flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/values.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Z flags:
+    CONSTRUCTOR visibility:public <> () returnType:Z flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Z'
@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/values.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z.Companion flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:private <> () returnType:Z.Companion flags:
+      CONSTRUCTOR visibility:private <> () returnType:Z.Companion flags:primary
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Z'

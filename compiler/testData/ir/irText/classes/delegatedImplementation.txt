@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:BaseImpl flags:
     superClasses:
       CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:BaseImpl flags:
+    CONSTRUCTOR visibility:private <> () returnType:BaseImpl flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='BaseImpl'
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:otherImpl.<no name provided> flags:
             superClasses:
               CLASS INTERFACE name:IOther modality:ABSTRACT visibility:public flags:
-            CONSTRUCTOR visibility:public <> () returnType:otherImpl.<no name provided> flags:
+            CONSTRUCTOR visibility:public <> () returnType:otherImpl.<no name provided> flags:primary
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
@@ -194,7 +194,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
     superClasses:
       CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
@@ -250,7 +250,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     superClasses:
       CLASS INTERFACE name:IBase modality:ABSTRACT visibility:public flags:
       CLASS INTERFACE name:IOther modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test2 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test2 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'

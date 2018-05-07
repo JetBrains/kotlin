@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test0 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test0 flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test0 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test1 flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test1 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -148,7 +148,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test2 flags:
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:Test2 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -170,7 +170,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2.ZERO flags:
         superClasses:
           CLASS ENUM_CLASS name:Test2 modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:Test2.ZERO flags:
+        CONSTRUCTOR visibility:private <> () returnType:Test2.ZERO flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Test2()'
             INSTANCE_INITIALIZER_CALL classDescriptor='ZERO'
@@ -232,7 +232,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2.ONE flags:
         superClasses:
           CLASS ENUM_CLASS name:Test2 modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:Test2.ONE flags:
+        CONSTRUCTOR visibility:private <> () returnType:Test2.ONE flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Test2(Int)'
               x: CONST Int type=kotlin.Int value=1

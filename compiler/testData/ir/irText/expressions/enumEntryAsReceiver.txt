@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:X flags:
+    CONSTRUCTOR visibility:private <> () returnType:X flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: X
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:X.B flags:
         superClasses:
           CLASS ENUM_CLASS name:X modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:X.B flags:
+        CONSTRUCTOR visibility:private <> () returnType:X.B flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor X()'
             INSTANCE_INITIALIZER_CALL classDescriptor='B'

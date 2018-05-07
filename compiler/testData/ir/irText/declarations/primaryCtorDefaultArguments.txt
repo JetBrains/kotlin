@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/primaryCtorDefaultArguments.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0

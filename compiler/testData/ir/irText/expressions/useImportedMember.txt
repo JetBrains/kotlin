@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:BaseClass flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:BaseClass flags:
+    CONSTRUCTOR visibility:public <> () returnType:BaseClass flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='BaseClass'
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
     superClasses:
       CLASS CLASS name:BaseClass modality:OPEN visibility:public flags:
       CLASS INTERFACE name:I modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:C flags:
+    CONSTRUCTOR visibility:private <> () returnType:C flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor BaseClass()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
@@ -289,3 +289,4 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             CONST String type=kotlin.String value=11
       RETURN type=kotlin.Nothing from='box(): String'
         CONST String type=kotlin.String value=OK
+

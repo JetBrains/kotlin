@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnn flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestClassConstructor1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:TestClassConstructor1 flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:TestClassConstructor1 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         annotations:
           CALL 'constructor TestAnn(String)' type=TestAnn origin=null
@@ -69,3 +69,4 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+

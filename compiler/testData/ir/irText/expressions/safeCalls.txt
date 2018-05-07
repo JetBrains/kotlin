@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Ref flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:Ref flags:
+    CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:Ref flags:primary
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

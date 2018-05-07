@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnn flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB INTERFACE name:Annotation modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:TestAnn flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     PROPERTY name:x type:kotlin.String visibility:public modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public flags:final
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Enum modality:ABSTRACT visibility:public flags:
-    CONSTRUCTOR visibility:private <> () returnType:TestEnum flags:
+    CONSTRUCTOR visibility:private <> () returnType:TestEnum flags:primary
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
           <E : Enum<E>>: TestEnum
@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum.ENTRY2 flags:
         superClasses:
           CLASS ENUM_CLASS name:TestEnum modality:FINAL visibility:public flags:
-        CONSTRUCTOR visibility:private <> () returnType:TestEnum.ENTRY2 flags:
+        CONSTRUCTOR visibility:private <> () returnType:TestEnum.ENTRY2 flags:primary
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum()'
             INSTANCE_INITIALIZER_CALL classDescriptor='ENTRY2'
@@ -153,3 +153,4 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:TestEnum flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+

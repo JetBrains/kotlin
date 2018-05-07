@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/initBlock.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test1 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/initBlock.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test2 flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test2 flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/initBlock.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test5 flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:Test5 flags:
+    CONSTRUCTOR visibility:public <> () returnType:Test5 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test5'
@@ -127,7 +127,7 @@ FILE fqName:<root> fileName:/initBlock.kt
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test5.TestInner flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR visibility:public <> ($this:Test5) returnType:Test5.TestInner flags:
+      CONSTRUCTOR visibility:public <> ($this:Test5) returnType:Test5.TestInner flags:primary
         $outer: VALUE_PARAMETER name:<this> type:Test5 flags:
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

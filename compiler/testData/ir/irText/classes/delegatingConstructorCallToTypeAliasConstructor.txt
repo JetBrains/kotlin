@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
       superClassifiers:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (value:T) returnType:Cell<T> flags:
+    CONSTRUCTOR visibility:public <> (value:T) returnType:Cell<T> flags:primary
       VALUE_PARAMETER name:value index:0 type:T flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C1 flags:
     superClasses:
       CLASS CLASS name:Cell modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:C1 flags:
+    CONSTRUCTOR visibility:public <> () returnType:C1 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
           <T>: String
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C2 flags:
     superClasses:
       CLASS CLASS name:Cell modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> () returnType:C2 flags:
+    CONSTRUCTOR visibility:public <> () returnType:C2 flags:primary
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
           <T>: String

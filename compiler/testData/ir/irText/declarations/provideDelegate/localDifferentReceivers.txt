@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:MyClass flags:
     superClasses:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:MyClass flags:
+    CONSTRUCTOR visibility:public <> (value:kotlin.String) returnType:MyClass flags:primary
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

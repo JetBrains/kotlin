@@ -4,7 +4,7 @@ MODULE_FRAGMENT name:<test-module>
       $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J flags:
       superClasses:
         CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J flags:
+      CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J flags:primary
       PROPERTY IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public modality:FINAL flags:var
         FIELD IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public flags:final
       FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> ($this:J) returnType:Unit flags:
@@ -13,7 +13,7 @@ MODULE_FRAGMENT name:<test-module>
         $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J.JInner flags:
         superClasses:
           CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
-        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> ($this:J) returnType:J.JInner flags:
+        CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> ($this:J) returnType:J.JInner flags:primary
           $outer: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J flags:
         PROPERTY IR_EXTERNAL_DECLARATION_STUB name:z type:kotlin.Int visibility:public modality:FINAL flags:var
           FIELD IR_EXTERNAL_DECLARATION_STUB name:z type:kotlin.Int visibility:public flags:final
