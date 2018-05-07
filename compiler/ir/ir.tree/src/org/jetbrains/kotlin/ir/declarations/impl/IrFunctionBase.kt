@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -32,6 +33,7 @@ abstract class IrFunctionBase(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
+    override val name: Name,
     override val visibility: Visibility,
     override val isInline: Boolean,
     override val isExternal: Boolean,

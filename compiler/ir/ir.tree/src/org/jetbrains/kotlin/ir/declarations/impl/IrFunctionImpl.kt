@@ -34,7 +34,7 @@ class IrFunctionImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
-    override val name: Name,
+    name: Name,
     visibility: Visibility,
     override val modality: Modality,
     returnType: KotlinType,
@@ -43,7 +43,7 @@ class IrFunctionImpl(
     override val isTailrec: Boolean,
     override val isSuspend: Boolean
 ) :
-    IrFunctionBase(startOffset, endOffset, origin, visibility, isInline, isExternal, returnType),
+    IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, returnType),
     IrSimpleFunction {
 
     constructor(

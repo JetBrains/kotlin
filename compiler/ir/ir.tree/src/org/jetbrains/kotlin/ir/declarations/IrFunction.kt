@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IrFunction : IrDeclaration, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent {
     override val descriptor: FunctionDescriptor
     override val symbol: IrFunctionSymbol
 
+    val name: Name
     val visibility: Visibility
     val isInline: Boolean // NB: there's an inline constructor for Array and each primitive array class
     val isExternal: Boolean

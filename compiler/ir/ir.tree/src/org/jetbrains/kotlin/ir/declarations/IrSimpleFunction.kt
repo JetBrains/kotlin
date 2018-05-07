@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
 interface IrSimpleFunction : IrFunction, IrSymbolDeclaration<IrSimpleFunctionSymbol> {
-    val name: Name
     val modality: Modality
     val isTailrec: Boolean
     val isSuspend: Boolean
