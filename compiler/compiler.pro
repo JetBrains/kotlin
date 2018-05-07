@@ -213,3 +213,6 @@ messages/**)
 
 # for kapt
 -keep class com.intellij.openapi.project.Project { *; }
+
+# remove when KT-18563 would be fixed
+-keep class org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt { *; }
