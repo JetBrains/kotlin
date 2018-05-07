@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
-import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -25,12 +24,25 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
 
         val type = element.descriptor?.type ?: return false
         return when {
-            KotlinBuiltIns.isPrimitiveArray(type) ->
+            KotlinBuiltIns.isPrimitiveArray(type) -> {
+                text = "Convert to vararg parameter"
                 true
+            }
             KotlinBuiltIns.isArray(type) -> {
-                val typeArguments = typeReference.typeElement?.typeArgumentsAsTypes
-                val typeProjection = typeArguments?.firstOrNull()?.parent as? KtTypeProjection
-                typeProjection?.hasModifier(KtTokens.IN_KEYWORD) == false
+                val typeArgument = typeReference.typeElement?.typeArgumentsAsTypes?.firstOrNull()
+                val typeProjection = typeArgument?.parent as? KtTypeProjection
+                if (typeProjection?.hasModifier(KtTokens.IN_KEYWORD) == false) {
+                    text = if (!typeProjection.hasModifier(KtTokens.OUT_KEYWORD)
+                        && !KotlinBuiltIns.isPrimitiveType(element.builtIns.getArrayElementType(type))
+                    ) {
+                        "Convert to vararg parameter (may break code)"
+                    } else {
+                        "Convert to vararg parameter"
+                    }
+                    true
+                } else {
+                    false
+                }
             }
             else ->
                 false
@@ -40,12 +52,9 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
     override fun applyTo(element: KtParameter, editor: Editor?) {
         val typeReference = element.getChildOfType<KtTypeReference>() ?: return
         val type = element.descriptor?.type ?: return
-        val newType = (if (KotlinBuiltIns.isPrimitiveArray(type)) {
-            PrimitiveType.values().firstOrNull { it.arrayTypeName == type.nameIfStandardType }?.typeName?.asString()
-        } else {
-            typeReference.typeElement?.typeArgumentsAsTypes?.firstOrNull()?.text
-        }) ?: return
-
+        val newType = KotlinBuiltIns.getPrimitiveArrayElementType(type)?.typeName?.asString()
+                ?: typeReference.typeElement?.typeArgumentsAsTypes?.firstOrNull()?.text
+                ?: return
         typeReference.replace(KtPsiFactory(element).createType(newType))
         element.addModifier(KtTokens.VARARG_KEYWORD)
     }

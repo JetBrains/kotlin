@@ -1,1 +1,4 @@
-fun test(vararg a: Int) = a.size
+// INTENTION_TEXT: Convert to vararg parameter
+fun test(vararg a: Int) {
+    a[0] = 1
+}
