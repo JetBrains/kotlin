@@ -309,10 +309,21 @@ public class KotlinTypeMapper {
         ClassId classId = DescriptorUtilsKt.getClassId(classDescriptor);
         assert classId != null : "Deserialized class should have a ClassId: " + classDescriptor;
 
+        String nestedClass;
         if (isInterface(classDescriptor)) {
+            nestedClass = JvmAbi.DEFAULT_IMPLS_SUFFIX;
+        }
+        else if (classDescriptor.isInline()) {
+            nestedClass = JvmAbi.ERASED_INLINE_CLASS_SUFFIX;
+        }
+        else {
+            nestedClass = null;
+        }
+
+        if (nestedClass != null) {
             FqName relativeClassName = classId.getRelativeClassName();
             //TODO test nested trait fun inlining
-            String defaultImplsClassName = relativeClassName.shortName().asString() + JvmAbi.DEFAULT_IMPLS_SUFFIX;
+            String defaultImplsClassName = relativeClassName.shortName().asString() + nestedClass;
             return new ClassId(classId.getPackageFqName(), Name.identifier(defaultImplsClassName));
         }
 
