@@ -307,7 +307,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 .generateDeclaredClassFilter(generateClassFilter)
                 .codegenFactory(
                     if (configuration.getBoolean(JVMConfigurationKeys.IR))
-                        JvmIrCodegenFactory
+                        JvmIrCodegenFactory()
                     else
                         DefaultCodegenFactory
                 )

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -26,9 +27,10 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object DEFAULT_IMPLS : IrDeclarationOriginImpl("DEFAULT_IMPL")
     object FIELD_FOR_ENUM_ENTRY : IrDeclarationOriginImpl("FIELD_FOR_ENUM_ENTRY")
     object FIELD_FOR_ENUM_VALUES : IrDeclarationOriginImpl("FIELD_FOR_ENUM_VALUES")
-    object FIELD_FOR_OBJECT_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
     object SYNTHETIC_ACCESSOR : IrDeclarationOriginImpl("SYNTHETIC_ACCESSOR")
+
+    data class FIELD_FOR_OBJECT_INSTANCE(val element: PsiElement?) : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE")
 }
 
 interface JvmLoweredStatementOrigin : IrStatementOrigin {

@@ -17,35 +17,88 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.generators.ClassBodyGenerationMode
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
-object JvmIrCodegenFactory : CodegenFactory {
+class JvmIrCodegenFactory(private val bodyGenerationMode: ClassBodyGenerationMode = ClassBodyGenerationMode.FULL_CLASS) : CodegenFactory {
+    var irModuleFragment: IrModuleFragment? = null
+    var generatorContext: GeneratorContext? = null
+
+    private fun getOrBuildIr(state: GenerationState, files: Collection<KtFile>): IrModuleFragment {
+        if (irModuleFragment == null) {
+            doBuildIr(state, files)
+        }
+        return irModuleFragment!!
+    }
+
+    private fun getOrBuildContext(state: GenerationState, files: Collection<KtFile>): GeneratorContext {
+        if (generatorContext == null) {
+            doBuildIr(state, files)
+        }
+        return generatorContext!!
+    }
+
+    private fun doBuildIr(state: GenerationState, files: Collection<KtFile>) {
+        val configuration = Psi2IrConfiguration()
+        val psi2ir = Psi2IrTranslator(configuration)
+        val psi2irContext = GeneratorContext(configuration, state.module, state.bindingContext, bodyGenerationMode)
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
+
+        generatorContext = psi2irContext
+        this.irModuleFragment = irModuleFragment
+    }
 
     override fun generateModule(state: GenerationState, files: Collection<KtFile?>, errorHandler: CompilationErrorHandler) {
         assert(!files.any { it == null })
-
-        val psi2ir = Psi2IrTranslator()
-        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext)
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files as Collection<KtFile>)
-        JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext)
+        files as Collection<KtFile>
+        JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, getOrBuildIr(state, files), getOrBuildContext(state, files))
     }
 
-    override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): PackageCodegen {
+    override fun createPackageCodegen(
+        state: GenerationState,
+        files: Collection<KtFile>,
+        fqName: FqName,
+        registry: PackagePartRegistry
+    ): PackageCodegen {
         val impl = PackageCodegenImpl(state, files, fqName, registry)
+        val context = getOrBuildContext(state, files)
+        val ir = getOrBuildIr(state, files)
+
+        val jvmBackendContext = JvmBackendContext(state, context.sourceManager, context.irBuiltIns, ir, context.symbolTable)
+        val jvmBackend = JvmBackend(
+            jvmBackendContext,
+            if (bodyGenerationMode == ClassBodyGenerationMode.LIGHT_CLASS)
+                LightClassesLower(jvmBackendContext)
+            else
+                JvmLower(jvmBackendContext)
+        )
 
         return object : PackageCodegen {
             override fun generate(errorHandler: CompilationErrorHandler) {
-                JvmBackendFacade.doGenerateFiles(files, state, errorHandler)
+                ir.files.forEach { jvmBackend.generateFile(it) }
             }
 
             override fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: PackageContext) {
-                TODO()
+                val correspondingIrFile = ir.files.first {
+                    it.fileEntry.name == classOrObject.containingKtFile.virtualFilePath
+                }
+
+                val correspondingIrClass =
+                    correspondingIrFile.declarations.find { it.descriptor.name.asString() == classOrObject.name } as IrClass
+
+                jvmBackend.generateClass(correspondingIrClass)
             }
 
             override fun getPackageFragment(): PackageFragmentDescriptor {
@@ -54,7 +107,46 @@ object JvmIrCodegenFactory : CodegenFactory {
         }
     }
 
-    override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): MultifileClassCodegen {
-        TODO()
+    override fun createMultifileClassCodegen(
+        state: GenerationState,
+        files: Collection<KtFile>,
+        fqName: FqName,
+        registry: PackagePartRegistry
+    ): MultifileClassCodegen {
+        val context = getOrBuildContext(state, files)
+        val ir = getOrBuildIr(state, files)
+
+        val jvmBackendContext = JvmBackendContext(state, context.sourceManager, context.irBuiltIns, ir, context.symbolTable)
+        val jvmBackend = JvmBackend(
+            jvmBackendContext,
+            if (bodyGenerationMode == ClassBodyGenerationMode.LIGHT_CLASS)
+                LightClassesLower(jvmBackendContext)
+            else
+                JvmLower(jvmBackendContext)
+        )
+
+        return object : MultifileClassCodegen {
+            override fun generate(errorHandler: CompilationErrorHandler) {
+                ExternalDependenciesGenerator(context.symbolTable, context.irBuiltIns).generateUnboundSymbolsAsDependencies(ir)
+                for (irFile in ir.files) {
+                    try {
+                        jvmBackend.generateFile(irFile)
+                        state.afterIndependentPart()
+                    } catch (e: Throwable) {
+                        errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
+                    }
+                }
+            }
+
+            override fun generateClassOrObject(
+                classOrObject: KtClassOrObject,
+                packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>
+            ) {
+                val correspondingIrFile = ir.files.first {
+                    it.fileEntry.name == classOrObject.containingKtFile.virtualFilePath
+                }
+                jvmBackend.generateFile(correspondingIrFile)
+            }
+        }
     }
 }

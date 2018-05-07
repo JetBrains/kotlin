@@ -69,7 +69,7 @@ object GenerationUtils {
             files.first().project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
             files, configuration
         ).codegenFactory(
-            if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory
+            if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory() else DefaultCodegenFactory
         ).build()
         if (analysisResult.shouldGenerateCode) {
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)

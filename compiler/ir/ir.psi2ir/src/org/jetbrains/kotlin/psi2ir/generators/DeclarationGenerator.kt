@@ -137,7 +137,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         }
     }
 
-    fun generateInitializerBody(scopeOwnerSymbol: IrSymbol, ktBody: KtExpression): IrExpressionBody =
+    fun generateInitializerBody(scopeOwnerSymbol: IrSymbol, ktBody: KtExpression): IrExpressionBody? =
         createBodyGenerator(scopeOwnerSymbol).generateExpressionBody(ktBody)
 
     fun generateFakeOverrideDeclaration(memberDescriptor: CallableMemberDescriptor, ktElement: KtElement): IrDeclaration {

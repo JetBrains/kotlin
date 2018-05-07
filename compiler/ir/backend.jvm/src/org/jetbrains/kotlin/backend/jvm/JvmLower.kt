@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.Lower
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
@@ -25,8 +26,8 @@ import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.NameUtils
 
-class JvmLower(val context: JvmBackendContext) {
-    fun lower(irFile: IrFile) {
+class JvmLower(val context: JvmBackendContext) : Lower {
+    override fun lower(irFile: IrFile) {
         // TODO run lowering passes as callbacks in bottom-up visitor
         FileClassLowering(context).lower(irFile)
         KCallableNamePropertyLowering(context).lower(irFile)
@@ -59,6 +60,23 @@ class JvmLower(val context: JvmBackendContext) {
         BridgeLowering(context).runOnFilePostfix(irFile)
 
         TailrecLowering(context).runOnFilePostfix(irFile)
+
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
+    }
+}
+
+class LightClassesLower(val context: JvmBackendContext) : Lower {
+    override fun lower(irFile: IrFile) {
+        FileClassLowering(context).lower(irFile)
+
+        ConstAndJvmFieldPropertiesLowering().lower(irFile)
+        PropertiesLowering().lower(irFile)
+
+        InterfaceLowering(context.state).runOnFilePostfix(irFile)
+        InnerClassesLowering(context).runOnFilePostfix(irFile)
+        EnumClassLowering(context).runOnFilePostfix(irFile)
+        ObjectClassLowering(context).lower(irFile)
+        BridgeLowering(context).runOnFilePostfix(irFile)
 
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
     }

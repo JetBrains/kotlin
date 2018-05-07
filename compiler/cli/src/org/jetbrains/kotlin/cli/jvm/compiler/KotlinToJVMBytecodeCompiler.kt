@@ -429,7 +429,7 @@ object KotlinToJVMBytecodeCompiler {
             sourceFiles,
             configuration
         )
-            .codegenFactory(if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory)
+            .codegenFactory(if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory() else DefaultCodegenFactory)
             .withModule(module)
             .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
             .build()

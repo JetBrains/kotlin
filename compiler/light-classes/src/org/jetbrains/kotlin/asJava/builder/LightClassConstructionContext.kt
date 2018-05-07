@@ -20,6 +20,12 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 
 open class LightClassConstructionContext(
-        val bindingContext: BindingContext,
-        val module: ModuleDescriptor
-)
+    val bindingContext: BindingContext,
+    val module: ModuleDescriptor,
+    val mode: Mode
+) {
+    enum class Mode {
+        LIGHT,
+        EXACT
+    }
+}

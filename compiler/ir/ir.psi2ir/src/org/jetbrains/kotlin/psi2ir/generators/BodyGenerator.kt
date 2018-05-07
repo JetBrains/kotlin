@@ -18,10 +18,13 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -41,6 +44,8 @@ class BodyGenerator(
     private val loopTable = HashMap<KtLoopExpression, IrLoop>()
 
     fun generateFunctionBody(ktBody: KtExpression): IrBody {
+        if (context.classBodyGenerationMode == ClassBodyGenerationMode.LIGHT_CLASS) return STUB_BODY
+
         val statementGenerator = createStatementGenerator()
 
         val irBlockBody = IrBlockBodyImpl(ktBody.startOffset, ktBody.endOffset)
@@ -53,10 +58,15 @@ class BodyGenerator(
         return irBlockBody
     }
 
-    fun generateExpressionBody(ktExpression: KtExpression): IrExpressionBody =
-        IrExpressionBodyImpl(createStatementGenerator().generateExpression(ktExpression))
+    fun generateExpressionBody(ktExpression: KtExpression): IrExpressionBody? {
+        if (context.classBodyGenerationMode == ClassBodyGenerationMode.LIGHT_CLASS) return null
+
+        return IrExpressionBodyImpl(createStatementGenerator().generateExpression(ktExpression))
+    }
 
     fun generateLambdaBody(ktFun: KtFunctionLiteral): IrBody {
+        if (context.classBodyGenerationMode == ClassBodyGenerationMode.LIGHT_CLASS) return STUB_BODY
+
         val statementGenerator = createStatementGenerator()
 
         val ktBody = ktFun.bodyExpression!!
@@ -123,6 +133,7 @@ class BodyGenerator(
 
 
     fun generateSecondaryConstructorBody(ktConstructor: KtSecondaryConstructor): IrBody {
+        if (context.classBodyGenerationMode == ClassBodyGenerationMode.LIGHT_CLASS) return STUB_BODY
         val irBlockBody = IrBlockBodyImpl(ktConstructor.startOffset, ktConstructor.endOffset)
 
         generateDelegatingConstructorCall(irBlockBody, ktConstructor)
@@ -169,6 +180,7 @@ class BodyGenerator(
         loopTable[expression]
 
     fun generatePrimaryConstructorBody(ktClassOrObject: KtClassOrObject): IrBody {
+        if (context.classBodyGenerationMode == ClassBodyGenerationMode.LIGHT_CLASS) return STUB_BODY
         val irBlockBody = IrBlockBodyImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset)
 
         generateSuperConstructorCall(irBlockBody, ktClassOrObject)
@@ -185,6 +197,7 @@ class BodyGenerator(
     }
 
     fun generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor: KtSecondaryConstructor): IrBody {
+        if (context.classBodyGenerationMode == ClassBodyGenerationMode.LIGHT_CLASS) return STUB_BODY
         val irBlockBody = IrBlockBodyImpl(ktConstructor.startOffset, ktConstructor.endOffset)
 
         generateDelegatingConstructorCall(irBlockBody, ktConstructor)
@@ -312,5 +325,23 @@ class BodyGenerator(
             ktEnumEntry.startOffset, ktEnumEntry.endOffset,
             pregenerateCall(constructorCall)
         )
+}
 
+val STUB_BODY = IrSyntheticBodyImpl(-1, -1, IrSyntheticBodyKind.STUB_BODY_FOR_LIGHT_CLASSES)
+val STUB_EXPRESSION_BODY: IrExpressionBody = object : IrExpressionBody, IrElementBase(-1, -1) {
+    override var expression: IrExpression
+        get() = throw IllegalStateException("Shouldn't be accessed")
+        set(value) = throw IllegalStateException("Shouldn't be accessed")
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
+        throw NotImplementedError("")
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+    }
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpressionBody = this
 }

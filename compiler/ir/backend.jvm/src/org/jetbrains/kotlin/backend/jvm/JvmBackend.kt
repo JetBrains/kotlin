@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.Lower
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.render
 import java.lang.AssertionError
 
-class JvmBackend(context: JvmBackendContext) {
-    private val lower = JvmLower(context)
+class JvmBackend(context: JvmBackendContext, private val lower: Lower = JvmLower(context)) {
     private val codegen = JvmCodegen(context)
 
     fun generateFile(irFile: IrFile) {
@@ -35,5 +35,15 @@ class JvmBackend(context: JvmBackendContext) {
 
             codegen.generateClass(loweredClass)
         }
+    }
+
+    fun generateClass(irClass: IrClass) {
+        val ownerFile = irClass.parent as IrFile
+        lower.lower(ownerFile)
+
+        val loweredClass = ownerFile.declarations.find { it.descriptor == irClass.descriptor } as? IrClass
+                ?: throw AssertionError("Can't find lowered class ${irClass.render()}")
+
+        codegen.generateClass(loweredClass)
     }
 }

@@ -33,6 +33,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isCompanionObjectInInterfaceNotIntrinsic
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 
@@ -95,12 +98,17 @@ class ObjectClassLowering(val context: JvmBackendContext) : IrElementTransformer
         instanceFieldDescriptor: PropertyDescriptor,
         instanceInitializer: IrExpression,
         instanceOwner: IrDeclarationContainer
-    ): IrField =
-        IrFieldImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE,
+    ): IrField {
+        val psiElementForCompanionObjectIfAny =
+            instanceOwner.declarations.firstOrNull { it.safeAs<IrClass>()?.isCompanion == true }
+                ?.descriptor?.safeAs<DeclarationDescriptorWithSource>()?.source?.getPsi()
+
+        return IrFieldImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE(psiElementForCompanionObjectIfAny),
             instanceFieldDescriptor,
             IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, instanceInitializer)
         ).also {
             pendingTransformations.add { instanceOwner.declarations.add(it) }
         }
+    }
 }

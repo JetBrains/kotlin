@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 class GeneratorContext(
     val configuration: Psi2IrConfiguration,
     val moduleDescriptor: ModuleDescriptor,
-    val bindingContext: BindingContext
+    val bindingContext: BindingContext,
+    val classBodyGenerationMode: ClassBodyGenerationMode = ClassBodyGenerationMode.FULL_CLASS
 ) : IrGeneratorContext(IrBuiltIns(moduleDescriptor.builtIns)) {
     val sourceManager = PsiSourceManager()
 
@@ -38,4 +39,9 @@ class GeneratorContext(
 
     // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
     val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))
+}
+
+enum class ClassBodyGenerationMode {
+    FULL_CLASS,
+    LIGHT_CLASS
 }

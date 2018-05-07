@@ -24,7 +24,6 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.StubComputationTracker
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext
-import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext.Mode.EXACT
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.search.PsiBasedClassResolver
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -72,7 +71,7 @@ abstract class AbstractAnnotatedMembersSearchTest : AbstractSearcherTest() {
 
 private object NoRealDelegatesComputed : StubComputationTracker {
     override fun onStubComputed(javaFileStub: PsiJavaFileStub, context: LightClassConstructionContext) {
-        if ((context as IDELightClassConstructionContext).mode == EXACT) {
+        if ((context as IDELightClassConstructionContext).mode == LightClassConstructionContext.Mode.EXACT) {
             Assert.fail("Should not have computed exact delegate for ${javaFileStub.classes.single().qualifiedName}")
         }
     }

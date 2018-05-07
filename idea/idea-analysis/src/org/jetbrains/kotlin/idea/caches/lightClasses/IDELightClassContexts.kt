@@ -22,6 +22,7 @@ import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
+import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext.Mode.*
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
@@ -36,8 +37,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext.Mode.EXACT
-import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext.Mode.LIGHT
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
@@ -75,12 +74,8 @@ import org.jetbrains.kotlin.types.WrappedTypeFactory
 import org.jetbrains.kotlin.utils.sure
 
 
-class IDELightClassConstructionContext(bindingContext: BindingContext, module: ModuleDescriptor, val mode: Mode) :
-    LightClassConstructionContext(bindingContext, module) {
-    enum class Mode {
-        LIGHT,
-        EXACT
-    }
+class IDELightClassConstructionContext(bindingContext: BindingContext, module: ModuleDescriptor, mode: Mode) :
+    LightClassConstructionContext(bindingContext, module, mode) {
 
     override fun toString() = "${this.javaClass.simpleName}:$mode"
 }
@@ -114,7 +109,10 @@ internal object IDELightClassContexts {
 
         if (descriptor == null) {
             LOG.warn("No class descriptor in context for class: " + classOrObject.getElementTextWithContext())
-            return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
+            return IDELightClassConstructionContext(
+                bindingContext, resolutionFacade.moduleDescriptor,
+                EXACT
+            )
         }
 
         ForceResolveUtil.forceResolveAllContents(descriptor)
@@ -344,7 +342,7 @@ internal object IDELightClassContexts {
         private val codegenAffectingAnnotations: CodegenAffectingAnnotations,
         private val callResolver: CallResolver,
         private val languageVersionSettings: LanguageVersionSettings,
-        private val dataFlowValueFactory: DataFlowValueFactory,constantExpressionEvaluator: ConstantExpressionEvaluator,
+        private val dataFlowValueFactory: DataFlowValueFactory, constantExpressionEvaluator: ConstantExpressionEvaluator,
         storageManager: StorageManager
     ) : AnnotationResolverImpl(callResolver, constantExpressionEvaluator, storageManager) {
 

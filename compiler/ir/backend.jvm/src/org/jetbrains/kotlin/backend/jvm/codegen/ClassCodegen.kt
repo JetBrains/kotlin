@@ -138,7 +138,7 @@ class ClassCodegen private constructor(
         val fieldType = typeMapper.mapType(field.descriptor)
         val fieldSignature = typeMapper.mapFieldSignature(field.descriptor.type, field.descriptor)
         val fv = visitor.newField(
-            field.OtherOrigin, field.descriptor.calculateCommonFlags(), field.descriptor.name.asString(), fieldType.descriptor,
+            field.OtherOrigin, field.descriptor.calculateBackingFieldFlags(), field.descriptor.name.asString(), fieldType.descriptor,
             fieldSignature, null/*TODO support default values*/
         )
 
@@ -201,6 +201,23 @@ fun ClassDescriptor.calculateClassFlags(): Int {
     flags = flags or AsmUtil.getVisibilityAccessFlagForClass(this)
     flags = flags or if (kind == ClassKind.ENUM_CLASS) Opcodes.ACC_ENUM else 0
     flags = flags or if (kind == ClassKind.ANNOTATION_CLASS) Opcodes.ACC_ANNOTATION else 0
+    flags = flags or if (!DescriptorUtils.isTopLevelDeclaration(this)) Opcodes.ACC_STATIC else 0
+    return flags
+}
+
+fun PropertyDescriptor.calculateBackingFieldFlags(): Int {
+    var flags = 0
+
+    flags = flags or AsmUtil.getVisibilityForBackingField(this, isDelegated)
+
+    if (!isLateInit && (!isVar || isDelegated)) {
+        flags = flags or Opcodes.ACC_FINAL
+    }
+
+    if (this is JvmDescriptorWithExtraFlags) {
+        flags = flags or extraFlags
+    }
+
     return flags
 }
 
@@ -273,7 +290,10 @@ private val DeclarationDescriptorWithSource.psiElement: PsiElement?
     get() = (source as? PsiSourceElement)?.psi
 
 private val IrField.OtherOrigin: JvmDeclarationOrigin
-    get() = OtherOrigin(descriptor.psiElement, this.descriptor)
+    get() = if (origin is JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE)
+        OtherOrigin((origin as JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE).element, descriptor)
+    else
+        OtherOrigin(descriptor.psiElement, descriptor)
 
 internal val IrFunction.OtherOrigin: JvmDeclarationOrigin
     get() = OtherOrigin(descriptor.psiElement, this.descriptor)

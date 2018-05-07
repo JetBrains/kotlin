@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.transformations.AnnotationGenerator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
+import org.jetbrains.kotlin.types.isError
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
@@ -57,6 +58,7 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
         for (ktAnnotationEntry in ktFile.annotationEntries) {
             val annotationDescriptor = getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry)
+            if (annotationDescriptor.type.isError) continue
             irFile.fileAnnotations.add(annotationDescriptor)
             irFile.annotations.add(annotationGenerator.generateAnnotationConstructorCall(annotationDescriptor))
         }

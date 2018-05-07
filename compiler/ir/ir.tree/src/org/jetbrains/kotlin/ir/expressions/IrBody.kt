@@ -39,6 +39,7 @@ interface IrSyntheticBody : IrBody {
 
 enum class IrSyntheticBodyKind {
     ENUM_VALUES,
-    ENUM_VALUEOF
+    ENUM_VALUEOF,
+    STUB_BODY_FOR_LIGHT_CLASSES
 }
 

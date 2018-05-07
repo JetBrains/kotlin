@@ -175,6 +175,13 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                         descriptor.containingDeclaration as ClassDescriptor, null, Annotations.EMPTY,
                         descriptor.name, CallableMemberDescriptor.Kind.SYNTHESIZED, descriptor.source, flags
                     )
+
+                    bridgeDescriptor.initialize(
+                        null, (descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter, emptyList(),
+                        descriptor.valueParameters.map { it.copy(bridgeDescriptor, it.name, it.index) },
+                        descriptor.returnType, Modality.OPEN, descriptor.visibility
+                    )
+
                     val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptor)
                     irClass.declarations.add(irFunction)
                 }

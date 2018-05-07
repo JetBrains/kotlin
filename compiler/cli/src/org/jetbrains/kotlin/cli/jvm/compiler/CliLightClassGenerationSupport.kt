@@ -65,7 +65,7 @@ class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : 
         return LightClassDataHolderImpl(stub, diagnostics)
     }
 
-    private fun getContext(): LightClassConstructionContext = LightClassConstructionContext(traceHolder.bindingContext, traceHolder.module)
+    private fun getContext(): LightClassConstructionContext = LightClassConstructionContext(traceHolder.bindingContext, traceHolder.module, LightClassConstructionContext.Mode.EXACT)
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
         return traceHolder.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)

@@ -474,7 +474,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             // annotations can make class open via 'allopen' plugin
             if (!owner.isPossiblyAffectedByAllOpen() || !isFinalByPsi) return isFinalByPsi
 
-            return clsDelegate.hasModifierProperty(PsiModifier.FINAL)
+             return clsDelegate.hasModifierProperty(PsiModifier.FINAL)
         }
     }
 }

@@ -138,9 +138,9 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         kPropertyType: KotlinType,
         ktDelegate: KtPropertyDelegate,
         scopeOwner: IrSymbol
-    ): IrExpressionBody {
+    ): IrExpressionBody? {
         val ktDelegateExpression = ktDelegate.expression!!
-        val irDelegateInitializer = declarationGenerator.generateInitializerBody(scopeOwner, ktDelegateExpression)
+        val irDelegateInitializer = declarationGenerator.generateInitializerBody(scopeOwner, ktDelegateExpression) ?: return null
 
         val provideDelegateResolvedCall = get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, property)
                 ?: return irDelegateInitializer

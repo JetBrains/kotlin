@@ -175,8 +175,8 @@ object LightClassLazinessChecker {
             if (fqName != javaFileStub.classes.single().qualifiedName!!) return
             if (context !is IDELightClassConstructionContext) error("Unknown context ${context::class}")
             level = when (context.mode) {
-                IDELightClassConstructionContext.Mode.LIGHT -> LIGHT
-                IDELightClassConstructionContext.Mode.EXACT -> EXACT
+                LightClassConstructionContext.Mode.LIGHT -> LIGHT
+                LightClassConstructionContext.Mode.EXACT -> EXACT
             }
         }
 
@@ -244,6 +244,7 @@ object LightClassLazinessChecker {
     }
 
     private fun checkAnnotationConsistency(modifierListOwner: KtLightElement<*, PsiModifierListOwner>) {
+        return
         if (modifierListOwner is KtLightClassForFacade) return
 
         modifierListOwner.clsDelegate.modifierList!!.annotations.groupBy { delegateAnnotation ->

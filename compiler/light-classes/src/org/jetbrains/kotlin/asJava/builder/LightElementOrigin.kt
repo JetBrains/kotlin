@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.asJava.builder
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -39,9 +40,10 @@ interface LightElementOrigin {
 
 fun JvmDeclarationOrigin.toLightMemberOrigin(): LightElementOrigin {
     val originalElement = element
-    return when (originalElement) {
-        is KtAnnotationEntry -> DefaultLightElementOrigin(originalElement)
-        is KtDeclaration -> LightMemberOriginForDeclaration(originalElement, originKind)
+    val originalDescriptor = descriptor
+    return when {
+        originalElement is KtAnnotationEntry -> DefaultLightElementOrigin(originalElement)
+        originalElement is KtDeclaration -> LightMemberOriginForDeclaration(originalElement, originKind)
         else -> LightElementOrigin.None
     }
 }

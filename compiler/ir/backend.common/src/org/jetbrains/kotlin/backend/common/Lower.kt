@@ -26,6 +26,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+interface Lower {
+    fun lower(irFile: IrFile)
+}
+
 interface FileLoweringPass {
     fun lower(irFile: IrFile)
 }
