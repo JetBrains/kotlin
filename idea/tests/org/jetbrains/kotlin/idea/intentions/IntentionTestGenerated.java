@@ -3994,6 +3994,87 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertArrayParameterToVararg")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertArrayParameterToVararg extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertArrayParameterToVararg() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertArrayParameterToVararg"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("arrayGenericType.kt")
+        public void testArrayGenericType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/arrayGenericType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arrayInt.kt")
+        public void testArrayInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/arrayInt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arrayString.kt")
+        public void testArrayString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/arrayString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inConstructor.kt")
+        public void testInConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/inConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inLambda.kt")
+        public void testInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/inLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intArray.kt")
+        public void testIntArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/intArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("longArray.kt")
+        public void testLongArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/longArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("starProjection.kt")
+        public void testStarProjection() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/starProjection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("vararg.kt")
+        public void testVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/vararg.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withContravariant.kt")
+        public void testWithContravariant() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/withContravariant.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withCovariance.kt")
+        public void testWithCovariance() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/withCovariance.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withDefaultValue.kt")
+        public void testWithDefaultValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertArrayParameterToVararg/withDefaultValue.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertAssertToIf")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -7372,6 +7453,57 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("safeCast.kt")
         public void testSafeCast() throws Exception {
             runTest("idea/testData/intentions/convertUnsafeCastToUnsafeCastCall/safeCast.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/convertVarargParameterToArray")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertVarargParameterToArray extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertVarargParameterToArray() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertVarargParameterToArray"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("genericType.kt")
+        public void testGenericType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/genericType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inConstructor.kt")
+        public void testInConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/inConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("int.kt")
+        public void testInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/int.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("long.kt")
+        public void testLong() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/long.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noVararg.kt")
+        public void testNoVararg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/noVararg.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("string.kt")
+        public void testString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/string.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withDefaultValue.kt")
+        public void testWithDefaultValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertVarargParameterToArray/withDefaultValue.kt");
+            doTest(fileName);
         }
     }
 
