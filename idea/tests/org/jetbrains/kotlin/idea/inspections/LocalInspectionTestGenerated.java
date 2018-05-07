@@ -3755,6 +3755,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/intArray.kt");
         }
 
+        @TestMetadata("kclass.kt")
+        public void testKclass() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/kclass.kt");
+        }
+
         @TestMetadata("noAnnotation.kt")
         public void testNoAnnotation() throws Exception {
             runTest("idea/testData/inspectionsLocal/replaceArrayOfWithLiteral/noAnnotation.kt");
