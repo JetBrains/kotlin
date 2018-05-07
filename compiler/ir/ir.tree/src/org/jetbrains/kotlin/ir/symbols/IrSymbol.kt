@@ -54,6 +54,7 @@ interface IrTypeParameterSymbol : IrClassifierSymbol, IrBindableSymbol<TypeParam
 
 interface IrValueSymbol : IrSymbol {
     override val descriptor: ValueDescriptor
+    override val owner: IrValueDeclaration
 }
 
 interface IrValueParameterSymbol : IrValueSymbol, IrBindableSymbol<ParameterDescriptor, IrValueParameter>

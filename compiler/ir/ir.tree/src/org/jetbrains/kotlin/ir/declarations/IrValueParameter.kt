@@ -20,18 +20,15 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrValueParameter : IrSymbolDeclaration<IrValueParameterSymbol> {
+interface IrValueParameter : IrValueDeclaration, IrSymbolDeclaration<IrValueParameterSymbol> {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.VALUE_PARAMETER
 
     override val descriptor: ParameterDescriptor
 
-    val name: Name
     val index: Int
-    val type: KotlinType
     val varargElementType: KotlinType?
     val isCrossinline: Boolean
     val isNoinline: Boolean
