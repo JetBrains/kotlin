@@ -51,7 +51,7 @@ open class VersionGenerator: DefaultTask() {
                      |  companion object {
                      |     val CURRENT = KonanVersion($meta, $major, $minor, $maintenance, $build)
                      |  }
-                     |  private fun versionToString(showMeta: Boolean = true, showBuild: Boolean = true) = buildString {
+                     |  fun toString(showMeta: Boolean, showBuild: Boolean) = buildString {
                      |    append(major)
                      |    append('.')
                      |    append(minor)
@@ -72,7 +72,7 @@ open class VersionGenerator: DefaultTask() {
                      |  private val isRelease: Boolean
                      |    get() = meta == MetaVersion.RELEASE
                      |
-                     |  private val versionString by lazy { versionToString(!isRelease, !isRelease) }
+                     |  private val versionString by lazy { toString(!isRelease, !isRelease) }
                      |
                      |  override fun toString() = versionString
                      |

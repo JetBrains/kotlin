@@ -427,6 +427,15 @@ task performance {
     dependsOn ':performance:bench'
 }
 
+task teamcityKonanVersion {
+    doLast {
+        println("##teamcity[setParameter name='kotlin.native.version.base' value='$konanVersion']")
+        println("##teamcity[setParameter name='kotlin.native.version.full' value='$KonanVersion.CURRENT']")
+        println("##teamcity[setParameter name='kotlin.native.version.meta' value='${KonanVersion.CURRENT.meta.toString().toLowerCase()}']")
+        println("##teamcity[buildNumber '${KonanVersion.CURRENT.toString(true, true)}']")
+    }
+}
+
 task clean {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
     doLast {
