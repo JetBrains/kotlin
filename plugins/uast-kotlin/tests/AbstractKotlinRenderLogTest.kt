@@ -7,10 +7,10 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
-import org.jetbrains.uast.JvmDeclarationUElement
 import org.jetbrains.uast.UAnchorOwner
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UFile
+import org.jetbrains.uast.kotlin.JvmDeclarationUElementPlaceholder
 import org.jetbrains.uast.kotlin.KOTLIN_CACHED_UELEMENT_KEY
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.test.common.RenderLogTestBase
@@ -108,7 +108,7 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
                     node.uastAnchor?.let { visitElement(it) }
                 }
 
-                val jvmDeclaration = node as? JvmDeclarationUElement
+                val jvmDeclaration = node as? JvmDeclarationUElementPlaceholder
                                      ?: throw AssertionError("${node.javaClass} should implement 'JvmDeclarationUElement'")
 
                 jvmDeclaration.sourcePsi?.let {

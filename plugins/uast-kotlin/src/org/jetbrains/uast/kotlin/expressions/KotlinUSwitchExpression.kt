@@ -70,7 +70,7 @@ class KotlinUSwitchEntry(
                 is KtBlockExpression -> exprPsi.statements.map { KotlinConverter.convertOrEmpty(it, this) }
                 else -> listOf(KotlinConverter.convertOrEmpty(exprPsi, this))
             }
-            expressions = userExpressions + object : UBreakExpression, JvmDeclarationUElement {
+            expressions = userExpressions + object : UBreakExpression, JvmDeclarationUElementPlaceholder {
                 override val javaPsi: PsiElement? = null
                 override val sourcePsi: PsiElement? = null
                 override val psi: PsiElement?

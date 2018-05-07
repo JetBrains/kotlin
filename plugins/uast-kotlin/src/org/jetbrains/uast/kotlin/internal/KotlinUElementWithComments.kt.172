@@ -23,8 +23,9 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.uast.UComment
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.kotlin.JvmDeclarationUElementPlaceholder
 
-interface KotlinUElementWithComments : UElement {
+interface KotlinUElementWithComments : JvmDeclarationUElementPlaceholder {
 
     override val comments: List<UComment>
         get() {
