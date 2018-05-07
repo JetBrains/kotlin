@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrFunction : IrDeclaration, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent {
+interface IrFunction : IrDeclaration, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget {
     override val descriptor: FunctionDescriptor
     override val symbol: IrFunctionSymbol
 

@@ -59,11 +59,16 @@ interface IrValueSymbol : IrSymbol {
 interface IrValueParameterSymbol : IrValueSymbol, IrBindableSymbol<ParameterDescriptor, IrValueParameter>
 interface IrVariableSymbol : IrValueSymbol, IrBindableSymbol<VariableDescriptor, IrVariable>
 
-interface IrFunctionSymbol : IrSymbol {
+interface IrReturnTargetSymbol : IrSymbol {
     override val descriptor: FunctionDescriptor
+    override val owner: IrReturnTarget
+}
+
+interface IrFunctionSymbol : IrReturnTargetSymbol {
+    override val owner: IrFunction
 }
 
 interface IrConstructorSymbol : IrFunctionSymbol, IrBindableSymbol<ClassConstructorDescriptor, IrConstructor>
 interface IrSimpleFunctionSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrSimpleFunction>
 
-interface IrReturnableBlockSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock>
+interface IrReturnableBlockSymbol : IrReturnTargetSymbol, IrBindableSymbol<FunctionDescriptor, IrReturnableBlock>

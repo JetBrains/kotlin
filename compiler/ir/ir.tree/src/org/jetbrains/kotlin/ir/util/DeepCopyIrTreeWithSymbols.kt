@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -550,9 +553,16 @@ open class DeepCopyIrTreeWithSymbols(private val symbolRemapper: SymbolRemapper)
         IrReturnImpl(
             expression.startOffset, expression.endOffset,
             expression.type,
-            symbolRemapper.getReferencedFunction(expression.returnTargetSymbol),
+            symbolRemapper.getReferencedReturnTarget(expression.returnTargetSymbol),
             expression.value.transform()
         )
+
+    private fun SymbolRemapper.getReferencedReturnTarget(returnTarget: IrReturnTargetSymbol) =
+        when (returnTarget) {
+            is IrFunctionSymbol -> getReferencedFunction(returnTarget)
+            is IrReturnableBlockSymbol -> getReferencedReturnableBlock(returnTarget)
+            else -> throw AssertionError("Unexpected return target: ${returnTarget.javaClass} $returnTarget")
+        }
 
     override fun visitThrow(expression: IrThrow): IrThrow =
         IrThrowImpl(
