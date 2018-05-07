@@ -11073,6 +11073,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt");
         }
 
+        @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
+        public void testElvisWithInlineClassAndNullConstant() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt");
+        }
+
         @TestMetadata("emptyConstructorForInlineClass.kt")
         public void testEmptyConstructorForInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt");
