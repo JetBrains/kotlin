@@ -40,10 +40,6 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
         irFile.transformChildrenVoid(this)
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
-        return super.visitDeclaration(declaration)
-    }
-
     override fun visitProperty(declaration: IrProperty): IrStatement {
         if (JvmCodegenUtil.isConstOrHasJvmFieldAnnotation(declaration.descriptor)) {
             /*Safe or need copy?*/
@@ -53,26 +49,17 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
         return super.visitProperty(declaration)
     }
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
-        return super.visitMemberAccess(expression)
-    }
-
     override fun visitCall(expression: IrCall): IrExpression {
-        val descriptor = expression.descriptor
-        if (descriptor !is PropertyAccessorDescriptor) {
-            return super.visitCall(expression)
-        }
+        val descriptor = expression.descriptor as? PropertyAccessorDescriptor ?: return super.visitCall(expression)
 
         val property = descriptor.correspondingProperty
         if (JvmCodegenUtil.isConstOrHasJvmFieldAnnotation(property)) {
             return if (descriptor is PropertyGetterDescriptor) {
                 substituteGetter(descriptor, expression)
-            }
-            else {
+            } else {
                 substituteSetter(descriptor, expression)
             }
-        }
-        else if (property is SyntheticJavaPropertyDescriptor) {
+        } else if (property is SyntheticJavaPropertyDescriptor) {
             expression.dispatchReceiver = expression.extensionReceiver
             expression.extensionReceiver = null
         }
@@ -81,24 +68,24 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
 
     private fun substituteSetter(descriptor: PropertyAccessorDescriptor, expression: IrCall): IrSetFieldImpl {
         return IrSetFieldImpl(
-                expression.startOffset,
-                expression.endOffset,
-                descriptor.correspondingProperty,
-                expression.dispatchReceiver,
-                expression.getValueArgument(descriptor.valueParameters.lastIndex)!!,
-                expression.origin,
-                expression.superQualifier
+            expression.startOffset,
+            expression.endOffset,
+            descriptor.correspondingProperty,
+            expression.dispatchReceiver,
+            expression.getValueArgument(descriptor.valueParameters.lastIndex)!!,
+            expression.origin,
+            expression.superQualifier
         )
     }
 
     private fun substituteGetter(descriptor: PropertyGetterDescriptor, expression: IrCall): IrGetFieldImpl {
         return IrGetFieldImpl(
-                expression.startOffset,
-                expression.endOffset,
-                descriptor.correspondingProperty,
-                expression.dispatchReceiver,
-                expression.origin,
-                expression.superQualifier
+            expression.startOffset,
+            expression.endOffset,
+            descriptor.correspondingProperty,
+            expression.dispatchReceiver,
+            expression.origin,
+            expression.superQualifier
         )
     }
 }

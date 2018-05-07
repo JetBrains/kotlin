@@ -685,6 +685,9 @@ class ControlFlowInformationProvider private constructor(
                     report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
                 }
             }
+            is KtPropertyAccessor -> {
+                report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
+            }
         }
     }
 

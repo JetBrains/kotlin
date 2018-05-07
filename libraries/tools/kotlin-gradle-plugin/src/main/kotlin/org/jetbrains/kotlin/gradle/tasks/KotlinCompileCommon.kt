@@ -50,10 +50,11 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly)
 
+        args.moduleName = friendTask?.moduleName ?: this@KotlinCompileCommon.moduleName
+
         if (defaultsOnly) return
 
         val classpathList = classpath.files.toMutableList()
-        val friendTask = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractCompile
         friendTask?.let { classpathList.add(it.destinationDir) }
 
         with(args) {

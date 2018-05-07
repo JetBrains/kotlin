@@ -1,9 +1,15 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:JvmName("ConstantsKt")
+
 package kotlin.io
 
 /**
  * Returns the default buffer size when working with buffered streams.
-*/
+ */
 public const val DEFAULT_BUFFER_SIZE: Int = 8 * 1024
 
 /**

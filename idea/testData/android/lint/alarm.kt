@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintShortAlarmInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintShortAlarmInspection
 
 import android.app.AlarmManager
 

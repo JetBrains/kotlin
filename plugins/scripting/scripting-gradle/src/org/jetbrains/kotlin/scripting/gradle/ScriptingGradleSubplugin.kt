@@ -44,7 +44,8 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     ): List<SubpluginOption> {
         if (!ScriptingGradleSubplugin.isEnabled(project)) return emptyList()
 
-        val scriptingExtension = project.extensions.findByType(ScriptingExtension::class.java) ?: return emptyList()
+        val scriptingExtension = project.extensions.findByType(ScriptingExtension::class.java)
+                ?: project.extensions.create("kotlinScripting", ScriptingExtension::class.java)
 
         val options = mutableListOf<SubpluginOption>()
 

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -52,17 +53,21 @@ class InterfaceDelegationLowering(val state: GenerationState) : IrElementTransfo
 
 
     private fun generateInterfaceMethods(irClass: IrClass, descriptor: ClassDescriptor) {
-        val classDescriptor = if (descriptor is DefaultImplsClassDescriptor) descriptor.correspondingInterface else descriptor
+        val classDescriptor = (descriptor as? DefaultImplsClassDescriptor)?.correspondingInterface ?: descriptor
         for ((interfaceFun, value) in CodegenUtil.getNonPrivateTraitMethods(classDescriptor)) {
             //skip java 8 default methods
             if (!interfaceFun.isDefinitelyNotDefaultImplsMethod()) {
                 val inheritedFun =
-                        if (classDescriptor !== descriptor) {
-                            InterfaceLowering.createDefaultImplFunDescriptor(descriptor as DefaultImplsClassDescriptorImpl, interfaceFun, classDescriptor, state.typeMapper)
-                        }
-                        else {
-                            value
-                        }
+                    if (classDescriptor !== descriptor) {
+                        InterfaceLowering.createDefaultImplFunDescriptor(
+                            descriptor as DefaultImplsClassDescriptorImpl,
+                            interfaceFun,
+                            classDescriptor,
+                            state.typeMapper
+                        )
+                    } else {
+                        value
+                    }
                 generateDelegationToDefaultImpl(irClass, interfaceFun, inheritedFun)
             }
         }
@@ -71,22 +76,37 @@ class InterfaceDelegationLowering(val state: GenerationState) : IrElementTransfo
     private fun generateDelegationToDefaultImpl(irClass: IrClass, interfaceFun: FunctionDescriptor, inheritedFun: FunctionDescriptor) {
         val irBody = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
         val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, inheritedFun, irBody)
+        irFunction.createParameterDeclarations()
         irClass.declarations.add(irFunction)
 
         val interfaceDescriptor = interfaceFun.containingDeclaration as ClassDescriptor
         val defaultImpls = InterfaceLowering.createDefaultImplsClassDescriptor(interfaceDescriptor)
-        val defaultImplFun = InterfaceLowering.createDefaultImplFunDescriptor(defaultImpls, interfaceFun.original, interfaceDescriptor, state.typeMapper)
-        val returnType = inheritedFun.returnType!!
-        val irCallImpl = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, defaultImplFun, null, JvmLoweredStatementOrigin.DEFAULT_IMPLS_DELEGATION)
-        irBody.statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, inheritedFun, irCallImpl))
+        val defaultImplFun =
+            InterfaceLowering.createDefaultImplFunDescriptor(defaultImpls, interfaceFun.original, interfaceDescriptor, state.typeMapper)
 
-        var shift = 0
-        if (inheritedFun.dispatchReceiverParameter != null) {
-            irCallImpl.putValueArgument(0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, interfaceFun.dispatchReceiverParameter!!))
-            shift = 1
+        val irCallImpl =
+            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, defaultImplFun, null, JvmLoweredStatementOrigin.DEFAULT_IMPLS_DELEGATION)
+        irBody.statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.symbol, irCallImpl))
+
+        var offset = 0
+        irFunction.dispatchReceiverParameter?.let {
+            irCallImpl.putValueArgument(
+                offset,
+                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
+            )
+            offset++
         }
-        inheritedFun.valueParameters.mapIndexed { i, valueParameterDescriptor ->
-            irCallImpl.putValueArgument(i + shift, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueParameterDescriptor, null))
+
+        irFunction.extensionReceiverParameter?.let {
+            irCallImpl.putValueArgument(
+                offset,
+                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
+            )
+            offset++
+        }
+
+        irFunction.valueParameters.mapIndexed { i, parameter ->
+            irCallImpl.putValueArgument(i + offset, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol, null))
         }
     }
 

@@ -30,17 +30,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties;
-import org.jetbrains.kotlin.idea.KotlinIcons;
 import org.jetbrains.kotlin.idea.debugger.KotlinPositionManager;
 import org.jetbrains.kotlin.psi.KtClassInitializer;
 import org.jetbrains.kotlin.psi.KtFunction;
 
-import javax.swing.*;
 import java.util.List;
 
 public class KotlinLineBreakpointType extends JavaLineBreakpointType {
@@ -143,32 +140,5 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
             }
         }
         return null;
-    }
-
-    public class KotlinLambdaBreakpointVariant extends ExactJavaBreakpointVariant {
-        public KotlinLambdaBreakpointVariant(@NotNull XSourcePosition position, @Nullable KtFunction function, Integer lambdaOrdinal) {
-            super(position, function, lambdaOrdinal);
-        }
-
-        @Override
-        public Icon getIcon() {
-            return KotlinIcons.LAMBDA;
-        }
-    }
-
-    public class KotlinLineBreakpointVariant extends ExactJavaBreakpointVariant {
-        public KotlinLineBreakpointVariant(XSourcePosition position, PsiElement element) {
-            super(position, element, -1);
-        }
-
-        @Override
-        public String getText() {
-            return StringsKt.replace(super.getText(), "  ", "", true);
-        }
-
-        @Override
-        public Icon getIcon() {
-            return KotlinIcons.FUNCTION;
-        }
     }
 }

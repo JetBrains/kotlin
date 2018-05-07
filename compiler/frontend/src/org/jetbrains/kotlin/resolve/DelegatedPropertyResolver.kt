@@ -569,7 +569,7 @@ class DelegatedPropertyResolver(
             )
         }
 
-        val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, inferenceSession)
+        val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, inferenceSession, context = null)
         inferenceSession.resolveCandidates(resolutionCallbacks)
 
         val resolvedDelegateType = extractResolvedDelegateType(delegateExpression, trace)

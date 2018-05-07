@@ -56,7 +56,8 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {
-        return jsVar(declaration.name, declaration.initializer, context)
+        val varName = context.getNameForSymbol(declaration.symbol)
+        return jsVar(varName, declaration.initializer, context)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {

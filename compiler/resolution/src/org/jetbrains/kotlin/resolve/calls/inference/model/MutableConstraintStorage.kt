@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
-import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.LinkedHashMap
 
 
 class MutableVariableWithConstraints(
@@ -25,6 +26,7 @@ class MutableVariableWithConstraints(
             }
             return simplifiedConstraints!!
         }
+
     private val mutableConstraints = ArrayList(constraints)
 
     private var simplifiedConstraints: List<Constraint>? = null
@@ -94,4 +96,5 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override val errors: MutableList<KotlinCallDiagnostic> = ArrayList()
     override val hasContradiction: Boolean get() = errors.any { !it.candidateApplicability.isSuccess }
     override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType> = LinkedHashMap()
+    override val postponedTypeVariables: ArrayList<NewTypeVariable> = ArrayList()
 }

@@ -56,6 +56,8 @@ open class KotlinScriptDefinition(val template: KClass<out Any>) : UserDataHolde
         listOf(ScriptExpectedLocation.SourcesOnly, ScriptExpectedLocation.TestsOnly)
 
     open val implicitReceivers: List<KType> get() = emptyList()
+
+    open val environmentVariables: List<Pair<String, KType>> get() = emptyList()
 }
 
 object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)

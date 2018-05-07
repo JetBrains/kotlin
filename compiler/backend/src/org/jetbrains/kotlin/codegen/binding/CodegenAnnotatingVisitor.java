@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.binding;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -171,6 +173,29 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     @Override
     public void visitKtElement(@NotNull KtElement element) {
         super.visitKtElement(element);
+
+        if (!classBuilderMode.generateBodies) {
+            if (element instanceof KtFile) {
+                KotlinFileStub stub = ((KtFile) element).getStub();
+                if (stub != null) {
+                    for (StubElement stubElement : stub.getChildrenStubs()) {
+                        stubElement.getPsi().accept(this);
+                    }
+                    return;
+                }
+            }
+
+            if (element instanceof KtElementImplStub<?> && ((KtElementImplStub) element).getStub() != null) {
+                StubElement<?> stub = ((KtElementImplStub<?>) element).getStub();
+                if (stub != null) {
+                    for (StubElement stubElement : stub.getChildrenStubs()) {
+                        stubElement.getPsi().accept(this);
+                    }
+                    return;
+                }
+            }
+        }
+
         element.acceptChildren(this);
     }
 
@@ -193,7 +218,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     @Override
     public void visitKtFile(@NotNull KtFile file) {
         nameStack.push(AsmUtil.internalNameByFqNameWithoutInnerClasses(file.getPackageFqName()));
-        file.acceptChildren(this);
+        visitKtElement(file);
         nameStack.pop();
     }
 

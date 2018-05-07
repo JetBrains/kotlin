@@ -1,4 +1,3 @@
-// -- Module: <api> --
 package
 
 package api {
@@ -11,19 +10,12 @@ package api {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    @kotlin.Experimental(changesMayBreak = {Impact.COMPILATION}, level = Level.ERROR) public final annotation class E : kotlin.Annotation {
+    @kotlin.Experimental public final annotation class E : kotlin.Annotation {
         public constructor E()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-}
-
-
-// -- Module: <usage> --
-package
-
-package api {
 }
 
 package usage {

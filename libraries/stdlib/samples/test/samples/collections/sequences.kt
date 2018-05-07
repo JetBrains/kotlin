@@ -40,8 +40,8 @@ class Sequences {
             class LinkedValue<T>(val value: T, val next: LinkedValue<T>? = null)
 
             fun <T> LinkedValue<T>?.asSequence(): Sequence<LinkedValue<T>> = generateSequence(
-                    seedFunction = { this },
-                    nextFunction = { it.next }
+                seedFunction = { this },
+                nextFunction = { it.next }
             )
 
             fun <T> LinkedValue<T>?.valueSequence(): Sequence<T> = asSequence().map { it.value }
@@ -116,7 +116,7 @@ class Sequences {
                 var terms = Pair(0, 1)
 
                 // this sequence is infinite
-                while(true) {
+                while (true) {
                     yield(terms.first)
                     terms = Pair(terms.second, terms.first + terms.second)
                 }

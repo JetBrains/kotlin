@@ -5,19 +5,33 @@
 
 package kotlin.script.experimental.basic
 
+import kotlin.reflect.full.createInstance
+import kotlin.script.experimental.annotations.KotlinScriptDefaultCompilationConfiguration
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.util.TypedKey
 
 
-class PassThroughCompilationConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
+private const val ILLEGAL_CONFIG_ANN_ARG =
+    "Illegal argument to KotlinScriptDefaultCompilationConfiguration annotation: expecting List-derived object or default-constructed class of configuration parameters"
 
-    override val defaultConfiguration = ScriptCompileConfiguration(environment)
+open class AnnotationsBasedCompilationConfigurator(val environment: ScriptingEnvironment) : ScriptCompilationConfigurator {
 
-    override suspend fun refineConfiguration(
-        script: ScriptSource,
-        configuration: ScriptCompileConfiguration,
-        processedScriptData: ProcessedScriptData
-    ): ResultWithDiagnostics<ScriptCompileConfiguration> =
-        configuration.asSuccess()
+    override val defaultConfiguration = run {
+        val base = environment[ScriptingEnvironmentProperties.baseClass]
+        val cfg = base.annotations.filterIsInstance(KotlinScriptDefaultCompilationConfiguration::class.java).flatMap { ann ->
+            val params = try {
+                ann.compilationConfiguration.objectInstance ?: ann.compilationConfiguration.createInstance()
+            } catch (e: Throwable) {
+                throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
+            }
+            params.forEach { param ->
+                if (param !is Pair<*, *> || param.first !is TypedKey<*>)
+                    throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: invalid parameter $param")
+            }
+            params as List<Pair<TypedKey<*>, Any?>>
+        }
+        ScriptCompileConfiguration(environment, cfg)
+    }
 }
 
 class DummyEvaluator<ScriptBase : Any>(val environment: ScriptingEnvironment) : ScriptEvaluator<ScriptBase> {
@@ -26,11 +40,5 @@ class DummyEvaluator<ScriptBase : Any>(val environment: ScriptingEnvironment) : 
         scriptEvaluationEnvironment: ScriptEvaluationEnvironment
     ): ResultWithDiagnostics<EvaluationResult> =
         ResultWithDiagnostics.Failure("not implemented".asErrorDiagnostics())
-}
-
-// TODO: from org.jetbrains.kotlin.utils.addToStdlib, take it from the stdlib when available
-private inline fun <reified T : Any> Iterable<*>.firstIsInstanceOrNull(): T? {
-    for (element in this) if (element is T) return element
-    return null
 }
 

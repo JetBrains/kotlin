@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.utils
 
 
@@ -82,7 +87,7 @@ class LazyJVMTest {
                      List(threads) { lazy(lock, initializer) }
                  },
                  access = { lazies, runnerIndex -> lazies[runnerIndex].value },
-                 validate = { result -> result.all { (id, initialized) -> initialized == (id != 1)} })
+                 validate = { result -> result.all { (id, initialized) -> initialized == (id != 1) } })
     }
 
     @Test fun publishOnceLazy() {
@@ -90,7 +95,9 @@ class LazyJVMTest {
         val initialized = AtomicBoolean(false)
         val threads = 3
         val values = Random().let { r -> List(threads) { 50 + r.nextInt(50) } }
+
         data class Run(val value: Int, val initialized: Boolean)
+
         val runs = ConcurrentLinkedQueue<Run>()
 
         val initializer = {
@@ -119,11 +126,11 @@ class LazyJVMTest {
     @Test fun publishOnceLazyRace() {
         racyTest(initialize = { lazy(LazyThreadSafetyMode.PUBLICATION) { Thread.currentThread().id } },
                  access = { lazy, _ -> lazy.value },
-                 validate = { result -> result.all { v -> v == result[0] } } )
+                 validate = { result -> result.all { v -> v == result[0] } })
     }
 
     @Test fun lazyInitializationForcedOnSerialization() {
-        for(mode in listOf(LazyThreadSafetyMode.SYNCHRONIZED, LazyThreadSafetyMode.PUBLICATION, LazyThreadSafetyMode.NONE)) {
+        for (mode in listOf(LazyThreadSafetyMode.SYNCHRONIZED, LazyThreadSafetyMode.PUBLICATION, LazyThreadSafetyMode.NONE)) {
             val lazy = lazy(mode) { "initialized" }
             assertFalse(lazy.isInitialized())
             val lazy2 = serializeAndDeserialize(lazy)
@@ -134,10 +141,11 @@ class LazyJVMTest {
     }
 
     private fun <TState : Any, TResult> racyTest(
-            threads: Int = 3, runs: Int = 5000,
-            initialize: () -> TState,
-            access: (TState, runnerIndex: Int) -> TResult,
-            validate: (List<TResult>) -> Boolean) {
+        threads: Int = 3, runs: Int = 5000,
+        initialize: () -> TState,
+        access: (TState, runnerIndex: Int) -> TResult,
+        validate: (List<TResult>) -> Boolean
+    ) {
 
         val runResult = java.util.Collections.synchronizedList(mutableListOf<TResult>())
         val invalidResults = mutableListOf<Pair<Int, List<TResult>>>()
@@ -154,13 +162,15 @@ class LazyJVMTest {
             runId += 1
         }
 
-        val runners = List(threads) { index -> thread {
-            barrier.await()
-            repeat(runs) {
-                runResult += access(state, index)
+        val runners = List(threads) { index ->
+            thread {
                 barrier.await()
+                repeat(runs) {
+                    runResult += access(state, index)
+                    barrier.await()
+                }
             }
-        }}
+        }
 
         runners.forEach { it.join() }
 

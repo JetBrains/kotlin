@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
@@ -103,7 +102,7 @@ sealed class EnableUnsupportedFeatureFix(
             val apiVersionOnly = sinceVersion <= languageFeatureSettings.languageVersion &&
                                  feature.sinceApiVersion > languageFeatureSettings.apiVersion
 
-            if (!sinceVersion.isStable && !KotlinInternalMode.enabled) {
+            if (!sinceVersion.isStable && !ApplicationManager.getApplication().isInternal) {
                 return null
             }
 

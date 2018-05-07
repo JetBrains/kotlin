@@ -15,7 +15,7 @@ import kotlin.*
  * @sample samples.collections.Sequences.Building.sequenceFromEnumeration
  */
 @kotlin.internal.InlineOnly
-public inline fun<T> java.util.Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
+public inline fun <T> java.util.Enumeration<T>.asSequence(): Sequence<T> = this.iterator().asSequence()
 
 
 internal actual class ConstrainedOnceSequence<T> actual constructor(sequence: Sequence<T>) : Sequence<T> {

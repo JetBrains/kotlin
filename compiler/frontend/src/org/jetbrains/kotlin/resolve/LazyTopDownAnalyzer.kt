@@ -102,7 +102,7 @@ class LazyTopDownAnalyzer(
                 }
 
                 override fun visitPackageDirective(directive: KtPackageDirective) {
-                    directive.packageNames.forEach { identifierChecker.checkIdentifier(it.getIdentifier(), trace) }
+                    directive.packageNames.forEach { identifierChecker.checkIdentifier(it, trace) }
                     qualifiedExpressionResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
                 }
 

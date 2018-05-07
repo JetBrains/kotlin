@@ -30,7 +30,12 @@ interface ThisClassReceiver : ReceiverValue {
 /**
  * Same but implicit only
  */
-open class ImplicitClassReceiver(final override val classDescriptor: ClassDescriptor) : ThisClassReceiver, ImplicitReceiver {
+open class ImplicitClassReceiver(
+    final override val classDescriptor: ClassDescriptor,
+    original: ImplicitClassReceiver? = null
+) : ThisClassReceiver, ImplicitReceiver {
+
+    private val original = original ?: this
 
     override fun getType() = classDescriptor.defaultType
 
@@ -44,4 +49,6 @@ open class ImplicitClassReceiver(final override val classDescriptor: ClassDescri
 
     override fun replaceType(newType: KotlinType) =
             throw UnsupportedOperationException("Replace type should not be called for this receiver")
+
+    override fun getOriginal() = original
 }

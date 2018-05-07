@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1120
 interface I {
     fun foo() = "OK"
@@ -6,6 +5,7 @@ interface I {
 
 interface J : I
 
-class A : J
+open class A : J
+class B : A()
 
-fun box() = A().foo()
+fun box() = B().foo()

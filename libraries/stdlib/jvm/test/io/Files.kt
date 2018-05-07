@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.io
 
 import java.io.*
@@ -516,8 +521,7 @@ class FilesTest {
             }
 
             var conflicts = 0
-            src.copyRecursively(dst) {
-                _: File, e: IOException ->
+            src.copyRecursively(dst) { _: File, e: IOException ->
                 if (e is FileAlreadyExistsException) {
                     conflicts++
                     OnErrorAction.SKIP
@@ -531,8 +535,7 @@ class FilesTest {
                 try {
                     dst.deleteRecursively()
                     var caught = false
-                    assertTrue(src.copyRecursively(dst) {
-                        _: File, e: IOException ->
+                    assertTrue(src.copyRecursively(dst) { _: File, e: IOException ->
                         if (e is AccessDeniedException) {
                             caught = true
                             OnErrorAction.SKIP

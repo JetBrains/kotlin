@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.uast.JvmDeclarationUElement
-import org.jetbrains.uast.UDeclaration
+import org.jetbrains.uast.UAnchorOwner
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UFile
 import org.jetbrains.uast.kotlin.KOTLIN_CACHED_UELEMENT_KEY
@@ -90,7 +90,7 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
                     node.containingFile.assertedCast<KtFile> { "containingFile should be KtFile for ${node.asLogString()}" }
                 }
 
-                val anchorPsi = (node as? UDeclaration)?.uastAnchor?.psi
+                val anchorPsi = (node as? UAnchorOwner)?.uastAnchor?.sourcePsi
                 if (anchorPsi != null) {
                     anchorPsi.containingFile.assertedCast<KtFile> { "uastAnchor.containingFile should be KtFile for ${node.asLogString()}" }
                 }
@@ -104,14 +104,16 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
         accept(object : UastVisitor {
             override fun visitElement(node: UElement): Boolean {
 
+                if (node is UAnchorOwner) {
+                    node.uastAnchor?.let { visitElement(it) }
+                }
+
                 val jvmDeclaration = node as? JvmDeclarationUElement
                                      ?: throw AssertionError("${node.javaClass} should implement 'JvmDeclarationUElement'")
 
                 jvmDeclaration.sourcePsi?.let {
                     assertTrue("sourcePsi should be physical but ${it.javaClass} found for [${it.text}] " +
-                                       "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}",
-                               it is KtElement || it is LeafPsiElement
-                    )
+                               "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}",it is LeafPsiElement || it is KtElement|| it is LeafPsiElement)
                 }
                 jvmDeclaration.javaPsi?.let {
                     assertTrue("javaPsi should be light but ${it.javaClass} found for [${it.text}] " +

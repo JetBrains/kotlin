@@ -11,15 +11,19 @@ import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
 object ScriptingConfigurationKeys {
+    val DISABLE_SCRIPTING_PLUGIN_OPTION: CompilerConfigurationKey<Boolean> =
+        CompilerConfigurationKey.create("Disable scripting plugin")
+
     val SCRIPT_DEFINITIONS: CompilerConfigurationKey<List<String>> =
         CompilerConfigurationKey.create("Script definition classes")
 
     val SCRIPT_DEFINITIONS_CLASSPATH: CompilerConfigurationKey<List<File>> =
         CompilerConfigurationKey.create("Additional classpath for the script definitions")
 
-    val DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION: CompilerConfigurationKey<Boolean> =
+    val DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("Do not extract script definitions from the compilation classpath")
 
     val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION: CompilerConfigurationKey<MutableMap<String, Any?>> =
@@ -28,6 +32,10 @@ object ScriptingConfigurationKeys {
 
 class ScriptingCommandLineProcessor : CommandLineProcessor {
     companion object {
+        val DISABLE_SCRIPTING_PLUGIN_OPTION = CliOption(
+            "disable", "true/false", "Disable scripting plugin",
+            required = false, allowMultipleOccurrences = false
+        )
         val SCRIPT_DEFINITIONS_OPTION = CliOption(
             "script-definitions", "<fully qualified class name[,]>", "Script definition classes",
             required = false, allowMultipleOccurrences = true
@@ -35,6 +43,10 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
         val SCRIPT_DEFINITIONS_CLASSPATH_OPTION = CliOption(
             "script-definitions-classpath", "<classpath entry[:]>", "Additional classpath for the script definitions",
             required = false, allowMultipleOccurrences = true
+        )
+        val DISABLE_STANDARD_SCRIPT_DEFINITION_OPTION = CliOption(
+            "disable-standard-script", "true/false", "Disable standard kotlin script support",
+            required = false, allowMultipleOccurrences = false
         )
         val DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION = CliOption(
             "disable-script-definitions-from-classpath", "true/false", "Do not extract script definitions from the compilation classpath",
@@ -56,14 +68,23 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
     override val pluginId = PLUGIN_ID
     override val pluginOptions =
         listOf(
+            DISABLE_SCRIPTING_PLUGIN_OPTION,
             SCRIPT_DEFINITIONS_OPTION,
             SCRIPT_DEFINITIONS_CLASSPATH_OPTION,
+            DISABLE_STANDARD_SCRIPT_DEFINITION_OPTION,
             DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION,
             LEGACY_SCRIPT_TEMPLATES_OPTION,
             LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION
         )
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
+        DISABLE_SCRIPTING_PLUGIN_OPTION -> {
+            configuration.put(
+                ScriptingConfigurationKeys.DISABLE_SCRIPTING_PLUGIN_OPTION,
+                value.takeUnless { it.isBlank() }?.toBoolean() ?: true
+            )
+        }
+
         SCRIPT_DEFINITIONS_OPTION, LEGACY_SCRIPT_TEMPLATES_OPTION -> {
             val currentDefs = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS).toMutableList()
             currentDefs.addAll(value.split(','))
@@ -74,9 +95,15 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             currentCP.addAll(value.split(File.pathSeparatorChar).map(::File))
             configuration.put(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSPATH, currentCP)
         }
+        DISABLE_STANDARD_SCRIPT_DEFINITION_OPTION -> {
+            configuration.put(
+                JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION,
+                value.takeUnless { it.isBlank() }?.toBoolean() ?: true
+            )
+        }
         DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION -> {
             configuration.put(
-                ScriptingConfigurationKeys.DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION,
+                ScriptingConfigurationKeys.DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION,
                 value.takeUnless { it.isBlank() }?.toBoolean() ?: true
             )
         }

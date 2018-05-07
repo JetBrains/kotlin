@@ -7,6 +7,7 @@ import org.gradle.api.file.CopySourceSpec
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.kotlin.dsl.creating
 import org.gradle.kotlin.dsl.extra
@@ -52,8 +53,8 @@ var Project.javaHome: String?
     get() = extra.takeIf { it.has("javaHome") }?.get("javaHome") as? String
     set(v) { extra["javaHome"] = v }
 
-fun Project.generator(fqName: String) = smartJavaExec {
-    classpath = the<JavaPluginConvention>().sourceSets["test"].runtimeClasspath
+fun Project.generator(fqName: String, sourceSet: SourceSet? = null) = smartJavaExec {
+    classpath = (sourceSet ?: the<JavaPluginConvention>().sourceSets["test"]).runtimeClasspath
     main = fqName
     workingDir = rootDir
 }

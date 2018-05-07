@@ -55,6 +55,11 @@ class KotlinScriptDefinitionAdapterFromNewAPI(val scriptDefinition: ScriptDefini
         scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.scriptImplicitReceivers)
                 ?: emptyList()
     }
+
+    override val environmentVariables: List<Pair<String, KType>> by lazy {
+        scriptDefinition.compilationConfigurator.defaultConfiguration.getOrNull(ScriptCompileConfigurationProperties.contextVariables)?.map { (k, v) -> k to v }
+                ?: emptyList()
+    }
 }
 
 

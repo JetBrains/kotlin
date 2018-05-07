@@ -5,19 +5,24 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.js.backend.ast.*
 
-typealias IrCallTransformer = (IrCall, List<JsExpression>) -> JsExpression
+typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
 
-class JsIntrinsicTransformers(intrinsics: JsIntrinsics) {
+class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
     private val transformers: Map<IrSymbol, IrCallTransformer>
 
     init {
+        val intrinsics = backendContext.intrinsics
+
         transformers = mutableMapOf()
 
         transformers.apply {
@@ -58,11 +63,28 @@ class JsIntrinsicTransformers(intrinsics: JsIntrinsics) {
 
             binOp(intrinsics.jsInstanceOf, JsBinaryOperator.INSTANCEOF)
 
-            add(intrinsics.jsObjectCreate) { call, _ ->
+            add(intrinsics.jsObjectCreate) { call, context ->
                 val classToCreate = call.getTypeArgument(0)!!
-                val prototype = prototypeOf(classToCreate.constructor.declarationDescriptor!!.name.toJsName().makeRef())
+                val className = context.getNameForSymbol(IrClassSymbolImpl(classToCreate.constructor.declarationDescriptor as ClassDescriptor))
+                val prototype = prototypeOf(className.makeRef())
                 JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototype)
+            }
 
+            add(backendContext.sharedVariablesManager.closureBoxConstructorTypeSymbol) { call, context ->
+                val args = translateCallArguments(call, context)
+                val initializer = args[0]
+                val propertyInit = JsPropertyInitializer(JsNameRef("v"), initializer)
+                JsObjectLiteral(listOf(propertyInit))
+            }
+
+            addIfNotNull(intrinsics.jsCode) { call, context ->
+                val jsCode = translateJsCode(call, context.currentScope)
+
+                when (jsCode) {
+                    is JsExpression -> jsCode
+                // TODO don't generate function for this case
+                    else -> JsInvocation(JsFunction(context.currentScope, jsCode as? JsBlock ?: JsBlock(jsCode as JsStatement), ""))
+                }
             }
         }
     }
@@ -70,18 +92,34 @@ class JsIntrinsicTransformers(intrinsics: JsIntrinsics) {
     operator fun get(symbol: IrSymbol): IrCallTransformer? = transformers[symbol]
 }
 
+private fun MutableMap<IrSymbol, IrCallTransformer>.add(functionSymbol: IrSymbol, t: IrCallTransformer) {
+    put(functionSymbol, t)
+}
+
 private fun MutableMap<IrSymbol, IrCallTransformer>.add(function: IrFunction, t: IrCallTransformer) {
     put(function.symbol, t)
 }
 
+private fun MutableMap<IrSymbol, IrCallTransformer>.addIfNotNull(symbol: IrSymbol?, t: IrCallTransformer) {
+    if (symbol == null) return
+    put(symbol, t)
+}
+
 private fun MutableMap<IrSymbol, IrCallTransformer>.binOp(function: IrFunction, op: JsBinaryOperator) {
-    put(function.symbol, { _, args -> JsBinaryOperation(op, args[0], args[1]) })
+    withTranslatedArgs(function) { JsBinaryOperation(op, it[0], it[1]) }
 }
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.prefixOp(function: IrFunction, op: JsUnaryOperator) {
-    put(function.symbol, { _, args -> JsPrefixOperation(op, args[0]) })
+    withTranslatedArgs(function) { JsPrefixOperation(op, it[0]) }
 }
 
 private fun MutableMap<IrSymbol, IrCallTransformer>.postfixOp(function: IrFunction, op: JsUnaryOperator) {
-    put(function.symbol, { _, args -> JsPostfixOperation(op, args[0]) })
+    withTranslatedArgs(function) { JsPostfixOperation(op, it[0]) }
+}
+
+private inline fun MutableMap<IrSymbol, IrCallTransformer>.withTranslatedArgs(
+    function: IrFunction,
+    crossinline t: (List<JsExpression>) -> JsExpression
+) {
+    put(function.symbol) { call, context -> t(translateCallArguments(call, context)) }
 }

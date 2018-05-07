@@ -1081,6 +1081,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTestWithCoroutinesPackageReplacement(fileName, "kotlin.coroutines");
         }
 
+        @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DestructuringInLambda extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDestructuringInLambda() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("inlineSeparateFiles.kt")
+            public void testInlineSeparateFiles() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/destructuringInLambda/inlineSeparateFiles.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -2342,6 +2360,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("alreadyCheckedForNull.kt")
         public void testAlreadyCheckedForNull() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/alreadyCheckedForNull.kt");
+        }
+
+        @TestMetadata("deterministicNotNullChecks.kt")
+        public void testDeterministicNotNullChecks() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/deterministicNotNullChecks.kt");
         }
 
         @TestMetadata("expressionValueIsNotNull.kt")

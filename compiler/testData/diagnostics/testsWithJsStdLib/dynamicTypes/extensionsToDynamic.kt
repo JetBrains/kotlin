@@ -39,7 +39,7 @@ val <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.valOnDynamic: Int get() = 1
 
 var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.varOnDynamic: Int
     get() = 1
-    set(v) {}
+    set(<!UNUSED_PARAMETER!>v<!>) {}
 
 
 class ForMemberExtensions {
@@ -54,5 +54,5 @@ class ForMemberExtensions {
     val <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.memberExtensionVal: Int get() = 1
     var <!DYNAMIC_RECEIVER_NOT_ALLOWED!>dynamic<!>.memberExtensionVar: Int
         get() = 1
-        set(v) {}
+        set(<!UNUSED_PARAMETER!>v<!>) {}
 }

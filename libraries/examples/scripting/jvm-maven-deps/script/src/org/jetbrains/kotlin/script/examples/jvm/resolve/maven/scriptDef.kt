@@ -15,12 +15,14 @@ import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.annotations.KotlinScriptCompilationConfigurator
 import kotlin.script.experimental.annotations.KotlinScriptEvaluator
+import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.runners.BasicJvmScriptEvaluator
 import kotlin.script.experimental.misc.*
 
 @KotlinScript
+@KotlinScriptFileExtension("scriptwithdeps.kts")
 @KotlinScriptCompilationConfigurator(MyConfigurator::class)
 @KotlinScriptEvaluator(BasicJvmScriptEvaluator::class)
 abstract class MyScriptWithMavenDeps {

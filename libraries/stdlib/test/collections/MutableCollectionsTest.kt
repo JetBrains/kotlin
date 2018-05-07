@@ -1,18 +1,23 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.collections
 
 import kotlin.test.*
 
 
 class MutableCollectionTest {
-    fun <T, C: MutableCollection<T>> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean, toMutableCollection: (List<T>) -> C)
-            = fun(operation: (C.() -> Boolean)) {
-                val list = toMutableCollection(before)
-                assertEquals(expectedModified, list.operation())
-                assertEquals(toMutableCollection(after), list)
-            }
+    fun <T, C : MutableCollection<T>> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean, toMutableCollection: (List<T>) -> C) =
+        fun(operation: (C.() -> Boolean)) {
+            val list = toMutableCollection(before)
+            assertEquals(expectedModified, list.operation())
+            assertEquals(toMutableCollection(after), list)
+        }
 
-    fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean)
-            = testOperation(before, after, expectedModified, { it.toMutableList() })
+    fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean) =
+        testOperation(before, after, expectedModified, { it.toMutableList() })
 
 
     @Test fun addAll() {

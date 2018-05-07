@@ -1717,11 +1717,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeToUseSpreadOperator/mapOf.kt");
         }
 
-        @TestMetadata("mapOfBug.kt")
-        public void testMapOfBug() throws Exception {
-            runTest("idea/testData/quickfix/changeToUseSpreadOperator/mapOfBug.kt");
-        }
-
         @TestMetadata("multipleParams.kt")
         public void testMultipleParams() throws Exception {
             runTest("idea/testData/quickfix/changeToUseSpreadOperator/multipleParams.kt");
@@ -1740,6 +1735,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("normal.kt")
         public void testNormal() throws Exception {
             runTest("idea/testData/quickfix/changeToUseSpreadOperator/normal.kt");
+        }
+
+        @TestMetadata("stdlibMapOf.kt")
+        public void testStdlibMapOf() throws Exception {
+            runTest("idea/testData/quickfix/changeToUseSpreadOperator/stdlibMapOf.kt");
         }
 
         @TestMetadata("vararg.kt")
@@ -11666,6 +11666,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("unusedVariableWithInitializer.kt")
         public void testUnusedVariableWithInitializer() throws Exception {
             runTest("idea/testData/quickfix/variables/unusedVariableWithInitializer.kt");
+        }
+
+        @TestMetadata("unusedVariableWithInitializerAndComment.kt")
+        public void testUnusedVariableWithInitializerAndComment() throws Exception {
+            runTest("idea/testData/quickfix/variables/unusedVariableWithInitializerAndComment.kt");
         }
 
         @TestMetadata("unusedVariableWithNullInitializer.kt")

@@ -1,11 +1,10 @@
-// !API_VERSION: 1.3
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// MODULE: api
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.WARNING)
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS,
         AnnotationTarget.VALUE_PARAMETER)
 annotation class ExperimentalAPI
@@ -15,7 +14,6 @@ annotation class ExperimentalAPI
         AnnotationTarget.VALUE_PARAMETER)
 annotation class EAnno
 
-// MODULE: usage1(api)
 // FILE: usage-propagate.kt
 
 package usage1
@@ -61,7 +59,6 @@ val inProperty = @EAnno fun() {}
 val inPropertyAccessor: () -> Unit
     get() = @EAnno fun() {}
 
-// MODULE: usage2(api)
 // FILE: usage-use.kt
 
 package usage2
@@ -69,28 +66,28 @@ package usage2
 import api.*
 
 @UseExperimental(ExperimentalAPI::class)
-@<!EXPERIMENTAL_API_USAGE!>EAnno<!> fun function() {}
+@EAnno fun function() {}
 
 @UseExperimental(ExperimentalAPI::class)
-fun parameter(@<!EXPERIMENTAL_API_USAGE!>EAnno<!> p: String) {}
+fun parameter(@EAnno p: String) {}
 
 @UseExperimental(ExperimentalAPI::class)
-fun parameterType(p: @<!EXPERIMENTAL_API_USAGE!>EAnno<!> String) {}
+fun parameterType(p: @EAnno String) {}
 
 @UseExperimental(ExperimentalAPI::class)
-fun returnType(): @<!EXPERIMENTAL_API_USAGE!>EAnno<!> Unit {}
+fun returnType(): @EAnno Unit {}
 
 @UseExperimental(ExperimentalAPI::class)
-@<!EXPERIMENTAL_API_USAGE!>EAnno<!> val property = ""
+@EAnno val property = ""
 
 <!WRONG_ANNOTATION_TARGET!>@UseExperimental(ExperimentalAPI::class)<!>
-@<!EXPERIMENTAL_API_USAGE!>EAnno<!> typealias Typealias = Unit
+@EAnno typealias Typealias = Unit
 
 @UseExperimental(ExperimentalAPI::class)
-@<!EXPERIMENTAL_API_USAGE!>EAnno<!> class Klass
+@EAnno class Klass
 
 @UseExperimental(ExperimentalAPI::class)
-annotation class AnnotationArgument(val p: <!EXPERIMENTAL_API_USAGE!>EAnno<!>)
+annotation class AnnotationArgument(val p: EAnno)
 
 fun insideBody() {
     @UseExperimental(ExperimentalAPI::class) @EAnno fun local() {}
@@ -105,7 +102,6 @@ val inPropertyAccessor: () -> Unit
     @UseExperimental(ExperimentalAPI::class)
     get() = @EAnno fun() {}
 
-// MODULE: usage3(api)
 // FILE: usage-none.kt
 
 package usage3

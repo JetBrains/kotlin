@@ -1,4 +1,10 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:JvmName("TextStreamsKt")
+
 package kotlin.io
 
 import java.io.*
@@ -10,13 +16,13 @@ import kotlin.internal.*
 
 /** Returns a buffered reader wrapping this Reader, or this Reader itself if it is already buffered. */
 @kotlin.internal.InlineOnly
-public inline fun Reader.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader
-        = if (this is BufferedReader) this else BufferedReader(this, bufferSize)
+public inline fun Reader.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader =
+    if (this is BufferedReader) this else BufferedReader(this, bufferSize)
 
 /** Returns a buffered reader wrapping this Writer, or this Writer itself if it is already buffered. */
 @kotlin.internal.InlineOnly
-public inline fun Writer.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter
-        = if (this is BufferedWriter) this else BufferedWriter(this, bufferSize)
+public inline fun Writer.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter =
+    if (this is BufferedWriter) this else BufferedWriter(this, bufferSize)
 
 /**
  * Iterates through each line of this reader, calls [action] for each line read
@@ -44,7 +50,7 @@ public fun Reader.readLines(): List<String> {
  */
 @RequireKotlin("1.2", versionKind = RequireKotlinVersionKind.COMPILER_VERSION, message = "Requires newer compiler version to be inlined correctly.")
 public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
-        buffered().use { block(it.lineSequence()) }
+    buffered().use { block(it.lineSequence()) }
 
 /** Creates a new reader for the string. */
 @kotlin.internal.InlineOnly

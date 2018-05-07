@@ -267,7 +267,7 @@ private inline fun <T> screenFloatValue(str: String, parse: (String) -> T): T? {
             parse(str)
         else
             null
-    } catch(e: NumberFormatException) {  // overflow
+    } catch (e: NumberFormatException) {  // overflow
         null
     }
 }

@@ -373,18 +373,16 @@ private enum class SourceType {
 
 @State(
     name = "AutoImportedSourceRoots",
-    storages = [(Storage(id = "other", file = StoragePathMacros.MODULE_FILE))]
+    storages = [(Storage(file = StoragePathMacros.MODULE_FILE))]
 )
 class KotlinImporterComponent : PersistentStateComponent<KotlinImporterComponent.State> {
     class State(var directories: List<String> = ArrayList())
 
     val addedSources: MutableSet<String> = Collections.synchronizedSet(HashSet<String>())
 
-    override fun loadState(state: State?) {
+    override fun loadState(state: State) {
         addedSources.clear()
-        if (state != null) {
-            addedSources.addAll(state.directories)
-        }
+        addedSources.addAll(state.directories)
     }
 
     override fun getState(): State {

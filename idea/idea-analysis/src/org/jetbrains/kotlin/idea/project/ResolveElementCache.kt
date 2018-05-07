@@ -77,7 +77,7 @@ class ResolveElementCache(
         CachedValuesManager.getManager(project).createCachedValue(
             CachedValueProvider<MutableMap<KtElement, ResolveElementCache.CachedFullResolve>> {
                 CachedValueProvider.Result.create(
-                    ContainerUtil.createConcurrentSoftValueMap<KtElement, CachedFullResolve>(),
+                    ContainerUtil.createConcurrentWeakKeySoftValueMap<KtElement, CachedFullResolve>(),
                     PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
                     resolveSession.exceptionTracker
                 )
@@ -103,21 +103,13 @@ class ResolveElementCache(
         CachedValuesManager.getManager(project).createCachedValue(
             CachedValueProvider<MutableMap<KtExpression, ResolveElementCache.CachedPartialResolve>> {
                 CachedValueProvider.Result.create(
-                    ContainerUtil.createConcurrentSoftValueMap<KtExpression, CachedPartialResolve>(),
+                    ContainerUtil.createConcurrentWeakKeySoftValueMap<KtExpression, CachedPartialResolve>(),
                     PsiModificationTracker.MODIFICATION_COUNT,
                     resolveSession.exceptionTracker
                 )
             },
             false
         )
-
-
-    private fun probablyNothingCallableNames(): ProbablyNothingCallableNames {
-        return object : ProbablyNothingCallableNames {
-            override fun functionNames() = KotlinProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project)
-            override fun propertyNames() = KotlinProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project)
-        }
-    }
 
     override fun resolveFunctionBody(function: KtNamedFunction) = getElementsAdditionalResolve(function, null, BodyResolveMode.FULL)
 
@@ -310,7 +302,6 @@ class ResolveElementCache(
                 statementFilterUsed = PartialBodyResolveFilter(
                     contextElements!!,
                     resolveElement as KtDeclaration,
-                    probablyNothingCallableNames(),
                     bodyResolveMode == BodyResolveMode.PARTIAL_FOR_COMPLETION
                 )
             }

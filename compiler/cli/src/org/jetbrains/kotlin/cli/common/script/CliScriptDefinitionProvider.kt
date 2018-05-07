@@ -16,29 +16,29 @@
 
 package org.jetbrains.kotlin.cli.common.script
 
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.StandardScriptDefinition
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
+import org.jetbrains.kotlin.script.*
 import kotlin.concurrent.write
 
-class CliScriptDefinitionProvider : ScriptDefinitionProvider {
+class CliScriptDefinitionProvider : LazyScriptDefinitionProvider() {
+    private val definitionsFromSources: MutableList<Sequence<KotlinScriptDefinition>> = arrayListOf()
     private val definitions: MutableList<KotlinScriptDefinition> = arrayListOf(StandardScriptDefinition)
-    private val lock = ReentrantReadWriteLock()
 
-    override fun findScriptDefinition(fileName: String) = lock.read {
-        definitions.firstOrNull { it.isScript(fileName) }
-    }
-
-    override fun isScript(fileName: String) = lock.read {
-        definitions.any { it.isScript(fileName) }
-    }
+    override val currentDefinitions: Sequence<KotlinScriptDefinition> =
+        definitionsFromSources.asSequence().flatMap { it } + definitions.asSequence()
 
     fun setScriptDefinitions(newDefinitions: List<KotlinScriptDefinition>) {
         lock.write {
             definitions.clear()
             definitions.addAll(newDefinitions)
+        }
+    }
+
+    fun setScriptDefinitionsSources(newSources: List<ScriptDefinitionsSource>) {
+        lock.write {
+            definitionsFromSources.clear()
+            for (it in newSources) {
+                definitionsFromSources.add(it.definitions.constrainOnce())
+            }
         }
     }
 }

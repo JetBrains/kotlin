@@ -16,5 +16,5 @@ class A(val firstName: String) : Parcelable {
 
     var customSetter: String
         get() = ""
-        set(v) {}
+        set(<warning descr="[UNUSED_PARAMETER] Parameter 'v' is never used">v</warning>) {}
 }

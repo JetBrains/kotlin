@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT LinkedHashMap
@@ -146,8 +135,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
         if (this.next === this) {
             // if this is single element, remove head
             head = null
-        }
-        else {
+        } else {
             if (head === this) {
                 // if this is first element, move head to next
                 head = next
@@ -169,7 +157,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
     /**
      * Constructs an empty [LinkedHashMap] instance.
      */
-    actual constructor() : super()  {
+    actual constructor() : super() {
         map = HashMap<K, ChainEntry<K, V>>()
     }
 
@@ -236,8 +224,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
             map.put(key, newEntry)
             newEntry.addToEnd()
             return null
-        }
-        else {
+        } else {
             return old.setValue(value)
         }
     }

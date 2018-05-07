@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1116
 // Order of evaluation differs for JVM and Javascript backend
 // http://youtrack.jetbrains.com/issue/KT-5254

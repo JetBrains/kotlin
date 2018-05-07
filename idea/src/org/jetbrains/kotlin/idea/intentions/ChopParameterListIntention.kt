@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement>(
-    protected val listClass: Class<TList>,
+    private val listClass: Class<TList>,
     private val elementClass: Class<TElement>,
     text: String
 ) : SelfTargetingOffsetIndependentIntention<TList>(listClass, text), LowPriorityAction {

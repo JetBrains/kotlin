@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MapsKt")
 
@@ -33,8 +38,8 @@ public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.sin
  */
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     // Do not use computeIfAbsent on JVM8 as it would change locking behavior
-    return this.get(key) ?:
-            defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
+    return this.get(key)
+            ?: defaultValue().let { default -> this.putIfAbsent(key, default) ?: default }
 
 }
 
@@ -52,8 +57,8 @@ public fun <K : Comparable<K>, V> Map<out K, V>.toSortedMap(): SortedMap<K, V> =
  *
  * @sample samples.collections.Maps.Transformations.mapToSortedMapWithComparator
  */
-public fun <K, V> Map<out K, V>.toSortedMap(comparator: Comparator<in K>): SortedMap<K, V>
-        = TreeMap<K, V>(comparator).apply { putAll(this@toSortedMap) }
+public fun <K, V> Map<out K, V>.toSortedMap(comparator: Comparator<in K>): SortedMap<K, V> =
+    TreeMap<K, V>(comparator).apply { putAll(this@toSortedMap) }
 
 /**
  * Returns a new [SortedMap] with the specified contents, given as a list of pairs
@@ -61,8 +66,8 @@ public fun <K, V> Map<out K, V>.toSortedMap(comparator: Comparator<in K>): Sorte
  *
  * @sample samples.collections.Maps.Instantiation.sortedMapFromPairs
  */
-public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedMap<K, V>
-        = TreeMap<K, V>().apply { putAll(pairs) }
+public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedMap<K, V> =
+    TreeMap<K, V>().apply { putAll(pairs) }
 
 
 /**
@@ -71,8 +76,8 @@ public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedM
  * @sample samples.collections.Maps.Transformations.mapToProperties
  */
 @kotlin.internal.InlineOnly
-public inline fun Map<String, String>.toProperties(): Properties
-        = Properties().apply { putAll(this@toProperties) }
+public inline fun Map<String, String>.toProperties(): Properties =
+    Properties().apply { putAll(this@toProperties) }
 
 
 // creates a singleton copy of map, if there is specialization available in target platform, otherwise returns itself
@@ -80,6 +85,6 @@ public inline fun Map<String, String>.toProperties(): Properties
 internal actual inline fun <K, V> Map<K, V>.toSingletonMapOrSelf(): Map<K, V> = toSingletonMap()
 
 // creates a singleton copy of map
-internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V>
-        = with (entries.iterator().next()) { java.util.Collections.singletonMap(key, value) }
+internal actual fun <K, V> Map<out K, V>.toSingletonMap(): Map<K, V> =
+    with(entries.iterator().next()) { java.util.Collections.singletonMap(key, value) }
 

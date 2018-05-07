@@ -43,15 +43,26 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String
     ) {
+        val runtime = listOf(
+            "libraries/stdlib/js/src/kotlin/core.kt"
+        ).map { createPsiFile(it) }
+
+        val filesToIgnore = listOf(
+            // TODO: temporary ignore some files from _commonFiles directory since they can't be compiled correctly by JS IR BE yet.
+            // Also, some declarations depends on stdlib but we don't have any library support in JS IR BE yet
+            // and probably it will be better to avoid using stdlib in testData as much as possible.
+            "js/js.translator/testData/_commonFiles/arrayAsserts.kt"
+        )
+
+        val filesToCompile = units
+            .map { (it as TranslationUnit.SourceFile).file }
+            .filter { file -> filesToIgnore.none { file.virtualFilePath.endsWith(it) } }
+
         val code = compile(
             config.project,
-            units.map { (it as TranslationUnit.SourceFile).file }
-                // TODO: temporary ignore _commonFiles/asserts.kt since it depends on stdlib but we don't have any library support in JS IR BE yet
-                // and probably it will be better to avoid using stdlib in testData as much as possible.
-                .filter { !it.virtualFilePath.endsWith("js/js.translator/testData/_commonFiles/arrayAsserts.kt") }
-                .filter { !it.virtualFilePath.endsWith("js/js.translator/testData/_commonFiles/fail.kt") },
+            runtime + filesToCompile,
             config.configuration,
-            FqName((testPackage?.let { it + "." } ?: "") + testFunction))
+            FqName((testPackage?.let { "$it." } ?: "") + testFunction))
 
         outputFile.parentFile.mkdirs()
         outputFile.writeText(code)

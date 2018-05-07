@@ -181,6 +181,10 @@ fun main(args: Array<String>) {
             model("codegen/script", extension = "kts")
         }
 
+        testClass<AbstractCustomScriptCodegenTest> {
+            model("codegen/customScript", extension = "kts")
+        }
+
         testClass<AbstractBytecodeTextTest> {
             model("codegen/bytecodeText")
         }

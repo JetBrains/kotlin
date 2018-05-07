@@ -114,18 +114,18 @@ fun IrMemberAccessExpression.addArguments(args: Map<ParameterDescriptor, IrExpre
 }
 
 fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDescriptor, IrExpression>>) =
-        this.addArguments(args.toMap())
+    this.addArguments(args.toMap())
 
 fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
 
 fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
-        this.descriptor.valueParameters.any { this.getValueArgument(it) == null}
+    this.descriptor.valueParameters.any { this.getValueArgument(it) == null }
 
 fun IrFunction.createParameterDeclarations() {
     fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
-            innerStartOffset(this), innerEndOffset(this),
-            IrDeclarationOrigin.DEFINED,
-            this
+        innerStartOffset(this), innerEndOffset(this),
+        IrDeclarationOrigin.DEFINED,
+        this
     ).also {
         it.parent = this@createParameterDeclarations
     }
@@ -139,9 +139,9 @@ fun IrFunction.createParameterDeclarations() {
     assert(typeParameters.isEmpty())
     descriptor.typeParameters.mapTo(typeParameters) {
         IrTypeParameterImpl(
-                innerStartOffset(it), innerEndOffset(it),
-                IrDeclarationOrigin.DEFINED,
-                it
+            innerStartOffset(it), innerEndOffset(it),
+            IrDeclarationOrigin.DEFINED,
+            it
         ).also { typeParameter ->
             typeParameter.parent = this
         }
@@ -151,18 +151,18 @@ fun IrFunction.createParameterDeclarations() {
 fun IrClass.createParameterDeclarations() {
     descriptor.thisAsReceiverParameter.let {
         thisReceiver = IrValueParameterImpl(
-                innerStartOffset(it), innerEndOffset(it),
-                IrDeclarationOrigin.INSTANCE_RECEIVER,
-                it
+            innerStartOffset(it), innerEndOffset(it),
+            IrDeclarationOrigin.INSTANCE_RECEIVER,
+            it
         )
     }
 
     assert(typeParameters.isEmpty())
     descriptor.declaredTypeParameters.mapTo(typeParameters) {
         IrTypeParameterImpl(
-                innerStartOffset(it), innerEndOffset(it),
-                IrDeclarationOrigin.DEFINED,
-                it
+            innerStartOffset(it), innerEndOffset(it),
+            IrDeclarationOrigin.DEFINED,
+            it
         )
     }
 }
@@ -173,34 +173,34 @@ fun IrClass.addFakeOverrides() {
     val endOffset = this.endOffset
 
     fun FunctionDescriptor.createFunction(): IrFunction = IrFunctionImpl(
-            startOffset, endOffset,
-            IrDeclarationOrigin.FAKE_OVERRIDE, this
+        startOffset, endOffset,
+        IrDeclarationOrigin.FAKE_OVERRIDE, this
     ).apply {
         createParameterDeclarations()
     }
 
     descriptor.unsubstitutedMemberScope.getContributedDescriptors()
-            .filterIsInstance<CallableMemberDescriptor>()
-            .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
-            .mapTo(this.declarations) {
-                when (it) {
-                    is FunctionDescriptor -> it.createFunction()
-                    is PropertyDescriptor ->
-                        IrPropertyImpl(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, it).apply {
-                            // TODO: add field if getter is missing?
-                            getter = it.getter?.createFunction()
-                            setter = it.setter?.createFunction()
-                        }
-                    else -> TODO(it.toString())
-                }
+        .filterIsInstance<CallableMemberDescriptor>()
+        .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+        .mapTo(this.declarations) {
+            when (it) {
+                is FunctionDescriptor -> it.createFunction()
+                is PropertyDescriptor ->
+                    IrPropertyImpl(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, it).apply {
+                        // TODO: add field if getter is missing?
+                        getter = it.getter?.createFunction()
+                        setter = it.setter?.createFunction()
+                    }
+                else -> TODO(it.toString())
             }
+        }
 }
 
 private fun IrElement.innerStartOffset(descriptor: DeclarationDescriptorWithSource): Int =
-        descriptor.startOffset ?: this.startOffset
+    descriptor.startOffset ?: this.startOffset
 
 private fun IrElement.innerEndOffset(descriptor: DeclarationDescriptorWithSource): Int =
-       descriptor.endOffset ?: this.endOffset
+    descriptor.endOffset ?: this.endOffset
 
 val DeclarationDescriptorWithSource.startOffset: Int? get() = (this.source as? PsiSourceElement)?.psi?.startOffset
 val DeclarationDescriptorWithSource.endOffset: Int? get() = (this.source as? PsiSourceElement)?.psi?.endOffset
@@ -215,14 +215,14 @@ val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
     get() = this.owner.declarations.asSequence().filterIsInstance<IrConstructor>().map { it.symbol }
 
 private fun IrClassSymbol.getPropertyDeclaration(name: String) =
-        this.owner.declarations.filterIsInstance<IrProperty>()
-                .atMostOne { it.descriptor.name == Name.identifier(name) }
+    this.owner.declarations.filterIsInstance<IrProperty>()
+        .atMostOne { it.descriptor.name == Name.identifier(name) }
 
 fun IrClassSymbol.getPropertyGetter(name: String): IrFunctionSymbol? =
-        this.getPropertyDeclaration(name)?.getter?.symbol
+    this.getPropertyDeclaration(name)?.getter?.symbol
 
 fun IrClassSymbol.getPropertySetter(name: String): IrFunctionSymbol? =
-        this.getPropertyDeclaration(name)?.setter?.symbol
+    this.getPropertyDeclaration(name)?.setter?.symbol
 
 val IrFunction.explicitParameters: List<IrValueParameterSymbol>
     get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters).map { it.symbol }
@@ -232,3 +232,41 @@ val IrValueParameter.type: KotlinType
 
 val IrClass.defaultType: KotlinType
     get() = this.descriptor.defaultType
+
+val IrSimpleFunction.isReal: Boolean get() = descriptor.kind.isReal
+
+// This implementation is from kotlin-native
+// TODO: use this implementation instead of any other
+fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction? {
+
+    if (isReal) return this
+
+    val visited = mutableSetOf<IrSimpleFunction>()
+    val realOverrides = mutableSetOf<IrSimpleFunction>()
+
+    fun collectRealOverrides(func: IrSimpleFunction) {
+        if (!visited.add(func)) return
+
+        if (func.isReal) {
+            realOverrides += func
+        } else {
+            func.overriddenSymbols.forEach { collectRealOverrides(it.owner) }
+        }
+    }
+
+    overriddenSymbols.forEach { collectRealOverrides(it.owner) }
+
+    fun excludeRepeated(func: IrSimpleFunction) {
+        if (!visited.add(func)) return
+
+        func.overriddenSymbols.forEach {
+            realOverrides.remove(it.owner)
+            excludeRepeated(it.owner)
+        }
+    }
+
+    visited.clear()
+    realOverrides.toList().forEach { excludeRepeated(it) }
+
+    return realOverrides.singleOrNull { it.modality != Modality.ABSTRACT }
+}
