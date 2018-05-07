@@ -13078,8 +13078,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("unnecessaryParenthesesWithComment.kt")
         public void testUnnecessaryParenthesesWithComment() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParenthesesWithComment.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParenthesesWithComment.kt");
         }
     }
 

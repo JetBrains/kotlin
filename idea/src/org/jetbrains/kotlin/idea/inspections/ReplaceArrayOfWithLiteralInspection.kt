@@ -66,7 +66,9 @@ class ReplaceArrayOfWithLiteralInspection : AbstractKotlinInspection() {
             val arrayLiteral = KtPsiFactory(callExpression).buildExpression {
                 appendFixedText("[")
                 for ((index, argument) in arguments.withIndex()) {
-                    appendExpression(argument.getArgumentExpression())
+                    argument.getArgumentExpression()?.also {
+                        appendFixedText(it.text)
+                    }
                     if (index != arguments.size - 1) {
                         appendFixedText(", ")
                     }
