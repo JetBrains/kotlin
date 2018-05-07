@@ -57,7 +57,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import javax.swing.JComponent
 
-class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpression>(UsePropertyAccessSyntaxIntention::class), CleanupLocalInspectionTool {
+class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpression>(UsePropertyAccessSyntaxIntention::class),
+    CleanupLocalInspectionTool {
 
     val fqNameList = mutableListOf<FqNameUnsafe>()
 
@@ -89,14 +90,14 @@ class NotPropertiesServiceImpl(private val project: Project) : NotPropertiesServ
     companion object {
 
         val default = listOf(
-                "java.net.Socket.getInputStream",
-                "java.net.Socket.getOutputStream",
-                "java.net.URLConnection.getInputStream",
-                "java.net.URLConnection.getOutputStream",
-                "java.util.concurrent.atomic.AtomicInteger.getAndIncrement",
-                "java.util.concurrent.atomic.AtomicInteger.getAndDecrement",
-                "java.util.concurrent.atomic.AtomicLong.getAndIncrement",
-                "java.util.concurrent.atomic.AtomicLong.getAndDecrement"
+            "java.net.Socket.getInputStream",
+            "java.net.Socket.getOutputStream",
+            "java.net.URLConnection.getInputStream",
+            "java.net.URLConnection.getOutputStream",
+            "java.util.concurrent.atomic.AtomicInteger.getAndIncrement",
+            "java.util.concurrent.atomic.AtomicInteger.getAndDecrement",
+            "java.util.concurrent.atomic.AtomicLong.getAndIncrement",
+            "java.util.concurrent.atomic.AtomicLong.getAndDecrement"
         )
 
 
@@ -104,7 +105,8 @@ class NotPropertiesServiceImpl(private val project: Project) : NotPropertiesServ
     }
 }
 
-class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(KtCallExpression::class.java, "Use property access syntax") {
+class UsePropertyAccessSyntaxIntention :
+    SelfTargetingOffsetIndependentIntention<KtCallExpression>(KtCallExpression::class.java, "Use property access syntax") {
     override fun isApplicableTo(element: KtCallExpression): Boolean {
         return detectPropertyNameToUse(element) != null
     }
@@ -135,8 +137,8 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
 
         val function = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
 
-        val notProperties = (inspection as? UsePropertyAccessSyntaxInspection)?.fqNameList?.toSet() ?:
-                            NotPropertiesService.getNotProperties(callExpression)
+        val notProperties =
+            (inspection as? UsePropertyAccessSyntaxInspection)?.fqNameList?.toSet() ?: NotPropertiesService.getNotProperties(callExpression)
         if (function.shouldNotConvertToProperty(notProperties)) return null
 
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
@@ -146,7 +148,16 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         val qualifiedExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
         val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, qualifiedExpression] ?: TypeUtils.NO_EXPECTED_TYPE
 
-        if (!checkWillResolveToProperty(resolvedCall, property, bindingContext, resolutionScope, dataFlowInfo, expectedType, resolutionFacade)) return null
+        if (!checkWillResolveToProperty(
+                resolvedCall,
+                property,
+                bindingContext,
+                resolutionScope,
+                dataFlowInfo,
+                expectedType,
+                resolutionFacade
+            )
+        ) return null
 
         val isSetUsage = callExpression.valueArguments.size == 1
 
@@ -159,16 +170,17 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
 
         if (isSetUsage && property.type != function.valueParameters.single().type) {
             val qualifiedExpressionCopy = qualifiedExpression.copied()
-            val callExpressionCopy = ((qualifiedExpressionCopy as? KtQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as KtCallExpression
+            val callExpressionCopy =
+                ((qualifiedExpressionCopy as? KtQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as KtCallExpression
             val newExpression = applyTo(callExpressionCopy, property.name, reformat = false)
             val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
             val newBindingContext = newExpression.analyzeInContext(
-                    resolutionScope,
-                    contextExpression = callExpression,
-                    trace = bindingTrace,
-                    dataFlowInfo = dataFlowInfo,
-                    expectedType = expectedType,
-                    isStatement = true
+                resolutionScope,
+                contextExpression = callExpression,
+                trace = bindingTrace,
+                dataFlowInfo = dataFlowInfo,
+                expectedType = expectedType,
+                isStatement = true
             )
             if (newBindingContext.diagnostics.any { it.severity == Severity.ERROR }) return null
         }
@@ -177,13 +189,13 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
     }
 
     private fun checkWillResolveToProperty(
-            resolvedCall: ResolvedCall<out CallableDescriptor>,
-            property: SyntheticJavaPropertyDescriptor,
-            bindingContext: BindingContext,
-            resolutionScope: LexicalScope,
-            dataFlowInfo: DataFlowInfo,
-            expectedType: KotlinType,
-            facade: ResolutionFacade
+        resolvedCall: ResolvedCall<out CallableDescriptor>,
+        property: SyntheticJavaPropertyDescriptor,
+        bindingContext: BindingContext,
+        resolutionScope: LexicalScope,
+        dataFlowInfo: DataFlowInfo,
+        expectedType: KotlinType,
+        facade: ResolutionFacade
     ): Boolean {
         val project = resolvedCall.call.callElement.project
         val newCall = object : DelegatingCall(resolvedCall.call) {
@@ -196,10 +208,12 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         }
 
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
-        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
-                                                        ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        false, facade.frontendService<LanguageVersionSettings>(),
-                                                        facade.frontendService<DataFlowValueFactory>())
+        val context = BasicCallResolutionContext.create(
+            bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
+            ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+            false, facade.frontendService<LanguageVersionSettings>(),
+            facade.frontendService<DataFlowValueFactory>()
+        )
         val callResolver = facade.frontendService<CallResolver>()
         val result = callResolver.resolveSimpleProperty(context)
         return result.isSuccess && result.resultingDescriptor.original == property
@@ -228,8 +242,8 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
             ConvertToBlockBodyIntention.convert(callParent)
             val firstStatement = (callParent.bodyExpression as? KtBlockExpression)?.statements?.first()
             callToConvert = (firstStatement as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
-                ?: firstStatement as? KtCallExpression
-                ?: throw IllegalStateException("Unexpected contents of function after conversion: ${callParent.text}")
+                    ?: firstStatement as? KtCallExpression
+                    ?: throw IllegalStateException("Unexpected contents of function after conversion: ${callParent.text}")
         }
 
         val qualifiedExpression = callToConvert.getQualifiedExpressionForSelector()
@@ -241,16 +255,16 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
                 else -> error(qualifiedExpression) //TODO: make it sealed?
             }
             val newExpression = KtPsiFactory(callToConvert).createExpressionByPattern(
-                    pattern,
-                    qualifiedExpression.receiverExpression,
-                    propertyName,
-                    argument.getArgumentExpression()!!,
-                    reformat = reformat
+                pattern,
+                qualifiedExpression.receiverExpression,
+                propertyName,
+                argument.getArgumentExpression()!!,
+                reformat = reformat
             )
             return qualifiedExpression.replaced(newExpression)
-        }
-        else {
-            val newExpression = KtPsiFactory(callToConvert).createExpressionByPattern("$0=$1", propertyName, argument.getArgumentExpression()!!)
+        } else {
+            val newExpression =
+                KtPsiFactory(callToConvert).createExpressionByPattern("$0=$1", propertyName, argument.getArgumentExpression()!!)
             return callToConvert.replaced(newExpression)
         }
     }
