@@ -13078,8 +13078,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("unnecessaryParenthesesWithComment.kt")
         public void testUnnecessaryParenthesesWithComment() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParenthesesWithComment.kt");
-            doTest(fileName);
+            runTest("idea/testData/intentions/removeUnnecessaryParentheses/unnecessaryParenthesesWithComment.kt");
         }
     }
 
@@ -15171,6 +15170,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/getImplicitReceiver.kt");
         }
 
+        @TestMetadata("getReservedWord1.kt")
+        public void testGetReservedWord1() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/getReservedWord1.kt");
+        }
+
+        @TestMetadata("getReservedWord2.kt")
+        public void testGetReservedWord2() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/getReservedWord2.kt");
+        }
+
         @TestMetadata("getSafeCall.kt")
         public void testGetSafeCall() throws Exception {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/getSafeCall.kt");
@@ -15229,6 +15238,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("setImplicitReceiver.kt")
         public void testSetImplicitReceiver() throws Exception {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/setImplicitReceiver.kt");
+        }
+
+        @TestMetadata("setReservedWord1.kt")
+        public void testSetReservedWord1() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setReservedWord1.kt");
+        }
+
+        @TestMetadata("setReservedWord2.kt")
+        public void testSetReservedWord2() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/setReservedWord2.kt");
         }
 
         @TestMetadata("setSafeCall.kt")
