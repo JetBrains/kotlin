@@ -570,11 +570,11 @@ val cidrPlugin by task<Copy> {
 
         exclude("lib/uast-kotlin.jar")
         exclude("lib/uast-kotlin-ide.jar")
-
         exclude("lib/android-ide.jar")
         exclude("lib/android-output-parser-ide.jar")
         exclude("lib/android-extensions-ide.jar")
         exclude("lib/android-extensions-compiler.jar")
+        exclude("lib/kapt3-idea.jar")
     }
     from(cidrKotlinPlugin) { into("lib") }
 }
