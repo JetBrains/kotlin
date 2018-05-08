@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
@@ -44,10 +47,13 @@ class JvmDescriptorsFactory(
     private val outerThisDescriptors = HashMap<ClassDescriptor, PropertyDescriptor>()
     private val innerClassConstructors = HashMap<ClassConstructorDescriptor, IrConstructorSymbol>()
 
-    override fun getFieldDescriptorForEnumEntry(enumEntryDescriptor: ClassDescriptor): PropertyDescriptor =
-        singletonFieldDescriptors.getOrPut(enumEntryDescriptor) {
+    override fun getSymbolForEnumEntry(enumEntry: IrEnumEntrySymbol): IrFieldSymbol {
+        val enumEntryDescriptor = enumEntry.descriptor
+        val fieldDescriptor = singletonFieldDescriptors.getOrPut(enumEntryDescriptor) {
             createEnumEntryFieldDescriptor(enumEntryDescriptor)
         }
+        return IrFieldSymbolImpl(fieldDescriptor)
+    }
 
     fun createFileClassDescriptor(fileEntry: SourceManager.FileEntry, packageFragment: PackageFragmentDescriptor): FileClassDescriptor {
         val ktFile = psiSourceManager.getKtFile(fileEntry as PsiSourceManager.PsiFileEntry)
