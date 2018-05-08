@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.dump
@@ -90,11 +90,10 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         }
 
         private fun lowerConstructor(irConstructor: IrConstructor): IrConstructor {
-            val oldDescriptor = irConstructor.descriptor
             val startOffset = irConstructor.startOffset
             val endOffset = irConstructor.endOffset
 
-            val newSymbol = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(oldDescriptor)
+            val newSymbol = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(irConstructor)
             val loweredConstructor = IrConstructorImpl(
                 startOffset, endOffset,
                 irConstructor.origin, // TODO special origin for lowered inner class constructors?
@@ -104,7 +103,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
             loweredConstructor.createParameterDeclarations()
             val outerThisValueParameter = loweredConstructor.valueParameters[0].symbol
 
-            oldDescriptor.valueParameters.forEach { oldValueParameter ->
+            irConstructor.descriptor.valueParameters.forEach { oldValueParameter ->
                 oldConstructorParameterToNew[oldValueParameter] = loweredConstructor.valueParameters[oldValueParameter.index + 1]
             }
 
@@ -201,10 +200,11 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                 expression.transformChildrenVoid(this)
 
                 val dispatchReceiver = expression.dispatchReceiver ?: return expression
-                val callee = expression.descriptor as? ClassConstructorDescriptor ?: return expression
-                if (!callee.constructedClass.isInner) return expression
+                val callee = expression.symbol as? IrConstructorSymbol ?: return expression
+                val parent = callee.owner.parent as? IrClass ?: return expression
+                if (!parent.descriptor.isInner) return expression
 
-                val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee)
+                val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
                 val newCall = IrCallImpl(
                     expression.startOffset, expression.endOffset, newCallee, newCallee.descriptor,
                     null, // TODO type arguments map
@@ -223,10 +223,10 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLowe
                 expression.transformChildrenVoid(this)
 
                 val dispatchReceiver = expression.dispatchReceiver ?: return expression
-                val callee = expression.descriptor
-                if (!callee.constructedClass.isInner) return expression
+                val callee = expression.symbol
+                if (!callee.descriptor.containingDeclaration.isInner) return expression
 
-                val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee)
+                val newCallee = context.descriptorsFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
                 val newCall = IrDelegatingConstructorCallImpl(
                     expression.startOffset, expression.endOffset, newCallee, newCallee.descriptor,
                     null // TODO type arguments map

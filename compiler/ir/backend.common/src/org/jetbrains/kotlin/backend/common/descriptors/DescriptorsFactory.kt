@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.descriptors
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
@@ -15,6 +15,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 interface DescriptorsFactory {
     fun getSymbolForEnumEntry(enumEntry: IrEnumEntrySymbol): IrFieldSymbol
     fun getOuterThisFieldSymbol(innerClass: IrClass): IrFieldSymbol
-    fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: ClassConstructorDescriptor): IrConstructorSymbol
+    fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructorSymbol
     fun getSymbolForObjectInstance(singleton: IrClassSymbol): IrFieldSymbol
 }

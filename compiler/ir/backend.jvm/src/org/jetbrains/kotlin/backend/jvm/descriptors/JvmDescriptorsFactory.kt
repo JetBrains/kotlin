@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -45,7 +46,7 @@ class JvmDescriptorsFactory(
 ) : DescriptorsFactory {
     private val singletonFieldDescriptors = HashMap<IrBindableSymbol<*, *>, IrFieldSymbol>()
     private val outerThisDescriptors = HashMap<IrClass, IrFieldSymbol>()
-    private val innerClassConstructors = HashMap<ClassConstructorDescriptor, IrConstructorSymbol>()
+    private val innerClassConstructors = HashMap<IrConstructorSymbol, IrConstructorSymbol>()
 
     override fun getSymbolForEnumEntry(enumEntry: IrEnumEntrySymbol): IrFieldSymbol =
         singletonFieldDescriptors.getOrPut(enumEntry) {
@@ -79,16 +80,16 @@ class JvmDescriptorsFactory(
             )
         }
 
-    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: ClassConstructorDescriptor): IrConstructorSymbol {
-        val innerClass = innerClassConstructor.containingDeclaration
-        assert(innerClass.isInner) { "Class is not inner: $innerClass" }
+    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructorSymbol {
+        assert((innerClassConstructor.parent as IrClass).descriptor.isInner) { "Class is not inner: ${(innerClassConstructor.parent as IrClass).dump()}" }
 
-        return innerClassConstructors.getOrPut(innerClassConstructor) {
+        return innerClassConstructors.getOrPut(innerClassConstructor.symbol) {
             createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
         }
     }
 
-    private fun createInnerClassConstructorWithOuterThisParameter(oldDescriptor: ClassConstructorDescriptor): IrConstructorSymbol {
+    private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructorSymbol {
+        val oldDescriptor = oldConstructor.descriptor
         val classDescriptor = oldDescriptor.containingDeclaration
         val outerThisType = (classDescriptor.containingDeclaration as ClassDescriptor).defaultType
 

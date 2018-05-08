@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -38,7 +39,7 @@ class JsDescriptorsFactory(
 ) : DescriptorsFactory {
     private val singletonFieldDescriptors = HashMap<IrBindableSymbol<*, *>, IrFieldSymbol>()
     private val outerThisFieldSymbols = HashMap<IrClass, IrFieldSymbol>()
-    private val innerClassConstructors = HashMap<ClassConstructorDescriptor, IrConstructorSymbol>()
+    private val innerClassConstructors = HashMap<IrConstructorSymbol, IrConstructorSymbol>()
 
     override fun getSymbolForEnumEntry(enumEntry: IrEnumEntrySymbol): IrFieldSymbol = TODO()
 
@@ -74,12 +75,13 @@ class JsDescriptorsFactory(
             })
         }
 
-    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: ClassConstructorDescriptor): IrConstructorSymbol {
-        val innerClass = innerClassConstructor.containingDeclaration
-        assert(innerClass.isInner) { "Class is not inner: $innerClass" }
 
-        return innerClassConstructors.getOrPut(innerClassConstructor) {
-            createInnerClassConstructorWithOuterThisParameter(innerClassConstructor)
+    override fun getInnerClassConstructorWithOuterThisParameter(innerClassConstructor: IrConstructor): IrConstructorSymbol {
+        val innerClass = innerClassConstructor.parent as IrClass
+        assert(innerClass.descriptor.isInner) { "Class is not inner: $innerClass" }
+
+        return innerClassConstructors.getOrPut(innerClassConstructor.symbol) {
+            createInnerClassConstructorWithOuterThisParameter(innerClassConstructor.descriptor)
         }
     }
 
