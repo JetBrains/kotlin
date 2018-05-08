@@ -30,7 +30,6 @@ val projectsToShadow by extra(listOf(
         ":idea:ide-common",
         ":idea",
         ":idea:idea-core",
-        ":idea:idea-jvm",
         ":idea:idea-jps-common",
         ":idea:idea-gradle",
         ":idea:idea-maven",
