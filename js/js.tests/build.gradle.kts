@@ -3,14 +3,14 @@ import com.moowork.gradle.node.npm.NpmExecRunner
 import com.moowork.gradle.node.npm.NpmTask
 
 plugins {
+    kotlin("jvm")
+    id("jps-compatible")
     id("com.moowork.node").version("1.2.0")
 }
 
 node {
     download = true
 }
-
-apply { plugin("kotlin") }
 
 val antLauncherJar by configurations.creating
 
@@ -24,6 +24,7 @@ dependencies {
     testCompileOnly(project(":compiler:util"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
+    testCompile(project(":compiler:backend.js"))
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
     testCompile(project(":js:js.dce"))
@@ -48,17 +49,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val testDistProjects = listOf(
-        "", // for root project
-        ":prepare:mock-runtime-for-test",
-        ":kotlin-compiler",
-        ":kotlin-script-runtime",
-        ":kotlin-stdlib",
-        ":kotlin-daemon-client",
-        ":kotlin-ant")
-
 projectTest {
-    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    dependsOn(":dist")
+    jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
@@ -69,7 +62,7 @@ projectTest {
 testsJar {}
 
 projectTest("quickTest") {
-    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.js.skipMinificationTest", "true")
     doFirst {

@@ -24,15 +24,13 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
-import org.jetbrains.kotlin.idea.facet.implementingDescriptors
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 
@@ -46,8 +44,7 @@ class KotlinMultiplatformJUnitRecognizer : JUnitRecognizer() {
         val implModules = moduleDescriptor.implementingDescriptors
         if (implModules.isEmpty()) return false
 
-        val bindingContext = origin.analyze(BodyResolveMode.PARTIAL)
-        val methodDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, origin] ?: return false
+        val methodDescriptor = origin.resolveToDescriptorIfAny() ?: return false
         return methodDescriptor.annotations.getAllAnnotations().any { it.isExpectOfAnnotation("org.junit.Test", implModules) }
 
     }

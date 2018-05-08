@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
@@ -45,7 +45,7 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
         val variableExpr: KtExpression = ((element.loopParameter ?: element.destructuringDeclaration) ?: return null) as KtExpression
         val iterableType = TypeInfo(iterableExpr, Variance.IN_VARIANCE)
 
-        val (bindingContext, moduleDescriptor) = file.analyzeFullyAndGetResult()
+        val (bindingContext, moduleDescriptor) = file.analyzeWithAllCompilerChecks()
 
         val returnJetType = moduleDescriptor.builtIns.iterator.defaultType
         val returnJetTypeParameterTypes = variableExpr.guessTypes(bindingContext, moduleDescriptor)

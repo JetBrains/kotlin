@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufClassKind
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufPackageKind
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.Deserialization
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import java.util.*
 
 data class Difference(
@@ -41,16 +41,15 @@ data class PackagePartProtoData(val proto: ProtoBuf.Package, val nameResolver: N
 
 fun ProtoMapValue.toProtoData(packageFqName: FqName): ProtoData =
     if (isPackageFacade) {
-        val packageData = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
-        PackagePartProtoData(packageData.packageProto, packageData.nameResolver, packageFqName)
-    }
-    else {
-        val classData = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
-        ClassProtoData(classData.classProto, classData.nameResolver)
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
+        PackagePartProtoData(packageProto, nameResolver, packageFqName)
+    } else {
+        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
+        ClassProtoData(classProto, nameResolver)
     }
 
 internal val MessageLite.isPrivate: Boolean
-    get() = Visibilities.isPrivate(Deserialization.visibility(
+    get() = Visibilities.isPrivate(ProtoEnumFlags.visibility(
             when (this) {
                 is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
                 is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)

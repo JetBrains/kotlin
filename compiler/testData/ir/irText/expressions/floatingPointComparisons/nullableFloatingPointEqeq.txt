@@ -15,6 +15,7 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float?
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
             then: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'value-parameter x: Double?' type=kotlin.Double? origin=null
@@ -31,6 +32,7 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'toDouble(): Double' type=kotlin.Double origin=null
                       $this: TYPE_OP type=kotlin.Float origin=IMPLICIT_CAST typeOperand=kotlin.Float
+                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                         GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -43,6 +45,7 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int?
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
             then: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'value-parameter x: Double?' type=kotlin.Double? origin=null
@@ -59,6 +62,7 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'toDouble(): Double' type=kotlin.Double origin=null
                       $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
                         GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -73,8 +77,10 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int?
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -93,9 +99,12 @@ FILE fqName:<root> fileName:/nullableFloatingPointEqeq.kt
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'toDouble(): Double' type=kotlin.Double origin=null
                       $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+                        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
                         GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
               arg1: TYPE_OP type=kotlin.Double? origin=IMPLICIT_CAST typeOperand=kotlin.Double?
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                 GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
+

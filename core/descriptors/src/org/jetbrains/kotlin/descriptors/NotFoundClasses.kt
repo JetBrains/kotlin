@@ -50,13 +50,13 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
             private val isInner: Boolean,
             numberOfDeclaredTypeParameters: Int
     ) : ClassDescriptorBase(storageManager, container, name, SourceElement.NO_SOURCE, /* isExternal = */ false) {
-        private val typeParameters = (1..numberOfDeclaredTypeParameters).map { index ->
+        private val typeParameters = (0 until numberOfDeclaredTypeParameters).map { index ->
             TypeParameterDescriptorImpl.createWithDefaultBound(
                     this, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T$index"), index
             )
         }
 
-        private val typeConstructor = ClassTypeConstructorImpl(this, typeParameters, setOf(module.builtIns.anyType))
+        private val typeConstructor = ClassTypeConstructorImpl(this, typeParameters, setOf(module.builtIns.anyType), storageManager)
 
         override fun getKind() = ClassKind.CLASS
         override fun getModality() = Modality.FINAL

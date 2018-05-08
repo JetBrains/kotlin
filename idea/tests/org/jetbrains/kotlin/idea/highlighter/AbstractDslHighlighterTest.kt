@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.psi.PsiComment
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtElement
@@ -21,7 +21,7 @@ abstract class AbstractDslHighlighterTest : LightCodeInsightFixtureTestCase() {
     protected fun doTest(filePath: String) {
         val psiFile = myFixture.configureByFile(filePath) as KtFile
         val extension = DslHighlighterExtension()
-        val bindingContext = psiFile.analyzeFullyAndGetResult().bindingContext
+        val bindingContext = psiFile.analyzeWithAllCompilerChecks().bindingContext
 
         fun checkCall(element: KtElement) {
             val call = element.getResolvedCall(bindingContext) ?: return

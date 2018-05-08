@@ -27,17 +27,18 @@ import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
-import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.projectScope
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.ImportPath
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
@@ -58,7 +59,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
         return references
     }
 
-    override fun getQualifiedNameAfterRename(element: PsiElement, newName: String?, nonJava: Boolean): String? {
+    override fun getQualifiedNameAfterRename(element: PsiElement, newName: String, nonJava: Boolean): String? {
         if (!nonJava) return newName
 
         val qualifiedName = when (element) {
@@ -69,12 +70,10 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
         return PsiUtilCore.getQualifiedNameAfterRename(qualifiedName, newName)
     }
 
-    override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
-        if (newName == null) return
-
+    override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         val safeNewName = newName.quoteIfNeeded()
 
-        if (!KotlinNameSuggester.isIdentifier(newName)) {
+        if (!newName.isIdentifier()) {
             allRenames[element] = safeNewName
         }
 
@@ -93,12 +92,10 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
         val ref = reference as? PsiPolyVariantReference ?: return false
         val refElement = ref.element
         return refElement.parents.any { (it is KtImportDirective && !it.isAllUnder) || (it is PsiImportStaticStatement && !it.isOnDemand) }
-               && ref.multiResolve(false).size > 1
+               && ref.multiResolve(false).mapNotNullTo(HashSet()) { it.element?.unwrapped }.size > 1
     }
 
-    override fun getPostRenameCallback(element: PsiElement, newName: String?, elementListener: RefactoringElementListener?): Runnable? {
-        if (newName == null) return null
-
+    override fun getPostRenameCallback(element: PsiElement, newName: String, elementListener: RefactoringElementListener): Runnable? {
         return Runnable {
             element.ambiguousImportUsages?.forEach {
                 val ref = it.reference as? PsiPolyVariantReference ?: return@forEach

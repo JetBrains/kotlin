@@ -47,24 +47,26 @@ interface IrImplementingDelegateDescriptor : IrDelegateDescriptor {
 abstract class IrDelegateDescriptorBase(
     containingDeclaration: DeclarationDescriptor,
     name: Name,
-    delegateType: KotlinType
-) : PropertyDescriptorImpl(
-    containingDeclaration,
-    /* original = */ null,
-    Annotations.EMPTY,
-    Modality.FINAL,
-    Visibilities.PRIVATE,
-    /* isVar = */ false,
-    name,
-    CallableMemberDescriptor.Kind.SYNTHESIZED,
-    SourceElement.NO_SOURCE,
-    /* lateInit = */ false,
-    /* isConst = */ false,
-    /* isExpect = */ false,
-    /* isActual = */ false,
-    /* isExternal = */ false,
-    /* isDelegated = */ true
-) {
+    delegateType: KotlinType,
+    annotations: Annotations = Annotations.EMPTY
+) :
+    PropertyDescriptorImpl(
+        containingDeclaration,
+        /* original = */ null,
+        annotations,
+        Modality.FINAL,
+        Visibilities.PRIVATE,
+        /* isVar = */ false,
+        name,
+        CallableMemberDescriptor.Kind.SYNTHESIZED,
+        SourceElement.NO_SOURCE,
+        /* lateInit = */ false,
+        /* isConst = */ false,
+        /* isExpect = */ false,
+        /* isActual = */ false,
+        /* isExternal = */ false,
+        /* isDelegated = */ true
+    ) {
     init {
         val typeParameters: List<TypeParameterDescriptor> = emptyList()
         val extensionReceiverParameter: ReceiverParameterDescriptor? = null
@@ -75,7 +77,7 @@ abstract class IrDelegateDescriptorBase(
         setType(delegateType, typeParameters, dispatchReceiverParameter, extensionReceiverParameter)
     }
 
-    override final fun setOutType(outType: KotlinType?) {
+    final override fun setOutType(outType: KotlinType?) {
         super.setOutType(outType)
     }
 
@@ -97,21 +99,26 @@ class IrPropertyDelegateDescriptorImpl(
     override val correspondingProperty: PropertyDescriptor,
     delegateType: KotlinType,
     override val kPropertyType: KotlinType
-) : IrDelegateDescriptorBase(
-    correspondingProperty.containingDeclaration,
-    getDelegateName(correspondingProperty.name),
-    delegateType
-), IrPropertyDelegateDescriptor
+) :
+    IrDelegateDescriptorBase(
+        correspondingProperty.containingDeclaration,
+        getDelegateName(correspondingProperty.name),
+        delegateType,
+        correspondingProperty.annotations
+    ),
+    IrPropertyDelegateDescriptor
 
 class IrImplementingDelegateDescriptorImpl(
     containingDeclaration: ClassDescriptor,
     delegateType: KotlinType,
     override val correspondingSuperType: KotlinType
-) : IrDelegateDescriptorBase(
-    containingDeclaration,
-    getDelegateName(containingDeclaration, correspondingSuperType),
-    delegateType
-), IrImplementingDelegateDescriptor
+) :
+    IrDelegateDescriptorBase(
+        containingDeclaration,
+        getDelegateName(containingDeclaration, correspondingSuperType),
+        delegateType
+    ),
+    IrImplementingDelegateDescriptor
 
 internal fun getDelegateName(name: Name): Name =
     Name.identifier(name.asString() + "\$delegate")

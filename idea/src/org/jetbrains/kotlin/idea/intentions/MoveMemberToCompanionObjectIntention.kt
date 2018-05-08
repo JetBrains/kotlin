@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
@@ -61,7 +62,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -312,8 +312,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
                         is KtSimpleNameReference -> {
                             val refExpr = ref.expression
                             if (element.isAncestor(refExpr)) return@mapNotNullTo null
-                            val context = refExpr.analyze(BodyResolveMode.PARTIAL)
-                            val resolvedCall = refExpr.getResolvedCall(context) ?: return@mapNotNullTo null
+                            val resolvedCall = refExpr.resolveToCall() ?: return@mapNotNullTo null
 
                             val callExpression = resolvedCall.call.callElement as? KtExpression ?: return@mapNotNullTo null
 

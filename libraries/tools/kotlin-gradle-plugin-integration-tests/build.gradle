@@ -28,6 +28,10 @@ dependencies {
     testCompile gradleApi()
 
     testRuntime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
+
+    // Workaround for missing transitive import of the common project `kotlin-test-common`
+    // for `kotlin-test-jvm` into the IDE:
+    testCompileOnly(project(':kotlin-test:kotlin-test-common')) { transitive = false }
 }
 
 // Include Gradle task properties validation into the testing procedure:
@@ -80,6 +84,8 @@ tasks.withType(Test) {
     executable = "${JDK_18}/bin/java"
 
     systemProperty("kotlinVersion", kotlinVersion)
+    systemProperty("runnerGradleVersion", gradle.gradleVersion)
+
     def mavenLocalRepo = System.getProperty("maven.repo.local")
     if (mavenLocalRepo != null) {
         systemProperty("maven.repo.local", mavenLocalRepo)
@@ -113,3 +119,23 @@ tasks.withType(Test) {
         }
     }
 }
+
+def jpsIncrementalTestsClass = '**/KotlinGradlePluginJpsParametrizedIT.class'
+
+test {
+    exclude jpsIncrementalTestsClass
+}
+
+task testsFromJps(type: Test) {
+    include jpsIncrementalTestsClass
+    dependsOn = test.dependsOn
+}
+
+task testAdvanceGradleVersion(type: Test) {
+    def gradleVersionForTests = "4.5.1"
+    systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
+    dependsOn = test.dependsOn
+    exclude jpsIncrementalTestsClass
+}
+
+check.dependsOn(testAdvanceGradleVersion)

@@ -1,4 +1,4 @@
-// "Create actual class for platform JS" "true"
+// "Create actual class for module testModule_JS (JS)" "true"
 
 expect abstract class <caret>Abstract {
     fun foo(param: String): Int

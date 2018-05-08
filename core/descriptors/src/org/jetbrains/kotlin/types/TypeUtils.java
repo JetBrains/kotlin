@@ -265,6 +265,14 @@ public class TypeUtils {
         if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
         }
+
+        TypeConstructor constructor = type.getConstructor();
+        if (constructor instanceof IntersectionTypeConstructor) {
+            for (KotlinType supertype : constructor.getSupertypes()) {
+                if (isNullableType(supertype)) return true;
+            }
+        }
+
         return false;
     }
 

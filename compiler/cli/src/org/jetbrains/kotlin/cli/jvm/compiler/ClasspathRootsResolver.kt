@@ -265,7 +265,7 @@ class ClasspathRootsResolver(
             }
         }
 
-        if (requireStdlibModule && sourceModule != null && KOTLIN_STDLIB_MODULE_NAME !in allDependencies) {
+        if (requireStdlibModule && sourceModule != null && !javaModuleGraph.reads(sourceModule.name, KOTLIN_STDLIB_MODULE_NAME)) {
             report(
                     ERROR,
                     "The Kotlin standard library is not found in the module graph. " +

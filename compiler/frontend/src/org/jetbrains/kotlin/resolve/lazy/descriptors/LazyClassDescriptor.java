@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
@@ -221,7 +222,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             return null;
         }, null);
 
-        this.resolutionScopesSupport = new ClassResolutionScopesSupport(this, storageManager, this::getOuterScope);
+        this.resolutionScopesSupport = new ClassResolutionScopesSupport(
+                this,
+                storageManager,
+                c.getLanguageVersionSettings(),
+                this::getOuterScope
+        );
 
         this.parameters = c.getStorageManager().createLazyValue(() -> {
             KtClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
@@ -429,11 +435,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         Name syntheticCompanionName = c.getSyntheticResolveExtension().getSyntheticCompanionObjectNameIfNeeded(this);
         if (syntheticCompanionName == null)
             return null;
-        return new SyntheticClassOrObjectDescriptor(c,
+        SyntheticClassOrObjectDescriptor companionDescriptor = new SyntheticClassOrObjectDescriptor(c,
                 /* parentClassOrObject= */ classOrObject,
                 this, syntheticCompanionName, getSource(),
                 /* outerScope= */ getOuterScope(),
                 Modality.FINAL, PUBLIC, PRIVATE, ClassKind.OBJECT, true);
+        companionDescriptor.initialize();
+        return companionDescriptor;
     }
 
     @Nullable

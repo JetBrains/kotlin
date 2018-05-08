@@ -75,6 +75,8 @@ class KotlinNameSuggesterTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testExtensionFunction2() = doTest()
 
+    fun testNoCamelNamesForBacktickedNonId() = doTest()
+
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/refactoring/nameSuggester"
     }

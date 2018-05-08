@@ -38,8 +38,8 @@ class GradleMultiplatformRunTest : GradleImportingTestCase() {
     @Test
     fun testMultiplatformClasspath() {
         createProjectSubFile(
-                "build.gradle",
-                """
+            "build.gradle",
+            """
                 buildscript {
                     repositories {
                         jcenter()
@@ -64,15 +64,15 @@ class GradleMultiplatformRunTest : GradleImportingTestCase() {
                 """.trimIndent()
         )
         createProjectSubFile(
-                "settings.gradle",
-                """
+            "settings.gradle",
+            """
                     rootProject.name = 'MultiTest'
                     include 'MultiTest-jvm', 'MultiTest-js'
                 """.trimIndent()
         )
         createProjectSubFile(
-                "MultiTest-js/build.gradle",
-                """
+            "MultiTest-js/build.gradle",
+            """
                 buildscript {
                     repositories {
                         jcenter()
@@ -98,8 +98,8 @@ class GradleMultiplatformRunTest : GradleImportingTestCase() {
                 """.trimIndent()
         )
         createProjectSubFile(
-                "MultiTest-jvm/build.gradle",
-                """
+            "MultiTest-jvm/build.gradle",
+            """
                 buildscript {
                     repositories {
                         jcenter()
@@ -140,16 +140,23 @@ class GradleMultiplatformRunTest : GradleImportingTestCase() {
             val producer = RunConfigurationProducer.getInstance(KotlinRunConfigurationProducer::class.java)
             val configuration = producer.createConfigurationFromContext(configurationContext)!!
 
-            val executionEnvironment = ExecutionEnvironmentBuilder.create(myProject,
-                                                                          DefaultRunExecutor.getRunExecutorInstance(),
-                                                                          configuration.configuration)
+            val executionEnvironment = ExecutionEnvironmentBuilder.create(
+                myProject,
+                DefaultRunExecutor.getRunExecutorInstance(),
+                configuration.configuration
+            )
                 .build()
 
             val compileStepBeforeRun = CompileStepBeforeRun(myProject)
-            compileStepBeforeRun.executeTask(dataContext, configuration.configuration, executionEnvironment,
-                                             CompileStepBeforeRun.MakeBeforeRunTask())
+            compileStepBeforeRun.executeTask(
+                dataContext, configuration.configuration, executionEnvironment,
+                CompileStepBeforeRun.MakeBeforeRunTask()
+            )
 
-            val state = configuration.configuration.getState(DefaultRunExecutor.getRunExecutorInstance(), executionEnvironment) as JavaCommandLineState
+            val state = configuration.configuration.getState(
+                DefaultRunExecutor.getRunExecutorInstance(),
+                executionEnvironment
+            ) as JavaCommandLineState
             state.javaParameters
 
         }

@@ -1,5 +1,7 @@
 package a
 
-class Y {
+import X
+
+class Y(x: X) {
 
 }

@@ -25,21 +25,4 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
  */
 abstract class FunctionIntrinsic {
     abstract fun apply(callInfo: CallInfo, arguments: List<JsExpression>, context: TranslationContext): JsExpression
-
-    open fun exists(): Boolean = true
-
-    companion object {
-        @JvmField
-        val NO_INTRINSIC: FunctionIntrinsic = object : FunctionIntrinsic() {
-            override fun exists() = false
-
-            override fun apply(callInfo: CallInfo, arguments: List<JsExpression>, context: TranslationContext) =
-                    throw UnsupportedOperationException("FunctionIntrinsic#NO_INTRINSIC_#apply")
-
-        }
-
-        @JvmStatic
-        protected fun getThisOrReceiverOrNull(callInfo: CallInfo): JsExpression? =
-            callInfo.dispatchReceiver ?: callInfo.extensionReceiver
-    }
 }

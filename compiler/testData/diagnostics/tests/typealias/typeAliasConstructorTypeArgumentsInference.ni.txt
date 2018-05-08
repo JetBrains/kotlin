@@ -44,9 +44,9 @@ public final class Pair</*0*/ X, /*1*/ Y> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias C</*0*/ T>  = Cons<T>
-public typealias CC</*0*/ T>  = C<C<T>>
-public typealias F</*0*/ T>  = Foo<T>
-public typealias N</*0*/ T>  = Num<T>
-public typealias PL</*0*/ T>  = Pair<T, kotlin.collections.List<T>>
-public typealias PN</*0*/ T>  = Pair<T, Num<T>>
+public typealias C</*0*/ T> = Cons<T>
+public typealias CC</*0*/ T> = C<C<T>>
+public typealias F</*0*/ T> = Foo<T>
+public typealias N</*0*/ T> = Num<T>
+public typealias PL</*0*/ T> = Pair<T, kotlin.collections.List<T>>
+public typealias PN</*0*/ T> = Pair<T, Num<T>>

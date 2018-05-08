@@ -31,7 +31,6 @@ import com.intellij.spring.model.utils.SpringModelSearchers
 import com.intellij.spring.model.utils.SpringModelUtils
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.editor.BatchTemplateRunner
 import org.jetbrains.kotlin.idea.spring.effectiveBeanClasses
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.utils.ifEmpty
 
 // TODO: GenerateAutowiredDependenciesUtil.getQualifierName() is not accessible here
@@ -59,7 +59,7 @@ private fun createAutowiredProperty(
         val qualifierName = candidateBean.getQualifierName()
         val candidateBeanClass = candidateBeanClasses.first()
         val beanName = candidateBean.name
-        val name = if (beanName != null && KotlinNameSuggester.isIdentifier(beanName)) beanName else candidateBeanClass.name!!
+        val name = if (beanName != null && beanName.isIdentifier()) beanName else candidateBeanClass.name!!
 
         val psiFactory = KtPsiFactory(currentBeanClass.project)
         // TODO: Use KtPsiFactory.CallableBuilder

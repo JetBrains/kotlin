@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -132,9 +134,12 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
                 } else {
                     context[BindingContext.EXPRESSION_TYPE_INFO, psiElement]?.let {
                         val type = it.type
+
+                        val dataFlowValueFactory = psiElement.getResolutionFacade().frontendService<DataFlowValueFactory>()
+
                         if (type != null) {
                             val nullability = it.dataFlowInfo.getStableNullability(
-                                DataFlowValueFactory.createDataFlowValue(psiElement, type, context, psiElement.findModuleDescriptor())
+                                dataFlowValueFactory.createDataFlowValue(psiElement, type, context, psiElement.findModuleDescriptor())
                             )
                             if (!nullability.canBeNonNull()) return null
                         }

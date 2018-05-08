@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
@@ -240,8 +241,7 @@ fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boole
             else -> {
                 if (!useResolveForReadWrite) return ReferenceAccess.READ_WRITE to assignment
 
-                val bindingContext = assignment.analyze(BodyResolveMode.PARTIAL)
-                val resolvedCall = assignment.getResolvedCall(bindingContext) ?: return ReferenceAccess.READ_WRITE to assignment
+                val resolvedCall = assignment.resolveToCall() ?: return ReferenceAccess.READ_WRITE to assignment
                 if (!resolvedCall.isReallySuccess()) return ReferenceAccess.READ_WRITE to assignment
                 return if (resolvedCall.resultingDescriptor.name in OperatorConventions.ASSIGNMENT_OPERATIONS.values)
                     ReferenceAccess.READ to assignment

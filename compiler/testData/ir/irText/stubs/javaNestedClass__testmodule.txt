@@ -1,16 +1,41 @@
 MODULE_FRAGMENT name:<test-module>
   EXTERNAL_PACKAGE_FRAGMENT fqName:<root>
     CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:J modality:OPEN visibility:public flags:
+      $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J flags:
+      superClasses:
+        UNBOUND: class Any
       CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J flags:
       CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:JJ modality:OPEN visibility:public flags:
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J.JJ flags:
+        superClasses:
+          UNBOUND: class Any
         CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:J.JJ flags:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:foo visibility:public modality:OPEN <> () returnType:Unit flags:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:foo visibility:public modality:OPEN <> ($this:J.JJ) returnType:Unit flags:
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:J.JJ flags:
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+          overridden:
+            UNBOUND: operator fun equals(other: kotlin.Any?): kotlin.Boolean
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
           VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+          overridden:
+            UNBOUND: fun hashCode(): kotlin.Int
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+          overridden:
+            UNBOUND: fun toString(): kotlin.String
+          $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
         FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> () returnType:Unit flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> (other:kotlin.Any?) returnType:Boolean flags:
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          UNBOUND: operator fun equals(other: kotlin.Any?): kotlin.Boolean
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
         VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any? flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> () returnType:Int flags:
-      FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> () returnType:String flags:
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          UNBOUND: fun hashCode(): kotlin.Int
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          UNBOUND: fun toString(): kotlin.String
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Any flags:

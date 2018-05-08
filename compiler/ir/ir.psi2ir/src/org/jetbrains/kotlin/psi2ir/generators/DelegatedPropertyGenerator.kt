@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
@@ -93,7 +94,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         accessorDescriptor: PropertyAccessorDescriptor,
         generateBody: (IrFunction) -> IrBody
     ): IrFunction =
-        context.symbolTable.declareSimpleFunction(
+        context.symbolTable.declareSimpleFunctionWithOverrides(
             ktDelegate.startOffset, ktDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
             accessorDescriptor
@@ -327,7 +328,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         ktDelegate: KtPropertyDelegate,
         generateBody: (IrFunction) -> IrBody
     ) =
-        context.symbolTable.declareSimpleFunction(
+        context.symbolTable.declareSimpleFunctionWithOverrides(
             ktDelegate.startOffset, ktDelegate.endOffset,
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
             getterDescriptor

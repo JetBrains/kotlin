@@ -35,7 +35,7 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.CommonProcessors
-import org.jetbrains.kotlin.idea.caches.resolve.cached
+import org.jetbrains.kotlin.idea.caches.project.cached
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor

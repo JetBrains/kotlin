@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -84,7 +85,7 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
                           ?: return false) as PsiElement
             if (!lbrace.textRange.containsOffset(caretOffset)) return false
 
-            val resolvedCall = element.getResolvedCall(element.analyze())
+            val resolvedCall = element.resolveToCall(BodyResolveMode.FULL)
             val descriptor = resolvedCall?.resultingDescriptor
             if (descriptor is FunctionDescriptor && descriptor.getName() == OperatorNameConventions.INVOKE) {
                 if (element.parent is KtDotQualifiedExpression &&

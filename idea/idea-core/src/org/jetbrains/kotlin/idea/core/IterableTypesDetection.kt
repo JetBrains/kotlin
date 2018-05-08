@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
@@ -40,7 +41,8 @@ import java.util.*
 class IterableTypesDetection(
         private val project: Project,
         private val forLoopConventionsChecker: ForLoopConventionsChecker,
-        private val languageVersionSettings: LanguageVersionSettings
+        private val languageVersionSettings: LanguageVersionSettings,
+        private val dataFlowValueFactory: DataFlowValueFactory
 ) {
     companion object {
         private val iteratorName = Name.identifier("iterator")
@@ -78,7 +80,7 @@ class IterableTypesDetection(
 
             val expression = KtPsiFactory(project).createExpression("fake")
             val context = ExpressionTypingContext.newContext(
-                    BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings)
+                    BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE, languageVersionSettings, dataFlowValueFactory)
             val expressionReceiver = ExpressionReceiver.create(expression, type.type, context.trace.bindingContext)
             val elementType = forLoopConventionsChecker.checkIterableConvention(expressionReceiver, context)
             return elementType?.let { it.toFuzzyType(type.freeParameters) }

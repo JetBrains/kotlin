@@ -246,7 +246,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         return
                     }
 
-                    val message = "Missing " + diagnostic.description + DiagnosticUtils.atLocation(ktFile, TextRange(expectedStart, expectedEnd))
+                    val message = "Missing " + diagnostic.description + PsiDiagnosticUtils.atLocation(
+                        ktFile,
+                        TextRange(expectedStart, expectedEnd)
+                    )
                     System.err.println(message)
                     ok[0] = false
                 }
@@ -258,7 +261,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         end: Int
                 ) {
                     val message = "Parameters of diagnostic not equal at position " +
-                                  DiagnosticUtils.atLocation(ktFile, TextRange(start, end)) +
+                            PsiDiagnosticUtils.atLocation(ktFile, TextRange(start, end)) +
                                   ". Expected: ${expectedDiagnostic.asString()}, actual: $actualDiagnostic"
                     System.err.println(message)
                     ok[0] = false
@@ -270,7 +273,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                         return
                     }
 
-                    val message = "Unexpected ${diagnostic.description}${DiagnosticUtils.atLocation(ktFile, TextRange(actualStart, actualEnd))}"
+                    val message = "Unexpected ${diagnostic.description}${PsiDiagnosticUtils.atLocation(
+                        ktFile,
+                        TextRange(actualStart, actualEnd)
+                    )}"
                     System.err.println(message)
                     ok[0] = false
                 }

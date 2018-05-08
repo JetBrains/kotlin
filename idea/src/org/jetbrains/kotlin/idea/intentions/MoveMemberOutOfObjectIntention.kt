@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
+import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
@@ -47,13 +48,17 @@ abstract class MoveMemberOutOfObjectIntention(text: String) : SelfTargetingRange
         }
 
         if (element is KtClassOrObject) {
-            val moveDescriptor = MoveDeclarationsDescriptor(project,
-                                                            listOf(element),
-                                                            KotlinMoveTargetForExistingElement(destination),
-                                                            MoveDeclarationsDelegate.NestedClass())
-            runWriteAction {
-                MoveKotlinDeclarationsProcessor(moveDescriptor).run()
-                deleteClassOrObjectIfEmpty()
+            val moveDescriptor = MoveDeclarationsDescriptor(
+                    project,
+                    listOf(element),
+                    KotlinMoveTargetForExistingElement(destination),
+                    MoveDeclarationsDelegate.NestedClass()
+            )
+            val refactoring = { MoveKotlinDeclarationsProcessor(moveDescriptor).run() }
+            refactoring.runRefactoringWithPostprocessing(project, MoveKotlinDeclarationsProcessor.REFACTORING_ID) {
+                runWriteAction {
+                    deleteClassOrObjectIfEmpty()
+                }
             }
             return
         }

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrFunction : IrDeclaration, IrTypeParametersContainer, IrSymbolOwner {
+interface IrFunction : IrDeclaration, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent {
     override val descriptor: FunctionDescriptor
     override val symbol: IrFunctionSymbol
 
@@ -44,10 +44,10 @@ fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValue
     valueParameters.getOrElse(parameter.index) {
         throw AssertionError("No IrValueParameter for $parameter")
     }.also { found ->
-            assert(found.descriptor == parameter) {
-                "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
-            }
+        assert(found.descriptor == parameter) {
+            "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
         }
+    }
 
 fun IrFunction.getDefault(parameter: ValueParameterDescriptor): IrExpressionBody? =
     getIrValueParameter(parameter).defaultValue

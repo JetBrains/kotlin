@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,19 +21,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class DiagnosticsWithModifiedMockJdkTestGenerated extends AbstractDiagnosticsWithModifiedMockJdkTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInTestWithModifiedMockJdk() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testWithModifiedMockJdk"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("notConsideredMethod.kt")
     public void testNotConsideredMethod() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testWithModifiedMockJdk/notConsideredMethod.kt");
-        doTest(fileName);
+        runTest("compiler/testData/diagnostics/testWithModifiedMockJdk/notConsideredMethod.kt");
     }
 
     @TestMetadata("throwableConstructor.kt")
     public void testThrowableConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testWithModifiedMockJdk/throwableConstructor.kt");
-        doTest(fileName);
+        runTest("compiler/testData/diagnostics/testWithModifiedMockJdk/throwableConstructor.kt");
     }
 }

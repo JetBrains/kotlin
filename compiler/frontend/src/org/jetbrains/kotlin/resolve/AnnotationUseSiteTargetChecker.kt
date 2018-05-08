@@ -1,21 +1,12 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -26,14 +17,60 @@ import org.jetbrains.kotlin.psi.*
 
 object AnnotationUseSiteTargetChecker {
 
-    fun check(annotated: KtAnnotated, descriptor: DeclarationDescriptor, trace: BindingTrace) {
+    fun check(
+        annotated: KtAnnotated,
+        descriptor: DeclarationDescriptor,
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
+    ) {
         trace.checkDeclaration(annotated, descriptor)
+
+        if (annotated is KtCallableDeclaration) {
+            annotated.receiverTypeReference?.let { trace.checkTypeReference(it, languageVersionSettings, isReceiver = true) }
+            annotated.typeReference?.let { trace.checkTypeReference(it, languageVersionSettings, isReceiver = false) }
+        }
 
         if (annotated is KtFunction) {
             for (parameter in annotated.valueParameters) {
                 if (parameter.hasValOrVar()) continue
                 val parameterDescriptor = trace.bindingContext[BindingContext.VALUE_PARAMETER, parameter] ?: continue
+
                 trace.checkDeclaration(parameter, parameterDescriptor)
+                parameter.typeReference?.let { trace.checkTypeReference(it, languageVersionSettings, isReceiver = false) }
+            }
+        }
+    }
+
+    private fun BindingTrace.checkTypeReference(
+        topLevelTypeReference: KtTypeReference,
+        languageVersionSettings: LanguageVersionSettings,
+        isReceiver: Boolean
+    ) {
+        checkAsTopLevelTypeReference(topLevelTypeReference, languageVersionSettings, isReceiver)
+
+        topLevelTypeReference.acceptChildren(
+            typeReferenceRecursiveVisitor { typeReference ->
+                checkAsTopLevelTypeReference(typeReference, languageVersionSettings, isReceiver = false)
+            }
+        )
+    }
+
+    private fun BindingTrace.checkAsTopLevelTypeReference(
+        topLevelTypeReference: KtTypeReference,
+        languageVersionSettings: LanguageVersionSettings,
+        isReceiver: Boolean
+    ) {
+        for (annotationEntry in topLevelTypeReference.annotationEntries) {
+            val target = annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
+
+            if (target != AnnotationUseSiteTarget.RECEIVER || !isReceiver) {
+                val diagnostic =
+                    if (languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes))
+                        WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(annotationEntry, "undefined target", target.renderName)
+                    else
+                        WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE.on(annotationEntry, target.renderName)
+
+                reportDiagnosticOnce(diagnostic)
             }
         }
     }
@@ -64,8 +101,9 @@ object AnnotationUseSiteTargetChecker {
                 }
                 AnnotationUseSiteTarget.SETTER_PARAMETER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.FILE -> reportDiagnosticOnce(INAPPLICABLE_FILE_TARGET.on(useSiteTarget))
-                AnnotationUseSiteTarget.RECEIVER -> {
-                }
+                AnnotationUseSiteTarget.RECEIVER ->
+                    // annotation with use-site target `receiver` can be only on type reference, but not on declaration
+                    reportDiagnosticOnce(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.on(annotation, "declaration", target.renderName))
             }
         }
     }

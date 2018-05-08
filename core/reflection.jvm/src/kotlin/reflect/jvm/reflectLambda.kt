@@ -18,9 +18,9 @@
 
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.EmptyContainerForLocal
 import kotlin.reflect.jvm.internal.KFunctionImpl

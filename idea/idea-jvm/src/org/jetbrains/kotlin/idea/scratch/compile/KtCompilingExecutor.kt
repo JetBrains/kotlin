@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
@@ -164,7 +164,7 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
                 return@runReadAction false
             }
 
-            val analysisResult = psiFile.analyzeFullyAndGetResult()
+            val analysisResult = psiFile.analyzeWithAllCompilerChecks()
 
             if (analysisResult.isError()) {
                 handlers.forEach { it.error(file, analysisResult.error.message ?: "Couldn't compile ${psiFile.name}") }

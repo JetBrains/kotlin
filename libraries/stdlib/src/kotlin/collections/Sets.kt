@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SetsKt")
 
@@ -27,10 +32,12 @@ internal object EmptySet : Set<Nothing>, Serializable {
  * @sample samples.collections.Collections.Sets.emptyReadOnlySet
  */
 public fun <T> emptySet(): Set<T> = EmptySet
+
 /**
  * Returns a new read-only set with the given elements.
  * Elements of the set are iterated in the order they were specified.
  * The returned set is serializable (JVM).
+ * @sample samples.collections.Collections.Sets.readOnlySet
  */
 public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
 
@@ -78,27 +85,6 @@ public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCo
 /** Returns this Set if it's not `null` and the empty set otherwise. */
 @kotlin.internal.InlineOnly
 public inline fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
-
-/**
- * Returns an immutable set containing only the specified object [element].
- * The returned set is serializable.
- */
-@JvmVersion
-public fun <T> setOf(element: T): Set<T> = java.util.Collections.singleton(element)
-
-
-/**
- * Returns a new [SortedSet] with the given elements.
- */
-@JvmVersion
-public fun <T> sortedSetOf(vararg elements: T): java.util.TreeSet<T> = elements.toCollection(java.util.TreeSet<T>())
-
-/**
- * Returns a new [SortedSet] with the given [comparator] and elements.
- */
-@JvmVersion
-public fun <T> sortedSetOf(comparator: Comparator<in T>, vararg elements: T): java.util.TreeSet<T> = elements.toCollection(java.util.TreeSet<T>(comparator))
-
 
 internal fun <T> Set<T>.optimizeReadOnlySet() = when (size) {
     0 -> emptySet()

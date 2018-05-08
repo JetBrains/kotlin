@@ -36,14 +36,12 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap.PlatformMutabilityMapping;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DelegationResolver;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
@@ -54,6 +52,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -74,6 +73,7 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationCons
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -219,7 +219,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateDefaultImplsIfNeeded() {
-        if (isInterface(descriptor) && !isLocal && (!JvmCodegenUtil.isJvm8InterfaceWithDefaults(descriptor, state) || state.getGenerateDefaultImplsForJvm8())) {
+        if (isInterface(descriptor) && !isLocal) {
             Type defaultImplsType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder defaultImplsBuilder =
                     state.getFactory().newVisitor(JvmDeclarationOriginKt.DefaultImpls(myClass.getPsiOrParent(), descriptor), defaultImplsType, myClass.getContainingKtFile());
@@ -249,6 +249,35 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ClassContext erasedInlineClassContext = parentContext.intoWrapperForErasedInlineClass(descriptor, state);
         new ErasedInlineClassBodyCodegen((KtClass) myClass, erasedInlineClassContext, builder, state, this).generate();
+    }
+
+    @Override
+    protected void generateUnboxMethodForInlineClass() {
+        if (!(myClass instanceof KtClass)) return;
+        if (!descriptor.isInline()) return;
+
+        Type ownerType = typeMapper.mapClass(descriptor);
+        ValueParameterDescriptor inlinedValue = InlineClassesUtilsKt.underlyingRepresentation(this.descriptor);
+        if (inlinedValue == null) return;
+
+        Type valueType = typeMapper.mapType(inlinedValue.getType());
+        SimpleFunctionDescriptor functionDescriptor = InlineClassDescriptorResolver.INSTANCE.createUnboxFunctionDescriptor(this.descriptor);
+        assert functionDescriptor != null : "FunctionDescriptor for unbox method should be not null during codegen";
+
+        functionCodegen.generateMethod(
+                JvmDeclarationOriginKt.UnboxMethodOfInlineClass(functionDescriptor), functionDescriptor,
+                new FunctionGenerationStrategy.CodegenBased(state) {
+                    @Override
+                    public void doGenerateBody(
+                            @NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature
+                    ) {
+                        InstructionAdapter iv = codegen.v;
+                        iv.load(0, OBJECT_TYPE);
+                        iv.getfield(ownerType.getInternalName(), inlinedValue.getName().asString(), valueType.getDescriptor());
+                        iv.areturn(valueType);
+                    }
+                }
+        );
     }
 
     @Override
@@ -374,9 +403,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateDelegates(delegationFieldsInfo);
 
-        if (!isInterface(descriptor)  || kind == OwnerKind.DEFAULT_IMPLS) {
-            generateSyntheticAccessors();
-        }
+        generateSyntheticAccessors();
 
         generateEnumMethods();
 
@@ -548,8 +575,23 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifne(ne);
                 }
                 else {
-                    StackValue value = genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
-                    value.put(Type.BOOLEAN_TYPE, iv);
+                    if (isPrimitive(asmType)) {
+                        StackValue value = StackValue.cmp(KtTokens.EQEQ, asmType, StackValue.onStack(asmType), StackValue.onStack(asmType));
+                        value.put(Type.BOOLEAN_TYPE, iv);
+                    }
+                    else if (TypeUtils.isNullableType(propertyDescriptor.getType())) {
+                        StackValue value =
+                                genEqualsForExpressionsOnStack(KtTokens.EQEQ, StackValue.onStack(asmType), StackValue.onStack(asmType));
+                        value.put(Type.BOOLEAN_TYPE, iv);
+                    }
+                    else {
+                        Type owner =
+                                DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor())
+                                ? AsmTypes.OBJECT_TYPE
+                                : asmType;
+                        iv.invokevirtual(owner.getInternalName(), "equals",
+                                         Type.getMethodDescriptor(Type.BOOLEAN_TYPE, AsmTypes.OBJECT_TYPE), false);
+                    }
                     iv.ifeq(ne);
                 }
             }
@@ -590,7 +632,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.ifnull(ifNull);
                 }
 
-                genHashCode(mv, iv, asmType, state.getTarget());
+                genHashCode(mv, iv, asmType, state.getTarget(),
+                            DescriptorUtils.isInterface(propertyDescriptor.getType().getConstructor().getDeclarationDescriptor()));
 
                 if (ifNull != null) {
                     Label end = new Label();
@@ -871,7 +914,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 deprecatedFieldForInvisibleCompanionObject &&
                 !properVisibilityForCompanionObjectInstanceField &&
                 (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
-        int fieldAccessFlags = ACC_PUBLIC | ACC_STATIC | ACC_FINAL;
+        boolean doNotGeneratePublic =
+                properVisibilityForCompanionObjectInstanceField && (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
+        int fieldAccessFlags;
+        if (doNotGeneratePublic) {
+            fieldAccessFlags = ACC_STATIC | ACC_FINAL;
+        }
+        else {
+            fieldAccessFlags = ACC_PUBLIC | ACC_STATIC | ACC_FINAL;
+        }
         if (properVisibilityForCompanionObjectInstanceField) {
             fieldAccessFlags |= properFieldVisibilityFlag;
         }
@@ -982,8 +1033,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void copyFieldFromCompanionObject(PropertyDescriptor propertyDescriptor) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         StackValue property = codegen.intermediateValueForProperty(propertyDescriptor, false, null, StackValue.none());
-        StackValue.Field field = StackValue
-                .field(property.type, classAsmType, propertyDescriptor.getName().asString(), true, StackValue.none(), propertyDescriptor);
+        StackValue.Field field = StackValue.field(
+                property.type, property.kotlinType, classAsmType, propertyDescriptor.getName().asString(),
+                true, StackValue.none(), propertyDescriptor
+        );
         field.store(property, codegen.v);
     }
 
@@ -1369,23 +1422,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateTraitMethods() {
-        if (isInterfaceWithoutDefaults(descriptor, state)) return;
+        if (isInterface(descriptor)) return;
 
-        List<FunctionDescriptor> restrictedInheritance = new ArrayList<>();
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor interfaceFun = entry.getKey();
             //skip java 8 default methods
-            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) && !isJvm8InterfaceWithDefaultsMember(interfaceFun, state)) {
-                if (state.isJvm8TargetWithDefaults() && !JvmCodegenUtil.isJvm8InterfaceWithDefaults(interfaceFun.getContainingDeclaration(), state)) {
-                    restrictedInheritance.add(interfaceFun);
-                }
-                else {
-                    generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
-                }
+            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) && !hasJvmDefaultAnnotation(interfaceFun)) {
+                generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
             }
         }
-
-        CodegenUtilKt.reportTarget6InheritanceErrorIfNeeded(descriptor, myClass.getPsiOrParent(), restrictedInheritance, state);
     }
 
     private void generateDelegationToDefaultImpl(@NotNull  FunctionDescriptor interfaceFun, @NotNull  FunctionDescriptor inheritedFun) {

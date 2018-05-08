@@ -44,7 +44,7 @@ class IrClassReferenceImpl(
         type: KotlinType,
         descriptor: ClassifierDescriptor,
         classType: KotlinType
-    ) : this(startOffset, endOffset, type, createClassifierSymbolForClassReference(descriptor), classType)
+    ) : this(startOffset, endOffset, type, createClassifierSymbol(descriptor), classType)
 
     override val descriptor: ClassifierDescriptor get() = symbol.descriptor
 
@@ -52,7 +52,7 @@ class IrClassReferenceImpl(
         visitor.visitClassReference(this, data)
 }
 
-internal fun createClassifierSymbolForClassReference(descriptor: ClassifierDescriptor): IrClassifierSymbol =
+internal fun createClassifierSymbol(descriptor: ClassifierDescriptor): IrClassifierSymbol =
     when (descriptor) {
         is ClassDescriptor -> IrClassSymbolImpl(descriptor)
         is TypeParameterDescriptor -> IrTypeParameterSymbolImpl(descriptor)

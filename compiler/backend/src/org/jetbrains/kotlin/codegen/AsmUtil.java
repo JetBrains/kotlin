@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ArrayUtil;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.kotlin.codegen.serialization.JvmStringTable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmTarget;
@@ -26,19 +26,22 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
+import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.protobuf.MessageLite;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.*;
@@ -57,6 +60,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAn
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -127,6 +131,12 @@ public class AsmUtil {
         return primitiveTypeByBoxedType.get(boxedType);
     }
 
+    @NotNull
+    public static Type unboxUnlessPrimitive(@NotNull Type boxedOrPrimitiveType) {
+        if (isPrimitive(boxedOrPrimitiveType)) return boxedOrPrimitiveType;
+        return unboxType(boxedOrPrimitiveType);
+    }
+
     public static boolean isBoxedTypeOf(@NotNull Type boxedType, @NotNull Type unboxedType) {
         return unboxPrimitiveTypeOrNull(boxedType) == unboxedType;
     }
@@ -173,9 +183,9 @@ public class AsmUtil {
         return new Method(name, Type.getMethodDescriptor(returnType, parameterTypes));
     }
 
-    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
+    public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
-                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !state.isJvm8TargetWithDefaults()))
+                (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor)))
                && !isStaticMethod(kind, functionDescriptor);
     }
 
@@ -219,7 +229,7 @@ public class AsmUtil {
             flags |= ACC_STATIC;
         }
 
-        if (isAbstractMethod(functionDescriptor, kind, state)) {
+        if (isAbstractMethod(functionDescriptor, kind)) {
             flags |= ACC_ABSTRACT;
         }
 
@@ -235,7 +245,8 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (state.getDeprecationProvider().isDeprecatedHidden(functionDescriptor)) {
+        if (state.getDeprecationProvider().isDeprecatedHidden(functionDescriptor) ||
+            (functionDescriptor.isSuspend()) && functionDescriptor.getVisibility().equals(Visibilities.PRIVATE)) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
@@ -498,7 +509,7 @@ public class AsmUtil {
         });
     }
 
-    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
+    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget, boolean isInterface) {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
@@ -509,7 +520,7 @@ public class AsmUtil {
             }
         }
         else if (type.getSort() == Type.OBJECT) {
-            iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
+            iv.invokevirtual((isInterface ? AsmTypes.OBJECT_TYPE : type).getInternalName(), "hashCode", "()I", false);
         }
         else if (type.getSort() == Type.BOOLEAN) {
             Label end = new Label();
@@ -677,7 +688,7 @@ public class AsmUtil {
             @NotNull String name
     ) {
         KotlinType type = parameter.getType();
-        if (isNullableType(type)) return;
+        if (isNullableType(type) || InlineClassesUtilsKt.isNullableUnderlyingType(type)) return;
 
         int index = frameMap.getIndex(parameter);
         Type asmType = typeMapper.mapType(type);
@@ -702,7 +713,7 @@ public class AsmUtil {
         return new StackValue(stackValue.type) {
 
             @Override
-            public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+            public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
                 Type innerType = stackValue.type;
                 stackValue.put(innerType, v);
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
@@ -881,11 +892,11 @@ public class AsmUtil {
     public static void writeAnnotationData(
             @NotNull AnnotationVisitor av, @NotNull MessageLite message, @NotNull JvmStringTable stringTable
     ) {
-        writeAnnotationData(av, BitEncoding.encodeBytes(DescriptorSerializer.serialize(message, stringTable)), stringTable.getStrings());
+        writeAnnotationData(av, JvmProtoBufUtil.writeData(message, stringTable), ArrayUtil.toStringArray(stringTable.getStrings()));
     }
 
     public static void writeAnnotationData(
-            @NotNull AnnotationVisitor av, @NotNull String[] data, @NotNull List<String> strings
+            @NotNull AnnotationVisitor av, @NotNull String[] data, @NotNull String[] strings
     ) {
         AnnotationVisitor dataVisitor = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
         for (String string : data) {

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.NameUtils
 
 class JvmLower(val context: JvmBackendContext) {
@@ -35,7 +37,7 @@ class JvmLower(val context: JvmBackendContext) {
         PropertiesLowering().lower(irFile)
 
         //Should be before interface lowering
-        DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
+        DefaultArgumentStubGenerator(context, false).runOnFilePostfix(irFile)
         StaticDefaultFunctionLowering(context.state).runOnFilePostfix(irFile)
 
         InterfaceLowering(context.state).runOnFilePostfix(irFile)
@@ -51,11 +53,13 @@ class JvmLower(val context: JvmBackendContext) {
         EnumClassLowering(context).runOnFilePostfix(irFile)
         //Should be before SyntheticAccessorLowering cause of synthetic accessor for companion constructor
         ObjectClassLowering(context).lower(irFile)
-        InitializersLowering(context).runOnFilePostfix(irFile)
+        InitializersLowering(context, JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, true).runOnFilePostfix(irFile)
         SingletonReferencesLowering(context).runOnFilePostfix(irFile)
         SyntheticAccessorLowering(context).lower(irFile)
         BridgeLowering(context).runOnFilePostfix(irFile)
 
         TailrecLowering(context).runOnFilePostfix(irFile)
+
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
     }
 }

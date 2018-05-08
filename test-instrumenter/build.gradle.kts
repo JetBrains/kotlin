@@ -1,7 +1,9 @@
 import org.gradle.jvm.tasks.Jar
 
-plugins { java }
-apply { plugin("kotlin") }
+plugins {
+    java
+    kotlin("jvm")
+}
 
 dependencies {
     compile(project(":kotlin-stdlib"))

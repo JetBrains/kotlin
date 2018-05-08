@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.findUElementByTextFromPsi
@@ -59,6 +62,42 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
         TestCase.assertSame("virtualFiles of element and file itself should be the same",
                             psiElement(copied).containingFile.originalFile.virtualFile,
                             copied.originalFile.virtualFile)
+    }
+
+    fun testDetachedResolve() {
+        val psiFile = myFixture.configureByText(
+            "AnnotatedClass.kt", """
+            class AnnotatedClass {
+                    @JvmName(name = "")
+                    fun bar(param: String) { unknownFunc(param) }
+            }
+        """.trimIndent()
+        ) as KtFile
+
+        val detachedCall = psiFile.findDescendantOfType<KtCallExpression>()!!.copied()
+        val uCallExpression = detachedCall.toUElementOfType<UCallExpression>()!!
+        // at least it should not throw exceptions
+        TestCase.assertNull(uCallExpression.methodName)
+    }
+
+    fun testCapturedTypeInExtensionReceiverOfCall() {
+        val psiFile = myFixture.configureByText(
+            "foo.kt", """
+            class Foo<T>
+
+            fun <K> K.extensionFunc() {}
+
+            fun test(f: Foo<*>) {
+                f.extensionFunc()
+            }
+        """.trimIndent()
+        ) as KtFile
+
+        val extensionFunctionCall = psiFile.findDescendantOfType<KtCallExpression>()!!
+        val uCallExpression = extensionFunctionCall.toUElementOfType<UCallExpression>()!!
+
+        TestCase.assertNotNull(uCallExpression.receiverType)
+        TestCase.assertNotNull(uCallExpression.methodName)
     }
 
     fun testParameterInAnnotationClassFromFactory() {

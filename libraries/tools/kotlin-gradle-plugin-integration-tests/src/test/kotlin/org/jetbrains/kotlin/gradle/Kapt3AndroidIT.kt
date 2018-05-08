@@ -12,7 +12,7 @@ class Kapt3Android30IT : Kapt3AndroidIT() {
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {
     companion object {
-        private const val GRADLE_VERSION = "4.1-rc-1"
+        private val GRADLE_VERSION = GradleVersionRequired.AtLeast("4.1")
     }
 
     protected open val androidGradlePluginVersion: String

@@ -39,14 +39,13 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
-import org.jetbrains.kotlin.idea.highlighter.markers.hasActualsFor
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -58,8 +57,8 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.getAccessorNames
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.hasActualsFor
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils

@@ -96,7 +96,7 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
                 }
 
         val resolutionFacade = element.getResolutionFacade()
-        val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
+        val context = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL_WITH_CFA)
         val moduleDescriptor = resolutionFacade.moduleDescriptor
         val variantsHelper = ReferenceVariantsHelper(context, resolutionFacade, moduleDescriptor, {
             it !is DeclarationDescriptorWithVisibility || it.isVisible(element, null, context, resolutionFacade)

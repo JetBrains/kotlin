@@ -1,0 +1,5 @@
+package
+
+public fun consume(/*0*/ s: kotlin.String): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun </*0*/ T, /*1*/ U> T.map(/*0*/ f: (T) -> U): U

@@ -16,81 +16,24 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.implementedDescriptor
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
-import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
+import org.jetbrains.kotlin.idea.util.hasDeclarationOf
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-fun ModuleDescriptor.hasDeclarationOf(descriptor: MemberDescriptor) = declarationOf(descriptor) != null
-
-private fun ModuleDescriptor.declarationOf(descriptor: MemberDescriptor): DeclarationDescriptor? =
-    with(ExpectedActualResolver) {
-        val expectedCompatibilityMap = findExpectedForActual(descriptor, this@declarationOf)
-        expectedCompatibilityMap?.get(Compatible)?.firstOrNull() ?: expectedCompatibilityMap?.values?.flatten()?.firstOrNull()
-    }
 
 fun getExpectedDeclarationTooltip(declaration: KtDeclaration?): String? {
     val descriptor = declaration?.toDescriptor() as? MemberDescriptor ?: return null
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
-    val commonModuleDescriptor = platformModuleDescriptor.implementedDescriptor ?: return null
-    if (!commonModuleDescriptor.hasDeclarationOf(descriptor)) return null
+    val commonModuleDescriptors = platformModuleDescriptor.implementedDescriptors ?: return null
+    if (!commonModuleDescriptors.any { it.hasDeclarationOf(descriptor) }) return null
 
     return "Has declaration in common module"
 }
 
 fun navigateToExpectedDeclaration(declaration: KtDeclaration?) {
     declaration?.expectedDeclarationIfAny()?.navigate(false)
-}
-
-internal fun MemberDescriptor.expectedDescriptor() = module.implementedDescriptor?.declarationOf(this)
-
-internal fun KtDeclaration.expectedDeclarationIfAny(): KtDeclaration? {
-    val expectedDescriptor = (toDescriptor() as? MemberDescriptor)?.expectedDescriptor() ?: return null
-    return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtDeclaration
-}
-
-internal fun KtDeclaration.isExpectedOrExpectedClassMember(): Boolean {
-    if (hasExpectModifier()) return true
-    if (this is KtClassOrObject) return this.isExpected()
-
-    return containingClassOrObject?.isExpected() == true
-}
-
-internal fun KtClassOrObject.isExpected(): Boolean {
-    return this.hasExpectModifier() || this.descriptor.safeAs<ClassDescriptor>()?.isExpect == true
-}
-
-internal fun DeclarationDescriptor.liftToExpected(): DeclarationDescriptor? {
-    if (this is MemberDescriptor) {
-        return when {
-            isExpect -> this
-            isActual -> expectedDescriptor()
-            else -> null
-        }
-    }
-
-    if (this is ValueParameterDescriptor) {
-        val containingExpectedDescriptor = containingDeclaration.liftToExpected() as? CallableDescriptor ?: return null
-        return containingExpectedDescriptor.valueParameters.getOrNull(index)
-    }
-
-    return null
-}
-
-internal fun KtDeclaration.liftToExpected(): KtDeclaration? {
-    val descriptor = resolveToDescriptorIfAny()
-    val expectedDescriptor = descriptor?.liftToExpected() ?: return null
-    return DescriptorToSourceUtils.descriptorToDeclaration(expectedDescriptor) as? KtDeclaration
 }

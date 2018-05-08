@@ -71,7 +71,8 @@ fun makeIncrementally(
                 sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
                 versions, reporter,
                 // Use precise setting in case of non-Gradle build
-                usePreciseJavaTracking = true
+                usePreciseJavaTracking = true,
+                localStateDirs = emptyList()
         )
         compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
@@ -104,14 +105,16 @@ class IncrementalJvmCompilerRunner(
         changesRegistry: ChangesRegistry? = null,
         private val buildHistoryFile: File? = null,
         private val friendBuildHistoryFile: File? = null,
-        private val usePreciseJavaTracking: Boolean
+        private val usePreciseJavaTracking: Boolean,
+        localStateDirs: Collection<File>
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
         workingDir,
         "caches-jvm",
         cacheVersions,
         reporter,
         artifactChangesProvider,
-        changesRegistry
+        changesRegistry,
+        localStateDirs = localStateDirs
 ) {
     override fun isICEnabled(): Boolean =
             IncrementalCompilation.isEnabled()
@@ -138,7 +141,11 @@ class IncrementalJvmCompilerRunner(
             else
                 null
 
-    override fun calculateSourcesToCompile(caches: IncrementalJvmCachesManager, changedFiles: ChangedFiles.Known, args: K2JVMCompilerArguments): CompilationMode {
+    override fun calculateSourcesToCompile(
+        caches: IncrementalJvmCachesManager,
+        changedFiles: ChangedFiles.Known,
+        args: K2JVMCompilerArguments
+    ): CompilationMode {
         val dirtyFiles = getDirtyFiles(changedFiles)
 
         fun markDirtyBy(lookupSymbols: Collection<LookupSymbol>) {
@@ -211,10 +218,13 @@ class IncrementalJvmCompilerRunner(
         }
 
         val androidLayoutChanges = processLookupSymbolsForAndroidLayouts(changedFiles)
+        val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
 
         markDirtyBy(androidLayoutChanges)
         markDirtyBy(classpathChanges.lookupSymbols)
         markDirtyBy(classpathChanges.fqNames)
+        markDirtyBy(removedClassesChanges.dirtyLookupSymbols)
+        markDirtyBy(removedClassesChanges.dirtyClassesFqNames)
 
         return CompilationMode.Incremental(dirtyFiles)
     }
@@ -311,7 +321,9 @@ class IncrementalJvmCompilerRunner(
     override fun preBuildHook(args: K2JVMCompilerArguments, compilationMode: CompilationMode) {
         when (compilationMode) {
             is CompilationMode.Incremental -> {
-                args.classpathAsList += args.destinationAsFile.apply { mkdirs() }
+                val destinationDir = args.destinationAsFile
+                destinationDir.mkdirs()
+                args.classpathAsList = listOf(destinationDir) + args.classpathAsList
             }
             is CompilationMode.Rebuild -> {
                 // there is no point in updating annotation file since all files will be compiled anyway

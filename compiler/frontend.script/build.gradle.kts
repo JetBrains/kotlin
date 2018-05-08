@@ -1,5 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.Coroutines
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
@@ -10,7 +14,7 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(project(":kotlin-reflect"))
 }
 
 sourceSets {
@@ -18,3 +22,6 @@ sourceSets {
     "test" {}
 }
 
+kotlin {
+    experimental.coroutines = Coroutines.ENABLE
+}

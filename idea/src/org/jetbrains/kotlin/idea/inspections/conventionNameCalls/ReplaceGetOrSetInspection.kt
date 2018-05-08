@@ -22,15 +22,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.psi.KtArrayAccessExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.buildExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -54,7 +52,9 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
 
     override fun isApplicable(element: KtDotQualifiedExpression): Boolean {
         val callExpression = element.callExpression ?: return false
-        val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
+        val calleeName = (callExpression.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameAsName()
+        if (calleeName !in operatorNames) return false
+        val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return false
         if (!resolvedCall.isReallySuccess()) return false
 
@@ -88,8 +88,7 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
 
     override fun fixText(element: KtDotQualifiedExpression): String {
         val callExpression = element.callExpression ?: return defaultFixText
-        val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return defaultFixText
+        val resolvedCall = callExpression.resolveToCall() ?: return defaultFixText
         return "Replace '${resolvedCall.resultingDescriptor.name.asString()}' call with indexing operator"
     }
 

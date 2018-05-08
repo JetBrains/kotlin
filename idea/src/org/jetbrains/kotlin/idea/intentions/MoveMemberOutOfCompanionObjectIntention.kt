@@ -23,7 +23,7 @@ import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
@@ -47,22 +46,22 @@ class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention("
         val refsRequiringClassInstance = element.project.runSynchronouslyWithProgress("Searching for ${element.name}", true) {
             runReadAction {
                 ReferencesSearch
-                        .search(element)
-                        .mapNotNull { it.element }
-                        .filter {
-                            if (it !is KtElement) return@filter true
-                            val resolvedCall = it.getResolvedCall(it.analyzeFully()) ?: return@filter false
-                            val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@filter false
-                            if (dispatchReceiver !is ImplicitClassReceiver) return@filter true
-                            it.parents
-                                    .filterIsInstance<KtClassOrObject>()
-                                    .none {
-                                        val classDescriptor = it.resolveToDescriptorIfAny() as? ClassDescriptor
-                                        if (classDescriptor != null && classDescriptor.isSubclassOf(targetClassDescriptor)) return@none true
-                                        if (it.isTopLevel() || it is KtObjectDeclaration || (it is KtClass && !it.isInner())) return@filter true
-                                        false
-                                    }
-                        }
+                    .search(element)
+                    .mapNotNull { it.element }
+                    .filter {
+                        if (it !is KtElement) return@filter true
+                        val resolvedCall = it.resolveToCall() ?: return@filter false
+                        val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@filter false
+                        if (dispatchReceiver !is ImplicitClassReceiver) return@filter true
+                        it.parents
+                            .filterIsInstance<KtClassOrObject>()
+                            .none {
+                                val classDescriptor = it.resolveToDescriptorIfAny()
+                                if (classDescriptor != null && classDescriptor.isSubclassOf(targetClassDescriptor)) return@none true
+                                if (it.isTopLevel() || it is KtObjectDeclaration || (it is KtClass && !it.isInner())) return@filter true
+                                false
+                            }
+                    }
             }
         } ?: return
 

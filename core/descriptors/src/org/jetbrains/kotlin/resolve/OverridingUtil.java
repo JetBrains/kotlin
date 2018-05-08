@@ -659,9 +659,7 @@ public class OverridingUtil {
         // Optimization: avoid creating hash sets in frequent cases when modality can be computed trivially
         boolean hasOpen = false;
         boolean hasAbstract = false;
-        boolean hasExpect = false;
         for (CallableMemberDescriptor descriptor : descriptors) {
-            hasExpect |= descriptor.isExpect();
             switch (descriptor.getModality()) {
                 case FINAL:
                     return Modality.FINAL;
@@ -676,33 +674,39 @@ public class OverridingUtil {
             }
         }
 
-        if (!hasExpect) {
-            if (hasOpen && !hasAbstract) return Modality.OPEN;
-            if (!hasOpen && hasAbstract) return Modality.ABSTRACT;
+        // Fake overrides of abstract members in non-abstract expected classes should not be abstract, because otherwise it would be
+        // impossible to inherit a non-expected class from that expected class in common code.
+        // We're making their modality that of the containing class, because this is the least confusing behavior for the users.
+        // However, it may cause problems if we reuse resolution results of common code when compiling platform code (see KT-15220)
+        boolean transformAbstractToClassModality =
+                current.isExpect() && (current.getModality() != Modality.ABSTRACT && current.getModality() != Modality.SEALED);
+
+        if (hasOpen && !hasAbstract) {
+            return Modality.OPEN;
+        }
+        if (!hasOpen && hasAbstract) {
+            return transformAbstractToClassModality ? current.getModality() : Modality.ABSTRACT;
         }
 
         Set<CallableMemberDescriptor> allOverriddenDeclarations = new HashSet<CallableMemberDescriptor>();
         for (CallableMemberDescriptor descriptor : descriptors) {
             allOverriddenDeclarations.addAll(getOverriddenDeclarations(descriptor));
         }
-        // Fake overrides of abstract members in non-abstract expected classes should not be abstract, because otherwise it would be
-        // impossible to inherit a non-expected class from that expected class in common code.
-        // We cannot assume that they're open though, because the actual abstract function from an expected super class
-        // can be implemented with a final function in the actual class for this class.
-        boolean transformAbstractToFinal =
-                current.isExpect() && (current.getModality() != Modality.ABSTRACT && current.getModality() != Modality.SEALED);
-        return getMinimalModality(filterOutOverridden(allOverriddenDeclarations), transformAbstractToFinal);
+        return getMinimalModality(filterOutOverridden(allOverriddenDeclarations), transformAbstractToClassModality, current.getModality());
     }
 
     @NotNull
     private static Modality getMinimalModality(
             @NotNull Collection<CallableMemberDescriptor> descriptors,
-            boolean transformAbstractToFinal
+            boolean transformAbstractToClassModality,
+            @NotNull Modality classModality
     ) {
         Modality result = Modality.ABSTRACT;
         for (CallableMemberDescriptor descriptor : descriptors) {
             Modality effectiveModality =
-                    transformAbstractToFinal && descriptor.getModality() == Modality.ABSTRACT ? Modality.FINAL : descriptor.getModality();
+                    transformAbstractToClassModality && descriptor.getModality() == Modality.ABSTRACT
+                    ? classModality
+                    : descriptor.getModality();
             if (effectiveModality.compareTo(result) < 0) {
                 result = effectiveModality;
             }
@@ -836,7 +840,11 @@ public class OverridingUtil {
         }
         else {
             assert memberDescriptor instanceof PropertyAccessorDescriptorImpl;
-            ((PropertyAccessorDescriptorImpl) memberDescriptor).setVisibility(visibilityToInherit);
+            PropertyAccessorDescriptorImpl propertyAccessorDescriptor = (PropertyAccessorDescriptorImpl) memberDescriptor;
+            propertyAccessorDescriptor.setVisibility(visibilityToInherit);
+            if (visibilityToInherit != propertyAccessorDescriptor.getCorrespondingProperty().getVisibility()) {
+                propertyAccessorDescriptor.setDefault(false);
+            }
         }
     }
 

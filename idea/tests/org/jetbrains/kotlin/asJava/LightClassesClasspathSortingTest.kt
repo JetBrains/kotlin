@@ -21,7 +21,7 @@ import com.intellij.psi.impl.ResolveScopeManager
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.KotlinTestUtils

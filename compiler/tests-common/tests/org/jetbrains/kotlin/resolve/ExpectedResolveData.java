@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -66,7 +66,7 @@ public abstract class ExpectedResolveData {
 
         @Override
         public String toString() {
-            return DiagnosticUtils.atLocation(element);
+            return PsiDiagnosticUtils.atLocation(element);
         }
     }
 
@@ -370,8 +370,8 @@ public abstract class ExpectedResolveData {
 
 
 
-        return referenceExpression.getText() + " at " + DiagnosticUtils.atLocation(referenceExpression) +
-                                    " in " + statement.getText() + (declaration == null ? "" : " in " + declaration.getText());
+        return referenceExpression.getText() + " at " + PsiDiagnosticUtils.atLocation(referenceExpression) +
+               " in " + statement.getText() + (declaration == null ? "" : " in " + declaration.getText());
     }
 
     private static <T> T getAncestorOfType(Class<T> type, PsiElement element) {

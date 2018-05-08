@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.common;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,24 +27,23 @@ import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
-import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.progress.CompilationCanceledException;
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static org.jetbrains.kotlin.cli.common.ExitCode.*;
+import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
+import static org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR;
 import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
 
@@ -70,11 +68,16 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     @NotNull
     @Override
     public ExitCode execImpl(@NotNull MessageCollector messageCollector, @NotNull Services services, @NotNull A arguments) {
+        CommonCompilerPerformanceManager performanceManager = getPerformanceManager();
+        if (arguments.getReportPerf() || arguments.getDumpPerf() != null) {
+            performanceManager.enableCollectingPerformanceStatistics();
+        }
+
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector, arguments.getAllWarningsAsErrors());
 
         CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, groupingCollector);
-
+        configuration.put(CLIConfigurationKeys.PERF_MANAGER, performanceManager);
         try {
             setupCommonArgumentsAndServices(configuration, arguments, services);
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
@@ -83,50 +86,44 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
                 return ExitCode.COMPILATION_ERROR;
             }
 
-            ExitCode exitCode = OK;
-
-            int repeatCount = 1;
-            String repeat = arguments.getRepeat();
-            if (repeat != null) {
-                try {
-                    repeatCount = Integer.parseInt(repeat);
-                }
-                catch (NumberFormatException ignored) {
-                }
-            }
-
             CompilationCanceledStatus canceledStatus = services.get(CompilationCanceledStatus.class);
             ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus);
 
-            for (int i = 0; i < repeatCount; i++) {
-                if (i > 0) {
-                    K2JVMCompiler.Companion.resetInitStartTime();
+            Disposable rootDisposable = Disposer.newDisposable();
+            try {
+                setIdeaIoUseFallback();
+                ExitCode code = doExecute(arguments, configuration, rootDisposable, paths);
+
+                performanceManager.notifyCompilationFinished();
+                if (arguments.getReportPerf()) {
+                    performanceManager.getMeasurementResults().forEach(
+                            it -> configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(INFO, "PERF: " + it.render(), null)
+                    );
                 }
-                Disposable rootDisposable = Disposer.newDisposable();
-                try {
-                    setIdeaIoUseFallback();
-                    ExitCode code = doExecute(arguments, configuration, rootDisposable, paths);
-                    exitCode = groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
+
+                if (arguments.getDumpPerf() != null) {
+                    performanceManager.dumpPerformanceReport(new File(arguments.getDumpPerf()));
                 }
-                catch (CompilationCanceledException e) {
+
+                return groupingCollector.hasErrors() ? COMPILATION_ERROR : code;
+            }
+            catch (CompilationCanceledException e) {
+                messageCollector.report(INFO, "Compilation was canceled", null);
+                return ExitCode.OK;
+            }
+            catch (RuntimeException e) {
+                Throwable cause = e.getCause();
+                if (cause instanceof CompilationCanceledException) {
                     messageCollector.report(INFO, "Compilation was canceled", null);
                     return ExitCode.OK;
                 }
-                catch (RuntimeException e) {
-                    Throwable cause = e.getCause();
-                    if (cause instanceof CompilationCanceledException) {
-                        messageCollector.report(INFO, "Compilation was canceled", null);
-                        return ExitCode.OK;
-                    }
-                    else {
-                        throw e;
-                    }
-                }
-                finally {
-                    Disposer.dispose(rootDisposable);
+                else {
+                    throw e;
                 }
             }
-            return exitCode;
+            finally {
+                Disposer.dispose(rootDisposable);
+            }
         }
         catch (AnalysisResult.CompilationErrorException e) {
             return COMPILATION_ERROR;
@@ -162,85 +159,10 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
     }
 
     private void setupLanguageVersionSettings(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
-        LanguageVersion languageVersion = parseVersion(configuration, arguments.getLanguageVersion(), "language");
-        LanguageVersion apiVersion = parseVersion(configuration, arguments.getApiVersion(), "API");
-
-        if (languageVersion == null) {
-            // If only "-api-version" is specified, language version is assumed to be the latest stable
-            languageVersion = LanguageVersion.LATEST_STABLE;
-        }
-
-        if (apiVersion == null) {
-            // If only "-language-version" is specified, API version is assumed to be equal to the language version
-            // (API version cannot be greater than the language version)
-            apiVersion = languageVersion;
-        }
-        else {
-            configuration.put(CLIConfigurationKeys.IS_API_VERSION_EXPLICIT, true);
-        }
 
         MessageCollector collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-        if (apiVersion.compareTo(languageVersion) > 0) {
-            collector.report(
-                    ERROR,
-                    "-api-version (" + apiVersion.getVersionString() + ") cannot be greater than " +
-                    "-language-version (" + languageVersion.getVersionString() + ")",
-                    null
-            );
-        }
 
-        if (!languageVersion.isStable()) {
-            collector.report(
-                    STRONG_WARNING,
-                    "Language version " + languageVersion.getVersionString() + " is experimental, there are " +
-                    "no backwards compatibility guarantees for new language and library features",
-                    null
-            );
-        }
-
-        Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures = new HashMap<>(0);
-        if (arguments.getMultiPlatform()) {
-            extraLanguageFeatures.put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED);
-        }
-
-        LanguageFeature.State coroutinesState = chooseCoroutinesApplicabilityLevel(configuration, arguments);
-        if (coroutinesState != null) {
-            extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
-        }
-
-        if (arguments.getNewInference()) {
-            extraLanguageFeatures.put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED);
-        }
-
-        if (arguments.getLegacySmartCastAfterTry()) {
-            extraLanguageFeatures.put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED);
-        }
-
-        if (arguments.getEffectSystem()) {
-            extraLanguageFeatures.put(LanguageFeature.UseCallsInPlaceEffect, LanguageFeature.State.ENABLED);
-            extraLanguageFeatures.put(LanguageFeature.UseReturnsEffect, LanguageFeature.State.ENABLED);
-        }
-
-        if (arguments.getReadDeserializedContracts()) {
-            extraLanguageFeatures.put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED);
-        }
-
-
-        setupPlatformSpecificLanguageFeatureSettings(extraLanguageFeatures, arguments);
-
-        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
-                languageVersion,
-                ApiVersion.createByLanguageVersion(apiVersion),
-                arguments.configureAnalysisFlags(collector),
-                extraLanguageFeatures
-        ));
-    }
-
-    protected void setupPlatformSpecificLanguageFeatureSettings(
-            @NotNull Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures,
-            @NotNull A commandLineArguments
-    ) {
-        // do nothing
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, arguments.configureLanguageVersionSettings(collector));
     }
 
     private static final String kotlinHomeEnvVar = System.getenv(KOTLIN_HOME_ENV_VAR);
@@ -295,43 +217,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         return null;
     }
 
-    @Nullable
-    private static LanguageFeature.State chooseCoroutinesApplicabilityLevel(
-            @NotNull CompilerConfiguration configuration,
-            @NotNull CommonCompilerArguments arguments
-    ) {
-        switch (arguments.getCoroutinesState()) {
-            case CommonCompilerArguments.ERROR:
-                return LanguageFeature.State.ENABLED_WITH_ERROR;
-            case CommonCompilerArguments.ENABLE:
-                return LanguageFeature.State.ENABLED;
-            case CommonCompilerArguments.WARN:
-                return null;
-            default:
-                String message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + arguments.getCoroutinesState();
-                configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(ERROR, message, null);
-                return null;
-        }
-    }
-
-    @Nullable
-    private static LanguageVersion parseVersion(
-            @NotNull CompilerConfiguration configuration, @Nullable String value, @NotNull String versionOf
-    ) {
-        if (value == null) return null;
-
-        LanguageVersion version = LanguageVersion.fromVersionString(value);
-        if (version != null) {
-            return version;
-        }
-
-        List<String> versionStrings = ArraysKt.map(LanguageVersion.values(), LanguageVersion::getDescription);
-        String message = "Unknown " + versionOf + " version: " + value + "\n" +
-                         "Supported " + versionOf + " versions: " + StringsKt.join(versionStrings, ", ");
-        configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(ERROR, message, null);
-        return null;
-    }
-
     protected abstract void setupPlatformSpecificArgumentsAndServices(
             @NotNull CompilerConfiguration configuration, @NotNull A arguments, @NotNull Services services
     );
@@ -343,4 +228,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             @NotNull Disposable rootDisposable,
             @Nullable KotlinPaths paths
     );
+
+    @NotNull
+    protected abstract CommonCompilerPerformanceManager getPerformanceManager();
 }

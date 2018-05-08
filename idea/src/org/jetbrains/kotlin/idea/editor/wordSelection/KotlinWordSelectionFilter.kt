@@ -29,6 +29,7 @@ class KotlinWordSelectionFilter : Condition<PsiElement>{
         if (e.language != KotlinLanguage.INSTANCE) return true
 
         if (KotlinListSelectioner.canSelect(e)) return false
+        if (KotlinCodeBlockSelectioner.canSelect(e)) return false
 
         val elementType = e.node.elementType
         if (elementType == KtTokens.REGULAR_STRING_PART || elementType == KtTokens.ESCAPE_SEQUENCE) return true

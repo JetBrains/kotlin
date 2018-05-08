@@ -26,7 +26,10 @@ import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.requests.ClassPrepareRequestor
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiFile
@@ -42,6 +45,7 @@ import com.sun.jdi.ReferenceType
 import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.idea.KotlinFileTypeFactory
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
@@ -54,10 +58,8 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
@@ -82,6 +84,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             myDebugProcess.searchScope,
             allKotlinFilesScope
     )
+
+    override fun getAcceptedFileTypes(): Set<FileType> = KotlinFileTypeFactory.KOTLIN_FILE_TYPES_SET
 
     override fun evaluateCondition(context: EvaluationContext, frame: StackFrameProxyImpl, location: Location, expression: String): ThreeState? {
         return ThreeState.UNSURE
@@ -160,7 +164,16 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             // have been merged into one), but it's impossible to correctly map locations to actual source expressions now.
             val locationIndex = sameLineLocations.indexOf(location)
             if (locationIndex > 0) {
-                return KotlinReentrantSourcePosition(SourcePosition.createFromLine(psiFile, sourceLineNumber))
+                /*
+                    `finally {}` block code is placed in the class file twice.
+                    Unless the debugger metadata is available, we can't figure out if we are inside `finally {}`, so we have to check it using PSI.
+                    This is conceptually wrong and won't work in some cases, but it's still better than nothing.
+                */
+                val elementAt = psiFile.getLineStartOffset(lineNumber)?.let { psiFile.findElementAt(it) }
+                val isInsideDuplicatedFinally = elementAt != null && elementAt.getStrictParentOfType<KtFinallySection>() != null
+                if (!isInsideDuplicatedFinally) {
+                    return KotlinReentrantSourcePosition(SourcePosition.createFromLine(psiFile, sourceLineNumber))
+                }
             }
         }
 
@@ -342,13 +355,15 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             throw NoDataException.INSTANCE
         }
 
-        val classNames = DebuggerClassNameProvider(myDebugProcess).getOuterClassNamesForPosition(position)
-        return classNames.flatMap { name ->
-            listOfNotNull(
-                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name),
-                    myDebugProcess.requestsManager.createClassPrepareRequest(requestor, "$name$*")
-            )
-        }
+        return DumbService.getInstance(myDebugProcess.project).runReadActionInSmartMode(Computable {
+            val classNames = DebuggerClassNameProvider(myDebugProcess).getOuterClassNamesForPosition(position)
+            classNames.flatMap { name ->
+                listOfNotNull(
+                        myDebugProcess.requestsManager.createClassPrepareRequest(requestor, name),
+                        myDebugProcess.requestsManager.createClassPrepareRequest(requestor, "$name$*")
+                )
+            }
+        })
     }
 
     private fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)

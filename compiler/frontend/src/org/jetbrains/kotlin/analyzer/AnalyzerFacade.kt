@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import java.util.*
 import kotlin.coroutines.experimental.buildSequence
 
@@ -61,6 +62,7 @@ abstract class ResolverForProject<M : ModuleInfo> {
 
     abstract val name: String
     abstract val allModules: Collection<M>
+    abstract val builtIns: KotlinBuiltIns
 
     override fun toString() = name
 }
@@ -76,23 +78,24 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override fun descriptorForModule(moduleInfo: M) = diagnoseUnknownModuleInfo(listOf(moduleInfo))
     override val allModules: Collection<M> = listOf()
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) = throw IllegalStateException("Should not be called for $infos")
+    override val builtIns get() = DefaultBuiltIns.Instance
 }
 
 class ResolverForProjectImpl<M : ModuleInfo>(
     private val debugName: String,
     private val projectContext: ProjectContext,
     modules: Collection<M>,
-    private val analyzerFacade: (M) -> AnalyzerFacade,
-    private val modulesContent: (M) -> ModuleContent,
+    private val modulesContent: (M) -> ModuleContent<M>,
+    private val modulePlatforms: (M) -> MultiTargetPlatform?,
+    private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
+    private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val platformParameters: PlatformAnalysisParameters,
     private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
-    private val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
+    override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val packagePartProviderFactory: (M, ModuleContent) -> PackagePartProvider = { _, _ -> PackagePartProvider.Empty },
+    private val packagePartProviderFactory: (ModuleContent<M>) -> PackagePartProvider = { _ -> PackagePartProvider.Empty },
     private val firstDependency: M? = null,
-    private val modulePlatforms: (M) -> MultiTargetPlatform?,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    private val languageSettingsProvider: LanguageSettingsProvider = LanguageSettingsProvider.Default,
     private val invalidateOnOOCB: Boolean = true
 ) : ResolverForProject<M>() {
 
@@ -107,9 +110,18 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         }
     }
 
+    // Protected by ("projectContext.storageManager.lock")
     private val descriptorByModule = mutableMapOf<M, ModuleData>()
+
+    // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
-    val modules = modules.toSet()
+
+    private val moduleInfoToResolvableInfo: Map<M, M> =
+        modules.flatMap { module -> module.flatten().map { modulePart -> modulePart to module } }.toMap() as Map<M, M>
+
+    init {
+        assert(moduleInfoToResolvableInfo.values.toSet() == modules.toSet())
+    }
 
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {
@@ -137,10 +149,11 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         )
     }
 
+    // Protected by ("projectContext.storageManager.lock")
     private val resolverByModuleDescriptor = mutableMapOf<ModuleDescriptor, ResolverForModule>()
 
     override val allModules: Collection<M> by lazy {
-        this.modules + delegateResolver.allModules
+        this.moduleInfoToResolvableInfo.keys + delegateResolver.allModules
     }
 
     override val name: String
@@ -158,45 +171,64 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 return@compute delegateResolver.resolverForModuleDescriptor(descriptor)
             }
             resolverByModuleDescriptor.getOrPut(descriptor) {
+                checkModuleIsCorrect(module)
+
                 ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
-                analyzerFacade(module).createResolverForModule(
-                    module, descriptor as ModuleDescriptorImpl, projectContext.withModule(descriptor), modulesContent(module),
-                    platformParameters, targetEnvironment, this@ResolverForProjectImpl,
-                    languageSettingsProvider,
-                    packagePartProviderFactory(module, modulesContent(module))
+                val moduleContent = modulesContent(module)
+                val packagePartProvider = packagePartProviderFactory(moduleContent)
+                val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
+
+                val languageVersionSettings = moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project)
+                val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module)
+
+                resolverForModuleFactory.createResolverForModule(
+                    descriptor as ModuleDescriptorImpl,
+                    projectContext.withModule(descriptor),
+                    moduleContent,
+                    platformParameters,
+                    targetEnvironment,
+                    this@ResolverForProjectImpl,
+                    languageVersionSettings,
+                    targetPlatformVersion,
+                    packagePartProvider
                 )
             }
         }
     }
 
     internal fun isResolverForModuleDescriptorComputed(descriptor: ModuleDescriptor) =
-        descriptor in resolverByModuleDescriptor
+        projectContext.storageManager.compute {
+            descriptor in resolverByModuleDescriptor
+        }
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
-        if (!isCorrectModuleInfo(moduleInfo)) {
-            diagnoseUnknownModuleInfo(listOf(moduleInfo))
-        }
+        checkModuleIsCorrect(moduleInfo)
         return doGetDescriptorForModule(moduleInfo)
     }
 
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) =
         throw AssertionError("$name does not know how to resolve $infos")
 
-    private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
-        if (module in modules) {
-            return projectContext.storageManager.compute {
-                var moduleData = descriptorByModule.getOrPut(module) {
-                    createModuleDescriptor(module)
-                }
-                if (moduleData.isOutOfDate()) {
-                    moduleData = recreateModuleDescriptor(module)
-                }
-                moduleData.moduleDescriptor
-            }
+    private fun checkModuleIsCorrect(moduleInfo: M) {
+        if (!isCorrectModuleInfo(moduleInfo)) {
+            diagnoseUnknownModuleInfo(listOf(moduleInfo))
         }
+    }
 
-        return delegateResolver.descriptorForModule(module) as ModuleDescriptorImpl
+    private fun doGetDescriptorForModule(module: M): ModuleDescriptorImpl {
+        val moduleFromThisResolver = moduleInfoToResolvableInfo[module]
+                ?: return delegateResolver.descriptorForModule(module) as ModuleDescriptorImpl
+
+        return projectContext.storageManager.compute {
+            var moduleData = descriptorByModule.getOrPut(moduleFromThisResolver) {
+                createModuleDescriptor(moduleFromThisResolver)
+            }
+            if (moduleData.isOutOfDate()) {
+                moduleData = recreateModuleDescriptor(moduleFromThisResolver)
+            }
+            moduleData.moduleDescriptor
+        }
     }
 
     private fun recreateModuleDescriptor(module: M): ModuleData {
@@ -225,7 +257,8 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     }
 }
 
-data class ModuleContent(
+data class ModuleContent<out M : ModuleInfo>(
+    val moduleInfo: M,
     val syntheticFiles: Collection<KtFile>,
     val moduleContentScope: GlobalSearchScope
 )
@@ -236,6 +269,7 @@ interface ModuleInfo {
     val name: Name
     val displayedName: String get() = name.asString()
     fun dependencies(): List<ModuleInfo>
+    val expectedBy: List<ModuleInfo> get() = emptyList()
     val platform: TargetPlatform? get() = null
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
@@ -260,20 +294,29 @@ interface ModuleInfo {
     }
 }
 
+interface CombinedModuleInfo : ModuleInfo {
+    val containedModules: List<ModuleInfo>
+}
+
+fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
+    is CombinedModuleInfo -> listOf(this) + containedModules
+    else -> listOf(this)
+}
+
 interface TrackableModuleInfo : ModuleInfo {
     fun createModificationTracker(): ModificationTracker
 }
 
-abstract class AnalyzerFacade {
+abstract class ResolverForModuleFactory {
     abstract fun <M : ModuleInfo> createResolverForModule(
-        moduleInfo: M,
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
-        moduleContent: ModuleContent,
+        moduleContent: ModuleContent<M>,
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageSettingsProvider: LanguageSettingsProvider,
+        languageVersionSettings: LanguageVersionSettings,
+        targetPlatformVersion: TargetPlatformVersion,
         packagePartProvider: PackagePartProvider
     ): ResolverForModule
 
@@ -288,7 +331,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 ) : ModuleDependencies {
     private val dependencies = storageManager.createLazyValue {
         val moduleDescriptor = resolverForProject.descriptorForModule(module)
-        buildSequence {
+        buildSequence<ModuleDescriptorImpl> {
             if (firstDependency != null) {
                 yield(resolverForProject.descriptorForModule(firstDependency))
             }
@@ -306,6 +349,10 @@ class LazyModuleDependencies<M : ModuleInfo>(
 
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
 
+    override val expectedByDependencies by storageManager.createLazyValue {
+        module.expectedBy.map { resolverForProject.descriptorForModule(it as M) }
+    }
+
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
         get() =
             module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
@@ -318,7 +365,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
     private val resolverForProject: ResolverForProjectImpl<M>,
     private val module: ModuleDescriptor,
-    moduleContent: ModuleContent,
+    moduleContent: ModuleContent<M>,
     private val packageOracle: PackageOracle
 ) : PackageFragmentProvider {
     private val syntheticFilePackages = moduleContent.syntheticFiles.map { it.packageFqName }.toSet()

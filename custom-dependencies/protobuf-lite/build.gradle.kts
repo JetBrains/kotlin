@@ -33,15 +33,10 @@ task("prepare") {
 
         fun loadAllFromJar(file: File): Map<String, Pair<JarEntry, ByteArray>> {
             val result = hashMapOf<String, Pair<JarEntry, ByteArray>>()
-            val jar = JarFile(file)
-            try {
+            JarFile(file).use { jar ->
                 for (jarEntry in jar.entries()) {
                     result[jarEntry.name] = Pair(jarEntry, jar.getInputStream(jarEntry).readBytes())
                 }
-            }
-            finally {
-                // Yes, JarFile does not extend Closeable on JDK 6 so we can't use "use" here
-                jar.close()
             }
             return result
         }

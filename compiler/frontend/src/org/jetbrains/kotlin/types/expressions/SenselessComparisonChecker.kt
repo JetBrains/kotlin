@@ -49,7 +49,7 @@ object SenselessComparisonChecker {
         if (type == null || type.isError) return
 
         val operationSign = expression.operationReference
-        val value = DataFlowValueFactory.createDataFlowValue(expr, type, context)
+        val value = context.dataFlowValueFactory.createDataFlowValue(expr, type, context)
 
         val equality =
             operationSign.getReferencedNameElementType() == KtTokens.EQEQ || operationSign.getReferencedNameElementType() == KtTokens.EQEQEQ

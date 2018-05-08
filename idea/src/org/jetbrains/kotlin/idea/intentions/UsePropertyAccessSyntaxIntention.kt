@@ -45,11 +45,13 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import org.jetbrains.kotlin.synthetic.canBePropertyAccessor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -124,6 +126,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         if (callExpression.getQualifiedExpressionForSelector()?.receiverExpression is KtSuperExpression) return null // cannot call extensions on "super"
 
         val callee = callExpression.calleeExpression as? KtNameReferenceExpression ?: return null
+        if (!canBePropertyAccessor(callee.getReferencedName())) return null
 
         val resolutionFacade = callExpression.getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL_FOR_COMPLETION)
@@ -195,7 +198,8 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        false, facade.frontendService<LanguageVersionSettings>())
+                                                        false, facade.frontendService<LanguageVersionSettings>(),
+                                                        facade.frontendService<DataFlowValueFactory>())
         val callResolver = facade.frontendService<CallResolver>()
         val result = callResolver.resolveSimpleProperty(context)
         return result.isSuccess && result.resultingDescriptor.original == property

@@ -19,13 +19,11 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
@@ -92,24 +90,24 @@ class DeserializedSimpleFunctionDescriptor(
 }
 
 class DeserializedPropertyDescriptor(
-        containingDeclaration: DeclarationDescriptor,
-        original: PropertyDescriptor?,
-        annotations: Annotations,
-        modality: Modality,
-        visibility: Visibility,
-        isVar: Boolean,
-        name: Name,
-        kind: CallableMemberDescriptor.Kind,
-        isLateInit: Boolean,
-        isConst: Boolean,
-        isExternal: Boolean,
-        isDelegated: Boolean,
-        isExpect: Boolean,
-        override val proto: ProtoBuf.Property,
-        override val nameResolver: NameResolver,
-        override val typeTable: TypeTable,
-        override val versionRequirementTable: VersionRequirementTable,
-        override val containerSource: DeserializedContainerSource?
+    containingDeclaration: DeclarationDescriptor,
+    original: PropertyDescriptor?,
+    annotations: Annotations,
+    modality: Modality,
+    visibility: Visibility,
+    isVar: Boolean,
+    name: Name,
+    kind: CallableMemberDescriptor.Kind,
+    isLateInit: Boolean,
+    isConst: Boolean,
+    isExternal: Boolean,
+    isDelegated: Boolean,
+    isExpect: Boolean,
+    override val proto: ProtoBuf.Property,
+    override val nameResolver: NameResolver,
+    override val typeTable: TypeTable,
+    override val versionRequirementTable: VersionRequirementTable,
+    override val containerSource: DeserializedContainerSource?
 ) : DeserializedCallableMemberDescriptor, PropertyDescriptorImpl(
         containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE,
         isLateInit, isConst, isExpect, false, isExternal, isDelegated

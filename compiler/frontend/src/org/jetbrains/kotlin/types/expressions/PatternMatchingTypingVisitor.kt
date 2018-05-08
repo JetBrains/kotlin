@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ConditionalDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonCallChecker
 import org.jetbrains.kotlin.types.*
@@ -53,7 +52,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val knownType = typeInfo.type
         val typeReference = expression.typeReference
         if (typeReference != null && knownType != null) {
-            val dataFlowValue = DataFlowValueFactory.createDataFlowValue(leftHandSide, knownType, context)
+            val dataFlowValue = components.dataFlowValueFactory.createDataFlowValue(leftHandSide, knownType, context)
             val conditionInfo = checkTypeForIs(context, expression, expression.isNegated, knownType, typeReference, dataFlowValue).thenInfo
             val newDataFlowInfo = conditionInfo.and(typeInfo.dataFlowInfo)
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo)
@@ -104,7 +103,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val subjectType = subjectTypeInfo?.type ?: ErrorUtils.createErrorType("Unknown type")
         val jumpOutPossibleInSubject: Boolean = subjectTypeInfo?.jumpOutPossible ?: false
         val subjectDataFlowValue = subjectExpression?.let {
-            DataFlowValueFactory.createDataFlowValue(it, subjectType, contextAfterSubject)
+            facade.components.dataFlowValueFactory.createDataFlowValue(it, subjectType, contextAfterSubject)
         } ?: DataFlowValue.nullValue(components.builtIns)
 
         val possibleTypesForSubject = subjectTypeInfo?.dataFlowInfo?.getStableTypes(
@@ -114,7 +113,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
         val dataFlowInfoForEntries = analyzeConditionsInWhenEntries(expression, contextAfterSubject, subjectDataFlowValue, subjectType)
         val whenReturnType = inferTypeForWhenExpression(expression, contextWithExpectedType, contextAfterSubject, dataFlowInfoForEntries)
-        val whenResultValue = whenReturnType?.let { DataFlowValueFactory.createDataFlowValue(expression, it, contextAfterSubject) }
+        val whenResultValue = whenReturnType?.let { facade.components.dataFlowValueFactory.createDataFlowValue(expression, it, contextAfterSubject) }
 
         val branchesTypeInfo =
             joinWhenExpressionBranches(expression, contextAfterSubject, whenReturnType, jumpOutPossibleInSubject, whenResultValue)
@@ -223,7 +222,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
             val entryDataFlowInfo =
                 if (whenResultValue != null && entryType != null) {
-                    val entryValue = DataFlowValueFactory.createDataFlowValue(entryExpression, entryType, contextAfterSubject)
+                    val entryValue = facade.components.dataFlowValueFactory.createDataFlowValue(entryExpression, entryType, contextAfterSubject)
                     entryTypeInfo.dataFlowInfo.assign(whenResultValue, entryValue, components.languageVersionSettings)
                 } else {
                     entryTypeInfo.dataFlowInfo
@@ -288,7 +287,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
     ): Boolean {
         val trace = TemporaryBindingTrace.create(contextBeforeSubject.trace, "Temporary trace for when subject nullability")
         val subjectContext = contextBeforeSubject.replaceExpectedType(expectedType).replaceBindingTrace(trace)
-        val castResult = DataFlowAnalyzer.checkPossibleCast(
+        val castResult = facade.components.dataFlowAnalyzer.checkPossibleCast(
             subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext
         )
         if (castResult != null && castResult.isCorrect) {
@@ -428,7 +427,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         }
 
         checkTypeCompatibility(newContext, type, subjectType, expression)
-        val expressionDataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, newContext)
+        val expressionDataFlowValue = facade.components.dataFlowValueFactory.createDataFlowValue(expression, type, newContext)
 
         val subjectStableTypes =
             listOf(subjectType) + context.dataFlowInfo.getStableTypes(subjectDataFlowValue, components.languageVersionSettings)
@@ -445,7 +444,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         return ConditionalDataFlowInfo(
             result.thenInfo.equate(
                 subjectDataFlowValue, expressionDataFlowValue,
-                identityEquals = DataFlowAnalyzer.typeHasEqualsFromAny(subjectType, expression),
+                identityEquals = facade.components.dataFlowAnalyzer.typeHasEqualsFromAny(subjectType, expression),
                 languageVersionSettings = components.languageVersionSettings
             ),
             result.elseInfo.disequate(

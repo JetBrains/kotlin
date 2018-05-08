@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.state
@@ -25,6 +14,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.RootContext
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
@@ -49,66 +39,67 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 
 class GenerationState private constructor(
-        val project: Project,
-        builderFactory: ClassBuilderFactory,
-        val module: ModuleDescriptor,
-        bindingContext: BindingContext,
-        val files: List<KtFile>,
-        val configuration: CompilerConfiguration,
-        val generateDeclaredClassFilter: GenerateClassFilter,
-        val codegenFactory: CodegenFactory,
-        val targetId: TargetId?,
-        moduleName: String?,
-        val outDirectory: File?,
-        private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
-        wantsDiagnostics: Boolean
+    val project: Project,
+    builderFactory: ClassBuilderFactory,
+    val module: ModuleDescriptor,
+    bindingContext: BindingContext,
+    val files: List<KtFile>,
+    val configuration: CompilerConfiguration,
+    val generateDeclaredClassFilter: GenerateClassFilter,
+    val codegenFactory: CodegenFactory,
+    val targetId: TargetId?,
+    moduleName: String?,
+    val outDirectory: File?,
+    private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
+    wantsDiagnostics: Boolean
 ) {
 
     class Builder(
-            private val project: Project,
-            private val builderFactory: ClassBuilderFactory,
-            private val module: ModuleDescriptor,
-            private val bindingContext: BindingContext,
-            private val files: List<KtFile>,
-            private val configuration: CompilerConfiguration
+        private val project: Project,
+        private val builderFactory: ClassBuilderFactory,
+        private val module: ModuleDescriptor,
+        private val bindingContext: BindingContext,
+        private val files: List<KtFile>,
+        private val configuration: CompilerConfiguration
     ) {
         private var generateDeclaredClassFilter: GenerateClassFilter = GenerateClassFilter.GENERATE_ALL
         fun generateDeclaredClassFilter(v: GenerateClassFilter) =
-                apply { generateDeclaredClassFilter = v }
+            apply { generateDeclaredClassFilter = v }
 
         private var codegenFactory: CodegenFactory = DefaultCodegenFactory
         fun codegenFactory(v: CodegenFactory) =
-                apply { codegenFactory = v }
+            apply { codegenFactory = v }
 
         private var targetId: TargetId? = null
         fun targetId(v: TargetId?) =
-                apply { targetId = v }
+            apply { targetId = v }
 
         private var moduleName: String? = configuration[CommonConfigurationKeys.MODULE_NAME]
         fun moduleName(v: String?) =
-                apply { moduleName = v }
+            apply { moduleName = v }
 
         // 'outDirectory' is a hack to correctly determine if a compiled class is from the same module as the callee during
         // partial compilation. Module chunks are treated as a single module.
         // TODO: get rid of it with the proper module infrastructure
         private var outDirectory: File? = null
+
         fun outDirectory(v: File?) =
-                apply { outDirectory = v }
+            apply { outDirectory = v }
 
         private var onIndependentPartCompilationEnd: GenerationStateEventCallback = GenerationStateEventCallback.DO_NOTHING
         fun onIndependentPartCompilationEnd(v: GenerationStateEventCallback) =
-                apply { onIndependentPartCompilationEnd = v }
+            apply { onIndependentPartCompilationEnd = v }
 
         private var wantsDiagnostics: Boolean = true
         fun wantsDiagnostics(v: Boolean) =
-                apply { wantsDiagnostics = v }
+            apply { wantsDiagnostics = v }
 
         fun build() =
-                GenerationState(
-                        project, builderFactory, module, bindingContext, files, configuration,
-                        generateDeclaredClassFilter, codegenFactory, targetId,
-                        moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics
-                )
+            GenerationState(
+                project, builderFactory, module, bindingContext, files, configuration,
+                generateDeclaredClassFilter, codegenFactory, targetId,
+                moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics
+            )
     }
 
     abstract class GenerateClassFilter {
@@ -119,7 +110,8 @@ class GenerationState private constructor(
         open fun shouldGenerateClassMembers(processingClassOrObject: KtClassOrObject) = shouldGenerateClass(processingClassOrObject)
 
         companion object {
-            @JvmField val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
+            @JvmField
+            val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
                 override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean = true
 
                 override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean = true
@@ -137,7 +129,7 @@ class GenerationState private constructor(
     val packagesWithObsoleteParts: Set<FqName>
     val obsoleteMultifileClasses: List<FqName>
     val deserializationConfiguration: DeserializationConfiguration =
-            CompilerDeserializationConfiguration(configuration.languageVersionSettings)
+        CompilerDeserializationConfiguration(configuration.languageVersionSettings)
 
     val deprecationProvider = DeprecationResolver(LockBasedStorageManager.NO_LOCKS, configuration.languageVersionSettings)
 
@@ -152,15 +144,15 @@ class GenerationState private constructor(
             obsoleteMultifileClasses = incrementalCacheForThisTarget.getObsoleteMultifileClasses().map {
                 JvmClassName.byInternalName(it).fqNameForClassNameWithoutDollars
             }
-        }
-        else {
+        } else {
             incrementalCacheForThisTarget = null
             packagesWithObsoleteParts = emptySet()
             obsoleteMultifileClasses = emptyList()
         }
     }
 
-    val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "For extra diagnostics in ${this::class.java}", false)
+    val extraJvmDiagnosticsTrace: BindingTrace =
+        DelegatingBindingTrace(bindingContext, "For extra diagnostics in ${this::class.java}", false)
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 
@@ -174,27 +166,31 @@ class GenerationState private constructor(
 
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val isJvm8Target: Boolean = target == JvmTarget.JVM_1_8
-    val isJvm8TargetWithDefaults: Boolean =  isJvm8Target && configuration.getBoolean(JVMConfigurationKeys.JVM8_TARGET_WITH_DEFAULTS)
-    val generateDefaultImplsForJvm8: Boolean = configuration.getBoolean(JVMConfigurationKeys.INTERFACE_COMPATIBILITY)
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
-    val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState",
-                                                            filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS)
+    val bindingTrace: BindingTrace = DelegatingBindingTrace(
+        bindingContext, "trace in GenerationState",
+        filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS
+    )
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
-            this.bindingContext, classBuilderMode, IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
-            this.moduleName, isJvm8Target, isJvm8TargetWithDefaults
+        this.bindingContext,
+        classBuilderMode,
+        IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
+        this.moduleName,
+        isJvm8Target,
+        configuration.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     )
     val intrinsics: IntrinsicMethods = run {
         val shouldUseConsistentEquals = languageVersionSettings.supportsFeature(LanguageFeature.ThrowNpeOnExplicitEqualsForBoxedNull) &&
-                                        !configuration.getBoolean(JVMConfigurationKeys.NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL)
+                !configuration.getBoolean(JVMConfigurationKeys.NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL)
         IntrinsicMethods(target, shouldUseConsistentEquals)
     }
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
-    val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
+    val globalInlineContext: GlobalInlineContext = GlobalInlineContext(diagnostics)
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
-    val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(module)
+    val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(module, configuration.languageVersionSettings)
     val factory: ClassFileFactory
     private lateinit var duplicateSignatureFactory: BuilderFactoryForDuplicateSignatureDiagnostics
 
@@ -210,8 +206,8 @@ class GenerationState private constructor(
 
     val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
     val isReceiverAssertionsDisabled: Boolean =
-            configuration.getBoolean(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS) ||
-            !languageVersionSettings.supportsFeature(LanguageFeature.NullabilityAssertionOnExtensionReceiver)
+        configuration.getBoolean(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS) ||
+                !languageVersionSettings.supportsFeature(LanguageFeature.NullabilityAssertionOnExtensionReceiver)
     val isParamAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS)
     val isInlineDisabled: Boolean = configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
     val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
@@ -225,26 +221,33 @@ class GenerationState private constructor(
 
     val shouldInlineConstVals = languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
 
-    val constructorCallNormalizationMode = configuration.get(JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
-                                                             JVMConstructorCallNormalizationMode.DEFAULT)
+    val constructorCallNormalizationMode = configuration.get(
+        JVMConfigurationKeys.CONSTRUCTOR_CALL_NORMALIZATION_MODE,
+        JVMConstructorCallNormalizationMode.DEFAULT
+    )
 
     init {
         val disableOptimization = configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)
 
         this.interceptedBuilderFactory = builderFactory
-                .wrapWith(
-                    { OptimizationClassBuilderFactory(it, disableOptimization, constructorCallNormalizationMode) },
-                    { BuilderFactoryForDuplicateSignatureDiagnostics(
-                            it, this.bindingContext, diagnostics, this.moduleName,
-                            shouldGenerate = { !shouldOnlyCollectSignatures(it) }
-                    ).apply { duplicateSignatureFactory = this } },
-                    { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
-                    { configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)
-                              ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it }
-                )
-                .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { builderFactory, extension ->
-                    extension.interceptClassBuilderFactory(builderFactory, bindingContext, diagnostics)
+            .wrapWith(
+                { OptimizationClassBuilderFactory(it, disableOptimization, constructorCallNormalizationMode) },
+                {
+                    BuilderFactoryForDuplicateSignatureDiagnostics(
+                        it, this.bindingContext, diagnostics, this.moduleName,
+                        isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+                        shouldGenerate = { !shouldOnlyCollectSignatures(it) }
+                    ).apply { duplicateSignatureFactory = this }
+                },
+                { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
+                {
+                    configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)
+                        ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it
                 }
+            )
+            .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { builderFactory, extension ->
+                extension.interceptClassBuilderFactory(builderFactory, bindingContext, diagnostics)
+            }
 
         this.factory = ClassFileFactory(this, interceptedBuilderFactory)
     }
@@ -269,13 +272,13 @@ class GenerationState private constructor(
         interceptedBuilderFactory.close()
     }
 
-    private fun shouldOnlyCollectSignatures(origin: JvmDeclarationOrigin)
-            = classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && origin.originKind in doNotGenerateInLightClassMode
+    private fun shouldOnlyCollectSignatures(origin: JvmDeclarationOrigin) =
+        classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && origin.originKind in doNotGenerateInLightClassMode
 }
 
 private val doNotGenerateInLightClassMode = setOf(CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, BRIDGE, COLLECTION_STUB, AUGMENTED_BUILTIN_API)
 
-private class LazyJvmDiagnostics(compute: () -> Diagnostics): Diagnostics {
+private class LazyJvmDiagnostics(compute: () -> Diagnostics) : Diagnostics {
     private val delegate by lazy(LazyThreadSafetyMode.SYNCHRONIZED, compute)
 
     override val modificationTracker: ModificationTracker
@@ -283,7 +286,7 @@ private class LazyJvmDiagnostics(compute: () -> Diagnostics): Diagnostics {
 
     override fun all(): Collection<Diagnostic> = delegate.all()
 
-    override fun forElement(psiElement: PsiElement)  = delegate.forElement(psiElement)
+    override fun forElement(psiElement: PsiElement) = delegate.forElement(psiElement)
 
     override fun isEmpty() = delegate.isEmpty()
 
@@ -294,17 +297,20 @@ private class LazyJvmDiagnostics(compute: () -> Diagnostics): Diagnostics {
 
 interface GenerationStateEventCallback : (GenerationState) -> Unit {
     companion object {
-        val DO_NOTHING = GenerationStateEventCallback {  }
+        val DO_NOTHING = GenerationStateEventCallback { }
     }
 }
 
 fun GenerationStateEventCallback(block: (GenerationState) -> Unit): GenerationStateEventCallback =
-        object : GenerationStateEventCallback {
-            override fun invoke(s: GenerationState) = block(s)
-        }
+    object : GenerationStateEventCallback {
+        override fun invoke(s: GenerationState) = block(s)
+    }
 
 private fun ClassBuilderFactory.wrapWith(vararg wrappers: (ClassBuilderFactory) -> ClassBuilderFactory): ClassBuilderFactory =
-        wrappers.fold(this) { builderFactory, wrapper -> wrapper(builderFactory) }
+    wrappers.fold(this) { builderFactory, wrapper -> wrapper(builderFactory) }
 
-private inline fun <T> ClassBuilderFactory.wrapWith(elements: Iterable<T>, wrapper: (ClassBuilderFactory, T) -> ClassBuilderFactory): ClassBuilderFactory =
-        elements.fold(this, wrapper)
+private inline fun <T> ClassBuilderFactory.wrapWith(
+    elements: Iterable<T>,
+    wrapper: (ClassBuilderFactory, T) -> ClassBuilderFactory
+): ClassBuilderFactory =
+    elements.fold(this, wrapper)

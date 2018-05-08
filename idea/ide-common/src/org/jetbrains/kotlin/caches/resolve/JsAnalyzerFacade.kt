@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
+import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
@@ -36,20 +37,20 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
-object JsAnalyzerFacade : AnalyzerFacade() {
+object JsAnalyzerFacade : ResolverForModuleFactory() {
 
     override fun <M : ModuleInfo> createResolverForModule(
-        moduleInfo: M,
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
-        moduleContent: ModuleContent,
+        moduleContent: ModuleContent<M>,
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageSettingsProvider: LanguageSettingsProvider,
+        languageVersionSettings: LanguageVersionSettings,
+        targetPlatformVersion: TargetPlatformVersion,
         packagePartProvider: PackagePartProvider
     ): ResolverForModule {
-        val (syntheticFiles, moduleContentScope) = moduleContent
+        val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project,
@@ -66,7 +67,7 @@ object JsAnalyzerFacade : AnalyzerFacade() {
             JsPlatform,
             TargetPlatformVersion.NoVersion,
             targetEnvironment,
-            languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
+            languageVersionSettings
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 

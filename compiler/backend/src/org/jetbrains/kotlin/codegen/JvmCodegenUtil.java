@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -27,14 +16,17 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.FacadePartWithSourceFile;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.RootContext;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
-import org.jetbrains.kotlin.load.kotlin.*;
+import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement;
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunction;
@@ -47,9 +39,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
 
@@ -59,6 +49,7 @@ import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
 import static org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_CALL;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
+import static org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 
 public class JvmCodegenUtil {
@@ -66,40 +57,7 @@ public class JvmCodegenUtil {
     private JvmCodegenUtil() {
     }
 
-    public static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isInterfaceWithoutDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
-    }
-
-    private static boolean isInterfaceWithoutDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
-        if (!DescriptorUtils.isInterface(descriptor)) return false;
-
-        if (descriptor instanceof DeserializedClassDescriptor) {
-            SourceElement source = ((DeserializedClassDescriptor) descriptor).getSource();
-            if (source instanceof KotlinJvmBinarySourceElement) {
-                KotlinJvmBinaryClass binaryClass = ((KotlinJvmBinarySourceElement) source).getBinaryClass();
-                assert binaryClass instanceof FileBasedKotlinClass :
-                        "KotlinJvmBinaryClass should be subclass of FileBasedKotlinClass, but " + binaryClass;
-                /*TODO need add some flags to compiled code*/
-                return true || ((FileBasedKotlinClass) binaryClass).getClassVersion() == Opcodes.V1_6;
-            }
-        }
-        return !isJvm8TargetWithDefaults;
-    }
-
-    public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, @NotNull GenerationState state) {
-        return isJvm8InterfaceWithDefaults(descriptor, state.isJvm8Target(), state.isJvm8TargetWithDefaults());
-    }
-
-    public static boolean isJvm8InterfaceWithDefaults(@NotNull DeclarationDescriptor descriptor, boolean isJvm8Target, boolean isJvm8TargetWithDefaults) {
-        return DescriptorUtils.isInterface(descriptor) && !isInterfaceWithoutDefaults(descriptor, isJvm8Target, isJvm8TargetWithDefaults);
-    }
-
-    public static boolean isJvm8InterfaceWithDefaultsMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
-        DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
-        return isJvm8InterfaceWithDefaults(declaration, state);
-    }
-
-    public static boolean isNonDefaultInterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
+    public static boolean isNonDefaultInterfaceMember(@NotNull CallableMemberDescriptor descriptor) {
         if (!isJvmInterface(descriptor.getContainingDeclaration())) {
             return false;
         }
@@ -107,7 +65,7 @@ public class JvmCodegenUtil {
             return descriptor.getModality() == Modality.ABSTRACT;
         }
 
-        return !isJvm8InterfaceWithDefaultsMember(descriptor, state);
+        return !hasJvmDefaultAnnotation(descriptor);
     }
 
     public static boolean isJvmInterface(DeclarationDescriptor descriptor) {
@@ -129,11 +87,19 @@ public class JvmCodegenUtil {
                     !closure.isSuspend();
     }
 
-    private static boolean isCallInsideSameClassAsDeclared(@NotNull CallableMemberDescriptor descriptor, @NotNull CodegenContext context) {
+    private static boolean isCallInsideSameClassAsFieldRepresentingProperty(
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull CodegenContext context
+    ) {
         boolean isFakeOverride = descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         boolean isDelegate = descriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration().getOriginal();
+        if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
+            // For property with backed field, check if the access is done in the same class containing the backed field and
+            // not the class that declared the field.
+            containingDeclaration = containingDeclaration.getContainingDeclaration();
+        }
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
@@ -199,13 +165,21 @@ public class JvmCodegenUtil {
         if (KotlinTypeMapper.isAccessor(property)) return false;
 
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
-        // Inline functions can't use direct access because a field may not be visible at the call site
-        if (context.isInlineMethodContext()) {
+        // Inline functions or inline classes can't use direct access because a field may not be visible at the call site
+        if (context.isInlineMethodContext() || (context.getEnclosingClass() != null && context.getEnclosingClass().isInline())) {
             return false;
         }
 
-        if (!isCallInsideSameClassAsDeclared(property, context)) {
-            if (!isDebuggerContext(context)) {
+        if (!isCallInsideSameClassAsFieldRepresentingProperty(property, context)) {
+            DeclarationDescriptor propertyOwner = property.getContainingDeclaration();
+            boolean isAnnotationValue;
+            if (propertyOwner instanceof ClassDescriptor) {
+                isAnnotationValue = ((ClassDescriptor) propertyOwner).getKind() == ANNOTATION_CLASS;
+            } else {
+                isAnnotationValue = false;
+            }
+
+            if (isAnnotationValue || !isDebuggerContext(context)) {
                 // Unless we are evaluating expression in debugger context, only properties of the same class can be directly accessed
                 return false;
             }
@@ -228,9 +202,6 @@ public class JvmCodegenUtil {
 
         // Delegated and extension properties have no backing fields
         if (isDelegated || property.getExtensionReceiverParameter() != null) return false;
-
-        // Companion object properties cannot be accessed directly because their backing fields are stored in the containing class
-        if (DescriptorUtils.isCompanionObject(property.getContainingDeclaration())) return false;
 
         PropertyAccessorDescriptor accessor = forGetter ? property.getGetter() : property.getSetter();
 
@@ -337,5 +308,13 @@ public class JvmCodegenUtil {
         return isCompanionObject(companionObject) &&
                isJvmInterface(companionObject.getContainingDeclaration()) &&
                !JvmAbi.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
+    }
+
+    public static boolean hasBackingField(
+            @NotNull PropertyDescriptor descriptor, @NotNull OwnerKind kind, @NotNull BindingContext bindingContext
+    ) {
+        return !isJvmInterface(descriptor.getContainingDeclaration()) &&
+               kind != OwnerKind.DEFAULT_IMPLS &&
+               !Boolean.FALSE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor));
     }
 }

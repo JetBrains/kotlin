@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import org.jetbrains.kotlin.resolve.scopes.utils.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.isWithoutValueArguments
@@ -62,6 +61,27 @@ class QualifiedExpressionResolver {
             get() = qualifierParts.flatMap { it.typeArguments?.arguments.orEmpty() }
     }
 
+    fun LexicalScope.findClassifierAndReportDeprecationIfNeeded(
+        name: Name,
+        lookupLocation: KotlinLookupLocation,
+        reportOn: KtExpression,
+        trace: BindingTrace
+    ): ClassifierDescriptor? {
+        val (classifier, isDeprecated) = findFirstClassifierWithDeprecationStatus(name, lookupLocation) ?: return null
+
+        if (isDeprecated) {
+            trace.record(BindingContext.DEPRECATED_SHORT_NAME_ACCESS, reportOn) // For IDE
+
+            // slow-path: we know that closest classifier is imported by the deprecated path, but before reporting
+            // deprecation, we have to recheck if there's some other import path, which isn't deprecated (e.g. explicit import)
+            if (!classifier.canBeResolvedWithoutDeprecation(this, lookupLocation)) {
+                trace.report(Errors.DEPRECATED_ACCESS_BY_SHORT_NAME.on(reportOn, classifier))
+            }
+        }
+
+        return classifier
+    }
+
     fun resolveDescriptorForType(
         userType: KtUserType,
         scope: LexicalScope,
@@ -71,7 +91,13 @@ class QualifiedExpressionResolver {
         val ownerDescriptor = if (!isDebuggerContext) scope.ownerDescriptor else null
         if (userType.qualifier == null) {
             val descriptor = userType.referenceExpression?.let { expression ->
-                val classifier = scope.findClassifier(expression.getReferencedNameAsName(), KotlinLookupLocation(expression))
+                val classifier = scope.findClassifierAndReportDeprecationIfNeeded(
+                    expression.getReferencedNameAsName(),
+                    KotlinLookupLocation(expression),
+                    expression,
+                    trace
+                )
+
                 checkNotEnumEntry(classifier, trace, expression)
                 storeResult(trace, expression, classifier, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = false)
                 classifier
@@ -143,9 +169,14 @@ class QualifiedExpressionResolver {
         }
 
         if (qualifierPartList.size == 1) {
-            val (name, simpleName) = qualifierPartList.single()
-            val descriptor = scope.findClassifier(name, KotlinLookupLocation(simpleName))
-            storeResult(trace, simpleName, descriptor, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = true)
+            val (name, simpleNameExpression) = qualifierPartList.single()
+            val descriptor = scope.findClassifierAndReportDeprecationIfNeeded(
+                name,
+                KotlinLookupLocation(simpleNameExpression),
+                simpleNameExpression,
+                trace
+            )
+            storeResult(trace, simpleNameExpression, descriptor, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = true)
             return TypeQualifierResolutionResult(qualifierPartList, descriptor)
         }
 

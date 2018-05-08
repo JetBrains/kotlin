@@ -1,7 +1,11 @@
 FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
   CLASS CLASS name:A modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A<Q> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:Q index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (q:Q) returnType:A<Q> flags:
       VALUE_PARAMETER name:q index:0 type:Q flags:
       BLOCK_BODY
@@ -18,11 +22,17 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
             GET_FIELD 'q: Q' type=Q origin=null
               receiver: GET_VAR 'this@A: A<Q>' type=A<Q> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   TYPEALIAS typealias B = A<X> type=A<X>
   TYPEALIAS typealias B2 = A<A<T>> type=A<A<T>>
@@ -30,10 +40,10 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
     BLOCK_BODY
       VAR name:b type:B<kotlin.Int> /* = A<kotlin.Int> */ flags:val
         CALL 'constructor A(Int)' type=A<kotlin.Int> origin=null
-          <Q>: null
+          <Q>: Int
           q: CONST Int type=kotlin.Int value=2
       VAR name:b2 type:B2<kotlin.Int> /* = A<A<kotlin.Int>> */ flags:val
         CALL 'constructor A(A<Int>)' type=A<A<kotlin.Int>> origin=null
-          <Q>: null
+          <Q>: A<Int>
           q: GET_VAR 'b: B<Int> /* = A<Int> */' type=B<kotlin.Int> /* = A<kotlin.Int> */ origin=null
 

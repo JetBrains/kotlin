@@ -1,5 +1,8 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
@@ -30,7 +33,7 @@ sourceSets {
 
 projectTest {
     doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+        environment("kotlin.tests.android.timeout", "45")
     }
     workingDir = rootDir
 }

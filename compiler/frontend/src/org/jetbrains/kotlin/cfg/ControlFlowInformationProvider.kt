@@ -469,7 +469,7 @@ class ControlFlowInformationProvider private constructor(
                             report(Errors.CAPTURED_VAL_INITIALIZATION.on(expression, variableDescriptor), ctxt)
                         }
                     } else {
-                        if (KtPsiUtil.isBackingFieldReference(variableDescriptor)) {
+                        if (isBackingFieldReference(variableDescriptor)) {
                             reportValReassigned(expression, variableDescriptor, ctxt)
                         } else {
                             report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt)

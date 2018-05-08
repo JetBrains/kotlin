@@ -1,5 +1,11 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.utils
 
+import test.randomInt
 import kotlin.test.*
 
 
@@ -23,8 +29,7 @@ class KotlinVersionTest {
                 val (major, minor, patch) = IntArray(3) { index -> if (index == place) component else 0 }
                 if (component in 0..KotlinVersion.MAX_COMPONENT_VALUE) {
                     KotlinVersion(major, minor, patch)
-                }
-                else {
+                } else {
                     assertFailsWith<IllegalArgumentException>("Expected $major.$minor.$patch to be invalid version") {
                         KotlinVersion(major, minor, patch)
                     }
@@ -55,10 +60,8 @@ class KotlinVersionTest {
         }
     }
 
-    @JvmVersion // until there's random in JS
     @Test fun randomVersionComparison() {
-        val random = java.util.Random()
-        fun randomComponent(): Int = random.nextInt(KotlinVersion.MAX_COMPONENT_VALUE + 1)
+        fun randomComponent(): Int = randomInt(KotlinVersion.MAX_COMPONENT_VALUE + 1)
         fun randomVersion() = KotlinVersion(randomComponent(), randomComponent(), randomComponent())
         repeat(1000) {
             val v1 = randomVersion()

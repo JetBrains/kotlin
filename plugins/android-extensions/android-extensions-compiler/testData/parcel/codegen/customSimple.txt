@@ -24,7 +24,6 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
           ALOAD (0)
           ILOAD (1)
           INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
-          CHECKCAST
           ARETURN
     }
 

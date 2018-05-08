@@ -4,6 +4,6 @@ class <caret>X {
 
 }
 
-class Y {
+class Y(x: X) {
 
 }

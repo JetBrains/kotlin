@@ -33,14 +33,11 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
-import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -111,7 +108,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         val descriptor = element.unsafeResolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
-        val isEffectivelyExpected = allowExpected && element.isExpectedOrExpectedClassMember()
+        val isEffectivelyExpected = allowExpected && element.isExpectDeclaration()
 
         val file = element.containingKtFile
         val project = file.project

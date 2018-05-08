@@ -4,6 +4,7 @@
       <w>ctor</w>
       <w>inlining</w>
       <w>interner</w>
+      <w>intrinsicify</w>
       <w>kclass</w>
       <w>lookups</w>
       <w>minification</w>

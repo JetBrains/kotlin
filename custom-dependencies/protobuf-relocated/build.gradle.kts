@@ -1,9 +1,14 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.io.File
+
+plugins {
+    base
+}
 
 val baseProtobuf by configurations.creating
 val baseProtobufSources by configurations.creating
 
-val resultsCfg = configurations.create("default")
+val resultsCfg = configurations.getByName("default")
 val resultsSourcesCfg = configurations.create("sources")
 
 val protobufVersion = rootProject.extra["versions.protobuf-java"] as String
@@ -12,6 +17,10 @@ val protobufJarPrefix = "protobuf-$protobufVersion"
 val renamedSources = "$buildDir/renamedSrc/"
 val outputJarsPath = "$buildDir/libs"
 val artifactBaseName = "protobuf-java-relocated"
+
+val jpsLibraryPath by extra(outputJarsPath)
+
+setProperty("archivesBaseName", "$artifactBaseName-$protobufVersion")
 
 dependencies {
     baseProtobuf("com.google.protobuf:protobuf-java:$protobufVersion")
@@ -47,8 +56,4 @@ val prepareSources by task<Jar> {
     from(relocateSources)
     project.addArtifact("archives", this, this)
     addArtifact(resultsSourcesCfg.name, this, this)
-}
-
-val clean by task<Delete> {
-    delete(buildDir)
 }

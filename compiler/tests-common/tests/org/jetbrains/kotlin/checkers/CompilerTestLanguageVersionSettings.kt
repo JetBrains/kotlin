@@ -26,6 +26,10 @@ import java.util.regex.Pattern
 const val LANGUAGE_DIRECTIVE = "LANGUAGE"
 const val API_VERSION_DIRECTIVE = "API_VERSION"
 
+const val EXPERIMENTAL_DIRECTIVE = "EXPERIMENTAL"
+const val USE_EXPERIMENTAL_DIRECTIVE = "USE_EXPERIMENTAL"
+const val ENABLE_JVM_DEFAULT = "ENABLE_JVM_DEFAULT"
+
 data class CompilerTestLanguageVersionSettings(
         private val initialLanguageFeatures: Map<LanguageFeature, LanguageFeature.State>,
         override val apiVersion: ApiVersion,
@@ -51,15 +55,24 @@ private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.Sta
 
 fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVersionSettings? {
     val apiVersionString = directiveMap[API_VERSION_DIRECTIVE]
-    val directives = directiveMap[LANGUAGE_DIRECTIVE]
-    if (apiVersionString == null && directives == null) return null
+    val languageFeaturesString = directiveMap[LANGUAGE_DIRECTIVE]
+    val experimental = directiveMap[EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.experimental to it }
+    val useExperimental = directiveMap[USE_EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.useExperimental to it }
+    val enableJvmDefault = AnalysisFlag.enableJvmDefault to directiveMap.containsKey(ENABLE_JVM_DEFAULT)
+
+    if (apiVersionString == null && languageFeaturesString == null && experimental == null && useExperimental == null) return null
 
     val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
                      ?: error("Unknown API version: $apiVersionString")
 
-    val languageFeatures = directives?.let(::collectLanguageFeatureMap).orEmpty()
+    val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
 
-    return CompilerTestLanguageVersionSettings(languageFeatures, apiVersion, LanguageVersion.LATEST_STABLE)
+    val languageFeatures = languageFeaturesString?.let(::collectLanguageFeatureMap).orEmpty()
+
+    return CompilerTestLanguageVersionSettings(
+        languageFeatures, apiVersion, languageVersion,
+        mapOf(*listOfNotNull(experimental, useExperimental, enableJvmDefault).toTypedArray())
+    )
 }
 
 fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, environment: KotlinCoreEnvironment) {

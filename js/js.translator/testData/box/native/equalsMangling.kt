@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1118
 data class A(val number: Int)
 

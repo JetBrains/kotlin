@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compati
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
 object ExpectedActualDeclarationChecker : DeclarationChecker {
@@ -110,10 +111,17 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
     private fun checkActualDeclarationHasExpected(
         reportOn: KtNamedDeclaration, descriptor: MemberDescriptor, trace: BindingTrace, checkActual: Boolean
     ) {
-        // Using the platform module instead of the common module is sort of fine here because the former always depends on the latter.
-        // However, it would be clearer to find the common module this platform module implements and look for expected there instead.
-        // TODO: use common module here
-        val compatibility = ExpectedActualResolver.findExpectedForActual(descriptor, descriptor.module) ?: return
+        // TODO: ideally, we should always use common module here
+        // However, in compiler context platform & common modules are joined into one module,
+        // so there is yet no "common module" in this situation.
+        // So yet we are using own module in compiler context and common module in IDE context.
+        val commonOrOwnModules = descriptor.module.expectedByModules.ifEmpty { listOf(descriptor.module) }
+        val compatibility = commonOrOwnModules
+            .mapNotNull { ExpectedActualResolver.findExpectedForActual(descriptor, it) }
+            .ifEmpty { return }
+            .fold(LinkedHashMap<Compatibility, List<MemberDescriptor>>()) { resultMap, partialMap ->
+                resultMap.apply { putAll(partialMap) }
+            }
 
         val hasActualModifier = descriptor.isActual && reportOn.hasActualModifier()
         if (!hasActualModifier) {

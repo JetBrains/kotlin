@@ -21,6 +21,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -36,10 +37,13 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.SmartList
 
 @Suppress("UNCHECKED_CAST")
@@ -55,13 +59,23 @@ inline fun <reified T : PsiElement> PsiElement.replaced(newElement: T): T {
 fun <T : PsiElement> T.copied(): T = copy() as T
 
 fun KtLambdaArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
-    return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
+    val ktExpression = this.getArgumentExpression()
+            ?: throw KotlinExceptionWithAttachments("no argument expression for $this")
+                .withAttachment("lambdaExpression", this.text)
+    return moveInsideParenthesesAndReplaceWith(ktExpression, bindingContext)
 }
 
 fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
         replacement: KtExpression,
         bindingContext: BindingContext
 ): KtCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getLambdaArgumentName(bindingContext))
+
+
+fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name? {
+    val callExpression = parent as KtCallExpression
+    val resolvedCall = callExpression.getResolvedCall(bindingContext)
+    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.name
+}
 
 fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
         replacement: KtExpression,
@@ -94,12 +108,45 @@ fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
     return oldCallExpression.replace(newCallExpression) as KtCallExpression
 }
 
+fun KtLambdaExpression.moveFunctionLiteralOutsideParenthesesIfPossible() {
+    val call = ((parent as? KtValueArgument)?.parent as? KtValueArgumentList)?.parent as? KtCallExpression ?: return
+    if (call.canMoveLambdaOutsideParentheses()) {
+        call.moveFunctionLiteralOutsideParentheses()
+    }
+}
+
 private fun shouldLambdaParameterBeNamed(args: List<ValueArgument>, callExpr: KtCallExpression): Boolean {
     if (args.any { it.isNamed() }) return true
     val calee = (callExpr.calleeExpression?.mainReference?.resolve() as? KtFunction) ?: return true
     return if (calee.valueParameters.any { it.isVarArg }) true else calee.valueParameters.size - 1 > args.size
 }
 
+fun KtCallExpression.getLastLambdaExpression(): KtLambdaExpression? {
+    if (lambdaArguments.isNotEmpty()) return null
+    return valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral()
+}
+
+fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
+    if (getLastLambdaExpression() == null) return false
+
+    val callee = calleeExpression
+    if (callee is KtNameReferenceExpression) {
+        val bindingContext = analyze(BodyResolveMode.PARTIAL)
+        val targets = bindingContext[BindingContext.REFERENCE_TARGET, callee]?.let { listOf(it) }
+                ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, callee]
+                ?: listOf()
+        val candidates = targets.filterIsInstance<FunctionDescriptor>()
+        // if there are functions among candidates but none of them have last function parameter then not show the intention
+        if (candidates.isNotEmpty() && candidates.none {
+            val lastParameter = it.valueParameters.lastOrNull()
+            lastParameter != null && lastParameter.type.isFunctionType
+        }) {
+            return false
+        }
+    }
+
+    return true
+}
 
 fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     assert(lambdaArguments.isEmpty())
@@ -187,7 +234,7 @@ fun KtDeclaration.toDescriptor(): DeclarationDescriptor? {
     val bindingContext = analyze()
     // TODO: temporary code
     if (this is KtPrimaryConstructor) {
-        return (this.getContainingClassOrObject().resolveToDescriptorIfAny() as? ClassDescriptor)?.unsubstitutedPrimaryConstructor
+        return this.getContainingClassOrObject().resolveToDescriptorIfAny()?.unsubstitutedPrimaryConstructor
     }
 
     val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
@@ -431,4 +478,13 @@ fun KtModifierList.normalize(): KtModifierList {
         modifiers.sortBy { MODIFIERS_ORDER.indexOf(it.node.elementType) }
         modifiers.forEach { newList.add(it) }
     }
+}
+
+fun KtBlockStringTemplateEntry.canDropBraces() =
+    expression is KtNameReferenceExpression && canPlaceAfterSimpleNameEntry(nextSibling)
+
+fun KtBlockStringTemplateEntry.dropBraces(): KtSimpleNameStringTemplateEntry {
+    val name = (expression as KtNameReferenceExpression).getReferencedName()
+    val newEntry = KtPsiFactory(this).createSimpleNameStringTemplateEntry(name)
+    return replaced(newEntry)
 }

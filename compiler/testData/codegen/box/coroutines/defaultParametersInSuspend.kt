@@ -1,8 +1,9 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 class Controller {
     suspend fun suspendHere(a: String = "abc", i: Int = 2): String = suspendCoroutineOrReturn { x ->

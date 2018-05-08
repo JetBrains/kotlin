@@ -8,5 +8,6 @@ class ExpectedChildChild : ExpectedChild()
 
 class SimpleChild : SimpleParent()
 
-// REF: [common] (test).ExpectedChildChild
-// REF: [jvm] (test).ExpectedChildChildJvm
+// REF: [testModule_Common] (test).ExpectedChildChild
+// REF: [testModule_JVM] (test).ExpectedChild
+// REF: [testModule_JVM] (test).ExpectedChildChildJvm

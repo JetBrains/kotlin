@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.FlexibleType
@@ -59,9 +60,10 @@ fun SmartCastManager.getSmartCastVariantsWithLessSpecificExcluded(
         bindingContext: BindingContext,
         containingDeclarationOrModule: DeclarationDescriptor,
         dataFlowInfo: DataFlowInfo,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        dataFlowValueFactory: DataFlowValueFactory
 ): List<KotlinType> {
-    val variants = getSmartCastVariants(receiverToCast, bindingContext, containingDeclarationOrModule, dataFlowInfo, languageVersionSettings)
+    val variants = getSmartCastVariants(receiverToCast, bindingContext, containingDeclarationOrModule, dataFlowInfo, languageVersionSettings, dataFlowValueFactory)
     return variants.filter { type ->
         variants.all { another -> another === type || chooseMoreSpecific(type, another).let { it == null || it === type } }
     }

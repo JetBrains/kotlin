@@ -48,6 +48,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.StreamSupport;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
 public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testNewLibrary_copyJar() {
         doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
@@ -269,8 +272,8 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         Module module2 = moduleManager.findModuleByName("module2");
         assert module2 != null;
 
-        assertEquals(KotlinFacet.Companion.get(module1).getConfiguration().getSettings().getImplementedModuleName(), null);
-        assertEquals(KotlinFacet.Companion.get(module2).getConfiguration().getSettings().getImplementedModuleName(), "module1");
+        assertEquals(KotlinFacet.Companion.get(module1).getConfiguration().getSettings().getImplementedModuleNames(), emptyList());
+        assertEquals(KotlinFacet.Companion.get(module2).getConfiguration().getSettings().getImplementedModuleNames(), singletonList("module1"));
     }
 
     public void testJava9WithModuleInfo() {

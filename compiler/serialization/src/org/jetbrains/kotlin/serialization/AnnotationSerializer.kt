@@ -19,13 +19,14 @@ package org.jetbrains.kotlin.serialization
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value
+import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value
-import org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.Argument.Value.Type
 import org.jetbrains.kotlin.types.ErrorUtils
 
-class AnnotationSerializer(private val stringTable: StringTable) {
+class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) {
     fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
         val annotationClass = annotation.annotationClass ?: error("Annotation type is not a class: ${annotation.type}")
         if (ErrorUtils.isError(annotationClass)) {
@@ -78,7 +79,7 @@ class AnnotationSerializer(private val stringTable: StringTable) {
 
             override fun visitEnumValue(value: EnumValue, data: Unit) {
                 type = Type.ENUM
-                classId = stringTable.getClassIdIndex(value.enumClassId)
+                classId = stringTable.getQualifiedClassNameIndex(value.enumClassId.asString(), value.enumClassId.isLocal)
                 enumValueId = stringTable.getStringIndex(value.enumEntryName.asString())
             }
 

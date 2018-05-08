@@ -1,3 +1,4 @@
+// !LANGUAGE: +ProperIeee754Comparisons
 fun equals5(a: Any?, b: Any?) = if (a is Float && b is Float?) a == b else null!!
 
 fun equals6(a: Any?, b: Any?) = if (a is Float? && b is Float) a == b else null!!
@@ -17,7 +18,5 @@ fun box(): String {
     return "OK"
 }
 
-// 1 areEqual \(Ljava/lang/Float;Ljava/lang/Float;\)Z
-// 1 areEqual \(FLjava/lang/Float;\)Z
-// 1 areEqual \(Ljava/lang/Float;F\)Z
+// 3 areEqual \(Ljava/lang/Float;Ljava/lang/Float;\)Z
 // 3 areEqual

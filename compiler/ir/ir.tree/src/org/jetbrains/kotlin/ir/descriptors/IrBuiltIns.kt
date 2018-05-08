@@ -42,7 +42,7 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
 
     private val stubBuilder = DeclarationStubGenerator(SymbolTable(), IrDeclarationOrigin.IR_BUILTINS_STUB)
 
-    private fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrSimpleFunction {
+    fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrSimpleFunction {
         val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragment, Name.identifier(name), returnType)
         for ((i, valueParameterType) in valueParameterTypes.withIndex()) {
             operatorDescriptor.addValueParameter(
@@ -55,6 +55,7 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
     private fun addStubToPackageFragment(descriptor: SimpleFunctionDescriptor): IrSimpleFunction {
         val irSimpleFunction = stubBuilder.generateFunctionStub(descriptor)
         irBuiltInsExternalPackageFragment.declarations.add(irSimpleFunction)
+        irSimpleFunction.parent = irBuiltInsExternalPackageFragment
         return irSimpleFunction
     }
 

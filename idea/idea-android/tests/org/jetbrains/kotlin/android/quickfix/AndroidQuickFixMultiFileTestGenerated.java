@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidQuickFixMultiFileTestGenerated extends AbstractAndroidQuickFixMultiFileTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInQuickfix() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/quickfix"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
     }
@@ -29,14 +33,17 @@ public class AndroidQuickFixMultiFileTestGenerated extends AbstractAndroidQuickF
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AutoImports extends AbstractAndroidQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInAutoImports() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/quickfix/autoImports"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("androidRImport.before.Main.kt")
         public void testAndroidRImport() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/quickfix/autoImports/androidRImport.before.Main.kt");
-            doTestWithExtraFile(fileName);
+            runTest("idea/testData/android/quickfix/autoImports/androidRImport.before.Main.kt");
         }
     }
 
@@ -44,20 +51,22 @@ public class AndroidQuickFixMultiFileTestGenerated extends AbstractAndroidQuickF
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ViewConstructor extends AbstractAndroidQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInViewConstructor() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/quickfix/viewConstructor"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("indirect.before.Main.kt")
         public void testIndirect() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/quickfix/viewConstructor/indirect.before.Main.kt");
-            doTestWithExtraFile(fileName);
+            runTest("idea/testData/android/quickfix/viewConstructor/indirect.before.Main.kt");
         }
 
         @TestMetadata("simple.before.Main.kt")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/android/quickfix/viewConstructor/simple.before.Main.kt");
-            doTestWithExtraFile(fileName);
+            runTest("idea/testData/android/quickfix/viewConstructor/simple.before.Main.kt");
         }
     }
 }

@@ -101,7 +101,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
             Assert.assertEquals("Rebuild exit code differs from incremental exit code", rebuildExpectedToSucceed, rebuildSucceeded)
 
             if (rebuildSucceeded) {
-                assertEqualDirectories(outDir, rebuildOutDir, forgiveExtraFiles = rebuildSucceeded)
+                assertEqualDirectories(rebuildOutDir, outDir, forgiveExtraFiles = false)
             }
         }
     }

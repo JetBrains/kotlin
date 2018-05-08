@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
+import java.io.IOException
 import java.util.*
 
 
@@ -47,11 +48,16 @@ open class LookupStorage(targetDataDir: File) : BasicMapsOwner(targetDataDir) {
     private var deletedCount: Int = 0
 
     init {
-        if (countersFile.exists()) {
-            val lines = countersFile.readLines()
-            size = lines[0].toInt()
-            deletedCount = lines[1].toInt()
+        try {
+            if (countersFile.exists()) {
+                val lines = countersFile.readLines()
+                size = lines[0].toInt()
+                deletedCount = lines[1].toInt()
+            }
+        } catch (e: Exception) {
+            throw IOException("Could not read $countersFile", e)
         }
+
     }
 
     @Synchronized

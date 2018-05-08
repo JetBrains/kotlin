@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.incremental
 import org.gradle.api.Project
 import java.io.File
 
+// todo: Move all files under org.jetbrains.kotlin.gradle package to avoid class clash (KT-18621, KT-20516)
+
 internal fun File.isJavaFile() =
         extension.equals("java", ignoreCase = true)
 

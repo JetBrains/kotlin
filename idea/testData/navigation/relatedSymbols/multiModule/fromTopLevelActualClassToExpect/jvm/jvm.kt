@@ -2,4 +2,4 @@ package test
 
 actual class <caret>Foo
 
-// REF: [common] (test).Foo
+// REF: [testModule_Common] (test).Foo

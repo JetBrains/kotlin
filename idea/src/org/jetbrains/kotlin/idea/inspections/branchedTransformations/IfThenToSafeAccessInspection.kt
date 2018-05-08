@@ -33,7 +33,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
 
     override fun isApplicable(element: KtIfExpression): Boolean {
         val ifThenToSelectData = element.buildSelectTransformationData() ?: return false
-        if (!ifThenToSelectData.receiverExpression.isStable(ifThenToSelectData.context)) return false
+        if (!ifThenToSelectData.receiverExpression.isStableSimpleExpression(ifThenToSelectData.context)) return false
 
         return ifThenToSelectData.clausesReplaceableBySafeCall()
     }

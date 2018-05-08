@@ -43,9 +43,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.descriptors.DescriptorPsiUtilsKt.isBackingFieldReference;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getSelectorAsSimpleName;
-import static org.jetbrains.kotlin.psi.KtPsiUtil.isBackingFieldReference;
 
 public final class ReferenceTranslator {
     private static final Set<FqNameUnsafe> DECLARATIONS_WITHOUT_SIZE_EFFECTS = new HashSet<>(Arrays.asList(

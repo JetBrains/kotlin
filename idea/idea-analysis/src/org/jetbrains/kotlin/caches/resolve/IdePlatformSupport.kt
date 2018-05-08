@@ -20,7 +20,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
-import org.jetbrains.kotlin.analyzer.AnalyzerFacade
+import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
 import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 abstract class IdePlatformSupport {
     abstract val platform: TargetPlatform
-    abstract val analyzerFacade: AnalyzerFacade
+    abstract val resolverForModuleFactory: ResolverForModuleFactory
     abstract val libraryKind: PersistentLibraryKind<*>?
 
     abstract fun createBuiltIns(settings: PlatformAnalysisSettings, sdkContext: GlobalContextImpl): KotlinBuiltIns
@@ -54,7 +54,7 @@ abstract class IdePlatformSupport {
         }
 
         val facades by lazy {
-            Extensions.getExtensions(EP_NAME).map { it.platform to it.analyzerFacade }.toMap()
+            Extensions.getExtensions(EP_NAME).map { it.platform to it.resolverForModuleFactory }.toMap()
         }
 
         @JvmStatic
@@ -69,7 +69,7 @@ class JvmPlatformSupport : IdePlatformSupport() {
     override val platform: TargetPlatform
         get() = JvmPlatform
 
-    override val analyzerFacade: AnalyzerFacade
+    override val resolverForModuleFactory: ResolverForModuleFactory
         get() = JvmAnalyzerFacade
 
     override val libraryKind: PersistentLibraryKind<*>?
@@ -89,7 +89,7 @@ class JsPlatformSupport : IdePlatformSupport() {
     override val platform: TargetPlatform
         get() = JsPlatform
 
-    override val analyzerFacade: AnalyzerFacade
+    override val resolverForModuleFactory: ResolverForModuleFactory
         get() = JsAnalyzerFacade
 
     override val libraryKind: PersistentLibraryKind<*>?
@@ -109,7 +109,7 @@ class CommonPlatformSupport : IdePlatformSupport() {
     override val platform: TargetPlatform
         get() = TargetPlatform.Common
 
-    override val analyzerFacade: AnalyzerFacade
+    override val resolverForModuleFactory: ResolverForModuleFactory
         get() = CommonAnalyzerFacade
 
     override val libraryKind: PersistentLibraryKind<*>?

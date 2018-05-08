@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.resolve.scopes.*
@@ -30,6 +31,7 @@ import java.util.*
 class ClassResolutionScopesSupport(
     private val classDescriptor: ClassDescriptor,
     storageManager: StorageManager,
+    private val languageVersionSettings: LanguageVersionSettings,
     private val getOuterScope: () -> LexicalScope
 ) {
     private fun scopeWithGenerics(parent: LexicalScope): LexicalScopeImpl {
@@ -38,7 +40,7 @@ class ClassResolutionScopesSupport(
         }
     }
 
-    val scopeForClassHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
+    val scopeForClassHeaderResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createErrorLexicalScope) {
         scopeWithGenerics(getOuterScope())
     }
 
@@ -85,44 +87,50 @@ class ClassResolutionScopesSupport(
         parent: LexicalScope,
         ownerDescriptor: DeclarationDescriptor,
         classDescriptor: ClassDescriptor,
-        withCompanionObject: Boolean = true
+        withCompanionObject: Boolean = true,
+        isDeprecated: Boolean = false
     ): LexicalScope {
+        val companionObjectDescriptor = classDescriptor.companionObjectDescriptor?.takeIf { withCompanionObject }
         val staticScopes = ArrayList<MemberScope>(3)
 
-        // todo filter fake overrides
         staticScopes.add(classDescriptor.staticScope)
-
         staticScopes.add(classDescriptor.unsubstitutedInnerClassesScope)
+        staticScopes.addIfNotNull(companionObjectDescriptor?.getStaticScopeOfCompanionObject(classDescriptor))
 
-        val implicitReceiver: ReceiverParameterDescriptor?
+        val parentForNewScope = companionObjectDescriptor?.packScopesOfCompanionSupertypes(parent, ownerDescriptor) ?: parent
 
-        val parentForNewScope: LexicalScope
-
-        if (withCompanionObject) {
-            staticScopes.addIfNotNull(classDescriptor.companionObjectDescriptor?.unsubstitutedInnerClassesScope)
-            implicitReceiver = classDescriptor.companionObjectDescriptor?.thisAsReceiverParameter
-
-            parentForNewScope = classDescriptor.companionObjectDescriptor?.let {
-                it.getAllSuperclassesWithoutAny().asReversed().fold(parent) { scope, currentClass ->
-                    createInheritanceScope(
-                        parent = scope,
-                        ownerDescriptor = ownerDescriptor,
-                        classDescriptor = currentClass,
-                        withCompanionObject = false
-                    )
-                }
-            } ?: parent
-        } else {
-            implicitReceiver = null
-            parentForNewScope = parent
-        }
-
-        return LexicalChainedScope(
-            parentForNewScope, ownerDescriptor, false,
-            implicitReceiver,
-            LexicalScopeKind.CLASS_INHERITANCE,
-            memberScopes = staticScopes, isStaticScope = true
+        val lexicalChainedScope = LexicalChainedScope(
+            parentForNewScope, ownerDescriptor,
+            isOwnerDescriptorAccessibleByLabel = false,
+            implicitReceiver = companionObjectDescriptor?.thisAsReceiverParameter,
+            kind = LexicalScopeKind.CLASS_INHERITANCE,
+            memberScopes = staticScopes,
+            isStaticScope = true
         )
+
+        return if (isDeprecated) DeprecatedLexicalScope(lexicalChainedScope) else lexicalChainedScope
+    }
+
+    private fun ClassDescriptor.getStaticScopeOfCompanionObject(companionOwner: ClassDescriptor): MemberScope? {
+        return when {
+        // We always see nesteds from our own companion
+            companionOwner == classDescriptor -> unsubstitutedInnerClassesScope
+
+        // We see nesteds from other companions in hierarchy only in legacy mode
+            languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion) -> null
+
+            else -> DeprecatedMemberScope(unsubstitutedInnerClassesScope)
+        }
+    }
+
+    private fun ClassDescriptor.packScopesOfCompanionSupertypes(
+        parent: LexicalScope,
+        ownerDescriptor: DeclarationDescriptor
+    ): LexicalScope? {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion)) return null
+        return getAllSuperclassesWithoutAny().asReversed().fold(parent) { scope, currentClass ->
+            createInheritanceScope(scope, ownerDescriptor, currentClass, withCompanionObject = false, isDeprecated = true)
+        }
     }
 
     private fun <T : Any> StorageManager.createLazyValue(onRecursion: ((Boolean) -> T), compute: () -> T) =

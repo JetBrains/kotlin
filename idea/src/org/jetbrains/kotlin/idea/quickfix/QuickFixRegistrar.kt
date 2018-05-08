@@ -112,6 +112,7 @@ class QuickFixRegistrar : QuickFixContributor {
         val removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true)
         REDUNDANT_MODIFIER.registerFactory(removeRedundantModifierFactory)
         REDUNDANT_OPEN_IN_INTERFACE.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD, true))
+        REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE.registerFactory(RemoveModifierFix.createRemoveSuspendFactory())
         UNNECESSARY_LATEINIT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(LATEINIT_KEYWORD))
 
         REDUNDANT_PROJECTION.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(true))
@@ -144,6 +145,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         UNRESOLVED_REFERENCE.registerFactory(ImportFix)
         UNRESOLVED_REFERENCE.registerFactory(ImportConstructorReferenceFix)
+        DEPRECATED_ACCESS_BY_SHORT_NAME.registerFactory(AddExplicitImportForDeprecatedVisibilityFix.Factory)
 
         TOO_MANY_ARGUMENTS.registerFactory(ImportForMismatchingArgumentsFix)
         NO_VALUE_FOR_PARAMETER.registerFactory(ImportForMismatchingArgumentsFix)
@@ -486,7 +488,8 @@ class QuickFixRegistrar : QuickFixContributor {
         ErrorsJs.WRONG_EXTERNAL_DECLARATION.registerFactory(MigrateExternalExtensionFix)
 
         ILLEGAL_SUSPEND_FUNCTION_CALL.registerFactory(AddSuspendModifierFix)
-        INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.registerFactory(AddInlineModifierFix.SuspendFactory)
+        INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.registerFactory(AddInlineModifierFix.NoInlineSuspendFactory)
+        INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.registerFactory(AddInlineModifierFix.CrossInlineSuspendFactory)
 
         UNRESOLVED_REFERENCE.registerFactory(AddSuspendModifierFix.UnresolvedReferenceFactory)
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(AddSuspendModifierFix.UnresolvedReferenceFactory)
@@ -506,7 +509,7 @@ class QuickFixRegistrar : QuickFixContributor {
         RETURN_NOT_ALLOWED.registerFactory(ChangeToLabeledReturnFix)
 
         WRONG_ANNOTATION_TARGET.registerFactory(AddAnnotationTargetFix)
-        WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.registerFactory(MoveReceiverAnnotationFix)
+        WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET.registerFactory(MoveReceiverAnnotationFix, AddAnnotationTargetFix)
 
         NO_CONSTRUCTOR.registerFactory(RemoveNoConstructorFix)
 
@@ -516,5 +519,8 @@ class QuickFixRegistrar : QuickFixContributor {
         ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION.registerFactory(SurroundWithArrayOfWithSpreadOperatorInFunctionFix)
 
         JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE.registerFactory(KotlinAddRequiredModuleFix)
+
+        JVM_DEFAULT_REQUIRED_FOR_OVERRIDE.registerFactory(AddJvmDefaultAnnotation)
+        NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT.registerFactory(AddJvmDefaultAnnotation)
     }
 }

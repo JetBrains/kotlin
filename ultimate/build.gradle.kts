@@ -4,8 +4,8 @@ import org.gradle.jvm.tasks.Jar
 
 description = "Kotlin IDEA Ultimate plugin"
 
-apply {
-    plugin("kotlin")
+plugins {
+    kotlin("jvm")
 }
 
 val ideaProjectResources =  project(":idea").the<JavaPluginConvention>().sourceSets["main"].output.resourcesDir
@@ -24,6 +24,7 @@ dependencies {
     compileOnly(project(":kotlin-reflect-api"))
     compile(projectDist(":kotlin-stdlib"))
     compile(project(":core:descriptors")) { isTransitive = false }
+    compile(project(":compiler:psi")) { isTransitive = false }
     compile(project(":core:descriptors.jvm")) { isTransitive = false }
     compile(project(":core:util.runtime")) { isTransitive = false }
     compile(project(":compiler:light-classes")) { isTransitive = false }
@@ -39,7 +40,7 @@ dependencies {
 
     if (intellijUltimateEnabled) {
         compileOnly(intellijUltimatePluginDep("NodeJS"))
-        compileOnly(intellijUltimateDep()) { includeJars("annotations", "trove4j", "openapi", "idea", "util", "jdom") }
+        compileOnly(intellijUltimateDep()) { includeJars("annotations", "trove4j", "openapi", "platform-api", "platform-impl", "java-api", "java-impl", "idea", "util", "jdom") }
         compileOnly(intellijUltimatePluginDep("CSS"))
         compileOnly(intellijUltimatePluginDep("DatabaseTools"))
         compileOnly(intellijUltimatePluginDep("JavaEE"))
@@ -57,7 +58,7 @@ dependencies {
     }
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(projectTests(":compiler:tests-common"))
@@ -65,12 +66,12 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
     testCompile(commonDep("junit:junit"))
     if (intellijUltimateEnabled) {
-        testCompileOnly(intellijUltimateDep()) { includeJars("gson", "annotations", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject) }
+        testCompileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "gson", "annotations", "trove4j", "openapi", "idea", "util", "jdom", rootProject = rootProject) }
     }
     testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-script-runtime"))
+    testRuntime(project(":kotlin-script-runtime"))
     testRuntime(projectRuntimeJar(":kotlin-compiler"))
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":plugins:android-extensions-compiler")) { isTransitive = false }
@@ -88,6 +89,7 @@ dependencies {
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))
     testRuntime(project(":plugins:uast-kotlin-idea"))
+    testRuntime(intellijPluginDep("smali"))
 
     if (intellijUltimateEnabled) {
         testCompile(intellijUltimatePluginDep("CSS"))

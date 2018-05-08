@@ -16,14 +16,12 @@ import com.intellij.ui.EditorTextField
 import org.intellij.lang.regexp.RegExpFileType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import java.awt.BorderLayout
 import java.util.regex.PatternSyntaxException
@@ -58,8 +56,7 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                     return
                 }
 
-                val context = expression.analyze(BodyResolveMode.PARTIAL)
-                val resolvedCall = expression.getResolvedCall(context) ?: return
+                val resolvedCall = expression.resolveToCall() ?: return
                 val extensionReceiverType = resolvedCall.extensionReceiver?.type ?: return
                 if (!extensionReceiverType.isNullabilityFlexible()) return
                 val descriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return

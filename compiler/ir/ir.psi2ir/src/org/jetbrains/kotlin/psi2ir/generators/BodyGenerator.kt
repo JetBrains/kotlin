@@ -142,8 +142,9 @@ class BodyGenerator(
         val delegatingConstructorResolvedCall = getResolvedCall(ktDelegatingConstructorCall)
 
         if (delegatingConstructorResolvedCall == null) {
-            if (constructorDescriptor.containingDeclaration.kind == ClassKind.ENUM_CLASS) {
-                generateEnumSuperConstructorCall(irBlockBody, ktConstructor)
+            val classDescriptor = constructorDescriptor.containingDeclaration
+            if (classDescriptor.kind == ClassKind.ENUM_CLASS) {
+                generateEnumSuperConstructorCall(irBlockBody, ktConstructor, classDescriptor)
             } else {
                 generateAnySuperConstructorCall(irBlockBody, ktConstructor)
             }
@@ -207,12 +208,14 @@ class BodyGenerator(
         val classDescriptor = getOrFail(BindingContext.CLASS, ktClassOrObject)
 
         when (classDescriptor.kind) {
-            ClassKind.ENUM_CLASS -> {
-                generateEnumSuperConstructorCall(irBlockBody, ktClassOrObject)
-            }
+            ClassKind.ENUM_CLASS -> generateEnumSuperConstructorCall(irBlockBody, ktClassOrObject, classDescriptor)
+
             ClassKind.ENUM_ENTRY -> {
-                irBlockBody.statements.add(generateEnumEntrySuperConstructorCall(ktClassOrObject as KtEnumEntry, classDescriptor))
+                irBlockBody.statements.add(
+                    generateEnumEntrySuperConstructorCall(ktClassOrObject as KtEnumEntry, classDescriptor)
+                )
             }
+
             else -> {
                 val statementGenerator = createStatementGenerator()
 
@@ -232,7 +235,9 @@ class BodyGenerator(
                 // If we are here, we didn't find a superclass entry in super types.
                 // Thus, super class should be Any.
                 val superClass = classDescriptor.getSuperClassOrAny()
-                assert(KotlinBuiltIns.isAny(superClass)) { "$classDescriptor: Super class should be any: $superClass" }
+                assert(KotlinBuiltIns.isAny(superClass)) {
+                    "$classDescriptor: Super class should be any: $superClass"
+                }
                 generateAnySuperConstructorCall(irBlockBody, ktClassOrObject)
             }
         }
@@ -250,12 +255,17 @@ class BodyGenerator(
         )
     }
 
-    private fun generateEnumSuperConstructorCall(irBlockBody: IrBlockBodyImpl, ktElement: KtElement) {
+    private fun generateEnumSuperConstructorCall(
+        irBlockBody: IrBlockBodyImpl,
+        ktElement: KtElement,
+        classDescriptor: ClassDescriptor
+    ) {
         val enumConstructor = context.builtIns.enum.constructors.single()
         irBlockBody.statements.add(
             IrEnumConstructorCallImpl(
                 ktElement.startOffset, ktElement.endOffset,
-                context.symbolTable.referenceConstructor(enumConstructor)
+                context.symbolTable.referenceConstructor(enumConstructor),
+                mapOf(enumConstructor.typeParameters.single() to classDescriptor.defaultType)
             )
         )
     }
@@ -269,7 +279,8 @@ class BodyGenerator(
             val enumEntryConstructor = enumEntryDescriptor.unsubstitutedPrimaryConstructor!!
             return IrEnumConstructorCallImpl(
                 ktEnumEntry.startOffset, ktEnumEntry.endOffset,
-                context.symbolTable.referenceConstructor(enumEntryConstructor)
+                context.symbolTable.referenceConstructor(enumEntryConstructor),
+                null // enums can't be generic (so far)
             )
         }
 
@@ -289,19 +300,8 @@ class BodyGenerator(
         }
 
         val enumDefaultConstructorCall = getResolvedCall(ktEnumEntry)
-        if (enumDefaultConstructorCall != null) {
-            return statementGenerator.generateEnumConstructorCall(enumDefaultConstructorCall, ktEnumEntry)
-        }
-
-        // Default enum entry constructor
-        val enumClassConstructor =
-            enumClassDescriptor.constructors.singleOrNull { constructor ->
-                constructor.valueParameters.all(ValueParameterDescriptor::declaresDefaultValue)
-            } ?: throw AssertionError("Enum class $enumClassDescriptor should have a default constructor")
-        return IrEnumConstructorCallImpl(
-            ktEnumEntry.startOffset, ktEnumEntry.endOffset,
-            context.symbolTable.referenceConstructor(enumClassConstructor)
-        )
+                ?: throw AssertionError("No default constructor call for enum entry $enumClassDescriptor")
+        return statementGenerator.generateEnumConstructorCall(enumDefaultConstructorCall, ktEnumEntry)
     }
 
     private fun StatementGenerator.generateEnumConstructorCall(

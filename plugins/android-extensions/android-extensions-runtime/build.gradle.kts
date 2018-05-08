@@ -1,11 +1,14 @@
 description = "Kotlin Android Extensions Runtime"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib"))
     compileOnly(commonDep("com.google.android", "android"))
 }
 

@@ -1,0 +1,1 @@
+val foo = "\n\n" + '\n'<caret>

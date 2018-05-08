@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -31,7 +32,8 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
     private fun doTest(
             relativeDirectory: String,
             compileWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
-            loadWith: LanguageVersion = LanguageVersion.LATEST_STABLE
+            loadWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
+            extraOptions: List<String> = emptyList()
     ) {
         val directory = KotlinTestUtils.getTestDataPathBase() + relativeDirectory
         val tmpdir = KotlinTestUtils.tmpDir(this::class.simpleName)
@@ -42,15 +44,18 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
                 "-d", tmpdir.path,
                 "-module-name", moduleName,
                 "-language-version", compileWith.versionString
-        ))
+        ) + extraOptions)
 
-        val mapping = ModuleMapping.create(
+        val mapping = ModuleMapping.loadModuleMapping(
                 File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test",
                 CompilerDeserializationConfiguration(
                         LanguageVersionSettingsImpl(loadWith, ApiVersion.createByLanguageVersion(loadWith))
                 )
         )
         val result = buildString {
+            for (annotationClassId in mapping.moduleData.annotations) {
+                appendln("@$annotationClassId")
+            }
             for ((fqName, packageParts) in mapping.packageFqName2Parts) {
                 appendln(fqName)
                 for (part in packageParts.parts) {
@@ -87,5 +92,16 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
     fun testJvmPackageNameLanguageVersion11() {
         doTest("/moduleProtoBuf/jvmPackageNameLanguageVersion11",
                compileWith = LanguageVersion.KOTLIN_1_2, loadWith = LanguageVersion.KOTLIN_1_1)
+    }
+
+    fun testExperimental() {
+        doTest(
+            "/moduleProtoBuf/experimental", extraOptions = listOf(
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xexperimental=org.foo.A",
+                "-Xexperimental=org.foo.B.C",
+                "-Xuse-experimental=org.foo.D"
+            )
+        )
     }
 }

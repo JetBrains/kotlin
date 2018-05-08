@@ -1,7 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
-import org.jetbrains.kotlin.serialization.jvm.JvmModuleProtoBuf
+import org.gradle.kotlin.dsl.extra
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import proguard.gradle.ProGuardTask
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
@@ -11,19 +12,12 @@ import java.io.DataOutputStream
 
 description = "Kotlin Full Reflection Library"
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath("net.sf.proguard:proguard-gradle:${property("versions.proguard")}")
-    }
-}
-
 plugins { java }
 
 callGroovy("configureJavaOnlyJvm6Project", this)
 publish()
+
+val jpsLibraryPath by extra(rootProject.extra["distLibDir"])
 
 val core = "$rootDir/core"
 val annotationsSrc = "$buildDir/annotations"
@@ -44,12 +38,14 @@ configurations.getByName("compileOnly").extendsFrom(shadows)
 val mainJar by configurations.creating
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(projectDist(":kotlin-stdlib"))
 
     proguardDeps(project(":kotlin-stdlib"))
-    proguardDeps(files(firstFromJavaHomeThatExists("lib/rt.jar", "../Classes/classes.jar")))
+    proguardDeps(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = File(property("JDK_16") as String))))
 
     shadows(project(":kotlin-reflect-api"))
+    shadows(project(":core:metadata"))
+    shadows(project(":core:metadata.jvm"))
     shadows(project(":core:descriptors"))
     shadows(project(":core:descriptors.jvm"))
     shadows(project(":core:deserialization"))
@@ -127,7 +123,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
 val reflectShadowJar by task<ShadowJar> {
     classifier = "shadow"
     version = null
-    callGroovy("manifestAttributes", manifest, project, "Main")
+    callGroovy("manifestAttributes", manifest, project, "Main", true)
 
     from(the<JavaPluginConvention>().sourceSets.getByName("main").output)
     from(project(":core:descriptors.jvm").the<JavaPluginConvention>().sourceSets.getByName("main").resources) {
@@ -158,18 +154,17 @@ val stripMetadata by tasks.creating {
     }
 }
 
-val mainArchiveName = "${property("archivesBaseName")}-$version.jar"
-val outputJarPath = "$libsDir/$mainArchiveName"
+val proguardOutput = "$libsDir/${property("archivesBaseName")}-proguard.jar"
 
 val proguard by task<ProGuardTask> {
     dependsOn(stripMetadata)
     inputs.files(stripMetadata.outputs.files)
-    outputs.file(outputJarPath)
+    outputs.file(proguardOutput)
 
-    injars(stripMetadata.outputs.files)
-    outjars(outputJarPath)
+    injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.outputs.files)
+    outjars(proguardOutput)
 
-    libraryjars(proguardDeps)
+    libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)
 
     configuration("$core/reflection.jvm/reflection.pro")
 }
@@ -207,20 +202,27 @@ val sourcesJar = sourcesJar(sourceSet = null) {
     from("$core/reflection.jvm/src")
 }
 
-val result = proguard
+val result by task<Jar> {
+    dependsOn(proguard)
+    from(zipTree(file(proguardOutput)))
+    from(zipTree(reflectShadowJar.archivePath)) {
+        include("META-INF/versions/**")
+    }
+    callGroovy("manifestAttributes", manifest, project, "Main", true)
+}
 
 val dexMethodCount by task<DexMethodCount> {
     dependsOn(result)
-    jarFile = File(outputJarPath)
+    jarFile = result.outputs.files.single()
     ownPackages = listOf("kotlin.reflect")
 }
 tasks.getByName("check").dependsOn(dexMethodCount)
 
 artifacts {
     val artifactJar = mapOf(
-            "file" to File(outputJarPath),
-            "builtBy" to result,
-            "name" to property("archivesBaseName")
+        "file" to result.outputs.files.single(),
+        "builtBy" to result,
+        "name" to property("archivesBaseName")
     )
 
     add(mainJar.name, artifactJar)

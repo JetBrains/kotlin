@@ -94,6 +94,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private JTextField tfFileNameInPackage;
     private JCheckBox cbSpecifyFileNameInPackage;
     private JCheckBox cbUpdatePackageDirective;
+    private JCheckBox cbSearchReferences;
     private KotlinMemberSelectionTable memberTable;
     public MoveKotlinTopLevelDeclarationsDialog(
             @NotNull Project project,
@@ -747,6 +748,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                                     : new KotlinAwareMoveFilesOrDirectoriesProcessor(myProject,
                                                                                      sourceFiles,
                                                                                      targetDirectory,
+                                                                                     cbSearchReferences.isSelected(),
                                                                                      isSearchInComments(),
                                                                                      isSearchInNonJavaFiles(),
                                                                                      moveCallback);
@@ -777,7 +779,10 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     false,
                     deleteSourceFile,
                     moveCallback,
-                    false
+                    false,
+                    null,
+                    true,
+                    cbSearchReferences.isSelected()
             );
             invokeRefactoring(new MoveKotlinDeclarationsProcessor(options, Mover.Default.INSTANCE));
         }

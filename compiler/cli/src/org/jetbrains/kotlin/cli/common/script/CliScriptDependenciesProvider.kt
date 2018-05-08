@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.cli.common.script
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.script.ScriptContentLoader
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
+import org.jetbrains.kotlin.script.findScriptDefinition
+import org.jetbrains.kotlin.script.*
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -48,7 +47,9 @@ class CliScriptDependenciesProvider(
         else {
             val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
             if (scriptDef != null) {
-                val deps = scriptContentLoader.loadContentsAndResolveDependencies(scriptDef, file)
+                val deps = scriptContentLoader
+                    .loadContentsAndResolveDependencies(scriptDef, file)
+                    .dependencies?.adjustByDefinition(scriptDef)
 
                 if (deps != null) {
                     log.info("[kts] new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")

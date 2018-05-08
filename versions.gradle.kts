@@ -1,7 +1,7 @@
 
-extra["versions.intellijSdk"] = "173.4548.28"
+extra["versions.intellijSdk"] = "181.4203.6"
 extra["versions.androidBuildTools"] = "r23.0.1"
-extra["versions.idea.NodeJS"] = "172.3757.32"
+extra["versions.idea.NodeJS"] = "181.3494.12"
 //extra["versions.androidStudioRelease"] = "3.1.0.5"
 //extra["versions.androidStudioBuild"] = "173.4506631"
 
@@ -31,6 +31,7 @@ when (platform) {
         extra["versions.jar.kxml2"] = "2.3.0"
         extra["versions.jar.streamex"] = "0.6.5"
         extra["versions.jar.gson"] = "2.8.2"
+        extra["versions.jar.oro"] = "2.0.8"
         for (jar in gradleJars) {
             extra["versions.jar.$jar"] = "4.4"
         }

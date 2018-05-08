@@ -14,5 +14,5 @@ fun <A> main() {
     <!NI;UNREACHABLE_CODE!>val <!OI;UNUSED_VARIABLE!>b<!>: Int = f()<!>
     <!NI;UNREACHABLE_CODE!>f<Int>()<!>
 
-    <!NI;UNREACHABLE_CODE!>val <!OI;UNUSED_VARIABLE!>с<!>: A = id(<!TYPE_PARAMETER_AS_REIFIED!>f<!>())<!>
+    <!NI;UNREACHABLE_CODE!>val <!OI;UNUSED_VARIABLE!>с<!>: A = id(<!NI;TYPE_PARAMETER_AS_REIFIED, TYPE_PARAMETER_AS_REIFIED!>f<!>())<!>
 }

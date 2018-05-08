@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,31 +21,31 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ExpressionSelectionTestGenerated extends AbstractExpressionSelectionTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTestExpressionSelection, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInExpressionSelection() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/expressionSelection"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("binaryExpr.kt")
     public void testBinaryExpr() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/expressionSelection/binaryExpr.kt");
-        doTestExpressionSelection(fileName);
+        runTest("idea/testData/expressionSelection/binaryExpr.kt");
     }
 
     @TestMetadata("labelledStatement.kt")
     public void testLabelledStatement() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/expressionSelection/labelledStatement.kt");
-        doTestExpressionSelection(fileName);
+        runTest("idea/testData/expressionSelection/labelledStatement.kt");
     }
 
     @TestMetadata("labelledThis.kt")
     public void testLabelledThis() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/expressionSelection/labelledThis.kt");
-        doTestExpressionSelection(fileName);
+        runTest("idea/testData/expressionSelection/labelledThis.kt");
     }
 
     @TestMetadata("noExpression.kt")
     public void testNoExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/expressionSelection/noExpression.kt");
-        doTestExpressionSelection(fileName);
+        runTest("idea/testData/expressionSelection/noExpression.kt");
     }
 }

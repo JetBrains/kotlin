@@ -24,4 +24,6 @@ class EmptyStatementEliminationTest : BasicOptimizerTest("empty-statement-elimin
     @Test fun ifWithEmptyThenAndNoElse() = box()
 
     @Test fun emptyBlockEliminated() = box()
+
+    @Test fun switchElimination() = box()
 }

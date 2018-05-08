@@ -26,4 +26,5 @@ fun box(): String {
     }
     return "OK"
 }
-// 0 areEqual
+// 4 areEqual \(Ljava/lang/Object;Ljava/lang/Object;\)Z
+// 4 areEqual

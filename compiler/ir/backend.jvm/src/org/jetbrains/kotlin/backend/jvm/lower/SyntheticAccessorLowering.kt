@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
@@ -165,7 +168,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
                     val isConstructor = descriptor is ConstructorDescriptor
                     val accessorOwner = accessor.containingDeclaration as ClassOrPackageFragmentDescriptor
                     val accessorForIr =
-                            accessorToIrAccessor(isConstructor, accessor, context, descriptor, accessorOwner) //TODO change call
+                            accessorToIrAccessorDescriptor(isConstructor, accessor, context, descriptor, accessorOwner) //TODO change call
 
                     val call =
                             if (isConstructor && expression is IrDelegatingConstructorCall)
@@ -185,7 +188,7 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
             return superResult
         }
 
-        private fun accessorToIrAccessor(isConstructor: Boolean, accessor: CallableMemberDescriptor, context: JvmBackendContext, descriptor: FunctionDescriptor, accessorOwner: ClassOrPackageFragmentDescriptor): FunctionDescriptor {
+        private fun accessorToIrAccessorDescriptor(isConstructor: Boolean, accessor: CallableMemberDescriptor, context: JvmBackendContext, descriptor: FunctionDescriptor, accessorOwner: ClassOrPackageFragmentDescriptor): FunctionDescriptor {
             return if (isConstructor)
                 (accessor as AccessorForConstructorDescriptor).constructorDescriptorWithMarker(
                         context.ir.symbols.defaultConstructorMarker.descriptor.defaultType
@@ -197,26 +200,38 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
             val accessorOwner = (accessor as FunctionDescriptor).containingDeclaration as ClassOrPackageFragmentDescriptor
             val body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             val isConstructor = accessor.calleeDescriptor is ConstructorDescriptor
-            val accessorForIr = accessorToIrAccessor(
+            val accessorForIr = accessorToIrAccessorDescriptor(
                 isConstructor, accessor, context,
                 accessor.calleeDescriptor as? FunctionDescriptor ?: return,
                 accessorOwner)
-            val syntheticFunction = IrFunctionImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                    accessorForIr, body
+            val syntheticFunction = if (isConstructor) IrConstructorImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                accessorForIr as ClassConstructorDescriptor, body
+            ) else IrFunctionImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                accessorForIr, body
             )
+            syntheticFunction.createParameterDeclarations()
+
             val calleeDescriptor = accessor.calleeDescriptor as FunctionDescriptor
             val delegationCall =
-                    if (!isConstructor)
-                        IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor)
-                    else IrDelegatingConstructorCallImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            createFunctionSymbol(accessor.calleeDescriptor) as IrConstructorSymbol,
-                            accessor.calleeDescriptor as ClassConstructorDescriptor
-                    )
-            copyAllArgsToValueParams(delegationCall, accessorForIr)
+                if (!isConstructor)
+                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor)
+                else IrDelegatingConstructorCallImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    createFunctionSymbol(accessor.calleeDescriptor) as IrConstructorSymbol,
+                    accessor.calleeDescriptor as ClassConstructorDescriptor
+                )
+            copyAllArgsToValueParams(delegationCall, syntheticFunction)
 
-            body.statements.add(if (isConstructor) delegationCall else IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor, delegationCall))
+            body.statements.add(
+                if (isConstructor) delegationCall else IrReturnImpl(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    syntheticFunction.symbol,
+                    delegationCall
+                )
+            )
             irClassToAddAccessor.declarations.add(syntheticFunction)
         }
 
@@ -233,19 +248,22 @@ class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPa
             return calculatedAccessor
         }
 
-        private fun copyAllArgsToValueParams(call: IrMemberAccessExpression, fromDescriptor: CallableMemberDescriptor) {
+        private fun copyAllArgsToValueParams(
+            call: IrMemberAccessExpression,
+            syntheticFunction: IrFunction
+        ) {
             var offset = 0
-            val newDescriptor = call.descriptor
-            newDescriptor.dispatchReceiverParameter?.let {
-                call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[offset++])
+            val delegateTo = call.descriptor
+            delegateTo.dispatchReceiverParameter?.let {
+                call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
             }
 
-            newDescriptor.extensionReceiverParameter?.let {
-                call.extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[offset++])
+            delegateTo.extensionReceiverParameter?.let {
+                call.extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[offset++].symbol)
             }
 
             call.descriptor.valueParameters.forEachIndexed { i, _ ->
-                call.putValueArgument(i, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[i + offset]))
+                call.putValueArgument(i, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, syntheticFunction.valueParameters[i + offset].symbol))
             }
         }
 

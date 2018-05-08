@@ -50,15 +50,11 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
             receiverExpression.genExpr()
         }
 
-        ktCall.valueArguments.forEach {
+        (ktCall.valueArguments + ktCall.lambdaArguments).forEach {
             val ktArgument = it.getArgumentExpression()
             if (ktArgument != null) {
                 irErrorCall.addArgument(ktArgument.genExpr())
             }
-        }
-
-        ktCall.lambdaArguments.forEach {
-            irErrorCall.addArgument(it.getArgumentExpression().genExpr())
         }
 
         irErrorCall

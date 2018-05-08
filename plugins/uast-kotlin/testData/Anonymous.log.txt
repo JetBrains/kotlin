@@ -45,7 +45,9 @@ UFile (package = )
                         UObjectLiteralExpression
                             UClass (name = null)
                                 UAnnotationMethod (name = read)
-                                    ULiteralExpression (value = 0)
+                                    UBlockExpression
+                                        UReturnExpression
+                                            ULiteralExpression (value = 0)
                                 UAnnotationMethod (name = run)
                                     UBlockExpression
                                 UAnnotationMethod (name = AnonymousKt$foo$runnableIs$1)

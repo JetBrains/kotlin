@@ -3,7 +3,10 @@ import java.io.File
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
@@ -11,16 +14,22 @@ val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
 val effectSystemEnabled: Boolean by rootProject.extra
-if (effectSystemEnabled) {
-    allprojects {
-        tasks.withType<KotlinCompile<*>> {
-            kotlinOptions {
-                freeCompilerArgs += listOf("-Xeffect-system")
+val newInferenceEnabled: Boolean by rootProject.extra
+
+configureFreeCompilerArg(effectSystemEnabled, "-Xeffect-system")
+configureFreeCompilerArg(newInferenceEnabled, "-Xnew-inference")
+
+fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
+    if (isEnabled) {
+        allprojects {
+            tasks.withType<KotlinCompile<*>> {
+                kotlinOptions {
+                    freeCompilerArgs += listOf(compilerArgument)
+                }
             }
         }
     }
 }
-
 
 val depDistProjects = listOf(
         ":kotlin-script-runtime",
@@ -31,7 +40,7 @@ val depDistProjects = listOf(
 // TODO: it seems incomplete, find and add missing dependencies
 val testDistProjects = listOf(
         "", // for root project
-        ":prepare:mock-runtime-for-test",
+        ":kotlin-stdlib:jvm-minimal-for-test",
         ":kotlin-compiler",
         ":kotlin-script-runtime",
         ":kotlin-stdlib",
@@ -65,7 +74,7 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
-    testCompileOnly(project(":kotlin-daemon-client"))
+    testCompileOnly(projectRuntimeJar(":kotlin-daemon-client"))
     testCompileOnly(project(":kotlin-reflect-api"))
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
@@ -93,6 +102,11 @@ sourceSets {
     }
 }
 
+val jar: Jar by tasks
+jar.from("../idea/src") {
+    include("META-INF/extensions/compiler.xml")
+}
+
 projectTest {
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
@@ -100,7 +114,6 @@ projectTest {
     doFirst {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }
 }
 
@@ -180,4 +193,11 @@ codegenTest(target = 9, jvm = 9) {
     systemProperty("kotlin.test.substitute.bytecode.1.8.to.1.9", "true")
 }
 
+codegenTest(target = 10, jvm = 10) {
+    systemProperty("kotlin.test.default.jvm.target", "1.8")
+    systemProperty("kotlin.test.substitute.bytecode.1.8.to.10", "true")
+}
+
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")
+
+testsJar()

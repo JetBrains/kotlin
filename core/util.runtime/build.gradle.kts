@@ -1,7 +1,8 @@
 
-apply {
-    plugin("java")
-    plugin("kotlin")
+plugins {
+    java
+    kotlin("jvm")
+    id("jps-compatible")
 }
 
 jvmTarget = "1.6"

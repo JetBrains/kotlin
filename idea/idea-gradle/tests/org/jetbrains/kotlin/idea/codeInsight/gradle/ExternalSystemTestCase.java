@@ -55,261 +55,261 @@ import static org.jetbrains.kotlin.test.testFramework.EdtTestUtil.runInEdtAndWai
 
 // part of com.intellij.openapi.externalSystem.test.ExternalSystemTestCase
 public abstract class ExternalSystemTestCase extends UsefulTestCase {
-  private File ourTempDir;
+    private File ourTempDir;
 
-  protected IdeaProjectTestFixture myTestFixture;
+    protected IdeaProjectTestFixture myTestFixture;
 
-  protected Project myProject;
+    protected Project myProject;
 
-  private File myTestDir;
-  private VirtualFile myProjectRoot;
-  private final List<VirtualFile> myAllConfigs = new ArrayList<VirtualFile>();
+    private File myTestDir;
+    private VirtualFile myProjectRoot;
+    private final List<VirtualFile> myAllConfigs = new ArrayList<VirtualFile>();
 
-  @Before
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    ensureTempDirCreated();
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        ensureTempDirCreated();
 
-    myTestDir = new File(ourTempDir, getTestName(false));
-    FileUtil.ensureExists(myTestDir);
+        myTestDir = new File(ourTempDir, getTestName(false));
+        FileUtil.ensureExists(myTestDir);
 
-    setUpFixtures();
-    myProject = myTestFixture.getProject();
+        setUpFixtures();
+        myProject = myTestFixture.getProject();
 
-    invokeTestRunnable(new Runnable() {
-      @Override
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            try {
-              setUpInWriteAction();
+        invokeTestRunnable(new Runnable() {
+            @Override
+            public void run() {
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            setUpInWriteAction();
+                        }
+                        catch (Throwable e) {
+                            try {
+                                tearDown();
+                            }
+                            catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
             }
-            catch (Throwable e) {
-              try {
-                tearDown();
-              }
-              catch (Exception e1) {
-                e1.printStackTrace();
-              }
-              throw new RuntimeException(e);
-            }
-          }
         });
-      }
-    });
 
-    List<String> allowedRoots = new ArrayList<String>();
-    collectAllowedRoots(allowedRoots);
-    if (!allowedRoots.isEmpty()) {
-      VfsRootAccess.allowRootAccess(getTestRootDisposable(), ArrayUtil.toStringArray(allowedRoots));
+        List<String> allowedRoots = new ArrayList<String>();
+        collectAllowedRoots(allowedRoots);
+        if (!allowedRoots.isEmpty()) {
+            VfsRootAccess.allowRootAccess(getTestRootDisposable(), ArrayUtil.toStringArray(allowedRoots));
+        }
+
+        CompilerTestUtil.enableExternalCompiler();
     }
 
-    CompilerTestUtil.enableExternalCompiler();
-  }
+    protected void collectAllowedRoots(List<String> roots) throws IOException {
+    }
 
-  protected void collectAllowedRoots(List<String> roots) throws IOException {
-  }
+    public static Collection<String> collectRootsInside(String root) {
+        final List<String> roots = ContainerUtil.newSmartList();
+        roots.add(root);
+        FileUtil.processFilesRecursively(new File(root), new Processor<File>() {
+            @Override
+            public boolean process(File file) {
+                try {
+                    String path = file.getCanonicalPath();
+                    if (!FileUtil.isAncestor(path, path, false)) {
+                        roots.add(path);
+                    }
+                }
+                catch (IOException ignore) {
+                }
+                return true;
+            }
+        });
 
-  public static Collection<String> collectRootsInside(String root) {
-    final List<String> roots = ContainerUtil.newSmartList();
-    roots.add(root);
-    FileUtil.processFilesRecursively(new File(root), new Processor<File>() {
-      @Override
-      public boolean process(File file) {
+        return roots;
+    }
+
+    private void ensureTempDirCreated() throws IOException {
+        if (ourTempDir != null) return;
+
+        ourTempDir = new File(FileUtil.getTempDirectory(), getTestsTempDir());
+        FileUtil.delete(ourTempDir);
+        FileUtil.ensureExists(ourTempDir);
+    }
+
+    protected abstract String getTestsTempDir();
+
+    protected void setUpFixtures() throws Exception {
+        myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).getFixture();
+        myTestFixture.setUp();
+    }
+
+    private void setUpInWriteAction() throws Exception {
+        File projectDir = new File(myTestDir, "project");
+        FileUtil.ensureExists(projectDir);
+        myProjectRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
         try {
-          String path = file.getCanonicalPath();
-          if (!FileUtil.isAncestor(path, path, false)) {
-            roots.add(path);
-          }
+            EdtTestUtil.runInEdtAndWait(new ThrowableRunnable<Throwable>() {
+                @Override
+                public void run() throws Throwable {
+                    CompilerTestUtil.disableExternalCompiler(myProject);
+                    tearDownFixtures();
+                }
+            });
+            myProject = null;
+            if (!FileUtil.delete(myTestDir) && myTestDir.exists()) {
+                System.err.println("Cannot delete " + myTestDir);
+                //printDirectoryContent(myDir);
+                myTestDir.deleteOnExit();
+            }
         }
-        catch (IOException ignore) {
+        finally {
+            super.tearDown();
+            resetClassFields(getClass());
         }
-        return true;
-      }
-    });
-
-    return roots;
-  }
-
-  private void ensureTempDirCreated() throws IOException {
-    if (ourTempDir != null) return;
-
-    ourTempDir = new File(FileUtil.getTempDirectory(), getTestsTempDir());
-    FileUtil.delete(ourTempDir);
-    FileUtil.ensureExists(ourTempDir);
-  }
-
-  protected abstract String getTestsTempDir();
-
-  protected void setUpFixtures() throws Exception {
-    myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).getFixture();
-    myTestFixture.setUp();
-  }
-
-  private void setUpInWriteAction() throws Exception {
-    File projectDir = new File(myTestDir, "project");
-    FileUtil.ensureExists(projectDir);
-    myProjectRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
-  }
-
-  @After
-  @Override
-  public void tearDown() throws Exception {
-    try {
-      EdtTestUtil.runInEdtAndWait(new ThrowableRunnable<Throwable>() {
-        @Override
-        public void run() throws Throwable {
-          CompilerTestUtil.disableExternalCompiler(myProject);
-          tearDownFixtures();
-        }
-      });
-      myProject = null;
-      if (!FileUtil.delete(myTestDir) && myTestDir.exists()) {
-        System.err.println("Cannot delete " + myTestDir);
-        //printDirectoryContent(myDir);
-        myTestDir.deleteOnExit();
-      }
     }
-    finally {
-      super.tearDown();
-      resetClassFields(getClass());
+
+    protected void tearDownFixtures() throws Exception {
+        myTestFixture.tearDown();
+        myTestFixture = null;
     }
-  }
 
-  protected void tearDownFixtures() throws Exception {
-    myTestFixture.tearDown();
-    myTestFixture = null;
-  }
+    private void resetClassFields(Class<?> aClass) {
+        if (aClass == null) return;
 
-  private void resetClassFields(Class<?> aClass) {
-    if (aClass == null) return;
+        Field[] fields = aClass.getDeclaredFields();
+        for (Field field : fields) {
+            final int modifiers = field.getModifiers();
+            if ((modifiers & Modifier.FINAL) == 0
+                && (modifiers & Modifier.STATIC) == 0
+                && !field.getType().isPrimitive()) {
+                field.setAccessible(true);
+                try {
+                    field.set(this, null);
+                }
+                catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-    Field[] fields = aClass.getDeclaredFields();
-    for (Field field : fields) {
-      final int modifiers = field.getModifiers();
-      if ((modifiers & Modifier.FINAL) == 0
-          && (modifiers & Modifier.STATIC) == 0
-          && !field.getType().isPrimitive()) {
-        field.setAccessible(true);
+        if (aClass == ExternalSystemTestCase.class) return;
+        resetClassFields(aClass.getSuperclass());
+    }
+
+    @Override
+    protected void runTest() throws Throwable {
         try {
-          field.set(this, null);
+            super.runTest();
         }
-        catch (IllegalAccessException e) {
-          e.printStackTrace();
+        catch (Exception throwable) {
+            Throwable each = throwable;
+            do {
+                if (each instanceof HeadlessException) {
+                    printIgnoredMessage("Doesn't work in Headless environment");
+                    return;
+                }
+            }
+            while ((each = each.getCause()) != null);
+            throw throwable;
         }
-      }
     }
 
-    if (aClass == ExternalSystemTestCase.class) return;
-    resetClassFields(aClass.getSuperclass());
-  }
-
-  @Override
-  protected void runTest() throws Throwable {
-    try {
-      super.runTest();
+    @Override
+    protected void invokeTestRunnable(@NotNull Runnable runnable) throws Exception {
+        runInEdtAndWait(runnable);
     }
-    catch (Exception throwable) {
-      Throwable each = throwable;
-      do {
-        if (each instanceof HeadlessException) {
-          printIgnoredMessage("Doesn't work in Headless environment");
-          return;
+
+    protected static String getRoot() {
+        if (SystemInfo.isWindows) return "c:";
+        return "";
+    }
+
+    protected String getProjectPath() {
+        return myProjectRoot.getPath();
+    }
+
+    protected VirtualFile createProjectConfig(@NonNls String config) throws IOException {
+        return createConfigFile(myProjectRoot, config);
+    }
+
+    private VirtualFile createConfigFile(final VirtualFile dir, String config) throws IOException {
+        final String configFileName = getExternalSystemConfigFileName();
+        VirtualFile f = dir.findChild(configFileName);
+        if (f == null) {
+            f = new WriteAction<VirtualFile>() {
+                @Override
+                protected void run(@NotNull Result<VirtualFile> result) throws Throwable {
+                    VirtualFile res = dir.createChildData(null, configFileName);
+                    result.setResult(res);
+                }
+            }.execute().getResultObject();
+            myAllConfigs.add(f);
         }
-      }
-      while ((each = each.getCause()) != null);
-      throw throwable;
+        setFileContent(f, config, true);
+        return f;
     }
-  }
 
-  @Override
-  protected void invokeTestRunnable(@NotNull Runnable runnable) throws Exception {
-    runInEdtAndWait(runnable);
-  }
+    protected abstract String getExternalSystemConfigFileName();
 
-  protected static String getRoot() {
-    if (SystemInfo.isWindows) return "c:";
-    return "";
-  }
-
-  protected String getProjectPath() {
-    return myProjectRoot.getPath();
-  }
-
-  protected VirtualFile createProjectConfig(@NonNls String config) throws IOException {
-    return createConfigFile(myProjectRoot, config);
-  }
-
-  private VirtualFile createConfigFile(final VirtualFile dir, String config) throws IOException {
-    final String configFileName = getExternalSystemConfigFileName();
-    VirtualFile f = dir.findChild(configFileName);
-    if (f == null) {
-      f = new WriteAction<VirtualFile>() {
-        @Override
-        protected void run(@NotNull Result<VirtualFile> result) throws Throwable {
-          VirtualFile res = dir.createChildData(null, configFileName);
-          result.setResult(res);
+    protected VirtualFile createProjectSubFile(String relativePath) throws IOException {
+        File f = new File(getProjectPath(), relativePath);
+        FileUtil.ensureExists(f.getParentFile());
+        FileUtil.ensureCanCreateFile(f);
+        boolean created = f.createNewFile();
+        if (!created) {
+            throw new AssertionError("Unable to create the project sub file: " + f.getAbsolutePath());
         }
-      }.execute().getResultObject();
-      myAllConfigs.add(f);
+        return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(f);
     }
-    setFileContent(f, config, true);
-    return f;
-  }
 
-  protected abstract String getExternalSystemConfigFileName();
-
-  protected VirtualFile createProjectSubFile(String relativePath) throws IOException {
-    File f = new File(getProjectPath(), relativePath);
-    FileUtil.ensureExists(f.getParentFile());
-    FileUtil.ensureCanCreateFile(f);
-    boolean created = f.createNewFile();
-    if(!created) {
-      throw new AssertionError("Unable to create the project sub file: " + f.getAbsolutePath());
+    protected VirtualFile createProjectSubFile(String relativePath, String content) throws IOException {
+        VirtualFile file = createProjectSubFile(relativePath);
+        setFileContent(file, content, false);
+        return file;
     }
-    return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(f);
-  }
 
-  protected VirtualFile createProjectSubFile(String relativePath, String content) throws IOException {
-    VirtualFile file = createProjectSubFile(relativePath);
-    setFileContent(file, content, false);
-    return file;
-  }
-
-  protected Module getModule(String name) {
-    AccessToken accessToken = ApplicationManager.getApplication().acquireReadActionLock();
-    try {
-      Module m = ModuleManager.getInstance(myProject).findModuleByName(name);
-      assertNotNull("Module " + name + " not found", m);
-      return m;
-    }
-    finally {
-      accessToken.finish();
-    }
-  }
-
-  private static void setFileContent(final VirtualFile file, final String content, final boolean advanceStamps) throws IOException {
-    new WriteAction<VirtualFile>() {
-      @Override
-      protected void run(@NotNull Result<VirtualFile> result) throws Throwable {
-        if (advanceStamps) {
-          file.setBinaryContent(content.getBytes(CharsetToolkit.UTF8_CHARSET), -1, file.getTimeStamp() + 4000);
+    protected Module getModule(String name) {
+        AccessToken accessToken = ApplicationManager.getApplication().acquireReadActionLock();
+        try {
+            Module m = ModuleManager.getInstance(myProject).findModuleByName(name);
+            assertNotNull("Module " + name + " not found", m);
+            return m;
         }
-        else {
-          file.setBinaryContent(content.getBytes(CharsetToolkit.UTF8_CHARSET), file.getModificationStamp(), file.getTimeStamp());
+        finally {
+            accessToken.finish();
         }
-      }
-    }.execute().getResultObject();
-  }
-
-  private void printIgnoredMessage(String message) {
-    String toPrint = "Ignored";
-    if (message != null) {
-      toPrint += ", because " + message;
     }
-    toPrint += ": " + getClass().getSimpleName() + "." + getName();
-    System.out.println(toPrint);
-  }
+
+    private static void setFileContent(final VirtualFile file, final String content, final boolean advanceStamps) throws IOException {
+        new WriteAction<VirtualFile>() {
+            @Override
+            protected void run(@NotNull Result<VirtualFile> result) throws Throwable {
+                if (advanceStamps) {
+                    file.setBinaryContent(content.getBytes(CharsetToolkit.UTF8_CHARSET), -1, file.getTimeStamp() + 4000);
+                }
+                else {
+                    file.setBinaryContent(content.getBytes(CharsetToolkit.UTF8_CHARSET), file.getModificationStamp(), file.getTimeStamp());
+                }
+            }
+        }.execute().getResultObject();
+    }
+
+    private void printIgnoredMessage(String message) {
+        String toPrint = "Ignored";
+        if (message != null) {
+            toPrint += ", because " + message;
+        }
+        toPrint += ": " + getClass().getSimpleName() + "." + getName();
+        System.out.println(toPrint);
+    }
 }

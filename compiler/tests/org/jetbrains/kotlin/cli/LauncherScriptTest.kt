@@ -42,7 +42,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         workDirectory?.let(cmd::withWorkDirectory)
         val processOutput = ExecUtil.execAndGetOutput(cmd)
         val stdout = StringUtil.convertLineSeparators(processOutput.stdout)
-        val stderr = StringUtil.convertLineSeparators(processOutput.stderr)
+        val stderr = StringUtil.convertLineSeparators(processOutput.stderr).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
         val exitCode = processOutput.exitCode
 
         try {

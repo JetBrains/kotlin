@@ -27,7 +27,7 @@ import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.idea.caches.resolve.ScriptModuleSearchScope
+import org.jetbrains.kotlin.idea.caches.project.ScriptModuleSearchScope
 import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 

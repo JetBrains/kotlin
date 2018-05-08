@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.util
@@ -21,6 +10,7 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
@@ -76,7 +66,7 @@ object ProjectRootsUtil {
         if (!includeLibraryClasses && !includeLibrarySource) return false
 
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
-        val fileType = file.fileType
+        val fileType = FileTypeManager.getInstance().getFileTypeByFileName(file.name)
         val canContainClassFiles = fileType == ArchiveFileType.INSTANCE || file.isDirectory
         val isBinary = fileType.isKotlinBinary()
 
@@ -148,5 +138,10 @@ object ProjectRootsUtil {
 val Module.rootManager: ModuleRootManager
     get() = ModuleRootManager.getInstance(this)
 
+val Module.sourceRoots: Array<VirtualFile>
+    get() = rootManager.sourceRoots
+
 val PsiElement.module: Module?
     get() = ModuleUtilCore.findModuleForPsiElement(this)
+
+fun VirtualFile.findModule(project: Project) = ModuleUtilCore.findModuleForFile(this, project)

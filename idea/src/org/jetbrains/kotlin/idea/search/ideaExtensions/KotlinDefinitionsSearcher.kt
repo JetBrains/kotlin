@@ -31,24 +31,28 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachImplementation
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
+import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import java.util.*
 
 class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
-    override fun execute(queryParameters: DefinitionsScopedSearch.SearchParameters, consumer: Processor<PsiElement>): Boolean {
+    override fun execute(queryParameters: DefinitionsScopedSearch.SearchParameters, consumer: ExecutorProcessor<PsiElement>): Boolean {
         val consumer = skipDelegatedMethodsConsumer(consumer)
         val element = queryParameters.element
         val scope = queryParameters.scope
 
         return when (element) {
-            is KtClass ->
-                processClassImplementations(element, consumer)
+            is KtClass -> {
+                processClassImplementations(element, consumer) && processActualDeclarations(element, consumer)
+            }
 
             is KtLightClass -> {
                 val useScope = runReadAction { element.useScope }
@@ -58,14 +62,21 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
                     true
             }
 
-            is KtNamedFunction, is KtSecondaryConstructor ->
-                processFunctionImplementations(element as KtFunction, scope, consumer)
+            is KtNamedFunction, is KtSecondaryConstructor -> {
+                processFunctionImplementations(element as KtFunction, scope, consumer) && processActualDeclarations(element, consumer)
+            }
 
-            is KtProperty ->
-                processPropertyImplementations(element, scope, consumer)
+            is KtProperty -> {
+                processPropertyImplementations(element, scope, consumer) && processActualDeclarations(element, consumer)
+            }
 
-            is KtParameter ->
-                if (isFieldParameter(element)) processPropertyImplementations(element, scope, consumer) else true
+            is KtParameter -> {
+                if (isFieldParameter(element)) {
+                    processPropertyImplementations(element, scope, consumer) && processActualDeclarations(element, consumer)
+                } else {
+                    true
+                }
+            }
 
             else -> true
         }
@@ -73,7 +84,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
     companion object {
 
-        private fun skipDelegatedMethodsConsumer(baseConsumer: Processor<PsiElement>): Processor<PsiElement> {
+        private fun skipDelegatedMethodsConsumer(baseConsumer: ExecutorProcessor<PsiElement>): Processor<PsiElement> {
             return Processor { element ->
                 if (isDelegated(element)) {
                     return@Processor true
@@ -125,6 +136,13 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
         private fun processPropertyImplementations(declaration: KtNamedDeclaration, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
             return runReadAction {
                 processPropertyImplementationsMethods(declaration.toPossiblyFakeLightMethods(), scope, consumer)
+            }
+        }
+
+        private fun processActualDeclarations(declaration: KtDeclaration, consumer: Processor<PsiElement>): Boolean {
+            return runReadAction {
+                if (!declaration.isExpectDeclaration()) true
+                else declaration.actualsForExpected().all(consumer::process)
             }
         }
 

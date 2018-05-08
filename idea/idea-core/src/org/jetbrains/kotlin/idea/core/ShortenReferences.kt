@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -36,7 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecationStatus
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.lang.IllegalStateException
@@ -47,7 +44,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         val removeThisLabels: Boolean = false,
         val removeThis: Boolean = false,
         // TODO: remove this option and all related stuff (RETAIN_COMPANION etc.) after KT-13934 fixed
-        val removeExplicitCompanion: Boolean = true
+        val removeExplicitCompanion: Boolean = true,
+        val dropBracesInStringTemplates: Boolean = true
     ) {
         companion object {
             val DEFAULT = Options()
@@ -175,11 +173,11 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             // step 2: analyze collected elements with resolve and decide which can be shortened now and which need descriptors to be imported before shortening
             val allElementsToAnalyze = visitors.flatMap { it.getElementsToAnalyze().map { it.element } }
-            val bindingContext = file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL)
+            val bindingContext = file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL_WITH_CFA)
             processors.forEach { it.analyzeCollectedElements(bindingContext) }
 
             // step 3: shorten elements that can be shortened right now
-            processors.forEach { it.shortenElements(elementSetToUpdate = elementsToUse) }
+            processors.forEach { it.shortenElements(elementSetToUpdate = elementsToUse, options = options) }
 
             // step 4: try to import descriptors needed to shorten other elements
             val descriptorsToImport = processors.flatMap { it.getDescriptorsToImport() }.toSet()
@@ -310,9 +308,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             class ImportDescriptors(val descriptors: Collection<DeclarationDescriptor>) : AnalyzeQualifiedElementResult()
         }
 
-        protected abstract fun shortenElement(element: TElement): KtElement
+        protected abstract fun shortenElement(element: TElement, options: Options): KtElement
 
-        fun shortenElements(elementSetToUpdate: MutableSet<KtElement>) {
+        fun shortenElements(elementSetToUpdate: MutableSet<KtElement>, options: (KtElement) -> Options) {
             for (elementPointer in elementsToShorten) {
                 val element = elementPointer.element ?: continue
                 if (!element.isValid) continue
@@ -320,7 +318,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 var newElement: KtElement? = null
                 // we never want any reformatting to happen because sometimes it causes strange effects (see KT-11633)
                 PostprocessReformattingAspect.getInstance(element.project).disablePostprocessFormattingInside {
-                    newElement = shortenElement(element)
+                    newElement = shortenElement(element, options(element))
                 }
 
                 if (element in elementSetToUpdate && newElement != element) {
@@ -369,18 +367,26 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             val scope = element.getResolutionScope(bindingContext, resolutionFacade)
             val name = target.name
-            val targetByName = if (target is ClassifierDescriptor)
-                scope.findClassifier(name, NoLookupLocation.FROM_IDE)
-            else
-                scope.findPackage(name)
 
-            val canShortenNow = targetByName?.asString() == target.asString()
+            val targetByName: DeclarationDescriptor?
+            val isDeprecated: Boolean
+
+            if (target is ClassifierDescriptor) {
+                val classifierWithDeprecation = scope.findFirstClassifierWithDeprecationStatus(name, NoLookupLocation.FROM_IDE)
+                targetByName = classifierWithDeprecation?.descriptor
+                isDeprecated = classifierWithDeprecation?.isDeprecated ?: false
+            } else {
+                targetByName = scope.findPackage(name)
+                isDeprecated = false
+            }
+
+            val canShortenNow = targetByName?.asString() == target.asString() && !isDeprecated
             return if (canShortenNow) AnalyzeQualifiedElementResult.ShortenNow else AnalyzeQualifiedElementResult.ImportDescriptors(
                 listOfNotNull(target)
             )
         }
 
-        override fun shortenElement(element: KtUserType): KtElement {
+        override fun shortenElement(element: KtUserType, options: Options): KtElement {
             element.deleteQualifier()
             return element
         }
@@ -461,6 +467,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                             resolvedCallWhenShort is VariableAsFunctionResolvedCall? &&
                                     resolvedCallsMatch(resolvedCall, resolvedCallWhenShort)))
 
+            // Don't shorten references if it will result to call to deprecated classifier by short name
+            val isShortenedReferenceResolvesToDeprecated = newContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, newCallee] == true
+            if (isShortenedReferenceResolvesToDeprecated) return AnalyzeQualifiedElementResult.Skip
 
             // If before and after shorten call can be resolved unambiguously, then preform comparing of such calls,
             // if it matches, then we can preform shortening
@@ -505,13 +514,20 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
 
             return when {
-                targetsMatch || resolvedCallsMatch -> AnalyzeQualifiedElementResult.ShortenNow
+                targetsMatch || resolvedCallsMatch ->
+                    AnalyzeQualifiedElementResult.ShortenNow
 
-            // it makes no sense to insert import when there is a conflict with function, property etc
-                targetsWhenShort.any { it !is ClassifierDescriptorWithTypeParameters && it !is PackageViewDescriptor } -> AnalyzeQualifiedElementResult.Skip
+                // Function doesn't conflict with property
+                targets.all { it is FunctionDescriptor } && targetsWhenShort.all { it is PropertyDescriptor } ->
+                    AnalyzeQualifiedElementResult.ImportDescriptors(targets)
+
+                // In other cases it makes no sense to insert import when there is a conflict with function, property etc
+                targetsWhenShort.any { it !is ClassifierDescriptorWithTypeParameters && it !is PackageViewDescriptor } ->
+                    AnalyzeQualifiedElementResult.Skip
 
 
-                else -> AnalyzeQualifiedElementResult.ImportDescriptors(targets)
+                else ->
+                    AnalyzeQualifiedElementResult.ImportDescriptors(targets)
             }
         }
 
@@ -563,11 +579,15 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                     rc1?.functionCall?.candidateDescriptor?.asString() == rc2?.functionCall?.candidateDescriptor?.asString()
         }
 
-        override fun shortenElement(element: KtDotQualifiedExpression): KtElement {
+        override fun shortenElement(element: KtDotQualifiedExpression, options: Options): KtElement {
             val parens = element.parent as? KtParenthesizedExpression
             val requiredParens = parens != null && !KtPsiUtil.areParenthesesUseless(parens)
             val shortenedElement = element.replace(element.selectorExpression!!) as KtElement
-            if (requiredParens) return shortenedElement.parent.replaced(shortenedElement)
+            val newParent = shortenedElement.parent
+            if (requiredParens) return newParent.replaced(shortenedElement)
+            if (options.dropBracesInStringTemplates && newParent is KtBlockStringTemplateEntry && newParent.canDropBraces()) {
+                newParent.dropBraces()
+            }
             return shortenedElement
         }
     }
@@ -596,7 +616,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             return if (targetBefore == targetAfter) AnalyzeQualifiedElementResult.ShortenNow else AnalyzeQualifiedElementResult.Skip
         }
 
-        override fun shortenElement(element: KtThisExpression): KtElement {
+        override fun shortenElement(element: KtThisExpression, options: Options): KtElement {
             return element.replace(simpleThis) as KtElement
         }
     }
@@ -650,7 +670,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             return AnalyzeQualifiedElementResult.ShortenNow
         }
 
-        override fun shortenElement(element: KtDotQualifiedExpression): KtElement {
+        override fun shortenElement(element: KtDotQualifiedExpression, options: Options): KtElement {
             val receiver = element.receiverExpression
             val selector = element.selectorExpression ?: return element
 

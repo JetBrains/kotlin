@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1 flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (stringArray:kotlin.Array<kotlin.String>, charArray:kotlin.CharArray, booleanArray:kotlin.BooleanArray, byteArray:kotlin.ByteArray, shortArray:kotlin.ShortArray, intArray:kotlin.IntArray, longArray:kotlin.LongArray, floatArray:kotlin.FloatArray, doubleArray:kotlin.DoubleArray) returnType:Test1 flags:
       VALUE_PARAMETER name:stringArray index:0 type:kotlin.Array<kotlin.String> flags:
       VALUE_PARAMETER name:charArray index:1 type:kotlin.CharArray flags:
@@ -209,6 +211,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
             floatArray: GET_VAR 'value-parameter floatArray: FloatArray = ...' type=kotlin.FloatArray origin=null
             doubleArray: GET_VAR 'value-parameter doubleArray: DoubleArray = ...' type=kotlin.DoubleArray origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test1) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:Test1 flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
@@ -260,6 +264,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
             CONST String type=kotlin.String value=)
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test1) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:Test1 flags:
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
@@ -335,6 +341,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:Test1, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:Test1 flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       BLOCK_BODY
@@ -348,11 +356,13 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test1
+              typeOperand: CLASS CLASS name:Test1 modality:FINAL visibility:public flags:data
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test1 flags:val
           TYPE_OP type=Test1 origin=CAST typeOperand=Test1
+            typeOperand: CLASS CLASS name:Test1 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -448,7 +458,11 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:Test2 modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test2<T> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (genericArray:kotlin.Array<T>) returnType:Test2<T> flags:
       VALUE_PARAMETER name:genericArray index:0 type:kotlin.Array<T> flags:
       BLOCK_BODY
@@ -479,9 +493,11 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(Array<T> = ...): Test2<T>'
           CALL 'constructor Test2(Array<T>)' type=Test2<T> origin=null
-            <T>: null
+            <T>: T
             genericArray: GET_VAR 'value-parameter genericArray: Array<T> = ...' type=kotlin.Array<T> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test2<T>) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:Test2<T> flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
@@ -493,6 +509,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 $this: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
             CONST String type=kotlin.String value=)
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test2<T>) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:Test2<T> flags:
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
@@ -504,6 +522,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:Test2<T>, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:Test2<T> flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       BLOCK_BODY
@@ -517,11 +537,13 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test2<T>
+              typeOperand: CLASS CLASS name:Test2 modality:FINAL visibility:public flags:data
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test2<T> flags:val
           TYPE_OP type=Test2<T> origin=CAST typeOperand=Test2<T>
+            typeOperand: CLASS CLASS name:Test2 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -537,6 +559,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           CONST Boolean type=kotlin.Boolean value=true
   CLASS CLASS name:Test3 modality:FINAL visibility:public flags:data
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test3 flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (anyArrayN:kotlin.Array<kotlin.Any>?) returnType:Test3 flags:
       VALUE_PARAMETER name:anyArrayN index:0 type:kotlin.Array<kotlin.Any>? flags:
       BLOCK_BODY
@@ -569,6 +593,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
           CALL 'constructor Test3(Array<Any>?)' type=Test3 origin=null
             anyArrayN: GET_VAR 'value-parameter anyArrayN: Array<Any>? = ...' type=kotlin.Array<kotlin.Any>? origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test3) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:Test3 flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
@@ -580,6 +606,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
             CONST String type=kotlin.String value=)
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test3) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:Test3 flags:
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
@@ -602,6 +630,8 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:Test3, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:Test3 flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       BLOCK_BODY
@@ -615,11 +645,13 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test3
+              typeOperand: CLASS CLASS name:Test3 modality:FINAL visibility:public flags:data
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test3 flags:val
           TYPE_OP type=Test3 origin=CAST typeOperand=Test3
+            typeOperand: CLASS CLASS name:Test3 modality:FINAL visibility:public flags:data
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

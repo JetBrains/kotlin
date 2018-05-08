@@ -20,6 +20,17 @@ public final class kotlin/ExceptionsKt {
 	public static final fun getStackTrace (Ljava/lang/Throwable;)[Ljava/lang/StackTraceElement;
 }
 
+public abstract interface annotation class kotlin/Experimental : java/lang/annotation/Annotation {
+	public abstract fun level ()Lkotlin/Experimental$Level;
+}
+
+public final class kotlin/Experimental$Level : java/lang/Enum {
+	public static final field ERROR Lkotlin/Experimental$Level;
+	public static final field WARNING Lkotlin/Experimental$Level;
+	public static fun valueOf (Ljava/lang/String;)Lkotlin/Experimental$Level;
+	public static fun values ()[Lkotlin/Experimental$Level;
+}
+
 public abstract interface annotation class kotlin/ExtensionFunctionType : java/lang/annotation/Annotation {
 }
 
@@ -157,6 +168,10 @@ public final class kotlin/Unit {
 }
 
 public abstract interface annotation class kotlin/UnsafeVariance : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class kotlin/UseExperimental : java/lang/annotation/Annotation {
+	public abstract fun markerClass ()[Ljava/lang/Class;
 }
 
 public final class kotlin/_Assertions {
@@ -2220,6 +2235,9 @@ public final class kotlin/jvm/JvmClassMappingKt {
 	public static final fun getRuntimeClassOfKClassInstance (Lkotlin/reflect/KClass;)Ljava/lang/Class;
 }
 
+public abstract interface annotation class kotlin/jvm/JvmDefault : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/jvm/JvmField : java/lang/annotation/Annotation {
 }
 
@@ -2471,9 +2489,9 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 	public fun toString ()Ljava/lang/String;
 }
 
-public class kotlin/jvm/internal/CollectionToArray {
-	public static fun toArray (Ljava/util/Collection;)[Ljava/lang/Object;
-	public static fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
+public final class kotlin/jvm/internal/CollectionToArray {
+	public static final fun toArray (Ljava/util/Collection;)[Ljava/lang/Object;
+	public static final fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
 public final class kotlin/jvm/internal/DoubleCompanionObject {

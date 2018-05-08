@@ -1,21 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,12 +17,13 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
@@ -45,8 +36,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
-import static org.jetbrains.kotlin.types.TypeUtils.UNIT_EXPECTED_TYPE;
+import static org.jetbrains.kotlin.types.TypeUtils.*;
 import static org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 
 public class ExpressionTypingServices {
@@ -115,7 +105,8 @@ public class ExpressionTypingServices {
             @NotNull ContextDependency contextDependency
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter, getLanguageVersionSettings()
+                trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter, getLanguageVersionSettings(),
+                expressionTypingComponents.dataFlowValueFactory
         );
         if (contextExpression != expression) {
             context = context.replaceExpressionContextProvider(arg -> arg == expression ? contextExpression : null);
@@ -157,7 +148,8 @@ public class ExpressionTypingServices {
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
                 trace,
-                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings()
+                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings(),
+                expressionTypingComponents.dataFlowValueFactory
         ));
     }
 
@@ -225,7 +217,8 @@ public class ExpressionTypingServices {
                                                                                        expressionTypingComponents.overloadChecker);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, getLanguageVersionSettings()
+                trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, getLanguageVersionSettings(),
+                expressionTypingComponents.dataFlowValueFactory
         );
         KotlinTypeInfo typeInfo = expressionTypingFacade.getTypeInfo(bodyExpression, context, function.hasBlockBody());
 
@@ -285,9 +278,9 @@ public class ExpressionTypingServices {
                         statementExpression, newContext.replaceExpectedType(context.expectedType), coercionStrategyForLastExpression,
                         blockLevelVisitor);
                 if (result.getType() != null && statementExpression.getParent() instanceof KtBlockExpression) {
-                    DataFlowValue lastExpressionValue = DataFlowValueFactory.createDataFlowValue(
+                    DataFlowValue lastExpressionValue = expressionTypingComponents.dataFlowValueFactory.createDataFlowValue(
                             statementExpression, result.getType(), context);
-                    DataFlowValue blockExpressionValue = DataFlowValueFactory.createDataFlowValue(
+                    DataFlowValue blockExpressionValue = expressionTypingComponents.dataFlowValueFactory.createDataFlowValue(
                             (KtBlockExpression) statementExpression.getParent(), result.getType(), context);
                     result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(blockExpressionValue, lastExpressionValue,
                                                                                         expressionTypingComponents.languageVersionSettings));
@@ -341,6 +334,20 @@ public class ExpressionTypingServices {
             }
 
             return blockLevelVisitor.getTypeInfo(statementExpression, context.replaceExpectedType(expectedType).replaceContextDependency(dependency), true);
+        }
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) &&
+            statementExpression instanceof KtLambdaExpression) {
+            PsiElement parent = PsiUtilsKt.getNonStrictParentOfType(statementExpression, KtFunctionLiteral.class);
+            if (parent != null) {
+                KtFunctionLiteral functionLiteral = (KtFunctionLiteral) parent;
+                KotlinResolutionCallbacksImpl.LambdaInfo info =
+                        context.trace.getBindingContext().get(BindingContext.NEW_INFERENCE_LAMBDA_INFO, functionLiteral);
+                if (info != null) {
+                    info.getLastExpressionInfo().setLexicalScope(context.scope);
+                    info.getLastExpressionInfo().setTrace(context.trace);
+                    return new KotlinTypeInfo(DONT_CARE, context.dataFlowInfo);
+                }
+            }
         }
         KotlinTypeInfo result = blockLevelVisitor.getTypeInfo(statementExpression, context, true);
         if (coercionStrategyForLastExpression == COERCION_TO_UNIT) {

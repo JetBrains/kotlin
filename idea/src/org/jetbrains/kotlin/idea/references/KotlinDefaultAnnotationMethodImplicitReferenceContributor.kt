@@ -22,14 +22,10 @@ import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.util.ArrayUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.findPropertyByName
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 class KotlinDefaultAnnotationMethodImplicitReferenceContributor : AbstractKotlinReferenceContributor() {
     class ReferenceImpl(private val argument: KtValueArgument) : PsiReference {

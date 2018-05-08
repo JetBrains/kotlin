@@ -1,3 +1,5 @@
+// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+
 interface A {
     companion object {
         fun foo() {}
@@ -31,7 +33,7 @@ class C: B(), A {
         B.Companion.bar()
         C.<!UNRESOLVED_REFERENCE!>bar<!>()
 
-        B_()
+        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B_()<!>
         B.<!UNRESOLVED_REFERENCE!>B_<!>()
         B.Companion.B_()
         C.<!UNRESOLVED_REFERENCE!>B_<!>()

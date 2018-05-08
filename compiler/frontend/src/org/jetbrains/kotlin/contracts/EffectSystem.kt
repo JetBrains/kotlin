@@ -37,8 +37,9 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.ConditionalDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
-class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
+class EffectSystem(val languageVersionSettings: LanguageVersionSettings, val dataFlowValueFactory: DataFlowValueFactory) {
 
     fun getDataFlowInfoForFinishedCall(
         resolvedCall: ResolvedCall<*>,
@@ -120,7 +121,7 @@ class EffectSystem(val languageVersionSettings: LanguageVersionSettings) {
     }
 
     private fun getNonTrivialComputation(expression: KtExpression, trace: BindingTrace, moduleDescriptor: ModuleDescriptor): Computation? {
-        val computation = EffectsExtractingVisitor(trace, moduleDescriptor).extractOrGetCached(expression)
+        val computation = EffectsExtractingVisitor(trace, moduleDescriptor, dataFlowValueFactory).extractOrGetCached(expression)
         return if (computation == UNKNOWN_COMPUTATION) null else computation
     }
 }

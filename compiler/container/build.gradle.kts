@@ -1,14 +1,17 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
 dependencies {
     compile(project(":core:util.runtime"))
     compile(commonDep("javax.inject"))
-    compileOnly(project(":kotlin-stdlib"))
+    compileOnly(projectDist(":kotlin-stdlib"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(project(":kotlin-stdlib"))
+    testCompile(projectDist(":kotlin-stdlib"))
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))

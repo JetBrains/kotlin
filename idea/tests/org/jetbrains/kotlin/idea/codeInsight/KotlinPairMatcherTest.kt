@@ -38,4 +38,8 @@ class KotlinPairMatcherTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testFun() {
         doTest("/* Doc comment */ <start>fun xyzzy(x: Int, y: String): Any <brace>{ }")
     }
+
+    fun testFor() {
+        doTest("fun xyzzy() { for (x in 0..1)<start><brace>{ } }")
+    }
 }

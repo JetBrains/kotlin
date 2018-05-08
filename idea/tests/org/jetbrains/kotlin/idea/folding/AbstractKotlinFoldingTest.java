@@ -21,12 +21,10 @@ import com.intellij.codeInsight.folding.impl.JavaCodeFoldingSettingsImpl;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase;
-import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
 import org.junit.Assert;
 
@@ -35,7 +33,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.function.Consumer;
 
-public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFixtureTestCaseBase {
+public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFixtureTestCase {
     protected void doTest(@NotNull String path) {
         myFixture.testFolding(path);
     }
@@ -110,11 +108,5 @@ public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFi
         String actual = ((CodeInsightTestFixtureImpl)myFixture).getFoldingDescription(true);
 
         Assert.assertEquals(expectedContent, actual);
-    }
-
-    @NotNull
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        return KotlinLightProjectDescriptor.INSTANCE;
     }
 }

@@ -176,6 +176,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
             val superQualifier = getSuperQualifier(resolvedCall)
 
+            // TODO property imported from an object
             createPropertyLValue(ktLeft, descriptor, propertyReceiver, getTypeArguments(resolvedCall), origin, superQualifier)
         }
 

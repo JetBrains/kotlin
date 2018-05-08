@@ -22,7 +22,7 @@ import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.table.JBTable
 import com.intellij.util.ui.EditableModel
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -200,7 +200,7 @@ abstract class AbstractParameterTablePanel<Param, UIParam : AbstractParameterTab
                 }
                 PARAMETER_NAME_COLUMN -> {
                     val name = aValue as String
-                    if (KotlinNameSuggester.isIdentifier(name)) {
+                    if (name.isIdentifier()) {
                         info.name = name
                     }
                     updateSignature()

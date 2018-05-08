@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls
@@ -40,7 +29,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class DiagnosticReporterByTrackingStrategy(
     val constantExpressionEvaluator: ConstantExpressionEvaluator,
     val context: BasicCallResolutionContext,
-    val psiKotlinCall: PSIKotlinCall
+    val psiKotlinCall: PSIKotlinCall,
+    val dataFlowValueFactory: DataFlowValueFactory
 ) : DiagnosticReporter {
     private val trace = context.trace as TrackingBindingTrace
     private val tracingStrategy: TracingStrategy get() = psiKotlinCall.tracingStrategy
@@ -89,7 +79,7 @@ class DiagnosticReporterByTrackingStrategy(
     override fun onCallReceiver(callReceiver: SimpleKotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
         when (diagnostic.javaClass) {
             UnsafeCallError::class.java -> {
-                val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isVariableReceiverForInvoke ?: false
+                val implicitInvokeCheck = (callReceiver as? ReceiverExpressionKotlinCallArgument)?.isForImplicitInvoke ?: false
                 tracingStrategy.unsafeCall(trace, callReceiver.receiver.receiverValue.type, implicitInvokeCheck)
             }
 
@@ -118,6 +108,14 @@ class DiagnosticReporterByTrackingStrategy(
 
             MixingNamedAndPositionArguments::class.java ->
                 trace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(callArgument.psiCallArgument.valueArgument.asElement()))
+
+            NoneCallableReferenceCandidates::class.java -> {
+                val expression =
+                    (diagnostic as NoneCallableReferenceCandidates).argument.psiExpression.safeAs<KtCallableReferenceExpression>()
+                reportIfNonNull(expression) {
+                    trace.report(UNRESOLVED_REFERENCE.on(it.callableReference, it.callableReference))
+                }
+            }
         }
     }
 
@@ -126,8 +124,7 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     override fun onCallArgumentName(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
-        val nameReference = callArgument.psiCallArgument.valueArgument.getArgumentName()?.referenceExpression
-                ?: error("Argument name should be not null for argument: $callArgument")
+        val nameReference = callArgument.psiCallArgument.valueArgument.getArgumentName()?.referenceExpression ?: return
         when (diagnostic.javaClass) {
             NamedArgumentReference::class.java -> {
                 trace.record(BindingContext.REFERENCE_TARGET, nameReference, (diagnostic as NamedArgumentReference).parameterDescriptor)
@@ -165,7 +162,7 @@ class DiagnosticReporterByTrackingStrategy(
                     expressionArgument.valueArgument.getArgumentExpression(),
                     context.statementFilter
                 )
-                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
+                val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expressionArgument.receiver.receiverValue, context)
                 SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, argumentExpression, context, call,
                     recordExpressionType = true
@@ -174,7 +171,7 @@ class DiagnosticReporterByTrackingStrategy(
             is ReceiverExpressionKotlinCallArgument -> {
                 trace.markAsReported()
                 val receiverValue = expressionArgument.receiver.receiverValue
-                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverValue, context)
+                val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverValue, context)
                 SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, smartCastDiagnostic.smartCastType, (receiverValue as? ExpressionReceiver)?.expression, context, call,
                     recordExpressionType = true

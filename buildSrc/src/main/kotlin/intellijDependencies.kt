@@ -30,14 +30,20 @@ private fun Project.intellijRepoDir() = File("${project.rootDir.absoluteFile}/bu
 
 fun RepositoryHandler.intellijSdkRepo(project: Project): IvyArtifactRepository = ivy {
     val baseDir = project.intellijRepoDir()
+    val intellijEnforceCommunitySdk = project.getBooleanProperty("intellijEnforceCommunitySdk") == true
+
     setUrl(baseDir)
-    ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]Ultimate.ivy.xml")
+
+    if (!intellijEnforceCommunitySdk) {
+        ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]Ultimate.ivy.xml")
+        ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellijUltimate.plugin.[module].ivy.xml")
+        artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]Ultimate/lib/[artifact](-[classifier]).jar")
+        artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellijUltimate/plugins/[module]/lib/[artifact](-[classifier]).jar")
+    }
+
     ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module].ivy.xml")
-    ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellijUltimate.plugin.[module].ivy.xml")
     ivyPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellij.plugin.[module].ivy.xml")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]Ultimate/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/lib/[artifact](-[classifier]).jar")
-    artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellijUltimate/plugins/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/intellij/plugins/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/plugins-[module]/[module]/lib/[artifact](-[classifier]).jar")
     artifactPattern("${baseDir.canonicalPath}/[organisation]/[revision]/[module]/[artifact].jar")
@@ -72,6 +78,17 @@ fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = n
     }
 }
 
+// Workaround. Top-level Kotlin function in a default package can't be called from a non-default package
+object IntellijRootUtils {
+    fun getRepositoryRootDir(project: Project): File = with (project.rootProject) {
+        return File(intellijRepoDir(), "kotlin.build.custom.deps/${extra["versions.intellijSdk"]}")
+    }
+
+    fun getIntellijRootDir(project: Project): File = with (project.rootProject) {
+        return File(getRepositoryRootDir(this), "intellij${if (isIntellijCommunityAvailable()) "" else "Ultimate"}")
+    }
+}
+
 fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project) =
         includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray(), rootProject = project.rootProject)
 
@@ -82,8 +99,7 @@ fun Project.isIntellijCommunityAvailable() = !(rootProject.extra["intellijUltima
 
 fun Project.isIntellijUltimateSdkAvailable() = (rootProject.extra["intellijUltimateEnabled"] as Boolean)
 
-fun Project.intellijRootDir() =
-        File(intellijRepoDir(), "kotlin.build.custom.deps/${rootProject.extra["versions.intellijSdk"]}/intellij${if (isIntellijCommunityAvailable()) "" else "Ultimate"}")
+fun Project.intellijRootDir() = IntellijRootUtils.getIntellijRootDir(project)
 
 fun Project.intellijUltimateRootDir() =
         if (isIntellijUltimateSdkAvailable())
@@ -121,9 +137,12 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Dapple.awt.graphics.UseQuartz=true",
             "-Dsun.io.useCanonCaches=false",
             "-Dplugin.path=${ideaPluginDir.absolutePath}",
-            "-Dkotlin.internal.mode.enabled=true",
             "-Didea.additional.classpath=../idea-kotlin-runtime/kotlin-runtime.jar,../idea-kotlin-runtime/kotlin-reflect.jar"
         )
+
+        if (rootProject.findProperty("versions.androidStudioRelease") != null) {
+            jvmArgs("-Didea.platform.prefix=AndroidStudio")
+        }
 
         if (project.hasProperty("noPCE")) {
             jvmArgs("-Didea.ProcessCanceledException=disabled")

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfStatement
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -82,14 +82,14 @@ class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(K
             val newReceiver = leftSafeCastReceiver.left
             val typeReference = leftSafeCastReceiver.right!!
             val factory = KtPsiFactory(element)
-            newReceiver.isStable(context) to element.convertToIfStatement(
+            newReceiver.isStableSimpleExpression(context) to element.convertToIfStatement(
                     factory.createExpressionByPattern("$0 is $1", newReceiver, typeReference),
                     left.buildExpressionWithReplacedReceiver(factory, newReceiver),
                     right
             )
         }
         else {
-            left.isStable(context) to element.convertToIfNotNullExpression(left, left, right)
+            left.isStableSimpleExpression(context) to element.convertToIfNotNullExpression(left, left, right)
         }
 
         if (!leftIsStable) {

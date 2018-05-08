@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.inspections.SimplifyNegatedBinaryExpressionInspection
@@ -41,7 +42,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
         if (functionLiterals.size > 1) return false
         if (functionLiterals.size == 1 && argumentSize == 1) return false // "assert {...}" is incorrect
 
-        val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
+        val resolvedCall = element.resolveToCall() ?: return false
         return DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).asString() == "kotlin.assert"
     }
 
@@ -49,7 +50,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
         val args = element.valueArguments
         val conditionText = args[0]?.getArgumentExpression()?.text ?: return
         val functionLiteralArgument = element.lambdaArguments.singleOrNull()
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val psiFactory = KtPsiFactory(element)
 
         val messageFunctionExpr = when {

@@ -9,7 +9,7 @@ import net.rubygrapefruit.platform.WindowsRegistry.Key.HKEY_LOCAL_MACHINE
 import org.gradle.internal.os.OperatingSystem
 
 enum class JdkMajorVersion {
-    JDK_16, JDK_17, JDK_18, JDK_9
+    JDK_16, JDK_17, JDK_18, JDK_9, JDK_10
 }
 
 val jdkAlternativeVarNames = mapOf(JdkMajorVersion.JDK_9 to listOf("JDK_19"))
@@ -149,7 +149,9 @@ fun MutableCollection<JdkId>.discoverJdksOnUnix(project: Project) {
 
 private val windowsConventionalJdkRegistryPaths = listOf(
         "SOFTWARE\\JavaSoft\\Java Development Kit",
-        "SOFTWARE\\Wow6432Node\\JavaSoft\\Java Development Kit")
+        "SOFTWARE\\Wow6432Node\\JavaSoft\\Java Development Kit",
+        "SOFTWARE\\JavaSoft\\JDK",
+        "SOFTWARE\\Wow6432Node\\JavaSoft\\JDK")
 
 fun MutableCollection<JdkId>.discoverJdksOnWindows(project: Project) {
     val registry = Native.get(WindowsRegistry::class.java)

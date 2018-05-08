@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.range.forLoop
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull
@@ -40,7 +40,7 @@ class IteratorForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForE
         this.iteratorCall = getNotNull(
             bindingContext,
             LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRange,
-            "No .iterator() function " + DiagnosticUtils.atLocation(loopRange)
+            "No .iterator() function " + PsiDiagnosticUtils.atLocation(loopRange)
         )
 
         val iteratorType = iteratorCall.resultingDescriptor.returnType!!
@@ -49,7 +49,7 @@ class IteratorForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForE
         this.nextCall = getNotNull(
             bindingContext,
             LOOP_RANGE_NEXT_RESOLVED_CALL, loopRange,
-            "No next() function " + DiagnosticUtils.atLocation(loopRange)
+            "No next() function " + PsiDiagnosticUtils.atLocation(loopRange)
         )
     }
 
@@ -70,7 +70,7 @@ class IteratorForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForE
         val hasNextCall = getNotNull(
             codegen.bindingContext, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL,
             loopRange!!,
-            "No hasNext() function " + DiagnosticUtils.atLocation(loopRange)
+            "No hasNext() function " + PsiDiagnosticUtils.atLocation(loopRange)
         )
         val fakeCall = codegen.makeFakeCall(TransientReceiver(iteratorCall.resultingDescriptor.returnType!!))
         val result = codegen.invokeFunction(fakeCall, hasNextCall, StackValue.local(iteratorVarIndex, asmTypeForIterator))

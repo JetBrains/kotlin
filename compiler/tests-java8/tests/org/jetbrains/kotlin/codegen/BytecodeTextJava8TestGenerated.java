@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,10 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeTextJava8TestGenerated extends AbstractBytecodeTextTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInBytecodeText() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
@@ -29,20 +33,22 @@ public class BytecodeTextJava8TestGenerated extends AbstractBytecodeTextTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class HashCode extends AbstractBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInHashCode() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/bytecodeText/hashCode"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("dataClass.kt")
         public void testDataClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/bytecodeText/hashCode/dataClass.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/java8/bytecodeText/hashCode/dataClass.kt");
         }
 
         @TestMetadata("hashCode.kt")
         public void testHashCode() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/bytecodeText/hashCode/hashCode.kt");
-            doTest(fileName);
+            runTest("compiler/testData/codegen/java8/bytecodeText/hashCode/hashCode.kt");
         }
     }
 }

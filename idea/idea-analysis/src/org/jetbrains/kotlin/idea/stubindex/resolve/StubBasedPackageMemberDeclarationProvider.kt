@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.vfilefinder.KotlinPackageSourcesMemberNamesInde
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.safeNameForLazyResolve
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
@@ -67,7 +68,7 @@ class StubBasedPackageMemberDeclarationProvider(
         FileBasedIndex.getInstance()
                 .getValues(KotlinPackageSourcesMemberNamesIndex.KEY, fqName.asString(), searchScope)
                 .flatMapTo(hashSetOf()) {
-                    it.map { stringName -> ResolveSessionUtils.safeNameForLazyResolve(Name.identifier(stringName)) }
+                    it.map { stringName -> Name.identifier(stringName).safeNameForLazyResolve() }
                 }
     }
 
@@ -118,6 +119,6 @@ class StubBasedPackageMemberDeclarationProvider(
     }
 
     private fun childName(name: Name): String {
-        return fqName.child(ResolveSessionUtils.safeNameForLazyResolve(name)).asString()
+        return fqName.child(name.safeNameForLazyResolve()).asString()
     }
 }

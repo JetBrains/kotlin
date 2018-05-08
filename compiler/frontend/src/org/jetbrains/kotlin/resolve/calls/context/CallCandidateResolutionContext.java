@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.context;
@@ -25,9 +14,11 @@ import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -59,11 +50,14 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition,
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory,
+            @NotNull InferenceSession inferenceSession
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
               dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext,
-              collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings);
+              collectAllCandidates, callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory,
+              inferenceSession);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
         this.candidateResolveMode = candidateResolveMode;
@@ -80,7 +74,8 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
                 context.statementFilter,
                 candidateResolveMode, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
-                context.callPosition, context.expressionContextProvider, context.languageVersionSettings);
+                context.callPosition, context.expressionContextProvider, context.languageVersionSettings, context.dataFlowValueFactory,
+                context.inferenceSession);
     }
 
     @NotNull
@@ -92,7 +87,8 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
                 context.dataFlowInfoForArguments, context.statementFilter,
                 CandidateResolveMode.FULLY, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
-                context.callPosition, context.expressionContextProvider, context.languageVersionSettings);
+                context.callPosition, context.expressionContextProvider, context.languageVersionSettings, context.dataFlowValueFactory,
+                context.inferenceSession);
     }
 
     @Override
@@ -107,12 +103,14 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition,
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory,
+            @NotNull InferenceSession inferenceSession
     ) {
         return new CallCandidateResolutionContext<>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, statementFilter,
                 candidateResolveMode, isAnnotationContext, isDebuggerContext, collectAllCandidates, callPosition, expressionContextProvider,
-                languageVersionSettings);
+                languageVersionSettings, dataFlowValueFactory, inferenceSession);
     }
 }

@@ -416,14 +416,10 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
     }
 
     fun findDependencies(artifact: MavenId, scope: MavenArtifactScope? = null) =
-        findDependencies(SmartList(artifact), scope)
+        domModel.dependencies.findDependencies(artifact, scope)
 
     fun findDependencies(artifacts: List<MavenId>, scope: MavenArtifactScope? = null): List<MavenDomDependency> {
-        return domModel.dependencies.dependencies.filter { dependency ->
-            artifacts.any { artifact ->
-                dependency.matches(artifact, scope)
-            }
-        }
+        return domModel.dependencies.findDependencies(artifacts, scope)
     }
 
     private fun ensureBuild(): XmlTag = ensureElement(projectElement, "build")
@@ -434,14 +430,6 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
 
     private fun MavenDomPlugin.isKotlinMavenPlugin() = groupId.stringValue == KotlinMavenConfigurator.GROUP_ID
             && artifactId.stringValue == KotlinMavenConfigurator.MAVEN_PLUGIN_ID
-
-    private fun MavenDomDependency.matches(artifact: MavenId, scope: MavenArtifactScope?) =
-        this.matches(artifact) && (this.scope.stringValue == scope?.name?.toLowerCase() || scope == null && this.scope.stringValue == "compile")
-
-    private fun MavenDomArtifactCoordinates.matches(artifact: MavenId) =
-        (artifact.groupId == null || groupId.stringValue == artifact.groupId)
-                && (artifact.artifactId == null || artifactId.stringValue == artifact.artifactId)
-                && (artifact.version == null || version.stringValue == artifact.version)
 
     private fun MavenId.withNoVersion() = MavenId(groupId, artifactId, null)
     private fun MavenId.withoutJDKSpecificSuffix() = MavenId(
@@ -650,6 +638,25 @@ fun PomFile.changeLanguageVersion(languageVersion: String?, apiVersion: String?)
     }
     return languageElement ?: apiElement
 }
+
+internal fun MavenDomDependencies.findDependencies(artifact: MavenId, scope: MavenArtifactScope? = null) =
+    findDependencies(SmartList(artifact), scope)
+
+internal fun MavenDomDependencies.findDependencies(artifacts: List<MavenId>, scope: MavenArtifactScope? = null): List<MavenDomDependency> {
+    return dependencies.filter { dependency ->
+        artifacts.any { artifact ->
+            dependency.matches(artifact, scope)
+        }
+    }
+}
+
+private fun MavenDomDependency.matches(artifact: MavenId, scope: MavenArtifactScope?) =
+    this.matches(artifact) && (this.scope.stringValue == scope?.name?.toLowerCase() || scope == null && this.scope.stringValue == "compile")
+
+private fun MavenDomArtifactCoordinates.matches(artifact: MavenId) =
+    (artifact.groupId == null || groupId.stringValue == artifact.groupId)
+            && (artifact.artifactId == null || artifactId.stringValue == artifact.artifactId)
+            && (artifact.version == null || version.stringValue == artifact.version)
 
 private fun PomFile.changeConfigurationOrProperty(
     kotlinPlugin: MavenDomPlugin,

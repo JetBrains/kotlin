@@ -22,14 +22,22 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.reference.SoftReference
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 
 object IDEKotlinBinaryClassCache {
-    data class KotlinBinaryHeaderData(val classHeader: KotlinClassHeader, val classId: ClassId)
-    data class KotlinBinaryData(val isKotlinBinary: Boolean, val timestamp: Long, val headerData: KotlinBinaryHeaderData?)
+    class KotlinBinaryClassHeaderData(
+        val classId: ClassId,
+        val kind: KotlinClassHeader.Kind,
+        val metadataVersion: JvmMetadataVersion,
+        val partNamesIfMultifileFacade: List<String>,
+        val packageName: String?
+    )
+
+    data class KotlinBinaryData(val isKotlinBinary: Boolean, val timestamp: Long, val headerData: KotlinBinaryClassHeaderData?)
 
     /**
      * Checks if this file is a compiled Kotlin class file (not necessarily ABI-compatible with the current plugin)
@@ -67,7 +75,7 @@ object IDEKotlinBinaryClassCache {
         return kotlinBinaryClass
     }
 
-    fun getKotlinBinaryClassHeaderData(file: VirtualFile, fileContent: ByteArray? = null): KotlinBinaryHeaderData? {
+    fun getKotlinBinaryClassHeaderData(file: VirtualFile, fileContent: ByteArray? = null): KotlinBinaryClassHeaderData? {
         val cached = getKotlinBinaryFromCache(file)
         if (cached != null) {
             if (!cached.isKotlinBinary) {
@@ -84,12 +92,16 @@ object IDEKotlinBinaryClassCache {
 
     private val attributeService = ServiceManager.getService(FileAttributeService::class.java)
 
-    private fun createHeaderInfo(kotlinBinaryClass: KotlinJvmBinaryClass?): KotlinBinaryHeaderData? {
-        val header = kotlinBinaryClass?.classHeader
-        val classId = kotlinBinaryClass?.classId
+    private fun createHeaderInfo(kotlinBinaryClass: KotlinJvmBinaryClass?): KotlinBinaryClassHeaderData? {
+        val classId = kotlinBinaryClass?.classId ?: return null
 
-        return if (header != null && classId != null) KotlinBinaryHeaderData(header, classId) else null
+        return kotlinBinaryClass.classHeader.toLightHeader(classId)
     }
+
+    private fun KotlinClassHeader.toLightHeader(classId: ClassId) =
+        KotlinBinaryClassHeaderData(
+            classId, kind, metadataVersion, multifilePartNames, packageName
+        )
 
     private val KOTLIN_IS_COMPILED_FILE_ATTRIBUTE: String = "kotlin-is-binary-compiled".apply {
         ServiceManager.getService(FileAttributeService::class.java)?.register(this, 1)

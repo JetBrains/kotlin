@@ -19,20 +19,17 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
-import org.jetbrains.kotlin.gradle.util.allKotlinFiles
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertTrue
 
 class MultiplatformGradleIT : BaseGradleIT() {
-    companion object {
-        private const val GRADLE_VERSION = "4.2"
-    }
 
     @Test
     fun testMultiplatformCompile() {
-        val project = Project("multiplatformProject", GRADLE_VERSION)
+        val project = Project("multiplatformProject", GradleVersionRequired.AtLeast("4.0"))
 
         project.build("build") {
             assertSuccessful()
@@ -53,7 +50,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testDeprecatedImplementWarning() {
-        val project = Project("multiplatformProject", GRADLE_VERSION)
+        val project = Project("multiplatformProject")
 
         project.build("build") {
             assertSuccessful()
@@ -72,7 +69,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testCommonKotlinOptions() {
-        with(Project("multiplatformProject", GRADLE_VERSION)) {
+        with(Project("multiplatformProject")) {
             setupWorkingDir()
 
             File(projectDir, "lib/build.gradle").appendText(
@@ -89,7 +86,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testSubprojectWithAnotherClassLoader() {
-        with(Project("multiplatformProject", GRADLE_VERSION)) {
+        with(Project("multiplatformProject", GradleVersionRequired.AtLeast("4.0"))) {
             setupWorkingDir()
 
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
@@ -126,7 +123,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     // todo: also make incremental compilation test
     @Test
-    fun testIncrementalBuild(): Unit = Project("multiplatformProject", GRADLE_VERSION).run {
+    fun testIncrementalBuild(): Unit = Project("multiplatformProject").run {
         val compileCommonTask = ":lib:compileKotlinCommon"
         val compileJsTask = ":libJs:compileKotlin2Js"
         val compileJvmTask = ":libJvm:compileKotlin"
@@ -157,6 +154,106 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertSuccessful()
             assertTasksExecuted(listOf(compileJsTask))
             assertTasksUpToDate(listOf(compileCommonTask, compileJvmTask))
+        }
+    }
+
+    @Test
+    fun testMultipleCommonModules(): Unit = with(Project("multiplatformMultipleCommonModules")) {
+        build("build") {
+            assertSuccessful()
+
+            val sourceSets = listOf("", "Test")
+            val commonTasks = listOf("libA", "libB").flatMap { module ->
+                sourceSets.map { sourceSet -> ":$module:compile${sourceSet}KotlinCommon" }
+            }
+            val platformTasks = listOf("libJvm" to "", "libJs" to "2Js").flatMap { (module, platformSuffix) ->
+                sourceSets.map { sourceSet -> ":$module:compile${sourceSet}Kotlin$platformSuffix" }
+            }
+            assertTasksExecuted(commonTasks + platformTasks)
+
+            val expectedJvmMainClasses =
+                listOf("PlatformClassB", "PlatformClassA", "JavaLibUseKt", "CommonClassB", "CommonClassA").map { "foo/$it" }
+            val jvmMainClassesDir = File(projectDir, kotlinClassesDir(subproject = "libJvm"))
+            expectedJvmMainClasses.forEach { className ->
+                assertTrue(File(jvmMainClassesDir, className + ".class").isFile, "Class $className should be compiled for JVM.")
+            }
+
+            val expectedJvmTestClasses = listOf("PlatformTestB", "PlatformTestA", "CommonTestB", "CommonTestA").map { "foo/$it" }
+            val jvmTestClassesDir = File(projectDir, kotlinClassesDir(subproject = "libJvm", sourceSet = "test"))
+            expectedJvmTestClasses.forEach { className ->
+                assertTrue(File(jvmTestClassesDir, className + ".class").isFile, "Class $className should be compiled for JVM.")
+            }
+        }
+    }
+
+    @Test
+    fun testFreeCompilerArgsAssignment(): Unit = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+
+        val overrideCompilerArgs = "kotlinOptions.freeCompilerArgs = ['-verbose']"
+
+        gradleBuildScript("lib").appendText("\ncompileKotlinCommon.$overrideCompilerArgs")
+        gradleBuildScript("libJvm").appendText("\ncompileKotlin.$overrideCompilerArgs")
+        gradleBuildScript("libJs").appendText("\ncompileKotlin2Js.$overrideCompilerArgs")
+
+        build("build") {
+            assertSuccessful()
+            assertTasksExecuted(listOf(":lib:compileKotlinCommon", ":libJvm:compileKotlin", ":libJs:compileKotlin2Js"))
+        }
+    }
+
+    @Test
+    fun testCommonModuleAsTransitiveDependency() = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+        gradleBuildScript("libJvm").appendText("""
+            ${'\n'}
+            task printCompileConfiguration(type: DefaultTask) {
+                doFirst {
+                    configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
+                        println("Dependency: '" + it.name + "'")
+                    }
+                }
+            }
+            """.trimIndent())
+
+        build("printCompileConfiguration") {
+            assertSuccessful()
+            // Check that `lib` is contained in the resolved compile artifacts of `libJvm`:
+            assertContains("Dependency: 'lib'")
+        }
+    }
+
+    @Test
+    fun testArchivesBaseNameAsCommonModuleName() = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+
+        val moduleName = "my_module_name"
+
+        gradleBuildScript("lib").appendText("\narchivesBaseName = '$moduleName'")
+
+        build("compileKotlinCommon") {
+            assertSuccessful()
+            assertFileExists(kotlinClassesDir(subproject = "lib") + "META-INF/$moduleName.kotlin_module")
+        }
+    }
+
+    @Test
+    fun testKt23092() = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+        val successMarker = "Found JavaCompile task:"
+
+        gradleBuildScript("lib").appendText("\n" + """
+            afterEvaluate {
+                println('$successMarker ' + tasks.getByName('compileJava').path)
+                println('$successMarker ' + tasks.getByName('compileTestJava').path)
+            }
+            """.trimIndent()
+        )
+
+        build(":lib:tasks") {
+            assertSuccessful()
+            assertContains("$successMarker :lib:compileJava")
+            assertContains("$successMarker :lib:compileTestJava")
         }
     }
 }

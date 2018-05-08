@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
@@ -33,6 +34,8 @@ interface IrTypeParameter : IrSymbolDeclaration<IrTypeParameterSymbol> {
     val variance: Variance
     val index: Int
     val upperBounds: List<KotlinType>
+
+    val superClassifiers: MutableList<IrClassifierSymbol>
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrTypeParameter
 }

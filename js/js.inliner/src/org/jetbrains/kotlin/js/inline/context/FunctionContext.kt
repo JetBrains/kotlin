@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.context
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.FunctionReader
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.translate.context.Namer
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 
 abstract class FunctionContext(private val functionReader: FunctionReader, private val config: JsConfig) {
     protected abstract fun lookUpStaticFunction(functionName: JsName?): FunctionWithWrapper?
@@ -68,12 +70,16 @@ abstract class FunctionContext(private val functionReader: FunctionReader, priva
      *    in case of local function with closure.
      */
     private fun getFunctionDefinitionImpl(call: JsInvocation): FunctionWithWrapper? {
+
         val descriptor = call.descriptor
         if (descriptor != null) {
-            if (descriptor in functionReader) return functionReader[descriptor]
-            lookUpStaticFunctionByTag(Namer.getFunctionTag(descriptor, config))?.let { return it }
+            return lookUpFunctionDirect(descriptor) ?: lookUpFunctionIndirect(call) ?: lookUpFunctionExternal(descriptor)
         }
 
+        return lookUpFunctionIndirect(call)
+    }
+
+    private fun lookUpFunctionIndirect(call: JsInvocation): FunctionWithWrapper? {
         /** remove ending `()` */
         val callQualifier: JsExpression = if (isCallInvocation(call)) {
             (call.qualifier as JsNameRef).qualifier!!
@@ -95,6 +101,11 @@ abstract class FunctionContext(private val functionReader: FunctionReader, priva
             else -> null
         }
     }
+
+    private fun lookUpFunctionDirect(descriptor: CallableDescriptor): FunctionWithWrapper? =
+        lookUpStaticFunctionByTag(Namer.getFunctionTag(descriptor, config))
+
+    private fun lookUpFunctionExternal(descriptor: CallableDescriptor): FunctionWithWrapper? = functionReader[descriptor]
 
     private fun tryExtractCallableReference(invocation: JsInvocation): FunctionWithWrapper? {
         if (invocation.isCallableReference) {

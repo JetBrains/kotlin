@@ -1,7 +1,10 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testRuntime(intellijDep())
@@ -19,13 +22,12 @@ dependencies {
 
     compile(androidDxJar())
 
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "extensions", "util", "guava", "android-base-common", rootProject = rootProject) }
-    compileOnly(intellijPluginDep("android")) {
-        includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
-    }
+    compileOnly(project(":kotlin-android-extensions-runtime"))
+    compileOnly(intellijDep())
+    compileOnly(intellijPluginDep("android"))
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -33,11 +35,9 @@ dependencies {
     testCompile(projectTests(":idea:idea-gradle"))
     testCompile(commonDep("junit:junit"))
 
-    testCompile(intellijDep()) { includeJars("gson", rootProject = rootProject) }
+    testCompile(intellijDep())
     testCompile(intellijPluginDep("properties"))
-    testCompileOnly(intellijPluginDep("android")) {
-        includeJars("android", "android-common", "sdk-common", "sdklib", "sdk-tools", "layoutlib-api")
-    }
+    testCompileOnly(intellijPluginDep("android"))
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":plugins:android-extensions-ide"))
@@ -47,6 +47,7 @@ dependencies {
     testRuntime(project(":allopen-ide-plugin"))
 
     testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("copyright"))
     testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("gradle"))
@@ -67,9 +68,6 @@ sourceSets {
 projectTest {
     workingDir = rootDir
     useAndroidSdk()
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }
 
 testsJar {}

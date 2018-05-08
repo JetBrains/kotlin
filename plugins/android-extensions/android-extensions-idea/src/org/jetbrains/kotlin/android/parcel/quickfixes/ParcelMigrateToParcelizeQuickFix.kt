@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getOrCreateCompanionObject
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
 import org.jetbrains.kotlin.idea.util.findAnnotation
@@ -54,8 +56,7 @@ class ParcelMigrateToParcelizeQuickFix(function: KtClass) : AbstractParcelableQu
 
         private fun KtClass.findParcelerCompanionObject(): Pair<KtObjectDeclaration, ClassDescriptor>? {
             for (obj in companionObjects) {
-                val bindingContext = obj.analyze(BodyResolveMode.PARTIAL)
-                val objDescriptor = bindingContext[BindingContext.CLASS, obj] ?: continue
+                val objDescriptor = obj.resolveToDescriptorIfAny() ?: continue
                 for (superClassifier in objDescriptor.getAllSuperClassifiers()) {
                     val superClass = superClassifier as? ClassDescriptor ?: continue
                     if (superClass.fqNameSafe == PARCELER_FQNAME) return Pair(obj, objDescriptor)
@@ -114,8 +115,8 @@ class ParcelMigrateToParcelizeQuickFix(function: KtClass) : AbstractParcelableQu
                 when (initializer) {
                     is KtObjectLiteralExpression -> return initializer.objectDeclaration
                     is KtCallExpression -> {
-                        val constructedClass = (initializer.getResolvedCall(initializer.analyze(BodyResolveMode.PARTIAL))
-                                ?.resultingDescriptor as? ConstructorDescriptor)?.constructedClass
+                        val constructedClass = (initializer.resolveToCall()
+                            ?.resultingDescriptor as? ConstructorDescriptor)?.constructedClass
                         if (constructedClass != null) {
                             val sourceElement = constructedClass.source as? KotlinSourceElement
                             (sourceElement?.psi as? KtClassOrObject)?.let { return it }

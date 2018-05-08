@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.properties.delegation.map
 
 import kotlin.test.*
@@ -66,12 +71,12 @@ class VarByMapExtensionsTest {
 
     @Test fun deprecatedAccessors() {
         assertEquals<Int>(
-                expected = map.getValue(this, VarByMapExtensionsTest::c),
-                actual = map.getValue<Int>(this, VarByMapExtensionsTest::c)
+            expected = map.getValue(this, VarByMapExtensionsTest::c),
+            actual = map.getValue<Int>(this, VarByMapExtensionsTest::c)
         )
         assertEquals<String>(
-                expected = map2.getValue<CharSequence, String>(this, VarByMapExtensionsTest::a2),
-                actual = map2.getValue<String>(this, VarByMapExtensionsTest::a2)
+            expected = map2.getValue<CharSequence, String>(this, VarByMapExtensionsTest::a2),
+            actual = map2.getValue<String>(this, VarByMapExtensionsTest::a2)
         )
     }
 }

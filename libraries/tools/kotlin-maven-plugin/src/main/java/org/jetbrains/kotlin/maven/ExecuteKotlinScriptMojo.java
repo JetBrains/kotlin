@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.script.ReflectionUtilKt;
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationExtensionKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -183,9 +184,8 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             configuration.add(JVMConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath()));
             configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
 
-            K2JVMCompiler.Companion.configureScriptDefinitions(
-                    scriptTemplates.toArray(new String[scriptTemplates.size()]),
-                    configuration, messageCollector, new HashMap<>()
+            ScriptingCompilerConfigurationExtensionKt.configureScriptDefinitions(
+                    scriptTemplates, configuration, messageCollector, new HashMap<>()
             );
 
             KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);

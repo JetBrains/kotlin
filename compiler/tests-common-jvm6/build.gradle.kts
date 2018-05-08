@@ -1,11 +1,14 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
 dependencies {
-    compile(project(":kotlin-stdlib"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    compile(projectDist(":kotlin-stdlib"))
+    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
 }
 
 sourceSets {

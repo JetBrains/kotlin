@@ -1,6 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testCompile(projectTests(":compiler:tests-common"))
@@ -25,6 +28,9 @@ projectTest {
     dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", the<JavaPluginConvention>().sourceSets.getByName("test").output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("idea.home.path", intellijRootDir().canonicalPath)
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt")
+
+testsJar()

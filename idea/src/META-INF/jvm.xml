@@ -46,6 +46,11 @@
                 class="org.jetbrains.kotlin.idea.internal.makeBackup.CreateIncrementalCompilationBackup">
             <add-to-group group-id="KotlinInternalGroup"/>
         </action>
+
+        <action id="ReactivePostOpenProjectActionsAction" class="org.jetbrains.kotlin.idea.actions.internal.ReactivePostOpenProjectActionsAction"
+                text="Kotlin Project Post-Open Activity">
+            <add-to-group group-id="KotlinInternalGroup"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

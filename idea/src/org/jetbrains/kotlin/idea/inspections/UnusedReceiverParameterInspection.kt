@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
     override val suppressionKey: String get() = "unused"
@@ -130,7 +132,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
 
             val function = element.parent as? KtCallableDeclaration ?: return
-            val callableDescriptor = function.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? CallableDescriptor ?: return
+            val callableDescriptor = function.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableDescriptor ?: return
             runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)
         }
 

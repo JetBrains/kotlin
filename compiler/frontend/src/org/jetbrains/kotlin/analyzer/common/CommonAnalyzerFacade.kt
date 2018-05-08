@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
  * See [TargetPlatform.Common]
  */
-object CommonAnalyzerFacade : AnalyzerFacade() {
+object CommonAnalyzerFacade : ResolverForModuleFactory() {
     private class SourceModuleInfo(
         override val name: Name,
         override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
@@ -64,7 +64,7 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
     fun analyzeFiles(
         files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
         capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = mapOf(MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common),
-        packagePartProviderFactory: (ModuleInfo, ModuleContent) -> PackagePartProvider
+        packagePartProviderFactory: (ModuleContent<ModuleInfo>) -> PackagePartProvider
     ): AnalysisResult {
         val moduleInfo = SourceModuleInfo(moduleName, capabilities, dependOnBuiltIns)
         val project = files.firstOrNull()?.project ?: throw AssertionError("No files to analyze")
@@ -78,15 +78,17 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
         @Suppress("NAME_SHADOWING")
         val resolver = ResolverForProjectImpl(
             "sources for metadata serializer",
-            ProjectContext(project), listOf(moduleInfo), { CommonAnalyzerFacade },
-            { ModuleContent(files, GlobalSearchScope.allScope(project)) },
-            object : PlatformAnalysisParameters {},
-            languageSettingsProvider = object : LanguageSettingsProvider {
+            ProjectContext(project),
+            listOf(moduleInfo),
+            modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
+            modulePlatforms = { MultiTargetPlatform.Common },
+            moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
                 override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project) = multiplatformLanguageSettings
                 override fun getTargetPlatform(moduleInfo: ModuleInfo) = TargetPlatformVersion.NoVersion
             },
-            packagePartProviderFactory = packagePartProviderFactory,
-            modulePlatforms = { MultiTargetPlatform.Common }
+            resolverForModuleFactoryByPlatform = { CommonAnalyzerFacade },
+            platformParameters = object : PlatformAnalysisParameters {},
+            packagePartProviderFactory = packagePartProviderFactory
         )
 
         val moduleDescriptor = resolver.descriptorForModule(moduleInfo)
@@ -98,17 +100,17 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
     }
 
     override fun <M : ModuleInfo> createResolverForModule(
-        moduleInfo: M,
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
-        moduleContent: ModuleContent,
+        moduleContent: ModuleContent<M>,
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageSettingsProvider: LanguageSettingsProvider,
+        languageVersionSettings: LanguageVersionSettings,
+        targetPlatformVersion: TargetPlatformVersion,
         packagePartProvider: PackagePartProvider
     ): ResolverForModule {
-        val (syntheticFiles, moduleContentScope) = moduleContent
+        val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
             project, moduleContext.storageManager, syntheticFiles,
@@ -119,7 +121,7 @@ object CommonAnalyzerFacade : AnalyzerFacade() {
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerToResolveCommonCode(
             moduleContext, trace, declarationProviderFactory, moduleContentScope, targetEnvironment, packagePartProvider,
-            languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
+            languageVersionSettings
         )
 
         val packageFragmentProviders = listOf(

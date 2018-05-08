@@ -1,7 +1,10 @@
 
 description = "Kotlin AllOpen Compiler Plugin"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testRuntime(intellijDep())
@@ -35,7 +38,6 @@ dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kot
 
 ideaPlugin {
     from(jar)
-    rename("^kotlin-", "")
 }
 
 projectTest {

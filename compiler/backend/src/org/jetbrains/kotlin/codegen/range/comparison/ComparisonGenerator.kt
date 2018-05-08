@@ -35,7 +35,8 @@ interface ComparisonGenerator {
 
 fun getComparisonGeneratorForPrimitiveType(type: Type): ComparisonGenerator =
     when {
-        type.isRepresentedAsPrimitiveInt() -> IntComparisonGenerator
+        type == Type.CHAR_TYPE -> CharComparisonGenerator
+        type.isPrimitiveIntOrCoercible() -> IntComparisonGenerator
         type == Type.LONG_TYPE -> LongComparisonGenerator
         type == Type.FLOAT_TYPE -> FloatComparisonGenerator
         type == Type.DOUBLE_TYPE -> DoubleComparisonGenerator
@@ -61,11 +62,11 @@ fun getComparisonGeneratorForRangeContainsCall(
         asmElementType == asmValueParameterType ->
             getComparisonGeneratorForPrimitiveType(asmElementType)
 
-        asmElementType.isRepresentedAsPrimitiveInt() && asmValueParameterType.isRepresentedAsPrimitiveInt() ->
+        asmElementType.isPrimitiveIntOrCoercible() && asmValueParameterType.isPrimitiveIntOrCoercible() ->
             IntComparisonGenerator
 
-        asmElementType.isRepresentedAsPrimitiveInt() && asmValueParameterType == Type.LONG_TYPE ||
-                asmValueParameterType.isRepresentedAsPrimitiveInt() && asmElementType == Type.LONG_TYPE ->
+        asmElementType.isPrimitiveIntOrCoercible() && asmValueParameterType == Type.LONG_TYPE ||
+                asmValueParameterType.isPrimitiveIntOrCoercible() && asmElementType == Type.LONG_TYPE ->
             LongComparisonGenerator
 
         asmElementType == Type.FLOAT_TYPE && asmValueParameterType == Type.DOUBLE_TYPE ||
@@ -76,5 +77,5 @@ fun getComparisonGeneratorForRangeContainsCall(
     }
 }
 
-private fun Type.isRepresentedAsPrimitiveInt() =
-    this == Type.INT_TYPE || this == Type.SHORT_TYPE || this == Type.BYTE_TYPE || this == Type.CHAR_TYPE
+private fun Type.isPrimitiveIntOrCoercible() =
+    this == Type.INT_TYPE || this == Type.SHORT_TYPE || this == Type.BYTE_TYPE

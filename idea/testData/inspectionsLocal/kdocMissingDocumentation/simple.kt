@@ -1,3 +1,3 @@
-// PROBLEM: "Class ''A'' is missing documentation"
+// PROBLEM: "Class "A" is missing documentation"
 
 class <caret>A

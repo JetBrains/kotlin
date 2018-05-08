@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.kotlin.idea.configuration.ui.ConfigurePluginUpdatesForm">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="8d277" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="ca1a9"/>
+          <text value="Update &amp;channel:"/>
+        </properties>
+      </component>
+      <vspacer id="42b13">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+      <grid id="2505b" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="4ec56" class="javax.swing.JLabel" binding="updateStatusLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value=" "/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="b171" layout-manager="FlowLayout" hgap="-1" vgap="5" flow-align="0">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="65662" class="javax.swing.JButton" binding="installButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <actionCommand value="Install"/>
+              <label value="Install"/>
+              <text value="&amp;Install"/>
+              <visible value="true"/>
+            </properties>
+          </component>
+          <grid id="5d5c6" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+            <constraints/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="6d2f7" class="javax.swing.JLabel" binding="installStatusLabel">
+                <constraints/>
+                <properties>
+                  <text value=" "/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="209b0" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="ca1a9" class="javax.swing.JComboBox" binding="channelCombo">
+            <constraints/>
+            <properties>
+              <model>
+                <item value="Stable"/>
+                <item value="Early Access Preview 1.2.x"/>
+                <item value="Early Access Preview 1.3"/>
+              </model>
+            </properties>
+          </component>
+          <component id="c7546" class="javax.swing.JButton" binding="reCheckButton">
+            <constraints/>
+            <properties>
+              <text value="&amp;Recheck now"/>
+            </properties>
+          </component>
+          <component id="3b585" class="com.intellij.util.ui.AsyncProcessIcon" binding="updateCheckProgressIcon" custom-create="true">
+            <constraints/>
+            <properties/>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

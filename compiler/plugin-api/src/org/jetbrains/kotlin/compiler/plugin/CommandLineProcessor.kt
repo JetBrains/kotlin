@@ -31,6 +31,12 @@ interface CommandLineProcessor {
         put(option, paths)
     }
 
+    fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, values: List<T>) {
+        val paths = getList(option).toMutableList()
+        paths.addAll(values)
+        put(option, paths)
+    }
+
     fun CompilerConfiguration.applyOptionsFrom(map: Map<String, List<String>>, pluginOptions: Collection<CliOption>) {
         for ((key, values) in map) {
             val option = pluginOptions.firstOrNull { it.name == key } ?: continue

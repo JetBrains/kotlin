@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.js.JsProtoBuf
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragmentImpl
-import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -65,11 +65,18 @@ class KotlinJavascriptPackageFragment(
         }
     }
 
-    private class JsContainerSource(
+    class JsContainerSource(
             private val fqName: FqName,
             header: JsProtoBuf.Header,
             configuration: DeserializationConfiguration
     ) : DeserializedContainerSource {
+        val annotations: List<ClassId> =
+            if (header.annotationCount == 0) emptyList()
+            else NameResolverImpl(header.strings, header.qualifiedNames).let { nameResolver ->
+                // TODO: read arguments of module annotations
+                header.annotationList.map { annotation -> nameResolver.getClassId(annotation.id) }
+            }
+
         // TODO
         override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 

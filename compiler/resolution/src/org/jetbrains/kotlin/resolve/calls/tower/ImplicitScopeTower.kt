@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -110,3 +108,5 @@ object HiddenDescriptor : ResolutionDiagnostic(HIDDEN)
 object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(CONVENTION_ERROR)
 object InfixCallNoInfixModifier : ResolutionDiagnostic(CONVENTION_ERROR)
 object DeprecatedUnaryPlusAsPlus : ResolutionDiagnostic(CONVENTION_ERROR)
+
+class ResolvedUsingDeprecatedVisbility(val baseSourceScope: ResolutionScope, val lookupLocation: LookupLocation) : ResolutionDiagnostic(RESOLVED)

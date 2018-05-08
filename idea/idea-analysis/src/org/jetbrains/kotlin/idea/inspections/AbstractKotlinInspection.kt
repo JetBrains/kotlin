@@ -66,8 +66,7 @@ abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSuppressab
             range: TextRange?,
             vararg fixes: LocalQuickFix
     ) {
-        if (!ApplicationManager.getApplication().isUnitTestMode &&
-            !isOnTheFly && highlightType == ProblemHighlightType.INFORMATION) return
+        if (!isOnTheFly && highlightType == ProblemHighlightType.INFORMATION) return
         val problemDescriptor = manager.createProblemDescriptor(element, range, description, highlightType, isOnTheFly, *fixes)
         registerProblem(problemDescriptor)
     }

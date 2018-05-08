@@ -76,7 +76,7 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExp
             else -> return
         }
         val lambda = call.lambdaArguments.firstOrNull() ?: return
-        val lambdaParameter = lambda.getLambdaExpression().valueParameters.firstOrNull() ?: return
+        val lambdaParameter = lambda.getLambdaExpression()?.valueParameters?.firstOrNull() ?: return
         editor?.selectionModel?.setSelection(lambdaParameter.startOffset, lambdaParameter.endOffset)
     }
 

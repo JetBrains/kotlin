@@ -68,7 +68,6 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<AnnotationResolverImpl>()
     useImpl<SignaturePropagatorImpl>()
     useImpl<TraceBasedErrorReporter>()
-    useImpl<PsiBasedExternalAnnotationResolver>()
     useInstance(InternalFlexibleTypeTransformer)
 
     useImpl<CompilerDeserializationConfiguration>()
@@ -120,6 +119,7 @@ fun createContainerForLazyResolveWithJava(
     targetEnvironment.configure(this)
 
     useImpl<ContractDeserializerImpl>()
+    useImpl<FilesByFacadeFqNameIndexer>()
 }.apply {
     get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
 }

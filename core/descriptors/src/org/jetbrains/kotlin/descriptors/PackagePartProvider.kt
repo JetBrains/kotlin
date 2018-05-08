@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.name.ClassId
+
 interface PackagePartProvider {
     /**
      * @return JVM internal names of package parts existing in the package with the given FQ name.
@@ -31,9 +33,13 @@ interface PackagePartProvider {
      */
     fun findMetadataPackageParts(packageFqName: String): List<String>
 
+    fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId>
+
     object Empty : PackagePartProvider {
         override fun findPackageParts(packageFqName: String): List<String> = emptyList()
 
         override fun findMetadataPackageParts(packageFqName: String): List<String> = emptyList()
+
+        override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> = emptyList()
     }
 }

@@ -293,7 +293,7 @@ public class CodeInsightUtils {
             @NotNull String message, @NotNull String title,
             @Nullable String helpId
     ) {
-        if (ApplicationManager.getApplication().isUnitTestMode()) throw new RuntimeException(message);
+        if (ApplicationManager.getApplication().isUnitTestMode()) throw new CommonRefactoringUtil.RefactoringErrorHintException(message);
         CommonRefactoringUtil.showErrorHint(project, editor, message, title, helpId);
     }
 

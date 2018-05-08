@@ -6,6 +6,7 @@ configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
 
+project.ext["jpsLibraryPath"] = rootProject.distLibDir
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
@@ -28,7 +29,7 @@ dist {
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-module-name", project.name]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
 }
 
 compileTestKotlin {

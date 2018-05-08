@@ -1,4 +1,3 @@
-
 description = 'Kotlin Test'
 
 apply plugin: 'kotlin-platform-jvm'
@@ -7,6 +6,12 @@ configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
 
+project.ext["jpsLibraryPath"] = rootProject.distLibDir
+
+sourceSets {
+    java9
+}
+
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
     compile project(':kotlin-stdlib')
@@ -14,11 +19,12 @@ dependencies {
     testCompile('junit:junit:4.12')
 }
 
-
 archivesBaseName = 'kotlin-test'
 
 jar {
-    manifestAttributes(manifest, project, 'Test')
+    manifestAttributes(manifest, project, 'Test', true)
+    // TODO: enable as soon as this doesn't cause D8/DX to crash
+    // from sourceSets.java9.output
 }
 
 artifacts {
@@ -31,11 +37,12 @@ dist {
 }
 
 compileKotlin {
-    // TODO: Why "-Xmulti-platfrom" ?
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",
-                                      "-Xmulti-platform", "-module-name", project.archivesBaseName]
+                                      "-module-name", project.archivesBaseName]
 }
 
 compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
+
+compileJava9Sources(project, 'kotlin.test')

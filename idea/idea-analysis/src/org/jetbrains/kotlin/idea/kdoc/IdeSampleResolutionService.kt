@@ -104,7 +104,7 @@ private class GlobalSyntheticPackageViewDescriptor(override val fqName: FqName, 
                 .filter { it.isChildOf(fqName) }
                 .filter { nameFilter(it.shortName()) }
                 .flatMap { KotlinTopLevelFunctionFqnNameIndex.getInstance()[it.asString(), project, scope].asSequence() }
-                .map { it.resolveToDescriptorIfAny() }
+                .map { it.resolveToDescriptorIfAny() as? DeclarationDescriptor }
 
         fun getSubpackages(nameFilter: (Name) -> Boolean) =
                 PackageIndexUtil.getSubPackageFqNames(fqName, scope, project, nameFilter)

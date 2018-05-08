@@ -1,0 +1,16 @@
+@kotlin.Metadata
+public final static class Foo$Erased {
+    public final static @org.jetbrains.annotations.NotNull method box(p0: int): Foo
+    public final static method getAsThis(p0: int): int
+    public final static method getProp(p0: int): int
+}
+
+@kotlin.Metadata
+public final class Foo {
+    private final field x: int
+    public method <init>(p0: int): void
+    public final method getAsThis(): int
+    public final method getProp(): int
+    public final method getX(): int
+    public final method unbox(): int
+}

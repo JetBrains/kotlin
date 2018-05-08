@@ -42,13 +42,16 @@ class IrConstructorImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrConstructorSymbol
+        symbol: IrConstructorSymbol,
+        body: IrBody? = null
     ) : this(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.visibility,
         symbol.descriptor.returnType,
         symbol.descriptor.isInline
-    )
+    ) {
+        this.body = body
+    }
 
     constructor(
         startOffset: Int,
@@ -57,12 +60,13 @@ class IrConstructorImpl(
         descriptor: ClassConstructorDescriptor
     ) : this(startOffset, endOffset, origin, IrConstructorSymbolImpl(descriptor))
 
+    @Deprecated("Let use constructor which takes symbol instead of descriptor")
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ClassConstructorDescriptor,
-        body: IrBody
+        body: IrBody?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.body = body
     }

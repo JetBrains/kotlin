@@ -65,6 +65,8 @@ public final class Namer {
     public static final String LONG_ZERO = "ZERO";
     public static final String LONG_ONE = "ONE";
     public static final String LONG_NEG_ONE = "NEG_ONE";
+    public static final String LONG_MAX_VALUE = "MAX_VALUE";
+    public static final String LONG_MIN_VALUE = "MIN_VALUE";
     public static final String PRIMITIVE_COMPARE_TO = "primitiveCompareTo";
     public static final String IS_CHAR = "isChar";
     public static final String IS_NUMBER = "isNumber";

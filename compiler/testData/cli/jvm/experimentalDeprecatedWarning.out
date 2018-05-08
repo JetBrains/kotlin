@@ -1,0 +1,3 @@
+warning: experimental API marker org.test.Warning2 is deprecated. Warning2
+warning: experimental API marker org.test.Warning1 is deprecated. Warning1
+OK

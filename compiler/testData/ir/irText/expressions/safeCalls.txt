@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/safeCalls.kt
   CLASS CLASS name:Ref modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Ref flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (value:kotlin.Int) returnType:Ref flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
       BLOCK_BODY
@@ -24,14 +26,22 @@ FILE fqName:<root> fileName:/safeCalls.kt
             receiver: GET_VAR 'this@Ref: Ref' type=Ref origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   CLASS INTERFACE name:IHost modality:ABSTRACT visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:IHost flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     FUN name:extLength visibility:public modality:OPEN <> ($this:IHost, $receiver:kotlin.String) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:IHost flags:
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
@@ -40,11 +50,17 @@ FILE fqName:<root> fileName:/safeCalls.kt
           CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'this@extLength: String' type=kotlin.String origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.String?) returnType:Int? flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.String? flags:
@@ -111,6 +127,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
               arg0: GET_VAR 'tmp0_safe_receiver: Ref?' type=Ref? origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
             then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
               CONST Null type=kotlin.Nothing? value=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -144,6 +161,7 @@ FILE fqName:<root> fileName:/safeCalls.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:Unit flags:
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags:
         BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Int flags:val
             CONST Int type=kotlin.Int value=42

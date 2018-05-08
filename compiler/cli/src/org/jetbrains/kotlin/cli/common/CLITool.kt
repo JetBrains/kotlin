@@ -24,11 +24,12 @@ import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import java.io.PrintStream
+import java.net.URL
+import java.net.URLConnection
 import java.util.function.Predicate
 
 abstract class CLITool<A : CommonToolArguments> {
@@ -42,8 +43,6 @@ abstract class CLITool<A : CommonToolArguments> {
             messageRenderer: MessageRenderer,
             args: Array<out String>
     ): ExitCode {
-        K2JVMCompiler.resetInitStartTime()
-
         val arguments = createArguments()
         parseCommandLineArguments(args.asList(), arguments)
         val collector = PrintingMessageCollector(errStream, messageRenderer, arguments.verbose)
@@ -79,6 +78,8 @@ abstract class CLITool<A : CommonToolArguments> {
     }
 
     fun exec(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
+        disableURLConnectionCaches()
+
         printVersionIfNeeded(messageCollector, arguments)
 
         val fixedMessageCollector = if (arguments.suppressWarnings && !arguments.allWarningsAsErrors) {
@@ -90,6 +91,16 @@ abstract class CLITool<A : CommonToolArguments> {
 
         reportArgumentParseProblems(fixedMessageCollector, arguments.errors)
         return execImpl(fixedMessageCollector, services, arguments)
+    }
+
+    private fun disableURLConnectionCaches() {
+        // We disable caches to avoid problems with compiler under daemon, see https://youtrack.jetbrains.com/issue/KT-22513
+        // For some inexplicable reason, URLConnection.setDefaultUseCaches is an instance method modifying a static field,
+        // so we have to create a dummy instance to call that method
+
+        object : URLConnection(URL("file:.")) {
+            override fun connect() = throw UnsupportedOperationException()
+        }.defaultUseCaches = false
     }
 
     // Used in kotlin-maven-plugin (KotlinCompileMojoBase)

@@ -26,17 +26,20 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.Serializable
 
 internal class JpsCompilerServicesFacadeImpl(
-        private val env: JpsCompilerEnvironment,
-        port: Int = SOCKET_ANY_FREE_PORT
-) : CompilerCallbackServicesFacadeServer(env.services.get(IncrementalCompilationComponents::class.java),
-                                         env.services.get(LookupTracker::class.java),
-                                         env.services.get(CompilationCanceledStatus::class.java),
-                                         port),
-        JpsCompilerServicesFacade {
+    private val env: JpsCompilerEnvironment,
+    port: Int = SOCKET_ANY_FREE_PORT
+) : CompilerCallbackServicesFacadeServer(
+    env.services.get(IncrementalCompilationComponents::class.java),
+    env.services.get(LookupTracker::class.java),
+    env.services.get(CompilationCanceledStatus::class.java),
+    port
+),
+    JpsCompilerServicesFacade {
 
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         env.messageCollector.reportFromDaemon(
-                { outFile, srcFiles -> env.outputItemsCollector.add(srcFiles, outFile) },
-                category, severity, message, attachment)
+            { outFile, srcFiles -> env.outputItemsCollector.add(srcFiles, outFile) },
+            category, severity, message, attachment
+        )
     }
 }

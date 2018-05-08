@@ -1,5 +1,8 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testRuntime(intellijDep())
@@ -12,10 +15,11 @@ dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
     testCompile(project(":idea"))
-    testCompile(project(":idea:idea-test-framework"))
+    testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":compiler:light-classes"))
     testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
+    testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
 
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
     testRuntime(project(":idea:idea-jvm"))
@@ -30,6 +34,7 @@ dependencies {
     testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("testng"))
     testRuntime(intellijPluginDep("IntelliLang"))
@@ -51,9 +56,6 @@ sourceSets {
 projectTest {
     dependsOn(":dist")
     workingDir = rootDir
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }
 
 testsJar()

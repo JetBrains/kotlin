@@ -2,8 +2,7 @@
 buildscript {
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
     val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
-    extra["versions.shadow"] = "2.0.1"
-    extra["versions.intellij-plugin"] = "0.3.0-SNAPSHOT"
+    extra["versions.shadow"] = "2.0.2"
     extra["versions.native-platform"] = "0.14"
 
     repositories {
@@ -29,6 +28,20 @@ apply {
 
 plugins {
     `kotlin-dsl`
+    `java-gradle-plugin`
+}
+
+gradlePlugin {
+    (plugins) {
+        "jps-compatible-base" {
+            id = "jps-compatible-base"
+            implementationClass = "org.jetbrains.kotlin.pill.JpsCompatibleBasePlugin"
+        }
+        "jps-compatible" {
+            id = "jps-compatible"
+            implementationClass = "org.jetbrains.kotlin.pill.JpsCompatiblePlugin"
+        }
+    }
 }
 
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
@@ -55,7 +68,6 @@ repositories {
     extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
     }
-    maven(url = "https://dl.bintray.com/kotlin/kotlin-dev") // for dex-method-list
     maven(url = "https://repo.gradle.org/gradle/libs-releases-local") // for native-platform
     jcenter()
 }
@@ -64,7 +76,7 @@ dependencies {
     compile("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
-    compile("com.jakewharton.dex:dex-method-list:2.0.0-alpha")
+    compile("com.jakewharton.dex:dex-method-list:3.0.0")
     // TODO: adding the dep to the plugin breaks the build unexpectedly, resolve and uncomment
 //    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:${rootProject.extra["bootstrap_kotlin_version"]}")
     // Shadow plugin is used in many projects of the main build. Once it's no longer used in buildSrc, please move this dependency to the root project

@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
@@ -91,11 +94,15 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
     CallableReferenceCompatibilityChecker(), LateinitIntrinsicApplicabilityChecker,
     UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker(),
-    PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker
+    PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker,
+    UselessElvisCallChecker()
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
     DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage
+)
+private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>(
+    ExperimentalMarkerDeclarationAnnotationChecker
 )
 
 
@@ -105,7 +112,7 @@ abstract class PlatformConfigurator(
     additionalCallCheckers: List<CallChecker>,
     additionalTypeCheckers: List<AdditionalTypeChecker>,
     additionalClassifierUsageCheckers: List<ClassifierUsageChecker>,
-    private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
+    additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
     private val identifierChecker: IdentifierChecker,
     private val overloadFilter: OverloadFilter,
     private val platformToKotlinClassMap: PlatformToKotlinClassMap,
@@ -118,6 +125,7 @@ abstract class PlatformConfigurator(
     private val typeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
     private val classifierUsageCheckers: List<ClassifierUsageChecker> =
         DEFAULT_CLASSIFIER_USAGE_CHECKERS + additionalClassifierUsageCheckers
+    private val annotationCheckers: List<AdditionalAnnotationChecker> = DEFAULT_ANNOTATION_CHECKERS + additionalAnnotationCheckers
 
     abstract fun configureModuleComponents(container: StorageComponentContainer)
 
@@ -127,7 +135,7 @@ abstract class PlatformConfigurator(
         callCheckers.forEach { useInstance(it) }
         typeCheckers.forEach { useInstance(it) }
         classifierUsageCheckers.forEach { useInstance(it) }
-        additionalAnnotationCheckers.forEach { useInstance(it) }
+        annotationCheckers.forEach { useInstance(it) }
         useInstance(identifierChecker)
         useInstance(overloadFilter)
         useInstance(platformToKotlinClassMap)
@@ -139,3 +147,6 @@ abstract class PlatformConfigurator(
 
 fun createContainer(id: String, platform: TargetPlatform, init: StorageComponentContainer.() -> Unit) =
     composeContainer(id, platform.platformConfigurator.platformSpecificContainer, init)
+
+
+var KtFile.targetPlatform: TargetPlatform? by UserDataProperty(Key.create("TARGET_PLATFORM"))

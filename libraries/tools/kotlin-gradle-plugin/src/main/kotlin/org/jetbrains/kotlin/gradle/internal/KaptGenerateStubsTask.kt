@@ -84,16 +84,6 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         args.destinationAsFile = this.destinationDir
     }
 
-    override fun clearOutputsBeforeNonIncrementalBuild() {
-        super.clearOutputsBeforeNonIncrementalBuild()
-
-        if (!stubsDir.deleteRecursively()) {
-            logger.kotlinWarn("Could not delete $stubsDir")
-        }
-
-        stubsDir.mkdirs()
-    }
-
     override fun execute(inputs: IncrementalTaskInputs) {
         val sourceRoots = kotlinCompileTask.getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles

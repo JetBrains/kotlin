@@ -13,6 +13,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
@@ -46,10 +47,6 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0.1'
     kapt 'com.google.dagger:dagger-compiler:2.0'
     provided 'org.glassfish:javax.annotation:10.0-b28'
-}
-
-kapt {
-    generateStubs = true
 }
 
 androidExtensions {

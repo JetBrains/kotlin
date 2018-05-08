@@ -25,15 +25,13 @@ import com.intellij.lang.properties.psi.Property
 import com.intellij.lang.properties.references.PropertyReference
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
@@ -69,7 +67,7 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                 if (argument.getArgumentExpression() != KtPsiUtil.deparenthesize(template) ) return
 
                 val callExpression = argument.getStrictParentOfType<KtCallExpression>() ?: return
-                val resolvedCall = callExpression.getResolvedCall(callExpression.analyze(BodyResolveMode.PARTIAL)) ?: return
+                val resolvedCall = callExpression.resolveToCall() ?: return
 
                 val resolvedArguments = resolvedCall.valueArgumentsByIndex ?: return
                 val keyArgumentIndex = resolvedArguments.indexOfFirst { it is ExpressionValueArgument && it.valueArgument == argument }

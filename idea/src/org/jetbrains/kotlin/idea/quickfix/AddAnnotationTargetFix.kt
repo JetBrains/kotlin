@@ -1,34 +1,35 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors.WRONG_ANNOTATION_TARGET
+import org.jetbrains.kotlin.diagnostics.Errors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.EMPTY
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_CLASSIFIER
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_CONSTRUCTOR
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_EXPRESSION
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_LOCAL_VARIABLE
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_MEMBER_FUNCTION
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_MEMBER_PROPERTY
+import org.jetbrains.kotlin.resolve.AnnotationChecker.Companion.TargetLists.T_VALUE_PARAMETER_WITHOUT_VAL
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -63,8 +64,13 @@ class AddAnnotationTargetFix(annotationEntry: KtAnnotationEntry) : KotlinQuickFi
         }
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtAnnotationEntry>? {
+            if (diagnostic.factory != WRONG_ANNOTATION_TARGET && diagnostic.factory != WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET) {
+                return null
+            }
+
             val entry = diagnostic.psiElement as? KtAnnotationEntry ?: return null
-            if (entry.toAnnotationClass() == null) return null
+            val annotationClass = entry.toAnnotationClass() ?: return null
+            if (entry.useSiteTarget != null && entry.getRequiredAnnotationTargets(annotationClass, entry.project).isEmpty()) return null
 
             return AddAnnotationTargetFix(entry)
         }
@@ -75,20 +81,68 @@ private fun KtAnnotationEntry.getRequiredAnnotationTargets(annotationClass: KtCl
     val requiredTargets = getActualTargetList()
     if (requiredTargets.isEmpty()) return emptyList()
 
-    val searchScope = GlobalSearchScope.allScope(project).restrictToKotlinSources()
+    val searchScope = GlobalSearchScope.allScope(project)
     val otherReferenceRequiredTargets = ReferencesSearch.search(annotationClass, searchScope).mapNotNull { reference ->
-        reference.element.getNonStrictParentOfType<KtAnnotationEntry>()?.takeIf { it != this }?.getActualTargetList()
+        if (reference.element is KtNameReferenceExpression) {
+            // Kotlin annotation
+            reference.element.getNonStrictParentOfType<KtAnnotationEntry>()?.takeIf { it != this }?.getActualTargetList()
+        } else {
+            // Java annotation
+            (reference.element.parent as? PsiAnnotation)?.getActualTargetList()
+        }
     }.flatten().toSet()
-
     val annotationTargetValueNames = AnnotationTarget.values().map { it.name }
-    return (requiredTargets + otherReferenceRequiredTargets).filter { it.name in annotationTargetValueNames }
+    return (requiredTargets + otherReferenceRequiredTargets).distinct().filter { it.name in annotationTargetValueNames }
+}
+
+private fun getActualTargetList(annotated: PsiTarget): AnnotationChecker.Companion.TargetList {
+    return when (annotated) {
+        is PsiClass -> T_CLASSIFIER
+        is PsiMethod ->
+            when {
+                annotated.isConstructor -> T_CONSTRUCTOR
+                else -> T_MEMBER_FUNCTION
+            }
+        is PsiExpression -> T_EXPRESSION
+        is PsiField -> T_MEMBER_PROPERTY(true, false)
+        is PsiLocalVariable -> T_LOCAL_VARIABLE
+        is PsiParameter -> T_VALUE_PARAMETER_WITHOUT_VAL
+        else -> EMPTY
+    }
+}
+
+private fun PsiAnnotation.getActualTargetList(): List<KotlinTarget> {
+    val annotated = parent.parent as? PsiTarget ?: return emptyList()
+    return getActualTargetList(annotated).defaultTargets
 }
 
 private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
     val annotatedElement = getStrictParentOfType<KtModifierList>()?.owner as? KtElement
             ?: getStrictParentOfType<KtAnnotatedExpression>()?.baseExpression
+            ?: getStrictParentOfType<KtFile>()
             ?: return emptyList()
-    return AnnotationChecker.getDeclarationSiteActualTargetList(annotatedElement, null, BindingTraceContext())
+
+    val targetList = AnnotationChecker.getActualTargetList(annotatedElement, null, BindingTraceContext())
+
+    val useSiteTarget = this.useSiteTarget ?: return targetList.defaultTargets
+    val annotationUseSiteTarget = useSiteTarget.getAnnotationUseSiteTarget()
+    val target = KotlinTarget.USE_SITE_MAPPING[annotationUseSiteTarget] ?: return emptyList()
+
+    if (annotationUseSiteTarget == AnnotationUseSiteTarget.FIELD) {
+        if (KotlinTarget.MEMBER_PROPERTY !in targetList.defaultTargets && KotlinTarget.TOP_LEVEL_PROPERTY !in targetList.defaultTargets) {
+            return emptyList()
+        }
+        val property = annotatedElement as? KtProperty
+        if (property != null && (LightClassUtil.getLightClassPropertyMethods(property).backingField == null || property.hasDelegate())) {
+            return emptyList()
+        }
+    } else {
+        if (target !in with(targetList) { defaultTargets + canBeSubstituted + onlyWithUseSiteTarget }) {
+            return emptyList()
+        }
+    }
+
+    return listOf(target)
 }
 
 private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, psiFactory: KtPsiFactory) {

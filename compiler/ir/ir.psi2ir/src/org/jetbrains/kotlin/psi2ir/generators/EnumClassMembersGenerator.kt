@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
+import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
 
 class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
@@ -38,7 +39,7 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
         }
 
         irClass.addMember(
-            context.symbolTable.declareSimpleFunction(
+            context.symbolTable.declareSimpleFunctionWithOverrides(
                 irClass.startOffset, irClass.endOffset,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 valuesFunction
@@ -57,7 +58,7 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
         }
 
         irClass.addMember(
-            context.symbolTable.declareSimpleFunction(
+            context.symbolTable.declareSimpleFunctionWithOverrides(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
                 valueOfFunction

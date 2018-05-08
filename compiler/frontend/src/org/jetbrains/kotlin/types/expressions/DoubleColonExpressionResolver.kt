@@ -93,7 +93,8 @@ class DoubleColonExpressionResolver(
     val reflectionTypes: ReflectionTypes,
     val typeResolver: TypeResolver,
     val languageVersionSettings: LanguageVersionSettings,
-    val additionalCheckers: Iterable<ClassLiteralChecker>
+    val additionalCheckers: Iterable<ClassLiteralChecker>,
+    val dataFlowValueFactory: DataFlowValueFactory
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -112,7 +113,7 @@ class DoubleColonExpressionResolver(
             if (result != null && !result.type.isError) {
                 val inherentType = result.type
                 val dataFlowInfo = (result as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
-                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression.receiverExpression!!, inherentType, c)
+                val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expression.receiverExpression!!, inherentType, c)
                 val type =
                     if (!dataFlowInfo.getStableNullability(dataFlowValue).canBeNull()) inherentType.makeNotNullable()
                     else inherentType
@@ -703,7 +704,7 @@ class DoubleColonExpressionResolver(
                 ?.apply { commitTrace() }?.results
         }
 
-        val resultSequence = buildSequence {
+        val resultSequence = buildSequence<ResolutionResultsAndTraceCommitCallback> {
             when (lhs) {
                 is DoubleColonLHS.Type -> {
                     val classifier = lhsType.constructor.declarationDescriptor

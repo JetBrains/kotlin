@@ -31,10 +31,11 @@ import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.io.IOException
+import java.nio.file.Path
 
 abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     override fun setUp() {
@@ -67,6 +68,8 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     @Throws(Exception::class)
     override fun initApplication() {
         super.initApplication()
+
+        KotlinSdkType.setUpIfNeeded()
 
         ApplicationManager.getApplication().runWriteAction {
             ProjectJdkTable.getInstance().addJdk(PluginTestCaseBase.mockJdk6())
@@ -123,16 +126,14 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     val modules: Array<Module>
         get() = ModuleManager.getInstance(myProject).modules
 
-    @Throws(IOException::class)
-    override fun getIprFile(): File {
+    override fun getProjectDirOrFile(): Path {
         val projectFilePath = projectRoot + "/projectFile.ipr"
         TestCase.assertTrue("Project file should exists " + projectFilePath, File(projectFilePath).exists())
-        return File(projectFilePath)
+        return File(projectFilePath).toPath()
     }
 
-    @Throws(Exception::class)
-    override fun doCreateProject(projectFile: File): Project? {
-        return myProjectManager.loadProject(projectFile.path)
+    override fun doCreateProject(projectFile: Path): Project {
+        return myProjectManager.loadProject(projectFile.toFile().path)!!
     }
 
     private val projectName: String

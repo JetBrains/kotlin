@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -30,8 +31,7 @@ class ReplaceToWithInfixFormInspection : AbstractKotlinInspection() {
             if (expression.callExpression?.valueArguments?.size != 1) return
             if (expression.calleeName !in compatibleNames) return
 
-            val context = expression.analyze(BodyResolveMode.PARTIAL)
-            val resolvedCall = expression.getResolvedCall(context) ?: return
+            val resolvedCall = expression.resolveToCall() ?: return
             val function = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
 
             if (!function.isInfix) return

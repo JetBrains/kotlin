@@ -50,7 +50,7 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Void
         fun findLightClass(environment: KotlinCoreEnvironment, fqname: String): PsiClass? {
             KotlinTestUtils.resolveAllKotlinFiles(environment)
 
-            val lightCLassForScript = LightClassGenerationSupport
+            val lightCLassForScript = KotlinAsJavaSupport
                     .getInstance(environment.project)
                     .getScriptClasses(FqName(fqname), GlobalSearchScope.allScope(environment.project))
                     .firstOrNull()

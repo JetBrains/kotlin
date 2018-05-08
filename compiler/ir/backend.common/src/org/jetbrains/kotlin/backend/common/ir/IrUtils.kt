@@ -113,6 +113,7 @@ fun IrClass.addSimpleDelegatingConstructor(superConstructorSymbol: IrConstructor
                 )
         )
 
+        constructor.parent = this
         this.declarations.add(constructor)
     }
 }

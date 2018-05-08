@@ -19,9 +19,9 @@ import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.BinaryModuleInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getBinaryLibrariesModuleInfos
-import org.jetbrains.kotlin.idea.caches.resolve.getLibrarySourcesModuleInfos
+import org.jetbrains.kotlin.idea.caches.project.BinaryModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getBinaryLibrariesModuleInfos
+import org.jetbrains.kotlin.idea.caches.project.getLibrarySourcesModuleInfos
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
@@ -69,8 +69,10 @@ object SourceNavigationHelper {
                 }.flatten().mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
             }
 
-            NavigationKind.SOURCES_TO_CLASS_FILES -> getLibrarySourcesModuleInfos(declaration.project, vFile)
-                .map { it.binariesModuleInfo.binariesScope() }.union()
+            NavigationKind.SOURCES_TO_CLASS_FILES -> getLibrarySourcesModuleInfos(
+                declaration.project,
+                vFile
+            ).map { it.binariesModuleInfo.binariesScope() }.union()
         }
     }
 

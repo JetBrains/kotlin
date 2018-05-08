@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils;
 
 import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
 
@@ -41,7 +42,7 @@ public class MessageUtil {
     public static CompilerMessageLocation psiFileToMessageLocation(
             @NotNull PsiFile file,
             @Nullable String defaultValue,
-            @NotNull DiagnosticUtils.LineAndColumn lineAndColumn
+            @NotNull PsiDiagnosticUtils.LineAndColumn lineAndColumn
     ) {
         VirtualFile virtualFile = file.getVirtualFile();
         String path = virtualFile != null ? virtualFileToPath(virtualFile) : defaultValue;

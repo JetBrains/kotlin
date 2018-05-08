@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jvm.compiler;
@@ -21,9 +10,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace;
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
@@ -119,7 +108,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true);
         }
-        updateConfigurationWithDirectives(ktFile, configuration);
+        String fileContent = FileUtil.loadFile(ktFile, true);
+        updateConfigurationWithDirectives(fileContent, configuration);
 
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
@@ -143,11 +133,17 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         DescriptorValidator.validate(errorTypesForbidden(), packageFromSource);
         DescriptorValidator.validate(new DeserializedScopeValidationVisitor(), packageFromBinary);
         Configuration comparatorConfiguration = COMPARATOR_CONFIGURATION.checkPrimaryConstructors(true).checkPropertyAccessors(true).checkFunctionContracts(true);
-        compareDescriptors(packageFromSource, packageFromBinary, comparatorConfiguration, txtFile);
+
+        if (InTextDirectivesUtils.isDirectiveDefined(fileContent, "NO_CHECK_SOURCE_VS_BINARY")) {
+            // If NO_CHECK_SOURCE_VS_BINARY is enabled, only check that binary descriptors correspond to the .txt file content
+            validateAndCompareDescriptorWithFile(packageFromBinary, comparatorConfiguration, txtFile);
+        }
+        else {
+            compareDescriptors(packageFromSource, packageFromBinary, comparatorConfiguration, txtFile);
+        }
     }
 
-    private static void updateConfigurationWithDirectives(File file, CompilerConfiguration configuration) throws IOException {
-        String content = FileUtil.loadFile(file, true);
+    private static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
         String version = InTextDirectivesUtils.findStringWithPrefixes(content, "// LANGUAGE_VERSION:");
         if (version != null) {
             LanguageVersion explicitVersion = LanguageVersion.fromVersionString(version);
@@ -189,7 +185,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         registerJavacIfNeeded(environment);
         AnalysisResult result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                environment.getProject(), environment.getSourceFiles(), new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
+                environment.getProject(), environment.getSourceFiles(), new NoScopeRecordCliBindingTrace(),
                 configuration, environment::createPackagePartProvider
         );
 
@@ -273,7 +269,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                         }
                         return targetFile;
                     }
-                });
+                }, "");
 
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
                 srcFiles, compiledDir, ConfigurationKind.ALL

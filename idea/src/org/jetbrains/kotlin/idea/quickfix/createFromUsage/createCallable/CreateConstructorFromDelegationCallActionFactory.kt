@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -45,7 +44,7 @@ object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFr
 
         val project = currentClass.project
 
-        val classDescriptor = currentClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return null
+        val classDescriptor = currentClass.resolveToDescriptorIfAny() ?: return null
 
         val targetClass = if (calleeExpression.isThis) {
             currentClass

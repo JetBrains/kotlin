@@ -271,6 +271,19 @@ class Collections {
             assertTrue(set == other, "Empty sets are equal")
             assertPrints(set, "[]")
         }
+
+        @Sample
+        fun readOnlySet() {
+            val set1 = setOf(1, 2, 3)
+            val set2 = setOf(3, 2, 1)
+
+            // setOf preserves the iteration order of elements
+            assertPrints(set1, "[1, 2, 3]")
+            assertPrints(set2, "[3, 2, 1]")
+
+            // but the sets with the same elements are equal no matter of order
+            assertTrue(set1 == set2)
+        }
     }
 
     class Transformations {
@@ -312,13 +325,52 @@ class Collections {
         }
 
         @Sample
+        fun joinTo() {
+            val sb = StringBuilder("An existing string and a list: ")
+            val numbers = listOf(1, 2, 3)
+            assertPrints(numbers.joinTo(sb, prefix = "[", postfix = "]").toString(), "An existing string and a list: [1, 2, 3]")
+
+            val lotOfNumbers: Iterable<Int> = 1..100
+            val firstNumbers = StringBuilder("First five numbers: ")
+            assertPrints(lotOfNumbers.joinTo(firstNumbers, limit = 5).toString(), "First five numbers: 1, 2, 3, 4, 5, ...")
+        }
+
+        @Sample
+        fun joinToString() {
+            val numbers = listOf(1, 2, 3, 4, 5, 6)
+            assertPrints(numbers.joinToString(), "1, 2, 3, 4, 5, 6")
+            assertPrints(numbers.joinToString(prefix = "[", postfix = "]"), "[1, 2, 3, 4, 5, 6]")
+            assertPrints(numbers.joinToString(prefix = "<", postfix = ">", separator = "•"), "<1•2•3•4•5•6>")
+
+            val chars = charArrayOf('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q')
+            assertPrints(chars.joinToString(limit = 5, truncated = "...!") { it.toUpperCase().toString() }, "A, B, C, D, E, ...!")
+        }
+
+        @Sample
+        fun take() {
+            val chars = ('a'..'z').toList()
+            assertPrints(chars.take(3), "[a, b, c]")
+            assertPrints(chars.takeWhile { it < 'f' }, "[a, b, c, d, e]")
+            assertPrints(chars.takeLast(2), "[y, z]")
+            assertPrints(chars.takeLastWhile { it > 'w' }, "[x, y, z]")
+        }
+
+        @Sample
+        fun drop() {
+            val chars = ('a'..'z').toList()
+            assertPrints(chars.drop(23), "[x, y, z]")
+            assertPrints(chars.dropLast(23), "[a, b, c]")
+            assertPrints(chars.dropWhile { it < 'x' }, "[x, y, z]")
+            assertPrints(chars.dropLastWhile { it > 'c' }, "[a, b, c]")
+        }
+
+        @Sample
         fun chunked() {
             val words = "one two three four five six seven eight nine ten".split(' ')
             val chunks = words.chunked(3)
 
             assertPrints(chunks, "[[one, two, three], [four, five, six], [seven, eight, nine], [ten]]")
         }
-
 
         @Sample
         fun zipWithNext() {
@@ -335,6 +387,68 @@ class Collections {
             val deltas = values.zipWithNext { a, b -> b - a }
 
             assertPrints(deltas, "[3, 5, 7, 9, 11]")
+        }
+    }
+
+    class Aggregates {
+        @Sample
+        fun all() {
+            val isEven: (Int) -> Boolean = { it % 2 == 0 }
+            val zeroToTen = 0..10
+            assertFalse(zeroToTen.all { isEven(it) })
+            assertFalse(zeroToTen.all(isEven))
+
+            val evens = zeroToTen.map { it * 2 }
+            assertTrue(evens.all { isEven(it) })
+
+            val emptyList = emptyList<Int>()
+            assertTrue(emptyList.all { false })
+        }
+
+        @Sample
+        fun none() {
+            val emptyList = emptyList<Int>()
+            assertTrue(emptyList.none())
+
+            val nonEmptyList = listOf("one", "two", "three")
+            assertFalse(nonEmptyList.none())
+        }
+
+        @Sample
+        fun noneWithPredicate() {
+            val isEven: (Int) -> Boolean = { it % 2 == 0 }
+            val zeroToTen = 0..10
+            assertFalse(zeroToTen.none { isEven(it) })
+            assertFalse(zeroToTen.none(isEven))
+
+            val odds = zeroToTen.map { it * 2 + 1 }
+            assertTrue(odds.none { isEven(it) })
+
+            val emptyList = emptyList<Int>()
+            assertTrue(emptyList.none { true })
+        }
+
+        @Sample
+        fun any() {
+            val emptyList = emptyList<Int>()
+            assertFalse(emptyList.any())
+
+            val nonEmptyList = listOf(1, 2, 3)
+            assertTrue(nonEmptyList.any())
+        }
+
+        @Sample
+        fun anyWithPredicate() {
+            val isEven: (Int) -> Boolean = { it % 2 == 0 }
+            val zeroToTen = 0..10
+            assertTrue(zeroToTen.any { isEven(it) })
+            assertTrue(zeroToTen.any(isEven))
+
+            val odds = zeroToTen.map { it * 2 + 1 }
+            assertFalse(odds.any { isEven(it) })
+
+            val emptyList = emptyList<Int>()
+            assertFalse(emptyList.any { true })
         }
     }
 

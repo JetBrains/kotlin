@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.codegen.range.forLoop
 
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
-import org.jetbrains.kotlin.codegen.range.forLoop.AbstractWithIndexForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtForExpression
@@ -25,6 +25,7 @@ class ArrayWithIndexForLoopGenerator(
 ) : AbstractWithIndexForLoopGenerator(codegen, forExpression, loopParameter, rangeCall) {
 
     private val arrayType = codegen.asmType(ExpressionCodegen.getExpectedReceiverType(rangeCall))
+    private val arrayElementType = AsmUtil.correctElementType(arrayType)
     private var arrayVar = -1
     private var arrayLengthVar = -1
 
@@ -61,9 +62,9 @@ class ArrayWithIndexForLoopGenerator(
         if (elementLoopComponent != null) {
             v.load(arrayVar, AsmTypes.OBJECT_TYPE)
             v.load(indexVar, Type.INT_TYPE)
-            v.aload(elementLoopComponent.elementType)
-            StackValue.local(elementLoopComponent.parameterVar, elementLoopComponent .parameterType)
-                .store(StackValue.onStack(elementLoopComponent .elementType), v)
+            v.aload(arrayElementType)
+            StackValue.local(elementLoopComponent.parameterVar, elementLoopComponent.parameterType)
+                .store(StackValue.onStack(arrayElementType), v)
         }
     }
 

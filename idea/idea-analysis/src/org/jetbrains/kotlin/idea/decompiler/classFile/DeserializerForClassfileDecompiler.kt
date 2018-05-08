@@ -30,17 +30,13 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.serialization.ClassDataWithSource
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.ContractDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.io.InputStream
 
 fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
@@ -92,7 +88,7 @@ class DeserializerForClassfileDecompiler(
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(header.packageName?.let(::FqName) ?: facadeFqName.parent()), packageProto, nameResolver,
-                JvmPackagePartSource(binaryClassForPackageClass), deserializationComponents
+                JvmPackagePartSource(binaryClassForPackageClass, packageProto, nameResolver), deserializationComponents
         ) { emptyList() }
         return membersScope.getContributedDescriptors().toList()
     }
@@ -134,7 +130,7 @@ class DirectoryBasedDataFinder(
         val classFinder: DirectoryBasedClassFinder,
         val log: Logger
 ) : ClassDataFinder {
-    override fun findClassData(classId: ClassId): ClassDataWithSource? {
+    override fun findClassData(classId: ClassId): ClassData? {
         val binaryClass = classFinder.findKotlinClass(classId) ?: return null
         val classHeader = binaryClass.classHeader
         val data = classHeader.data
@@ -148,6 +144,7 @@ class DirectoryBasedDataFinder(
             return null
         }
 
-        return ClassDataWithSource(JvmProtoBufUtil.readClassDataFrom(data, strings), KotlinJvmBinarySourceElement(binaryClass))
+        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+        return ClassData(nameResolver, classProto, KotlinJvmBinarySourceElement(binaryClass))
     }
 }

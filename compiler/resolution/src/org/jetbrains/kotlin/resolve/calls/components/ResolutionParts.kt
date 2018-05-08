@@ -205,7 +205,11 @@ internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         when (resolvedCall.explicitReceiverKind) {
             NO_EXPLICIT_RECEIVER -> if (kotlinCall.explicitReceiver is SimpleKotlinCallArgument || kotlinCall.dispatchReceiverForInvokeExtension != null) hasError()
-            DISPATCH_RECEIVER, EXTENSION_RECEIVER -> if (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension != null) hasError()
+            DISPATCH_RECEIVER, EXTENSION_RECEIVER ->
+                if (kotlinCall.callKind == KotlinCallKind.INVOKE && kotlinCall.dispatchReceiverForInvokeExtension == null ||
+                    kotlinCall.callKind != KotlinCallKind.INVOKE &&
+                    (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension != null)
+                ) hasError()
             BOTH_RECEIVERS -> if (kotlinCall.explicitReceiver == null || kotlinCall.dispatchReceiverForInvokeExtension == null) hasError()
         }
     }

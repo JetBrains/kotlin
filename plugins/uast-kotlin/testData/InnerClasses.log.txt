@@ -7,9 +7,11 @@ UFile (package = )
             UField (name = b)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UAnnotationMethod (name = getAPlusB)
-                UBinaryExpression (operator = +)
-                    USimpleNameReferenceExpression (identifier = a)
-                    USimpleNameReferenceExpression (identifier = b)
+                UBlockExpression
+                    UReturnExpression
+                        UBinaryExpression (operator = +)
+                            USimpleNameReferenceExpression (identifier = a)
+                            USimpleNameReferenceExpression (identifier = b)
             UAnnotationMethod (name = getA)
             UAnnotationMethod (name = getB)
             UAnnotationMethod (name = Bar)
@@ -19,5 +21,7 @@ UFile (package = )
                     UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UClass (name = Baz)
                 UAnnotationMethod (name = doNothing)
-                    USimpleNameReferenceExpression (identifier = Unit)
+                    UBlockExpression
+                        UReturnExpression
+                            USimpleNameReferenceExpression (identifier = Unit)
                 UAnnotationMethod (name = Baz)

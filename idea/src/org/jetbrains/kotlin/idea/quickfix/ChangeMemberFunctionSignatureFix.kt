@@ -100,7 +100,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 return emptyList()
             }
 
-            val functionDescriptor = functionElement.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor
+            val functionDescriptor = functionElement.resolveToDescriptorIfAny(BodyResolveMode.FULL)
                                      ?: return emptyList()
             val superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor)
 

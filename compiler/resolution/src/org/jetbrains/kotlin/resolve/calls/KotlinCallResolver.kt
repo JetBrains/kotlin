@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResol
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 import java.lang.UnsupportedOperationException
 
@@ -39,12 +40,12 @@ class KotlinCallResolver(
         resolutionCallbacks: KotlinResolutionCallbacks,
         kotlinCall: KotlinCall,
         expectedType: UnwrappedType?,
-        factoryProviderForInvoke: CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>,
-        collectAllCandidates: Boolean
+        collectAllCandidates: Boolean,
+        createFactoryProviderForInvoke: () -> CandidateFactoryProviderForInvoke<KotlinResolutionCandidate>
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
 
-        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall)
+        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks.inferenceSession)
         val processor = when (kotlinCall.callKind) {
             KotlinCallKind.VARIABLE -> {
                 createVariableAndObjectProcessor(scopeTower, kotlinCall.name, candidateFactory, kotlinCall.explicitReceiver?.receiver)
@@ -54,9 +55,19 @@ class KotlinCallResolver(
                     scopeTower,
                     kotlinCall.name,
                     candidateFactory,
-                    factoryProviderForInvoke,
+                    createFactoryProviderForInvoke(),
                     kotlinCall.explicitReceiver?.receiver
                 )
+            }
+            KotlinCallKind.INVOKE -> {
+                createProcessorWithReceiverValueOrEmpty(kotlinCall.explicitReceiver?.receiver) {
+                    createCallTowerProcessorForExplicitInvoke(
+                        scopeTower,
+                        candidateFactory,
+                        kotlinCall.dispatchReceiverForInvokeExtension?.receiver as ReceiverValueWithSmartCastInfo,
+                        it
+                    )
+                }
             }
             KotlinCallKind.UNSUPPORTED -> throw UnsupportedOperationException()
         }
@@ -85,7 +96,7 @@ class KotlinCallResolver(
         collectAllCandidates: Boolean
     ): CallResolutionResult {
         kotlinCall.checkCallInvariants()
-        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall)
+        val candidateFactory = SimpleCandidateFactory(callComponents, scopeTower, kotlinCall, resolutionCallbacks.inferenceSession)
 
         val resolutionCandidates = givenCandidates.map { candidateFactory.createCandidate(it).forceResolution() }
 

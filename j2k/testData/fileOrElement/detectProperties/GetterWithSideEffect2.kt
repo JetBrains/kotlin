@@ -11,6 +11,6 @@ class C {
     }
 
     internal fun foo() {
-        println("x = " + x)
+        println("x = $x")
     }
 }

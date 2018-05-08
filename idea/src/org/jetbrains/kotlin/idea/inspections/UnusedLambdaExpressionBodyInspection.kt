@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 class UnusedLambdaExpressionBodyInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return callExpressionVisitor(fun(expression) {
-            val context = expression.analyze(BodyResolveMode.PARTIAL)
+            val context = expression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
             if (expression.used(context)) {
                 return
             }

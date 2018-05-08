@@ -8,8 +8,6 @@ public interface TraitClassObjectField {
         public static final java.lang.String x = "";
         private static final java.lang.String y = "";
 
-        private final java.lang.String getY() { /* compiled code */ }
-
         private Companion() { /* compiled code */ }
     }
 }

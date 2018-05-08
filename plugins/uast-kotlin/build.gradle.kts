@@ -1,5 +1,8 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compile(projectDist(":kotlin-stdlib"))
@@ -8,15 +11,16 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
-    compileOnly(intellijDep()) { includeJars("openapi", "idea", "util", "extensions", "asm-all") }
+    compile(project(":idea:idea-core"))
+    compileOnly(intellijDep()) { includeJars("openapi", "idea", "java-api", "java-impl", "platform-api", "platform-impl", "util", "extensions", "asm-all") }
 
     testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
-    testCompile(project(":idea:idea-test-framework"))
-    testCompileOnly(intellijDep()) { includeJars("idea_rt") }
+    testCompile(projectTests(":idea:idea-test-framework"))
+    testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl", "idea_rt") }
 
     testRuntime(projectDist(":kotlin-reflect"))
     testRuntime(project(":idea:idea-android"))
@@ -43,7 +47,4 @@ testsJar {}
 
 projectTest {
     workingDir = rootDir
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-    }
 }

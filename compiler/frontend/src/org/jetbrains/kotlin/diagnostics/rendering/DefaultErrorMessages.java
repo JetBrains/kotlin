@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.VersionRequirement;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt;
@@ -64,6 +64,7 @@ public class DefaultErrorMessages {
 
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE);
         MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE);
+        MAP.put(DEPRECATED_ACCESS_BY_SHORT_NAME, "Access to this type by short name is deprecated, and soon is going to be removed. Please, add explicit qualifier or import", NAME);
 
         MAP.put(PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL, "Protected constructor ''{0}'' from other classes can only be used in super-call", Renderers.SHORT_NAMES_IN_TYPES);
 
@@ -119,7 +120,8 @@ public class DefaultErrorMessages {
         MAP.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, TO_STRING);
         MAP.put(DEPRECATED_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is deprecated inside ''{1}''", TO_STRING, TO_STRING);
         MAP.put(ILLEGAL_INLINE_PARAMETER_MODIFIER, "Modifier ''{0}'' is allowed only for function parameters of an inline function", TO_STRING);
-        MAP.put(INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED, "Inline lambda parameters of suspend function type are not fully supported. Add 'noinline' modifier.");
+        MAP.put(INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED, "Suspend inline lambda parameters of non-suspend function type are not supported. Add 'noinline' or 'crossinline' modifier.");
+        MAP.put(REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE, "Redundant 'suspend' modifier: lambda parameters of suspend function type uses existing continuation.");
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
         MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET, "This annotation is not applicable to target ''{0}'' and use site target ''@{1}''", TO_STRING, TO_STRING);
         MAP.put(WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET_ON_TYPE,
@@ -137,6 +139,17 @@ public class DefaultErrorMessages {
 
         MAP.put(ILLEGAL_KOTLIN_VERSION_STRING_VALUE, "Invalid @{0} annotation value (should be ''major.minor'' or ''major.minor.patch'')", TO_STRING);
         MAP.put(NEWER_VERSION_IN_SINCE_KOTLIN, "The version is greater than the specified API version {0}", STRING);
+
+        MAP.put(EXPERIMENTAL_API_USAGE, "This declaration is experimental and its usage should be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
+        MAP.put(EXPERIMENTAL_API_USAGE_ERROR, "This declaration is experimental and its usage must be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
+
+        MAP.put(EXPERIMENTAL_OVERRIDE, "This declaration overrides experimental member of supertype ''{1}'' and should be annotated with ''@{0}''", TO_STRING, NAME);
+        MAP.put(EXPERIMENTAL_OVERRIDE_ERROR, "This declaration overrides experimental member of supertype ''{1}'' and must be annotated with ''@{0}''", TO_STRING, NAME);
+
+        MAP.put(EXPERIMENTAL_IS_NOT_ENABLED, "This class can only be used with the compiler argument '-Xuse-experimental=kotlin.Experimental'");
+        MAP.put(USE_EXPERIMENTAL_WITHOUT_ARGUMENTS, "@UseExperimental without any arguments has no effect");
+        MAP.put(USE_EXPERIMENTAL_ARGUMENT_IS_NOT_MARKER, "Annotation ''{0}'' is not an experimental API marker, therefore its usage in @UseExperimental is ignored", TO_STRING);
+        MAP.put(EXPERIMENTAL_ANNOTATION_WITH_WRONG_TARGET, "Experimental annotation cannot be used on the following code elements: {0}. Please remove these targets", STRING);
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members");
@@ -338,6 +351,8 @@ public class DefaultErrorMessages {
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 
         MAP.put(MISSING_DEPENDENCY_CLASS, "Cannot access class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
+        MAP.put(MISSING_SCRIPT_RECEIVER_CLASS, "Cannot access implicit script receiver class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
+        MAP.put(MISSING_SCRIPT_ENVIRONMENT_PROPERTY_CLASS, "Cannot access script environment property class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
         MAP.put(PRE_RELEASE_CLASS, "{0} is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler", TO_STRING);
         MAP.put(INCOMPATIBLE_CLASS,
                 "{0} was compiled with an incompatible version of Kotlin. {1}",
@@ -483,8 +498,6 @@ public class DefaultErrorMessages {
         MAP.put(REPEATED_BOUND, "Type parameter already has this bound");
         MAP.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound");
         MAP.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE);
-        MAP.put(USELESS_ELVIS_ON_LAMBDA_EXPRESSION, "Left operand of elvis operator (?:) is a lambda expression");
-        MAP.put(USELESS_ELVIS_ON_CALLABLE_REFERENCE, "Left operand of elvis operator (?:) is a callable reference expression");
         MAP.put(USELESS_ELVIS_RIGHT_IS_NULL, "Right operand of elvis operator (?:) is useless if it is null");
         MAP.put(CONFLICTING_UPPER_BOUNDS, "Upper bounds of {0} have empty intersection", NAME);
 
@@ -793,9 +806,9 @@ public class DefaultErrorMessages {
         MAP.put(ANNOTATION_CLASS_MEMBER, "Members are not allowed in annotation class");
         MAP.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member");
         MAP.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "An annotation parameter cannot be nullable");
-        MAP.put(ANNOTATION_PARAMETER_MUST_BE_CONST, "An annotation parameter must be a compile-time constant");
-        MAP.put(ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST, "An enum annotation parameter must be a enum constant");
-        MAP.put(ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL, "An annotation parameter must be a class literal (T::class)");
+        MAP.put(ANNOTATION_ARGUMENT_MUST_BE_CONST, "An annotation argument must be a compile-time constant");
+        MAP.put(ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST, "An enum annotation argument must be a enum constant");
+        MAP.put(ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL, "An annotation argument must be a class literal (T::class)");
         MAP.put(ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, "Default value of annotation parameter must be a compile-time constant");
 
         MAP.put(ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE,
@@ -803,6 +816,10 @@ public class DefaultErrorMessages {
                 "Use new line if whole block-level expression must be annotated or wrap annotated expression in parentheses");
 
         MAP.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "An annotation can't be used as the annotations argument");
+        MAP.put(ANNOTATION_ARGUMENT_IS_NON_CONST, "An annotation argument must be a compile-time constant");
+
+        MAP.put(LOCAL_ANNOTATION_CLASS, "Local annotation classes are deprecated and will be unsupported in a future release");
+        MAP.put(LOCAL_ANNOTATION_CLASS_ERROR, "Annotation class cannot be local");
 
         MAP.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects");
         MAP.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate");
@@ -874,6 +891,7 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_SUSPEND_PROPERTY_ACCESS, "Suspend property ''{0}'' should be accessed only from a coroutine or suspend function", NAME);
         MAP.put(ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope");
         MAP.put(NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND, "''suspend'' function can only be called in a form of modifier of a lambda: suspend { ... }");
+        MAP.put(RETURN_FOR_BUILT_IN_SUSPEND, "Using implicit label for this lambda is prohibited");
         MAP.put(MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND, "Calls having a form of ''suspend {}'' are deprecated because ''suspend'' in the context will have a meaning of a modifier. Add empty argument list to the call: ''suspend() { ... }''");
 
         MAP.put(PLUGIN_ERROR, "{0}", (d, c) -> d.getText());

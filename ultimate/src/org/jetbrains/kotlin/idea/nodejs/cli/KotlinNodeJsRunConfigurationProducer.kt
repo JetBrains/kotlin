@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
 import org.jetbrains.kotlin.idea.run.addBuildTask
 import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 private class KotlinNodeJsRunConfigurationProducer :
         RunConfigurationProducer<NodeJsRunConfiguration>(NodeJsRunConfigurationType.getInstance()) {
@@ -39,13 +41,14 @@ private class KotlinNodeJsRunConfigurationProducer :
         if (!context.isAcceptable) return false
 
         val psiElement = sourceElement.get() ?: return false
-        val psiFile = psiElement.containingFile
+        val psiFile = psiElement.containingFile ?: return false
         val jsModule = psiFile.module?.jsOrJsImpl() ?: return false
         val project = psiFile.project
 
-        if (psiElement is KtNamedFunction) {
-            val detector = MainFunctionDetector { it.resolveToDescriptorIfAny() as? FunctionDescriptor }
-            if (!detector.isMain(psiElement, false)) return false
+        val declaration = psiElement.getNonStrictParentOfType<KtNamedDeclaration>()
+        if (declaration is KtNamedFunction) {
+            val detector = MainFunctionDetector { it.resolveToDescriptorIfAny() }
+            if (!detector.isMain(declaration, false)) return false
         }
         else if (!TestElementPath.isModuleAssociatedDir(psiElement, jsModule)) return false
 
@@ -55,7 +58,7 @@ private class KotlinNodeJsRunConfigurationProducer :
             configuration.workingDirectory = FileUtil.toSystemDependentName(project.baseDir.path)
         }
         configuration.inputPath = jsFilePath
-        configuration.envs = jsModule.getNodeJsEnvironmentVars().envs
+        configuration.envs = jsModule.getNodeJsEnvironmentVars(false).envs
         configuration.setGeneratedName()
         configuration.addBuildTask()
 

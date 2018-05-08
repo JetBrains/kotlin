@@ -1,9 +1,10 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // WITH_REFLECT
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
     x.resume(v)

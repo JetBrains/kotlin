@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
@@ -47,8 +47,7 @@ import kotlin.reflect.KProperty1
 
 private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): TargetPlatformKind<*> {
     for (platform in TargetPlatformKind.ALL_PLATFORMS) {
-        if (platform.version == TargetPlatformVersion.NoVersion &&
-            getRuntimeLibraryVersions(module, rootModel, platform).isNotEmpty()) {
+        if (getRuntimeLibraryVersions(module, rootModel, platform).isNotEmpty()) {
             return platform
         }
     }
@@ -122,70 +121,6 @@ val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
             .sortedByDescending { it.first.length }
             .toMap()
 }
-
-private fun Module.findImplementedModuleName(modelsProvider: IdeModifiableModelsProvider): String? {
-    val facetModel = modelsProvider.getModifiableFacetModel(this)
-    val facet = facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
-    return facet?.configuration?.settings?.implementedModuleName
-}
-
-private fun Module.findImplementingModules(modelsProvider: IdeModifiableModelsProvider): List<Module> {
-    return modelsProvider.modules.filter { module ->
-        module.findImplementedModuleName(modelsProvider) == name
-    }
-}
-
-val Module.implementingModules: List<Module>
-    get() = cached(CachedValueProvider {
-        CachedValueProvider.Result(
-                findImplementingModules(IdeModifiableModelsProviderImpl(project)),
-                ProjectRootModificationTracker.getInstance(project)
-        )
-    })
-
-private fun Module.getModuleInfo(baseModuleSourceInfo: ModuleSourceInfo): ModuleSourceInfo? =
-        when (baseModuleSourceInfo) {
-            is ModuleProductionSourceInfo -> productionSourceInfo()
-            is ModuleTestSourceInfo -> testSourceInfo()
-            else -> null
-        }
-
-private fun Module.findImplementingModuleInfos(moduleSourceInfo: ModuleSourceInfo): List<ModuleSourceInfo> {
-    val modelsProvider = IdeModifiableModelsProviderImpl(project)
-    val implementingModules = findImplementingModules(modelsProvider)
-    return implementingModules.mapNotNull { it.getModuleInfo(moduleSourceInfo) }
-}
-
-val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
-    get() {
-        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return emptyList()
-        val module = moduleSourceInfo.module
-        return module.cached(CachedValueProvider {
-            val implementingModuleInfos = module.findImplementingModuleInfos(moduleSourceInfo)
-            val implementingModuleDescriptors = implementingModuleInfos.mapNotNull {
-                KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
-            }
-            CachedValueProvider.Result(
-                    implementingModuleDescriptors,
-                    *(implementingModuleInfos.map { it.createModificationTracker() } +
-                      ProjectRootModificationTracker.getInstance(module.project)).toTypedArray()
-            )
-        })
-    }
-
-val ModuleDescriptor.implementedDescriptor: ModuleDescriptor?
-    get() {
-        val moduleSourceInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo ?: return null
-        val module = moduleSourceInfo.module
-
-        val modelsProvider = IdeModifiableModelsProviderImpl(module.project)
-        val implementedModuleName = module.findImplementedModuleName(modelsProvider)
-        val implementedModule = implementedModuleName?.let { modelsProvider.findIdeModule(it) }
-        val implementedModuleInfo = implementedModule?.getModuleInfo(moduleSourceInfo)
-        return implementedModuleInfo?.let {
-            KotlinCacheService.getInstance(module.project).getResolutionFacadeByModuleInfo(it, it.platform)?.moduleDescriptor
-        }
-    }
 
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider,
                             useProjectSettings: Boolean,

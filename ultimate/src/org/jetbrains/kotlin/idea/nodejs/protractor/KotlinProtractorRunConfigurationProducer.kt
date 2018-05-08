@@ -55,7 +55,7 @@ class KotlinProtractorRunConfigurationProducer :
         sourceElement.set(element)
         configuration.runSettings = configuration.runSettings.copy(
                 testFilePath = testFilePath,
-                envData = jsModule.getNodeJsEnvironmentVars()
+                envData = jsModule.getNodeJsEnvironmentVars(true)
         )
         configuration.name = configuration.suggestedName()
         configuration.addBuildTask()

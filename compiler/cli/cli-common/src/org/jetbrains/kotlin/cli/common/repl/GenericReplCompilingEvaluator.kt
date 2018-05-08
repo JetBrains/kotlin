@@ -31,6 +31,10 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = AggregatedReplStageState(compiler.createState(lock), evaluator.createState(lock), lock)
 
     override fun compileAndEval(state: IReplStageState<*>, codeLine: ReplCodeLine, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult {
+        if (codeLine.code.trim().isEmpty()) {
+            return ReplEvalResult.UnitResult()
+        }
+
         return state.lock.write {
             val aggregatedState = state.asState(AggregatedReplStageState::class.java)
             val compiled = compiler.compile(state, codeLine)

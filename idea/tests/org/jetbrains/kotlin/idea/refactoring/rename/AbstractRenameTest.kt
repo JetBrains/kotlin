@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -300,7 +300,7 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
         doTestCommittingDocuments(context) {
             val ktFile = myFixture.configureFromTempProjectFile(mainFilePath) as KtFile
 
-            val module = ktFile.analyzeFullyAndGetResult().moduleDescriptor
+            val module = ktFile.analyzeWithAllCompilerChecks().moduleDescriptor
 
             val (declaration, scopeToSearch)  = if (classIdStr != null) {
                 module.findClassAcrossModuleDependencies(classIdStr.toClassId())!!.let { it to it.defaultType.memberScope }

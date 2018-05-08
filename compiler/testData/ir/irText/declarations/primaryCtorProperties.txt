@@ -1,6 +1,8 @@
 FILE fqName:<root> fileName:/primaryCtorProperties.kt
   CLASS CLASS name:C modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (test1:kotlin.Int, test2:kotlin.Int) returnType:C flags:
       VALUE_PARAMETER name:test1 index:0 type:kotlin.Int flags:
       VALUE_PARAMETER name:test2 index:1 type:kotlin.Int flags:
@@ -35,10 +37,16 @@ FILE fqName:<root> fileName:/primaryCtorProperties.kt
             receiver: GET_VAR 'this@C: C' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

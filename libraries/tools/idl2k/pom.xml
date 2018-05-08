@@ -18,6 +18,7 @@
     <properties>
         <kotlin.version>${project.version}</kotlin.version>
         <antlr.version>4.5.3</antlr.version>
+        <idl2k.deploy.skip>true</idl2k.deploy.skip>
     </properties>
 
     <dependencies>
@@ -118,7 +119,7 @@
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
+                    <skip>${idl2k.deploy.skip}</skip>
                 </configuration>
             </plugin>
         </plugins>

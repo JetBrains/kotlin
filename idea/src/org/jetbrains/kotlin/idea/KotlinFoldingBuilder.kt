@@ -22,21 +22,43 @@ import com.intellij.lang.folding.CustomFoldingBuilder
 import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.editor.fixers.endLine
+import org.jetbrains.kotlin.idea.editor.fixers.startLine
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtImportList
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 
 class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
+
+    private val collectionFactoryFunctionsNames: Set<String> =
+        setOf(
+            "arrayOf", "booleanArrayOf", "byteArrayOf", "charArrayOf", "doubleArrayOf",
+            "floatArrayOf", "intArrayOf", "longArrayOf", "shortArrayOf", "arrayListOf",
+            "hashMapOf", "hashSetOf",
+            "linkedMapOf", "linkedSetOf", "linkedStringMapOf", "linkedStringSetOf",
+            "listOf", "listOfNotNull",
+            "mapOf",
+            "mutableListOf", "mutableMapOf", "mutableSetOf",
+            "setOf",
+            "sortedMapOf", "sortedSetOf",
+            "stringMapOf", "stringSetOf"
+        )
+
     override fun buildLanguageFoldRegions(
         descriptors: MutableList<FoldingDescriptor>,
         root: PsiElement, document: Document, quick: Boolean
@@ -62,7 +84,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     }
 
     private fun appendDescriptors(node: ASTNode, document: Document, descriptors: MutableList<FoldingDescriptor>) {
-        if (needFolding(node)) {
+        if (needFolding(node, document)) {
             val textRange = getRangeToFold(node)
             val relativeRange = textRange.shiftRight(-node.textRange.startOffset)
             val foldRegionText = node.chars.subSequence(relativeRange.startOffset, relativeRange.endOffset)
@@ -78,13 +100,34 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         }
     }
 
-    private fun needFolding(node: ASTNode): Boolean {
+    private fun needFolding(node: ASTNode, document: Document): Boolean {
         val type = node.elementType
         val parentType = node.treeParent?.elementType
+
         return type == KtNodeTypes.FUNCTION_LITERAL ||
                 (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
                 type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC ||
-                type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR
+                type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR ||
+                node.shouldFoldCollection(document)
+    }
+
+    private fun ASTNode.shouldFoldCollection(document: Document): Boolean {
+        val call = psi as? KtCallExpression ?: return false
+        if (DumbService.isDumb(call.project)) return false
+
+        if (call.valueArguments.size < 2) return false
+
+        // Similar check will be done latter, but we still use it here to avoid unnecessary resolve.
+        if (call.startLine(document) == call.endLine(document)) return false
+
+        val reference = call.referenceExpression() ?: return false
+        if (reference.mainReference.resolvesByNames.any { name -> name.isSpecial || name.identifier !in collectionFactoryFunctionsNames }) {
+            return false
+        }
+
+        // Do all possible psi checks before actual resolve
+        val functionDescriptor = reference.resolveMainReferenceToDescriptors().singleOrNull() as? FunctionDescriptor ?: return false
+        return functionDescriptor.valueParameters.size == 1 && functionDescriptor.valueParameters.first().isVararg
     }
 
     private fun getRangeToFold(node: ASTNode): TextRange {
@@ -96,6 +139,16 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
                 return TextRange(lbrace.startOffset, rbrace.endOffset)
             }
         }
+
+        if (node.elementType == KtNodeTypes.CALL_EXPRESSION) {
+            val valueArgumentList = (node.psi as? KtCallExpression)?.valueArgumentList
+            val leftParenthesis = valueArgumentList?.leftParenthesis
+            val rightParenthesis = valueArgumentList?.rightParenthesis
+            if (leftParenthesis != null && rightParenthesis != null) {
+                return TextRange(leftParenthesis.startOffset, rightParenthesis.endOffset)
+            }
+        }
+
         return node.textRange
     }
 
@@ -103,7 +156,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         node.elementType == KtTokens.BLOCK_COMMENT -> "/${getFirstLineOfComment(node)}.../"
         node.elementType == KDocTokens.KDOC -> "/**${getFirstLineOfComment(node)}...*/"
         node.elementType == KtNodeTypes.STRING_TEMPLATE -> "\"\"\"${getTrimmedFirstLineOfString(node).addSpaceIfNeeded()}...\"\"\""
-        node.elementType == KtNodeTypes.PRIMARY_CONSTRUCTOR -> "(...)"
+        node.elementType == KtNodeTypes.PRIMARY_CONSTRUCTOR || node.elementType == KtNodeTypes.CALL_EXPRESSION -> "(...)"
         node.psi is KtImportList -> "..."
         else -> "{...}"
     }

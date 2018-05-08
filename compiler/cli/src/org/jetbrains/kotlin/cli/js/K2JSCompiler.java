@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
@@ -65,10 +66,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.KotlinPaths;
-import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.StringsKt;
+import org.jetbrains.kotlin.utils.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,6 +95,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     public static void main(String... args) {
         doMain(new K2JSCompiler(), args);
     }
+
+    private final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
 
     @NotNull
     @Override
@@ -168,7 +168,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        ExitCode pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration);
+        ExitCode pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments.getPluginClasspaths(), arguments.getPluginOptions(), configuration);
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult;
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
@@ -222,7 +222,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
+                messageCollector, CommonConfigurationKeysKt.getLanguageVersionSettings(configuration)
+        );
         analyzerWithCompilerReport.analyzeAndReport(sourcesFiles, () -> TopDownAnalyzerFacadeForJS.analyzeFiles(sourcesFiles, config));
         if (analyzerWithCompilerReport.hasErrors()) {
             return COMPILATION_ERROR;
@@ -514,6 +516,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         return commonPath != null ? commonPath.getPath() : ".";
     }
 
+    @NotNull
+    @Override
+    protected CommonCompilerPerformanceManager getPerformanceManager() {
+        return performanceManager;
+    }
 
     private static MainCallParameters createMainCallParameters(String main) {
         if (K2JsArgumentConstants.NO_CALL.equals(main)) {
@@ -529,4 +536,12 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     public String executableScriptFileName() {
         return "kotlinc-js";
     }
+
+    private static final class K2JSCompilerPerformanceManager extends CommonCompilerPerformanceManager {
+        public K2JSCompilerPerformanceManager() {
+            super("Kotlin to JS Compiler");
+        }
+    }
+
+
 }

@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.ir.builders
 
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
@@ -145,8 +147,12 @@ fun IrBuilderWithScope.irNotEquals(arg1: IrExpression, arg2: IrExpression) =
 fun IrBuilderWithScope.irGet(receiver: IrExpression, getterSymbol: IrFunctionSymbol): IrCall =
     IrGetterCallImpl(startOffset, endOffset, getterSymbol, getterSymbol.descriptor, null, receiver, null, IrStatementOrigin.GET_PROPERTY)
 
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: KotlinType): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor, null)
+fun IrBuilderWithScope.irCall(
+    callee: IrFunctionSymbol,
+    type: KotlinType,
+    typeArguments: Map<TypeParameterDescriptor, KotlinType>? = null
+): IrCall =
+    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor, typeArguments)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrCall =
     irCall(callee, callee.descriptor.returnType!!)
@@ -168,17 +174,41 @@ fun IrBuilderWithScope.irCallOp(
         putValueArgument(0, argument)
     }
 
+@Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irIs(argument: IrExpression, type: KotlinType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.booleanType, IrTypeOperator.INSTANCEOF, type, argument)
 
+fun IrBuilderWithScope.irIs(argument: IrExpression, type: KotlinType, typeClassifier: IrClassifierSymbol) =
+    IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.booleanType, IrTypeOperator.INSTANCEOF, type, argument, typeClassifier)
+
+
+@Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irNotIs(argument: IrExpression, type: KotlinType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, context.builtIns.booleanType, IrTypeOperator.NOT_INSTANCEOF, type, argument)
 
+fun IrBuilderWithScope.irNotIs(argument: IrExpression, type: KotlinType, typeClassifier: IrClassifierSymbol) =
+    IrTypeOperatorCallImpl(
+        startOffset, endOffset,
+        context.builtIns.booleanType,
+        IrTypeOperator.NOT_INSTANCEOF,
+        type, argument, typeClassifier
+    )
+
+
+@Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irAs(argument: IrExpression, type: KotlinType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, type, argument)
 
+fun IrBuilderWithScope.irAs(argument: IrExpression, type: KotlinType, typeClassifier: IrClassifierSymbol) =
+    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.CAST, type, argument, typeClassifier)
+
+@Deprecated("Creates unbound symbol")
 fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: KotlinType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, argument)
+
+fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: KotlinType, typeClassifier: IrClassifierSymbol) =
+    IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, argument, typeClassifier)
+
 
 fun IrBuilderWithScope.irInt(value: Int) =
     IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, value)

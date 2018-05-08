@@ -10,6 +10,7 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -44,11 +45,15 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
     }
 
-    protected fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
+    fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
         val srcDir = testDataPath + "${getTestName(true)}/$name"
         val moduleWithSrcRootSet = createModuleFromTestData(srcDir, name, StdModuleTypes.JAVA, true)!!
         if (hasTestRoot) {
-            setTestRoot(moduleWithSrcRootSet, name)
+            addRoot(
+                moduleWithSrcRootSet,
+                File(testDataPath + "${getTestName(true)}/${name}Test"),
+                true
+            )
         }
 
         ConfigLibraryUtil.configureSdk(moduleWithSrcRootSet, PluginTestCaseBase.addJdk(testRootDisposable) { PluginTestCaseBase.jdk(jdk) })
@@ -56,36 +61,40 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         return moduleWithSrcRootSet
     }
 
-    private fun setTestRoot(module: Module, name: String) {
-        val testDir = testDataPath + "${getTestName(true)}/${name}Test"
-        val testRootDirInTestData = File(testDir)
-        val testRootDir = createTempDirectory()!!
-        FileUtil.copyDir(testRootDirInTestData, testRootDir)
-        val testRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(testRootDir)!!
-        object : WriteCommandAction.Simple<Unit>(project) {
-            override fun run() {
-                testRoot.refresh(false, true)
-            }
-        }.execute().throwException()
-        PsiTestUtil.addSourceRoot(module, testRoot, true)
+    public override fun createModule(path: String, moduleType: ModuleType<*>): Module {
+        return super.createModule(path, moduleType)
     }
 
-    protected fun Module.addDependency(
-            other: Module,
-            dependencyScope: DependencyScope = DependencyScope.COMPILE,
-            exported: Boolean = false
+    fun addRoot(module: Module, sourceDirInTestData: File, isTestRoot: Boolean) {
+        val tmpRootDir = createTempDirectory()
+        FileUtil.copyDir(sourceDirInTestData, tmpRootDir)
+        val virtualTempDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tmpRootDir)!!
+        object : WriteCommandAction.Simple<Unit>(project) {
+            override fun run() {
+                virtualTempDir.refresh(false, isTestRoot)
+            }
+        }.execute().throwException()
+        PsiTestUtil.addSourceRoot(module, virtualTempDir, isTestRoot)
+    }
+
+    fun Module.addDependency(
+        other: Module,
+        dependencyScope: DependencyScope = DependencyScope.COMPILE,
+        exported: Boolean = false
     ): Module = this.apply { ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported) }
 
-    protected fun Module.addLibrary(jar: File,
-                                    name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME,
-                                    kind: PersistentLibraryKind<*>? = null) {
+    fun Module.addLibrary(
+        jar: File,
+        name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME,
+        kind: PersistentLibraryKind<*>? = null
+    ) {
         ConfigLibraryUtil.addLibrary(NewLibraryEditor().apply {
             this.name = name
             addRoot(VfsUtil.getUrlForLibraryRoot(jar), OrderRootType.CLASSES)
         }, this, kind)
     }
 
-    protected fun Module.enableMultiPlatform() {
+    fun Module.enableMultiPlatform() {
         createFacet()
         val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
         facetSettings.useProjectSettings = false
@@ -121,7 +130,7 @@ fun Module.createFacet(
                     platformKind
             )
             if (implementedModuleName != null) {
-                this.implementedModuleName = implementedModuleName
+                this.implementedModuleNames = listOf(implementedModuleName)
             }
         }
         modelsProvider.commit()

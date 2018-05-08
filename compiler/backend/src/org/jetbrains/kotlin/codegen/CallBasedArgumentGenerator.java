@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -28,7 +17,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.StackValue.*;
+import static org.jetbrains.kotlin.codegen.StackValue.createDefaultValue;
 
 public class CallBasedArgumentGenerator extends ArgumentGenerator {
     private final ExpressionCodegen codegen;
@@ -64,7 +53,12 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
 
     @Override
     protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
-        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), createDefaultValue(valueParameterTypes.get(i)), ValueKind.DEFAULT_PARAMETER, i);
+        callGenerator.putValueIfNeeded(
+                getJvmKotlinType(valueParameterTypes, valueParameters, i),
+                createDefaultValue(valueParameterTypes.get(i)),
+                ValueKind.DEFAULT_PARAMETER,
+                i
+        );
     }
 
     @Override
@@ -73,7 +67,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
         // while its lower bound may be Nothing-typed after approximation
         StackValue lazyVararg = codegen.genVarargs(argument, FlexibleTypesKt.upperIfFlexible(parameter.getType()));
-        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), lazyVararg, ValueKind.GENERAL_VARARG, i);
+        callGenerator.putValueIfNeeded(getJvmKotlinType(valueParameterTypes, valueParameters, i), lazyVararg, ValueKind.GENERAL_VARARG, i);
     }
 
     @Override
@@ -84,11 +78,19 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
                 codegen.typeMapper
         );
 
-        callGenerator.putValueIfNeeded(valueParameterTypes.get(i), argumentValue);
+        callGenerator.putValueIfNeeded(getJvmKotlinType(valueParameterTypes, valueParameters, i), argumentValue);
     }
 
     @Override
     protected void reorderArgumentsIfNeeded(@NotNull List<ArgumentAndDeclIndex> actualArgsWithDeclIndex) {
         callGenerator.reorderArgumentsIfNeeded(actualArgsWithDeclIndex, valueParameterTypes);
+    }
+
+    @NotNull
+    private static JvmKotlinType getJvmKotlinType(
+            @NotNull List<Type> valueParameterTypes,
+            @NotNull List<ValueParameterDescriptor> valueParameters, int i
+    ) {
+        return new JvmKotlinType(valueParameterTypes.get(i), valueParameters.get(i).getOriginal().getType());
     }
 }

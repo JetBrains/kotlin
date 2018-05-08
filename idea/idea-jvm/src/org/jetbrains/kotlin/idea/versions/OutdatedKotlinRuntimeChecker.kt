@@ -39,6 +39,7 @@ data class VersionedLibrary(val library: Library, val version: String?, val used
 fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
     val pluginVersion = KotlinPluginUtil.getPluginVersion()
     if (KotlinPluginUtil.isSnapshotVersion()) return emptyList() // plugin is run from sources, can't compare versions
+    if (KotlinPluginUtil.isDevVersion()) return emptyList()
     if (project.isDisposed) return emptyList()
 
     // user already clicked suppress

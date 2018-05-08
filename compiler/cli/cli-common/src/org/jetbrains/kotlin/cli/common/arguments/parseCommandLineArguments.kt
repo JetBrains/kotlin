@@ -22,6 +22,7 @@ import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 
+@Target(AnnotationTarget.PROPERTY)
 annotation class Argument(
         val value: String,
         val shortName: String = "",
@@ -62,7 +63,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
     @Suppress("UNCHECKED_CAST")
     val properties = result::class.memberProperties.mapNotNull { property ->
         if (property !is KMutableProperty1<*, *>) return@mapNotNull null
-        val argument = property.findAnnotation<Argument>() ?: return@mapNotNull null
+        val argument = property.annotations.firstOrNull { it is Argument } as Argument? ?: return@mapNotNull null
         ArgumentField(property as KMutableProperty1<A, Any?>, argument)
     }
 

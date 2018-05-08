@@ -22,34 +22,16 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
+/**
+ * Low level abstraction for bounded range that is used to generate contains checks and for loops.
+ */
 class SimpleBoundedValue(
-    codegen: ExpressionCodegen,
-    rangeCall: ResolvedCall<out CallableDescriptor>,
+    instanceType: Type,
     val lowBound: StackValue,
-    isLowInclusive: Boolean,
+    isLowInclusive: Boolean = true,
     val highBound: StackValue,
-    isHighInclusive: Boolean
-) : AbstractBoundedValue(codegen, rangeCall, isLowInclusive, isHighInclusive) {
-    constructor(
-        codegen: ExpressionCodegen,
-        rangeCall: ResolvedCall<out CallableDescriptor>,
-        isLowInclusive: Boolean = true,
-        isHighInclusive: Boolean = true
-    ) : this(
-        codegen,
-        rangeCall,
-        codegen.generateCallReceiver(rangeCall),
-        isLowInclusive,
-        codegen.generateCallSingleArgument(rangeCall),
-        isHighInclusive
-    )
-
-    constructor(
-        codegen: ExpressionCodegen,
-        rangeCall: ResolvedCall<out CallableDescriptor>,
-        lowBound: StackValue,
-        highBound: StackValue
-    ) : this(codegen, rangeCall, lowBound, true, highBound, true)
+    isHighInclusive: Boolean = true
+) : AbstractBoundedValue(instanceType, isLowInclusive, isHighInclusive) {
 
     override fun putHighLow(v: InstructionAdapter, type: Type) {
         if (!lowBound.canHaveSideEffects() || !highBound.canHaveSideEffects()) {

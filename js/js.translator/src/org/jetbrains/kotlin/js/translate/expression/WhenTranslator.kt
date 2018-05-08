@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -52,6 +53,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
     private val type: KotlinType?
     private val uniqueConstants = mutableSetOf<Any>()
     private val uniqueEnumNames = mutableSetOf<String>()
+    private val dataFlowValueFactory: DataFlowValueFactory = DataFlowValueFactoryImpl()
 
     private val isExhaustive: Boolean
         get() {
@@ -124,7 +126,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
         val ktSubject = whenExpression.subjectExpression ?: return null
         val subjectType = bindingContext().getType(ktSubject) ?: return null
 
-        val dataFlow = DataFlowValueFactory.createDataFlowValue(
+        val dataFlow = dataFlowValueFactory.createDataFlowValue(
                 ktSubject, subjectType, bindingContext(), context().declarationDescriptor ?: context().currentModule)
         val languageVersionSettings = context().config.configuration.languageVersionSettings
         val expectedTypes = bindingContext().getDataFlowInfoBefore(ktSubject).getStableTypes(dataFlow, languageVersionSettings) +
@@ -161,7 +163,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
                 lastEntry.statements += JsBreak().apply { source = entry }
                 members
             }
-            Pair(JsSwitch(subjectSupplier(), switchEntries).apply { source = expression }, nextIndex)
+            Pair(JsSwitch(subjectSupplier(), switchEntries).apply { source = whenExpression }, nextIndex)
         }
         else {
             null
@@ -324,10 +326,8 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
         val patternTranslator = Translation.patternTranslator(context)
         return if (expressionToMatch == null) {
             patternTranslator.translateExpressionForExpressionPattern(patternExpression)
-        }
-        else {
-            val type = bindingContext().getType(whenExpression.subjectExpression!!)!!
-            patternTranslator.translateExpressionPattern(type, expressionToMatch, patternExpression)
+        } else {
+            patternTranslator.translateExpressionPattern(whenExpression.subjectExpression!!, expressionToMatch, patternExpression)
         }
     }
 

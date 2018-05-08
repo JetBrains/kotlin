@@ -44,7 +44,7 @@ public class CompanionObjectIntrinsicAccessTranslator extends AbstractTranslator
             @NotNull TranslationContext context
     ) {
         DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
-        return descriptor instanceof ClassDescriptor && context.intrinsics().getObjectIntrinsic((ClassDescriptor) descriptor).exists();
+        return descriptor instanceof ClassDescriptor && context.intrinsics().getObjectIntrinsic((ClassDescriptor) descriptor) != null;
     }
 
     @NotNull

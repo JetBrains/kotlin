@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
@@ -42,7 +43,6 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -132,7 +132,6 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
         }
 
         fun inlineIntoCall(usage: KtReferenceExpression): KtElement? {
-            val context = usage.analyze(BodyResolveMode.PARTIAL)
 
             val importDirective = usage.getStrictParentOfType<KtImportDirective>()
             if (importDirective != null) {
@@ -144,7 +143,7 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
                 return null
             }
 
-            val resolvedCall = usage.getResolvedCall(context) ?: return null
+            val resolvedCall = usage.resolveToCall() ?: return null
             val callElement = resolvedCall.call.callElement as? KtCallElement ?: return null
             val substitution = resolvedCall.typeArguments
                     .mapKeys { it.key.typeConstructor }

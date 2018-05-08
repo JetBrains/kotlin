@@ -20,7 +20,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtClass

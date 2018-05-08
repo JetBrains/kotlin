@@ -44,8 +44,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.isEnumCompanionPropertyWithEntryConflict
+import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
 import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -56,6 +58,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.findPropertyByName
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -91,7 +94,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        val allReferences = super.findReferences(element)
+        val allReferences = super.findReferences(element).filterNot { it is KtDestructuringDeclarationReference }
         val (getterJvmName, setterJvmName) = getJvmNames(element)
         return when {
             getterJvmName == null && setterJvmName == null -> allReferences
@@ -193,11 +196,10 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
 
     override fun findCollisions(
             element: PsiElement,
-            newName: String?,
+            newName: String,
             allRenames: MutableMap<out PsiElement, String>,
             result: MutableList<UsageInfo>
     ) {
-        if (newName == null) return
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration ?: return
         val descriptor = declaration.unsafeResolveToDescriptor() as VariableDescriptor
 
@@ -234,8 +236,8 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
-    override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement? {
-        val namedUnwrappedElement = element?.namedUnwrappedElement ?: return null
+    override fun substituteElementToRename(element: PsiElement, editor: Editor?): PsiElement? {
+        val namedUnwrappedElement = element.namedUnwrappedElement ?: return null
 
         val callableDeclaration = namedUnwrappedElement as? KtCallableDeclaration
                                   ?: throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
@@ -290,7 +292,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         override fun copy() = this
     }
 
-    override fun prepareRenaming(element: PsiElement, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
+    override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         super.prepareRenaming(element, newName, allRenames, scope)
 
         val namedUnwrappedElement = element.namedUnwrappedElement
@@ -300,7 +302,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
         }
 
-        val newPropertyName = if (newName != null && element is KtLightMethod) propertyNameByAccessor(newName, element) else newName
+        val newPropertyName = if (element is KtLightMethod) propertyNameByAccessor(newName, element) else newName
 
         val (getterJvmName, setterJvmName) = getJvmNames(namedUnwrappedElement)
 
@@ -341,18 +343,19 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     }
 
     override tailrec fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
+        val newNameUnquoted = newName.unquote()
         if (element is KtLightMethod) {
             if (element.modifierList.findAnnotation(DescriptorUtils.JVM_NAME.asString()) != null) {
                 return super.renameElement(element, newName, usages, listener)
             }
 
             val origin = element.kotlinOrigin
-            val newPropertyName = propertyNameByAccessor(newName, element)
+            val newPropertyName = propertyNameByAccessor(newNameUnquoted, element)
             // Kotlin references to Kotlin property should not use accessor name
             if (newPropertyName != null && (origin is KtProperty || origin is KtParameter)) {
                 val (ktUsages, otherUsages) = usages.partition { it.reference is KtSimpleNameReference }
                 super.renameElement(element, newName, otherUsages.toTypedArray(), listener)
-                renameElement(origin, newPropertyName, ktUsages.toTypedArray(), listener)
+                renameElement(origin, newPropertyName.quoteIfNeeded(), ktUsages.toTypedArray(), listener)
                 return
             }
         }
@@ -366,7 +369,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
         val oldGetterName = JvmAbi.getterName(name)
         val oldSetterName = JvmAbi.setterName(name)
 
-        if (isEnumCompanionPropertyWithEntryConflict(element, newName)) {
+        if (isEnumCompanionPropertyWithEntryConflict(element, newNameUnquoted)) {
             for ((i, usage) in usages.withIndex()) {
                 if (usage !is MoveRenameUsageInfo) continue
                 val ref = usage.reference ?: continue
@@ -397,11 +400,11 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             }
         }
 
-        super.renameElement(element, JvmAbi.setterName(newName),
+        super.renameElement(element, JvmAbi.setterName(newNameUnquoted).quoteIfNeeded(),
                             refKindUsages[UsageKind.SETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 
-        super.renameElement(element, JvmAbi.getterName(newName),
+        super.renameElement(element, JvmAbi.getterName(newNameUnquoted).quoteIfNeeded(),
                             refKindUsages[UsageKind.GETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 

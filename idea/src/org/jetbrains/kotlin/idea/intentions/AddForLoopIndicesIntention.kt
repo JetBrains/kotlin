@@ -39,7 +39,7 @@ class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(
         if (element.loopParameter == null) return null
         val loopRange = element.loopRange ?: return null
 
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
 
         val resolvedCall = loopRange.getResolvedCall(bindingContext)
         if (resolvedCall?.resultingDescriptor?.fqNameUnsafe?.asString() in WITH_INDEX_FQ_NAMES) return null // already withIndex() call

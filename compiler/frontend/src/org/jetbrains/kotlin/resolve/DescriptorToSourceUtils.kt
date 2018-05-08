@@ -31,6 +31,11 @@ import java.util.*
 
 object DescriptorToSourceUtils {
     private fun collectEffectiveReferencedDescriptors(result: MutableList<DeclarationDescriptor>, descriptor: DeclarationDescriptor) {
+        if (descriptor is DeclarationDescriptorWithNavigationSubstitute) {
+            collectEffectiveReferencedDescriptors(result, descriptor.substitute)
+            return
+        }
+
         if (descriptor is CallableMemberDescriptor) {
             val kind = descriptor.kind
             if (kind != DECLARATION && kind != SYNTHESIZED) {

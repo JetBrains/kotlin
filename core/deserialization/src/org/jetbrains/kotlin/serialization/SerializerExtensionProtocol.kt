@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension
 

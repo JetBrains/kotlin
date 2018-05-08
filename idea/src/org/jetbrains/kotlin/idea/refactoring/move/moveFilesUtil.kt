@@ -82,6 +82,7 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
                         project,
                         elementsToMove as List<KtFile>,
                         selectedDir,
+                        moveDialog?.searchReferences ?: true,
                         false,
                         false,
                         moveCallback,

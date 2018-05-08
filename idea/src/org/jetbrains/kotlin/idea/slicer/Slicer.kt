@@ -41,13 +41,9 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
@@ -65,9 +61,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -140,7 +136,7 @@ abstract class Slicer(
         operator fun get(element: KtElement): Pseudocode? {
             val container = element.containingDeclarationForPseudocode ?: return null
             return computedPseudocodes.getOrPut(container) {
-                container.getContainingPseudocode(container.analyzeFully())?.apply { computedPseudocodes[container] = this } ?: return null
+                container.getContainingPseudocode(container.analyzeWithContent())?.apply { computedPseudocodes[container] = this } ?: return null
             }
         }
     }
@@ -213,7 +209,7 @@ class InflowSlicer(
     }
 
     private fun KtProperty.processProperty() {
-        val bindingContext by lazy { analyzeFully() }
+        val bindingContext by lazy { analyzeWithContent() }
 
         if (hasDelegateExpression()) {
             val getter = (unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter
@@ -259,7 +255,7 @@ class InflowSlicer(
                     .forEach { (it.element?.parent as? KtProperty)?.processPropertyAssignments() }
         }
 
-        val parameterDescriptor = analyze()[BindingContext.VALUE_PARAMETER, this] ?: return
+        val parameterDescriptor = resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
         (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope()) body@ {
             val refElement = it.element ?: return@body
@@ -268,7 +264,7 @@ class InflowSlicer(
             val argumentExpression = when {
                 refElement is KtExpression -> {
                     val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return@body
-                    val resolvedCall = callElement.getResolvedCall(callElement.analyze()) ?: return@body
+                    val resolvedCall = callElement.resolveToCall() ?: return@body
                     val resolvedArgument = resolvedCall.valueArguments[parameterDescriptor] ?: return@body
                     when (resolvedArgument) {
                         is DefaultValueArgument -> defaultValue
@@ -310,7 +306,7 @@ class InflowSlicer(
     private fun KtExpression.isBackingFieldReference(): Boolean {
         return this is KtSimpleNameExpression &&
                getReferencedName() == SyntheticFieldDescriptor.NAME.asString() &&
-               analyze()[BindingContext.REFERENCE_TARGET, this] is SyntheticFieldDescriptor
+               resolveToCall()?.resultingDescriptor is SyntheticFieldDescriptor
     }
 
     private fun KtExpression.processExpression() {

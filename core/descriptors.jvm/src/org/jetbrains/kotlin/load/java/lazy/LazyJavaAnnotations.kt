@@ -36,9 +36,6 @@ class LazyJavaAnnotations(
             annotationOwner.findAnnotation(fqName)?.let(annotationDescriptors)
             ?: JavaAnnotationMapper.findMappedJavaAnnotation(fqName, annotationOwner, c)
 
-    override fun findExternalAnnotation(fqName: FqName) =
-            c.components.externalAnnotationResolver.findExternalAnnotation(annotationOwner, fqName)?.let(annotationDescriptors)
-
     override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
 
     override fun getAllAnnotations() = this.map { AnnotationWithTarget(it, null) }

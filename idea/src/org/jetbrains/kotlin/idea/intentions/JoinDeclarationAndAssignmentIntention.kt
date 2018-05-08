@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReferenceService
 import com.intellij.psi.util.PsiTreeUtil
@@ -36,13 +37,13 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 class JoinDeclarationAndAssignmentInspection : IntentionBasedInspection<KtProperty>(
-        JoinDeclarationAndAssignmentIntention::class,
-        "Can be joined with assignment"
+    JoinDeclarationAndAssignmentIntention::class,
+    "Can be joined with assignment"
 )
 
-class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentIntention<KtProperty>(
-        KtProperty::class.java,
-        "Join declaration and assignment"
+class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProperty>(
+    KtProperty::class.java,
+    "Join declaration and assignment"
 ) {
 
     private fun equalNullableTypes(type1: KotlinType?, type2: KotlinType?): Boolean {
@@ -51,24 +52,25 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
         return TypeUtils.equalTypes(type1, type2)
     }
 
-    override fun isApplicableTo(element: KtProperty): Boolean {
+    override fun applicabilityRange(element: KtProperty): TextRange? {
         if (element.hasDelegate()
             || element.hasInitializer()
             || element.setter != null
             || element.getter != null
             || element.receiverTypeReference != null
             || element.name == null) {
-            return false
+            return null
         }
 
-        val assignment = findAssignment(element) ?: return false
-        return assignment.right?.let {
-            hasNoLocalDependencies(it, element.parent) &&
-            assignment.analyze().let { context ->
-                (element.isVar && !element.isLocal) ||
-                equalNullableTypes(it.getType(context), context[BindingContext.TYPE, element.typeReference])
-            }
-        } ?: false
+        val assignment = findAssignment(element) ?: return null
+        if (assignment.right?.let {
+                hasNoLocalDependencies(it, element.parent) && assignment.analyze().let { context ->
+                    (element.isVar && !element.isLocal) ||
+                            equalNullableTypes(it.getType(context), context[BindingContext.TYPE, element.typeReference])
+                }
+            } != true) return null
+
+        return TextRange((element.modifierList ?: element.valOrVarKeyword).startOffset, (element.typeReference ?: element).endOffset)
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
@@ -93,8 +95,7 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
                 val colon = element.colon!!
                 selectionModel.setSelection(colon.startOffset, typeReference.endOffset)
                 moveCaret(typeReference.endOffset, ScrollType.CENTER)
-            }
-            else {
+            } else {
                 moveCaret(newInitializer.startOffset, ScrollType.CENTER)
             }
         }
@@ -161,6 +162,6 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
 
 private fun PsiElement.resolveAllReferences(): Sequence<PsiElement?> {
     return PsiReferenceService.getService().getReferences(this, PsiReferenceService.Hints.NO_HINTS)
-            .asSequence()
-            .map { it.resolve() }
+        .asSequence()
+        .map { it.resolve() }
 }

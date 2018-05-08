@@ -7,6 +7,16 @@ import org.gradle.api.publish.ivy.internal.publication.DefaultIvyPublicationIden
 import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
 import java.io.File
 import org.gradle.internal.os.OperatingSystem
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
+    }
+}
 
 val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijRepo: String by rootProject.extra
@@ -17,6 +27,13 @@ val androidStudioBuild = rootProject.findProperty("versions.androidStudioBuild")
 val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
 val installIntellijUltimate = intellijUltimateEnabled
+
+val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
+if (intellijVersionDelimiterIndex == -1) {
+    error("Invalid IDEA version $intellijVersion")
+}
+
+val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
 
 logger.info("intellijUltimateEnabled: $intellijUltimateEnabled")
 
@@ -48,11 +65,15 @@ repositories {
     }
     maven { setUrl("$intellijRepo/$intellijReleaseType") }
     maven { setUrl("https://plugins.jetbrains.com/maven") }
+    ivy {
+        artifactPattern("https://raw.github.com/JetBrains/intellij-community/[revision]/lib/src/[artifact].zip")
+    }
 }
 
 val intellij by configurations.creating
 val intellijUltimate by configurations.creating
 val sources by configurations.creating
+val `asm-shaded-sources` by configurations.creating
 val `jps-standalone` by configurations.creating
 val `jps-build-test` by configurations.creating
 val `intellij-core` by configurations.creating
@@ -76,6 +97,12 @@ dependencies {
         }
     }
     sources("com.jetbrains.intellij.idea:ideaIC:$intellijVersion:sources@jar")
+    if (platformBaseVersion == "182") {
+        // There is no asm sources for 182 yet
+        `asm-shaded-sources`("asmsources:asm-src:181@zip")
+    } else {
+        `asm-shaded-sources`("asmsources:asm-src:$platformBaseVersion@zip")
+    }
     `jps-standalone`("com.jetbrains.intellij.idea:jps-standalone:$intellijVersion")
     `jps-build-test`("com.jetbrains.intellij.idea:jps-build-test:$intellijVersion")
     `intellij-core`("com.jetbrains.intellij.idea:intellij-core:$intellijVersion")
@@ -115,7 +142,7 @@ fun removePathPrefix(path: String): String {
 val unzipIntellijSdk by tasks.creating {
     configureExtractFromConfigurationTask(intellij, pathRemap = { removePathPrefix(it) }) {
         zipTree(it.singleFile).matching {
-            exclude("plugins/Kotlin/**")
+            exclude("**/plugins/Kotlin/**")
         }
     }
 }
@@ -132,8 +159,19 @@ val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(
 
 val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
-val copyIntellijSdkSources by tasks.creating {
-    configureExtractFromConfigurationTask(sources) { it.singleFile }
+val copyAsmShadedSources by tasks.creating(Copy::class.java) {
+    from(`asm-shaded-sources`)
+    rename(".zip", ".jar")
+    destinationDir = File(repoDir, `asm-shaded-sources`.name)
+}
+
+val copyIntellijSdkSources by tasks.creating(ShadowJar::class.java) {
+    from(copyAsmShadedSources)
+    from(sources)
+    baseName = "ideaIC"
+    version = intellijVersion
+    classifier = "sources"
+    destinationDir = File(repoDir, sources.name)
 }
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }
@@ -159,7 +197,7 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
 }
 
 val prepareIvyXmls by tasks.creating {
-    dependsOn(unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest)
+    dependsOn(unzipIntellijCore, unzipJpsStandalone, copyIntellijSdkSources, copyJpsBuildTest, copyAsmShadedSources)
 
     val intellijSdkDir = File(repoDir, intellij.name)
     val intellijUltimateSdkDir = File(repoDir, intellijUltimate.name)
@@ -176,7 +214,7 @@ val prepareIvyXmls by tasks.creating {
         outputs.file(File(repoDir, "${intellijUltimate.name}.ivy.xml"))
     }
 
-    val flatDeps = listOf(`intellij-core`, `jps-standalone`, `jps-build-test`)
+    val flatDeps = listOf(`intellij-core`, `jps-standalone`, `jps-build-test`, `asm-shaded-sources`)
     flatDeps.forEach {
         inputs.dir(File(repoDir, it.name))
         outputs.file(File(repoDir, "${it.name}.ivy.xml"))
@@ -193,9 +231,13 @@ val prepareIvyXmls by tasks.creating {
         val sourcesFile = if (sources.isEmpty) null else File(repoDir, "${sources.name}/${sources.singleFile.name}")
 
         if (installIntellijCommunity) {
-            writeIvyXml(intellij.name, intellij.name,
-                        files("$intellijSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
-                        File(intellijSdkDir, "lib"),
+            val libDir = File(intellijSdkDir, "lib")
+            writeIvyXml(intellij.name,
+                        intellij.name,
+                        fileTree(libDir).filter {
+                            it.parentFile == libDir && !it.name.startsWith("kotlin-")
+                        },
+                        libDir,
                         sourcesFile)
 
             File(intellijSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {
@@ -204,9 +246,13 @@ val prepareIvyXmls by tasks.creating {
         }
 
         if (installIntellijUltimate) {
-            writeIvyXml(intellij.name /* important! the module name should be "intellij" */ , intellijUltimate.name,
-                        files("$intellijUltimateSdkDir/lib/").filter { !it.name.startsWith("kotlin-") },
-                        File(intellijUltimateSdkDir, "lib"),
+            val libDir = File(intellijUltimateSdkDir, "lib")
+            writeIvyXml(intellij.name, // important! the module name should be "intellij"
+                        intellijUltimate.name,
+                        fileTree(libDir).filter {
+                            it.parentFile == libDir && !it.name.startsWith("kotlin-")
+                        },
+                        libDir,
                         sourcesFile)
 
             File(intellijUltimateSdkDir, "plugins").listFiles { it: File -> it.isDirectory }.forEach {

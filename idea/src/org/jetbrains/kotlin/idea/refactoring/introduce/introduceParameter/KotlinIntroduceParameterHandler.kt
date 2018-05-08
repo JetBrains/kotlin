@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
@@ -57,7 +58,6 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -441,8 +441,7 @@ private fun findInternalUsagesOfParametersAndReceiver(
                     override fun visitKtElement(element: KtElement) {
                         super.visitKtElement(element)
 
-                        val bindingContext = element.analyze()
-                        val resolvedCall = element.getResolvedCall(bindingContext) ?: return
+                        val resolvedCall = element.resolveToCall() ?: return
 
                         if ((resolvedCall.extensionReceiver as? ImplicitReceiver)?.declarationDescriptor == targetDescriptor ||
                             (resolvedCall.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor == targetDescriptor) {

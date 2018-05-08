@@ -3,20 +3,22 @@ UFile (package = )
         UAnnotationMethod (name = foo)
             UParameter (name = bar)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
-            USwitchExpression
-                USimpleNameReferenceExpression (identifier = bar)
-                UExpressionList (when)
-                    USwitchClauseExpressionWithBody
-                        UBinaryExpressionWithType
-                            USimpleNameReferenceExpression (identifier = it)
-                            UTypeReferenceExpression (name = java.lang.String)
-                        UExpressionList (when_entry)
-                            USimpleNameReferenceExpression (identifier = bar)
-                            UBreakExpression (label = null)
-                    USwitchClauseExpressionWithBody
-                        UBinaryExpressionWithType
-                            USimpleNameReferenceExpression (identifier = it)
-                            UTypeReferenceExpression (name = java.lang.String)
-                        UExpressionList (when_entry)
-                            ULiteralExpression (value = "<error>")
-                            UBreakExpression (label = null)
+            UBlockExpression
+                UReturnExpression
+                    USwitchExpression
+                        USimpleNameReferenceExpression (identifier = bar)
+                        UExpressionList (when)
+                            USwitchClauseExpressionWithBody
+                                UBinaryExpressionWithType
+                                    USimpleNameReferenceExpression (identifier = it)
+                                    UTypeReferenceExpression (name = java.lang.String)
+                                UExpressionList (when_entry)
+                                    USimpleNameReferenceExpression (identifier = bar)
+                                    UBreakExpression (label = null)
+                            USwitchClauseExpressionWithBody
+                                UBinaryExpressionWithType
+                                    USimpleNameReferenceExpression (identifier = it)
+                                    UTypeReferenceExpression (name = java.lang.String)
+                                UExpressionList (when_entry)
+                                    ULiteralExpression (value = "<error>")
+                                    UBreakExpression (label = null)

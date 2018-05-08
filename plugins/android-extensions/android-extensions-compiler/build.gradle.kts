@@ -1,7 +1,10 @@
 
 description = "Kotlin Android Extensions Compiler"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 val robolectricClasspath by configurations.creating
 
@@ -29,6 +32,9 @@ dependencies {
     testRuntime(intellijPluginDep("junit")) { includeJars("idea-junit", "resources_en") }
 
     robolectricClasspath(commonDep("org.robolectric", "robolectric"))
+    robolectricClasspath(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
+
+    embeddedComponents(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 }
 
 sourceSets {
@@ -37,7 +43,7 @@ sourceSets {
 }
 
 runtimeJar {
-    from(getSourceSetsFrom(":kotlin-android-extensions-runtime")["main"].output.classesDirs)
+    fromEmbeddedComponents()
 }
 
 dist()

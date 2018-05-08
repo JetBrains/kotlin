@@ -17,29 +17,17 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.canDropBraces
+import org.jetbrains.kotlin.idea.core.dropBraces
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
-import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
 
 class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention::class)
 
 class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBlockStringTemplateEntry>(KtBlockStringTemplateEntry::class.java, "Remove curly braces") {
-    override fun isApplicableTo(element: KtBlockStringTemplateEntry): Boolean {
-        if (element.expression !is KtNameReferenceExpression) return false
-        return canPlaceAfterSimpleNameEntry(element.nextSibling)
-    }
+    override fun isApplicableTo(element: KtBlockStringTemplateEntry) = element.canDropBraces()
 
     override fun applyTo(element: KtBlockStringTemplateEntry, editor: Editor?) {
-        applyTo(element)
-    }
-
-    fun applyTo(element: KtBlockStringTemplateEntry): KtSimpleNameStringTemplateEntry {
-        val name = (element.expression as KtNameReferenceExpression).getReferencedName()
-        val newEntry = KtPsiFactory(element).createSimpleNameStringTemplateEntry(name)
-        return element.replaced(newEntry)
+        element.dropBraces()
     }
 }

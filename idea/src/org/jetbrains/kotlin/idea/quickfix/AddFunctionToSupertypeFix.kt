@@ -143,7 +143,7 @@ class AddFunctionToSupertypeFix private constructor(
                         functionDescriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "Unit",
                         classDescriptor.importableFqName
                     )
-                    "{ $bodyText }"
+                    "{\n$bodyText\n}"
                 } else {
                     "{}"
                 }
@@ -158,8 +158,7 @@ class AddFunctionToSupertypeFix private constructor(
         }
 
         private fun generateFunctionsToAdd(functionElement: KtNamedFunction): List<FunctionDescriptor> {
-            val functionDescriptor = functionElement.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor
-                    ?: return emptyList()
+            val functionDescriptor = functionElement.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return emptyList()
 
             val containingClass = functionDescriptor.containingDeclaration as? ClassDescriptor ?: return emptyList()
 

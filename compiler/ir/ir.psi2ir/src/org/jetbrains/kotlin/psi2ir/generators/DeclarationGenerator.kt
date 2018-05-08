@@ -68,22 +68,72 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     fun generateClassOrObjectDeclaration(ktClassOrObject: KtClassOrObject): IrClass =
         ClassGenerator(this).generateClass(ktClassOrObject)
 
-    fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
+    private fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
         IrTypeAliasImpl(
             ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
             getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration)
         )
 
 
-    fun generateTypeParameterDeclarations(
+    fun generateGlobalTypeParametersDeclarations(
         irTypeParametersOwner: IrTypeParametersContainer,
         from: List<TypeParameterDescriptor>
     ) {
-        from.mapTo(irTypeParametersOwner.typeParameters) { typeParameterDescriptor ->
+        generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
+            context.symbolTable.declareGlobalTypeParameter(
+                startOffset,
+                endOffset,
+                IrDeclarationOrigin.DEFINED,
+                typeParameterDescriptor
+            )
+        }
+    }
+
+    fun generateScopedTypeParameterDeclarations(
+        irTypeParametersOwner: IrTypeParametersContainer,
+        from: List<TypeParameterDescriptor>
+    ) {
+        generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
+            context.symbolTable.declareScopedTypeParameter(
+                startOffset,
+                endOffset,
+                IrDeclarationOrigin.DEFINED,
+                typeParameterDescriptor
+            )
+        }
+    }
+
+    private fun generateTypeParameterDeclarations(
+        irTypeParametersOwner: IrTypeParametersContainer,
+        from: List<TypeParameterDescriptor>,
+        declareTypeParameter: (Int, Int, TypeParameterDescriptor) -> IrTypeParameter
+    ) {
+        val irTypeParameters = from.map { typeParameterDescriptor ->
             val ktTypeParameterDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor)
             val startOffset = ktTypeParameterDeclaration.startOffsetOrUndefined
             val endOffset = ktTypeParameterDeclaration.endOffsetOrUndefined
-            context.symbolTable.declareTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
+            declareTypeParameter(
+                startOffset,
+                endOffset,
+                typeParameterDescriptor
+            )
+        }
+
+        irTypeParameters.forEach {
+            mapSuperClassifiers(it.descriptor, it)
+        }
+
+        irTypeParametersOwner.typeParameters.addAll(irTypeParameters)
+    }
+
+    private fun mapSuperClassifiers(
+        descriptor: TypeParameterDescriptor,
+        irTypeParameter: IrTypeParameter
+    ) {
+        descriptor.typeConstructor.supertypes.mapNotNullTo(irTypeParameter.superClassifiers) {
+            it.constructor.declarationDescriptor?.let {
+                context.symbolTable.referenceClassifier(it)
+            }
         }
     }
 

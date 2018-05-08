@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.*
@@ -54,7 +55,6 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -210,8 +210,7 @@ private fun getInlineArgumentsCallsIfAny(sourcePosition: SourcePosition, declara
     }
 
     fun isCallOfArgument(ktCallExpression: KtCallExpression): Boolean {
-        val context = ktCallExpression.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = ktCallExpression.getResolvedCall(context) as? VariableAsFunctionResolvedCallImpl ?: return false
+        val resolvedCall = ktCallExpression.resolveToCall() as? VariableAsFunctionResolvedCallImpl ?: return false
 
         val candidateDescriptor = resolvedCall.variableCall.candidateDescriptor
 
@@ -223,8 +222,7 @@ private fun getInlineArgumentsCallsIfAny(sourcePosition: SourcePosition, declara
 
 private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<KtCallExpression> {
     fun isInlineCall(expr: KtCallExpression): Boolean {
-        val context = expr.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = expr.getResolvedCall(context) ?: return false
+        val resolvedCall = expr.resolveToCall() ?: return false
         return InlineUtil.isInline(resolvedCall.resultingDescriptor)
     }
 

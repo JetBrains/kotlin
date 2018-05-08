@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.run
@@ -23,6 +12,7 @@ import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.junit.*
 import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
@@ -31,11 +21,13 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
@@ -43,8 +35,10 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         return other.isProducedBy(JUnitConfigurationProducer::class.java) || other.isProducedBy(PatternConfigurationProducer::class.java)
     }
 
-    override fun isConfigurationFromContext(configuration: JUnitConfiguration,
-                                            context: ConfigurationContext): Boolean {
+    override fun isConfigurationFromContext(
+        configuration: JUnitConfiguration,
+        context: ConfigurationContext
+    ): Boolean {
         if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
             return false
         }
@@ -74,9 +68,11 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         return configurationModule == context.location?.module || configurationModule == predefinedModule
     }
 
-    override fun setupConfigurationFromContext(configuration: JUnitConfiguration,
-                                               context: ConfigurationContext,
-                                               sourceElement: Ref<PsiElement>): Boolean {
+    override fun setupConfigurationFromContext(
+        configuration: JUnitConfiguration,
+        context: ConfigurationContext,
+        sourceElement: Ref<PsiElement>
+    ): Boolean {
         if (DumbService.getInstance(context.project).isDumb) return false
 
         val location = context.location ?: return false
@@ -92,7 +88,8 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
 
         val ktFile = leaf.containingFile as KtFile
 
-        if (TargetPlatformDetector.getPlatform(ktFile) != JvmPlatform) {
+        val targetPlatform = TargetPlatformDetector.getPlatform(ktFile)
+        if (targetPlatform != JvmPlatform && targetPlatform != TargetPlatform.Common) {
             return false
         }
 
@@ -102,6 +99,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
             configuration.beMethodConfiguration(methodLocation)
             configuration.restoreOriginalModule(originalModule)
             JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
+            fixJdkForCommonModule(ktFile, configuration)
             return true
         }
 
@@ -111,10 +109,20 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
             configuration.beClassConfiguration(testClass)
             configuration.restoreOriginalModule(originalModule)
             JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
+            fixJdkForCommonModule(ktFile, configuration)
             return true
         }
 
         return false
+    }
+
+    private fun fixJdkForCommonModule(ktFile: KtFile, configuration: JUnitConfiguration) {
+        val implModule = ktFile.module?.findJvmImplementationModule() ?: return
+        val sdk = ModuleRootManager.getInstance(implModule).sdk
+        if (sdk != null) {
+            configuration.isAlternativeJrePathEnabled = true
+            configuration.alternativeJrePath = sdk.homePath
+        }
     }
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
@@ -131,14 +139,14 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
             }
             // TODO: use TestClassConfigurationProducer when constructor becomes public
             return object : AbstractTestClassConfigurationProducer(JUnitConfigurationType.getInstance()){}
-                    .onFirstRun(fromContextSubstitute, context, performRunnable)
+                .onFirstRun(fromContextSubstitute, context, performRunnable)
         }
 
         super.onFirstRun(fromContext, context, performRunnable)
     }
 
     companion object {
-         fun getTestClass(leaf: PsiElement): PsiClass? {
+        fun getTestClass(leaf: PsiElement): PsiClass? {
             val containingFile = leaf.containingFile as? KtFile ?: return null
             var ktClass = leaf.getParentOfType<KtClass>(false)
             if (!ktClass.isJUnitTestClass()) {
@@ -163,9 +171,9 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         }
 
         private fun KtClass?.isJUnitTestClass() =
-                this?.toLightClass()?.let { JUnitUtil.isTestClass(it, false, true) } ?: false
+            this?.toLightClass()?.let { JUnitUtil.isTestClass(it, false, true) } ?: false
 
         private fun getTestClassInFile(ktFile: KtFile) =
-                ktFile.declarations.filterIsInstance<KtClass>().singleOrNull { it.isJUnitTestClass() }
+            ktFile.declarations.filterIsInstance<KtClass>().singleOrNull { it.isJUnitTestClass() }
     }
 }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String path) throws Exception {
@@ -68,25 +69,32 @@ public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsigh
             }
             String expectedInfo = expectedInfoBuilder.toString();
 
+            String cleanedInfo = info == null ? "" : StringUtil.join(
+                    StringUtil.split(info, "\n", false)
+                            .stream()
+                            .map(s -> StringUtil.isEmptyOrSpaces(s) ? "\n" : s)
+                            .collect(Collectors.toList()),
+                    "");
+
             if (expectedInfo.endsWith("...\n")) {
-                if (!info.startsWith(StringUtil.trimEnd(expectedInfo, "...\n"))) {
-                    wrapToFileComparisonFailure(info, path, textData);
+                if (!cleanedInfo.startsWith(StringUtil.trimEnd(expectedInfo, "...\n"))) {
+                    wrapToFileComparisonFailure(cleanedInfo, path, textData);
                 }
             }
-            else if (!expectedInfo.equals(info)) {
-                wrapToFileComparisonFailure(info, path, textData);
+            else if (!expectedInfo.equals(cleanedInfo)) {
+                wrapToFileComparisonFailure(cleanedInfo, path, textData);
             }
         }
     }
 
     public static void wrapToFileComparisonFailure(String info, String filePath, String fileData) {
-        List<String> infoLines = StringUtil.split(info, "\n");
+        List<String> infoLines = StringUtil.split(info, "\n", false);
         StringBuilder infoBuilder = new StringBuilder();
         for (String line : infoLines) {
-            infoBuilder.append("//INFO: ").append(line).append("\n");
+            infoBuilder.append("//INFO: ").append(line);
         }
 
-        String correctedFileText = fileData.replaceAll("//\\s?INFO: .*\n?", "") + infoBuilder.toString();
+        String correctedFileText = fileData.replaceAll("//\\s?INFO:\\s?.*\n?", "") + infoBuilder.toString();
         throw new FileComparisonFailure("Unexpected info", fileData, correctedFileText, new File(filePath).getAbsolutePath());
     }
 

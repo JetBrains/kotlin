@@ -48,7 +48,8 @@ class LocalVariableResolver(
     private val annotationResolver: AnnotationResolver,
     private val variableTypeAndInitializerResolver: VariableTypeAndInitializerResolver,
     private val delegatedPropertyResolver: DelegatedPropertyResolver,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val dataFlowValueFactory: DataFlowValueFactory
 ) {
 
     fun process(
@@ -108,7 +109,7 @@ class LocalVariableResolver(
             val dataFlowInfo = typeInfo.dataFlowInfo
             val type = typeInfo.type
             if (type != null) {
-                val initializerDataFlowValue = DataFlowValueFactory.createDataFlowValue(initializer, type, context)
+                val initializerDataFlowValue = dataFlowValueFactory.createDataFlowValue(initializer, type, context)
                 if (!propertyDescriptor.isVar && initializerDataFlowValue.canBeBound) {
                     context.trace.record(BindingContext.BOUND_INITIALIZER_VALUE, propertyDescriptor, initializerDataFlowValue)
                 }
@@ -116,7 +117,7 @@ class LocalVariableResolver(
                 // We can comment this condition to take them into account, like here: var s: String? = "xyz"
                 // In this case s will be not-nullable until it is changed
                 if (property.typeReference == null) {
-                    val variableDataFlowValue = DataFlowValueFactory.createDataFlowValueForProperty(
+                    val variableDataFlowValue = dataFlowValueFactory.createDataFlowValueForProperty(
                         property, propertyDescriptor, context.trace.bindingContext,
                         DescriptorUtils.getContainingModuleOrNull(scope.ownerDescriptor)
                     )

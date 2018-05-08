@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1251
 // DECLARES_VARIABLE: function=doResume name=k
 // PROPERTY_READ_COUNT: name=local$o count=1

@@ -269,7 +269,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 targetPlatform = targetPlatform,
                 resultDifferenceFile = environment.buildHistoryFile,
                 friendDifferenceFile = environment.friendBuildHistoryFile,
-                usePreciseJavaTracking = environment.usePreciseJavaTracking
+                usePreciseJavaTracking = environment.usePreciseJavaTracking,
+                localStateDirs = environment.localStateDirs
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")

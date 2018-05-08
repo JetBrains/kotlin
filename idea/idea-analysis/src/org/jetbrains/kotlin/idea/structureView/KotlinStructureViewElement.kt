@@ -34,21 +34,23 @@ import javax.swing.Icon
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class KotlinStructureViewElement(val element: NavigatablePsiElement,
-                                 private val isInherited: Boolean = false) : PsiTreeElementBase<NavigatablePsiElement>(element), Queryable {
+class KotlinStructureViewElement(
+    element: NavigatablePsiElement,
+    private val isInherited: Boolean = false
+) : PsiTreeElementBase<NavigatablePsiElement>(element), Queryable {
 
     private var kotlinPresentation
-        by AssignableLazyProperty {
-            KotlinStructureElementPresentation(isInherited, element, countDescriptor())
-        }
+            by AssignableLazyProperty {
+                KotlinStructureElementPresentation(isInherited, element, countDescriptor())
+            }
 
     var isPublic
-        by AssignableLazyProperty {
-            isPublic(countDescriptor())
-        }
+            by AssignableLazyProperty {
+                isPublic(countDescriptor())
+            }
         private set
 
-    constructor(element: NavigatablePsiElement, descriptor: DeclarationDescriptor, isInherited: Boolean) : this(element, isInherited){
+    constructor(element: NavigatablePsiElement, descriptor: DeclarationDescriptor, isInherited: Boolean) : this(element, isInherited) {
         if (element !is KtElement) {
             // Avoid storing descriptor in fields
             kotlinPresentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
@@ -72,6 +74,8 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
     }
 
     override fun getChildrenBase(): Collection<StructureViewTreeElement> {
+        val element = element
+
         val children = when (element) {
             is KtFile -> element.declarations
             is KtClass -> element.getStructureDeclarations()
@@ -100,16 +104,20 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
     }
 
     private fun isPublic(descriptor: DeclarationDescriptor?) =
-            (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
+        (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
 
-    private fun countDescriptor(): DeclarationDescriptor? = when {
-        !element.isValid -> null
-        element !is KtDeclaration -> null
-        element is KtAnonymousInitializer -> null
-        else -> runReadAction {
-            if (!DumbService.isDumb(element.getProject())) {
-                element.resolveToDescriptorIfAny()
-            } else null
+    private fun countDescriptor(): DeclarationDescriptor? {
+        val element = element
+        return when {
+            element == null -> null
+            !element.isValid -> null
+            element !is KtDeclaration -> null
+            element is KtAnonymousInitializer -> null
+            else -> runReadAction {
+                if (!DumbService.isDumb(element.getProject())) {
+                    element.resolveToDescriptorIfAny()
+                } else null
+            }
         }
     }
 }
@@ -127,7 +135,7 @@ private class AssignableLazyProperty<in R, T : Any>(val init: () -> T) : ReadWri
 }
 
 fun KtClassOrObject.getStructureDeclarations() =
-        (primaryConstructor?.let { listOf(it) } ?: emptyList()) +
-        primaryConstructorParameters.filter { it.hasValOrVar() } +
-        declarations
+    (primaryConstructor?.let { listOf(it) } ?: emptyList()) +
+            primaryConstructorParameters.filter { it.hasValOrVar() } +
+            declarations
 

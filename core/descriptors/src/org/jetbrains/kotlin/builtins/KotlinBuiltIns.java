@@ -391,6 +391,15 @@ public abstract class KotlinBuiltIns {
         return packageFragments.invoke().builtInsPackageFragment;
     }
 
+    /**
+     * Checks if the given descriptor is declared in the deserialized built-in package fragment, i.e. if it was loaded as a part of
+     * loading .kotlin_builtins definition files.
+     *
+     * NOTE: this method returns false for descriptors loaded from .class files or other binaries, even if they are "built-in" in some
+     * other sense! For example, it returns false for the class descriptor of `kotlin.IntRange` loaded from `kotlin/IntRange.class`.
+     * In case you need to check if the class is "built-in" in another sense, you should probably do it by inspecting its FQ name,
+     * or the FQ name of its containing package.
+     */
     public static boolean isBuiltIn(@NotNull DeclarationDescriptor descriptor) {
         return DescriptorUtils.getParentOfType(descriptor, BuiltInsPackageFragment.class, false) != null;
     }
@@ -946,6 +955,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._long);
     }
 
+    public static boolean isLongOrNullableLong(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES._long);
+    }
+
     public static boolean isShort(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._short);
     }
@@ -972,12 +985,12 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNothing(@NotNull KotlinType type) {
         return isNothingOrNullableNothing(type)
-               && !type.isMarkedNullable();
+               && !TypeUtils.isNullableType(type);
     }
 
     public static boolean isNullableNothing(@NotNull KotlinType type) {
         return isNothingOrNullableNothing(type)
-               && type.isMarkedNullable();
+               && TypeUtils.isNullableType(type);
     }
 
     public static boolean isNothingOrNullableNothing(@NotNull KotlinType type) {

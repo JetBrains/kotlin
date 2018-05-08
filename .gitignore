@@ -29,7 +29,10 @@ build/
 !**/testData/**/*.iml
 .idea/libraries/Gradle*.xml
 .idea/libraries/Maven*.xml
+.idea/artifacts
 .idea/modules
+.idea/runConfigurations/JPS_*.xml
+.idea/libraries
 .idea/modules.xml
 .idea/gradle.xml
 .idea/compiler.xml

@@ -16,15 +16,21 @@
 
 package org.jetbrains.kotlin.idea.run;
 
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.CommonJavaRunConfigurationParameters;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
 import com.intellij.execution.junit.InheritorChooser;
 import com.intellij.execution.junit2.info.MethodLocation;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
@@ -41,6 +47,7 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector;
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 
 import java.util.List;
 
@@ -50,6 +57,44 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
     @Override
     public boolean shouldReplace(ConfigurationFromContext self, ConfigurationFromContext other) {
         return other.isProducedBy(TestNGConfigurationProducer.class);
+    }
+
+    @Override
+    public boolean isConfigurationFromContext(TestNGConfiguration configuration, ConfigurationContext context) {
+        if (isMultipleElementsSelected(context)) {
+            return false;
+        }
+        final RunConfiguration predefinedConfiguration = context.getOriginalConfiguration(getConfigurationType());
+        final Location contextLocation = context.getLocation();
+        if (contextLocation == null) {
+            return false;
+        }
+        Location location = JavaExecutionUtil.stepIntoSingleClass(contextLocation);
+        if (location == null) {
+            return false;
+        }
+        final PsiElement element = location.getPsiElement();
+
+        RunnerAndConfigurationSettings template =
+                RunManager.getInstance(location.getProject()).getConfigurationTemplate(getConfigurationFactory());
+        final Module predefinedModule = ((TestNGConfiguration) template.getConfiguration()).getConfigurationModule().getModule();
+        final String vmParameters =
+                predefinedConfiguration instanceof CommonJavaRunConfigurationParameters
+                ? ((CommonJavaRunConfigurationParameters) predefinedConfiguration).getVMParameters()
+                : null;
+        if (vmParameters != null && !Comparing.strEqual(vmParameters, configuration.getVMParameters())) return false;
+        if (differentParamSet(configuration, contextLocation)) return false;
+
+        KtNamedDeclaration declarationToRun = getDeclarationToRun(element);
+        if (declarationToRun == null) return false;
+        PsiNamedElement lightElement = CollectionsKt.firstOrNull(LightClassUtilsKt.toLightElements(declarationToRun));
+        if (lightElement != null && configuration.isConfiguredByElement(lightElement)) {
+            final Module configurationModule = configuration.getConfigurationModule().getModule();
+            if (Comparing.equal(location.getModule(), configurationModule)) return true;
+            if (Comparing.equal(predefinedModule, configurationModule)) return true;
+        }
+
+        return false;
     }
 
     @Override

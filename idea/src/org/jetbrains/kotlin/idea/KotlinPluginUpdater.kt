@@ -162,7 +162,8 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         val currentVersion = KotlinPluginUtil.getPluginVersion()
         val os = URLEncoder.encode(SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION, CharsetToolkit.UTF8)
         val uid = PermanentInstallationID.get()
-        val url = "https://plugins.jetbrains.com/plugins/list?pluginId=6954&build=$buildNumber&pluginVersion=$currentVersion&os=$os&uuid=$uid"
+        val pluginId = KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString
+        val url = "https://plugins.jetbrains.com/plugins/list?pluginId=$pluginId&build=$buildNumber&pluginVersion=$currentVersion&os=$os&uuid=$uid"
         val responseDoc = HttpRequests.request(url).connect {
             JDOMUtil.load(it.inputStream)
         }
@@ -220,18 +221,21 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         notification.notify(null)
     }
 
-    fun installPluginUpdate(update: PluginUpdateStatus.Update,
-                            cancelCallback: () -> Unit = {}) {
+    fun installPluginUpdate(
+        update: PluginUpdateStatus.Update,
+        successCallback: () -> Unit = {}, cancelCallback: () -> Unit = {}, errorCallback: () -> Unit = {}
+    ) {
         val descriptor = update.pluginDescriptor
         val pluginDownloader = PluginDownloader.createDownloader(descriptor, update.hostToInstallFrom, null)
-        ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Downloading plugins", true) {
+        ProgressManager.getInstance().run(object : Task.Backgroundable(
+            null, "Downloading plugins", true, PluginManagerUISettings.getInstance()
+        ) {
             override fun run(indicator: ProgressIndicator) {
                 var installed = false
                 var message: String? = null
                 val prepareResult = try {
                     pluginDownloader.prepareToInstall(indicator)
-                }
-                catch (e: IOException) {
+                } catch (e: IOException) {
                     LOG.info(e)
                     message = e.message
                     false
@@ -249,8 +253,13 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                     }
                 }
 
-                if (!installed) {
-                    notifyNotInstalled(message)
+                ApplicationManager.getApplication().invokeLater {
+                    if (!installed) {
+                        errorCallback()
+                        notifyNotInstalled(message)
+                    } else {
+                        successCallback()
+                    }
                 }
             }
 
@@ -262,20 +271,18 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
 
     private fun notifyNotInstalled(message: String?) {
         val fullMessage = message?.let { ": $it" } ?: ""
-        ApplicationManager.getApplication().invokeLater {
-            val notification = notificationGroup.createNotification(
-                    "Kotlin",
-                    "Plugin update was not installed$fullMessage. <a href=\"#\">See the log for more information</a>",
-                    NotificationType.INFORMATION) { notification, event ->
+        val notification = notificationGroup.createNotification(
+            "Kotlin",
+            "Plugin update was not installed$fullMessage. <a href=\"#\">See the log for more information</a>",
+            NotificationType.INFORMATION
+        ) { notification, _ ->
+            val logFile = File(PathManager.getLogPath(), "idea.log")
+            ShowFilePathAction.openFile(logFile)
 
-                val logFile = File(PathManager.getLogPath(), "idea.log")
-                ShowFilePathAction.openFile(logFile)
-
-                notification.expire()
-            }
-
-            notification.notify(null)
+            notification.expire()
         }
+
+        notification.notify(null)
     }
 
     override fun dispose() {

@@ -1,10 +1,8 @@
 <html>
 <body>
-Reports recursive equals calls.
+This inspection reports recursive <b>equals</b> calls. For example:
+<br /><br />
 
-<p>
-For example:
-<code>
 <pre>
 class X {
     override fun equals(other: Any?): Boolean {
@@ -13,8 +11,5 @@ class X {
     }
 }
 </pre>
-</code>
-</p>
-
 </body>
 </html>

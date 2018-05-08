@@ -8,7 +8,7 @@ public class C {
 
     open class <!CYCLIC_SCOPES_WITH_COMPANION!>Base<!> ()
 
-    class Foo : Data()
+    class Foo : <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Data<!>()
 
     companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract()
 }

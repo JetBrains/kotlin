@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
-import org.jetbrains.kotlin.backend.common.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
@@ -30,11 +29,12 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
 object CoroutineContextFIF : FunctionIntrinsicFactory {
-    override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
-        if (!descriptor.isBuiltInCoroutineContext()) return null
+    override fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {
+        if (!descriptor.isBuiltInCoroutineContext(context.languageVersionSettings)) return null
         return Intrinsic
     }
 

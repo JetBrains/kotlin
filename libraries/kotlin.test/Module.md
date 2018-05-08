@@ -17,6 +17,8 @@ The library consists of the modules:
 - `kotlin-test` – a JVM implementation of assertions from `kotlin-test-common`;
 - `kotlin-test-junit` – provides an implementation of [Asserter] on top of JUnit
   and maps the test annotations from `kotlin-test-annotations-common` to JUnit test annotations;
+- `kotlin-test-testng` – provides an implementation of [Asserter] on top of TestNG
+  and maps the test annotations from `kotlin-test-annotations-common` to TestNG test annotations;
 - `kotlin-test-js` – a JS implementation of common test assertions and annotations 
   with the out-of-the-box support for [Jasmine](https://jasmine.github.io/), [Mocha](https://mochajs.org/), 
   and [Jest](https://facebook.github.io/jest/) testing frameworks, and an experimental way to plug in 

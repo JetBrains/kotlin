@@ -21,10 +21,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementFactory
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.changeSignature.*
 import com.intellij.refactoring.util.CanonicalTypes
@@ -118,11 +115,28 @@ class KotlinChangeSignature(
                 }
 
                 val (preview, javaChangeInfo) = getPreviewInfoForJavaMethod(descriptor)
-                object: JavaChangeSignatureDialog(project, JavaMethodDescriptor(preview), false, null) {
+                val javaDescriptor = object : JavaMethodDescriptor(preview) {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun getParameters() = javaChangeInfo.newParameters.toMutableList() as MutableList<ParameterInfoImpl>
+                }
+                object: JavaChangeSignatureDialog(project, javaDescriptor, false, null) {
                     override fun createRefactoringProcessor(): BaseRefactoringProcessor? {
-                        val processor = super.createRefactoringProcessor()
-                        (processor as? ChangeSignatureProcessor)?.changeInfo?.updateMethod(javaChangeInfo.method)
-                        return processor
+                        val parameters = parameters
+                        LOG.assertTrue(myMethod.method.isValid)
+                        val newJavaChangeInfo = JavaChangeInfoImpl(
+                                visibility ?: VisibilityUtil.getVisibilityModifier(myMethod.method.modifierList),
+                                javaChangeInfo.method,
+                                methodName,
+                                returnType ?: CanonicalTypes.createTypeWrapper(PsiType.VOID),
+                                parameters.toTypedArray(),
+                                exceptions,
+                                isGenerateDelegate,
+                                myMethodsToPropagateParameters ?: HashSet(),
+                                myMethodsToPropagateExceptions ?: HashSet()
+                        ).also {
+                            it.setCheckUnusedParameter()
+                        }
+                        return ChangeSignatureProcessor(myProject, newJavaChangeInfo)
                     }
                 }
             }

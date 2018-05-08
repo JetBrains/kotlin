@@ -32,10 +32,12 @@ import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.compatibility.projectDisposableEx
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.output.InlayScratchOutputHandler
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -159,6 +161,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+
+    override fun setUp() {
+        super.setUp()
+
+        PluginTestCaseBase.addJdk(myFixture.projectDisposableEx) { PluginTestCaseBase.fullJdk() }
+    }
 
     override fun tearDown() {
         super.tearDown()

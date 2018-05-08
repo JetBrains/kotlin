@@ -1,0 +1,32 @@
+package
+
+package api {
+    @api.ExperimentalAPI public const val MEANING: kotlin.Int = 42
+
+    public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.Int)
+        public final val value: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION}) public final annotation class ExperimentalAPI : kotlin.Annotation {
+        public constructor ExperimentalAPI()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package usage1 {
+    @api.ExperimentalAPI @api.Anno(value = 42) public fun usage(): kotlin.Unit
+}
+
+package usage2 {
+    @api.Anno(value = 42) public fun usage(): kotlin.Unit
+}
+
+package usage3 {
+    @api.Anno(value = 42) public fun usage(): kotlin.Unit
+}

@@ -59,7 +59,7 @@ object JvmArrayVariableInLoopAssignmentChecker : AdditionalTypeChecker {
 
         if (!isOuterForLoopRangeVariable(expression, variableDescriptor, c)) return
 
-        val dataFlowValueKind = DataFlowValueFactory.createDataFlowValue(lhsExpression, variableType, c).kind
+        val dataFlowValueKind = c.dataFlowValueFactory.createDataFlowValue(lhsExpression, variableType, c).kind
         if (dataFlowValueKind != DataFlowValue.Kind.STABLE_VARIABLE) return
 
         c.trace.report(ErrorsJvm.ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE.on(lhsExpression))

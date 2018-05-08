@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(KtCallExpression::class.java) {
@@ -53,8 +51,7 @@ class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtC
         if (value.getReferencedNameAsName() != prevDeclaration.nameAsName) return false
         if (prevDeclaration.initializer == null) return false
 
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
-        val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
+        val resolvedCall = element.resolveToCall() ?: return false
         if (!resolvedCall.isReallySuccess()) return false
         val function = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return false
         if (function.importableFqName?.asString() != "kotlin.assert") return false

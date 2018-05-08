@@ -36,6 +36,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ArrayUtil
+import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.quickfix.utils.findInspectionFile
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
@@ -131,7 +133,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                         }
                         return TestFile(fileName, text)
                     }
-                })
+                }, "")
 
         val afterFile = subFiles.firstOrNull { file -> file.path.contains(".after") }
         val beforeFile = subFiles.firstOrNull { file -> file.path.contains(".before") }!!
@@ -194,11 +196,16 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
     private fun doTest(beforeFileName: String) {
         val mainFile = File(beforeFileName)
         val originalFileText = FileUtil.loadFile(mainFile, true)
+        configureCompilerOptions(originalFileText, project, module)
 
         val mainFileDir = mainFile.parentFile!!
 
         val mainFileName = mainFile.name
-        val extraFiles = mainFileDir.listFiles { _, name -> name.startsWith(extraFileNamePrefix(mainFileName)) && name != mainFileName }!!
+        val extraFiles = mainFileDir.listFiles { _, name ->
+            name.startsWith(extraFileNamePrefix(mainFileName))
+                    && name != mainFileName
+                    && PathUtil.getFileExtension(name).let { it == "kt" || it == "java" || it == "groovy" }
+        }!!
 
         val testFiles = ArrayList<String>()
         testFiles.add(mainFile.name)

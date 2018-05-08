@@ -16,7 +16,7 @@ import test.*
 fun box(): String {
     val anotherModule = doWork { "K" }
 
-    if (anotherModule.javaClass.name != "BKt\$box$\$inlined\$doWork$1") return "class should be regenerated, but ${anotherModule.javaClass.name}"
+    if (anotherModule.javaClass.name != "BKt\$inlined\$sam\$i\$java_util_concurrent_Callable\$0") return "class should be regenerated, but ${anotherModule.javaClass.name}"
 
     return "OK"
 }

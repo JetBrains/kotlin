@@ -30,18 +30,20 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrC
 import java.util.*
 
 object GradleHeuristicHelper {
+    val PRODUCTION_DEPENDENCY_STATEMENTS = setOf("classpath", "compile", "api", "implementation", "compileOnly", "runtimeOnly")
+
     fun getHeuristicVersionInBuildScriptDependency(classpathStatement: GrCallExpression): String? {
         val argumentList = when (classpathStatement) {
-                               is GrMethodCall -> classpathStatement.argumentList // classpath('argument')
-                               else -> classpathStatement.getChildrenOfType<GrCommandArgumentList>().singleOrNull() // classpath 'argument'
-                           } ?: return null
+            is GrMethodCall -> classpathStatement.argumentList // classpath('argument')
+            else -> classpathStatement.getChildrenOfType<GrCommandArgumentList>().singleOrNull() // classpath 'argument'
+        } ?: return null
         val grLiteral = argumentList.children.firstOrNull() as? GrLiteral ?: return null
 
         if (grLiteral is GrString && grLiteral.injections.size == 1) {
             val versionInjection = grLiteral.injections.first() ?: return null
             val expression = versionInjection.expression as? GrReferenceExpression ?: // $some_variable
-                             versionInjection.closableBlock?.getChildrenOfType<GrReferenceExpression>()?.singleOrNull() ?: // ${some_variable}
-                             return null
+            versionInjection.closableBlock?.getChildrenOfType<GrReferenceExpression>()?.singleOrNull() ?: // ${some_variable}
+            return null
 
             return resolveVariableInBuildScript(classpathStatement, expression.text)
         }
@@ -83,14 +85,18 @@ object GradleHeuristicHelper {
         return null
     }
 
-    fun findStatementWithPrefix(closure: GrClosableBlock, prefix: String): List<GrCallExpression> {
+    fun findStatementWithPrefix(closure: GrClosableBlock, prefix: String) =
+        findStatementWithPrefixes(closure, setOf(prefix))
+
+    fun findStatementWithPrefixes(closure: GrClosableBlock, prefixes: Set<String>): List<GrCallExpression> {
         val applicationStatements = closure.getChildrenOfType<GrCallExpression>()
 
         val classPathStatements = ArrayList<GrCallExpression>()
 
         for (statement in applicationStatements) {
             val startExpression = statement.getChildrenOfType<GrReferenceExpression>().firstOrNull() ?: continue
-            if (prefix == startExpression.text) {
+            val expressionText = startExpression.text ?: continue
+            if (expressionText in prefixes) {
                 classPathStatements.add(statement)
             }
         }

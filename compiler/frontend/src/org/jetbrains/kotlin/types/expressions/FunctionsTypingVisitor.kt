@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions
@@ -25,9 +14,9 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedPrefixWord
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYieldBeforeLambda
@@ -91,7 +80,9 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
                 context.scope.ownerDescriptor, context.scope, function, context.trace, context.dataFlowInfo
             )
             assert(statementScope != null) {
-                "statementScope must be not null for function: " + function.name + " at location " + DiagnosticUtils.atLocation(function)
+                "statementScope must be not null for function: " + function.name + " at location " + PsiDiagnosticUtils.atLocation(
+                    function
+                )
             }
             statementScope!!.addFunctionDescriptor(functionDescriptor)
         } else {
@@ -176,7 +167,12 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun checkReservedYield(context: ExpressionTypingContext, expression: PsiElement) {
-        checkReservedPrefixWord(context.trace, expression, "yield", "yield block/lambda. Use 'yield() { ... }' or 'yield(fun...)'")
+        checkReservedPrefixWord(
+            context.trace,
+            expression,
+            "yield",
+            "yield block/lambda. Use 'yield() { ... }' or 'yield(fun...)'"
+        )
     }
 
     private fun createFunctionLiteralDescriptor(
@@ -253,7 +249,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         val typeOfBodyExpression = blockReturnedType.type
 
         newInferenceLambdaInfo?.let {
-            it.dataFlowInfoAfter = blockReturnedType.dataFlowInfo
+            it.lastExpressionInfo.dataFlowInfoAfter = blockReturnedType.dataFlowInfo
             return null
         }
 

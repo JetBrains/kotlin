@@ -1,9 +1,10 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 // IGNORE_BACKEND: NATIVE
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 class A {
     var result = mutableListOf("O", "K", null)

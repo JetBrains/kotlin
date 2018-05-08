@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator
 
+import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.sun.jdi.ClassLoaderReference
 import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 fun loadClassesSafely(evaluationContext: EvaluationContextImpl, classes: Collection<ClassToLoad>): ClassLoaderReference? {
     return try {
         loadClasses(evaluationContext, classes)
+    } catch (e: EvaluateException) {
+        throw e
     } catch (e: Throwable) {
         LOG.debug("Failed to evaluate expression", e)
         null

@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.renderer
 
 import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -58,13 +58,13 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
         val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, environment.configuration)
 
         val container = createContainerForLazyResolve(
-                context,
-                FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
-                CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                JvmPlatform,
-                JvmTarget.JVM_1_6,
-                targetEnvironment,
-                LanguageVersionSettingsImpl.DEFAULT
+            context,
+            FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
+            NoScopeRecordCliBindingTrace(),
+            JvmPlatform,
+            JvmTarget.JVM_1_6,
+            targetEnvironment,
+            LanguageVersionSettingsImpl.DEFAULT
         )
 
         val resolveSession = container.get<ResolveSession>()

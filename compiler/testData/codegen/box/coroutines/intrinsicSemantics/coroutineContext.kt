@@ -1,9 +1,11 @@
+// !API_VERSION: 1.2
 // WITH_RUNTIME
 // WITH_COROUTINES
 import helpers.*
 import kotlin.coroutines.experimental.*
 import kotlin.test.assertEquals
 
+@Suppress("DEPRECATION_ERROR")
 suspend fun suspendHereOld() =
     if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
         "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
@@ -16,6 +18,7 @@ suspend fun suspendHereNew() =
     else
         "OK"
 
+@Suppress("DEPRECATION_ERROR")
 suspend fun multipleArgsOld(a: Any, b: Any, c: Any) =
     if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
         "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
@@ -59,6 +62,7 @@ fun box(): String {
         return "fail 2 $res"
     }
     res = builder {
+        @Suppress("DEPRECATION_ERROR")
         if (kotlin.coroutines.experimental.intrinsics.coroutineContext != EmptyCoroutineContext)
             "${kotlin.coroutines.experimental.intrinsics.coroutineContext} != $EmptyCoroutineContext"
         else

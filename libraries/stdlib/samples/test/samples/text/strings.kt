@@ -72,6 +72,21 @@ class Strings {
     }
 
     @Sample
+    fun zip() {
+        val stringA = "abcd"
+        val stringB = "zyx"
+        assertPrints(stringA zip stringB, "[(a, z), (b, y), (c, x)]")
+    }
+
+    @Sample
+    fun zipWithTransform() {
+        val stringA = "abcd"
+        val stringB = "zyx"
+        val result = stringA.zip(stringB) { a, b -> "$a$b" }
+        assertPrints(result, "[az, by, cx]")
+    }
+
+    @Sample
     fun stringToByteArray() {
         val charset = Charsets.UTF_8
         val byteArray = "Hello".toByteArray(charset)

@@ -29,7 +29,7 @@ abstract class AbstractWithIndexForLoopGenerator(
     private val bodyEnd = Label()
     private val leaveTasks = arrayListOf<() -> Unit>()
 
-    protected class LoopComponent(val parameterVar: Int, val parameterType: Type, val elementType: Type)
+    protected class LoopComponent(val parameterVar: Int, val parameterType: Type, val componentType: Type)
 
     protected val indexLoopComponent: LoopComponent? = loopParameter.entries.getOrNull(0)?.resolveLoopComponent()
     protected val elementLoopComponent: LoopComponent? = loopParameter.entries.getOrNull(1)?.resolveLoopComponent()

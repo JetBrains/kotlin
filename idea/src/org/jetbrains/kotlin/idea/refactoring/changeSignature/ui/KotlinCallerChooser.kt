@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.hierarchy.calls.CalleeReferenceProcessor
 import org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallHierarchyNodeDescriptor
@@ -54,9 +54,8 @@ class KotlinCallerChooser(
         previousTree: Tree?,
         callback: Consumer<Set<PsiElement>>
 ): CallerChooserBase<PsiElement>(declaration, project, title, previousTree, "dummy." + KotlinFileType.EXTENSION, callback) {
-    override fun createTreeNode(method: PsiElement?, called: com.intellij.util.containers.HashSet<PsiElement>, cancelCallback: Runnable): KotlinMethodNode {
-        return KotlinMethodNode(method, called, myProject, cancelCallback)
-    }
+    override fun createTreeNodeFor(method: PsiElement?, called: HashSet<PsiElement>?, cancelCallback: Runnable?) =
+        KotlinMethodNode(method, called ?: HashSet(), myProject, cancelCallback ?: Runnable {})
 
     override fun findDeepestSuperMethods(method: PsiElement) =
             method.toLightMethods().singleOrNull()?.findDeepestSuperMethods()

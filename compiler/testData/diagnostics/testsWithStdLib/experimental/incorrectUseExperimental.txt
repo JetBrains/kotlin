@@ -1,0 +1,4 @@
+package
+
+@kotlin.UseExperimental(markerClass = {}) public fun f1(): kotlin.Unit
+@kotlin.UseExperimental(markerClass = {kotlin.UseExperimental::class}) public fun f2(): kotlin.Unit

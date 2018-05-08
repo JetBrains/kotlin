@@ -43,14 +43,14 @@ class ScriptGenTest : CodegenTestCase() {
         super.setUp()
         additionalDependencies =
                 System.getenv("PROJECT_CLASSES_DIRS")?.split(File.pathSeparator)?.map { File(it) }
-                ?: listOf("compiler/build/classes/kotlin/test", "build/compiler/classes/kotlin/test")
+                ?: listOf("compiler/build/classes/kotlin/test", "build/compiler/classes/kotlin/test", "out/test/compiler.test")
                         .mapNotNull { File(it).canonicalFile.takeIf { it.isDirectory } }
                         .takeIf { it.isNotEmpty() }
                 ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
     }
 
     fun testLanguage() {
-        setUpEnvironment("scriptCustom/fib.lang.kt")
+        setUpEnvironment("scriptCustom/fib.lang.kts")
 
         val aClass = generateClass("Fib_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -61,7 +61,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testLanguageWithPackage() {
-        setUpEnvironment("scriptCustom/fibwp.lang.kt")
+        setUpEnvironment("scriptCustom/fibwp.lang.kts")
 
         val aClass = generateClass("test.Fibwp_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -72,7 +72,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testDependentScripts() {
-        setUpEnvironment(listOf("scriptCustom/fibwp.lang.kt", "scriptCustom/fibwprunner.kts"))
+        setUpEnvironment(listOf("scriptCustom/fibwp.lang.kts", "scriptCustom/fibwprunner.kts"))
 
         val aClass = generateClass("Fibwprunner")
         val constructor = aClass.getConstructor()
@@ -88,7 +88,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testScriptWhereMethodHasClosure() {
-        setUpEnvironment("scriptCustom/methodWithClosure.lang.kt")
+        setUpEnvironment("scriptCustom/methodWithClosure.lang.kts")
 
         val aClass = generateClass("MethodWithClosure_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -127,6 +127,6 @@ class ScriptGenTest : CodegenTestCase() {
 }
 
 @ScriptTemplateDefinition(
-        scriptFilePattern =".*\\.lang\\.kt",
+        scriptFilePattern =".*\\.lang\\.kts",
         resolver = TestKotlinScriptDependenciesResolver::class)
 abstract class ScriptWithIntParam(val num: Int)

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.annotations
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -27,6 +28,12 @@ import org.jetbrains.kotlin.resolve.constants.ErrorValue
 val JVM_STATIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
 
 val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
+
+val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
+
+fun CallableMemberDescriptor.hasJvmDefaultAnnotation() =
+    DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
+
 
 fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
     return annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) != null

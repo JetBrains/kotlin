@@ -64,7 +64,7 @@ public abstract class AbstractKotlinJpsBuildTestCase extends BaseKotlinJpsBuildT
     }
 
     protected JpsLibrary addKotlinMockRuntimeDependency() {
-        return addDependency("kotlin-mock-runtime", ForTestCompileRuntime.mockRuntimeJarForTests());
+        return addDependency("kotlin-mock-runtime", ForTestCompileRuntime.minimalRuntimeJarForTests());
     }
 
     protected JpsLibrary addKotlinStdlibDependency() {

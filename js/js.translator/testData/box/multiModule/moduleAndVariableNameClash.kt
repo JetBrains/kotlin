@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1115
 // MODULE: main(module1)
 // FILE: main.kt

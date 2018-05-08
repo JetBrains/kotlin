@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -88,7 +90,7 @@ private val ProtoBuf.PackageFragment.fqName: FqName?
     get() {
         val nameResolver = NameResolverImpl(strings, qualifiedNames)
         return when {
-            hasPackage() -> nameResolver.getPackageFqName(`package`.getExtension(JsProtoBuf.packageFqName))
+            hasPackage() -> FqName(nameResolver.getPackageFqName(`package`.getExtension(JsProtoBuf.packageFqName)))
             class_Count > 0 -> nameResolver.getClassId(class_OrBuilderList.first().fqName).packageFqName
             else -> null
         }

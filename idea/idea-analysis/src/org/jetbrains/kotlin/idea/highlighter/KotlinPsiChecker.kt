@@ -42,8 +42,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -64,7 +63,7 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
 
         if (!KotlinHighlightingUtil.shouldHighlight(file)) return
 
-        val analysisResult = file.analyzeFullyAndGetResult()
+        val analysisResult = file.analyzeWithAllCompilerChecks()
         if (analysisResult.isError()) {
             throw ProcessCanceledException(analysisResult.error)
         }
@@ -348,7 +347,7 @@ private class AnnotationPresentationInfo(
 
     private fun getMessage(diagnostic: Diagnostic): String {
         var message = IdeErrorMessages.render(diagnostic)
-        if (KotlinInternalMode.enabled || ApplicationManager.getApplication().isUnitTestMode) {
+        if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode) {
             val factoryName = diagnostic.factory.name
             message = if (message.startsWith("<html>")) {
                 "<html>[$factoryName] ${message.substring("<html>".length)}"
@@ -365,7 +364,7 @@ private class AnnotationPresentationInfo(
 
     private fun getDefaultMessage(diagnostic: Diagnostic): String {
         val message = DefaultErrorMessages.render(diagnostic)
-        if (KotlinInternalMode.enabled || ApplicationManager.getApplication().isUnitTestMode) {
+        if (ApplicationManager.getApplication().isInternal || ApplicationManager.getApplication().isUnitTestMode) {
             return "[${diagnostic.factory.name}] $message"
         }
         return message

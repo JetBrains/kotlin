@@ -1,18 +1,23 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.collections
 
 import kotlin.test.*
 
 
 class MutableCollectionTest {
-    fun <T, C: MutableCollection<T>> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean, toMutableCollection: (List<T>) -> C)
-            = fun(operation: (C.() -> Boolean)) {
-                val list = toMutableCollection(before)
-                assertEquals(expectedModified, list.operation())
-                assertEquals(toMutableCollection(after), list)
-            }
+    fun <T, C : MutableCollection<T>> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean, toMutableCollection: (List<T>) -> C) =
+        fun(operation: (C.() -> Boolean)) {
+            val list = toMutableCollection(before)
+            assertEquals(expectedModified, list.operation())
+            assertEquals(toMutableCollection(after), list)
+        }
 
-    fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean)
-            = testOperation(before, after, expectedModified, { it.toMutableList() })
+    fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean) =
+        testOperation(before, after, expectedModified, { it.toMutableList() })
 
 
     @Test fun addAll() {
@@ -109,20 +114,4 @@ class MutableCollectionTest {
         assertEquals(list.size, shuffled.distinct().size)
     }
 
-    @JvmVersion
-    @Test fun shuffledRnd() {
-        val rnd1 = java.util.Random(42L)
-        val rnd2 = java.util.Random(42L)
-
-        val list = MutableList(100) { it }
-        val shuffled1 = list.shuffled(rnd1)
-        val shuffled2 = list.shuffled(rnd2)
-
-
-        assertNotEquals(list, shuffled1)
-        assertEquals(list.toSet(), shuffled1.toSet())
-        assertEquals(list.size, shuffled1.distinct().size)
-
-        assertEquals(shuffled1, shuffled2)
-    }
 }

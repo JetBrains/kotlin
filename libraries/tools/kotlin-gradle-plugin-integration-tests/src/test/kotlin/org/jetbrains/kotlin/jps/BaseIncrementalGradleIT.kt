@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.jps
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.incremental.BuildStep
 import org.jetbrains.kotlin.incremental.parseTestBuildLog
 import org.jetbrains.kotlin.incremental.testingUtils.*
@@ -11,7 +12,13 @@ import kotlin.test.assertEquals
 
 abstract class BaseIncrementalGradleIT : BaseGradleIT() {
 
-    inner class JpsTestProject(val buildLogFinder: BuildLogFinder, val resourcesBase: File, val relPath: String, wrapperVersion: String = "2.10", minLogLevel: LogLevel = LogLevel.DEBUG) : Project(File(relPath).name, wrapperVersion, null, minLogLevel) {
+    inner class JpsTestProject(
+            val buildLogFinder: BuildLogFinder,
+            val resourcesBase: File,
+            val relPath: String,
+            minLogLevel: LogLevel = LogLevel.DEBUG
+    ) : Project(File(relPath).name, GradleVersionRequired.Exact("2.10"), null, minLogLevel) {
+
         override val resourcesRoot = File(resourcesBase, relPath)
         val mapWorkingToOriginalFile = hashMapOf<File, File>()
 

@@ -50,6 +50,7 @@ class PSIKotlinCallImpl(
     override val psiCall: Call,
     override val tracingStrategy: TracingStrategy,
     override val explicitReceiver: ReceiverKotlinCallArgument?,
+    override val dispatchReceiverForInvokeExtension: ReceiverKotlinCallArgument?,
     override val name: Name,
     override val typeArguments: List<TypeArgument>,
     override val argumentsInParenthesis: List<KotlinCallArgument>,

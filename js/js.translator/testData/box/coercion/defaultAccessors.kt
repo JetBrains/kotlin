@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1140
 interface I {
     val a: Char

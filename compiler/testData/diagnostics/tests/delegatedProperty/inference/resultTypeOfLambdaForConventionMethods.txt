@@ -1,0 +1,28 @@
+package
+
+public val q: A<kotlin.String>
+public operator fun </*0*/ T1, /*1*/ E1> B<T1, E1>.getValue(/*0*/ o: kotlin.Any, /*1*/ desc: kotlin.reflect.KProperty<*>): E1
+public operator fun </*0*/ T2, /*1*/ E2> B<T2, E2>.setValue(/*0*/ o: kotlin.Any, /*1*/ desc: kotlin.reflect.KProperty<*>, /*2*/ value: E2): kotlin.Unit
+public fun </*0*/ K, /*1*/ V> A<K>.toB(/*0*/ f: (V) -> K, /*1*/ g: (K) -> V): B<K, V>
+
+public final class A</*0*/ E> {
+    public constructor A</*0*/ E>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B</*0*/ E, /*1*/ F> {
+    public constructor B</*0*/ E, /*1*/ F>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Test {
+    public constructor Test()
+    public final var prop: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

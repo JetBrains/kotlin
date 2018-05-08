@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.descriptors.accessors
 import org.jetbrains.kotlin.idea.KotlinIcons
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
@@ -68,7 +71,7 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
 }
 
 private fun KtExpression.isValidCandidateExpression(): Boolean {
-    if (this is KtOperationReferenceExpression || this is KtForExpression || this is KtProperty) return true
+    if (this is KtOperationReferenceExpression || this is KtForExpression || this is KtProperty || this is KtNameReferenceExpression) return true
     val parent = parent
     if (parent is KtCallExpression && parent.calleeExpression == this) return true
     return false
@@ -94,14 +97,18 @@ fun KtExpression.hasSuspendCalls(bindingContext: BindingContext = analyze(BodyRe
                     val delegatedFunctionDescriptor = bindingContext[DELEGATED_PROPERTY_RESOLVED_CALL, accessor]?.resultingDescriptor
                     delegatedFunctionDescriptor?.isSuspend == true
                 }
-            }
-            else {
+            } else {
                 false
             }
         }
         else -> {
             val resolvedCall = getResolvedCall(bindingContext)
-            (resolvedCall?.resultingDescriptor as? FunctionDescriptor)?.isSuspend == true
+            if ((resolvedCall?.resultingDescriptor as? FunctionDescriptor)?.isSuspend == true) true
+            else {
+                val propertyDescriptor = resolvedCall?.resultingDescriptor as? PropertyDescriptor
+                val s = propertyDescriptor?.fqNameSafe?.asString()
+                s?.startsWith("kotlin.coroutines.") == true && s.endsWith(".coroutineContext")
+            }
         }
     }
 }

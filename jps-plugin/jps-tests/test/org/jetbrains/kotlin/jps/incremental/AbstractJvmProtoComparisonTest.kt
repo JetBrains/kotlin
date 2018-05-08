@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.LocalFileKotlinClass
+import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.incremental.toProtoData
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import java.io.File
 

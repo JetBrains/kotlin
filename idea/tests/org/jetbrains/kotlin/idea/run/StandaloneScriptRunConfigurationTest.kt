@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinScriptFqnIndex
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import kotlin.test.assertNotEquals
 
@@ -43,9 +43,9 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
 
         val javaParameters = getJavaRunParameters(runConfiguration)
         val programParametersList = javaParameters.programParametersList.list
-        val (first, second) = programParametersList
-        Assert.assertEquals("Should pass -script to compiler", "-script", first)
-        Assert.assertTrue("Should pass script file to compiler", second.contains("simpleScript.kts"))
+
+        programParametersList.checkParameter("-script") { it.contains("simpleScript.kts") }
+        programParametersList.checkParameter("-kotlin-home") { it == PathUtil.kotlinPathsForIdeaPlugin.homePath.path }
     }
 
     fun testOnFileRename() {
@@ -120,6 +120,12 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
 
         assertNotEquals(scriptVirtualFileAfter.parent.canonicalPath, runConfiguration.workingDirectory)
         assertEquals(originalWorkingDirectory, runConfiguration.workingDirectory)
+    }
+
+    private fun List<String>.checkParameter(name: String, condition: (String) -> Boolean) {
+        val param = find { it == name } ?: throw AssertionError("Should pass $name to compiler")
+        val paramValue = this[this.indexOf(param) + 1]
+        Assert.assertTrue("Check for $name parameter fails: actual value = $paramValue", condition(paramValue))
     }
 
     fun moveScriptFile(scriptFile: PsiFile) {

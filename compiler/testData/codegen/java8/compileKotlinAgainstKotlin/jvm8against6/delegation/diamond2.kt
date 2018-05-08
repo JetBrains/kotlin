@@ -1,3 +1,5 @@
+// !API_VERSION: 1.3
+// !ENABLE_JVM_DEFAULT
 // FILE: 1.kt
 interface Test {
     fun test(): String {
@@ -7,7 +9,7 @@ interface Test {
 
 // FILE: 2.kt
 // JVM_TARGET: 1.8
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
+// WITH_RUNTIME
 open class TestClass : Test {
     override fun test(): String {
         return super.test()
@@ -15,6 +17,7 @@ open class TestClass : Test {
 }
 
 interface Test2 : Test {
+    @JvmDefault
     override fun test(): String
 }
 

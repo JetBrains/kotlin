@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
+import kotlin.reflect.KFunction1
 
 object TopDownAnalyzerFacadeForJVM {
     @JvmStatic
@@ -161,7 +162,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         val configureJavaClassFinder =
                 if (configuration.getBoolean(JVMConfigurationKeys.USE_JAVAC)) StorageComponentContainer::useJavac
-                else null
+                else null as KFunction1<StorageComponentContainer, Unit>?
 
         val dependencyModule = if (separateModules) {
             val dependenciesContext = ContextForNewModule(
@@ -227,10 +228,10 @@ object TopDownAnalyzerFacadeForJVM {
         }
 
         // TODO: remove dependencyModule from friends
-        module.setDependencies(ModuleDependenciesImpl(
+        module.setDependencies(
                 listOfNotNull(module, dependencyModule, optionalBuiltInsModule),
                 if (dependencyModule != null) setOf(dependencyModule) else emptySet()
-        ))
+        )
         module.initialize(CompositePackageFragmentProvider(
                 listOf(container.get<KotlinCodeAnalyzer>().packageFragmentProvider) +
                 additionalProviders

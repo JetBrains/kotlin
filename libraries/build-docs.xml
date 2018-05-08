@@ -5,8 +5,6 @@
     <property name="docs.output" value="${basedir}/doc" />
     <property name="dokka.format" value="kotlin-website-html"/>
 
-    <property name="js.stdlib.common.src.path" value="stdlib/js/build/common-sources"/>
-
     <typedef resource="dokka-antlib.xml">
         <classpath>
             <fileset dir="${dokka.path}/lib" erroronmissingdir="false">
@@ -25,7 +23,7 @@
         <mkdir dir="${docs.output}"/>
     </target>
 
-    <target name="preprocess-js-common-and-compile-builtins">
+    <target name="dist-stdlib">
         <java classname="org.gradle.wrapper.GradleWrapperMain"
               fork="true"
               dir="${basedir}/.."
@@ -36,52 +34,53 @@
                 <pathelement location="${basedir}/../gradle/wrapper/gradle-wrapper.jar"/>
             </classpath>
             <arg line="--no-daemon"/>
-            <arg line=":kotlin-stdlib-js:preprocessSourcesMain"/>
-            <arg line=":kotlin-stdlib:builtinsJar"/>
             <arg line=":kotlin-stdlib:distJar"/>
         </java>
     </target>
 
     <path id="stdlib.compile.classpath">
-        <fileset dir="${basedir}/stdlib/build/libs/" includes="builtins-*.jar"/>
+        <fileset dir="${basedir}/stdlib/jvm/build/libs/" includes="dist-kotlin-stdlib.jar"/>
     </path>
     <path id="kotlin-test.compile.classpath">
-        <fileset dir="${basedir}/stdlib/build/libs/" includes="dist-kotlin-stdlib.jar"/>
+        <fileset dir="${basedir}/stdlib/jvm/build/libs/" includes="dist-kotlin-stdlib.jar"/>
         <pathelement location="${basedir}/lib/junit-4.11.jar"/>
     </path>
-    <target name="document" depends="clean,preprocess-js-common-and-compile-builtins">
+    <target name="document" depends="clean,dist-stdlib">
         <dokka samples="stdlib/samples/test" outputDir="${docs.output}/jre8" moduleName="kotlin-stdlib" skipDeprecated="false" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
                include="stdlib/src/Module.md" noStdlibLink="true" classpathref="stdlib.compile.classpath" languageVersion="1.2">
 
-            <sourceRoot path="stdlib/src" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/src" platforms="JVM"/>
+            <!--<sourceRoot path="stdlib/common/src" />-->
+            <!--<sourceRoot path="stdlib/common/src/generated" platforms="Common"/>-->
+            <!--<sourceRoot path="stdlib/common/build/common-sources" />-->
             <sourceRoot path="stdlib/jdk7/src" platforms="JVM,JRE7"/>
             <sourceRoot path="stdlib/jdk8/src" platforms="JVM,JRE8"/>
             <sourceRoot path="../core/builtins/native" platforms="JVM"/>
             <sourceRoot path="../core/builtins/src" platforms="JVM"/>
             <sourceRoot path="../core/reflection.jvm/src" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/annotations" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/PurelyImplements.kt" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/TypeAliases.kt" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin/text/TypeAliases.kt" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/jvm/annotations" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/jvm/JvmClassMapping.kt" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/jvm/PurelyImplements.kt" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/TypeAliases.kt" platforms="JVM"/>
+            <sourceRoot path="stdlib/jvm/runtime/kotlin/text/TypeAliases.kt" platforms="JVM"/>
 
 
             <sourceRoot path="../core/builtins/native" platforms="JS"/>
             <sourceRoot path="../core/builtins/src" platforms="JS"/>
 
-            <sourceRoot path="../js/js.libraries/src/browser" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/core" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/dom" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/generated" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/js" platforms="JS"/>
-            <sourceRoot path="../js/js.libraries/src/reflect" platforms="JS"/>
-            <sourceRoot path="${js.stdlib.common.src.path}" platforms="JS"/>
+            <sourceRoot path="stdlib/js/src" platforms="JS"/>
+
+            <sourceRoot path="../core/builtins/native" />
+            <sourceRoot path="../core/builtins/src" />
+            <sourceRoot path="stdlib/common/src" />
+            <sourceRoot path="stdlib/src" />
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
 
             <!-- TODO Docs? -->
             <packageOptions prefix="org.w3c" reportUndocumented="false"/>
             <packageOptions prefix="org.khronos" reportUndocumented="false"/>
+            <packageOptions prefix="jquery" suppress="true"/>
             <packageOptions prefix="kotlin.reflect.jvm.internal" suppress="true"/>
         </dokka>
         <makeurl file="${docs.output}/jre8/kotlin-stdlib/package-list" property="stdlib.package.list"/>
@@ -91,6 +90,7 @@
             <sourceRoot path="kotlin.test/common/src/main/kotlin" platforms="JVM,JS"/>
             <sourceRoot path="kotlin.test/jvm/src/main/kotlin" platforms="JVM"/>
             <sourceRoot path="kotlin.test/junit/src/main/kotlin" platforms="JVM"/>
+            <sourceRoot path="kotlin.test/testng/src/main/kotlin" platforms="JVM"/>
             <sourceRoot path="kotlin.test/js/src/main/kotlin" platforms="JS"/>
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>

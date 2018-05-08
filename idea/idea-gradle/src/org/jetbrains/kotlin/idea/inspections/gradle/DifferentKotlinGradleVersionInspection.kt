@@ -29,7 +29,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlo
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrCallExpression
 
-class DifferentKotlinGradleVersionInspection : GradleBaseInspection(), PluginVersionDependentInspection{
+class DifferentKotlinGradleVersionInspection : GradleBaseInspection(), PluginVersionDependentInspection {
     override var testVersionMessage: String? = null
         @TestOnly set
 
@@ -58,15 +58,15 @@ class DifferentKotlinGradleVersionInspection : GradleBaseInspection(), PluginVer
             } ?: return
 
             val kotlinPluginVersion =
-                    GradleHeuristicHelper.getHeuristicVersionInBuildScriptDependency(kotlinPluginStatement) ?:
-                    getResolvedKotlinGradleVersion(closure.containingFile) ?:
-                    return
+                GradleHeuristicHelper.getHeuristicVersionInBuildScriptDependency(kotlinPluginStatement) ?: getResolvedKotlinGradleVersion(
+                    closure.containingFile
+                ) ?: return
 
             onFound(kotlinPluginVersion, kotlinPluginStatement)
         }
     }
 
-    private inner class MyVisitor: VersionFinder() {
+    private inner class MyVisitor : VersionFinder() {
         private val idePluginVersion by lazy { bundledRuntimeVersion() }
 
         override fun onFound(kotlinPluginVersion: String, kotlinPluginStatement: GrCallExpression) {

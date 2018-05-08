@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.types.KotlinType
@@ -62,17 +63,19 @@ interface SyntheticResolveExtension {
                 // todo revert
                 override fun generateSyntheticMethods(
                     thisDescriptor: ClassDescriptor, name: Name,
+                    bindingContext: BindingContext,
                     fromSupertypes: List<SimpleFunctionDescriptor>,
                     result: MutableCollection<SimpleFunctionDescriptor>
                 ) =
-                    instances.forEach { it.generateSyntheticMethods(thisDescriptor, name, fromSupertypes, result) }
+                    instances.forEach { it.generateSyntheticMethods(thisDescriptor, name, bindingContext, fromSupertypes, result) }
 
                 override fun generateSyntheticProperties(
                     thisDescriptor: ClassDescriptor, name: Name,
+                    bindingContext: BindingContext,
                     fromSupertypes: ArrayList<PropertyDescriptor>,
                     result: MutableSet<PropertyDescriptor>
                 ) =
-                    instances.forEach { it.generateSyntheticProperties(thisDescriptor, name, fromSupertypes, result) }
+                    instances.forEach { it.generateSyntheticProperties(thisDescriptor, name, bindingContext, fromSupertypes, result) }
             }
         }
     }
@@ -97,6 +100,7 @@ interface SyntheticResolveExtension {
     fun generateSyntheticMethods(
         thisDescriptor: ClassDescriptor,
         name: Name,
+        bindingContext: BindingContext,
         fromSupertypes: List<SimpleFunctionDescriptor>,
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
@@ -105,6 +109,7 @@ interface SyntheticResolveExtension {
     fun generateSyntheticProperties(
         thisDescriptor: ClassDescriptor,
         name: Name,
+        bindingContext: BindingContext,
         fromSupertypes: ArrayList<PropertyDescriptor>,
         result: MutableSet<PropertyDescriptor>
     ) {

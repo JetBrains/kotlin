@@ -25,6 +25,8 @@ enum class AndroidContainerType(className: String, val doesSupportCache: Boolean
     ACTIVITY(AndroidConst.ACTIVITY_FQNAME, doesSupportCache = true),
     FRAGMENT(AndroidConst.FRAGMENT_FQNAME, doesSupportCache = true, isFragment = true),
     DIALOG(AndroidConst.DIALOG_FQNAME, doesSupportCache = false),
+    ANDROIDX_SUPPORT_FRAGMENT_ACTIVITY(AndroidConst.ANDROIDX_SUPPORT_FRAGMENT_ACTIVITY_FQNAME, doesSupportCache = true),
+    ANDROIDX_SUPPORT_FRAGMENT(AndroidConst.ANDROIDX_SUPPORT_FRAGMENT_FQNAME, doesSupportCache = true, isFragment = true),
     SUPPORT_FRAGMENT_ACTIVITY(AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME, doesSupportCache = true),
     SUPPORT_FRAGMENT(AndroidConst.SUPPORT_FRAGMENT_FQNAME, doesSupportCache = true, isFragment = true),
     VIEW(AndroidConst.VIEW_FQNAME, doesSupportCache = true),
@@ -41,6 +43,8 @@ enum class AndroidContainerType(className: String, val doesSupportCache: Boolean
                 AndroidConst.ACTIVITY_FQNAME -> AndroidContainerType.ACTIVITY
                 AndroidConst.FRAGMENT_FQNAME -> AndroidContainerType.FRAGMENT
                 AndroidConst.DIALOG_FQNAME -> AndroidContainerType.DIALOG
+                AndroidConst.ANDROIDX_SUPPORT_FRAGMENT_ACTIVITY_FQNAME -> AndroidContainerType.ANDROIDX_SUPPORT_FRAGMENT_ACTIVITY
+                AndroidConst.ANDROIDX_SUPPORT_FRAGMENT_FQNAME -> AndroidContainerType.ANDROIDX_SUPPORT_FRAGMENT
                 AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME -> AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY
                 AndroidConst.SUPPORT_FRAGMENT_FQNAME -> AndroidContainerType.SUPPORT_FRAGMENT
                 AndroidConst.VIEW_FQNAME -> AndroidContainerType.VIEW

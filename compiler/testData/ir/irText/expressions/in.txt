@@ -18,6 +18,8 @@ FILE fqName:<root> fileName:/in.kt
             element: GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
   FUN name:test3 visibility:public modality:FINAL <T> (a:T, x:kotlin.collections.Collection<T>) returnType:Boolean flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     VALUE_PARAMETER name:a index:0 type:T flags:
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<T> flags:
     BLOCK_BODY
@@ -27,6 +29,8 @@ FILE fqName:<root> fileName:/in.kt
           element: GET_VAR 'value-parameter a: T' type=T origin=null
   FUN name:test4 visibility:public modality:FINAL <T> (a:T, x:kotlin.collections.Collection<T>) returnType:Boolean flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     VALUE_PARAMETER name:a index:0 type:T flags:
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<T> flags:
     BLOCK_BODY

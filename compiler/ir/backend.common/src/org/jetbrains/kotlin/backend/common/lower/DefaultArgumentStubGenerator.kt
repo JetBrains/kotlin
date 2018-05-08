@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-open class DefaultArgumentStubGenerator constructor(val context: CommonBackendContext): DeclarationContainerLoweringPass {
+open class DefaultArgumentStubGenerator constructor(val context: CommonBackendContext, private val skipInlineMethods: Boolean = true): DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)
@@ -71,7 +71,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
     private fun lower(irFunction: IrFunction): List<IrFunction> {
         val functionDescriptor = irFunction.descriptor
 
-        if (!functionDescriptor.needsDefaultArgumentsLowering)
+        if (!functionDescriptor.needsDefaultArgumentsLowering(skipInlineMethods))
             return listOf(irFunction)
 
         val bodies = functionDescriptor.valueParameters
@@ -108,7 +108,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                         val expressionBody = getDefaultParameterExpressionBody(irFunction, valueParameter)
 
                         /* Use previously calculated values in next expression. */
-                        expressionBody.transformChildrenVoid(object:IrElementTransformerVoid() {
+                        expressionBody.transformChildrenVoid(object: IrElementTransformerVoid() {
                             override fun visitGetValue(expression: IrGetValue): IrExpression {
                                 log { "GetValue: ${expression.descriptor}" }
                                 val valueSymbol = variables[expression.descriptor] ?: return expression
@@ -161,20 +161,9 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
             irFunction.valueParameters.forEach {
                 it.defaultValue = null
             }
-            return if (functionDescriptor is ClassConstructorDescriptor)
-                listOf(irFunction, IrConstructorImpl(
-                        startOffset = irFunction.startOffset,
-                        endOffset   = irFunction.endOffset,
-                        descriptor  = descriptor as ClassConstructorDescriptor,
-                        origin      = DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER,
-                        body        = body).apply { createParameterDeclarations() })
-            else
-                listOf(irFunction, IrFunctionImpl(
-                        startOffset = irFunction.startOffset,
-                        endOffset   = irFunction.endOffset,
-                        descriptor  = descriptor,
-                        origin      = DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER,
-                        body        = body).apply { createParameterDeclarations() })
+
+            newIrFunction.body = body
+            return listOf(irFunction, newIrFunction)
         }
         return listOf(irFunction)
     }
@@ -200,7 +189,7 @@ private fun Scope.createTemporaryVariable(symbol: IrVariableSymbol, initializer:
             this.initializer = initializer
         }
 
-private fun getDefaultParameterExpressionBody(irFunction: IrFunction, valueParameter: ValueParameterDescriptor):IrExpressionBody {
+private fun getDefaultParameterExpressionBody(irFunction: IrFunction, valueParameter: ValueParameterDescriptor): IrExpressionBody {
     return irFunction.getDefault(valueParameter) ?: TODO("FIXME!!!")
 }
 
@@ -225,14 +214,14 @@ private fun nullConst(expression: IrElement, type: KotlinType): IrExpression? {
     }
 }
 
-class DefaultParameterInjector constructor(val context: CommonBackendContext): BodyLoweringPass {
+class DefaultParameterInjector constructor(val context: CommonBackendContext, private val skipInline: Boolean = true): BodyLoweringPass {
     override fun lower(irBody: IrBody) {
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                 super.visitDelegatingConstructorCall(expression)
                 val descriptor = expression.descriptor
-                if (!descriptor.needsDefaultArgumentsLowering)
+                if (!descriptor.needsDefaultArgumentsLowering(skipInline))
                     return expression
                 val argumentsCount = argumentCount(expression)
                 if (argumentsCount == descriptor.valueParameters.size)
@@ -257,7 +246,7 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
                 super.visitCall(expression)
                 val functionDescriptor = expression.descriptor
 
-                if (!functionDescriptor.needsDefaultArgumentsLowering)
+                if (!functionDescriptor.needsDefaultArgumentsLowering(skipInline))
                     return expression
 
                 val argumentsCount = argumentCount(expression)
@@ -292,14 +281,14 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
             private fun parametersForCall(expression: IrMemberAccessExpression): Pair<IrFunctionSymbol, List<Pair<ValueParameterDescriptor, IrExpression?>>> {
                 val descriptor = expression.descriptor as FunctionDescriptor
                 val keyDescriptor = if (DescriptorUtils.isOverride(descriptor))
-                    DescriptorUtils.getAllOverriddenDescriptors(descriptor).first()
+                    DescriptorUtils.getAllOverriddenDescriptors(descriptor).first { it.needsDefaultArgumentsLowering(skipInline) }
                 else
                     descriptor.original
                 val realFunction = keyDescriptor.generateDefaultsFunction(context)
                 val realDescriptor = realFunction.descriptor
 
                 log { "$descriptor -> $realDescriptor" }
-                val maskValues = Array((descriptor.valueParameters.size + 31) / 32, {0})
+                val maskValues = Array((descriptor.valueParameters.size + 31) / 32, { 0 })
                 val params = mutableListOf<Pair<ValueParameterDescriptor, IrExpression?>>()
                 params.addAll(descriptor.valueParameters.mapIndexed { i, _ ->
                     val valueArgument = expression.getValueArgument(i)
@@ -344,8 +333,8 @@ class DefaultParameterInjector constructor(val context: CommonBackendContext): B
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 }
 
-private val CallableMemberDescriptor.needsDefaultArgumentsLowering
-    get() = valueParameters.any { it.hasDefaultValue() } && !(this is FunctionDescriptor && isInline)
+private fun CallableMemberDescriptor.needsDefaultArgumentsLowering(skipInlineMethods: Boolean) =
+    valueParameters.any { it.hasDefaultValue() } && !(this is FunctionDescriptor && isInline && skipInlineMethods)
 
 private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendContext): IrFunction {
     return context.ir.defaultParameterDeclarationsCache.getOrPut(this) {
@@ -447,7 +436,7 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
 object DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER :
         IrDeclarationOriginImpl("DEFAULT_PARAMETER_EXTENT")
 
-private fun valueParameter(descriptor: FunctionDescriptor, index: Int, name: Name, type: KotlinType):ValueParameterDescriptor {
+private fun valueParameter(descriptor: FunctionDescriptor, index: Int, name: Name, type: KotlinType): ValueParameterDescriptor {
     return ValueParameterDescriptorImpl(
             containingDeclaration = descriptor,
             original              = null,

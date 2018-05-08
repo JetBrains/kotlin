@@ -61,6 +61,10 @@ class LambdaArgumentConstraintPosition(val lambda: ResolvedLambdaAtom) : Constra
     }
 }
 
+class DelegatedPropertyConstraintPosition(val topLevelCall: KotlinCall) : ConstraintPosition() {
+    override fun toString() = "Constraint from call $topLevelCall for delegated property"
+}
+
 class IncorporationConstraintPosition(val from: ConstraintPosition, val initialConstraint: InitialConstraint) : ConstraintPosition() {
     override fun toString() = "Incorporate $initialConstraint from position $from"
 }

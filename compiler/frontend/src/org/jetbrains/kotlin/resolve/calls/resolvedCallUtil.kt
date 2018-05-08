@@ -89,7 +89,7 @@ fun ResolvedCall<*>.getImplicitReceivers(): Collection<ReceiverValue> =
 
 private fun ResolvedCall<*>.hasSafeNullableReceiver(context: CallResolutionContext<*>): Boolean {
     if (!call.isSafeCall()) return false
-    val receiverValue = getExplicitReceiverValue()?.let { DataFlowValueFactory.createDataFlowValue(it, context) }
+    val receiverValue = getExplicitReceiverValue()?.let { context.dataFlowValueFactory.createDataFlowValue(it, context) }
             ?: return false
     return context.dataFlowInfo.getStableNullability(receiverValue).canBeNull()
 }

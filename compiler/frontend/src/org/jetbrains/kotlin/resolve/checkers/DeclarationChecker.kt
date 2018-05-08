@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -31,5 +32,6 @@ class DeclarationCheckerContext(
     override val trace: BindingTrace,
     override val languageVersionSettings: LanguageVersionSettings,
     override val deprecationResolver: DeprecationResolver,
+    override val moduleDescriptor: ModuleDescriptor,
     val expectActualTracker: ExpectActualTracker
 ) : CheckerContext

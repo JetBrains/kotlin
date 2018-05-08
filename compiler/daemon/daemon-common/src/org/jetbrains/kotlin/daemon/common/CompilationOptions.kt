@@ -62,7 +62,11 @@ class IncrementalCompilationOptions(
         requestedCompilationResults: Array<Int>,
         val resultDifferenceFile: File? = null,
         val friendDifferenceFile: File? = null,
-        val usePreciseJavaTracking: Boolean
+        val usePreciseJavaTracking: Boolean,
+        /**
+         * Directories that should be cleared when IC decides to rebuild
+         */
+        val localStateDirs: List<File>
 ) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
         const val serialVersionUID: Long = 0
@@ -80,6 +84,7 @@ class IncrementalCompilationOptions(
                "resultDifferenceFile=$resultDifferenceFile, " +
                "friendDifferenceFile=$friendDifferenceFile, " +
                "usePreciseJavaTracking=$usePreciseJavaTracking" +
+               "localStateDirs=$localStateDirs" +
                ")"
     }
 }

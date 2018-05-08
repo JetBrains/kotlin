@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package test.collections
@@ -778,6 +767,16 @@ class CollectionTest {
         val data = listOf(11, 3, 7)
         assertEquals(listOf(3, 7, 11), data.sorted())
         assertEquals(listOf(11, 7, 3), data.sortedDescending())
+
+        assertEquals(listOf(-0.0, 0.0), listOf(0.0, -0.0).sorted())
+        assertNotEquals(listOf(0.0, -0.0), listOf(0.0, -0.0).sorted())
+
+        val dataDouble = listOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.MIN_VALUE, -Double.MIN_VALUE,
+                                1.0, -1.0, Double.MAX_VALUE, -Double.MAX_VALUE, Double.NaN, 0.0, -0.0)
+        assertEquals(listOf(Double.NEGATIVE_INFINITY, -Double.MAX_VALUE, -1.0, -Double.MIN_VALUE, -0.0,
+                            0.0, Double.MIN_VALUE, 1.0, Double.MAX_VALUE, Double.POSITIVE_INFINITY, Double.NaN), dataDouble.sorted())
+        assertEquals(listOf(Double.NaN, Double.POSITIVE_INFINITY, Double.MAX_VALUE, 1.0, Double.MIN_VALUE, 0.0,
+                            -0.0, -Double.MIN_VALUE, -1.0, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY), dataDouble.sortedDescending())
     }
 
     @Test fun sortByInPlace() {

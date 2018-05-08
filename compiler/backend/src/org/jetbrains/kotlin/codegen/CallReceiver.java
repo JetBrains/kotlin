@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
@@ -20,21 +21,25 @@ public class CallReceiver extends StackValue {
     private final StackValue dispatchReceiver;
     private final StackValue extensionReceiver;
     private final Type secondReceiverType;
+    private final KotlinType secondReceiverKotlinType;
 
     private CallReceiver(
             @NotNull StackValue dispatchReceiver,
             @NotNull StackValue extensionReceiver,
             @NotNull Type type,
-            @Nullable Type secondReceiverType
+            @Nullable KotlinType kotlinType,
+            @Nullable Type secondReceiverType,
+            @Nullable KotlinType secondReceiverKotlinType
     ) {
-        super(type, dispatchReceiver.canHaveSideEffects() || extensionReceiver.canHaveSideEffects());
+        super(type, kotlinType, dispatchReceiver.canHaveSideEffects() || extensionReceiver.canHaveSideEffects());
         this.dispatchReceiver = dispatchReceiver;
         this.extensionReceiver = extensionReceiver;
         this.secondReceiverType = secondReceiverType;
+        this.secondReceiverKotlinType = secondReceiverKotlinType;
     }
 
     public StackValue withoutReceiverArgument() {
-        return new CallReceiver(dispatchReceiver, none(), type, secondReceiverType);
+        return new CallReceiver(dispatchReceiver, none(), type, kotlinType, secondReceiverType, secondReceiverKotlinType);
     }
 
     public static StackValue generateCallReceiver(
@@ -49,30 +54,42 @@ public class CallReceiver extends StackValue {
         KotlinTypeMapper typeMapper = codegen.typeMapper;
         GenerationState state = codegen.getState();
 
-        Type type;
+        JvmKotlinType jvmKotlinType;
         Type secondReceiverType = null;
+        KotlinType secondReceiverKotlinType = null;
         if (extensionReceiverParameter != null) {
-            type = calcExtensionReceiverType(resolvedCall, extensionReceiverParameter, typeMapper, callableMethod, state);
+            jvmKotlinType = calcExtensionReceiverType(
+                    resolvedCall, extensionReceiverParameter, typeMapper, callableMethod, state
+            );
             if (dispatchReceiverParameter != null) {
-                secondReceiverType = calcDispatchReceiverType(resolvedCall, dispatchReceiverParameter, typeMapper, callableMethod);
+                JvmKotlinType dispatchReceiverInfo = calcDispatchReceiverType(
+                        resolvedCall, dispatchReceiverParameter, typeMapper, callableMethod
+                );
+                secondReceiverType = dispatchReceiverInfo.getType();
+                secondReceiverKotlinType = dispatchReceiverInfo.getKotlinType();
             }
         }
         else if (dispatchReceiverParameter != null) {
-            type = calcDispatchReceiverType(resolvedCall, dispatchReceiverParameter, typeMapper, callableMethod);
+            jvmKotlinType = calcDispatchReceiverType(resolvedCall, dispatchReceiverParameter, typeMapper, callableMethod);
         }
         else if (isLocalFunCall(callableMethod)) {
-            type = callableMethod.getGenerateCalleeType();
+            Type calleeType = callableMethod.getGenerateCalleeType();
+            assert calleeType != null : "Could not get callee type for " + resolvedCall;
+
+            jvmKotlinType = new JvmKotlinType(calleeType, null);
         }
         else {
-            type = Type.VOID_TYPE;
+            jvmKotlinType = new JvmKotlinType(Type.VOID_TYPE, null);
         }
 
-        assert type != null : "Could not map receiver type for " + resolvedCall;
 
-        return new CallReceiver(dispatchReceiver, extensionReceiver, type, secondReceiverType);
+        return new CallReceiver(
+                dispatchReceiver, extensionReceiver, jvmKotlinType.getType(),
+                jvmKotlinType.getKotlinType(), secondReceiverType, secondReceiverKotlinType
+        );
     }
 
-    private static Type calcDispatchReceiverType(
+    private static JvmKotlinType calcDispatchReceiverType(
             @NotNull ResolvedCall<?> resolvedCall,
             @Nullable ReceiverParameterDescriptor dispatchReceiver,
             @NotNull KotlinTypeMapper typeMapper,
@@ -83,27 +100,33 @@ public class CallReceiver extends StackValue {
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
         if (CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(descriptor)) {
-            return Type.VOID_TYPE;
+            return new JvmKotlinType(Type.VOID_TYPE, null);
         }
 
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (callableMethod != null) {
             if (InlineClassesUtilsKt.isInlineClass(container)) {
-                return typeMapper.mapType((ClassDescriptor) container);
+                ClassDescriptor classDescriptor = (ClassDescriptor) container;
+                return new JvmKotlinType(typeMapper.mapType(classDescriptor), classDescriptor.getDefaultType());
             }
-            return callableMethod.getDispatchReceiverType();
+            //noinspection ConstantConditions
+            return new JvmKotlinType(callableMethod.getDispatchReceiverType(), callableMethod.getDispatchReceiverKotlinType());
         }
 
         // Extract the receiver from the resolved call, workarounding the fact that ResolvedCall#dispatchReceiver doesn't have
         // all the needed information, for example there's no way to find out whether or not a smart cast was applied to the receiver.
         if (container instanceof ClassDescriptor) {
-            return typeMapper.mapClass((ClassDescriptor) container);
+            ClassDescriptor classDescriptor = (ClassDescriptor) container;
+            return new JvmKotlinType(typeMapper.mapType(classDescriptor), classDescriptor.getDefaultType());
         }
 
-        return typeMapper.mapType(dispatchReceiver);
+        KotlinType dispatchReceiverType = dispatchReceiver.getReturnType();
+
+        //noinspection ConstantConditions
+        return new JvmKotlinType(typeMapper.mapType(dispatchReceiverType), dispatchReceiverType);
     }
 
-    private static Type calcExtensionReceiverType(
+    private static JvmKotlinType calcExtensionReceiverType(
             @NotNull ResolvedCall<?> resolvedCall,
             @Nullable ReceiverParameterDescriptor extensionReceiver,
             @NotNull KotlinTypeMapper typeMapper,
@@ -120,28 +143,46 @@ public class CallReceiver extends StackValue {
         ) {
             ReceiverParameterDescriptor receiverCandidate = descriptor.getExtensionReceiverParameter();
             assert receiverCandidate != null;
-            return typeMapper.mapType(receiverCandidate.getType());
+            return new JvmKotlinType(typeMapper.mapType(receiverCandidate.getType()), receiverCandidate.getType());
         }
 
-        return callableMethod != null ? callableMethod.getExtensionReceiverType() : typeMapper.mapType(extensionReceiver.getType());
+        return callableMethod != null ?
+               new JvmKotlinType(callableMethod.getExtensionReceiverType(), callableMethod.getExtensionReceiverKotlinType()) :
+               new JvmKotlinType(typeMapper.mapType(extensionReceiver.getType()), extensionReceiver.getType());
     }
 
     @Override
-    public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
+    public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
         StackValue currentExtensionReceiver = extensionReceiver;
         boolean hasExtensionReceiver = extensionReceiver != none();
         if (extensionReceiver instanceof SafeCall) {
-            currentExtensionReceiver.put(currentExtensionReceiver.type, v);
-            currentExtensionReceiver = StackValue.onStack(currentExtensionReceiver.type);
+            currentExtensionReceiver.put(currentExtensionReceiver.type, currentExtensionReceiver.kotlinType, v);
+            currentExtensionReceiver = StackValue.onStack(currentExtensionReceiver.type, currentExtensionReceiver.kotlinType);
         }
 
-        Type dispatchReceiverType = secondReceiverType != null ? secondReceiverType :
-                                    hasExtensionReceiver ? dispatchReceiver.type :
-                                    type;
-        dispatchReceiver.put(dispatchReceiverType, v);
+        Type dispatchReceiverType = calcDispatchReceiver(secondReceiverType, hasExtensionReceiver, dispatchReceiver.type, type);
+        KotlinType dispatchReceiverKotlinType = calcDispatchReceiver(
+                secondReceiverKotlinType, hasExtensionReceiver, dispatchReceiver.kotlinType, kotlinType
+        );
+
+        dispatchReceiver.put(dispatchReceiverType, dispatchReceiverKotlinType, v);
 
         currentExtensionReceiver
-                .moveToTopOfStack(hasExtensionReceiver ? type : currentExtensionReceiver.type, v, dispatchReceiverType.getSize());
+                .moveToTopOfStack(
+                        hasExtensionReceiver ? type : currentExtensionReceiver.type,
+                        hasExtensionReceiver ? kotlinType : currentExtensionReceiver.kotlinType,
+                        v,
+                        dispatchReceiverType.getSize()
+                );
+    }
+
+    private static <T> T calcDispatchReceiver(T secondType, boolean hasExtensionReceiver, T dispatchReceiverType, T defaultType) {
+        if (secondType != null) {
+            return secondType;
+        }
+        else {
+            return hasExtensionReceiver ? dispatchReceiverType : defaultType;
+        }
     }
 
     @Override

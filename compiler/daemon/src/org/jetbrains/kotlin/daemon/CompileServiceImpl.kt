@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapte
 import org.jetbrains.kotlin.daemon.report.RemoteICReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -352,6 +353,15 @@ class CompileServiceImpl(
                 }
             }
 
+    override fun classesFqNamesByFiles(
+        sessionId: Int, sourceFiles: Set<File>
+    ): CompileService.CallResult<Set<String>> =
+        ifAlive {
+            withValidClientOrSessionProxy(sessionId) {
+                CompileService.CallResult.Good(classesFqNames(sourceFiles))
+            }
+        }
+
     override fun compile(
             sessionId: Int,
             compilerArguments: Array<out String>,
@@ -522,7 +532,8 @@ class CompileServiceImpl(
                                                     artifactChanges, changesRegistry,
                                                     buildHistoryFile = incrementalCompilationOptions.resultDifferenceFile,
                                                     friendBuildHistoryFile = incrementalCompilationOptions.friendDifferenceFile,
-                                                    usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking
+                                                    usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
+                                                    localStateDirs = incrementalCompilationOptions.localStateDirs
         )
         return compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)
     }

@@ -32,7 +32,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
@@ -151,7 +151,10 @@ private class VariablesCollector(
     }
 
     private fun isRefToProperty(expression: KtReferenceExpression): Boolean {
-        val context = expression.analyzeFully()
+        // NB: analyze() cannot be called here, because DELEGATED_PROPERTY_RESOLVED_CALL will be always null
+        // Looks like a bug
+        @Suppress("DEPRECATION")
+        val context = expression.analyzeWithAllCompilerChecks().bindingContext
         val descriptor = context[BindingContext.REFERENCE_TARGET, expression]
         if (descriptor is PropertyDescriptor) {
             val getter = descriptor.getter

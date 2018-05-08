@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.ClassDataWithSource
+import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import javax.inject.Inject
 
 class DeserializedDescriptorResolver {
@@ -45,14 +45,14 @@ class DeserializedDescriptorResolver {
         return components.classDeserializer.deserializeClass(kotlinClass.classId, classData)
     }
 
-    internal fun readClassData(kotlinClass: KotlinJvmBinaryClass): ClassDataWithSource? {
+    internal fun readClassData(kotlinClass: KotlinJvmBinaryClass): ClassData? {
         val data = readData(kotlinClass, KOTLIN_CLASS) ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
-        val classData = parseProto(kotlinClass) {
+        val (nameResolver, classProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
         val source = KotlinJvmBinarySourceElement(kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible)
-        return ClassDataWithSource(classData, source)
+        return ClassData(nameResolver, classProto, source)
     }
 
     fun createKotlinPackagePartScope(descriptor: PackageFragmentDescriptor, kotlinClass: KotlinJvmBinaryClass): MemberScope? {
@@ -61,7 +61,9 @@ class DeserializedDescriptorResolver {
         val (nameResolver, packageProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
         } ?: return null
-        val source = JvmPackagePartSource(kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible)
+        val source = JvmPackagePartSource(
+            kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible
+        )
         return DeserializedPackageMemberScope(descriptor, packageProto, nameResolver, source, components) {
             // All classes are included into Java scope
             emptyList()

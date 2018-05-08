@@ -25,15 +25,15 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.inline.inlineFunctionsJvmNames
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
+import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.security.MessageDigest
@@ -81,6 +81,9 @@ open class IncrementalJvmCache(
     @Suppress("unused")
     fun classesBySources(sources: Iterable<File>): Iterable<JvmClassName> =
             sources.flatMap { sourceToClassesMap[it] }
+
+    fun sourceInCache(file: File): Boolean =
+        sourceToClassesMap.contains(file)
 
     fun sourcesByInternalName(internalName: String): Collection<File> =
             internalNameToSource[internalName]

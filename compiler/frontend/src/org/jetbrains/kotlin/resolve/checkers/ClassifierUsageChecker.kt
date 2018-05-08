@@ -35,7 +35,8 @@ interface ClassifierUsageChecker {
 class ClassifierUsageCheckerContext(
     override val trace: BindingTrace,
     override val languageVersionSettings: LanguageVersionSettings,
-    override val deprecationResolver: DeprecationResolver
+    override val deprecationResolver: DeprecationResolver,
+    override val moduleDescriptor: ModuleDescriptor
 ) : CheckerContext
 
 

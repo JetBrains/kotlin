@@ -40,5 +40,19 @@ interface DeclarationAttributeAltererExtension {
         isImplicitModality: Boolean
     ): Modality? = null
 
+    @Deprecated(
+        "Use refineDeclarationModality(modifierListOwner, declaration, containingDeclaration, currentModality, bindingContext, isImplicitModality)",
+        ReplaceWith("refineDeclarationModality(modifierListOwner, declaration, containingDeclaration, currentModality, bindingContext, false)")
+    )
+    fun refineDeclarationModality(
+        modifierListOwner: KtModifierListOwner,
+        declaration: DeclarationDescriptor?,
+        containingDeclaration: DeclarationDescriptor?,
+        currentModality: Modality,
+        bindingContext: BindingContext
+    ): Modality? {
+        return refineDeclarationModality(modifierListOwner, declaration, containingDeclaration, currentModality, bindingContext, false)
+    }
+
     fun shouldConvertFirstSAMParameterToReceiver(function: FunctionDescriptor): Boolean = false
 }

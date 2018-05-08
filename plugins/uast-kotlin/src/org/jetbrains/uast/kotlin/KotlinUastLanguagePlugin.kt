@@ -32,12 +32,16 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
@@ -60,11 +64,23 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return fileName.endsWith(".kt", false) || fileName.endsWith(".kts", false)
     }
 
+    private val PsiElement.isJvmElement
+        get() = try {
+            // Workaround for UAST used without full-fledged IDEA when ProjectFileIndex is not available
+            // If we can't get the module (or don't have one), act as if the current platform is JVM
+            val module = module
+            module == null || TargetPlatformDetector.getPlatform(module) is JvmPlatform
+        } catch (e: Exception) {
+            true
+        }
+
     override fun convertElement(element: PsiElement, parent: UElement?, requiredType: Class<out UElement>?): UElement? {
+        if (!element.isJvmElement) return null
         return convertDeclarationOrElement(element, parent, requiredType)
     }
 
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
+        if (!element.isJvmElement) return null
         if (element is PsiFile) return convertDeclaration(element, null, requiredType)
         if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
 
@@ -277,8 +293,12 @@ internal object KotlinConverter {
         is KtContainerNode -> unwrapElements(element.parent)
         is KtSimpleNameStringTemplateEntry -> unwrapElements(element.parent)
         is KtLightParameterList -> unwrapElements(element.parent)
+        is KtTypeElement -> unwrapElements(element.parent)
         else -> element
     }
+
+    private val identifiersTokens =
+        setOf(KtTokens.IDENTIFIER, KtTokens.CONSTRUCTOR_KEYWORD, KtTokens.THIS_KEYWORD, KtTokens.SUPER_KEYWORD, KtTokens.OBJECT_KEYWORD)
 
     internal fun convertPsiElement(element: PsiElement?,
                                    givenParent: UElement?,
@@ -313,7 +333,7 @@ internal object KotlinConverter {
                 }
 
             is KtExpression -> KotlinConverter.convertExpression(element, givenParent, requiredType)
-            is KtLambdaArgument -> KotlinConverter.convertExpression(element.getLambdaExpression(), givenParent, requiredType)
+            is KtLambdaArgument -> element.getLambdaExpression()?.let { KotlinConverter.convertExpression(it, givenParent, requiredType) }
             is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> {
                 val expression = element.originalExpression
                 when (expression) {
@@ -337,8 +357,10 @@ internal object KotlinConverter {
             is KtImportDirective -> el<UImportStatement>(build(::KotlinUImportStatement))
             else -> {
                 if (element is LeafPsiElement) {
-                    if (element.elementType == KtTokens.IDENTIFIER)
-                    el<UIdentifier>(build(::UIdentifier))
+                    if (element.elementType in identifiersTokens)
+                        if (element.elementType != KtTokens.OBJECT_KEYWORD || element.getParentOfType<KtObjectDeclaration>(false)?.nameIdentifier == null)
+                            el<UIdentifier>(build(::KotlinUIdentifier))
+                        else null
                     else if (element.elementType == KtTokens.LBRACKET && element.parent is KtCollectionLiteralExpression)
                         el<UIdentifier> {
                             UIdentifier(
@@ -350,9 +372,7 @@ internal object KotlinConverter {
                             )
                         }
                     else null
-                } else {
-                    null
-                }
+                } else null
             }
         }}
     }

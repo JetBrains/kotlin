@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
     fun collectMembersToGenerate(classOrObject: KtClassOrObject): Collection<OverrideMemberChooserObject> {
-        val descriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return emptySet()
+        val descriptor = classOrObject.resolveToDescriptorIfAny() ?: return emptySet()
         return collectMembersToGenerate(descriptor, classOrObject.project)
     }
 

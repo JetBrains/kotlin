@@ -31,6 +31,6 @@ internal class A {
     }
 
     fun f(p: Int) {
-        println("p = " + p)
+        println("p = $p")
     }
 }

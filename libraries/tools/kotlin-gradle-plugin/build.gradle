@@ -30,6 +30,7 @@ dependencies {
     compile project(':kotlin-gradle-plugin-api')
     compileOnly project(':compiler')
     compileOnly project(':compiler:incremental-compilation-impl')
+    compileOnly project(':compiler:daemon-common')
 
     compile project(':kotlin-stdlib')
     compileOnly project(':kotlin-reflect-api')
@@ -50,20 +51,29 @@ dependencies {
             extension = 'jar'
         }
     }
+    compileOnly project(':kotlin-scripting-gradle')
 
     runtime project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
     runtime project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
     runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
     runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
+    runtime project(':kotlin-reflect')
+    runtime project(':kotlin-scripting-common')
+    runtime project(':kotlin-scripting-compiler')
+    runtime project(':kotlin-scripting-jvm')
+    runtime project(path: ':kotlin-scripting-gradle', configuration: 'runtimeJar')
 
-    agp25CompileOnly 'com.android.tools.build:gradle:3.0.0-alpha1'
+    // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
+    agp25CompileOnly('com.android.tools.build:gradle:3.0.0-alpha1') { transitive = false }
+    agp25CompileOnly('com.android.tools.build:gradle-core:3.0.0-alpha1') { transitive = false }
+    agp25CompileOnly('com.android.tools.build:builder-model:3.0.0-alpha1') { transitive = false }
     agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
     agp25CompileOnly gradleApi()
     agp25CompileOnly project(':kotlin-annotation-processing')
     agp25CompileOnly project(':kotlin-annotation-processing-gradle')
 
     testCompileOnly project(':compiler')
-    testCompile project (path: ':kotlin-build-common', configuration: 'tests-jar')
+    testCompile project(path: ':kotlin-build-common', configuration: 'tests-jar')
     testCompile project(':kotlin-android-extensions')
     testCompile project(':kotlin-compiler-runner')
     testCompile project(':kotlin-test::kotlin-test-junit')

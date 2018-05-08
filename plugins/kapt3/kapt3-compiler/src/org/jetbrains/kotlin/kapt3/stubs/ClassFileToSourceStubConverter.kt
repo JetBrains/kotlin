@@ -22,6 +22,7 @@ import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
+import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -92,6 +94,9 @@ class ClassFileToSourceStubConverter(
 
     val bindings: Map<String, KaptJavaFileObject>
         get() = _bindings
+
+    private val typeMapper
+        get() = kaptContext.generationState.typeMapper
 
     val treeMaker = TreeMaker.instance(kaptContext.context) as KaptTreeMaker
 
@@ -182,7 +187,40 @@ class ClassFileToSourceStubConverter(
             _bindings[clazz.name] = this
         }
 
+        postProcess(topLevel)
+
         return KaptStub(topLevel, lineMappings.serialize())
+    }
+
+    private fun postProcess(topLevel: JCCompilationUnit) {
+        topLevel.accept(object : TreeScanner() {
+            override fun visitClassDef(clazz: JCClassDecl) {
+                // Delete enums inside enum values
+                if (clazz.isEnum()) {
+                    for (child in clazz.defs) {
+                        if (child is JCVariableDecl) {
+                            deleteAllEnumsInside(child)
+                        }
+                    }
+                }
+
+                super.visitClassDef(clazz)
+            }
+
+            private fun JCClassDecl.isEnum() = mods.flags and Opcodes.ACC_ENUM.toLong() != 0L
+
+            private fun deleteAllEnumsInside(def: JCTree) {
+                def.accept(object : TreeScanner() {
+                    override fun visitClassDef(clazz: JCClassDecl) {
+                        clazz.defs = mapJList(clazz.defs) { child ->
+                            if (child is JCClassDecl && child.isEnum()) null else child
+                        }
+
+                        super.visitClassDef(clazz)
+                    }
+                })
+            }
+        })
     }
 
     private fun convertImports(file: KtFile, classDeclaration: JCClassDecl): JavacList<JCTree> {
@@ -529,7 +567,7 @@ class ClassFileToSourceStubConverter(
 
             val superClassConstructorCall = if (superClassConstructor != null) {
                 val args = mapJList(superClassConstructor.valueParameters) { param ->
-                    convertLiteralExpression(getDefaultValue(kaptContext.generationState.typeMapper.mapType(param.type)))
+                    convertLiteralExpression(getDefaultValue(typeMapper.mapType(param.type)))
                 }
                 val call = treeMaker.Apply(JavacList.nil(), treeMaker.SimpleName("super"), args)
                 JavacList.of<JCStatement>(treeMaker.Exec(call))
@@ -680,17 +718,14 @@ class ClassFileToSourceStubConverter(
             invisibleAnnotations: List<AnnotationNode>?,
             descriptorAnnotations: Annotations
     ): JCModifiers {
-        fun findDescriptorAnnotation(anno: AnnotationNode): AnnotationDescriptor? {
-            val annoFqName = treeMaker.getQualifiedName(Type.getType(anno.desc))
-            return descriptorAnnotations.findAnnotation(FqName(annoFqName))
+        fun convertAndAdd(list: JavacList<JCAnnotation>, anno: AnnotationNode): JavacList<JCAnnotation> {
+            val annotationDescriptor = descriptorAnnotations.singleOrNull { checkIfAnnotationValueMatches(anno, AnnotationValue(it)) }
+            val annotationTree = convertAnnotation(anno, packageFqName, annotationDescriptor) ?: return list
+            return list.prepend(annotationTree)
         }
 
-        var annotations = visibleAnnotations?.fold(JavacList.nil<JCAnnotation>()) { list, anno ->
-            convertAnnotation(anno, packageFqName, findDescriptorAnnotation(anno))?.let { list.prepend(it) } ?: list
-        } ?: JavacList.nil()
-        annotations = invisibleAnnotations?.fold(annotations) { list, anno ->
-            convertAnnotation(anno, packageFqName, findDescriptorAnnotation(anno))?.let { list.prepend(it) } ?: list
-        } ?: annotations
+        var annotations = visibleAnnotations?.fold(JavacList.nil<JCAnnotation>(), ::convertAndAdd) ?: JavacList.nil()
+        annotations = invisibleAnnotations?.fold(annotations, ::convertAndAdd) ?: annotations
 
         val flags = when (kind) {
             ElementKind.ENUM -> access and CLASS_MODIFIERS and Opcodes.ACC_ABSTRACT.inv().toLong()
@@ -840,6 +875,56 @@ class ClassFileToSourceStubConverter(
             is Short -> treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.SHORT), treeMaker.Literal(TypeTag.INT, value.toInt()))
             is Boolean, is Int, is Long, is Float, is Double, is String -> treeMaker.Literal(value)
             else -> null
+        }
+    }
+
+    private fun checkIfAnnotationValueMatches(asm: Any?, desc: ConstantValue<*>): Boolean {
+        return when (asm) {
+            null -> desc.value == null
+            is Char -> desc is CharValue && desc.value == asm
+            is Byte -> desc is ByteValue && desc.value == asm
+            is Short -> desc is ShortValue && desc.value == asm
+            is Boolean -> desc is BooleanValue && desc.value == asm
+            is Int -> desc is IntValue && desc.value == asm
+            is Long -> desc is LongValue && desc.value == asm
+            is Float -> desc is FloatValue && desc.value == asm
+            is Double -> desc is DoubleValue && desc.value == asm
+            is String -> desc is StringValue && desc.value == asm
+            is ByteArray -> desc is ArrayValue && desc.value.size == asm.size
+            is BooleanArray -> desc is ArrayValue && desc.value.size == asm.size
+            is CharArray -> desc is ArrayValue && desc.value.size == asm.size
+            is ShortArray -> desc is ArrayValue && desc.value.size == asm.size
+            is IntArray -> desc is ArrayValue && desc.value.size == asm.size
+            is LongArray -> desc is ArrayValue && desc.value.size == asm.size
+            is FloatArray -> desc is ArrayValue && desc.value.size == asm.size
+            is DoubleArray -> desc is ArrayValue && desc.value.size == asm.size
+            is Array<*> -> { // Two-element String array for enumerations ([desc, fieldName])
+                assert(asm.size == 2)
+                val valueName = (asm[1] as String).takeIf { isValidIdentifier(it) } ?: return false
+                // It's not that easy to check types here because of fqName/internalName differences.
+                // But enums can't extend other enums, so this should be enough.
+                desc is EnumValue && desc.enumEntryName.asString() == valueName
+            }
+            is List<*> -> {
+                desc is ArrayValue
+                        && asm.size == desc.value.size
+                        && asm.zip(desc.value).all { (eAsm, eDesc) -> checkIfAnnotationValueMatches(eAsm, eDesc) }
+            }
+            is Type -> desc is KClassValue && typeMapper.mapType(desc.value) == asm
+            is AnnotationNode -> {
+                val annotationDescriptor = (desc as? AnnotationValue)?.value ?: return false
+                if (typeMapper.mapType(annotationDescriptor.type).descriptor != asm.desc) return false
+                val asmAnnotationArgs = pairedListToMap(asm.values)
+                if (annotationDescriptor.allValueArguments.size != asmAnnotationArgs.size) return false
+
+                for ((descName, descValue) in annotationDescriptor.allValueArguments) {
+                    val asmValue = asmAnnotationArgs[descName.asString()] ?: return false
+                    if (!checkIfAnnotationValueMatches(asmValue, descValue)) return false
+                }
+
+                true
+            }
+            else -> false
         }
     }
 

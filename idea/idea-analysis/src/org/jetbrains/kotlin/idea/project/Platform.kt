@@ -58,6 +58,10 @@ private val readDeserializedContractsArg: String by lazy {
     CommonCompilerArguments::readDeserializedContracts.annotations.filterIsInstance<Argument>().single().value
 }
 
+private val newInferenceArg: String by lazy {
+    CommonCompilerArguments::newInference.annotations.filterIsInstance<Argument>().single().value
+}
+
 fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
     val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.targetPlatformKind)
@@ -189,6 +193,10 @@ private fun getExtraLanguageFeatures(
 
         if (compilerSettings?.additionalArguments?.contains(readDeserializedContractsArg) == true) {
             put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED)
+        }
+
+        if (compilerSettings?.additionalArguments?.contains(newInferenceArg) == true) {
+            put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
         }
     }
 }

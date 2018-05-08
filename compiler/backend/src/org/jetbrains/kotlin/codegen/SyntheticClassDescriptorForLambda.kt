@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 
 class SyntheticClassDescriptorForLambda(
@@ -32,7 +33,7 @@ class SyntheticClassDescriptorForLambda(
         supertypes: Collection<KotlinType>,
         element: KtElement
 ) : ClassDescriptorImpl(containingDeclaration, name, Modality.FINAL, ClassKind.CLASS, supertypes, element.toSourceElement(),
-                        /* isExternal = */ false) {
+                        /* isExternal = */ false, LockBasedStorageManager.NO_LOCKS) {
     init {
         initialize(MemberScope.Empty, emptySet(), null)
     }

@@ -218,9 +218,10 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     @Test
     fun testSimpleAnnotated() {
         doTest("SimpleAnnotated") { _, file ->
-            file.findElementByTextFromPsi<UField>("@SinceKotlin(\"1.0\")\n    val property: String = \"Mary\"").let { field ->
+            file.findElementByTextFromPsi<UField>("@kotlin.SinceKotlin(\"1.0\")\n    val property: String = \"Mary\"").let { field ->
                 val annotation = field.annotations.assertedFind("kotlin.SinceKotlin") { it.qualifiedName }
-                Assert.assertEquals(annotation.findDeclaredAttributeValue("version")?.evaluateString(), "1.0")
+                Assert.assertEquals("1.0", annotation.findDeclaredAttributeValue("version")?.evaluateString())
+                Assert.assertEquals("SinceKotlin", annotation.cast<UAnchorOwner>().uastAnchor?.sourcePsi?.text)
             }
         }
     }
@@ -278,6 +279,16 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     }
 
     @Test
+    fun testTypeAliases() {
+        doTest("TypeAliases") { _, file ->
+            val g = (file.psi as KtFile).declarations.single { it.name == "G" } as KtTypeAlias
+            val originalType = g.getTypeReference()!!.typeElement as KtFunctionType
+            val originalTypeParameters = originalType.parameterList.toUElement() as UDeclarationsExpression
+            Assert.assertTrue((originalTypeParameters.declarations.single() as UParameter).type.isValid)
+        }
+    }
+
+    @Test
     fun testNestedAnnotation() = doTest("AnnotationComplex") { _, file ->
         file.findElementByTextFromPsi<UElement>("@AnnotationArray(value = Annotation())")
             .findElementByTextFromPsi<UElement>("Annotation()")
@@ -292,10 +303,44 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                 val lightAnnotation = convertedUAnnotation.getAsJavaPsiElement(PsiAnnotation::class.java)
                         ?: throw AssertionError("can't get lightAnnotation from $convertedUAnnotation")
                 assertEquals("Annotation", lightAnnotation.qualifiedName)
+                assertEquals("Annotation", (convertedUAnnotation as UAnchorOwner).uastAnchor?.sourcePsi?.text)
             }
     }
 
 
+    @Test
+    fun testParametersDisorder() = doTest("ParametersDisorder") { _, file ->
+
+        fun assertArguments(argumentsInPositionalOrder: List<String?>?, refText: String) =
+            file.findElementByTextFromPsi<UCallExpression>(refText).let { call ->
+                if (call !is UCallExpressionEx) throw AssertionError("${call.javaClass} is not a UCallExpressionEx")
+                Assert.assertEquals(
+                    argumentsInPositionalOrder,
+                    call.resolve()?.let { psiMethod ->
+                        (0 until psiMethod.parameterList.parametersCount).map {
+                            call.getArgumentForParameter(it)?.asRenderString()
+                        }
+                    }
+                )
+            }
+
+
+        assertArguments(listOf("2", "2.2"), "global(b = 2.2F, a = 2)")
+        assertArguments(listOf(null, "\"bbb\""), "withDefault(d = \"bbb\")")
+        assertArguments(listOf("1.3", "3.4"), "atan2(1.3, 3.4)")
+        assertArguments(null, "unresolvedMethod(\"param1\", \"param2\")")
+        assertArguments(listOf("\"%i %i %i\"", "varargs 1 : 2 : 3"), "format(\"%i %i %i\", 1, 2, 3)")
+        assertArguments(listOf("\"%i %i %i\"", "varargs arrayOf(1, 2, 3)"), "format(\"%i %i %i\", arrayOf(1, 2, 3))")
+        assertArguments(
+            listOf("\"%i %i %i\"", "varargs arrayOf(1, 2, 3) : arrayOf(4, 5, 6)"),
+            "format(\"%i %i %i\", arrayOf(1, 2, 3), arrayOf(4, 5, 6))"
+        )
+        assertArguments(listOf("\"%i %i %i\"", "\"\".chunked(2).toTypedArray()"), "format(\"%i %i %i\", *\"\".chunked(2).toTypedArray())")
+        assertArguments(listOf("\"def\"", "8", "7.0"), "with2Receivers(8, 7.0F)")
+        assertArguments(listOf("\"foo\"", "1"), "object : Parent(b = 1, a = \"foo\")\n")
+    }
+
 }
 
-fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T = find { transform(it) == value } ?: throw AssertionError("'$value' not found, only ${this.joinToString { transform(it).toString() }}")
+fun <T, R> Iterable<T>.assertedFind(value: R, transform: (T) -> R): T =
+    find { transform(it) == value } ?: throw AssertionError("'$value' not found, only ${this.joinToString { transform(it).toString() }}")

@@ -29,8 +29,6 @@ import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.lang.jvm.facade.JvmElementProvider
-import com.intellij.lang.jvm.facade.JvmFacade
-import com.intellij.lang.jvm.facade.JvmFacadeImpl
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.TransactionGuardImpl
@@ -64,6 +62,7 @@ import com.intellij.psi.util.JavaClassSupers
 import com.intellij.util.io.URLUtil
 import com.intellij.util.lang.UrlClassLoader
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -89,6 +88,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
@@ -101,6 +101,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
@@ -131,17 +132,20 @@ class KotlinCoreEnvironment private constructor(
             with (project) {
                 registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
 
-                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
+                val traceHolder = CliTraceHolder()
+                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder)
+                val kotlinAsJavaSupport = CliKotlinAsJavaSupport(this, traceHolder)
                 registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(CodeAnalyzerInitializer::class.java, cliLightClassGenerationSupport)
+                registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)
+                registerService(CodeAnalyzerInitializer::class.java, traceHolder)
 
                 registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
                 registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
 
                 val area = Extensions.getArea(this)
 
-                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, cliLightClassGenerationSupport))
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, kotlinAsJavaSupport))
                 area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
                         PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java)))
             }
@@ -175,6 +179,7 @@ class KotlinCoreEnvironment private constructor(
         DeclarationAttributeAltererExtension.registerExtensionPoint(project)
         PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
         JsSyntheticTranslateExtension.registerExtensionPoint(project)
+        CompilerConfigurationExtension.registerExtensionPoint(project)
 
         for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             try {
@@ -192,6 +197,10 @@ class KotlinCoreEnvironment private constructor(
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         registerProjectServices(projectEnvironment, messageCollector)
 
+        CompilerConfigurationExtension.getInstances(project).forEach {
+            it.updateConfiguration(configuration)
+        }
+
         sourceFiles += CompileEnvironmentUtil.getKtFiles(project, getSourceRootsCheckingForDuplicates(), this.configuration, {
             message ->
             report(ERROR, message)
@@ -200,6 +209,9 @@ class KotlinCoreEnvironment private constructor(
 
         val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) as? CliScriptDefinitionProvider
         if (scriptDefinitionProvider != null) {
+            scriptDefinitionProvider.setScriptDefinitionsSources(
+                configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
+            )
             scriptDefinitionProvider.setScriptDefinitions(
                     configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
 
@@ -277,6 +289,7 @@ class KotlinCoreEnvironment private constructor(
         return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
             addRoots(initialRoots)
             packagePartProviders += this
+            (ModuleAnnotationsResolver.getInstance(project) as CliModuleAnnotationsResolver).addPackagePartProvider(this)
         }
     }
 
@@ -382,7 +395,7 @@ class KotlinCoreEnvironment private constructor(
     }
 
     companion object {
-        private val ideaCompatibleBuildNumber = "173.1"
+        private val ideaCompatibleBuildNumber = "181.1"
 
         init {
             setCompatibleBuild()
@@ -397,6 +410,12 @@ class KotlinCoreEnvironment private constructor(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, configFiles: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             setCompatibleBuild()
+            // If not disabled explicitly, we should always support at least the standard script definition
+            if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
+                StandardScriptDefinition !in configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
+            ) {
+                configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
+            }
             val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration)
             // Disposing of the environment is unsafe in production then parallel builds are enabled, but turning it off universally
             // breaks a lot of tests, therefore it is disabled for production and enabled for tests
@@ -431,7 +450,10 @@ class KotlinCoreEnvironment private constructor(
                 parentDisposable: Disposable, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {
             val configuration = initialConfiguration.copy()
-            if (configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).isEmpty()) {
+            // in tests we assume that standard definition should only be added if no other explicit defs are already added
+            if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
+                configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS).isEmpty()
+            ) {
                 configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition)
             }
             // Tests are supposed to create a single project and dispose it right after use
@@ -526,7 +548,7 @@ class KotlinCoreEnvironment private constructor(
                     ?: configuration.get(CLIConfigurationKeys.COMPILER_JAR_LOCATOR)?.compilerJar
                     ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
                     // hack for load extensions when compiler run directly from project directory (e.g. in tests)
-                    ?: File("compiler/cli/src").takeIf { it.hasConfigFile(configFilePath) }
+                    ?: File("idea/src").takeIf { it.hasConfigFile(configFilePath) }
                     ?: throw IllegalStateException(
                                 "Unable to find extension point configuration $configFilePath " +
                                 "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})")
@@ -569,6 +591,7 @@ class KotlinCoreEnvironment private constructor(
                 registerService(ScriptDependenciesProvider::class.java, CliScriptDependenciesProvider(projectEnvironment.project, scriptDefinitionProvider))
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
+                registerService(ModuleAnnotationsResolver::class.java, CliModuleAnnotationsResolver())
                 if (messageCollector != null) {
                     registerService(ScriptReportSink::class.java, CliScriptReportSink(messageCollector))
                 }

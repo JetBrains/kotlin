@@ -1,28 +1,21 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
+
+sourceSets {
+    "main" { }
+    "test" { projectDefault() }
+}
+
+val builtinsSourceSet = the<JavaPluginConvention>().sourceSets.create("builtins") {
+    java.srcDir("builtins")
+}
+val builtinsCompile by configurations
 
 dependencies {
-    compile(protobufFull())
-    compile(project(":idea"))
-    compile(project(":idea:idea-jvm"))
-    compile(project(":j2k"))
-    compile(project(":compiler:util"))
-    compile(project(":compiler:cli"))
-    compile(project(":compiler:backend"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:backend"))
-    compile(project(":js:js.ast"))
-    compile(project(":js:js.frontend"))
-    compile(project(":idea:idea-test-framework"))
-    compile(projectDist(":kotlin-test:kotlin-test-jvm"))
-    compile(projectTests(":kotlin-build-common"))
-    compile(projectTests(":compiler:tests-common"))
-    compile(projectTests(":compiler:container"))
-    compile(projectTests(":compiler:incremental-compilation-impl"))
     compile(projectTests(":compiler:cli"))
-    compile(projectTests(":idea"))
-    compile(projectTests(":idea:idea-gradle"))
     compile(projectTests(":idea:idea-maven"))
     compile(projectTests(":j2k"))
     compile(projectTests(":idea:idea-android"))
@@ -34,25 +27,16 @@ dependencies {
     compile(projectTests(":kotlin-allopen-compiler-plugin"))
     compile(projectTests(":kotlin-noarg-compiler-plugin"))
     compile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
-    compile(projectTests(":plugins:uast-kotlin"))
-    compile(projectTests(":js:js.tests"))
     compile(projectTests(":generators:test-generator"))
-    compileOnly(intellijDep("jps-build-test"))
-    compileOnly(project(":kotlin-reflect-api"))
-
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
-    testCompile(project(":compiler:incremental-compilation-impl"))
-    testCompile(commonDep("junit:junit"))
+    builtinsCompile("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion")
+    testCompileOnly(intellijDep("jps-build-test"))
+    testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(intellijDep("jps-build-test"))
-
+    testCompile(builtinsSourceSet.output)
     testRuntime(intellijDep()) { includeJars("idea_rt") }
     testRuntime(projectDist(":kotlin-reflect"))
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
-}
 
 projectTest {
     workingDir = rootDir
@@ -64,3 +48,7 @@ val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.Gene
 val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare")
 
 val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt")
+
+val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
+
+testsJar()

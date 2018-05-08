@@ -19,13 +19,18 @@ package org.jetbrains.kotlin.incremental
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
-import org.jetbrains.kotlin.incremental.storage.*
+import org.jetbrains.kotlin.incremental.storage.BasicStringMap
+import org.jetbrains.kotlin.incremental.storage.DirtyClassesFqNameMap
+import org.jetbrains.kotlin.incremental.storage.SourceToFqNameMap
+import org.jetbrains.kotlin.incremental.storage.StringToLongMapExternalizer
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.serialization.js.JsProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import java.io.DataInput
 import java.io.DataOutput
@@ -55,7 +60,7 @@ open class IncrementalJsCache(cachesDir: File) : IncrementalCacheCommon<FqName>(
             headerFile.writeBytes(value)
         }
 
-    override fun markDirty(removedAndCompiledSources: List<File>) {
+    override fun markDirty(removedAndCompiledSources: Collection<File>) {
         super.markDirty(removedAndCompiledSources)
         dirtySources.addAll(removedAndCompiledSources)
     }
@@ -177,14 +182,11 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
     }
 
     proto.`package`.apply {
-        val packageFqName = if (hasExtension(JsProtoBuf.packageFqName)) {
-            nameResolver.getPackageFqName(getExtension(JsProtoBuf.packageFqName))
-        }
-        else FqName.ROOT
-
+        val packageFqName = getExtensionOrNull(JsProtoBuf.packageFqName)?.let(nameResolver::getPackageFqName)?.let(::FqName) ?: FqName.ROOT
         val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
         classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
     }
+
     return classes
 }
 

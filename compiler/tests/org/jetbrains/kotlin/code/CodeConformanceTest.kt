@@ -34,8 +34,10 @@ class CodeConformanceTest : TestCase() {
                 "js/js.translator/testData/node_modules",
                 "libraries/kotlin.test/js/it/.gradle",
                 "libraries/kotlin.test/js/it/node_modules",
-                "libraries/stdlib/js/node_modules",
+                "libraries/stdlib/js/.gradle",
+                "libraries/stdlib/js/build",
                 "libraries/reflect/build",
+                "libraries/reflect/api/src/java9/java/kotlin/reflect/jvm/internal/impl",
                 "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
                 "dependencies",
                 "js/js.translator/qunit/qunit.js",
@@ -53,16 +55,19 @@ class CodeConformanceTest : TestCase() {
                 "dependencies",
                 "out",
                 "dist",
+                "custom-dependencies/android-sdk/build",
                 "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
                 "js/js.tests/.gradle",
                 "js/js.translator/testData/node_modules",
                 "libraries/stdlib/common/build",
-                "libraries/stdlib/common/target",
+                "libraries/stdlib/js/.gradle",
                 "libraries/stdlib/js/build",
                 "libraries/kotlin.test/js/it/.gradle",
                 "libraries/kotlin.test/js/it/node_modules",
                 "libraries/stdlib/js/node_modules",
+                "libraries/tools/kotlin-maven-plugin-test/target",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
                 "buildSrc/prepare-deps/android-dx/build",
                 "buildSrc/prepare-deps/intellij-sdk/build"
         )
@@ -158,6 +163,7 @@ class CodeConformanceTest : TestCase() {
         val filesWithUnlistedCopyrights = mutableListOf<String>()
         val root = File(".").absoluteFile
         val knownThirdPartyCode = loadKnownThirdPartyCodeList()
+        val copyrightRegex = Regex("""\bCopyright\b""")
         for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, root)) {
             val relativePath = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
             if (COPYRIGHT_EXCLUDED_FILES_AND_DIRS.any { relativePath.startsWith(it) } ||
@@ -165,7 +171,7 @@ class CodeConformanceTest : TestCase() {
 
             sourceFile.useLines { lineSequence ->
                 for (line in lineSequence) {
-                    if ("Copyright" in line && "JetBrains" !in line) {
+                    if (copyrightRegex in line && "JetBrains" !in line) {
                         filesWithUnlistedCopyrights.add("$relativePath: $line")
                     }
                 }

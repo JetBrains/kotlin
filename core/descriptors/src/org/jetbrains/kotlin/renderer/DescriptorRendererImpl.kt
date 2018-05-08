@@ -396,8 +396,9 @@ internal class DescriptorRendererImpl(
 
         val excluded = if (annotated is KotlinType) excludedTypeAnnotationClasses else excludedAnnotationClasses
 
+        val annotationFilter = annotationFilter
         for ((annotation, target) in annotated.annotations.getAllAnnotations()) {
-            if (annotation.fqName !in excluded) {
+            if (annotation.fqName !in excluded && (annotationFilter == null || annotationFilter(annotation))) {
                 append(renderAnnotation(annotation, target)).append(" ")
             }
         }

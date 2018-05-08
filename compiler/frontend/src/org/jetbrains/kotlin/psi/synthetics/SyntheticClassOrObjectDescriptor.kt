@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
+import java.lang.IllegalStateException
 
 /*
  * This class introduces all attributes that are needed for synthetic classes/object so far.
@@ -49,13 +50,21 @@ class SyntheticClassOrObjectDescriptor(
     val syntheticDeclaration: KtPureClassOrObject = SyntheticDeclaration(parentClassOrObject, name.asString())
 
     private val thisDescriptor: SyntheticClassOrObjectDescriptor get() = this // code readability
+
+    private lateinit var typeParameters: List<TypeParameterDescriptor>
     private val typeConstructor = SyntheticTypeConstructor(c.storageManager)
-    private val resolutionScopesSupport = ClassResolutionScopesSupport(thisDescriptor, c.storageManager, { outerScope })
+    private val resolutionScopesSupport = ClassResolutionScopesSupport(thisDescriptor, c.storageManager, c.languageVersionSettings, { outerScope })
     private val syntheticSupertypes =
         mutableListOf<KotlinType>().apply { c.syntheticResolveExtension.addSyntheticSupertypes(thisDescriptor, this) }
     private val unsubstitutedMemberScope =
         LazyClassMemberScope(c, SyntheticClassMemberDeclarationProvider(syntheticDeclaration), this, c.trace)
-    private val unsubstitutedPrimaryConstructor = createUnsubstitutedPrimaryConstructor(constructorVisibility)
+    private val _unsubstitutedPrimaryConstructor =
+        c.storageManager.createLazyValue { createUnsubstitutedPrimaryConstructor(constructorVisibility) }
+
+    @JvmOverloads
+    fun initialize(typeParameters: List<TypeParameterDescriptor> = emptyList()) {
+        this.typeParameters = typeParameters
+    }
 
     override val annotations: Annotations get() = Annotations.EMPTY
 
@@ -69,11 +78,11 @@ class SyntheticClassOrObjectDescriptor(
     override fun isExpect() = false
     override fun isActual() = false
 
-    override fun getCompanionObjectDescriptor() = null
+    override fun getCompanionObjectDescriptor(): ClassDescriptorWithResolutionScopes? = null
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
-    override fun getUnsubstitutedPrimaryConstructor() = unsubstitutedPrimaryConstructor
-    override fun getConstructors() = listOf(unsubstitutedPrimaryConstructor)
-    override fun getDeclaredTypeParameters() = emptyList<TypeParameterDescriptor>()
+    override fun getUnsubstitutedPrimaryConstructor() = _unsubstitutedPrimaryConstructor()
+    override fun getConstructors() = listOf(_unsubstitutedPrimaryConstructor())
+    override fun getDeclaredTypeParameters() = typeParameters
     override fun getStaticScope() = MemberScope.Empty
     override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
@@ -109,7 +118,7 @@ class SyntheticClassOrObjectDescriptor(
     }
 
     private inner class SyntheticTypeConstructor(storageManager: StorageManager) : AbstractClassTypeConstructor(storageManager) {
-        override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
+        override fun getParameters(): List<TypeParameterDescriptor> = typeParameters
         override fun isDenotable(): Boolean = true
         override fun getDeclarationDescriptor(): ClassDescriptor = thisDescriptor
         override fun computeSupertypes(): Collection<KotlinType> = syntheticSupertypes
@@ -151,7 +160,10 @@ class SyntheticClassOrObjectDescriptor(
 
         override fun getPsiOrParent() = _parent.psiOrParent
         override fun getParent() = _parent.psiOrParent
-        override fun getContainingKtFile() = _parent.containingKtFile
+        override fun getContainingKtFile() =
+        // in theory `containingKtFile` is `@NotNull` but in practice EA-114080
+            _parent.containingKtFile ?: throw IllegalStateException("containingKtFile was null for $_parent of ${_parent.javaClass}")
+
     }
 }
 

@@ -5,6 +5,7 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Int
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
             CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
@@ -12,6 +13,7 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
           elements: VARARG type=IntArray varargElementType=Int
             TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
   FUN name:testSpread visibility:public modality:FINAL <> (a:kotlin.Any) returnType:IntArray flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
@@ -19,6 +21,7 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.IntArray
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility:public flags:
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
             CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
@@ -27,5 +30,6 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
           elements: VARARG type=IntArray varargElementType=Int
             SPREAD_ELEMENT
               TYPE_OP type=kotlin.IntArray origin=IMPLICIT_CAST typeOperand=kotlin.IntArray
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility:public flags:
                 GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
 

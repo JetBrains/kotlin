@@ -25,7 +25,7 @@ class InlineLambdaContext(
         contextKind: OwnerKind,
         parentContext: CodegenContext<*>,
         closure: MutableClosure?,
-        private val isCrossInline: Boolean,
+        val isCrossInline: Boolean,
         private val isPropertyReference: Boolean
 ) : MethodContext(functionDescriptor, contextKind, parentContext, closure, false) {
 

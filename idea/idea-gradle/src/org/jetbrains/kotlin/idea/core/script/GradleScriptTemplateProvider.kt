@@ -17,31 +17,44 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.execution.configurations.CommandLineTokenizer
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.gradle.tooling.ProjectConnection
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettingsListener
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.reflect.KClass
 import kotlin.script.dependencies.Environment
+import kotlin.script.dependencies.ScriptContents
+import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
 import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.dependencies.ScriptReport
+import kotlin.script.experimental.location.ScriptExpectedLocation
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-
-class GradleScriptDefinitionsContributor(private val project: Project): ScriptDefinitionContributor {
+class GradleScriptDefinitionsContributor(private val project: Project) : ScriptDefinitionContributor {
 
     override val id: String = "Gradle Kotlin DSL"
     private val failedToLoad = AtomicBoolean(false)
@@ -69,12 +82,12 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
             }
         }
         project.messageBus.connect(project).subscribe(GradleSettingsListener.TOPIC, listener)
+
+        ServiceManager.getService(project, ScriptModificationListener::class.java)
     }
 
     override fun getDefinitions(): List<KotlinScriptDefinition> {
-        val definitions = loadDefinitions()
-        failedToLoad.set(definitions.isEmpty())
-        return definitions
+        return loadDefinitions()
     }
 
     // NOTE: control flow here depends on suppressing exceptions from loadGradleTemplates calls
@@ -83,8 +96,15 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
         val kotlinDslDependencySelector = Regex("^gradle-(?:kotlin-dsl|core).*\\.jar\$")
         val kotlinDslAdditionalResolverCp = ::kotlinStdlibAndCompiler
 
+        failedToLoad.set(false)
+
         // KotlinBuildScript should be last because it has wide scriptFilePattern
         val kotlinDslTemplates = loadGradleTemplates(
+            templateClass = "org.gradle.kotlin.dsl.KotlinInitScript",
+            dependencySelector = kotlinDslDependencySelector,
+            additionalResolverClasspath = kotlinDslAdditionalResolverCp
+
+        ) + loadGradleTemplates(
             templateClass = "org.gradle.kotlin.dsl.KotlinSettingsScript",
             dependencySelector = kotlinDslDependencySelector,
             additionalResolverClasspath = kotlinDslAdditionalResolverCp
@@ -97,63 +117,81 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
         if (kotlinDslTemplates.isNotEmpty()) {
             return kotlinDslTemplates
         }
-        val gradleScriptKotlinLegacyTemplates = loadGradleTemplates(
-                templateClass = "org.gradle.script.lang.kotlin.KotlinBuildScript",
-                dependencySelector = Regex("^gradle-(?:script-kotlin|core).*\\.jar\$"),
-                additionalResolverClasspath = { emptyList() }
+
+        val default = tryToLoadOldBuildScriptDefinition()
+        if (default.isNotEmpty()) {
+            return default
+        }
+
+        return listOf(ErrorGradleScriptDefinition())
+    }
+
+    private fun tryToLoadOldBuildScriptDefinition(): List<KotlinScriptDefinition> {
+        failedToLoad.set(false)
+
+        return loadGradleTemplates(
+            templateClass = "org.gradle.script.lang.kotlin.KotlinBuildScript",
+            dependencySelector = Regex("^gradle-(?:script-kotlin|core).*\\.jar\$"),
+            additionalResolverClasspath = { emptyList() }
         )
-        return gradleScriptKotlinLegacyTemplates
     }
 
     // TODO: check this against kotlin-dsl branch that uses daemon
     private fun kotlinStdlibAndCompiler(gradleLibDir: File): List<File> {
         // additionally need compiler jar to load gradle resolver
         return gradleLibDir.listFiles { file -> file.name.startsWith("kotlin-compiler-embeddable") || file.name.startsWith("kotlin-stdlib") }
-                .firstOrNull()?.let(::listOf).orEmpty()
+            .firstOrNull()?.let(::listOf).orEmpty()
     }
 
     private fun loadGradleTemplates(
-            templateClass: String, dependencySelector: Regex,
-            additionalResolverClasspath: (gradleLibDir: File) -> List<File>
+        templateClass: String, dependencySelector: Regex,
+        additionalResolverClasspath: (gradleLibDir: File) -> List<File>
     ): List<KotlinScriptDefinition> = try {
         doLoadGradleTemplates(templateClass, dependencySelector, additionalResolverClasspath)
-    }
-    catch (t: Throwable) {
+    } catch (t: Throwable) {
         // TODO: review exception handling
-        emptyList()
+        failedToLoad.set(true)
+        listOf(ErrorGradleScriptDefinition(t.message))
     }
 
 
     private fun doLoadGradleTemplates(
-            templateClass: String, dependencySelector: Regex,
-            additionalResolverClasspath: (gradleLibDir: File) -> List<File>
+        templateClass: String, dependencySelector: Regex,
+        additionalResolverClasspath: (gradleLibDir: File) -> List<File>
     ): List<KotlinScriptDefinition> {
         fun createEnvironment(gradleExeSettings: GradleExecutionSettings): Environment {
             val gradleJvmOptions = gradleExeSettings.daemonVmOptions?.let { vmOptions ->
                 CommandLineTokenizer(vmOptions).toList()
-                        .mapNotNull { it?.let { it as? String } }
-                        .filterNot(String::isBlank)
-                        .distinct()
+                    .mapNotNull { it?.let { it as? String } }
+                    .filterNot(String::isBlank)
+                    .distinct()
             } ?: emptyList()
 
 
             return mapOf(
-                    "gradleHome" to gradleExeSettings.gradleHome?.let(::File),
-                    "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File),
-                    "gradleWithConnection" to { action: (ProjectConnection) -> Unit ->
-                        GradleExecutionHelper().execute(project.basePath!!, null) { action(it) }
-                    },
-                    "gradleJavaHome" to gradleExeSettings.javaHome,
-                    "gradleJvmOptions" to gradleJvmOptions,
-                    "getScriptSectionTokens" to ::topLevelSectionCodeTextTokens
+                "gradleHome" to gradleExeSettings.gradleHome?.let(::File),
+                "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File),
+                "gradleWithConnection" to { action: (ProjectConnection) -> Unit ->
+                    GradleExecutionHelper().execute(project.basePath!!, null) { action(it) }
+                },
+                "gradleJavaHome" to gradleExeSettings.javaHome,
+                "gradleJvmOptions" to gradleJvmOptions,
+                "getScriptSectionTokens" to ::topLevelSectionCodeTextTokens
             )
 
         }
 
+        val gradleSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
+        if (gradleSettings.getLinkedProjectsSettings().isEmpty()) error("Project '${project.name}' isn't linked with Gradle")
+
+        val projectSettings = gradleSettings.getLinkedProjectsSettings().filterIsInstance<GradleProjectSettings>().firstOrNull()
+                ?: error("Project '${project.name}' isn't linked with Gradle")
+
         val gradleExeSettings = ExternalSystemApiUtil.getExecutionSettings<GradleExecutionSettings>(
-                project,
-                ExternalSystemApiUtil.toCanonicalPath(project.basePath!!),
-                GradleConstants.SYSTEM_ID)
+            project,
+            projectSettings.externalProjectPath,
+            GradleConstants.SYSTEM_ID
+        )
 
         val gradleHome = gradleExeSettings.gradleHome ?: error("Unable to get Gradle home directory")
 
@@ -166,11 +204,17 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
         }.takeIf { it.isNotEmpty() }?.asList() ?: error("Missing jars in gradle directory")
 
         return loadDefinitionsFromTemplates(
-                listOf(templateClass),
-                templateClasspath,
-                createEnvironment(gradleExeSettings),
-                additionalResolverClasspath(gradleLibDir)
-        )
+            listOf(templateClass),
+            templateClasspath,
+            createEnvironment(gradleExeSettings),
+            additionalResolverClasspath(gradleLibDir)
+        ).map {
+            // Expand scope for old gradle script definition
+            if (it is KotlinScriptDefinitionFromAnnotatedTemplate && !it.scriptExpectedLocations.contains(ScriptExpectedLocation.Project))
+                GradleKotlinScriptDefinitionFromAnnotatedTemplate(it)
+            else
+                it
+        }
     }
 
     fun reloadIfNeccessary() {
@@ -183,15 +227,66 @@ class GradleScriptDefinitionsContributor(private val project: Project): ScriptDe
         ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this)
     }
 
+    private class ErrorGradleScriptDefinition(message: String? = null) : KotlinScriptDefinition(ScriptTemplateWithArgs::class) {
+        override val name: String = "Default Kotlin Gradle Script"
+        override val fileType: LanguageFileType = KotlinFileType.INSTANCE
+        override val annotationsForSamWithReceivers: List<String> = emptyList()
+        override val acceptedAnnotations: List<KClass<out Annotation>> = emptyList()
+
+        override val dependencyResolver: DependenciesResolver = ErrorScriptDependenciesResolver(message)
+
+        override fun getScriptName(script: KtScript) =
+            Name.identifier(script.containingKtFile.name.removeSuffix(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION))
+
+        override fun isScript(fileName: String): Boolean =
+            fileName.endsWith(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION)
+
+        override fun toString(): String = "ErrorGradleScriptDefinition"
+    }
+
+    private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {
+        override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
+            val failureMessage = if (ReloadGradleTemplatesOnSync.gradleState.isSyncInProgress) {
+                "Highlighting is impossible during Gradle Import"
+            } else {
+                message ?: "Failed to load script definitions by ${GradleScriptDefinitionsContributor::class.java.name}"
+            }
+            return ResolveResult.Failure(ScriptReport(failureMessage, ScriptReport.Severity.FATAL))
+        }
+    }
+}
+
+internal class GradleSyncState {
+    var isSyncInProgress: Boolean = false
+}
+
+class GradleKotlinScriptDefinitionFromAnnotatedTemplate(
+    base: KotlinScriptDefinitionFromAnnotatedTemplate
+) : KotlinScriptDefinitionFromAnnotatedTemplate(base.template, base.environment, base.templateClasspath) {
+    override val scriptExpectedLocations: List<ScriptExpectedLocation>
+        get() = listOf(ScriptExpectedLocation.Project)
 }
 
 class ReloadGradleTemplatesOnSync : ExternalSystemTaskNotificationListenerAdapter() {
+    companion object {
+        internal val gradleState = GradleSyncState()
+    }
+
+    override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
+        if (id.type == ExternalSystemTaskType.RESOLVE_PROJECT && id.projectSystemId == GRADLE_SYSTEM_ID) {
+            gradleState.isSyncInProgress = true
+        }
+    }
 
     override fun onEnd(id: ExternalSystemTaskId) {
         if (id.type == ExternalSystemTaskType.RESOLVE_PROJECT && id.projectSystemId == GRADLE_SYSTEM_ID) {
+            gradleState.isSyncInProgress = false
+
             val project = id.findProject() ?: return
             val gradleDefinitionsContributor = ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project)
             gradleDefinitionsContributor?.reloadIfNeccessary()
+
+            ServiceManager.getService(project, ScriptDependenciesUpdater::class.java).reloadModifiedScripts()
         }
     }
 }
@@ -243,15 +338,15 @@ class TopLevelSectionTokensEnumerator(script: CharSequence, identifier: String) 
 }
 
 fun topLevelSectionCodeTextTokens(script: CharSequence, sectionIdentifier: String): Sequence<CharSequence> =
-        TopLevelSectionTokensEnumerator(script, sectionIdentifier).asSequence()
-                .filter { it.tokenType !in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET }
-                .map { it.tokenSequence }
+    TopLevelSectionTokensEnumerator(script, sectionIdentifier).asSequence()
+        .filter { it.tokenType !in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET }
+        .map { it.tokenSequence }
 
 
 private const val KOTLIN_BUILD_FILE_SUFFIX = ".gradle.kts"
 
 class GradleScriptDefaultDependenciesProvider(
-        private val scriptDependenciesCache: ScriptDependenciesCache
+    private val scriptDependenciesCache: ScriptDependenciesCache
 ) : DefaultScriptDependenciesProvider {
     override fun defaultDependenciesFor(scriptFile: VirtualFile): ScriptDependencies? {
         if (!scriptFile.name.endsWith(KOTLIN_BUILD_FILE_SUFFIX)) return null
@@ -260,5 +355,5 @@ class GradleScriptDefaultDependenciesProvider(
     }
 
     private fun previouslyAnalyzedScriptsCombinedDependencies() =
-            scriptDependenciesCache.combineDependencies { it.name.endsWith(KOTLIN_BUILD_FILE_SUFFIX) }
+        scriptDependenciesCache.combineDependencies { it.name.endsWith(KOTLIN_BUILD_FILE_SUFFIX) }
 }

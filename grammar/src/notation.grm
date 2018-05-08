@@ -6,7 +6,7 @@ This section informally explains the grammar notation used below.
 ## Symbols and naming
 
 _Terminal symbol_ names start with an uppercase letter, e.g. **SimpleName**.<br>
-_Nonterminal symbol_ names start with lowercase letter, e.g. **kotlinFile**.<br>
+_Nonterminal symbol_ names start with a lowercase letter, e.g. **kotlinFile**.<br>
 Each _production_ starts with a colon (**:**).<br>
 _Symbol definitions_ may have many productions and are terminated by a semicolon (**;**).<br>
 Symbol definitions may be prepended with _attributes_, e.g. `start` attribute denotes a start symbol.
@@ -18,7 +18,7 @@ Operator `*` denotes _iteration_ (zero or more).<br>
 Operator `+` denotes _iteration_ (one or more).<br>
 Operator `?` denotes _option_ (zero or one).<br>
 alpha`{`beta`}` denotes a nonempty _beta_-separated list of _alpha_'s. <br>
-Operator `++` means that no space or comment allowed between operands.
+Operator `++` means that no space or comment is allowed between operands.
 
 # Semicolons
 

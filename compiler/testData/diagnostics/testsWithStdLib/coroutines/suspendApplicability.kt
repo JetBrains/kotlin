@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -NOTHING_TO_INLINE
-import kotlin.coroutines.experimental.*
+// COMMON_COROUTINES_TEST
+import COROUTINES_PACKAGE.*
 
 suspend fun notMember(q: Double) = 1
 

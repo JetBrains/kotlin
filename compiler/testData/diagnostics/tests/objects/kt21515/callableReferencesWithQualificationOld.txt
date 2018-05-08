@@ -1,0 +1,239 @@
+package
+
+public final class C : O.B {
+    public constructor C()
+    public final val a: kotlin.reflect.KFunction1<O.A, kotlin.Int>
+    public final val b: kotlin.reflect.KFunction1<O.A, kotlin.Int>
+    public final val c: kotlin.reflect.KFunction1<O.A.FromA, kotlin.Int>
+    public final val d: kotlin.reflect.KFunction1<O.B.FromB, kotlin.Int>
+    public final val e: kotlin.reflect.KFunction1<O.A.Companion.FromCompanionA, kotlin.Int>
+    public final val f: kotlin.reflect.KFunction1<O.B.Companion.FromCompanionB, kotlin.Int>
+    public final val g: kotlin.reflect.KFunction1<O.Alpha, kotlin.Int>
+    public final val h: kotlin.reflect.KFunction1<O.Beta, kotlin.Int>
+    public final val i: kotlin.reflect.KFunction1<O.Gamma, kotlin.Int>
+    public final val k: kotlin.reflect.KFunction1<O.Alpha.FromAlpha, kotlin.Int>
+    public final val l: kotlin.reflect.KFunction1<O.Beta.FromBeta, kotlin.Int>
+    public final val m: kotlin.reflect.KFunction1<O.Gamma.FromGamma, kotlin.Int>
+    public final val n: kotlin.reflect.KFunction1<C.Companion.FromCompanionC, kotlin.Int>
+    public final val o: kotlin.reflect.KFunction1<O.Alpha.Companion.FromCompanionAlpha, kotlin.Int>
+    public final val p: kotlin.reflect.KFunction1<O.Beta.Companion.FromCompanionBeta, kotlin.Int>
+    public final val q: kotlin.reflect.KFunction1<O.Gamma.Companion.FromCompanionGamma, kotlin.Int>
+    public final val r: kotlin.reflect.KFunction1<Delta.FromDelta, kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun foo(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion : Delta {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class FromCompanionC {
+            public constructor FromCompanionC()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+public open class Delta {
+    public constructor Delta()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class FromDelta {
+        public constructor FromDelta()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class O {
+    public constructor O()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion : O.Beta {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public final class FromCompanionA {
+                public constructor FromCompanionA()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public final fun foo(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        public final class FromA {
+            public constructor FromA()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public open class Alpha {
+        public constructor Alpha()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public final class FromCompanionAlpha {
+                public constructor FromCompanionAlpha()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public final fun foo(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        public final class FromAlpha {
+            public constructor FromAlpha()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public open class B : O.A {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion : O.Gamma {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public final class FromCompanionB {
+                public constructor FromCompanionB()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public final fun foo(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        public final class FromB {
+            public constructor FromB()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public open class Beta : O.Alpha {
+        public constructor Beta()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public final class FromCompanionBeta {
+                public constructor FromCompanionBeta()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public final fun foo(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        public final class FromBeta {
+            public constructor FromBeta()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public open class FarAway {
+        public constructor FarAway()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class FromFarAway {
+            public constructor FromFarAway()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public open class Gamma {
+        public constructor Gamma()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion : O.FarAway {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            public final class FromCompanionGamma {
+                public constructor FromCompanionGamma()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public final fun foo(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        public final class FromGamma {
+            public constructor FromGamma()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public final fun foo(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

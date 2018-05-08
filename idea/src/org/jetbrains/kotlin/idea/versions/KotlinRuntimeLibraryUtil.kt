@@ -236,10 +236,12 @@ fun getDefaultJvmTarget(sdk: Sdk?, version: String): JvmTarget? {
         return null
     }
     val sdkVersion = sdk?.version
-    if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
-        return JvmTarget.JVM_1_8
+    return when {
+        sdkVersion == null -> null
+        sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) -> JvmTarget.JVM_1_8
+        sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_6) -> JvmTarget.JVM_1_6
+        else -> null
     }
-    return null
 }
 
 fun isSnapshot(version: String): Boolean {

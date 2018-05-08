@@ -56,19 +56,28 @@ import java.util.*
 
 class KotlinFunctionCallUsage(
         element: KtCallElement,
-        private val callee: KotlinCallableDefinitionUsage<*>
+        private val callee: KotlinCallableDefinitionUsage<*>,
+        forcedResolvedCall: ResolvedCall<*>? = null
 ) : KotlinUsageInfo<KtCallElement>(element) {
     private val context = element.analyze(BodyResolveMode.FULL)
-    private val resolvedCall = element.getResolvedCall(context)
+    private val resolvedCall = forcedResolvedCall ?: element.getResolvedCall(context)
+    private val skipUnmatchedArgumentsCheck = forcedResolvedCall != null
 
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
-        if (shouldSkipUsage(element)) return true
+        processUsageAndGetResult(changeInfo, element, allUsages)
+        return true
+    }
+
+    fun processUsageAndGetResult(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): KtElement {
+        if (shouldSkipUsage(element)) return element
+
+        var result: KtElement = element
 
         changeNameIfNeeded(changeInfo, element)
 
         if (element.valueArgumentList != null) {
             if (changeInfo.isParameterSetOrOrderChanged) {
-                updateArgumentsAndReceiver(changeInfo, element, allUsages)
+                result = updateArgumentsAndReceiver(changeInfo, element, allUsages)
             }
             else {
                 changeArgumentNames(changeInfo, element)
@@ -83,7 +92,7 @@ class KotlinFunctionCallUsage(
             }
         }
 
-        return true
+        return result
     }
 
     private fun shouldSkipUsage(element: KtCallElement): Boolean {
@@ -93,6 +102,8 @@ class KotlinFunctionCallUsage(
 
         // TODO: investigate why arguments are not recorded for enum constructor call
         if (element is KtSuperTypeCallEntry && element.parent.parent is KtEnumEntry) return false
+
+        if (skipUnmatchedArgumentsCheck) return false
 
         if (!resolvedCall.call.valueArguments.all{ resolvedCall.getArgumentMapping(it) is ArgumentMatch }) return true
 
@@ -305,7 +316,7 @@ class KotlinFunctionCallUsage(
         }
     }
 
-    private fun updateArgumentsAndReceiver(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>) {
+    private fun updateArgumentsAndReceiver(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): KtElement {
         if (isPropertyJavaUsage) return updateJavaPropertyCall(changeInfo, element)
 
         val fullCallElement = element.getQualifiedExpressionForSelector() ?: element
@@ -322,7 +333,7 @@ class KotlinFunctionCallUsage(
         val dispatchReceiver = resolvedCall?.dispatchReceiver
 
         // Do not add extension receiver to calls with explicit dispatch receiver
-        if (newReceiverInfo != null && fullCallElement is KtQualifiedExpression && dispatchReceiver is ExpressionReceiver) return
+        if (newReceiverInfo != null && fullCallElement is KtQualifiedExpression && dispatchReceiver is ExpressionReceiver) return element
 
         val newArgumentInfos = newParameters.withIndex().map {
             val (index, param) = it
@@ -386,7 +397,7 @@ class KotlinFunctionCallUsage(
                         if (it is KtValueArgument) addArgument(it)
                     }
 
-                    else -> return
+                    else -> return element
                 }
             }
         }
@@ -456,6 +467,8 @@ class KotlinFunctionCallUsage(
             val newCallExpression = ((newElement as? KtQualifiedExpression)?.selectorExpression ?: newElement) as KtCallExpression
             newCallExpression.moveFunctionLiteralOutsideParentheses()
         }
+
+        return newElement
     }
 
     private fun changeArgumentNames(changeInfo: KotlinChangeInfo, element: KtCallElement) {
@@ -488,10 +501,10 @@ class KotlinFunctionCallUsage(
 
         private val SHORTEN_ARGUMENTS_OPTIONS = ShortenReferences.Options(true, true)
 
-        private fun updateJavaPropertyCall(changeInfo: KotlinChangeInfo, element: KtCallElement) {
+        private fun updateJavaPropertyCall(changeInfo: KotlinChangeInfo, element: KtCallElement): KtElement {
             val newReceiverInfo = changeInfo.receiverParameterInfo
             val originalReceiverInfo = changeInfo.methodDescriptor.receiver
-            if (newReceiverInfo == originalReceiverInfo) return
+            if (newReceiverInfo == originalReceiverInfo) return element
 
             val arguments = element.valueArgumentList.sure { "Argument list is expected: " + element.text }
             val oldArguments = element.valueArguments
@@ -515,6 +528,8 @@ class KotlinFunctionCallUsage(
 
                 firstArgument != null -> arguments.removeArgument(firstArgument)
             }
+
+            return element
         }
 
         private fun getReceiverExpression(receiver: ReceiverValue, psiFactory: KtPsiFactory): KtExpression? {

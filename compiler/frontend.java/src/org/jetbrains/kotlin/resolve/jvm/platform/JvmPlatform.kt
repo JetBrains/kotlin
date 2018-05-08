@@ -24,21 +24,23 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
-    private val defaultImports = LockBasedStorageManager().createMemoizedFunction<Boolean, List<ImportPath>> { includeKotlinComparisons ->
-        ArrayList<ImportPath>().apply {
-            addAll(Common.getDefaultImports(includeKotlinComparisons))
+    private val defaultImports = LockBasedStorageManager().let { storageManager ->
+        storageManager.createMemoizedFunction<Boolean, List<ImportPath>> { includeKotlinComparisons ->
+            ArrayList<ImportPath>().apply {
+                addAll(Common.getDefaultImports(includeKotlinComparisons))
 
-            add(ImportPath.fromString("java.lang.*"))
-            add(ImportPath.fromString("kotlin.jvm.*"))
+                add(ImportPath.fromString("java.lang.*"))
+                add(ImportPath.fromString("kotlin.jvm.*"))
 
-            fun addAllClassifiersFromScope(scope: MemberScope) {
-                for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
-                    add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
+                fun addAllClassifiersFromScope(scope: MemberScope) {
+                    for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {
+                        add(ImportPath(DescriptorUtils.getFqNameSafe(descriptor), false))
+                    }
                 }
-            }
 
-            for (builtinPackageFragment in JvmBuiltIns(LockBasedStorageManager.NO_LOCKS).builtInsPackageFragmentsImportedByDefault) {
-                addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
+                for (builtinPackageFragment in JvmBuiltIns(storageManager).builtInsPackageFragmentsImportedByDefault) {
+                    addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
+                }
             }
         }
 

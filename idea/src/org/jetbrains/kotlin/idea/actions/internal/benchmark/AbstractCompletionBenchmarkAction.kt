@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.navigation.NavigationUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.ScrollType
@@ -40,9 +41,8 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withTimeout
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleOrigin
-import org.jetbrains.kotlin.idea.caches.resolve.getNullableModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
+import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.completion.CompletionBenchmarkSink
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.util.EDT
@@ -113,7 +113,7 @@ abstract class AbstractCompletionBenchmarkAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        e.presentation.isEnabledAndVisible = KotlinInternalMode.enabled
+        e.presentation.isEnabledAndVisible = ApplicationManager.getApplication().isInternal
     }
 }
 

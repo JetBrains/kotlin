@@ -3,6 +3,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
     BLOCK_BODY
       CALL 'println(String!): Unit' type=kotlin.Unit origin=null
         $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+          typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
           GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
         x: CONST String type=kotlin.String value=testFun
   PROPERTY name:testProp type:kotlin.Any visibility:public modality:FINAL flags:var
@@ -10,6 +11,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
           x: CONST String type=kotlin.String value=testProp/get
         RETURN type=kotlin.Nothing from='<get-testProp>(): Any'
@@ -19,10 +21,13 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
           x: CONST String type=kotlin.String value=testProp/set
   CLASS CLASS name:TestClass modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestClass flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> () returnType:TestClass flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -36,6 +41,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
               then: BLOCK type=kotlin.Int origin=null
                 CALL 'println(String!): Unit' type=kotlin.Unit origin=null
                   $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+                    typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
                     GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
                   x: CONST String type=kotlin.String value=TestClass/test
                 CONST Int type=kotlin.Int value=42
@@ -49,13 +55,20 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:PrintStream modality:OPEN visibility:public flags:
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
           x: CONST String type=kotlin.String value=TestClass/init
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
 

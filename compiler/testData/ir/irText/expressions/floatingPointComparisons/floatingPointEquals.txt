@@ -39,6 +39,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
             then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
               $this: GET_VAR 'value-parameter x: Double' type=kotlin.Double origin=null
@@ -56,8 +57,10 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -108,6 +111,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
             then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
               $this: GET_VAR 'value-parameter x: Float' type=kotlin.Float origin=null
@@ -125,8 +129,10 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -147,8 +153,10 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -169,8 +177,10 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
             if: WHEN type=kotlin.Boolean origin=ANDAND
               BRANCH
                 if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
                 then: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
                   GET_VAR 'value-parameter y: Any' type=kotlin.Any origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -221,6 +231,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Float modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
             then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
               $this: GET_VAR 'this@test5fr: Float' type=kotlin.Float origin=null
@@ -236,6 +247,7 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags:
               GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
             then: CALL 'equals(Any?): Boolean' type=kotlin.Boolean origin=null
               $this: GET_VAR 'this@test6fr: Float' type=kotlin.Float origin=null
@@ -243,3 +255,4 @@ FILE fqName:<root> fileName:/floatingPointEquals.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
+

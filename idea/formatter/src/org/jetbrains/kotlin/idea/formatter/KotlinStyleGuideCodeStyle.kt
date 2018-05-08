@@ -28,13 +28,20 @@ class KotlinStyleGuideCodeStyle : PredefinedCodeStyle("Kotlin style guide", Kotl
     }
 
     companion object {
+        const val CODE_STYLE_ID = "KOTLIN_OFFICIAL"
+        const val CODE_STYLE_TITLE = "Kotlin Coding Conventions"
+
         fun apply(settings: CodeStyleSettings) {
             applyToKotlinCustomSettings(settings.kotlinCustomSettings)
             applyToCommonSettings(settings.kotlinCommonSettings)
         }
 
-        fun applyToKotlinCustomSettings(kotlinCustomSettings: KotlinCodeStyleSettings) {
+        fun applyToKotlinCustomSettings(kotlinCustomSettings: KotlinCodeStyleSettings, modifyCodeStyle: Boolean = true) {
             kotlinCustomSettings.apply {
+                if (modifyCodeStyle) {
+                    CODE_STYLE_DEFAULTS = CODE_STYLE_ID
+                }
+
                 CONTINUATION_INDENT_IN_PARAMETER_LISTS = false
                 CONTINUATION_INDENT_IN_ARGUMENT_LISTS = false
                 CONTINUATION_INDENT_FOR_EXPRESSION_BODIES = false
@@ -46,7 +53,7 @@ class KotlinStyleGuideCodeStyle : PredefinedCodeStyle("Kotlin style guide", Kotl
             }
         }
 
-        fun applyToCommonSettings(commonSettings: CommonCodeStyleSettings) {
+        fun applyToCommonSettings(commonSettings: CommonCodeStyleSettings, modifyCodeStyle: Boolean = true) {
             commonSettings.apply {
                 WHILE_ON_NEW_LINE = false
                 ELSE_ON_NEW_LINE = false
@@ -66,6 +73,10 @@ class KotlinStyleGuideCodeStyle : PredefinedCodeStyle("Kotlin style guide", Kotl
                 ASSIGNMENT_WRAP = CodeStyleSettings.WRAP_AS_NEEDED
 
                 ALIGN_MULTILINE_BINARY_OPERATION = false
+            }
+
+            if (modifyCodeStyle && commonSettings is KotlinCommonCodeStyleSettings) {
+                commonSettings.CODE_STYLE_DEFAULTS = CODE_STYLE_ID
             }
         }
     }

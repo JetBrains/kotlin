@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1115
 // KT-2995 creating factory methods to simulate overloaded constructors don't work in JavaScript
 package foo

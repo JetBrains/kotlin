@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,13 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KDocLexerTestGenerated extends AbstractKDocLexerTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInLexer() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/kdoc/lexer"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("codeBlocks.kt")
     public void testCodeBlocks() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/kdoc/lexer/codeBlocks.kt");
-        doTest(fileName);
+        runTest("compiler/testData/kdoc/lexer/codeBlocks.kt");
     }
 }

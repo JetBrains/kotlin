@@ -1,15 +1,17 @@
+// !WITH_NEW_INFERENCE
+
 fun test1() {
-    <!TYPE_MISMATCH!>1<!>. (fun String.(i: Int) = i )(1)
-    <!TYPE_MISMATCH!>1<!>.(label@ fun String.(i: Int) = i )(1)
+    <!OI;TYPE_MISMATCH!>1<!>. <!NI;FUNCTION_EXPECTED!>(fun String.(i: Int) = i )<!>(1)
+    <!OI;TYPE_MISMATCH!>1<!>.<!NI;FUNCTION_EXPECTED!>(label@ fun String.(i: Int) = i )<!>(1)
 }
 
 fun test2(f: String.(Int) -> Unit) {
-    <!TYPE_MISMATCH!>11<!>.(f)(1)
-    <!TYPE_MISMATCH!>11<!>.(f)(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    <!OI;TYPE_MISMATCH!>11<!>.<!NI;FUNCTION_EXPECTED!>(f)<!>(1)
+    <!OI;TYPE_MISMATCH!>11<!>.<!NI;FUNCTION_EXPECTED!>(f)<!>(<!OI;NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
 fun test3() {
     fun foo(): String.(Int) -> Unit = {}
 
-    <!TYPE_MISMATCH!>1<!>.(foo())(1)
+    <!OI;TYPE_MISMATCH!>1<!>.<!NI;FUNCTION_EXPECTED!>(foo())<!>(1)
 }

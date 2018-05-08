@@ -95,6 +95,7 @@ class InFloatingPointRangeLiteralExpressionGenerator(
 
             }
 
+            // TODO evaluateOnce
             private fun introduceTemporaryIfRequired(v: InstructionAdapter, value: StackValue, type: Type): Pair<StackValue, Type?> {
                 val resultValue: StackValue
                 val resultType: Type?

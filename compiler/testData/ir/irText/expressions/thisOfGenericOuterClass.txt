@@ -1,7 +1,11 @@
 FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
   CLASS CLASS name:Outer modality:FINAL visibility:public flags:
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer<T> flags:
+    superClasses:
+      CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     TYPE_PARAMETER name:T index:0 variance: upperBounds:[kotlin.Any?]
+      superClassifiers:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
     CONSTRUCTOR visibility:public <> (x:T) returnType:Outer<T> flags:
       VALUE_PARAMETER name:x index:0 type:T flags:
       BLOCK_BODY
@@ -19,6 +23,8 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
               receiver: GET_VAR 'this@Outer: Outer<T>' type=Outer<T> origin=null
     CLASS CLASS name:Inner modality:OPEN visibility:public flags:
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Outer<T>.Inner flags:
+      superClasses:
+        CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Any modality:OPEN visibility:public flags:
       CONSTRUCTOR visibility:public <> ($this:Outer<T>, y:kotlin.Int) returnType:Outer<T>.Inner flags:
         $outer: VALUE_PARAMETER name:<this> type:Outer<T> flags:
         VALUE_PARAMETER name:y index:0 type:kotlin.Int flags:
@@ -36,18 +42,30 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
               GET_FIELD 'y: Int' type=kotlin.Int origin=null
                 receiver: GET_VAR 'this@Inner: Inner<T>' type=Outer<T>.Inner origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
         VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+        overridden:
+          FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
       VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
   FUN name:test visibility:public modality:FINAL <> ($receiver:Outer<kotlin.Int>) returnType:Inner<Int> flags:
     $receiver: VALUE_PARAMETER name:<this> type:Outer<kotlin.Int> flags:
@@ -56,6 +74,8 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
         BLOCK type=test.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags:
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.<no name provided> flags:
+            superClasses:
+              CLASS CLASS name:Inner modality:OPEN visibility:public flags:
             CONSTRUCTOR visibility:public <> () returnType:test.<no name provided> flags:
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Inner(Int)'
@@ -78,13 +98,21 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
                       receiver: GET_VAR 'this@<no name provided>: <no name provided>' type=test.<no name provided> origin=null
             PROPERTY FAKE_OVERRIDE name:y type:kotlin.Int visibility:public modality:FINAL flags:val
               FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:Outer<kotlin.Int>.Inner) returnType:Int flags:
+                overridden:
+                  FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:Outer<T>.Inner) returnType:Int flags:
                 $this: VALUE_PARAMETER name:<this> type:Outer<kotlin.Int>.Inner flags:
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
+              overridden:
+                FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:Boolean flags:
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
               VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
             FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
+              overridden:
+                FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:Int flags:
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
             FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
+              overridden:
+                FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:String flags:
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
           CALL 'constructor <no name provided>()' type=test.<no name provided> origin=OBJECT_LITERAL
 

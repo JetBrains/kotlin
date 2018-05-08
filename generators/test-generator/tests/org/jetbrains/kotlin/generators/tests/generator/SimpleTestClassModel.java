@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests.generator;
@@ -20,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.generators.util.CoroutinesKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.Printer;
@@ -53,6 +43,7 @@ public class SimpleTestClassModel implements TestClassModel {
     private Collection<MethodModel> testMethods;
 
     private final boolean skipIgnored;
+    private final String testRunnerMethodName;
 
     public SimpleTestClassModel(
             @NotNull File rootFile,
@@ -64,7 +55,8 @@ public class SimpleTestClassModel implements TestClassModel {
             @NotNull String testClassName,
             @NotNull TargetBackend targetBackend,
             @NotNull Collection<String> excludeDirs,
-            boolean skipIgnored
+            boolean skipIgnored,
+            String testRunnerMethodName
     ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
@@ -76,6 +68,7 @@ public class SimpleTestClassModel implements TestClassModel {
         this.checkFilenameStartsLowerCase = checkFilenameStartsLowerCase;
         this.excludeDirs = excludeDirs.isEmpty() ? Collections.emptySet() : new LinkedHashSet<>(excludeDirs);
         this.skipIgnored = skipIgnored;
+        this.testRunnerMethodName = testRunnerMethodName;
     }
 
     @NotNull
@@ -93,9 +86,9 @@ public class SimpleTestClassModel implements TestClassModel {
                     if (file.isDirectory() && dirHasFilesInside(file) && !excludeDirs.contains(file.getName())) {
                         String innerTestClassName = TestGeneratorUtil.fileNameToJavaIdentifier(file);
                         children.add(new SimpleTestClassModel(
-                                             file, true, excludeParentDirs, filenamePattern, checkFilenameStartsLowerCase,
-                                             doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()),
-                                             skipIgnored)
+                                file, true, excludeParentDirs, filenamePattern, checkFilenameStartsLowerCase,
+                                doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()),
+                                skipIgnored, testRunnerMethodName)
                         );
                     }
                 }
@@ -143,12 +136,21 @@ public class SimpleTestClassModel implements TestClassModel {
     public Collection<MethodModel> getMethods() {
         if (testMethods == null) {
             if (!rootFile.isDirectory()) {
-                testMethods = Collections.singletonList(new SimpleTestMethodModel(
-                        rootFile, rootFile, doTestMethodName, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
-                ));
+                if (CoroutinesKt.isCommonCoroutineTest(rootFile)) {
+                    testMethods = CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, rootFile, doTestMethodName, filenamePattern,
+                                                                                      checkFilenameStartsLowerCase, targetBackend,
+                                                                                      skipIgnored);
+                }
+                else {
+                    testMethods = Collections.singletonList(new SimpleTestMethodModel(
+                            rootFile, rootFile, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
+                    ));
+                }
             }
             else {
                 List<MethodModel> result = new ArrayList<>();
+
+                result.add(new RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName));
 
                 result.add(new TestAllFilesPresentMethodModel());
 
@@ -161,8 +163,16 @@ public class SimpleTestClassModel implements TestClassModel {
                                 continue;
                             }
 
-                            result.add(new SimpleTestMethodModel(rootFile, file, doTestMethodName, filenamePattern,
-                                                                 checkFilenameStartsLowerCase, targetBackend, skipIgnored));
+                            if (!file.isDirectory() && CoroutinesKt.isCommonCoroutineTest(file)) {
+                                result.addAll(CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, file, doTestMethodName,
+                                                                                                  filenamePattern,
+                                                                                                  checkFilenameStartsLowerCase,
+                                                                                                  targetBackend, skipIgnored));
+                            }
+                            else {
+                                result.add(new SimpleTestMethodModel(rootFile, file, filenamePattern,
+                                                                     checkFilenameStartsLowerCase, targetBackend, skipIgnored));
+                            }
                         }
                     }
                 }

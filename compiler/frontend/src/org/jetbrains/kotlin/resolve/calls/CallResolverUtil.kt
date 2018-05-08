@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.callResolverUtil
@@ -22,20 +11,19 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
@@ -186,41 +174,65 @@ fun getSuperCallExpression(call: Call): KtSuperExpression? {
 
 fun getEffectiveExpectedType(
     parameterDescriptor: ValueParameterDescriptor,
-    argument: ValueArgument,
-    context: ResolutionContext<*>
+    resolvedArgument: ResolvedValueArgument,
+    languageVersionSettings: LanguageVersionSettings,
+    trace: BindingTrace
 ): KotlinType {
-    if (argument.getSpreadElement() != null || shouldCheckAsArray(parameterDescriptor, argument, context)) {
-        if (parameterDescriptor.varargElementType == null) {
-            // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
-            return DONT_CARE
-        }
-        return parameterDescriptor.type
-    }
-    val varargElementType = parameterDescriptor.varargElementType
-    if (varargElementType != null) {
-        return varargElementType
-    }
-
-    return parameterDescriptor.type
+    val argument = resolvedArgument.arguments.singleOrNull()
+    return if (argument != null)
+        getEffectiveExpectedTypeForSingleArgument(parameterDescriptor, argument, languageVersionSettings, trace)
+    else
+        getExpectedType(parameterDescriptor)
 }
 
-private fun shouldCheckAsArray(
+fun getEffectiveExpectedType(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
     context: ResolutionContext<*>
+): KotlinType {
+    return getEffectiveExpectedTypeForSingleArgument(parameterDescriptor, argument, context.languageVersionSettings, context.trace)
+}
+
+fun getEffectiveExpectedTypeForSingleArgument(
+    parameterDescriptor: ValueParameterDescriptor,
+    argument: ValueArgument,
+    languageVersionSettings: LanguageVersionSettings,
+    trace: BindingTrace
+): KotlinType {
+    if (argument.getSpreadElement() != null) {
+        // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
+        return if (parameterDescriptor.varargElementType == null) DONT_CARE else parameterDescriptor.type
+    }
+
+    if (arrayAssignmentToVarargInNamedFormInAnnotation(parameterDescriptor, argument, languageVersionSettings, trace)) {
+        return parameterDescriptor.type
+    }
+
+    return getExpectedType(parameterDescriptor)
+}
+
+private fun getExpectedType(parameterDescriptor: ValueParameterDescriptor): KotlinType {
+    return parameterDescriptor.varargElementType ?: parameterDescriptor.type
+}
+
+private fun arrayAssignmentToVarargInNamedFormInAnnotation(
+    parameterDescriptor: ValueParameterDescriptor,
+    argument: ValueArgument,
+    languageVersionSettings: LanguageVersionSettings,
+    trace: BindingTrace
 ): Boolean {
-    if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
+    if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 
     if (!isParameterOfAnnotation(parameterDescriptor)) return false
 
-    return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, context)
+    return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, trace)
 }
 
-fun isArrayOrArrayLiteral(argument: ValueArgument, context: ResolutionContext<*>): Boolean {
+fun isArrayOrArrayLiteral(argument: ValueArgument, trace: BindingTrace): Boolean {
     val argumentExpression = argument.getArgumentExpression() ?: return false
     if (argumentExpression is KtCollectionLiteralExpression) return true
 
-    val type = context.trace.getType(argumentExpression) ?: return false
+    val type = trace.getType(argumentExpression) ?: return false
     return KotlinBuiltIns.isArrayOrPrimitiveArray(type)
 }
 
@@ -275,16 +287,4 @@ fun createResolutionCandidatesForConstructors(
     return (constructors + syntheticConstructors).map {
         ResolutionCandidate.create(call, it, dispatchReceiver, receiverKind, knownSubstitutor)
     }
-}
-
-fun KtLambdaExpression.getCorrespondingParameterForFunctionArgument(
-    bindingContext: BindingContext
-): ValueParameterDescriptor? {
-    val resolvedCall = KtPsiUtil.getParentCallIfPresent(this)?.getResolvedCall(bindingContext) ?: return null
-    val valueArgument =
-        resolvedCall.call.getValueArgumentForExpression(this)
-                ?: return null
-    val mapping = resolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return null
-
-    return mapping.valueParameter
 }

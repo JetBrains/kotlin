@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -36,11 +39,8 @@ import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 fun createTopLevelClassStub(
         classId: ClassId,
@@ -75,7 +75,8 @@ fun createFileFacadeStub(
     val fileStub = KotlinFileStubForIde.forFileFacadeStub(facadeFqName)
     setupFileStub(fileStub, packageFqName)
     val container = ProtoContainer.Package(
-            packageFqName, c.nameResolver, c.typeTable, JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null)
+        packageFqName, c.nameResolver, c.typeTable,
+        JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null, packageProto, c.nameResolver)
     )
     createDeclarationsStubs(fileStub, c, container, packageProto)
     return fileStub
@@ -95,8 +96,10 @@ fun createMultifileClassStub(
         val partHeader = partFile.classHeader
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(partHeader.data!!, partHeader.strings!!)
         val partContext = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
-        val container = ProtoContainer.Package(packageFqName, partContext.nameResolver, partContext.typeTable,
-                                               JvmPackagePartSource(partFile))
+        val container = ProtoContainer.Package(
+            packageFqName, partContext.nameResolver, partContext.typeTable,
+            JvmPackagePartSource(partFile, packageProto, nameResolver)
+        )
         createDeclarationsStubs(fileStub, partContext, container, packageProto)
     }
     return fileStub

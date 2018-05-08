@@ -97,6 +97,7 @@ class KtLightAnnotationForSourceEntry(
         override fun getNavigationElement() = originalExpression
         override fun isPhysical(): Boolean = false
         override fun getTextRange() = originalExpression?.textRange ?: TextRange.EMPTY_RANGE
+        override fun getStartOffsetInParent() = originalExpression?.startOffsetInParent ?: 0
         override fun getParent() = parent
         override fun getText() = originalExpression?.text.orEmpty()
         override fun getContainingFile(): PsiFile? = if (originalExpression?.containingFile == kotlinOrigin.containingFile)
@@ -177,7 +178,7 @@ class KtLightAnnotationForSourceEntry(
         override fun getType(): PsiType? = delegate.type
     }
 
-    inner class LightStringLiteral(
+    inner class LightPsiLiteral(
             delegate: PsiLiteralExpression,
             parent: PsiElement,
             valueOrigin: AnnotationValueOrigin
@@ -231,7 +232,7 @@ class KtLightAnnotationForSourceEntry(
 
     private fun wrapAnnotationValue(value: PsiAnnotationMemberValue, parent: PsiElement, ktOrigin: AnnotationValueOrigin): PsiAnnotationMemberValue =
             when {
-                value is PsiLiteralExpression && value.value is String -> LightStringLiteral(value, parent, ktOrigin)
+                value is PsiLiteralExpression -> LightPsiLiteral(value, parent, ktOrigin)
                 value is PsiClassObjectAccessExpression -> LightClassLiteral(value, parent, ktOrigin)
                 value is PsiExpression -> LightExpressionValue(value, parent, ktOrigin)
                 value is PsiArrayInitializerMemberValue -> LightArrayInitializerValue(value, parent, ktOrigin)

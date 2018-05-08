@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.context;
@@ -61,8 +50,10 @@ public interface LocalLookup {
                         ? JvmCodegenUtil.getPropertyDelegateType((VariableDescriptorWithAccessors) vd, state.getBindingContext())
                         : null;
                 Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
-                Type localType = state.getTypeMapper().mapType(delegateType != null ? delegateType : vd.getType());
+                KotlinType localKotlinType = delegateType != null ? delegateType : vd.getType();
+                Type localType = state.getTypeMapper().mapType(localKotlinType);
                 Type type = sharedVarType != null ? sharedVarType : localType;
+                KotlinType kotlinType = sharedVarType != null ? null : localKotlinType;
 
                 String fieldName = "$" + vd.getName();
                 StackValue.Local thiz = StackValue.LOCAL_0;
@@ -75,7 +66,7 @@ public interface LocalLookup {
                     enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, wrapperValue, type);
                 }
                 else {
-                    innerValue = StackValue.field(type, classType, fieldName, false, thiz, vd);
+                    innerValue = StackValue.field(type, kotlinType, classType, fieldName, false, thiz, vd);
                     enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, type);
                 }
 
@@ -114,7 +105,7 @@ public interface LocalLookup {
                 if (localFunClosure != null && JvmCodegenUtil.isConst(localFunClosure)) {
                     // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
                     // (instead of passing this instance to the constructor and storing as a field)
-                    return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.LOCAL_0, vd);
+                    return StackValue.field(localType, null, localType, JvmAbi.INSTANCE_FIELD, true, StackValue.LOCAL_0, vd);
                 }
 
                 String internalName = localType.getInternalName();
@@ -123,8 +114,9 @@ public interface LocalLookup {
                 String localFunSuffix = localClassIndexStart >= 0 ? simpleName.substring(localClassIndexStart) : "";
 
                 String fieldName = "$" + vd.getName() + localFunSuffix;
-                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(localType, classType, fieldName, false,
-                                                                                      StackValue.LOCAL_0, vd);
+                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(
+                        localType, null, classType, fieldName, false, StackValue.LOCAL_0, vd
+                );
 
                 closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType));
 
@@ -152,8 +144,9 @@ public interface LocalLookup {
 
                 KotlinType receiverType = closure.getEnclosingReceiverDescriptor().getType();
                 Type type = state.getTypeMapper().mapType(receiverType);
-                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(type, classType, CAPTURED_RECEIVER_FIELD, false,
-                                                                                      StackValue.LOCAL_0, d);
+                StackValue.StackValueWithSimpleReceiver innerValue = StackValue.field(
+                        type, receiverType, classType, CAPTURED_RECEIVER_FIELD, false, StackValue.LOCAL_0, d
+                );
                 closure.setCaptureReceiver();
 
                 return innerValue;

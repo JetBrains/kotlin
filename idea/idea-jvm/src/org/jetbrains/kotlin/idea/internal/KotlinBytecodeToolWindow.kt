@@ -275,7 +275,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
         ): GenerationState {
             val resolutionFacade = ktFile.getResolutionFacade()
 
-            val bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(listOf(ktFile)).bindingContext
+            val bindingContextForFile = resolutionFacade.analyzeWithAllCompilerChecks(listOf(ktFile)).bindingContext
 
             val (bindingContext, toProcess) = DebuggerUtils.analyzeInlinedFunctions(
                 resolutionFacade, ktFile, configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE),

@@ -17,6 +17,11 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -24,25 +29,35 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class JvmPackagePartSource(
-        val className: JvmClassName,
-        val facadeClassName: JvmClassName?,
-        override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
-        override val isPreReleaseInvisible: Boolean = false,
-        val knownJvmBinaryClass: KotlinJvmBinaryClass? = null
+    val className: JvmClassName,
+    val facadeClassName: JvmClassName?,
+    packageProto: ProtoBuf.Package,
+    nameResolver: NameResolver,
+    override val incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
+    override val isPreReleaseInvisible: Boolean = false,
+    val knownJvmBinaryClass: KotlinJvmBinaryClass? = null
 ) : DeserializedContainerSource {
     constructor(
-            kotlinClass: KotlinJvmBinaryClass,
-            incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
-            isPreReleaseInvisible: Boolean = false
+        kotlinClass: KotlinJvmBinaryClass,
+        packageProto: ProtoBuf.Package,
+        nameResolver: NameResolver,
+        incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>? = null,
+        isPreReleaseInvisible: Boolean = false
     ) : this(
-            JvmClassName.byClassId(kotlinClass.classId),
-            kotlinClass.classHeader.multifileClassName?.let {
-                if (it.isNotEmpty()) JvmClassName.byInternalName(it) else null
-            },
-            incompatibility,
-            isPreReleaseInvisible,
-            kotlinClass
+        JvmClassName.byClassId(kotlinClass.classId),
+        kotlinClass.classHeader.multifileClassName?.let {
+            if (it.isNotEmpty()) JvmClassName.byInternalName(it) else null
+        },
+        packageProto,
+        nameResolver,
+        incompatibility,
+        isPreReleaseInvisible,
+        kotlinClass
     )
+
+    val moduleName =
+        packageProto.getExtensionOrNull(JvmProtoBuf.packageModuleName)?.let(nameResolver::getString)
+                ?: JvmAbi.DEFAULT_MODULE_NAME
 
     override val presentableString: String
         get() = "Class '${classId.asSingleFqName().asString()}'"

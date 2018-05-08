@@ -1,14 +1,18 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" version="2" url="http://kotlinlang.org" allow-bundled-update="true">
-    <id>org.jetbrains.kotlin</id>
+  <id>org.jetbrains.kotlin</id>
 
   <name>Kotlin</name>
   <description>Kotlin language support</description>
   <version>@snapshot@</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
 
-  <idea-version since-build="173.1" until-build="173.*"/>
+  <idea-version since-build="181.1" until-build="181.*"/>
 
   <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.remoteServers</depends>
+
+  <!-- required for Kotlin/Native plugin -->
+  <depends optional="true">org.jetbrains.kotlin.native.platform.deps</depends>
 
   <depends optional="true" config-file="junit.xml">JUnit</depends>
   <depends optional="true" config-file="gradle.xml">org.jetbrains.plugins.gradle</depends>
@@ -23,10 +27,10 @@
 
   <!-- ULTIMATE-PLUGIN-PLACEHOLDER -->
 
-  <!-- CLION-PLUGIN-PLACEHOLDER-START -->
-  <depends optional="true" config-file="jvm.xml">com.intellij.modules.java</depends>
+  <!-- CIDR-PLUGIN-PLACEHOLDER-START -->
+  <depends>com.intellij.modules.java</depends>
   <depends optional="true" config-file="javaScriptDebug.xml">JavaScriptDebugger</depends>
-  <!-- CLION-PLUGIN-PLACEHOLDER-END -->
+  <!-- CIDR-PLUGIN-PLACEHOLDER-END -->
 
   <project-components>
     <component>
@@ -75,12 +79,20 @@
     <action id="Kotlin.NewFile" class="org.jetbrains.kotlin.idea.actions.NewKotlinFileAction">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
     </action>
-
-    <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction"
-            text="Convert Java File to Kotlin File">
-      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift K"/>
-      <add-to-group group-id="CodeMenu" anchor="last"/>
+    <action id="Kotlin.NewScript" class="org.jetbrains.kotlin.idea.actions.NewKotlinScriptAction">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
+
+    <group id = "ConvertJavaToKotlinGroup">
+      <separator/>
+      <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction"
+              text="Convert Java File to Kotlin File">
+        <keyboard-shortcut keymap="$default" first-keystroke="control alt shift K"/>
+      </action>
+      <add-to-group group-id="CodeMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorTabPopupMenu" anchor="last"/>
+    </group>
 
     <group id="KotlinToolsGroup" popup="true" text="Kotlin" icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
            class="org.jetbrains.kotlin.idea.actions.KotlinActionGroup">
@@ -114,50 +126,43 @@
       <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
     </action>
 
-    <action id="KotlinInternalMode" class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalModeToggleAction">
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
-    </action>
+    <group id="InternalKotlin" text="IDEA Internal Actions" internal="true">
+      <separator/>
+      <group id="KotlinInternalGroup" text="Kotlin" popup="true">
+        <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion">
+          <action id="TopLevelCompletionBenchmarkAction"
+                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.TopLevelCompletionBenchmarkAction"
+                  text="Top-level scenario"/>
 
+          <action id="LocalCompletionBenchmarkAction"
+                  class="org.jetbrains.kotlin.idea.actions.internal.benchmark.LocalCompletionBenchmarkAction"
+                  text="Local scenario"/>
+        </group>
 
+        <action id="HighlightingBenchmarkAction"
+                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"
+                text="Benchmark highlighting"/>
 
-    <group id="KotlinInternalGroup" popup="true" text="Internal" icon="/general/balloonWarning.png"
-           class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalActionGroup">
+        <action id="CacheResetOnProcessCanceledToggleAction"
+                class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"
+                text="Reset caches on ProcessCanceledException"/>
 
-      <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion"
-             class="org.jetbrains.kotlin.idea.actions.internal.KotlinInternalActionGroup" >
+        <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
+                text="Check Component Functions Usage Search"/>
 
-        <action id="TopLevelCompletionBenchmarkAction"
-                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.TopLevelCompletionBenchmarkAction"
-                text="Top-level scenario"/>
+        <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
+                text="Find Implicit Nothing Calls"/>
 
-        <action id="LocalCompletionBenchmarkAction"
-                class="org.jetbrains.kotlin.idea.actions.internal.benchmark.LocalCompletionBenchmarkAction"
-                text="Local scenario"/>
+        <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
+                text="Search Not Property Candidates"/>
+
+        <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
+                text="Throw cached PCE"/>
       </group>
+      <separator/>
 
-      <action id="HighlightingBenchmarkAction"
-              class="org.jetbrains.kotlin.idea.actions.internal.benchmark.HighlightingBenchmarkAction"
-              text="Benchmark highlighting"/>
-
-      <action id="CacheResetOnProcessCanceledToggleAction"
-              class="org.jetbrains.kotlin.idea.actions.internal.CacheResetOnProcessCanceledToggleAction"
-              text="Reset caches on ProcessCanceledException"/>
-
-      <action id="CheckComponentsUsageSearchAction" class="org.jetbrains.kotlin.idea.actions.internal.CheckComponentsUsageSearchAction"
-              text="Check Component Functions Usage Search"/>
-
-      <action id="FindImplicitNothingAction" class="org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction"
-              text="Find Implicit Nothing Calls"/>
-
-      <action id="PrintOutNotPropertyMatches" class="org.jetbrains.kotlin.idea.actions.internal.SearchNotPropertyCandidatesAction"
-              text="Search Not Property Candidates"/>
-
-      <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
-              text="Throw cached PCE"/>
-
-      <add-to-group group-id="KotlinToolsGroup" anchor="last"/>
+      <add-to-group group-id="Internal" anchor="last"/>
     </group>
-
 
     <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction"
             text="Function to _Scope...">
@@ -247,8 +252,14 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver"
                     serviceImplementation="org.jetbrains.kotlin.idea.modules.IdeJavaModuleResolver"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver"
+                    serviceImplementation="org.jetbrains.kotlin.idea.compiler.IdeModuleAnnotationsResolver"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.LightClassGenerationSupport"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IDELightClassGenerationSupport"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinAsJavaSupport"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IDEKotlinAsJavaSupport"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.psi.KtFileClassProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KtFileClassProviderImpl"/>
@@ -297,8 +308,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"
                     serviceImplementation="org.jetbrains.kotlin.idea.stubindex.SubpackagesIndexService"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker"/>
@@ -306,11 +317,11 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"
                     serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.lightClasses.ClsJavaStubByVirtualFileCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.lightClasses.ClsJavaStubByVirtualFileCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.ClsJavaStubByVirtualFileCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IdeLightClassInheritanceHelper"/>
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.lightClasses.IdeLightClassInheritanceHelper"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.config.KotlinFacetSettingsProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.facet.KotlinFacetSettingsProviderImpl"/>
@@ -323,17 +334,23 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.LibraryDependenciesCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.LibraryDependenciesCacheImpl"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCacheImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.ScriptBinariesScopeCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.ScriptBinariesScopeCache"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.project.ScriptBinariesScopeCache"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.ScriptBinariesScopeCache"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.util.ProjectJob"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.util.ProjectJob"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptModificationListener"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptModificationListener"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.resolve.lazy.ProbablyNothingCallableNames"
+                    serviceImplementation="org.jetbrains.kotlin.idea.project.ProbablyNothingCallableNamesImpl"/>
 
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
@@ -435,6 +452,9 @@
                          id="project.kotlinCompiler"
                          displayName="Kotlin Compiler"
                          parentId="project.propCompiler"/>
+
+    <applicationConfigurable groupId="language" displayName="Kotlin Updates" id="preferences.language.Kotlin"
+                             instance="org.jetbrains.kotlin.idea.configuration.KotlinUpdatesSettingsConfigurable"/>
 
     <qualifiedNameProvider implementation="org.jetbrains.kotlin.idea.actions.KotlinQualifiedNameProvider"/>
 
@@ -566,6 +586,7 @@
 
     <typedHandler implementation="org.jetbrains.kotlin.idea.editor.KotlinTypedHandler"/>
     <typedHandler implementation="org.jetbrains.kotlin.idea.kdoc.KDocTypedHandler"/>
+    <typedHandler implementation="org.jetbrains.kotlin.idea.editor.KotlinRawStringTypedHandler"/>
     <enterHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinEnterHandler"
                           id="KotlinEnterHandler" order="before EnterBetweenBracesHandler"/>
     <enterHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinMultilineStringEnterHandler"
@@ -573,6 +594,7 @@
     <lang.smartEnterProcessor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler"/>
     <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinBackspaceHandler"/>
     <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinStringTemplateBackspaceHandler"/>
+    <backspaceHandlerDelegate implementation="org.jetbrains.kotlin.idea.editor.KotlinRawStringBackspaceHandler"/>
 
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPasteProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertTextJavaCopyPasteProcessor"/>
@@ -687,6 +709,7 @@
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinMetadataFilePackageIndex"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinModuleMappingIndex"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinPackageSourcesMemberNamesIndex"/>
+    <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinJvmModuleAnnotationsIndex"/>
 
     <idIndexer filetype="Kotlin" implementationClass="org.jetbrains.kotlin.idea.search.KotlinIdIndexer"/>
     <todoIndexer filetype="Kotlin" implementationClass="org.jetbrains.kotlin.idea.search.KotlinTodoIndexer"/>
@@ -766,12 +789,13 @@
     <annotationSupport language="kotlin" implementationClass="com.intellij.psi.impl.source.tree.java.JavaAnnotationSupport"/>
 
     <createFromTemplateHandler implementation="org.jetbrains.kotlin.idea.actions.KotlinCreateFromTemplateHandler"/>
+    <defaultTemplatePropertiesProvider implementation="org.jetbrains.kotlin.idea.actions.KotlinDefaultTemplatePropertiesProvider" order="last"/>
 
     <nameSuggestionProvider implementation="org.jetbrains.kotlin.idea.core.KotlinNameSuggestionProvider"/>
 
     <usageToPsiElementProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinUsageToPsiElementProvider"/>
 
-    <facetType implementation="org.jetbrains.kotlin.idea.facet.KotlinFacetType"/>
+    <facetType implementation="org.jetbrains.kotlin.idea.facet.KotlinFacetTypeImpl"/>
 
     <lang.sliceProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.slicer.KotlinSliceProvider"/>
 
@@ -787,6 +811,8 @@
                              implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinFunDeclarationRangeHandler"/>
 
     <lang.jvm.actions.jvmElementActionsFactory implementation="org.jetbrains.kotlin.idea.quickfix.crossLanguage.KotlinElementActionsFactory"/>
+
+    <resolveScopeEnlarger implementation="org.jetbrains.kotlin.idea.CommonModuleResolveScopeEnlarger"/>
 
     <sdkType implementation="org.jetbrains.kotlin.idea.framework.KotlinSdkType"/>
 
@@ -952,11 +978,6 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.MoveLambdaOutsideParenthesesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1182,11 +1203,6 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ChangeVisibilityModifierIntention$Internal</className>
-      <category>Kotlin</category>
-    </intentionAction>
-
-    <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -1535,6 +1551,56 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertUnsafeCastCallToUnsafeCastIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertUnsafeCastToUnsafeCastCallIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveLabeledReturnInLambdaIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddLabeledReturnInLambdaIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.AddAnnotationUseSiteTargetIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.JoinParameterListIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.JoinArgumentListIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertLineCommentToBlockCommentIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertBlockCommentToLineCommentIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.IndentRawStringIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ObjectLiteralToLambdaInspection"
                      displayName="Object literal can be converted to lambda"
                      groupPath="Kotlin"
@@ -1562,7 +1628,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedCallableAddReplaceWithInspection"
                      displayName="@Deprecated annotation without 'replaceWith' argument"
                      groupPath="Kotlin"
                      groupName="Other problems"
@@ -1800,7 +1866,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="INFO"
+                     level="INFORMATION"
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.loopToCallChain.UseWithIndexInspection"
@@ -1881,7 +1947,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="WEAK WARNING"
+                     level="INFORMATION"
                      language="kotlin"
     />
 
@@ -2591,6 +2657,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.JavaCollectionsStaticMethodOnImmutableListInspection"
+                     displayName="Call of Java mutator method on immutable Kotlin collection"
+                     groupPath="Kotlin"
+                     groupName="Java interop issues"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RecursiveEqualsCallInspection"
                      displayName="Recursive equals call"
                      groupPath="Kotlin"
@@ -2626,7 +2701,7 @@
                      level="WARNING"
                      language="kotlin"
     />
-    
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SortModifiersInspection"
                      displayName="Non-canonical modifier order"
                      groupPath="Kotlin"
@@ -2691,6 +2766,60 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConvertPairConstructorToToFunctionInspection"
+                     displayName="Convert Pair constructor to 'to' function"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantCompanionReferenceInspection"
+                     displayName="Redundant Companion reference"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.PublicApiImplicitTypeInspection"
+                     displayName="Public API declaration has implicit return type"
+                     groupPath="Kotlin"
+                     groupName="Other problems"
+                     enabledByDefault="false"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.CanSealedSubClassBeObjectInspection"
+                     displayName="Refactor Sealed Sub-class to Object"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFO"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MoveLambdaOutsideParenthesesInspection"
+                     displayName="Lambda argument inside parentheses"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.MainFunctionReturnUnitInspection"
+                     displayName="Main function should return Unit"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
@@ -2716,7 +2845,14 @@
                   serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastBindingContextProviderService"/>
 
     <statistics.usagesCollector implementation="org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector" />
+    <statistics.usagesCollector implementation="org.jetbrains.kotlin.idea.parameterInfo.KotlinInlayParameterHintsUsageCollector" />
+
+    <checkinHandlerFactory implementation="org.jetbrains.kotlin.idea.vcs.BunchFileCheckInHandlerFactory"/>
   </extensions>
+
+  <!-- CIDR-PLUGIN-EXCLUDE-START -->
+  <xi:include href="jvm.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!-- CIDR-PLUGIN-EXCLUDE-END -->
 
   <xi:include href="tipsAndTricks.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
@@ -2733,6 +2869,7 @@
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameDynamicMemberHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameOnSecondaryConstructorHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler"/>
+    <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameSyntheticDeclarationByReferenceHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.JavaMemberByKotlinReferenceInplaceRenameHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameJvmNameHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameBackingFieldReferenceHandler"/>
@@ -2740,6 +2877,7 @@
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameByLabeledReferenceInLambdaArgumentHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.RenameImportAliasByReferenceHandler"/>
     <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.KotlinMemberInplaceRenameHandler"/>
+    <renameHandler implementation="org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler"/>
 
     <versionInfoProvider implementation="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProviderByModuleDependencies"/>
 

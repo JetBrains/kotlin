@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.translate.utils
@@ -19,6 +8,10 @@ package org.jetbrains.kotlin.js.translate.utils
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -31,15 +24,14 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOrInheritsParametersWithDefaultValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 
 fun generateDelegateCall(
     classDescriptor: ClassDescriptor,
@@ -76,8 +68,8 @@ fun generateDelegateCall(
         args.add(JsNameRef(jsParamName))
     }
 
-    val intrinsic = context.intrinsics().getFunctionIntrinsic(toDescriptor)
-    val invocation = if (intrinsic.exists() && intrinsic is FunctionIntrinsicWithReceiverComputed) {
+    val intrinsic = context.intrinsics().getFunctionIntrinsic(toDescriptor, context)
+    val invocation = if (intrinsic is FunctionIntrinsicWithReceiverComputed) {
         intrinsic.apply(thisObject, args, context)
     } else {
         JsInvocation(overriddenMemberFunctionRef, args)
@@ -163,7 +155,7 @@ fun JsFunction.fillCoroutineMetadata(
     descriptor: FunctionDescriptor,
     hasController: Boolean
 ) {
-    val suspendPropertyDescriptor = context.currentModule.getPackage(DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME)
+    val suspendPropertyDescriptor = context.currentModule.getPackage(context.languageVersionSettings.coroutinesIntrinsicsPackageFqName())
         .memberScope
         .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).first()
 
@@ -242,4 +234,34 @@ fun TranslationContext.createCoroutineResult(resolvedCall: ResolvedCall<*>): JsE
         coroutineResult = true
         synthetic = true
     }
+}
+
+/**
+ * Tries to get precise statically known primitive type. Takes generic supertypes into account. Doesn't handle smart-casts.
+ * This is needed to be compatible with JVM NaN behaviour:
+ *
+ * // Generics with Double super-type
+ * fun <T: Double> foo(v: T) = println(v == v)
+ * foo(Double.NaN) // false
+ *
+ * Also see org/jetbrains/kotlin/codegen/codegenUtil.kt#calcTypeForIEEE754ArithmeticIfNeeded
+ */
+fun TranslationContext.getPrecisePrimitiveType(expression: KtExpression): KotlinType? {
+    val bindingContext = bindingContext()
+    val ktType = bindingContext.getType(expression) ?: return null
+
+    return TypeUtils.getAllSupertypes(ktType).find(KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType) ?: ktType
+}
+
+fun TranslationContext.getPrecisePrimitiveTypeNotNull(expression: KtExpression): KotlinType {
+    return getPrecisePrimitiveType(expression) ?: throw IllegalStateException("Type must be not null for " + expression)
+}
+
+fun TranslationContext.getPrimitiveNumericComparisonInfo(expression: KtExpression) =
+    config.configuration.languageVersionSettings.let {
+        if (it.supportsFeature(LanguageFeature.ProperIeee754Comparisons)) {
+            bindingContext().get(BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO, expression)
+        } else {
+            null
+        }
 }

@@ -21,10 +21,12 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
             val (redundancyType, branchType) = RedundancyType.of(expression)
             if (redundancyType == RedundancyType.NONE) return@ifExpressionVisitor
 
-            holder.registerProblem(expression,
-                                   "Redundant 'if' statement",
-                                   ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                   RemoveRedundantIf(redundancyType, branchType))
+            holder.registerProblem(
+                expression,
+                "Redundant 'if' statement",
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                RemoveRedundantIf(redundancyType, branchType)
+            )
         }
     }
 
@@ -32,6 +34,8 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
         object Simple : BranchType()
 
         object Return : BranchType()
+
+        data class LabeledReturn(val label: String) : BranchType()
 
         class Assign(val lvalue: KtExpression) : BranchType() {
             override fun equals(other: Any?) = other is Assign && lvalue.text == other.lvalue.text
@@ -60,7 +64,10 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
 
             private fun KtExpression?.getBranchExpression(): Pair<KtExpression?, BranchType>? {
                 return when (this) {
-                    is KtReturnExpression -> returnedExpression to BranchType.Return
+                    is KtReturnExpression -> {
+                        val branchType = labeledExpression?.let { BranchType.LabeledReturn(it.text) } ?: BranchType.Return
+                        returnedExpression to branchType
+                    }
                     is KtBlockExpression -> statements.singleOrNull()?.getBranchExpression()
                     is KtBinaryExpression -> if (operationToken == KtTokens.EQ && left != null)
                         right to BranchType.Assign(left!!)
@@ -87,11 +94,12 @@ class RedundantIfInspection : AbstractKotlinInspection(), CleanupLocalInspection
             }
             val factory = KtPsiFactory(element)
             element.replace(
-                    when (branchType) {
-                        is BranchType.Return -> factory.createExpressionByPattern("return $0", condition)
-                        is BranchType.Assign -> factory.createExpressionByPattern("$0 = $1", branchType.lvalue, condition)
-                        else -> condition
-                    }
+                when (branchType) {
+                    is BranchType.Return -> factory.createExpressionByPattern("return $0", condition)
+                    is BranchType.LabeledReturn -> factory.createExpressionByPattern("return${branchType.label} $0", condition)
+                    is BranchType.Assign -> factory.createExpressionByPattern("$0 = $1", branchType.lvalue, condition)
+                    else -> condition
+                }
             )
         }
     }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi2ir.containsNull
@@ -48,7 +49,7 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
     }
 
     private fun declareSimpleFunction(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, function: FunctionDescriptor) =
-        context.symbolTable.declareSimpleFunction(startOffset, endOffset, origin, function)
+        context.symbolTable.declareSimpleFunctionWithOverrides(startOffset, endOffset, origin, function)
 
     private inner class MemberFunctionBuilder(
         val irClass: IrClass,
@@ -125,17 +126,23 @@ class DataClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 function.valueParameters.forEach { parameter ->
                     putDefault(parameter, irGet(irThis(), getPropertyGetterSymbol(parameter)))
                 }
-                +irReturn(irCall(constructorSymbol, dataClassConstructor.returnType).mapValueParameters {
-                    irGet(irFunction.valueParameters[it.index].symbol)
-                })
+                +irReturn(
+                    irCall(
+                        constructorSymbol,
+                        dataClassConstructor.returnType,
+                        dataClassConstructor.typeParameters.associate { it to it.defaultType }
+                    ).mapValueParameters {
+                        irGet(irFunction.valueParameters[it.index].symbol)
+                    }
+                )
             }
         }
 
         override fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
             buildMember(function, declaration) {
                 +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
-                +irIfThenReturnFalse(irNotIs(irOther(), classDescriptor.defaultType))
-                val otherWithCast = irTemporary(irAs(irOther(), classDescriptor.defaultType), "other_with_cast")
+                +irIfThenReturnFalse(irNotIs(irOther(), classDescriptor.defaultType, irClass.symbol))
+                val otherWithCast = irTemporary(irAs(irOther(), classDescriptor.defaultType, irClass.symbol), "other_with_cast")
                 for (property in properties) {
                     val arg1 = irGet(irThis(), getPropertyGetterSymbol(property))
                     val arg2 = irGet(irGet(otherWithCast.symbol), getPropertyGetterSymbol(property))

@@ -1,0 +1,30 @@
+@kotlin.Metadata
+final class ReleaseCoroutinesKt$l$1 {
+    inner class ReleaseCoroutinesKt$l$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+final class ReleaseCoroutinesKt$withStateMachine$1 {
+    synthetic field data: java.lang.Object
+    synthetic field exception: java.lang.Throwable
+    inner class ReleaseCoroutinesKt$withStateMachine$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
+    synthetic final method getLabel(): int
+    synthetic final method setLabel(p0: int): void
+}
+
+@kotlin.Metadata
+public final class ReleaseCoroutinesKt {
+    private final static @org.jetbrains.annotations.NotNull field l: kotlin.jvm.functions.Function1
+    inner class ReleaseCoroutinesKt$l$1
+    inner class ReleaseCoroutinesKt$withStateMachine$1
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method getL(): kotlin.jvm.functions.Function1
+    public final static @org.jetbrains.annotations.Nullable method named(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method withStateMachine(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+}

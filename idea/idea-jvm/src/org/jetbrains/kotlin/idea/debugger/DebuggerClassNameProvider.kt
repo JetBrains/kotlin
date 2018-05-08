@@ -24,6 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClassOrNull
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Computed
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.Cached
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.EMPTY
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ComputedClassNames.Companion.NonCached
+import org.jetbrains.kotlin.idea.debugger.evaluate.LOG
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -57,7 +59,11 @@ class DebuggerClassNameProvider(
                 KtFunctionLiteral::class.java,
                 KtAnonymousInitializer::class.java)
 
-        internal fun getRelevantElement(element: PsiElement): PsiElement? {
+        internal fun getRelevantElement(element: PsiElement?): PsiElement? {
+            if (element == null) {
+                return null
+            }
+
             for (elementType in CLASS_ELEMENT_TYPES) {
                 if (elementType.isInstance(element)) {
                     return element
@@ -187,13 +193,20 @@ class DebuggerClassNameProvider(
 
                 val classNamesOfContainingDeclaration = getOuterClassNamesForElement(element.relevantParentInReadAction)
 
-                val nonInlineClasses: ComputedClassNames = if (runReadAction { element.name == null || element.isLocal }) {
-                    classNamesOfContainingDeclaration + ComputedClassNames.Cached(
-                            asmTypeForAnonymousClass(typeMapper.bindingContext, element).internalName.toJdiName())
-                }
-                else {
-                    classNamesOfContainingDeclaration
-                }
+                val nonInlineClasses: ComputedClassNames =
+                    if (runReadAction { element.name == null || element.isLocal }) {
+                        val typeForAnonymousClass = asmTypeForAnonymousClassOrNull(typeMapper.bindingContext, element)
+
+                        if (typeForAnonymousClass == null) {
+                            val parentText = runReadAction { getRelevantElement(element.parent)?.text } ?: "<parent was null>"
+                            LOG.error("Can not get type for ${element.text}, parent: $parentText")
+                            classNamesOfContainingDeclaration
+                        } else {
+                            classNamesOfContainingDeclaration + ComputedClassNames.Cached(typeForAnonymousClass.internalName.toJdiName())
+                        }
+                    } else {
+                        classNamesOfContainingDeclaration
+                    }
 
                 if (!findInlineUseSites || !element.isInlineInReadAction) {
                     return NonCached(nonInlineClasses.classNames)

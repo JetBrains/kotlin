@@ -47,12 +47,12 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -360,7 +360,7 @@ class KotlinChangeSignatureDialog(
     }
 
     override fun canRun() {
-        if (myNamePanel.isVisible && myMethod.canChangeName() && !KotlinNameSuggester.isIdentifier(methodName)) {
+        if (myNamePanel.isVisible && myMethod.canChangeName() && !methodName.isIdentifier()) {
             throw ConfigurationException(KotlinRefactoringBundle.message("function.name.is.invalid"))
         }
 
@@ -372,7 +372,7 @@ class KotlinChangeSignatureDialog(
         for (item in parametersTableModel.items) {
             val parameterName = item.parameter.name
 
-            if (item.parameter != parametersTableModel.receiver && !KotlinNameSuggester.isIdentifier(parameterName)) {
+            if (item.parameter != parametersTableModel.receiver && !parameterName.isIdentifier()) {
                 throw ConfigurationException(KotlinRefactoringBundle.message("parameter.name.is.invalid", parameterName))
             }
 

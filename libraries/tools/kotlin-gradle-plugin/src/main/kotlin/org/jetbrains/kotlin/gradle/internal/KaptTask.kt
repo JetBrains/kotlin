@@ -97,9 +97,7 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
     fun compile() {
         /** Delete everything inside generated sources and classes output directory
          * (annotation processing is not incremental) */
-        destinationDir.clearDirectory()
-        classesDir.clearDirectory()
-        kotlinSourcesDestinationDir.clearDirectory()
+        clearOutputDirectories()
 
         val sourceRootsFromKotlin = kotlinCompileTask.sourceRootsContainer.sourceRoots
         val rawSourceRoots = FilteringSourceRootsContainer(sourceRootsFromKotlin, { !isInsideDestinationDirs(it) })
@@ -122,11 +120,6 @@ open class KaptTask : ConventionTask(), CompilerArgumentAwareWithInput<K2JVMComp
                 args,
                 environment)
         throwGradleExceptionIfError(exitCode)
-    }
-
-    private fun File.clearDirectory() {
-        deleteRecursively()
-        mkdirs()
     }
 
     private val isAtLeastJava9: Boolean

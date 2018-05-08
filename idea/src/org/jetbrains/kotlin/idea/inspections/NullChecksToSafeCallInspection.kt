@@ -10,7 +10,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -20,14 +20,16 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 class NullChecksToSafeCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            binaryExpressionVisitor { expression ->
-                if (isNullChecksToSafeCallFixAvailable(expression)) {
-                    holder.registerProblem(expression,
-                                           "Null-checks replaceable with safe-calls",
-                                           ProblemHighlightType.WEAK_WARNING,
-                                           NullChecksToSafeCallCheckFix())
-                }
+        binaryExpressionVisitor { expression ->
+            if (isNullChecksToSafeCallFixAvailable(expression)) {
+                holder.registerProblem(
+                    expression,
+                    "Null-checks replaceable with safe-calls",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    NullChecksToSafeCallCheckFix()
+                )
             }
+        }
 
     private class NullChecksToSafeCallCheckFix : LocalQuickFix {
         override fun getName() = "Replace chained null-checks with safe-calls"
@@ -92,8 +94,8 @@ class NullChecksToSafeCallInspection : AbstractKotlinInspection() {
         }
 
         private fun KtExpression.isChainStable(context: BindingContext): Boolean = when (this) {
-            is KtReferenceExpression -> isStable(context)
-            is KtQualifiedExpression -> selectorExpression?.isStable(context) == true && receiverExpression.isChainStable(context)
+            is KtReferenceExpression -> isStableSimpleExpression(context)
+            is KtQualifiedExpression -> selectorExpression?.isStableSimpleExpression(context) == true && receiverExpression.isChainStable(context)
             else -> false
         }
     }

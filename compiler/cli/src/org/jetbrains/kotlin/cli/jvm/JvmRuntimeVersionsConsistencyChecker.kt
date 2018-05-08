@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.cli.jvm
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -47,6 +46,8 @@ object JvmRuntimeVersionsConsistencyChecker {
     private const val MANIFEST_KOTLIN_RUNTIME_COMPONENT_MAIN = "manifest.impl.value.kotlin.runtime.component.main"
 
     private const val KOTLIN_STDLIB_MODULE = "$META_INF/kotlin-stdlib.kotlin_module"
+    private const val KOTLIN_STDLIB_JRE_7_MODULE = "$META_INF/kotlin-stdlib-jre7.kotlin_module"
+    private const val KOTLIN_STDLIB_JRE_8_MODULE = "$META_INF/kotlin-stdlib-jre8.kotlin_module"
     private const val KOTLIN_REFLECT_MODULE = "$META_INF/kotlin-reflection.kotlin_module"
 
     private val RUNTIME_IMPLEMENTATION_TITLES = setOf(
@@ -90,7 +91,9 @@ object JvmRuntimeVersionsConsistencyChecker {
             // Runtime jars with components "Core" only (a subset of [jars])
             val coreJars: List<KotlinLibraryFile>,
             // Library jars which have some Kotlin Runtime library bundled into them
-            val otherLibrariesWithBundledRuntime: List<VirtualFile>
+            val otherLibrariesWithBundledRuntime: List<VirtualFile>,
+            val stdlibJre7: List<KotlinLibraryFile>,
+            val stdlibJre8: List<KotlinLibraryFile>
     )
 
     fun checkCompilerClasspathConsistency(
@@ -102,34 +105,40 @@ object JvmRuntimeVersionsConsistencyChecker {
         if (runtimeJarsInfo.jars.isEmpty()) return
 
         val languageVersionSettings = configuration.languageVersionSettings
-        val apiVersion = languageVersionSettings.apiVersion.version
+        val currentApi = languageVersionSettings.apiVersion
 
-        val consistency = checkCompilerClasspathConsistency(messageCollector, apiVersion, runtimeJarsInfo)
+        val consistency = checkCompilerClasspathConsistency(messageCollector, currentApi.version, runtimeJarsInfo)
         if (consistency is ClasspathConsistency.InconsistentWithApiVersion) {
             val actualRuntimeVersion = consistency.actualRuntimeVersion
-            messageCollector.issue(
+            if (currentApi.isStable) {
+                messageCollector.issue(
                     null,
                     "Runtime JAR files in the classpath have the version $actualRuntimeVersion, " +
-                    "which is older than the API version $apiVersion. " +
-                    "Consider using the runtime of version $apiVersion, or pass '-api-version $actualRuntimeVersion' explicitly to " +
-                    "restrict the available APIs to the runtime of version $actualRuntimeVersion. " +
+                    "which is older than the API version ${currentApi.version}. " +
+                    "Consider using the runtime of version ${currentApi.version}, or pass '-api-version $actualRuntimeVersion' " +
+                    "explicitly to restrict the available APIs to the runtime of version $actualRuntimeVersion. " +
                     "You can also pass '-language-version $actualRuntimeVersion' instead, which will restrict " +
-                    "not only the APIs to the specified version, but also the language features. " +
-                    "Alternatively, you can use '-Xskip-runtime-version-check' to suppress this warning"
-            )
+                    "not only the APIs to the specified version, but also the language features"
+                )
+
+                for (jar in consistency.incompatibleJars) {
+                    messageCollector.issue(
+                        jar.file,
+                        "Runtime JAR file has version ${jar.version} which is older than required for API version ${currentApi.version}"
+                    )
+                }
+            }
 
             val actualApi = ApiVersion.parse(actualRuntimeVersion.toString())
-            if (actualApi != null) {
-                val inferredApiVersion =
-                        if (configuration.getBoolean(CLIConfigurationKeys.IS_API_VERSION_EXPLICIT))
-                            languageVersionSettings.apiVersion
-                        else
-                            // "minOf" is needed in case when API version was inferred from language version and it's older than actualApi.
-                            // For example, in "kotlinc-1.2 -language-version 1.0 -cp kotlin-runtime-1.1.jar" we should still infer API = 1.0
-                            minOf(languageVersionSettings.apiVersion, actualApi)
-
+            if (actualApi == null) {
+                messageCollector.issue(null, "Could not parse runtime JAR version: $actualRuntimeVersion")
+            } else if (!languageVersionSettings.getFlag(AnalysisFlag.explicitApiVersion) && actualApi < currentApi) {
+                // If there's no explicit "-api-version" AND there's an old stdlib in the classpath (older than the default value of API),
+                // we infer API = the version of that stdlib.
+                // Note that "no explicit -api-version" requirement is necessary because for example, in
+                // "kotlinc-1.2 -language-version 1.0 -cp kotlin-runtime-1.1.jar" we should still infer API = 1.0
                 val newSettings = object : LanguageVersionSettings by languageVersionSettings {
-                    override val apiVersion: ApiVersion get() = inferredApiVersion
+                    override val apiVersion: ApiVersion get() = actualApi
                 }
 
                 messageCollector.issue(null, "Old runtime has been found in the classpath. " +
@@ -138,16 +147,21 @@ object JvmRuntimeVersionsConsistencyChecker {
 
                 configuration.languageVersionSettings = newSettings
             }
-            else {
-                messageCollector.issue(null, "Could not parse runtime JAR version: $actualRuntimeVersion")
-            }
         }
         else if (consistency != ClasspathConsistency.Consistent) {
             messageCollector.issue(
                     null,
-                    "Some runtime JAR files in the classpath have an incompatible version. " +
-                    "Consider removing them from the classpath or use '-Xskip-runtime-version-check' to suppress this warning"
+                    "Some runtime JAR files in the classpath have an incompatible version. Consider removing them from the classpath"
             )
+        }
+
+        if (configuration.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_2) {
+            for (stdlibJre7 in runtimeJarsInfo.stdlibJre7) {
+                messageCollector.issue(stdlibJre7.file, "kotlin-stdlib-jre7 is deprecated. Please use kotlin-stdlib-jdk7 instead")
+            }
+            for (stdlibJre8 in runtimeJarsInfo.stdlibJre8) {
+                messageCollector.issue(stdlibJre8.file, "kotlin-stdlib-jre8 is deprecated. Please use kotlin-stdlib-jdk8 instead")
+            }
         }
 
         val librariesWithBundled = runtimeJarsInfo.otherLibrariesWithBundledRuntime
@@ -156,7 +170,7 @@ object JvmRuntimeVersionsConsistencyChecker {
                     null,
                     "Some JAR files in the classpath have the Kotlin Runtime library bundled into them. " +
                     "This may cause difficult to debug problems if there's a different version of the Kotlin Runtime library in the classpath. " +
-                    "Consider removing these libraries from the classpath or use '-Xskip-runtime-version-check' to suppress this warning"
+                    "Consider removing these libraries from the classpath"
             )
 
             for (library in librariesWithBundled) {
@@ -167,7 +181,10 @@ object JvmRuntimeVersionsConsistencyChecker {
 
     private sealed class ClasspathConsistency {
         object Consistent : ClasspathConsistency()
-        class InconsistentWithApiVersion(val actualRuntimeVersion: MavenComparableVersion) : ClasspathConsistency()
+        class InconsistentWithApiVersion(
+            val actualRuntimeVersion: MavenComparableVersion,
+            val incompatibleJars: List<KotlinLibraryFile>
+        ) : ClasspathConsistency()
         object InconsistentWithCompilerVersion : ClasspathConsistency()
         object InconsistentBecauseOfRuntimesWithDifferentVersions : ClasspathConsistency()
     }
@@ -191,9 +208,10 @@ object JvmRuntimeVersionsConsistencyChecker {
         val runtimeVersion = checkMatchingVersionsAndGetRuntimeVersion(messageCollector, jars)
                              ?: return ClasspathConsistency.InconsistentBecauseOfRuntimesWithDifferentVersions
 
-        if (jars.map {
-            checkCompatibleWithApiVersion(messageCollector, it, apiVersion)
-        }.any { it }) return ClasspathConsistency.InconsistentWithApiVersion(runtimeVersion)
+        val jarsIncompatibleWithApiVersion = jars.filter { it.version < apiVersion }
+        if (jarsIncompatibleWithApiVersion.isNotEmpty()) {
+            return ClasspathConsistency.InconsistentWithApiVersion(runtimeVersion, jarsIncompatibleWithApiVersion)
+        }
 
         return ClasspathConsistency.Consistent
     }
@@ -204,19 +222,6 @@ object JvmRuntimeVersionsConsistencyChecker {
                     jar.file,
                     "Runtime JAR file has version ${jar.version} which is newer than compiler version ${ApiVersion.LATEST_STABLE.version}",
                     CompilerMessageSeverity.ERROR
-            )
-            return true
-        }
-        return false
-    }
-
-    private fun checkCompatibleWithApiVersion(
-            messageCollector: MessageCollector, jar: KotlinLibraryFile, apiVersion: MavenComparableVersion
-    ): Boolean {
-        if (jar.version < apiVersion) {
-            messageCollector.issue(
-                    jar.file,
-                    "Runtime JAR file has version ${jar.version} which is older than required for API version $apiVersion"
             )
             return true
         }
@@ -271,6 +276,8 @@ object JvmRuntimeVersionsConsistencyChecker {
         val jars = ArrayList<KotlinLibraryFile>(2)
         val coreJars = ArrayList<KotlinLibraryFile>(2)
         val otherLibrariesWithBundledRuntime = ArrayList<VirtualFile>(0)
+        val stdlibJre7 = ArrayList<KotlinLibraryFile>(0)
+        val stdlibJre8 = ArrayList<KotlinLibraryFile>(0)
 
         val visitedPaths = hashSetOf<String>()
 
@@ -288,17 +295,28 @@ object JvmRuntimeVersionsConsistencyChecker {
                     if (fileKind.isCoreComponent) {
                         coreJars.add(file)
                     }
+                    if (fileKind.isStdlibJre7) {
+                        stdlibJre7.add(file)
+                    }
+                    if (fileKind.isStdlibJre8) {
+                        stdlibJre8.add(file)
+                    }
                 }
                 FileKind.OldRuntime -> jars.add(KotlinLibraryFile(jarFile, ApiVersion.KOTLIN_1_0.version))
                 FileKind.LibraryWithBundledRuntime -> otherLibrariesWithBundledRuntime.add(jarFile)
             }
         }
 
-        return RuntimeJarsInfo(jars, coreJars, otherLibrariesWithBundledRuntime)
+        return RuntimeJarsInfo(jars, coreJars, otherLibrariesWithBundledRuntime, stdlibJre7, stdlibJre8)
     }
 
     private sealed class FileKind {
-        class Runtime(val version: MavenComparableVersion, val isCoreComponent: Boolean) : FileKind()
+        class Runtime(
+            val version: MavenComparableVersion,
+            val isStdlibJre7: Boolean,
+            val isStdlibJre8: Boolean,
+            val isCoreComponent: Boolean
+        ) : FileKind()
 
         // Runtime library of Kotlin 1.0
         object OldRuntime : FileKind()
@@ -318,11 +336,13 @@ object JvmRuntimeVersionsConsistencyChecker {
         }
 
         val runtimeComponent = manifest?.mainAttributes?.getValue(KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE)
+        val isStdlibJre7 = jarRoot.findFileByRelativePath(KOTLIN_STDLIB_JRE_7_MODULE) != null
+        val isStdlibJre8 = jarRoot.findFileByRelativePath(KOTLIN_STDLIB_JRE_8_MODULE) != null
         return when (runtimeComponent) {
             KOTLIN_RUNTIME_COMPONENT_MAIN ->
-                FileKind.Runtime(manifest.getKotlinLanguageVersion(), isCoreComponent = false)
+                FileKind.Runtime(manifest.getKotlinLanguageVersion(), isStdlibJre7, isStdlibJre8, isCoreComponent = false)
             KOTLIN_RUNTIME_COMPONENT_CORE ->
-                FileKind.Runtime(manifest.getKotlinLanguageVersion(), isCoreComponent = true)
+                FileKind.Runtime(manifest.getKotlinLanguageVersion(), isStdlibJre7, isStdlibJre8, isCoreComponent = true)
             null -> when {
                 jarRoot.findFileByRelativePath(KOTLIN_STDLIB_MODULE) == null &&
                 jarRoot.findFileByRelativePath(KOTLIN_REFLECT_MODULE) == null -> FileKind.Irrelevant

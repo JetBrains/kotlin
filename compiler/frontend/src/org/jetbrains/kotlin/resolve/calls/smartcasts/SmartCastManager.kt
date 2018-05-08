@@ -41,10 +41,11 @@ class SmartCastManager {
         bindingContext: BindingContext,
         containingDeclarationOrModule: DeclarationDescriptor,
         dataFlowInfo: DataFlowInfo,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        dataFlowValueFactory: DataFlowValueFactory
     ): List<KotlinType> {
         val variants = getSmartCastVariantsExcludingReceiver(
-            bindingContext, containingDeclarationOrModule, dataFlowInfo, receiverToCast, languageVersionSettings
+            bindingContext, containingDeclarationOrModule, dataFlowInfo, receiverToCast, languageVersionSettings, dataFlowValueFactory
         )
         val result = ArrayList<KotlinType>(variants.size + 1)
         result.add(receiverToCast.type)
@@ -64,7 +65,8 @@ class SmartCastManager {
             context.scope.ownerDescriptor,
             context.dataFlowInfo,
             receiverToCast,
-            context.languageVersionSettings
+            context.languageVersionSettings,
+            context.dataFlowValueFactory
         )
     }
 
@@ -76,9 +78,10 @@ class SmartCastManager {
         containingDeclarationOrModule: DeclarationDescriptor,
         dataFlowInfo: DataFlowInfo,
         receiverToCast: ReceiverValue,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        dataFlowValueFactory: DataFlowValueFactory
     ): Collection<KotlinType> {
-        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverToCast, bindingContext, containingDeclarationOrModule)
+        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(receiverToCast, bindingContext, containingDeclarationOrModule)
         return dataFlowInfo.getCollectedTypes(dataFlowValue, languageVersionSettings)
     }
 

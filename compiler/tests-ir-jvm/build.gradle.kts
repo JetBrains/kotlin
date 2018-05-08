@@ -1,4 +1,7 @@
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testRuntime(intellijDep())

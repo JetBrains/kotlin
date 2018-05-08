@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.SmartList
 
 class IrTypeParameterImpl(
     startOffset: Int,
@@ -55,6 +57,8 @@ class IrTypeParameterImpl(
     }
 
     override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
+
+    override val superClassifiers: MutableList<IrClassifierSymbol> = SmartList<IrClassifierSymbol>()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKa
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
+import org.jetbrains.kotlin.scripting.gradle.ScriptingGradleSubplugin
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -356,8 +357,6 @@ internal class KotlinCommonSourceSetProcessor(
             project.tasks.findByName(sourceSet.classesTaskName)!!.dependsOn(kotlinTask)
             // can be missing (e.g. in case of tests)
             project.tasks.findByName(sourceSet.jarTaskName)?.dependsOn(kotlinTask)
-            val javaTask = project.tasks.findByName(sourceSet.compileJavaTaskName)
-            project.tasks.remove(javaTask)
 
             appliedPlugins
                     .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
@@ -429,6 +428,7 @@ internal open class KotlinPlugin(
 
     override fun apply(project: Project) {
         project.createKaptExtension()
+        project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
         super.apply(project)
     }
 }
@@ -555,7 +555,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         project.afterEvaluate { project ->
             if (project != null) {
                 val androidPluginIds = listOf("android", "com.android.application", "android-library", "com.android.library",
-                        "com.android.test", "com.android.feature")
+                        "com.android.test", "com.android.feature", "com.android.dynamic-feature")
                 val plugin = androidPluginIds.asSequence()
                                      .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
                                      .firstOrNull()
@@ -690,7 +690,9 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
     // Make Gradle check if the javaTask is up-to-date based on the Kotlin classes
     javaTask.inputsCompatible.run {
         if (isBuildCacheSupported()) {
-            dir(kotlinTask.destinationDir).withNormalizer(CompileClasspathNormalizer::class.java)
+            dir(kotlinTask.destinationDir)
+                .withNormalizer(CompileClasspathNormalizer::class.java)
+                .withPropertyName("${kotlinTask.name}OutputClasses")
         }
         else {
             dirCompatible(kotlinTask.destinationDir)

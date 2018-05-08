@@ -20,16 +20,16 @@ import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.util.ProgressWrapper
 import com.intellij.psi.*
 import com.intellij.psi.search.*
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
@@ -56,7 +56,7 @@ import java.util.*
 abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         protected val targetDeclaration: PsiElement,
         private val searchScope: SearchScope,
-        private val consumer: Processor<PsiReference>,
+        private val consumer: ExecutorProcessor<PsiReference>,
         private val optimizer: SearchRequestCollector,
         private val options: KotlinReferencesSearchOptions,
         private val wordsToSearch: List<String>
@@ -93,7 +93,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         fun create(
                 declaration: PsiElement,
                 searchScope: SearchScope,
-                consumer: Processor<PsiReference>,
+                consumer: ExecutorProcessor<PsiReference>,
                 optimizer: SearchRequestCollector,
                 options: KotlinReferencesSearchOptions
         ): OperatorReferenceSearcher<*>? {
@@ -108,7 +108,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         private fun createInReadAction(
                 declaration: PsiElement,
                 searchScope: SearchScope,
-                consumer: Processor<PsiReference>,
+                consumer: ExecutorProcessor<PsiReference>,
                 optimizer: SearchRequestCollector,
                 options: KotlinReferencesSearchOptions
         ): OperatorReferenceSearcher<*>? {
@@ -134,7 +134,7 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         private fun createInReadAction(
                 declaration: PsiElement,
                 name: Name,
-                consumer: Processor<PsiReference>,
+                consumer: ExecutorProcessor<PsiReference>,
                 optimizer: SearchRequestCollector,
                 options: KotlinReferencesSearchOptions,
                 searchScope: SearchScope

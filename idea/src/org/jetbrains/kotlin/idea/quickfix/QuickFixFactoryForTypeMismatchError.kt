@@ -23,11 +23,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
@@ -51,7 +53,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val actions = LinkedList<IntentionAction>()
 
-        val context = (diagnostic.psiFile as KtFile).analyzeFully()
+        val context = (diagnostic.psiFile as KtFile).analyzeWithContent()
 
         val diagnosticElement = diagnostic.psiElement
         if (diagnosticElement !is KtExpression) {
@@ -101,8 +103,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
             actions.add(NumberConversionFix(diagnosticElement, expectedType, wrongPrimitiveLiteralFix))
         }
 
-        if (KotlinBuiltIns.isCharSequenceOrNullableCharSequence(expectedType)
-            || KotlinBuiltIns.isStringOrNullableString(expectedType)) {
+        if (KotlinBuiltIns.isCharSequenceOrNullableCharSequence(expectedType) || KotlinBuiltIns.isStringOrNullableString(expectedType)) {
             actions.add(AddToStringFix(diagnosticElement, false))
             if (expectedType.isMarkedNullable && expressionType.isMarkedNullable) {
                 actions.add(AddToStringFix(diagnosticElement, true))
@@ -146,7 +147,9 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         if (property != null) {
             val getter = property.getter
             val initializer = property.initializer
-            if (QuickFixUtil.canEvaluateTo(initializer, diagnosticElement) || getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(getter, diagnosticElement)) {
+            if (QuickFixUtil.canEvaluateTo(initializer, diagnosticElement)
+                || getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(getter, diagnosticElement)
+            ) {
                 val scope = property.getResolutionScope(context, property.getResolutionFacade())
                 val typeToInsert = expressionType.approximateWithResolvableType(scope, false)
                 actions.add(ChangeVariableTypeFix(property, typeToInsert))
@@ -192,7 +195,9 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         // KT-10063: arrayOf() bounding single array element
         val annotationEntry = PsiTreeUtil.getParentOfType(diagnosticElement, KtAnnotationEntry::class.java)
         if (annotationEntry != null) {
-            if (KotlinBuiltIns.isArray(expectedType) && expressionType.isSubtypeOf(expectedType.arguments[0].type) || KotlinBuiltIns.isPrimitiveArray(expectedType)) {
+            if (KotlinBuiltIns.isArray(expectedType) && expressionType.isSubtypeOf(expectedType.arguments[0].type)
+                || KotlinBuiltIns.isPrimitiveArray(expectedType)
+            ) {
                 actions.add(AddArrayOfTypeFix(diagnosticElement, expectedType))
             }
         }
@@ -225,10 +230,12 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                         val typeToInsert = valueArgumentType.approximateWithResolvableType(scope, true)
                         actions.add(ChangeParameterTypeFix(correspondingParameter, typeToInsert))
                     }
-                    if (correspondingParameterDescriptor?.varargElementType != null
+                    val parameterVarargType = correspondingParameterDescriptor?.varargElementType
+                    if ((parameterVarargType != null || resolvedCall.resultingDescriptor.fqNameSafe == FqName("kotlin.collections.mapOf"))
                         && KotlinBuiltIns.isArray(valueArgumentType)
                         && expressionType.arguments.isNotEmpty()
-                        && expressionType.arguments[0].type.constructor == expectedType.constructor) {
+                        && expressionType.arguments[0].type.constructor == expectedType.constructor
+                    ) {
                         actions.add(ChangeToUseSpreadOperatorFix(diagnosticElement))
                     }
                 }

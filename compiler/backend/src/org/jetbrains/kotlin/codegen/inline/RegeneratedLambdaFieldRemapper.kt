@@ -25,7 +25,7 @@ class RegeneratedLambdaFieldRemapper(
         originalLambdaInternalName: String,
         override val newLambdaInternalName: String,
         parameters: Parameters,
-        private val recapturedLambdas: Map<String, LambdaInfo>,
+        val recapturedLambdas: Map<String, LambdaInfo>,
         remapper: FieldRemapper,
         private val isConstructor: Boolean
 ) : FieldRemapper(originalLambdaInternalName, remapper, parameters) {
