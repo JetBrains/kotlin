@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
+import org.jetbrains.kotlin.idea.scratch.LOG as log
 
 class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
     KotlinBundle.message("scratch.run.button"),
@@ -45,7 +46,7 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
 
         val handler = provider.getOutputHandler()
 
-        org.jetbrains.kotlin.idea.scratch.LOG.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
+        log.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun, isRepl = $isRepl")
 
         val module = scratchPanel.getModule()
         if (module == null) {
@@ -72,7 +73,16 @@ class RunScratchAction(private val scratchPanel: ScratchTopPanel) : AnAction(
                 }
             })
 
-            executor.execute()
+            try {
+                executor.execute()
+            } catch (ex: Throwable) {
+                handler.error(scratchFile, "Exception occurs during Run Scratch Action")
+                handler.onFinish(scratchFile)
+
+                e.presentation.isEnabled = true
+
+                log.error(ex)
+            }
         }
 
         if (isMakeBeforeRun) {
