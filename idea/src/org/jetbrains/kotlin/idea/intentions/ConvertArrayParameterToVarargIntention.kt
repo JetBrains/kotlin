@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 
 class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParameter>(
-    KtParameter::class.java, "Convert to vararg parameter"
+    KtParameter::class.java, DEFAULT_TEXT
 ) {
 
     override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
@@ -25,7 +25,7 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
         val type = element.descriptor?.type ?: return false
         return when {
             KotlinBuiltIns.isPrimitiveArray(type) -> {
-                text = "Convert to vararg parameter"
+                text = DEFAULT_TEXT
                 true
             }
             KotlinBuiltIns.isArray(type) -> {
@@ -35,9 +35,9 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
                     text = if (!typeProjection.hasModifier(KtTokens.OUT_KEYWORD)
                         && !KotlinBuiltIns.isPrimitiveType(element.builtIns.getArrayElementType(type))
                     ) {
-                        "Convert to vararg parameter (may break code)"
+                        BREAKING_TEXT
                     } else {
-                        "Convert to vararg parameter"
+                        DEFAULT_TEXT
                     }
                     true
                 } else {
@@ -57,6 +57,12 @@ class ConvertArrayParameterToVarargIntention : SelfTargetingIntention<KtParamete
                 ?: return
         typeReference.replace(KtPsiFactory(element).createType(newType))
         element.addModifier(KtTokens.VARARG_KEYWORD)
+    }
+
+    companion object {
+        private const val DEFAULT_TEXT = "Convert to vararg parameter"
+
+        private const val BREAKING_TEXT = "$DEFAULT_TEXT (may break code)"
     }
 
 }
