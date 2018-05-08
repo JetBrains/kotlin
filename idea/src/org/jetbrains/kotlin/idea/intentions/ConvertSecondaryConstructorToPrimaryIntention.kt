@@ -34,18 +34,18 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.util.kind
 
 class ConvertSecondaryConstructorToPrimaryInspection : IntentionBasedInspection<KtSecondaryConstructor>(
-        ConvertSecondaryConstructorToPrimaryIntention::class,
-        { constructor -> constructor.containingClass()?.secondaryConstructors?.size == 1 }
+    ConvertSecondaryConstructorToPrimaryIntention::class,
+    { constructor -> constructor.containingClass()?.secondaryConstructors?.size == 1 }
 ) {
     override fun inspectionTarget(element: KtSecondaryConstructor) = element.getConstructorKeyword()
 }
 
 class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntention<KtSecondaryConstructor>(
-        KtSecondaryConstructor::class.java,
-        "Convert to primary constructor"
+    KtSecondaryConstructor::class.java,
+    "Convert to primary constructor"
 ) {
     private tailrec fun ConstructorDescriptor.isReachableByDelegationFrom(
-            constructor: ConstructorDescriptor, context: BindingContext, visited: Set<ConstructorDescriptor> = emptySet()
+        constructor: ConstructorDescriptor, context: BindingContext, visited: Set<ConstructorDescriptor> = emptySet()
     ): Boolean {
         if (constructor == this) return true
         if (constructor in visited) return false
@@ -73,7 +73,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
     }
 
     private fun KtExpression.tryConvertToPropertyByParameterInitialization(
-            constructorDescriptor: ConstructorDescriptor, context: BindingContext
+        constructorDescriptor: ConstructorDescriptor, context: BindingContext
     ): Pair<ValueParameterDescriptor, PropertyDescriptor>? {
         if (this !is KtBinaryExpression || operationToken != KtTokens.EQ) return null
         val rightReference = right as? KtReferenceExpression ?: return null
@@ -93,21 +93,22 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
     }
 
     private fun KtSecondaryConstructor.extractInitializer(
-            parameterToPropertyMap: MutableMap<ValueParameterDescriptor, PropertyDescriptor>,
-            context: BindingContext,
-            factory: KtPsiFactory
+        parameterToPropertyMap: MutableMap<ValueParameterDescriptor, PropertyDescriptor>,
+        context: BindingContext,
+        factory: KtPsiFactory
     ): KtClassInitializer? {
         val constructorDescriptor = context[BindingContext.CONSTRUCTOR, this] ?: return null
         val initializer = factory.createAnonymousInitializer() as? KtClassInitializer
         for (statement in bodyExpression?.statements ?: emptyList()) {
-            val (rightDescriptor, leftDescriptor) = statement.tryConvertToPropertyByParameterInitialization(constructorDescriptor, context)
-                                                    ?: with(initializer) {
-                (initializer?.body as? KtBlockExpression)?.let {
-                    it.addBefore(statement.copy(), it.rBrace)
-                    it.addBefore(factory.createNewLine(), it.rBrace)
-                }
-                null to null
-            }
+            val (rightDescriptor, leftDescriptor) =
+                    statement.tryConvertToPropertyByParameterInitialization(constructorDescriptor, context)
+                    ?: with(initializer) {
+                        (initializer?.body as? KtBlockExpression)?.let {
+                            it.addBefore(statement.copy(), it.rBrace)
+                            it.addBefore(factory.createNewLine(), it.rBrace)
+                        }
+                        null to null
+                    }
             if (rightDescriptor == null || leftDescriptor == null) continue
             parameterToPropertyMap[rightDescriptor] = leftDescriptor
         }
@@ -115,10 +116,10 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
     }
 
     private fun KtSecondaryConstructor.moveParametersToPrimaryConstructorAndInitializers(
-            primaryConstructor: KtPrimaryConstructor,
-            parameterToPropertyMap: MutableMap<ValueParameterDescriptor, PropertyDescriptor>,
-            context: BindingContext,
-            factory: KtPsiFactory
+        primaryConstructor: KtPrimaryConstructor,
+        parameterToPropertyMap: MutableMap<ValueParameterDescriptor, PropertyDescriptor>,
+        context: BindingContext,
+        factory: KtPsiFactory
     ) {
         val parameterList = primaryConstructor.valueParameterList!!
         for (parameter in valueParameters) {
@@ -131,7 +132,8 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
                 if (property != null) {
                     if (propertyDescriptor.name == parameterDescriptor.name &&
                         propertyDescriptor.type == parameterDescriptor.type &&
-                        propertyDescriptor.accessors.all { it.isDefault }) {
+                        propertyDescriptor.accessors.all { it.isDefault }
+                    ) {
                         propertyCommentSaver = CommentSaver(property)
                         val valOrVar = if (property.isVar) factory.createVarKeyword() else factory.createValKeyword()
                         newParameter.addBefore(valOrVar, newParameter.nameIdentifier)
@@ -141,8 +143,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
                             newParameter.addBefore(newModifiers, newParameter.valOrVarKeyword)
                         }
                         property.delete()
-                    }
-                    else {
+                    } else {
                         property.initializer = factory.createSimpleName(parameterDescriptor.name.asString())
                     }
                 }
@@ -172,14 +173,14 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
             val type = context[BindingContext.TYPE, typeReference]
             if ((type?.constructor?.declarationDescriptor as? ClassifierDescriptorWithTypeParameters)?.kind == ClassKind.CLASS) {
                 val superTypeCallEntry = factory.createSuperTypeCallEntry(
-                        "${typeReference.text}${argumentList?.text ?: "()"}"
+                    "${typeReference.text}${argumentList?.text ?: "()"}"
                 )
                 superTypeListEntry.replace(superTypeCallEntry)
                 break
             }
         }
 
-        with (constructorInClass.replace(constructor)) {
+        with(constructorInClass.replace(constructor)) {
             constructorCommentSaver.restore(this)
         }
 
