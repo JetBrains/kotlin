@@ -26,13 +26,15 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 
 class RemoveEmptyParenthesesFromLambdaCallInspection : IntentionBasedInspection<KtValueArgumentList>(
-        RemoveEmptyParenthesesFromLambdaCallIntention::class), CleanupLocalInspectionTool {
+    RemoveEmptyParenthesesFromLambdaCallIntention::class
+), CleanupLocalInspectionTool {
     override fun problemHighlightType(element: KtValueArgumentList): ProblemHighlightType =
-            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+        ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
 class RemoveEmptyParenthesesFromLambdaCallIntention : SelfTargetingRangeIntention<KtValueArgumentList>(
-        KtValueArgumentList::class.java, "Remove unnecessary parentheses from function call with lambda") {
+    KtValueArgumentList::class.java, "Remove unnecessary parentheses from function call with lambda"
+) {
 
     override fun applicabilityRange(element: KtValueArgumentList): TextRange? {
         if (element.arguments.isNotEmpty()) return null
