@@ -24,7 +24,7 @@ interface ServerBase
 
 private fun Logger.info_and_print(msg: String) {
     this.info(msg)
-    println(msg)
+//    println(msg)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -56,14 +56,14 @@ interface Server<out T : ServerBase> : ServerBase {
 
     fun attachClient(client: Socket): Deferred<State> = async {
         val (input, output) = client.openIO(log)
-//        if (!serverHandshake(input, output, log)) {
-//            log.info_and_print("failed to establish connection with client (handshake failed)")
-//            return@async Server.State.UNVERIFIED
-//        }
-//        if (!securityCheck(input)) {
-//            log.info_and_print("failed to check securitay")
-//            return@async Server.State.UNVERIFIED
-//        }
+        if (!serverHandshake(input, output, log)) {
+            log.info_and_print("failed to establish connection with client (handshake failed)")
+            return@async Server.State.UNVERIFIED
+        }
+        if (!securityCheck(input)) {
+            log.info_and_print("failed to check securitay")
+            return@async Server.State.UNVERIFIED
+        }
         log.info_and_print("   client verified ($client)")
         clients[client] = ClientInfo(client, input, output)
         log.info_and_print("   ($client)client in clients($clients)")

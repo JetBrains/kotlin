@@ -28,7 +28,7 @@ open class CompilerCallbackServicesFacadeServerServerSide(
 ) : CompilerCallbackServicesFacadeServerSide {
 
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-
+        log.info(message)
     }
 
     override val clients = hashMapOf<Socket, Server.ClientInfo>()

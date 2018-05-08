@@ -15,6 +15,7 @@ import io.ktor.network.sockets.Socket
 import kotlinx.coroutines.experimental.CompletableDeferred
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.actor
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.runBlocking
@@ -152,14 +153,16 @@ class CompileServiceServerSideImpl(
 
     var isWriteLocked = false
     var readLocksCount = 0
-    val queriesActor = actor<CompileServiceTask> {
+    val queriesActor = actor<CompileServiceTask>(capacity = Channel.UNLIMITED) {
         var currentTaskId = 0
         var shutdownTask: ExclusiveTask? = null
         val activeTaskIds = arrayListOf<Int>()
         val waitingTasks = arrayListOf<CompileServiceTask>()
-        fun tryInvokeShutdown() {
+        fun tryInvokeShutdown(reason: String) {
+            println("tryInvokeShutdown | reason = $reason | tasksCnt = ${activeTaskIds.size} | shutdownTask = ${shutdownTask != null}")
             if (activeTaskIds.isEmpty()) {
                 shutdownTask?.let { task ->
+                    isWriteLocked = true
                     async {
                         val res = task.shutdownAction()
                         task.completed.complete(true)
@@ -176,8 +179,7 @@ class CompileServiceServerSideImpl(
                 is ExclusiveTask -> {
                     if (shutdownTask == null) {
                         shutdownTask = task
-                        isWriteLocked = true
-                        tryInvokeShutdown()
+                        tryInvokeShutdown("ExclusiveTask")
                     } else {
                         waitingTasks.add(task)
                     }
@@ -203,7 +205,7 @@ class CompileServiceServerSideImpl(
                     log.info("TaskFinished!!!")
                     activeTaskIds.remove(task.taskId)
                     readLocksCount--
-                    tryInvokeShutdown()
+                    tryInvokeShutdown("TaskFinished")
                 }
                 is ExclusiveTaskFinished -> {
                     shutdownTask = null
@@ -429,7 +431,7 @@ class CompileServiceServerSideImpl(
         }
     }
 
-    override suspend fun getClients(): CompileService.CallResult<List<String>> = ifAlive(info = "registerClient") {
+    override suspend fun getClients(): CompileService.CallResult<List<String>> = ifAlive(info = "getClients") {
         CompileService.CallResult.Good(state.getClientsFlagPaths())
     }
 
@@ -444,7 +446,7 @@ class CompileServiceServerSideImpl(
 
     override suspend fun releaseCompileSession(sessionId: Int) = ifAlive(
         minAliveness = Aliveness.LastSession,
-        info = "registerClient"
+        info = "releaseCompileSession"
     ) {
         state.sessions.remove(sessionId)
         log.info("cleaning after session $sessionId")
@@ -1134,10 +1136,13 @@ class CompileServiceServerSideImpl(
         info: String = "no info",
         body: suspend () -> CompileService.CallResult<R>
     ): CompileService.CallResult<R> {
+        log.info("ifAlive(1)($info)")
         val result = CompletableDeferred<Any>()
         queriesActor.send(OrdinaryTaskWithResult(result) {
-            log.info("alive?")
-            ifAliveChecksImpl(minAliveness, info, body)
+            log.info("ifAlive(2)($info)")
+            ifAliveChecksImpl(minAliveness, info, body).also {
+                log.info("ifAlive(3)($info)")
+            }
         })
         return result.await() as CompileService.CallResult<R>
     }
@@ -1155,6 +1160,8 @@ class CompileServiceServerSideImpl(
                 ifAliveChecksImpl(minAliveness, info) {
                     body()
                     CompileService.CallResult.Ok()
+                }.also {
+                    log.info("ifAliveUnit(3)($info)")
                 }
             }
         )
@@ -1166,9 +1173,13 @@ class CompileServiceServerSideImpl(
         info: String = "no info",
         body: suspend () -> CompileService.CallResult<R>
     ): CompileService.CallResult<R> {
+        log.info("ifAliveExclusive(1)($info)")
         val result = CompletableDeferred<Any>()
         queriesActor.send(ShutdownTaskWithResult(result) {
-            ifAliveChecksImpl(minAliveness, info, body)
+            log.info("ifAliveExclusive(2)($info)")
+            ifAliveChecksImpl(minAliveness, info, body).also {
+                log.info("ifAliveExclusive(3)($info)")
+            }
         })
         return result.await() as CompileService.CallResult<R>
     }
@@ -1178,11 +1189,15 @@ class CompileServiceServerSideImpl(
         info: String = "no info",
         body: suspend () -> Unit
     ): CompileService.CallResult<Unit> {
+        log.info("ifAliveExclusiveUnit(1)($info)")
         val result = CompletableDeferred<Any>()
         queriesActor.send(ShutdownTaskWithResult(result) {
+            log.info("ifAliveExclusive(2)($info)")
             ifAliveChecksImpl(minAliveness) {
                 body()
                 CompileService.CallResult.Ok()
+            }.also {
+                log.info("ifAliveExclusive(3)($info)")
             }
         })
         return result.await() as CompileService.CallResult<Unit>
