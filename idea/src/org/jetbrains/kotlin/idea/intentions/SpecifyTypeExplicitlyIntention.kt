@@ -44,9 +44,10 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.ifEmpty
 
-class SpecifyTypeExplicitlyIntention :
-        SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"),
-        LowPriorityAction {
+class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
+    KtCallableDeclaration::class.java,
+    "Specify type explicitly"
+), LowPriorityAction {
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         if (element.containingFile is KtCodeFragment) return null
@@ -61,8 +62,7 @@ class SpecifyTypeExplicitlyIntention :
         val initializer = (element as? KtDeclarationWithInitializer)?.initializer
         return if (initializer != null) {
             TextRange(element.startOffset, initializer.startOffset - 1)
-        }
-        else {
+        } else {
             TextRange(element.startOffset, element.endOffset)
         }
     }
@@ -84,7 +84,7 @@ class SpecifyTypeExplicitlyIntention :
             get() = setter?.valueParameters?.firstOrNull()?.type?.let { if (it.isError) null else it }
 
         fun dangerousFlexibleTypeOrNull(
-                declaration: KtCallableDeclaration, publicAPIOnly: Boolean, reportPlatformArguments: Boolean
+            declaration: KtCallableDeclaration, publicAPIOnly: Boolean, reportPlatformArguments: Boolean
         ): KotlinType? {
             when (declaration) {
                 is KtFunction -> if (declaration.isLocal || declaration.hasDeclaredReturnType()) return null
@@ -99,8 +99,7 @@ class SpecifyTypeExplicitlyIntention :
             val type = callable.returnType ?: return null
             if (reportPlatformArguments) {
                 if (!type.isFlexibleRecursive()) return null
-            }
-            else {
+            } else {
                 if (!type.isFlexible()) return null
             }
             return type
@@ -134,7 +133,7 @@ class SpecifyTypeExplicitlyIntention :
                 }
             }
 
-            val types = with (exprType.getResolvableApproximations(scope, checkTypeParameters).toList()) {
+            val types = with(exprType.getResolvableApproximations(scope, checkTypeParameters).toList()) {
                 when {
                     exprType.isNullabilityFlexible() -> flatMap {
                         listOf(TypeUtils.makeNotNullable(it), TypeUtils.makeNullable(it))
@@ -157,8 +156,9 @@ class SpecifyTypeExplicitlyIntention :
         }
 
         // Explicit class is used because of KT-20460
-        private class TypeChooseValueExpression(items: List<KotlinType>, defaultItem: KotlinType) :
-                ChooseValueExpression<KotlinType>(items, defaultItem) {
+        private class TypeChooseValueExpression(
+            items: List<KotlinType>, defaultItem: KotlinType
+        ) : ChooseValueExpression<KotlinType>(items, defaultItem) {
             override fun getLookupString(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
             override fun getResult(element: KotlinType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
         }
@@ -166,16 +166,17 @@ class SpecifyTypeExplicitlyIntention :
         fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {
             if (editor != null) {
                 addTypeAnnotationWithTemplate(editor, declaration, exprType)
-            }
-            else {
+            } else {
                 declaration.setType(exprType)
             }
         }
 
         @JvmOverloads
-        fun createTypeReferencePostprocessor(declaration: KtCallableDeclaration,
-                                             iterator: Iterator<KtCallableDeclaration>? = null,
-                                             editor: Editor? = null): TemplateEditingAdapter {
+        fun createTypeReferencePostprocessor(
+            declaration: KtCallableDeclaration,
+            iterator: Iterator<KtCallableDeclaration>? = null,
+            editor: Editor? = null
+        ): TemplateEditingAdapter {
             return object : TemplateEditingAdapter() {
                 override fun templateFinished(template: Template?, brokenOff: Boolean) {
                     val typeRef = declaration.typeReference
@@ -196,8 +197,10 @@ class SpecifyTypeExplicitlyIntention :
             addTypeAnnotationWithTemplate(editor, declaration, exprType, iterator)
         }
 
-        private fun addTypeAnnotationWithTemplate(editor: Editor, declaration: KtCallableDeclaration, exprType: KotlinType,
-                                                  iterator: Iterator<KtCallableDeclaration>? = null) {
+        private fun addTypeAnnotationWithTemplate(
+            editor: Editor, declaration: KtCallableDeclaration, exprType: KotlinType,
+            iterator: Iterator<KtCallableDeclaration>? = null
+        ) {
             assert(!exprType.isError) { "Unexpected error type, should have been checked before: " + declaration.getElementTextWithContext() + ", type = " + exprType }
 
             val project = declaration.project
@@ -215,9 +218,10 @@ class SpecifyTypeExplicitlyIntention :
             editor.caretModel.moveToOffset(newTypeRef.node.startOffset)
 
             TemplateManager.getInstance(project).startTemplate(
-                    editor,
-                    builder.buildInlineTemplate(),
-                    createTypeReferencePostprocessor(declaration, iterator, editor))
+                editor,
+                builder.buildInlineTemplate(),
+                createTypeReferencePostprocessor(declaration, iterator, editor)
+            )
         }
     }
 }
