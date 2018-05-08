@@ -291,7 +291,7 @@ object KotlinCompilerClient {
                 }
                 else -> {
                     log.info("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
-                    val servicesFacade = CompilerCallbackServicesFacadeServerSide()
+                    val servicesFacade = CompilerCallbackServicesFacadeServerServerSide()
                     val serverRun = servicesFacade.runServer()
                     try {
                         val memBefore = daemon.getUsedMemory().get() / 1024

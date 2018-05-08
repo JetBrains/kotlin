@@ -370,9 +370,10 @@ class CompileServiceServerSideImpl(
 
     @Volatile
     private var _lastUsedSeconds = nowSeconds()
-    val lastUsedSeconds: Long get() = (if (readLocksCount > 1 || isWriteLocked) nowSeconds() else _lastUsedSeconds).also {
-        log.info("lastUsedSeconds .. isReadLockedCNT : $readLocksCount , isWriteLocked : $isWriteLocked")
-    }
+    val lastUsedSeconds: Long
+        get() = (if (readLocksCount > 1 || isWriteLocked) nowSeconds() else _lastUsedSeconds).also {
+            log.info("lastUsedSeconds .. isReadLockedCNT : $readLocksCount , isWriteLocked : $isWriteLocked")
+        }
 
     private var runFile: File
     private var securityData: SecurityData
@@ -449,7 +450,7 @@ class CompileServiceServerSideImpl(
         log.info("cleaning after session $sessionId")
         val completed = CompletableDeferred<Boolean>()
         queriesActor.send(ExclusiveTask(completed, { clearJarCache() }))
-        completed.await()
+//        completed.await()
         if (state.sessions.isEmpty()) {
             // TODO: and some goes here
         }
@@ -801,7 +802,7 @@ class CompileServiceServerSideImpl(
 
         val anyDead = state.sessions.cleanDead() || state.cleanDeadClients()
 
-        runBlocking {
+        async {
             ifAliveUnit(minAliveness = Aliveness.LastSession, info = "periodicAndAfterSessionCheck - 1") {
                 when {
                 // check if in graceful shutdown state and all sessions are closed
