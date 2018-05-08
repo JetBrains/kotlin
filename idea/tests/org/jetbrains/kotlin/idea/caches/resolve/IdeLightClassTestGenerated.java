@@ -191,6 +191,11 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/JvmPackageName.kt");
         }
 
+        @TestMetadata("LocalInAnnotation.kt")
+        public void testLocalInAnnotation() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/LocalInAnnotation.kt");
+        }
+
         @TestMetadata("PrivateInTrait.kt")
         public void testPrivateInTrait() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/PrivateInTrait.kt");
