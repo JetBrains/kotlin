@@ -60,6 +60,7 @@ internal class LinkStage(val context: Context) {
         val tool = "${platform.absoluteLlvmHome}/bin/llvm-lto"
         val command = mutableListOf(tool, "-o", combined)
         command.addNonEmpty(platform.llvmLtoFlags)
+        command.addNonEmpty(llvmProfilingFlags())
         when {
             optimize -> command.addNonEmpty(platform.llvmLtoOptFlags)
             debug -> command.addNonEmpty(platform.llvmDebugOptFlags)
@@ -85,7 +86,6 @@ internal class LinkStage(val context: Context) {
         runTool(absoluteToolName, *arg)
     }
 
-    // TODO: pass different options llvm toolchain
     private fun bitcodeToWasm(bitcodeFiles: List<BitcodeFile>): String {
         val configurables = platform.configurables as WasmConfigurables
 
@@ -96,7 +96,7 @@ internal class LinkStage(val context: Context) {
             optimize -> configurables.optOptFlags
             debug -> configurables.optDebugFlags
             else -> configurables.optNooptFlags
-        }).toTypedArray()
+        } + llvmProfilingFlags()).toTypedArray()
         val optimizedBc = temporary("optimized", ".bc")
         hostLlvmTool("opt", combinedBc, "-o", optimizedBc, *optFlags)
 
@@ -104,7 +104,7 @@ internal class LinkStage(val context: Context) {
             optimize -> configurables.llcOptFlags
             debug -> configurables.llcDebugFlags
             else -> configurables.llcNooptFlags
-        }).toTypedArray()
+        } + llvmProfilingFlags()).toTypedArray()
         val combinedS = temporary("combined", ".s")
         targetTool("llc", optimizedBc, "-o", combinedS, *llcFlags)
 
@@ -124,12 +124,27 @@ internal class LinkStage(val context: Context) {
         hostLlvmTool("llvm-link", "-o", combinedBc, *bitcodeFiles.toTypedArray())
 
         val optimizedBc = temporary("optimized", ".bc")
-        hostLlvmTool("opt", combinedBc, "-o=$optimizedBc", "-O3", "-internalize", "-globaldce")
+        val optFlags = llvmProfilingFlags() + listOf("-O3", "-internalize", "-globaldce")
+        hostLlvmTool("opt", combinedBc, "-o=$optimizedBc", *optFlags.toTypedArray())
 
         val combinedO = temporary("combined", ".o")
-        hostLlvmTool("llc", optimizedBc, "-filetype=obj", "-o", combinedO, "-function-sections", "-data-sections")
+        val llcFlags = llvmProfilingFlags() + listOf("-function-sections", "-data-sections")
+        hostLlvmTool("llc", optimizedBc, "-filetype=obj", "-o", combinedO, *llcFlags.toTypedArray())
 
         return combinedO
+    }
+
+    // llvm-lto, opt and llc share same profiling flags, so we can
+    // reuse this function.
+    private fun llvmProfilingFlags(): List<String> {
+        val flags = mutableListOf<String>()
+        if (context.shouldProfilePhases()) {
+            flags += "-time-passes"
+        }
+        if (context.phase?.verbose == true) {
+            flags += "-debug-pass=Structure"
+        }
+        return flags
     }
 
     private fun asLinkerArgs(args: List<String>): List<String> {
@@ -203,13 +218,13 @@ internal class LinkStage(val context: Context) {
 
     fun linkStage() {
         val bitcodeFiles = listOf(emitted) +
-                libraries.map { it -> it.bitcodePaths }.flatten()
+                libraries.map { it.bitcodePaths }.flatten()
 
         val includedBinaries =
-                libraries.map { it -> it.includedPaths }.flatten()
+                libraries.map { it.includedPaths }.flatten()
 
         val libraryProvidedLinkerFlags =
-                libraries.map { it -> it.linkerOpts }.flatten()
+                libraries.map { it.linkerOpts }.flatten()
 
         val objectFiles: MutableList<String> = mutableListOf()
 
