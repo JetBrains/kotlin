@@ -14574,6 +14574,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/specifyTypeExplicitly/loopParameter.kt");
         }
 
+        @TestMetadata("overriddenAsNull.kt")
+        public void testOverriddenAsNull() throws Exception {
+            runTest("idea/testData/intentions/specifyTypeExplicitly/overriddenAsNull.kt");
+        }
+
         @TestMetadata("overrideNotNullFunction.kt")
         public void testOverrideNotNullFunction() throws Exception {
             runTest("idea/testData/intentions/specifyTypeExplicitly/overrideNotNullFunction.kt");
