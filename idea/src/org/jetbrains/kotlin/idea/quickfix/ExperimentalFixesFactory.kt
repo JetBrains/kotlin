@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
@@ -86,6 +87,13 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
                     )
                 }
             }
+        }
+        val containingFile = containingDeclaration.containingKtFile
+        val module = containingFile.module
+        if (module != null) {
+            result.add(
+                MakeModuleExperimentalFix(containingFile, module, annotationFqName)
+            )
         }
 
         return result
