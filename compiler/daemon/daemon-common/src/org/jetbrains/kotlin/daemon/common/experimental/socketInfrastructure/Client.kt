@@ -8,6 +8,7 @@ import kotlinx.coroutines.experimental.channels.actor
 import kotlinx.coroutines.experimental.channels.consumeEach
 import kotlinx.coroutines.experimental.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface
+import sun.net.ConnectionResetException
 import java.beans.Transient
 import java.io.IOException
 import java.io.ObjectInputStream
@@ -29,7 +30,7 @@ interface Client<ServerType : ServerBase> : Serializable, AutoCloseable {
 
 internal fun Logger.info_and_print(msg: String?) {
     this.info(msg)
-    println(msg)
+//    println(msg)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -202,16 +203,16 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
             log.info_and_print("OK serv.openIO() |port=$serverPort|")
             input = it.input
             output = it.output
-//                if (!clientHandshake(input, output, log)) {
-//                    log.info_and_print("failed handshake($serverPort)")
-//                    close()
-//                    throw ConnectionResetException("failed to establish connection with server (handshake failed)")
-//                }
-//                if (!authorizeOnServer(output)) {
-//                    log.info_and_print("failed authorization($serverPort)")
-//                    close()
-//                    throw ConnectionResetException("failed to establish connection with server (authorization failed)")
-//                }
+            if (!clientHandshake(input, output, log)) {
+                log.info_and_print("failed handshake($serverPort)")
+                close()
+                throw ConnectionResetException("failed to establish connection with server (handshake failed)")
+            }
+            if (!authorizeOnServer(output)) {
+                log.info_and_print("failed authorization($serverPort)")
+                close()
+                throw ConnectionResetException("failed to establish connection with server (authorization failed)")
+            }
         }
 
     }

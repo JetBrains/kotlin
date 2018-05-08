@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
-import org.jetbrains.kotlin.daemon.CompileServiceImpl
-import org.jetbrains.kotlin.daemon.CompilerSelector
-import org.jetbrains.kotlin.daemon.LinePattern
-import org.jetbrains.kotlin.daemon.client.RemoteOutputStreamServer
+import org.jetbrains.kotlin.daemon.*
 import org.jetbrains.kotlin.daemon.client.experimental.CompilerCallbackServicesFacadeServerServerSide
 import org.jetbrains.kotlin.daemon.client.experimental.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.experimental.KotlinCompilerClient
@@ -27,7 +24,6 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceAsyncWrapper
 import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceClientSide
 import org.jetbrains.kotlin.daemon.common.experimental.findCallbackServerSocket
-import org.jetbrains.kotlin.daemon.ifNotContainsSequence
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.experimental.CompilationCanceledStatus
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -723,9 +719,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         threadNo: Int
     ) = thread(name = "tread$threadNo") {
         runBlocking {
-            println("thread : ${Thread.currentThread()}")
             val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
-            println("compiling...")
             val res = KotlinCompilerClient.compile(
                 daemon,
                 CompileService.NO_SESSION,
@@ -733,7 +727,6 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
                 PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true)
             )
-            println("res = $res")
             synchronized(resultCodes) {
                 resultCodes[threadNo] = res
             }
@@ -783,6 +776,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     val localEndSignal = CountDownLatch(PARALLEL_THREADS_TO_COMPILE)
                     val outStreams = Array(PARALLEL_THREADS_TO_COMPILE, { ByteArrayOutputStream() })
 
+                    val time = nowSeconds()
+
                     (1..PARALLEL_THREADS_TO_COMPILE).forEach {
                         runCompile(
                             daemon!!,
@@ -794,6 +789,9 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     }
 
                     val succeeded = localEndSignal.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
+
+                    println("finished in ${nowSeconds() - time} seconds")
+
                     assertTrue(
                         "parallel compilation failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${localEndSignal.count} unfinished threads",
                         succeeded
@@ -809,7 +807,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     private object ParallelStartParams {
-        const val threads = 32
+        const val threads = 10
         const val performCompilation = false
         const val connectionFailedErr = -100
     }
@@ -825,46 +823,49 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         val daemonOptions = makeTestDaemonOptions(getTestName(true), 100)
 
-        fun connectThread(threadNo: Int) = async(newSingleThreadContext(name = "daemonConnect$threadNo")) {
-            // (name = "daemonConnect$threadNo")
-            try {
-                withFlagFile(getTestName(true), ".alive") { flagFile ->
-                    withLogFile(
-                        "kotlin-daemon-test",
-                        printLogOnException = false
-                    ) { logFile ->
-                        logFiles[threadNo] = logFile
-                        val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-                        println("-1      I'm working in thread ${Thread.currentThread().name}")
-                        val compileServiceSession =
-                            KotlinCompilerClient.connectAndLease(
-                                compilerId, flagFile, daemonJVMOptions, daemonOptions,
-                                DaemonReportingTargets(out = PrintStream(outStreams[threadNo])), autostart = true,
-                                leaseSession = true
-                            )
-                        println("0      I'm working in thread ${Thread.currentThread().name}")
-                        daemonInfos[threadNo] = compileServiceSession?.compileService?.getDaemonInfo() to compileServiceSession?.sessionId
-
-                        resultCodes[threadNo] = when {
-                            compileServiceSession?.compileService == null -> {
-                                ParallelStartParams.connectionFailedErr
-                            }
-                            ParallelStartParams.performCompilation -> {
-                                val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
-                                KotlinCompilerClient.compile(
-                                    compileServiceSession.compileService,
-                                    compileServiceSession.sessionId,
-                                    CompileService.TargetPlatform.JVM,
-                                    arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
-                                    PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true)
+        fun connectThread(threadNo: Int) = thread(name = "daemonConnect$threadNo") {
+            runBlocking(Unconfined) {
+                // (name = "daemonConnect$threadNo")
+                try {
+                    withFlagFile(getTestName(true), ".alive") { flagFile ->
+                        withLogFile(
+                            "kotlin-daemon-test",
+                            printLogOnException = false
+                        ) { logFile ->
+                            logFiles[threadNo] = logFile
+                            val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
+//                        println("-1      I'm working in thread ${Thread.currentThread().name}")
+                            val compileServiceSession =
+                                KotlinCompilerClient.connectAndLease(
+                                    compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                                    DaemonReportingTargets(out = PrintStream(outStreams[threadNo])), autostart = true,
+                                    leaseSession = true
                                 )
+//                        println("0      I'm working in thread ${Thread.currentThread().name}")
+                            daemonInfos[threadNo] = compileServiceSession?.compileService?.getDaemonInfo() to
+                                    compileServiceSession?.sessionId
+
+                            resultCodes[threadNo] = when {
+                                compileServiceSession?.compileService == null -> {
+                                    ParallelStartParams.connectionFailedErr
+                                }
+                                ParallelStartParams.performCompilation -> {
+                                    val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
+                                    KotlinCompilerClient.compile(
+                                        compileServiceSession.compileService,
+                                        compileServiceSession.sessionId,
+                                        CompileService.TargetPlatform.JVM,
+                                        arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                                        PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true)
+                                    )
+                                }
+                                else -> 0 // compilation skipped, assuming - successful
                             }
-                            else -> 0 // compilation skipped, assuming - successful
                         }
                     }
+                } finally {
+                    doneLatch.countDown()
                 }
-            } finally {
-                doneLatch.countDown()
             }
         }
 
@@ -997,6 +998,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                         },
                         serverSocketWithPort = findCallbackServerSocket()
                     )
+                    callbackServices.runServer()
                     val strm = ByteArrayOutputStream()
                     val code = daemon!!.compile(
                         CompileService.NO_SESSION,
@@ -1191,6 +1193,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     )
                     println("daemon : $daemon")
                     assertNotNull("failed to connect daemon", daemon)
+                    assertTrue("daemon is New", daemon !is CompileServiceAsyncWrapper)
 
                     body(daemon!!)
                 }

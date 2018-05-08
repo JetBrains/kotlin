@@ -8,9 +8,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.Channel
 import kotlinx.coroutines.experimental.channels.actor
 import kotlinx.coroutines.experimental.channels.consumeEach
-import kotlinx.coroutines.experimental.io.ByteBuffer
-import kotlinx.coroutines.experimental.io.ByteReadChannel
-import kotlinx.coroutines.experimental.io.ByteWriteChannel
+import kotlinx.coroutines.experimental.io.*
 import kotlinx.io.core.readBytes
 import java.io.*
 import java.util.logging.Logger
@@ -69,7 +67,7 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
                     }
                 }
             } else {
-                println("read chanel closed " + log.name)
+                log.info("read chanel closed " + log.name)
             }
         }
     }
@@ -82,7 +80,7 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
 
     /** reads exactly <tt>length</tt>  bytes.
      * after deafault timeout returns <tt>DEFAULT_BYTE_ARRAY</tt> */
-    suspend fun readBytes(length: Int): ByteArray = runBlockingWithTimeout {
+    suspend fun readBytes(length: Int): ByteArray = runWithTimeout {
         val expectedBytes = CompletableDeferred<ByteArray>()
 //        readActor.send(GivenLengthBytesQuery(length, expectedBytes))
         expectedBytes.await()
@@ -90,7 +88,7 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
 
     /** first reads <t>length</t> token (4 bytes) and then -- reads <t>length</t> bytes.
      * after deafault timeout returns <tt>DEFAULT_BYTE_ARRAY</tt> */
-    suspend fun nextBytes(): ByteArray = runBlockingWithTimeout {
+    suspend fun nextBytes(): ByteArray = runWithTimeout {
         val expectedBytes = CompletableDeferred<ByteArray>()
         readActor.send(BytesQuery(expectedBytes))
         expectedBytes.await()
@@ -146,9 +144,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
     private suspend fun tryPrint(b: ByteArray, writeChannel: ByteWriteChannel) {
         if (!writeChannel.isClosedForWrite) {
             try {
-                b.forEach {
-                    writeChannel.writeByte(it)
-                }
+                writeChannel.writeFully(b)
             } catch (e: IOException) {
                 log.info("failed to print message, ${e.message}")
             }
@@ -177,13 +173,13 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
                     }
                 }
             } else {
-                println("${log.name} write chanel closed")
+                log.info("${log.name} write chanel closed")
             }
         }
     }
 
     suspend fun printBytesAndLength(length: Int, bytes: ByteArray) {
-        println("printBytesAndLength : $length $bytes")
+//        println("printBytesAndLength : $length $bytes")
         writeActor.send(
             ObjectWithLength(
                 getLengthBytes(length),
@@ -195,14 +191,14 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
     private suspend fun printObjectImpl(obj: Any?) =
         ByteArrayOutputStream().use { bos ->
             ObjectOutputStream(bos).use { objOut ->
-                println("printObjectImpl : $obj")
-                println("obj is ser : ${obj is Serializable}")
+                //                println("printObjectImpl : $obj")
+//                println("obj is ser : ${obj is Serializable}")
                 objOut.writeObject(obj)
-                println("objOut.writeObject : $obj")
+//                println("objOut.writeObject : $obj")
                 objOut.flush()
-                println("objOut.flush : $obj")
+//                println("objOut.flush : $obj")
                 val bytes = bos.toByteArray()
-                println("bytes : $bytes")
+//                println("bytes : $bytes")
                 printBytesAndLength(bytes.size, bytes)
             }
         }
@@ -222,7 +218,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
             }
 
     suspend fun writeObject(obj: Any?) {
-        println("write object : $obj")
+//        println("write object : $obj")
         if (obj is String) printString(obj)
         else printObjectImpl(obj)
     }

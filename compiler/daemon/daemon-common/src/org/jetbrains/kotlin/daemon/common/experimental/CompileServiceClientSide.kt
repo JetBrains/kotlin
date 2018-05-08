@@ -120,7 +120,7 @@ class CompileServiceClientSideImpl(
 
     override suspend fun registerClient(aliveFlagPath: String?): CallResult<Nothing> {
         log.info("registerClient")
-        println("client's fun registerClient")
+//        println("client's fun registerClient")
         val id = sendMessage(RegisterClientMessage(aliveFlagPath))
         return readMessage(id)
     }
