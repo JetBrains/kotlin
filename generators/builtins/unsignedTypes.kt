@@ -69,6 +69,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
         generateMemberConversions()
 
+        generateToStringHashCode()
+
         out.println("}")
         out.println()
 
@@ -200,6 +202,20 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 else -> "$className(this.to$thisSigned())"
             })
         }
+    }
+
+
+    private fun generateToStringHashCode() {
+
+        out.print("    public override fun toString(): String = ")
+        when (type) {
+            UnsignedType.UBYTE, UnsignedType.USHORT -> out.println("toInt().toString()")
+            UnsignedType.UINT -> out.println("toLong().toString()")
+            UnsignedType.ULONG -> out.println("ulongToString(data)")
+            else -> error(type)
+        }
+
+        out.println()
     }
 
 

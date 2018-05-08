@@ -127,6 +127,8 @@ public inline class UInt internal constructor(private val data: Int) : Comparabl
     public fun toUInt(): UInt = this
     public fun toULong(): ULong = data.toULong()
 
+    public override fun toString(): String = toLong().toString()
+
 }
 
 public fun Byte.toUInt(): UInt = UInt(this.toInt() and 0xFF)

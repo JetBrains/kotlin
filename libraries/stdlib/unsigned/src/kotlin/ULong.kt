@@ -127,6 +127,8 @@ public inline class ULong internal constructor(private val data: Long) : Compara
     public fun toUInt(): UInt = data.toUInt()
     public fun toULong(): ULong = this
 
+    public override fun toString(): String = ulongToString(data)
+
 }
 
 public fun Byte.toULong(): ULong = ULong(this.toLong() and 0xFF)

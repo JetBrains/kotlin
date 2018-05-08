@@ -52,3 +52,20 @@ internal fun ulongRemainder(v1: ULong, v2: ULong): ULong {
     val rem = dividend - quotient * divisor
     return ULong(rem - if (ULong(rem) >= ULong(divisor)) divisor else 0)
 }
+
+
+internal fun ulongToString(v: Long): String = ulongToString(v, 10)
+
+internal fun ulongToString(v: Long, base: Int): String {
+    require(base == 10) // TODO: toString(base) support in common
+    if (v >= 0) return v.toString(/* base */)
+
+    var quotient = ((v ushr 1) / base) shl 1
+    var rem = v - quotient * base
+    if (rem >= base) {
+        rem -= base
+        quotient += 1
+    }
+    return quotient.toString(/* base */) + rem.toString(/* base */)
+}
+

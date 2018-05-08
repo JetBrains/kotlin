@@ -123,6 +123,8 @@ public inline class UShort internal constructor(private val data: Short) : Compa
     public fun toUInt(): UInt = data.toUInt()
     public fun toULong(): ULong = data.toULong()
 
+    public override fun toString(): String = toInt().toString()
+
 }
 
 public fun Byte.toUShort(): UShort = UShort(this.toShort() and 0xFF)

@@ -123,6 +123,8 @@ public inline class UByte internal constructor(private val data: Byte) : Compara
     public fun toUInt(): UInt = data.toUInt()
     public fun toULong(): ULong = data.toULong()
 
+    public override fun toString(): String = toInt().toString()
+
 }
 
 public fun Byte.toUByte(): UByte = UByte(this)
