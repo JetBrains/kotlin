@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
@@ -56,15 +57,30 @@ object ExperimentalFixesFactory : KotlinIntentionActionsFactory() {
         }
 
         val result = mutableListOf<IntentionAction>()
-        if (isApplicableTo(containingDeclaration, applicableTargets)) {
-            result.add(AddAnnotationFix(containingDeclaration, annotationFqName, " to '${containingDeclaration.name}'"))
+        run {
+            val suffix = " to '${containingDeclaration.name}'"
+            if (isApplicableTo(containingDeclaration, applicableTargets)) {
+                result.add(AddAnnotationFix(containingDeclaration, annotationFqName, suffix))
+            }
+            result.add(
+                AddAnnotationFix(
+                    containingDeclaration, ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME, suffix, annotationFqName
+                )
+            )
         }
         if (containingDeclaration is KtCallableDeclaration) {
             val containingClassOrObject = containingDeclaration.containingClassOrObject
-            if (containingClassOrObject != null && isApplicableTo(containingClassOrObject, applicableTargets)) {
-                result.add(
-                    AddAnnotationFix(containingClassOrObject, annotationFqName, " to containing class '${containingClassOrObject.name}'")
-                )
+            if (containingClassOrObject != null) {
+                val suffix = " to containing class '${containingClassOrObject.name}'"
+                if (isApplicableTo(containingClassOrObject, applicableTargets)) {
+                    result.add(AddAnnotationFix(containingClassOrObject, annotationFqName, suffix))
+                } else {
+                    result.add(
+                        AddAnnotationFix(
+                            containingClassOrObject, ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME, suffix, annotationFqName
+                        )
+                    )
+                }
             }
         }
 

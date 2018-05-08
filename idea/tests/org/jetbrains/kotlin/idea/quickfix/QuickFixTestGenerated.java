@@ -6053,6 +6053,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/experimental/basicFunctionNotApplicable.kt");
         }
 
+        @TestMetadata("basicUseExperimental.kt")
+        public void testBasicUseExperimental() throws Exception {
+            runTest("idea/testData/quickfix/experimental/basicUseExperimental.kt");
+        }
+
+        @TestMetadata("classUseExperimental.kt")
+        public void testClassUseExperimental() throws Exception {
+            runTest("idea/testData/quickfix/experimental/classUseExperimental.kt");
+        }
+
         @TestMetadata("override.kt")
         public void testOverride() throws Exception {
             runTest("idea/testData/quickfix/experimental/override.kt");

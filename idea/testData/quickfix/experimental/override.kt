@@ -2,6 +2,8 @@
 // COMPILER_ARGUMENTS: -Xuse-experimental=kotlin.Experimental
 // WITH_RUNTIME
 // ACTION: Add '@MyExperimentalAPI' annotation to 'foo'
+// ACTION: Add '@UseExperimental(MyExperimentalAPI::class)' annotation to 'foo'
+// ACTION: Add '@UseExperimental(MyExperimentalAPI::class)' annotation to containing class 'Derived'
 // ERROR: This declaration overrides experimental member of supertype 'Base' and must be annotated with '@MyExperimentalAPI'
 
 @Experimental
