@@ -156,7 +156,7 @@ fun loadDefinitionsFromTemplates(
                     )
                 }
                 else -> {
-                    LOG.error("[kts] cannot find a valid script definition annotation on the class $template")
+                    LOG.warn("[kts] cannot find a valid script definition annotation on the class $template")
                     null
                 }
             }
