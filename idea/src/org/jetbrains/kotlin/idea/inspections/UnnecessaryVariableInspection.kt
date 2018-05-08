@@ -82,12 +82,12 @@ class UnnecessaryVariableInspection : AbstractApplicabilityBasedInspection<KtPro
                     val containingDeclaration = property.getStrictParentOfType<KtDeclaration>()
                     if (containingDeclaration != null) {
                         val validator = NewDeclarationNameValidator(
-                                container = containingDeclaration,
-                                anchor = property,
-                                target = NewDeclarationNameValidator.Target.VARIABLES,
-                                excludedDeclarations = listOfNotNull(
-                                        DescriptorToSourceUtils.descriptorToDeclaration(initializerDescriptor) as? KtDeclaration
-                                )
+                            container = containingDeclaration,
+                            anchor = property,
+                            target = NewDeclarationNameValidator.Target.VARIABLES,
+                            excludedDeclarations = listOfNotNull(
+                                DescriptorToSourceUtils.descriptorToDeclaration(initializerDescriptor) as? KtDeclaration
+                            )
                         )
                         if (!validator(copyName)) return false
                     }
